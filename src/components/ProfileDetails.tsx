@@ -10,7 +10,7 @@ import {
   Heart, Music, BookOpen, Pencil, Languages, Clock, Calendar,
   Utensils, Dumbbell, Baby, Plane, PawPrint, Moon, Sun,
   Users, MessageCircle, DollarSign, Sparkles, Star, Award, 
-  Brain, AlarmClock, Clock4, Palmtree, Map
+  Brain, AlarmClock, Clock4, Palmtree, Map, X, Film
 } from 'lucide-react';
 
 interface DetailItemProps {
