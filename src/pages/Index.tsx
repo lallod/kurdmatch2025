@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ProfileDetails from '@/components/ProfileDetails';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Heart } from 'lucide-react';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
