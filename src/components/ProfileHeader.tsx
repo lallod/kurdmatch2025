@@ -3,7 +3,8 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Verified } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProfileHeaderProps {
   name: string;
@@ -24,6 +25,44 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   verified,
   profileImage,
 }) => {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className="fixed top-0 left-0 right-0 z-20 px-4 py-3 glass-dark">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-10 h-10 rounded-full overflow-hidden">
+              <img 
+                src={profileImage} 
+                alt={`${name}'s profile`}
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <div>
+              <h2 className="text-white font-semibold flex items-center">
+                {name}
+                {verified && (
+                  <Verified size={16} className="ml-1 text-blue-400" />
+                )}
+              </h2>
+              <p className="text-xs text-white/70">{lastActive}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/10">
+              <MessageCircle size={20} />
+            </Button>
+            <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/10">
+              <Share2 size={20} />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full">
       <div className="absolute inset-0 overflow-hidden">
@@ -40,6 +79,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         />
       </div>
 
+      <div className="absolute inset-0 bg-gradient-to-t from-tinder-rose/20 to-tinder-orange/20 mix-blend-overlay"></div>
+
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row items-center gap-8">
         <div className="relative">
           <div className="w-[220px] h-[220px] md:w-[280px] md:h-[280px] rounded-full overflow-hidden border-4 border-white shadow-xl transition-transform-slow hover:scale-[1.02]">
@@ -52,12 +93,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
           {verified && (
             <div className="absolute bottom-3 right-3 bg-white text-primary rounded-full p-1 shadow-md">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M21.3 12.23c0-.84-.14-1.66-.41-2.43l1.34-1c.29-.24.4-.67.25-1.04-.36-.91-.89-1.74-1.55-2.46-.29-.32-.75-.38-1.1-.14l-1.42.96c-.6-.48-1.28-.87-2-.113v-1.76c0-.41-.3-.76-.71-.83-1-.16-2.03-.16-3.04 0-.41.07-.71.42-.71.83v1.76c-.74.26-1.42.65-2.02 1.13l-1.42-.96c-.35-.24-.81-.18-1.1.14-.66.72-1.19 1.55-1.55 2.46-.15.37-.04.8.25 1.04l1.34 1c-.27.77-.41 1.59-.41 2.43 0 .84.14 1.66.41 2.43l-1.34 1c-.29.24-.4.67-.25 1.04.36.91.89 1.74 1.55 2.46.29.32.75.38 1.1.14l1.42-.96c.6.48 1.28.87 2 1.13v1.76c0 .41.3.76.71.83 1 .16 2.03.16 3.04 0 .41-.07.71-.42.71-.83v-1.76c.74-.26 1.42-.65 2.02-1.13l1.42.96c.35.24.81.18 1.1-.14.66-.72 1.19-1.55 1.55-2.46.15-.37.04-.8-.25-1.04l-1.34-1c.27-.77.41-1.59.41-2.43zm-9.3 3.65c-2.02 0-3.65-1.63-3.65-3.65s1.63-3.65 3.65-3.65 3.65 1.63 3.65 3.65-1.63 3.65-3.65 3.65z"
-                  fill="currentColor"
-                />
-              </svg>
+              <Verified size={20} className="text-blue-500" />
             </div>
           )}
         </div>
@@ -82,15 +118,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
 
           <div className="flex flex-wrap gap-3 mt-6">
-            <Button size="lg" className="rounded-full shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2">
+            <Button size="lg" className="rounded-full shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2 bg-gradient-tinder text-white">
               <MessageCircle size={16} />
               <span>Message</span>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full bg-white/80 backdrop-blur-sm border-pink-200 text-pink-600 hover:bg-pink-50 hover:text-pink-700 shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2">
-              <Heart size={16} />
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="rounded-full bg-white backdrop-blur-sm border-tinder-rose text-tinder-rose hover:bg-tinder-light hover:text-tinder-rose hover:border-tinder-rose shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
+            >
+              <Heart size={16} className="animate-pulse-heart" />
               <span>Like</span>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-gray-50 shadow-md transition-all-slow hover:shadow-lg">
+            <Button size="lg" variant="outline" className="rounded-full bg-white backdrop-blur-sm border-gray-200 hover:bg-gray-50 shadow-md transition-all-slow hover:shadow-lg">
               <Share2 size={16} />
             </Button>
           </div>

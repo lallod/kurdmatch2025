@@ -3,9 +3,12 @@ import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ProfileDetails from '@/components/ProfileDetails';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<'photos' | 'details'>('photos');
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Simulate loading
@@ -63,13 +66,55 @@ const Index = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full bg-secondary mb-4"></div>
-          <div className="h-4 w-40 bg-secondary rounded mb-2"></div>
-          <div className="h-3 w-32 bg-secondary rounded"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-tinder-rose to-tinder-orange">
+        <div className="animate-bounce flex flex-col items-center">
+          <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4">
+            <Heart size={40} className="text-tinder-rose animate-pulse-heart" />
+          </div>
+          <div className="text-white text-xl font-semibold">Loading...</div>
         </div>
       </div>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <main className="min-h-screen bg-black text-white">
+        <ProfileHeader
+          name={profileData.name}
+          age={profileData.age}
+          location={profileData.location}
+          occupation={profileData.occupation}
+          lastActive={profileData.lastActive}
+          verified={profileData.verified}
+          profileImage={profileData.profileImage}
+        />
+        
+        {activeSection === 'photos' && (
+          <PhotoGallery photos={profileData.photos} />
+        )}
+        
+        {activeSection === 'details' && (
+          <div className="pt-16 pb-20">
+            <ProfileDetails details={profileData.details} />
+          </div>
+        )}
+        
+        <div className="fixed bottom-0 left-0 right-0 h-16 bg-black border-t border-gray-800 flex z-10">
+          <button 
+            className={`flex-1 flex flex-col items-center justify-center transition-colors ${activeSection === 'photos' ? 'text-tinder-rose' : 'text-gray-400'}`}
+            onClick={() => setActiveSection('photos')}
+          >
+            <span className="text-sm font-medium">Photos</span>
+          </button>
+          <button 
+            className={`flex-1 flex flex-col items-center justify-center transition-colors ${activeSection === 'details' ? 'text-tinder-rose' : 'text-gray-400'}`}
+            onClick={() => setActiveSection('details')}
+          >
+            <span className="text-sm font-medium">Details</span>
+          </button>
+        </div>
+      </main>
     );
   }
 
@@ -85,11 +130,11 @@ const Index = () => {
         profileImage={profileData.profileImage}
       />
       
-      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
       <PhotoGallery photos={profileData.photos} />
       
-      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-orange/30 to-transparent"></div>
       
       <ProfileDetails details={profileData.details} />
       

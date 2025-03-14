@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 220 14% 5%;
+    --primary: 346 82% 66%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 240 4.8% 95.9%;
@@ -25,7 +25,7 @@
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 240 4.8% 95.9%;
+    --accent: 350 82% 85%;
     --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
@@ -33,39 +33,13 @@
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --ring: 346 82% 66%;
 
     --radius: 1rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240, 5%, 64.9%;
-
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    /* ... keep existing code (dark mode variables) */
   }
 }
 
@@ -77,6 +51,7 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overscroll-behavior: none;
   }
 }
 
@@ -85,14 +60,38 @@
     @apply bg-white/70 backdrop-blur-lg border border-white/20;
   }
   
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-lg border border-white/10;
+  }
+  
+  .tinder-card {
+    @apply relative w-full h-[calc(100vh-5rem)] rounded-2xl overflow-hidden shadow-xl;
+  }
+  
+  .tinder-gradient {
+    @apply absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent;
+  }
+  
   .text-balance {
     text-wrap: balance;
+  }
+  
+  .swipe-actions {
+    @apply fixed bottom-4 left-0 right-0 flex items-center justify-center gap-6 z-20;
+  }
+  
+  .action-button {
+    @apply flex items-center justify-center w-16 h-16 rounded-full shadow-lg transform transition-all duration-300;
+  }
+  
+  .action-button-big {
+    @apply flex items-center justify-center w-20 h-20 rounded-full shadow-lg transform transition-all duration-300;
   }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -107,6 +106,8 @@
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
 }
 
 /* Image blur-up animation */
@@ -126,4 +127,17 @@ html {
 
 .transition-transform-slow {
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tinder card swipe animations */
+.swipe-overlay {
+  @apply absolute inset-0 flex items-center justify-center opacity-0 transition-opacity;
+}
+
+.swipe-right .swipe-overlay-right {
+  @apply opacity-100;
+}
+
+.swipe-left .swipe-overlay-left {
+  @apply opacity-100;
 }
