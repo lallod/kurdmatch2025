@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Heart, X, Star, Info, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -9,7 +8,8 @@ import {
   CarouselContent,
   CarouselItem,
   CarouselPrevious,
-  CarouselNext
+  CarouselNext,
+  type CarouselApi
 } from './ui/carousel';
 
 interface PhotoGalleryProps {
@@ -22,6 +22,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   const [isLoaded, setIsLoaded] = useState<boolean[]>(Array(photos.length).fill(false));
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [api, setApi] = useState<CarouselApi | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
   const isMobile = useIsMobile();
@@ -96,7 +97,23 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     }
   };
 
-  // Common photo info overlay that appears on both mobile and desktop
+  React.useEffect(() => {
+    if (!api) return;
+    
+    const handleSelect = () => {
+      setCurrentIndex(api.selectedScrollSnap() || 0);
+    };
+
+    api.on("select", handleSelect);
+    
+    // Initial index
+    setCurrentIndex(api.selectedScrollSnap() || 0);
+
+    return () => {
+      api.off("select", handleSelect);
+    };
+  }, [api]);
+
   const renderPhotoInfo = (index: number) => (
     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-10">
       <div className="flex items-center justify-between">
@@ -111,7 +128,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     </div>
   );
 
-  // Common progress indicator for both mobile and desktop
   const renderProgressBar = (currentIndex: number) => (
     <div className="absolute top-2 left-2 right-2 flex gap-1 z-10">
       {photos.map((_, index) => (
@@ -126,7 +142,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     </div>
   );
 
-  // The Tinder card swipe UI for mobile
   if (isMobile) {
     return (
       <section className="w-full min-h-screen bg-gradient-to-br from-tinder-rose to-tinder-orange px-0 py-0">
@@ -144,15 +159,12 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           <Carousel 
             className="w-full h-full" 
             opts={{ loop: true }}
-            onSelect={(api) => {
-              const selectedIndex = api?.selectedScrollSnap() || 0;
-              setCurrentIndex(selectedIndex);
-            }}
+            setApi={setApi}
           >
             <CarouselContent className="h-full">
               {photos.map((photo, index) => (
                 <CarouselItem key={index} className="h-full">
-                  {renderProgressBar(index)}
+                  {renderProgressBar(currentIndex)}
                   <img
                     src={photo}
                     alt={`Photo ${index + 1}`}
@@ -171,7 +183,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             <CarouselNext className="absolute right-2 z-10 bg-white/20 hover:bg-white/40 text-white border-none" />
           </Carousel>
           
-          {/* Swipe overlays */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 swipe-overlay swipe-overlay-right">
             <div className="transform rotate-12 bg-green-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white shadow-lg">
               LIKE
@@ -185,7 +196,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           </div>
         </div>
 
-        {/* Tinder-style action buttons */}
         <div className="fixed bottom-4 left-0 right-0 flex items-center justify-center gap-6 z-20">
           <button 
             className="flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-lg transform transition-all duration-300 hover:scale-110"
@@ -211,7 +221,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     );
   }
 
-  // Desktop version with more Tinder-like styling
   return (
     <section className="w-full max-w-4xl mx-auto px-4 py-12 bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-3xl">
       <div className="mb-8">
@@ -224,15 +233,12 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           <Carousel 
             className="w-full h-full" 
             opts={{ loop: true }}
-            onSelect={(api) => {
-              const selectedIndex = api?.selectedScrollSnap() || 0;
-              setCurrentIndex(selectedIndex);
-            }}
+            setApi={setApi}
           >
             <CarouselContent className="h-full">
               {photos.map((photo, index) => (
                 <CarouselItem key={index} className="h-full">
-                  {renderProgressBar(index)}
+                  {renderProgressBar(currentIndex)}
                   <img
                     src={photo}
                     alt={`Photo ${index + 1}`}
