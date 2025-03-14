@@ -21,6 +21,7 @@ interface PhotoGalleryProps {
 const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   const [isLoaded, setIsLoaded] = useState<boolean[]>(Array(photos.length).fill(false));
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
   const isMobile = useIsMobile();
@@ -45,12 +46,15 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     cardRef.current.style.transform = `translateX(${diff}px) rotate(${rotation}deg)`;
     
     if (diff > 50) {
+      setSwipeDirection('right');
       cardRef.current.classList.add('swipe-right');
       cardRef.current.classList.remove('swipe-left');
     } else if (diff < -50) {
+      setSwipeDirection('left');
       cardRef.current.classList.add('swipe-left');
       cardRef.current.classList.remove('swipe-right');
     } else {
+      setSwipeDirection(null);
       cardRef.current.classList.remove('swipe-right', 'swipe-left');
     }
   };
@@ -59,13 +63,11 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     if (!cardRef.current) return;
     
     if (cardRef.current.classList.contains('swipe-right')) {
-      setSwipeDirection('right');
       // Simulate like
       setTimeout(() => {
         resetCard();
       }, 500);
     } else if (cardRef.current.classList.contains('swipe-left')) {
-      setSwipeDirection('left');
       // Simulate dislike
       setTimeout(() => {
         resetCard();
@@ -127,11 +129,11 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   // The Tinder card swipe UI for mobile
   if (isMobile) {
     return (
-      <section className="w-full min-h-screen bg-gradient-to-br from-tinder-rose to-tinder-orange px-2 py-4">
+      <section className="w-full min-h-screen bg-gradient-to-br from-tinder-rose to-tinder-orange px-0 py-0">
         <div 
           ref={cardRef}
           className={cn(
-            "tinder-card transition-all duration-300",
+            "tinder-card relative w-full h-[calc(100vh-5rem)] rounded-xl overflow-hidden shadow-2xl border-4 border-white/10 transform transition-all duration-300",
             swipeDirection === 'right' && "animate-swipe-right",
             swipeDirection === 'left' && "animate-swipe-left"
           )}
@@ -139,7 +141,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <Carousel className="w-full h-full">
+          <Carousel 
+            className="w-full h-full" 
+            opts={{ loop: true }}
+            onSelect={(api) => {
+              const selectedIndex = api?.selectedScrollSnap() || 0;
+              setCurrentIndex(selectedIndex);
+            }}
+          >
             <CarouselContent className="h-full">
               {photos.map((photo, index) => (
                 <CarouselItem key={index} className="h-full">
@@ -154,7 +163,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
                     onLoad={() => handleImageLoad(index)}
                   />
                   {renderPhotoInfo(index)}
-                  <div className="tinder-gradient"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/10"></div>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -162,36 +171,38 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             <CarouselNext className="absolute right-2 z-10 bg-white/20 hover:bg-white/40 text-white border-none" />
           </Carousel>
           
-          <div className="swipe-overlay swipe-overlay-right">
-            <div className="transform rotate-12 bg-green-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white">
+          {/* Swipe overlays */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 swipe-overlay swipe-overlay-right">
+            <div className="transform rotate-12 bg-green-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white shadow-lg">
               LIKE
             </div>
           </div>
           
-          <div className="swipe-overlay swipe-overlay-left">
-            <div className="transform -rotate-12 bg-red-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white">
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 swipe-overlay swipe-overlay-left">
+            <div className="transform -rotate-12 bg-red-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white shadow-lg">
               NOPE
             </div>
           </div>
         </div>
 
-        <div className="swipe-actions">
+        {/* Tinder-style action buttons */}
+        <div className="fixed bottom-4 left-0 right-0 flex items-center justify-center gap-6 z-20">
           <button 
-            className="action-button bg-white hover:scale-110"
+            className="flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-lg transform transition-all duration-300 hover:scale-110"
             onClick={() => handleManualSwipe('left')}
           >
             <X size={28} className="text-red-500" />
           </button>
           
           <button 
-            className="action-button-big bg-gradient-to-r from-tinder-rose to-tinder-orange hover:scale-110"
+            className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-tinder-rose to-tinder-orange shadow-lg transform transition-all duration-300 hover:scale-110"
             onClick={() => handleManualSwipe('right')}
           >
             <Heart size={32} className="text-white" />
           </button>
           
           <button 
-            className="action-button bg-gradient-to-r from-blue-400 to-blue-500 hover:scale-110"
+            className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 shadow-lg transform transition-all duration-300 hover:scale-110"
           >
             <Star size={28} className="text-white" />
           </button>
@@ -200,17 +211,24 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     );
   }
 
-  // Desktop version with the same swipeable gallery
+  // Desktop version with more Tinder-like styling
   return (
-    <section className="w-full max-w-4xl mx-auto px-4 py-16 bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 rounded-3xl">
-      <div className="mb-12">
+    <section className="w-full max-w-4xl mx-auto px-4 py-12 bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-3xl">
+      <div className="mb-8">
         <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">Gallery</span>
         <h2 className="text-3xl font-light mt-1">Photos</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="relative h-[400px] md:h-[500px] bg-secondary rounded-2xl overflow-hidden shadow-lg transition-all-slow hover:shadow-xl hover:scale-[1.01]">
-          <Carousel className="w-full h-full">
+        <div className="relative h-[400px] md:h-[500px] bg-secondary rounded-2xl overflow-hidden shadow-lg border border-tinder-rose/20 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+          <Carousel 
+            className="w-full h-full" 
+            opts={{ loop: true }}
+            onSelect={(api) => {
+              const selectedIndex = api?.selectedScrollSnap() || 0;
+              setCurrentIndex(selectedIndex);
+            }}
+          >
             <CarouselContent className="h-full">
               {photos.map((photo, index) => (
                 <CarouselItem key={index} className="h-full">
@@ -225,6 +243,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
                     onLoad={() => handleImageLoad(index)}
                   />
                   {renderPhotoInfo(index)}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -238,7 +257,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             <div 
               key={index} 
               className={cn(
-                "relative aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-md transition-all-slow hover:shadow-lg hover:scale-[1.03]"
+                "relative aspect-square rounded-2xl overflow-hidden cursor-pointer border border-tinder-rose/20 shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.03]",
+                currentIndex === index && "ring-2 ring-tinder-rose"
               )}
             >
               <img
@@ -252,10 +272,12 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
               />
               
               <div className={cn(
-                "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2",
+                "absolute inset-0 bg-gradient-to-t from-black/70 to-transparent",
                 "opacity-0 hover:opacity-100 transition-opacity duration-300"
               )}>
-                <span className="text-white text-xs font-medium">Photo {index + 1}</span>
+                <div className="absolute bottom-2 left-2">
+                  <span className="text-white text-xs font-medium">Photo {index + 1}</span>
+                </div>
               </div>
             </div>
           ))}
