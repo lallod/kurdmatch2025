@@ -1,9 +1,16 @@
 
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { Heart, X, Star, Info } from 'lucide-react';
+import { Heart, X, Star, Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ScrollArea } from './ui/scroll-area';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext
+} from './ui/carousel';
 
 interface PhotoGalleryProps {
   photos: string[];
@@ -12,13 +19,12 @@ interface PhotoGalleryProps {
 }
 
 const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
-  const [selectedPhoto, setSelectedPhoto] = useState<number>(0);
   const [isLoaded, setIsLoaded] = useState<boolean[]>(Array(photos.length).fill(false));
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
   const isMobile = useIsMobile();
-
+  
   const handleImageLoad = (index: number) => {
     const newLoadedState = [...isLoaded];
     newLoadedState[index] = true;
@@ -88,46 +94,13 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     }
   };
 
-  const goToNextPhoto = () => {
-    setSelectedPhoto((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
-  };
-
-  const goToPrevPhoto = () => {
-    setSelectedPhoto((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
-  };
-
-  const handlePhotoTap = (e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const width = rect.width;
-    
-    if (x > width / 2) {
-      goToNextPhoto();
-    } else {
-      goToPrevPhoto();
-    }
-  };
-
-  const progressBar = (
-    <div className="absolute top-2 left-2 right-2 flex gap-1 z-10">
-      {photos.map((_, index) => (
-        <div 
-          key={index} 
-          className={cn(
-            "h-1 rounded-full flex-1 transition-all duration-300",
-            selectedPhoto === index ? "bg-white" : "bg-white/30"
-          )}
-        />
-      ))}
-    </div>
-  );
-
-  const photoInfo = (
+  // Common photo info overlay that appears on both mobile and desktop
+  const renderPhotoInfo = (index: number) => (
     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-10">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl font-bold text-white">{name}, {age}</h3>
-          <p className="text-white/80 text-sm">Photo {selectedPhoto + 1} of {photos.length}</p>
+          <p className="text-white/80 text-sm">Photo {index + 1} of {photos.length}</p>
         </div>
         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white">
           <Info size={18} />
@@ -136,6 +109,22 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     </div>
   );
 
+  // Common progress indicator for both mobile and desktop
+  const renderProgressBar = (currentIndex: number) => (
+    <div className="absolute top-2 left-2 right-2 flex gap-1 z-10">
+      {photos.map((_, index) => (
+        <div 
+          key={index} 
+          className={cn(
+            "h-1 rounded-full flex-1 transition-all duration-300",
+            currentIndex === index ? "bg-white" : "bg-white/30"
+          )}
+        />
+      ))}
+    </div>
+  );
+
+  // The Tinder card swipe UI for mobile
   if (isMobile) {
     return (
       <section className="w-full min-h-screen bg-gradient-to-br from-tinder-rose to-tinder-orange px-2 py-4">
@@ -150,22 +139,28 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {progressBar}
-          
-          <img
-            src={photos[selectedPhoto]}
-            alt={`Photo ${selectedPhoto + 1}`}
-            className={cn(
-              "w-full h-full object-cover transition-opacity duration-300",
-              isLoaded[selectedPhoto] ? "opacity-100" : "opacity-0"
-            )}
-            onLoad={() => handleImageLoad(selectedPhoto)}
-            onClick={handlePhotoTap}
-          />
-          
-          {photoInfo}
-          
-          <div className="tinder-gradient"></div>
+          <Carousel className="w-full h-full">
+            <CarouselContent className="h-full">
+              {photos.map((photo, index) => (
+                <CarouselItem key={index} className="h-full">
+                  {renderProgressBar(index)}
+                  <img
+                    src={photo}
+                    alt={`Photo ${index + 1}`}
+                    className={cn(
+                      "w-full h-full object-cover transition-opacity duration-300",
+                      isLoaded[index] ? "opacity-100" : "opacity-0"
+                    )}
+                    onLoad={() => handleImageLoad(index)}
+                  />
+                  {renderPhotoInfo(index)}
+                  <div className="tinder-gradient"></div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-2 z-10 bg-white/20 hover:bg-white/40 text-white border-none" />
+            <CarouselNext className="absolute right-2 z-10 bg-white/20 hover:bg-white/40 text-white border-none" />
+          </Carousel>
           
           <div className="swipe-overlay swipe-overlay-right">
             <div className="transform rotate-12 bg-green-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white">
@@ -197,7 +192,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           
           <button 
             className="action-button bg-gradient-to-r from-blue-400 to-blue-500 hover:scale-110"
-            onClick={goToNextPhoto}
           >
             <Star size={28} className="text-white" />
           </button>
@@ -206,7 +200,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     );
   }
 
-  // Desktop version 
+  // Desktop version with the same swipeable gallery
   return (
     <section className="w-full max-w-4xl mx-auto px-4 py-16 bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 rounded-3xl">
       <div className="mb-12">
@@ -216,27 +210,36 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="relative h-[400px] md:h-[500px] bg-secondary rounded-2xl overflow-hidden shadow-lg transition-all-slow hover:shadow-xl hover:scale-[1.01]">
-          <img
-            src={photos[selectedPhoto]}
-            alt={`Selected photo ${selectedPhoto + 1}`}
-            className={cn("w-full h-full object-cover transition-all duration-500", 
-              isLoaded[selectedPhoto] ? "opacity-100" : "opacity-0")}
-            onLoad={() => handleImageLoad(selectedPhoto)}
-          />
-          
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-            <p className="text-white font-medium">Photo {selectedPhoto + 1} of {photos.length}</p>
-          </div>
+          <Carousel className="w-full h-full">
+            <CarouselContent className="h-full">
+              {photos.map((photo, index) => (
+                <CarouselItem key={index} className="h-full">
+                  {renderProgressBar(index)}
+                  <img
+                    src={photo}
+                    alt={`Photo ${index + 1}`}
+                    className={cn(
+                      "w-full h-full object-cover transition-opacity duration-300",
+                      isLoaded[index] ? "opacity-100" : "opacity-0"
+                    )}
+                    onLoad={() => handleImageLoad(index)}
+                  />
+                  {renderPhotoInfo(index)}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-2 z-10 bg-white/20 hover:bg-white/40 text-white border-none" />
+            <CarouselNext className="absolute right-2 z-10 bg-white/20 hover:bg-white/40 text-white border-none" />
+          </Carousel>
         </div>
+        
         <div className="grid grid-cols-2 gap-4">
           {photos.map((photo, index) => (
             <div 
               key={index} 
               className={cn(
-                "relative aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-md transition-all-slow hover:shadow-lg hover:scale-[1.03]",
-                selectedPhoto === index ? "ring-4 ring-tinder-rose ring-offset-2" : ""
+                "relative aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-md transition-all-slow hover:shadow-lg hover:scale-[1.03]"
               )}
-              onClick={() => setSelectedPhoto(index)}
             >
               <img
                 src={photo}
