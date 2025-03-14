@@ -1,9 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ProfileDetails from '@/components/ProfileDetails';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Heart } from 'lucide-react';
+import { Heart, ArrowDown } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -90,30 +92,26 @@ const Index = () => {
           profileImage={profileData.profileImage}
         />
         
-        {activeSection === 'photos' && (
-          <PhotoGallery photos={profileData.photos} />
-        )}
-        
-        {activeSection === 'details' && (
-          <div className="pt-16 pb-20">
-            <ProfileDetails details={profileData.details} />
+        <ScrollArea className="h-[calc(100vh-64px)] pb-16">
+          <div className="pt-16">
+            <PhotoGallery 
+              photos={profileData.photos} 
+              name={profileData.name} 
+              age={profileData.age} 
+            />
+            
+            <div className="flex justify-center my-6">
+              <div className="flex flex-col items-center animate-bounce">
+                <ArrowDown size={24} className="text-white/60" />
+                <p className="text-xs text-white/60 mt-1">Scroll for more details</p>
+              </div>
+            </div>
+            
+            <div className="px-4 pb-24">
+              <ProfileDetails details={profileData.details} />
+            </div>
           </div>
-        )}
-        
-        <div className="fixed bottom-0 left-0 right-0 h-16 bg-black border-t border-gray-800 flex z-10">
-          <button 
-            className={`flex-1 flex flex-col items-center justify-center transition-colors ${activeSection === 'photos' ? 'text-tinder-rose' : 'text-gray-400'}`}
-            onClick={() => setActiveSection('photos')}
-          >
-            <span className="text-sm font-medium">Photos</span>
-          </button>
-          <button 
-            className={`flex-1 flex flex-col items-center justify-center transition-colors ${activeSection === 'details' ? 'text-tinder-rose' : 'text-gray-400'}`}
-            onClick={() => setActiveSection('details')}
-          >
-            <span className="text-sm font-medium">Details</span>
-          </button>
-        </div>
+        </ScrollArea>
       </main>
     );
   }
@@ -132,7 +130,11 @@ const Index = () => {
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
-      <PhotoGallery photos={profileData.photos} />
+      <PhotoGallery 
+        photos={profileData.photos} 
+        name={profileData.name} 
+        age={profileData.age} 
+      />
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-orange/30 to-transparent"></div>
       

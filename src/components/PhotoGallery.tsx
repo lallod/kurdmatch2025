@@ -1,14 +1,17 @@
 
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { Heart, X, Star } from 'lucide-react';
+import { Heart, X, Star, Info } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ScrollArea } from './ui/scroll-area';
 
 interface PhotoGalleryProps {
   photos: string[];
+  name: string;
+  age: number;
 }
 
-const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   const [selectedPhoto, setSelectedPhoto] = useState<number>(0);
   const [isLoaded, setIsLoaded] = useState<boolean[]>(Array(photos.length).fill(false));
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
@@ -119,6 +122,20 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
     </div>
   );
 
+  const photoInfo = (
+    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-10">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-2xl font-bold text-white">{name}, {age}</h3>
+          <p className="text-white/80 text-sm">Photo {selectedPhoto + 1} of {photos.length}</p>
+        </div>
+        <button className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white">
+          <Info size={18} />
+        </button>
+      </div>
+    </div>
+  );
+
   if (isMobile) {
     return (
       <section className="w-full min-h-screen bg-gradient-to-br from-tinder-rose to-tinder-orange px-2 py-4">
@@ -145,6 +162,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
             onLoad={() => handleImageLoad(selectedPhoto)}
             onClick={handlePhotoTap}
           />
+          
+          {photoInfo}
           
           <div className="tinder-gradient"></div>
           
@@ -187,7 +206,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
     );
   }
 
-  // Desktop version remains similar to original with some style updates
+  // Desktop version 
   return (
     <section className="w-full max-w-4xl mx-auto px-4 py-16 bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 rounded-3xl">
       <div className="mb-12">
@@ -196,7 +215,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="h-[400px] md:h-[500px] bg-secondary rounded-2xl overflow-hidden shadow-lg transition-all-slow hover:shadow-xl hover:scale-[1.01]">
+        <div className="relative h-[400px] md:h-[500px] bg-secondary rounded-2xl overflow-hidden shadow-lg transition-all-slow hover:shadow-xl hover:scale-[1.01]">
           <img
             src={photos[selectedPhoto]}
             alt={`Selected photo ${selectedPhoto + 1}`}
@@ -204,13 +223,17 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
               isLoaded[selectedPhoto] ? "opacity-100" : "opacity-0")}
             onLoad={() => handleImageLoad(selectedPhoto)}
           />
+          
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+            <p className="text-white font-medium">Photo {selectedPhoto + 1} of {photos.length}</p>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {photos.map((photo, index) => (
             <div 
               key={index} 
               className={cn(
-                "aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-md transition-all-slow hover:shadow-lg hover:scale-[1.03]",
+                "relative aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-md transition-all-slow hover:shadow-lg hover:scale-[1.03]",
                 selectedPhoto === index ? "ring-4 ring-tinder-rose ring-offset-2" : ""
               )}
               onClick={() => setSelectedPhoto(index)}
@@ -224,6 +247,13 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
                 )}
                 onLoad={() => handleImageLoad(index)}
               />
+              
+              <div className={cn(
+                "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2",
+                "opacity-0 hover:opacity-100 transition-opacity duration-300"
+              )}>
+                <span className="text-white text-xs font-medium">Photo {index + 1}</span>
+              </div>
             </div>
           ))}
         </div>
