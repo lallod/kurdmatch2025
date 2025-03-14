@@ -4,8 +4,10 @@ import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ProfileDetails from '@/components/ProfileDetails';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Heart, ArrowDown } from 'lucide-react';
+import { Heart, ArrowDown, Lock } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,11 +60,26 @@ const Index = () => {
       favoriteMovies: ["Lost in Translation", "The Grand Budapest Hotel", "Parasite"],
       favoriteMusic: ["Indie Folk", "Jazz", "Classic Rock", "Electronic"],
       favoriteFoods: ["Japanese", "Mediterranean", "Thai", "Italian"],
+      // Added new extended profile information
       exerciseHabits: "Regular - 4-5 times per week",
       zodiacSign: "Libra",
       personalityType: "ENFJ",
       sleepSchedule: "Early bird",
-      travelFrequency: "Several times per year"
+      travelFrequency: "Several times per year",
+      communicationStyle: "Direct and thoughtful",
+      loveLanguage: "Quality Time, Words of Affirmation",
+      petPeeves: ["Tardiness", "Poor communication", "Rudeness to service workers"],
+      dreamVacation: "Backpacking through Southeast Asia",
+      weekendActivities: ["Farmers markets", "Hiking trails", "Art exhibitions", "Cozy coffee shops"],
+      financialHabits: "Saver with occasional splurges",
+      idealDate: "A hike followed by dinner at a local restaurant",
+      childrenStatus: "No children",
+      familyCloseness: "Very close with family",
+      friendshipStyle: "Small circle of close friends",
+      workLifeBalance: "Values boundaries between work and personal life",
+      careerAmbitions: "Working towards creative director position",
+      hobbies: ["Film photography", "Ceramics", "Rock climbing", "Cooking new cuisines"],
+      values: ["Authenticity", "Kindness", "Growth", "Adventure", "Balance"]
     }
   };
 
@@ -79,9 +96,18 @@ const Index = () => {
     );
   }
 
+  // Mobile view
   if (isMobile) {
     return (
-      <main className="min-h-screen bg-black text-white">
+      <main className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+        <div className="fixed top-0 right-0 p-4 z-10">
+          <Link to="/admin">
+            <Button variant="ghost" size="icon" className="bg-black/30 backdrop-blur-sm text-white hover:bg-black/50">
+              <Lock size={18} />
+            </Button>
+          </Link>
+        </div>
+        
         <ProfileHeader
           name={profileData.name}
           age={profileData.age}
@@ -93,12 +119,14 @@ const Index = () => {
         />
         
         <ScrollArea className="h-[calc(100vh-64px)] pb-16">
-          <div className="pt-16">
-            <PhotoGallery 
-              photos={profileData.photos} 
-              name={profileData.name} 
-              age={profileData.age} 
-            />
+          <div className="pt-16 px-4">
+            <div className="rounded-xl overflow-hidden mb-8">
+              <PhotoGallery 
+                photos={profileData.photos} 
+                name={profileData.name} 
+                age={profileData.age} 
+              />
+            </div>
             
             <div className="flex justify-center my-6">
               <div className="flex flex-col items-center animate-bounce">
@@ -107,7 +135,7 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="px-4 pb-24">
+            <div className="pb-24">
               <ProfileDetails details={profileData.details} />
             </div>
           </div>
@@ -116,8 +144,18 @@ const Index = () => {
     );
   }
 
+  // Desktop view
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="fixed top-4 right-4 z-50">
+        <Link to="/admin">
+          <Button variant="outline" size="sm" className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white">
+            <Lock size={16} />
+            Admin
+          </Button>
+        </Link>
+      </div>
+      
       <ProfileHeader
         name={profileData.name}
         age={profileData.age}
@@ -130,11 +168,15 @@ const Index = () => {
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
-      <PhotoGallery 
-        photos={profileData.photos} 
-        name={profileData.name} 
-        age={profileData.age} 
-      />
+      <ScrollArea className="max-h-[60vh] overflow-hidden">
+        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-8">
+          <PhotoGallery 
+            photos={profileData.photos} 
+            name={profileData.name} 
+            age={profileData.age} 
+          />
+        </div>
+      </ScrollArea>
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-orange/30 to-transparent"></div>
       
