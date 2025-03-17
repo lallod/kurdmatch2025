@@ -105,6 +105,31 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     </div>
   );
 
+  const renderControls = () => (
+    <div className="absolute bottom-20 left-0 right-0 flex items-center justify-center gap-4 z-20">
+      <button 
+        className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg transform transition-all duration-300 hover:scale-110"
+        onClick={() => api?.scrollPrev()}
+      >
+        <ChevronLeft size={24} className="text-red-500" />
+      </button>
+      
+      <button 
+        className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-tinder-rose to-tinder-orange shadow-lg transform transition-all duration-300 hover:scale-110"
+        onClick={() => api?.scrollNext()}
+      >
+        <Heart size={28} className="text-white" />
+      </button>
+      
+      <button 
+        className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg transform transition-all duration-300 hover:scale-110"
+        onClick={() => api?.scrollNext()}
+      >
+        <ChevronRight size={24} className="text-green-500" />
+      </button>
+    </div>
+  );
+
   return (
     <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
       <div className="relative w-full h-full rounded-xl overflow-hidden shadow-lg border border-tinder-rose/20"
@@ -153,28 +178,10 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             ))}
           </CarouselContent>
           
-          <div className="absolute bottom-20 left-0 right-0 flex items-center justify-center gap-4 z-20">
-            <button 
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg transform transition-all duration-300 hover:scale-110"
-              onClick={() => api?.scrollPrev()}
-            >
-              <ChevronLeft size={24} className="text-red-500" />
-            </button>
-            
-            <button 
-              className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-tinder-rose to-tinder-orange shadow-lg transform transition-all duration-300 hover:scale-110"
-              onClick={() => api?.scrollNext()}
-            >
-              <Heart size={28} className="text-white" />
-            </button>
-            
-            <button 
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg transform transition-all duration-300 hover:scale-110"
-              onClick={() => api?.scrollNext()}
-            >
-              <ChevronRight size={24} className="text-green-500" />
-            </button>
-          </div>
+          {renderControls()}
+          
+          <CarouselPrevious className="hidden" />
+          <CarouselNext className="hidden" />
         </Carousel>
       </div>
     </section>

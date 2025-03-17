@@ -29,10 +29,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   if (isMobile) {
     return (
-      <div className="fixed top-0 left-0 right-0 z-20 px-4 py-3 glass-dark">
+      <div className="fixed top-0 left-0 right-0 z-20 px-4 py-3 bg-gradient-to-br from-tinder-rose/80 to-tinder-orange/80 backdrop-blur-lg border-b border-white/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img 
                 src={profileImage} 
                 alt={`${name}'s profile`}
@@ -41,21 +41,29 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </div>
             <div>
               <h2 className="text-white font-semibold flex items-center">
-                {name}
+                {name}, {age}
                 {verified && (
                   <Verified size={16} className="ml-1 text-blue-400" />
                 )}
               </h2>
-              <p className="text-xs text-white/70">{lastActive}</p>
+              <p className="text-xs text-white/90">{lastActive}</p>
             </div>
           </div>
           
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/10">
-              <MessageCircle size={20} />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="rounded-full bg-white/80 backdrop-blur-sm border-white/20 text-tinder-rose hover:bg-white hover:text-tinder-rose shadow-md"
+            >
+              <MessageCircle size={18} />
             </Button>
-            <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/10">
-              <Share2 size={20} />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="rounded-full bg-white/80 backdrop-blur-sm border-white/20 hover:bg-white shadow-md"
+            >
+              <Share2 size={18} />
             </Button>
           </div>
         </div>

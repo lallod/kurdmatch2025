@@ -124,7 +124,7 @@ const Index = () => {
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
-      <ScrollArea className={`${isMobile ? 'max-h-[45vh]' : 'max-h-[60vh]'} overflow-hidden`}>
+      <ScrollArea className={`${isMobile ? 'max-h-[65vh]' : 'max-h-[60vh]'} overflow-hidden`}>
         <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-8 px-4">
           <PhotoGallery 
             photos={profileData.photos} 
