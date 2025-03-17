@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -101,10 +102,11 @@ const Index = () => {
             variant="outline" 
             size={isMobile ? "icon" : "sm"} 
             className={`
-              ${isMobile ? 'bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white' : 'flex items-center gap-2 bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white'}
+              bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white
+              ${!isMobile && 'flex items-center gap-2'}
             `}
           >
-            <Lock size={isMobile ? 16 : 16} />
+            <Lock size={16} />
             {!isMobile && "Admin"}
           </Button>
         </Link>
