@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -11,7 +10,6 @@ import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<'photos' | 'details'>('photos');
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -60,7 +58,6 @@ const Index = () => {
       favoriteMovies: ["Lost in Translation", "The Grand Budapest Hotel", "Parasite"],
       favoriteMusic: ["Indie Folk", "Jazz", "Classic Rock", "Electronic"],
       favoriteFoods: ["Japanese", "Mediterranean", "Thai", "Italian"],
-      // Added new extended profile information
       exerciseHabits: "Regular - 4-5 times per week",
       zodiacSign: "Libra",
       personalityType: "ENFJ",
@@ -96,62 +93,19 @@ const Index = () => {
     );
   }
 
-  // Mobile view
-  if (isMobile) {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
-        <div className="fixed top-0 right-0 p-4 z-10">
-          <Link to="/admin">
-            <Button variant="ghost" size="icon" className="bg-black/30 backdrop-blur-sm text-white hover:bg-black/50">
-              <Lock size={18} />
-            </Button>
-          </Link>
-        </div>
-        
-        <ProfileHeader
-          name={profileData.name}
-          age={profileData.age}
-          location={profileData.location}
-          occupation={profileData.occupation}
-          lastActive={profileData.lastActive}
-          verified={profileData.verified}
-          profileImage={profileData.profileImage}
-        />
-        
-        <ScrollArea className="h-[calc(100vh-64px)] pb-16">
-          <div className="pt-16 px-4">
-            <div className="rounded-xl overflow-hidden mb-8">
-              <PhotoGallery 
-                photos={profileData.photos} 
-                name={profileData.name} 
-                age={profileData.age} 
-              />
-            </div>
-            
-            <div className="flex justify-center my-6">
-              <div className="flex flex-col items-center animate-bounce">
-                <ArrowDown size={24} className="text-white/60" />
-                <p className="text-xs text-white/60 mt-1">Scroll for more details</p>
-              </div>
-            </div>
-            
-            <div className="pb-24">
-              <ProfileDetails details={profileData.details} />
-            </div>
-          </div>
-        </ScrollArea>
-      </main>
-    );
-  }
-
-  // Desktop view
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="fixed top-4 right-4 z-50">
+      <div className={`fixed top-4 right-4 z-50 ${isMobile ? 'top-2 right-2' : ''}`}>
         <Link to="/admin">
-          <Button variant="outline" size="sm" className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white">
-            <Lock size={16} />
-            Admin
+          <Button 
+            variant="outline" 
+            size={isMobile ? "icon" : "sm"} 
+            className={`
+              ${isMobile ? 'bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white' : 'flex items-center gap-2 bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white'}
+            `}
+          >
+            <Lock size={isMobile ? 16 : 16} />
+            {!isMobile && "Admin"}
           </Button>
         </Link>
       </div>
@@ -168,8 +122,8 @@ const Index = () => {
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
-      <ScrollArea className="max-h-[60vh] overflow-hidden">
-        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-8">
+      <ScrollArea className={`${isMobile ? 'max-h-[45vh]' : 'max-h-[60vh]'} overflow-hidden`}>
+        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-8 px-4">
           <PhotoGallery 
             photos={profileData.photos} 
             name={profileData.name} 

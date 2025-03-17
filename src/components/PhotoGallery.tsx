@@ -106,14 +106,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   );
 
   return (
-    <section className={cn(
-      "w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden",
-      isMobile ? "px-0 py-0 h-[80vh]" : "max-w-4xl mx-auto px-4 py-8"
-    )}>
-      <div className={cn(
-        "relative w-full h-full rounded-xl overflow-hidden shadow-lg",
-        isMobile ? "border-0" : "border border-tinder-rose/20"
-      )}
+    <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
+      <div className="relative w-full h-full rounded-xl overflow-hidden shadow-lg border border-tinder-rose/20"
         ref={carouselRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
