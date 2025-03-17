@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Share2, Verified } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Verified, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProfileHeaderProps {
@@ -14,6 +14,7 @@ interface ProfileHeaderProps {
   lastActive: string;
   verified: boolean;
   profileImage: string;
+  onDislike?: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -24,6 +25,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   lastActive,
   verified,
   profileImage,
+  onDislike,
 }) => {
   const isMobile = useIsMobile();
 
@@ -96,6 +98,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             >
               <Heart size={isMobile ? 14 : 16} className="animate-pulse-heart" />
               <span>Like</span>
+            </Button>
+            <Button 
+              size={isMobile ? "default" : "lg"} 
+              variant="outline" 
+              className="rounded-full bg-white backdrop-blur-sm border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
+              onClick={onDislike}
+            >
+              <X size={isMobile ? 14 : 16} />
+              <span>Dislike</span>
             </Button>
             <Button 
               size={isMobile ? "icon" : "lg"} 
