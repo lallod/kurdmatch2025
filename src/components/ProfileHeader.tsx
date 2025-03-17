@@ -27,50 +27,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  if (isMobile) {
-    return (
-      <div className="fixed top-0 left-0 right-0 z-20 px-4 py-3 bg-gradient-to-br from-tinder-rose/80 to-tinder-orange/80 backdrop-blur-lg border-b border-white/10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg">
-              <img 
-                src={profileImage} 
-                alt={`${name}'s profile`}
-                className="w-full h-full object-cover" 
-              />
-            </div>
-            <div>
-              <h2 className="text-white font-semibold flex items-center">
-                {name}, {age}
-                {verified && (
-                  <Verified size={16} className="ml-1 text-blue-400" />
-                )}
-              </h2>
-              <p className="text-xs text-white/90">{lastActive}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="rounded-full bg-white/80 backdrop-blur-sm border-white/20 text-tinder-rose hover:bg-white hover:text-tinder-rose shadow-md"
-            >
-              <MessageCircle size={18} />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="rounded-full bg-white/80 backdrop-blur-sm border-white/20 hover:bg-white shadow-md"
-            >
-              <Share2 size={18} />
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="relative w-full">
       <div className="absolute inset-0 overflow-hidden">
@@ -89,9 +45,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
       <div className="absolute inset-0 bg-gradient-to-t from-tinder-rose/20 to-tinder-orange/20 mix-blend-overlay"></div>
 
-      <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row items-center gap-8">
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-8 md:py-16 lg:py-24 flex flex-col md:flex-row items-center gap-6 md:gap-8">
         <div className="relative">
-          <div className="w-[220px] h-[220px] md:w-[280px] md:h-[280px] rounded-full overflow-hidden border-4 border-white shadow-xl transition-transform-slow hover:scale-[1.02]">
+          <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] md:w-[280px] md:h-[280px] rounded-full overflow-hidden border-4 border-white shadow-xl transition-transform-slow hover:scale-[1.02]">
             <img
               src={profileImage}
               alt={`${name}'s profile`}
@@ -101,22 +57,22 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
           {verified && (
             <div className="absolute bottom-3 right-3 bg-white text-primary rounded-full p-1 shadow-md">
-              <Verified size={20} className="text-blue-500" />
+              <Verified size={isMobile ? 16 : 20} className="text-blue-500" />
             </div>
           )}
         </div>
 
-        <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4 animate-fade-up">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left gap-3 md:gap-4 animate-fade-up">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-4xl md:text-5xl font-light tracking-tight">
+            <div className="flex items-center gap-2 mb-1 justify-center md:justify-start">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight">
                 {name}, <span className="font-normal">{age}</span>
               </h1>
             </div>
-            <p className="text-lg text-muted-foreground">{occupation}</p>
+            <p className="text-md sm:text-lg text-muted-foreground">{occupation}</p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             <Badge variant="outline" className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm">
               {location}
             </Badge>
@@ -125,21 +81,29 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </Badge>
           </div>
 
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Button size="lg" className="rounded-full shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2 bg-gradient-tinder text-white">
-              <MessageCircle size={16} />
+          <div className="flex flex-wrap gap-2 md:gap-3 mt-4 md:mt-6 justify-center md:justify-start">
+            <Button 
+              size={isMobile ? "default" : "lg"} 
+              className="rounded-full shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2 bg-gradient-tinder text-white"
+            >
+              <MessageCircle size={isMobile ? 14 : 16} />
               <span>Message</span>
             </Button>
             <Button 
-              size="lg" 
+              size={isMobile ? "default" : "lg"} 
               variant="outline" 
               className="rounded-full bg-white backdrop-blur-sm border-tinder-rose text-tinder-rose hover:bg-tinder-light hover:text-tinder-rose hover:border-tinder-rose shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
             >
-              <Heart size={16} className="animate-pulse-heart" />
+              <Heart size={isMobile ? 14 : 16} className="animate-pulse-heart" />
               <span>Like</span>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full bg-white backdrop-blur-sm border-gray-200 hover:bg-gray-50 shadow-md transition-all-slow hover:shadow-lg">
-              <Share2 size={16} />
+            <Button 
+              size={isMobile ? "icon" : "lg"} 
+              variant="outline" 
+              className="rounded-full bg-white backdrop-blur-sm border-gray-200 hover:bg-gray-50 shadow-md transition-all-slow hover:shadow-lg"
+            >
+              <Share2 size={isMobile ? 14 : 16} />
+              {!isMobile && <span className="ml-2">Share</span>}
             </Button>
           </div>
         </div>

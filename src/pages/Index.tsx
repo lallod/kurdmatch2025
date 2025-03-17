@@ -96,7 +96,7 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className={`fixed top-4 right-4 z-50 ${isMobile ? 'top-2 right-2' : ''}`}>
+      <div className="fixed top-4 right-4 z-50">
         <Link to="/admin">
           <Button 
             variant="outline" 
@@ -124,8 +124,8 @@ const Index = () => {
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
-      <ScrollArea className={`${isMobile ? 'max-h-[65vh]' : 'max-h-[60vh]'} overflow-hidden`}>
-        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-8 px-4">
+      <ScrollArea className="max-h-[50vh] sm:max-h-[55vh] md:max-h-[60vh] overflow-hidden">
+        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
           <PhotoGallery 
             photos={profileData.photos} 
             name={profileData.name} 
@@ -138,7 +138,7 @@ const Index = () => {
       
       <ProfileDetails details={profileData.details} />
       
-      <footer className="w-full py-8 px-4 text-center text-sm text-muted-foreground">
+      <footer className="w-full py-6 md:py-8 px-4 text-center text-sm text-muted-foreground">
         <p>© {new Date().getFullYear()} Dating Profile App</p>
       </footer>
     </main>
