@@ -38,7 +38,7 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
         value={details.relationshipGoals} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Baby size={18} />} 
@@ -51,7 +51,7 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<PawPrint size={18} />} 
@@ -59,7 +59,7 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
         value={details.havePets} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Users size={18} />} 
@@ -72,7 +72,7 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<MessageCircle size={18} />} 
@@ -80,7 +80,7 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
         value={details.communicationStyle || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Sparkles size={18} />} 
@@ -88,7 +88,7 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
         value={details.loveLanguage || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<X size={18} />} 

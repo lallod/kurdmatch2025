@@ -46,7 +46,7 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Church size={18} />} 
@@ -59,7 +59,7 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Award size={18} />} 

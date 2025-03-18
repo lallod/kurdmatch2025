@@ -97,7 +97,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
           <Pencil size={16} className="text-tinder-peach" />
           <span className="text-sm font-medium">Favorite Quote</span>
         </div>
-        <p className={isMobile ? "text-gray-300 italic" : "text-muted-foreground italic"}>"{details.favoriteQuote || "Not specified"}"</p>
+        <p className="text-muted-foreground italic">"{details.favoriteQuote || "Not specified"}"</p>
       </div>
     </div>
   );

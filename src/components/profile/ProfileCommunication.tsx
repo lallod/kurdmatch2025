@@ -48,7 +48,7 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
             value={details.communicationStyle || "Not specified"} 
           />
           
-          <Separator className={isMobile ? "bg-gray-800" : ""} />
+          <Separator />
           
           <DetailItem 
             icon={<Brain size={18} />} 

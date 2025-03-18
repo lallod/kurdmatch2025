@@ -47,7 +47,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Home size={18} />} 
@@ -55,7 +55,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.dreamHome || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Car size={18} />} 
@@ -63,7 +63,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.transportationPreference || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Cpu size={18} />} 
@@ -82,7 +82,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Briefcase size={18} />} 
@@ -90,7 +90,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.workEnvironment || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<MountainSnow size={18} />} 
@@ -98,7 +98,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.favoriteSeason || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<CloudSun size={18} />} 

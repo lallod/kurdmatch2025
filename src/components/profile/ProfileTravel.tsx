@@ -23,7 +23,7 @@ const ProfileTravel: React.FC<ProfileTravelProps> = ({ details, isMobile }) => {
         value={details.travelFrequency} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Palmtree size={18} className="group-hover:animate-pulse" />} 

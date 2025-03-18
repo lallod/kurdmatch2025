@@ -32,20 +32,20 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
     <div className="py-4">
       <div className="flex flex-wrap gap-2 mb-6">
         {details.interests.map((interest, index) => (
-          <Badge key={index} className={`rounded-full bg-gradient-to-r from-tinder-rose${isMobile ? '' : '/90'} to-tinder-orange${isMobile ? '' : '/90'} text-white hover:from-tinder-rose hover:to-tinder-orange transition-colors py-1.5 px-3`}>
+          <Badge key={index} className="rounded-full bg-gradient-to-r from-tinder-rose/90 to-tinder-orange/90 text-white hover:from-tinder-rose hover:to-tinder-orange transition-colors py-1.5 px-3">
             {interest}
           </Badge>
         ))}
         
         {details.hobbies && Array.isArray(details.hobbies) && details.hobbies.map((hobby, index) => (
-          <Badge key={`hobby-${index}`} className={`rounded-full bg-gradient-to-r from-tinder-orange${isMobile ? '' : '/90'} to-tinder-peach${isMobile ? '' : '/90'} text-white hover:from-tinder-orange hover:to-tinder-peach transition-colors py-1.5 px-3`}>
+          <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-tinder-orange/90 to-tinder-peach/90 text-white hover:from-tinder-orange hover:to-tinder-peach transition-colors py-1.5 px-3">
             {hobby}
           </Badge>
         ))}
         
         {details.hobbies && !Array.isArray(details.hobbies) && 
           details.hobbies.split(", ").map((hobby, index) => (
-            <Badge key={`hobby-${index}`} className={`rounded-full bg-gradient-to-r from-tinder-orange${isMobile ? '' : '/90'} to-tinder-peach${isMobile ? '' : '/90'} text-white hover:from-tinder-orange hover:to-tinder-peach transition-colors py-1.5 px-3`}>
+            <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-tinder-orange/90 to-tinder-peach/90 text-white hover:from-tinder-orange hover:to-tinder-peach transition-colors py-1.5 px-3">
               {hobby}
             </Badge>
           ))
@@ -59,7 +59,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
           value={formatList(details.weekendActivities) || "Not specified"} 
         />
         
-        <Separator className={isMobile ? "bg-gray-800" : ""} />
+        <Separator />
         
         <DetailItem 
           icon={<Sparkles size={18} />} 
@@ -67,7 +67,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
           value={details.idealDate || "Not specified"} 
         />
         
-        <Separator className={isMobile ? "bg-gray-800" : ""} />
+        <Separator />
         
         <DetailItem 
           icon={<Map size={18} />} 
@@ -75,7 +75,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
           value={details.careerAmbitions || "Not specified"} 
         />
         
-        <Separator className={isMobile ? "bg-gray-800" : ""} />
+        <Separator />
         
         <DetailItem 
           icon={<Headphones size={18} />} 
@@ -94,7 +94,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
           } 
         />
         
-        <Separator className={isMobile ? "bg-gray-800" : ""} />
+        <Separator />
         
         <DetailItem 
           icon={<Puzzle size={18} />} 

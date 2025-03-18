@@ -38,7 +38,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.drinking} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Cigarette size={18} className="group-hover:animate-pulse" />} 
@@ -46,7 +46,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.smoking} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Dumbbell size={18} className="group-hover:animate-pulse" />} 
@@ -54,7 +54,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.exerciseHabits} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<AlarmClock size={18} className="group-hover:animate-pulse" />} 
@@ -62,7 +62,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.sleepSchedule} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<DollarSign size={18} className="group-hover:animate-pulse" />} 
@@ -70,7 +70,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.financialHabits || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Calendar size={18} className="group-hover:animate-pulse" />} 
@@ -78,7 +78,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={formatList(details.weekendActivities) || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Clock4 size={18} className="group-hover:animate-pulse" />} 
@@ -86,7 +86,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.workLifeBalance || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Utensils size={18} className="group-hover:animate-pulse" />} 
@@ -94,7 +94,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.dietaryPreferences || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Sun size={18} className="group-hover:animate-pulse" />} 
@@ -102,7 +102,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.morningRoutine || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-700/50" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Moon size={18} className="group-hover:animate-pulse" />} 

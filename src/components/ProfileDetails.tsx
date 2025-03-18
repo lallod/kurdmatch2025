@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -99,9 +98,7 @@ interface ProfileDetailsProps {
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
   const isMobile = useIsMobile();
 
-  const tinderBadgeStyle = isMobile 
-    ? "rounded-full bg-gray-800 text-white border-gray-700" 
-    : "rounded-full bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 border-tinder-rose/20 text-tinder-rose";
+  const tinderBadgeStyle = "rounded-full bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 border-tinder-rose/20 text-tinder-rose";
 
   const formatList = (value: string[] | string | undefined) => {
     if (!value) return "";
@@ -126,10 +123,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
         />
         
         <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives"]} className="w-full space-y-4">
-          <AccordionItem value="basics" className="bg-gray-900 rounded-xl overflow-hidden border-none">
-            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium flex items-center">
-                <User size={20} className="mr-2 text-tinder-rose" />
+          <AccordionItem value="basics" className="rounded-xl overflow-hidden border border-tinder-rose/10 shadow-md">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-tinder-rose/5 to-transparent">
+              <h3 className="text-xl font-medium flex items-center text-tinder-rose">
+                <User size={20} className="mr-2" />
                 Basics
               </h3>
             </AccordionTrigger>
@@ -143,10 +140,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
             </AccordionContent>
           </AccordionItem>
           
-          <AccordionItem value="lifestyle" className="bg-gray-900 rounded-xl overflow-hidden border-none">
-            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium flex items-center">
-                <Wine size={20} className="mr-2 text-tinder-orange" />
+          <AccordionItem value="lifestyle" className="rounded-xl overflow-hidden border border-tinder-orange/10 shadow-md">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-tinder-orange/5 to-transparent">
+              <h3 className="text-xl font-medium flex items-center text-tinder-orange">
+                <Wine size={20} className="mr-2" />
                 Lifestyle
               </h3>
             </AccordionTrigger>
@@ -159,10 +156,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
             </AccordionContent>
           </AccordionItem>
           
-          <AccordionItem value="interests" className="bg-gray-900 rounded-xl overflow-hidden border-none">
-            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium flex items-center">
-                <Star size={20} className="mr-2 text-tinder-peach" />
+          <AccordionItem value="interests" className="rounded-xl overflow-hidden border border-tinder-orange/10 shadow-md">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-tinder-orange/5 to-transparent">
+              <h3 className="text-xl font-medium flex items-center text-tinder-orange">
+                <Star size={20} className="mr-2" />
                 Interests & Hobbies
               </h3>
             </AccordionTrigger>
@@ -176,10 +173,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
             </AccordionContent>
           </AccordionItem>
           
-          <AccordionItem value="more" className="bg-gray-900 rounded-xl overflow-hidden border-none">
-            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium flex items-center">
-                <Languages size={20} className="mr-2 text-blue-400" />
+          <AccordionItem value="more" className="rounded-xl overflow-hidden border border-tinder-rose/10 shadow-md">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-tinder-rose/5 to-transparent">
+              <h3 className="text-xl font-medium flex items-center text-tinder-rose">
+                <Languages size={20} className="mr-2" />
                 Communication
               </h3>
             </AccordionTrigger>
@@ -192,10 +189,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
             </AccordionContent>
           </AccordionItem>
           
-          <AccordionItem value="personality" className="bg-gray-900 rounded-xl overflow-hidden border-none">
-            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium flex items-center">
-                <BrainCircuit size={20} className="mr-2 text-purple-400" />
+          <AccordionItem value="personality" className="rounded-xl overflow-hidden border border-purple-200 shadow-md">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-purple-100 to-transparent">
+              <h3 className="text-xl font-medium flex items-center text-purple-500">
+                <BrainCircuit size={20} className="mr-2" />
                 Personality & Growth
               </h3>
             </AccordionTrigger>
@@ -209,10 +206,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
             </AccordionContent>
           </AccordionItem>
           
-          <AccordionItem value="creatives" className="bg-gray-900 rounded-xl overflow-hidden border-none">
-            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium flex items-center">
-                <Palette size={20} className="mr-2 text-pink-400" />
+          <AccordionItem value="creatives" className="rounded-xl overflow-hidden border border-pink-200 shadow-md">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-pink-100 to-transparent">
+              <h3 className="text-xl font-medium flex items-center text-pink-500">
+                <Palette size={20} className="mr-2" />
                 Creative & Lifestyle
               </h3>
             </AccordionTrigger>
@@ -226,10 +223,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
             </AccordionContent>
           </AccordionItem>
           
-          <AccordionItem value="travel" className="bg-gray-900 rounded-xl overflow-hidden border-none">
-            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium flex items-center">
-                <Plane size={20} className="mr-2 text-teal-400" />
+          <AccordionItem value="travel" className="rounded-xl overflow-hidden border border-teal-200 shadow-md">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-teal-100 to-transparent">
+              <h3 className="text-xl font-medium flex items-center text-teal-600">
+                <Plane size={20} className="mr-2" />
                 Travel
               </h3>
             </AccordionTrigger>

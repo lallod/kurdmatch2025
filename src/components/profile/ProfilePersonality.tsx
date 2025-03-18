@@ -45,7 +45,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Gem size={18} />} 
@@ -64,7 +64,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Star size={18} />} 
@@ -72,7 +72,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
         value={details.favoriteMemory || "Not specified"} 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<ThermometerSun size={18} />} 
@@ -91,7 +91,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
         } 
       />
       
-      <Separator className={isMobile ? "bg-gray-800" : ""} />
+      <Separator />
       
       <DetailItem 
         icon={<Globe size={18} />} 
