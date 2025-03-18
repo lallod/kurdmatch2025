@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +15,6 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 
-// Define options for common dropdown fields
 const OPTIONS = {
   bodyType: ['Athletic', 'Average', 'Slim', 'Muscular', 'Curvy', 'Full Figured'],
   height: ['5\'0"', '5\'1"', '5\'2"', '5\'3"', '5\'4"', '5\'5"', '5\'6"', '5\'7"', '5\'8"', '5\'9"', '5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"', '6\'4"'],
@@ -79,7 +77,6 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
     fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
   );
 
-  // New state to track which field is being edited individually
   const [fieldEditStates, setFieldEditStates] = useState<Record<string, boolean>>(
     fields.reduce((acc, field) => ({ ...acc, [field.name]: false }), {})
   );
@@ -107,10 +104,8 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
 
   const handleSave = () => {
     setEditMode(false);
-    // Here you would typically save the data to your backend
   };
 
-  // Toggle edit mode for a specific field
   const toggleFieldEditMode = (fieldName: string) => {
     setFieldEditStates(prev => ({ 
       ...prev, 
@@ -118,16 +113,13 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
     }));
   };
 
-  // Save a specific field
   const saveField = (fieldName: string) => {
     setFieldEditStates(prev => ({ 
       ...prev, 
       [fieldName]: false 
     }));
-    // Here you would save only this specific field to your backend
   };
 
-  // Get options for a field, either from the field itself or from predefined options
   const getOptions = (field: Field) => {
     if (field.options) return field.options;
     return OPTIONS[field.name as keyof typeof OPTIONS] || [];
@@ -146,7 +138,6 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
           variant="ghost" 
           size="sm" 
           onClick={() => editMode ? handleSave() : setEditMode(true)}
-          className="text-primary"
         >
           {editMode ? (
             <>
