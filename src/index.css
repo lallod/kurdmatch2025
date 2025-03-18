@@ -1,6 +1,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -53,7 +54,7 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     overscroll-behavior: none;
-    font-family: 'Poppins', 'Inter', sans-serif;
+    font-family: 'Quicksand', 'Poppins', 'Inter', sans-serif;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -108,6 +109,61 @@
   
   .ai-icon-container {
     @apply bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 text-tinder-rose;
+  }
+
+  /* New AI-inspired utility classes */
+  .neo-glow {
+    @apply shadow-[0_0_15px_rgba(253,41,123,0.2)];
+  }
+  
+  .neo-card {
+    @apply backdrop-blur-sm bg-white/10 border border-white/20 rounded-xl shadow-sm hover:shadow-[0_5px_15px_rgba(253,41,123,0.1)] transition-all duration-300;
+  }
+  
+  .neo-border {
+    @apply border-[0.5px] border-tinder-rose/20;
+  }
+  
+  .futuristic-text {
+    @apply font-light tracking-wide;
+  }
+  
+  .ai-pulse {
+    animation: ai-pulse 3s infinite;
+  }
+  
+  @keyframes ai-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(253, 41, 123, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(253, 41, 123, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(253, 41, 123, 0);
+    }
+  }
+  
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    100% {
+      left: 100%;
+    }
   }
 }
 
