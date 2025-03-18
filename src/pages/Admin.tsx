@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church, Calendar, Lock, AlertCircle, Map } from 'lucide-react';
+import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church, Calendar, Lock, AlertCircle, Map, CalendarDays } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import DetailEditor from '@/components/DetailEditor';
@@ -68,6 +67,15 @@ const AdminDashboard = () => {
       </div>
     </div>
   );
+
+  const quickDateOptions = [
+    { label: "18 years ago", date: new Date(new Date().setFullYear(new Date().getFullYear() - 18)) },
+    { label: "21 years ago", date: new Date(new Date().setFullYear(new Date().getFullYear() - 21)) },
+    { label: "25 years ago", date: new Date(new Date().setFullYear(new Date().getFullYear() - 25)) },
+    { label: "30 years ago", date: new Date(new Date().setFullYear(new Date().getFullYear() - 30)) },
+    { label: "35 years ago", date: new Date(new Date().setFullYear(new Date().getFullYear() - 35)) },
+    { label: "40 years ago", date: new Date(new Date().setFullYear(new Date().getFullYear() - 40)) },
+  ];
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 relative overflow-hidden">
@@ -150,40 +158,58 @@ const AdminDashboard = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="birthDate" className="flex items-center">
-                      <Calendar size={14} className="mr-1 text-tinder-rose" />
+                      <CalendarDays size={14} className="mr-1 text-tinder-rose" />
                       Date of Birth
                     </Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal neo-border focus-within:neo-glow transition-shadow",
-                            !birthDate && "text-muted-foreground"
-                          )}
-                        >
-                          {birthDate ? format(birthDate, "PPP") : <span>Select date of birth</span>}
-                          <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent
-                          mode="single"
-                          selected={birthDate}
-                          onSelect={setBirthDate}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1950-01-01")
-                          }
-                          initialFocus
-                          className="p-3"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    {birthDate && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Age: {calculateAge(birthDate)} years
-                      </p>
-                    )}
+                    <div className="space-y-2">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal neo-border focus-within:neo-glow transition-shadow",
+                              !birthDate && "text-muted-foreground"
+                            )}
+                          >
+                            {birthDate ? format(birthDate, "PPP") : <span>Select date of birth</span>}
+                            <CalendarDays className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <div className="p-3 border-b">
+                            <div className="text-sm font-medium mb-2">Quick select</div>
+                            <div className="grid grid-cols-2 gap-1">
+                              {quickDateOptions.map((option) => (
+                                <Button 
+                                  key={option.label}
+                                  variant="outline" 
+                                  size="sm"
+                                  className="text-xs h-7" 
+                                  onClick={() => setBirthDate(option.date)}
+                                >
+                                  {option.label}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                          <CalendarComponent
+                            mode="single"
+                            selected={birthDate}
+                            onSelect={setBirthDate}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1950-01-01")
+                            }
+                            initialFocus
+                            className="p-3"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      {birthDate && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Age: {calculateAge(birthDate)} years
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
@@ -616,3 +642,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
