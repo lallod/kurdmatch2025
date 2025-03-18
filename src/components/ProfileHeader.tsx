@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Share2, Verified, X } from 'lucide-react';
+import { Heart, MessageCircle, Verified, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProfileHeaderProps {
@@ -107,14 +107,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             >
               <X size={isMobile ? 14 : 16} />
               <span>Dislike</span>
-            </Button>
-            <Button 
-              size={isMobile ? "icon" : "lg"} 
-              variant="outline" 
-              className="rounded-full bg-white backdrop-blur-sm border-gray-200 hover:bg-gray-50 shadow-md transition-all-slow hover:shadow-lg"
-            >
-              <Share2 size={isMobile ? 14 : 16} />
-              {!isMobile && <span className="ml-2">Share</span>}
             </Button>
           </div>
         </div>

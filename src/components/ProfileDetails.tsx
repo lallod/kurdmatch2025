@@ -10,7 +10,10 @@ import {
   Heart, Music, BookOpen, Pencil, Languages, Clock, Calendar,
   Utensils, Dumbbell, Baby, Plane, PawPrint, Moon, Sun,
   Users, MessageCircle, DollarSign, Sparkles, Star, Award, 
-  Brain, AlarmClock, Clock4, Palmtree, Map, X, Film
+  Brain, AlarmClock, Clock4, Palmtree, Map, X, Film,
+  Church, Vote, Globe, Landmark, MountainSnow, Palette, Coffee,
+  ShoppingBag, Cpu, Trophy, Tv, Keyboard, Headphones, BrainCircuit,
+  Flower, Home, Car, Bike, Accessibility, Gem, Puzzle, ThermometerSun
 } from 'lucide-react';
 
 interface DetailItemProps {
@@ -90,6 +93,27 @@ interface ProfileDetailsProps {
     careerAmbitions?: string;
     hobbies?: string[] | string;
     values?: string[] | string;
+    // New profile information fields
+    dietaryPreferences?: string;
+    favoriteQuote?: string;
+    morningRoutine?: string;
+    eveningRoutine?: string;
+    favoriteSeason?: string;
+    idealWeather?: string;
+    creativePursuits?: string[] | string;
+    dreamHome?: string;
+    transportationPreference?: string;
+    techSkills?: string[] | string;
+    musicInstruments?: string[] | string;
+    favoriteGames?: string[] | string;
+    favoritePodcasts?: string[] | string;
+    charityInvolvement?: string;
+    growthGoals?: string[] | string;
+    hiddenTalents?: string[] | string;
+    favoriteMemory?: string;
+    stressRelievers?: string[] | string;
+    workEnvironment?: string;
+    decisionMakingStyle?: string;
   };
 }
 
@@ -105,6 +129,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
     if (Array.isArray(value)) return value.join(", ");
     return value;
   };
+
+  // Convert height from feet/inches to centimeters
+  const heightInCm = details.height.includes("'") 
+    ? `${Math.round(parseInt(details.height.split("'")[0]) * 30.48 + parseInt(details.height.split("'")[1]) * 2.54)} cm` 
+    : details.height;
 
   if (isMobile) {
     return (
@@ -151,10 +180,13 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
           </div>
         </div>
         
-        <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more"]} className="w-full space-y-4">
+        <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives"]} className="w-full space-y-4">
           <AccordionItem value="basics" className="bg-gray-900 rounded-xl overflow-hidden border-none">
             <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium">Basics</h3>
+              <h3 className="text-xl font-medium flex items-center">
+                <User size={20} className="mr-2 text-tinder-rose" />
+                Basics
+              </h3>
             </AccordionTrigger>
             <AccordionContent className="px-4">
               <div className="space-y-1">
@@ -163,7 +195,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                   label="Physical" 
                   value={
                     <div className="flex flex-wrap gap-2 mt-1">
-                      <Badge variant="outline" className={tinderBadgeStyle}>{details.height}</Badge>
+                      <Badge variant="outline" className={tinderBadgeStyle}>{heightInCm}</Badge>
                       <Badge variant="outline" className={tinderBadgeStyle}>{details.bodyType}</Badge>
                       <Badge variant="outline" className={tinderBadgeStyle}>{details.ethnicity}</Badge>
                     </div>
@@ -207,7 +239,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                 <Separator className="bg-gray-800" />
                 
                 <DetailItem 
-                  icon={<Pencil size={18} />} 
+                  icon={<Church size={18} />} 
                   label="Beliefs" 
                   value={
                     <div className="flex flex-wrap gap-2 mt-1">
@@ -241,7 +273,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
           
           <AccordionItem value="lifestyle" className="bg-gray-900 rounded-xl overflow-hidden border-none">
             <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium">Lifestyle</h3>
+              <h3 className="text-xl font-medium flex items-center">
+                <Wine size={20} className="mr-2 text-tinder-orange" />
+                Lifestyle
+              </h3>
             </AccordionTrigger>
             <AccordionContent className="px-4">
               <div className="space-y-3">
@@ -324,13 +359,40 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                     </div>
                   } 
                 />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Utensils size={18} />} 
+                  label="Dietary Preferences" 
+                  value={details.dietaryPreferences || "Not specified"} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Sun size={18} />} 
+                  label="Morning Routine" 
+                  value={details.morningRoutine || "Not specified"} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Moon size={18} />} 
+                  label="Evening Routine" 
+                  value={details.eveningRoutine || "Not specified"} 
+                />
               </div>
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="interests" className="bg-gray-900 rounded-xl overflow-hidden border-none">
             <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium">Interests & Hobbies</h3>
+              <h3 className="text-xl font-medium flex items-center">
+                <Star size={20} className="mr-2 text-tinder-peach" />
+                Interests & Hobbies
+              </h3>
             </AccordionTrigger>
             <AccordionContent className="px-4">
               <div className="flex flex-wrap gap-2 mb-4">
@@ -425,13 +487,54 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                     </div>
                   } 
                 />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Headphones size={18} />} 
+                  label="Music Instruments" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.musicInstruments) ? 
+                        details.musicInstruments.map((instrument, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{instrument}</Badge>
+                        )) : 
+                        formatList(details.musicInstruments).split(", ").map((instrument, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{instrument}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Puzzle size={18} />} 
+                  label="Favorite Games" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.favoriteGames) ? 
+                        details.favoriteGames.map((game, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{game}</Badge>
+                        )) : 
+                        formatList(details.favoriteGames).split(", ").map((game, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{game}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
               </div>
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="more" className="bg-gray-900 rounded-xl overflow-hidden border-none">
             <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
-              <h3 className="text-xl font-medium">More</h3>
+              <h3 className="text-xl font-medium flex items-center">
+                <Languages size={20} className="mr-2 text-blue-400" />
+                Communication
+              </h3>
             </AccordionTrigger>
             <AccordionContent className="px-4">
               <div className="space-y-3 mb-4">
@@ -471,35 +574,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                 <Separator className="bg-gray-800" />
                 
                 <DetailItem 
-                  icon={<Plane size={18} />} 
-                  label="Travel Frequency" 
-                  value={details.travelFrequency} 
+                  icon={<Brain size={18} />} 
+                  label="Decision Making Style" 
+                  value={details.decisionMakingStyle || "Not specified"} 
                 />
                 
-                <Separator className="bg-gray-800" />
-                
-                <DetailItem 
-                  icon={<Palmtree size={18} />} 
-                  label="Dream Vacation" 
-                  value={details.dreamVacation || "Not specified"} 
-                />
-
-                <Separator className="bg-gray-800" />
-                
-                <DetailItem 
-                  icon={<Clock4 size={18} />} 
-                  label="Work-Life Balance" 
-                  value={details.workLifeBalance || "Not specified"} 
-                />
-                
-                <Separator className="bg-gray-800" />
-                
-                <DetailItem 
-                  icon={<Map size={18} />} 
-                  label="Career Ambitions" 
-                  value={details.careerAmbitions || "Not specified"} 
-                />
-
                 <Separator className="bg-gray-800" />
                 
                 <DetailItem 
@@ -512,6 +591,230 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                       ))}
                     </div>
                   } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Headphones size={18} />} 
+                  label="Favorite Podcasts" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.favoritePodcasts) ? 
+                        details.favoritePodcasts.map((podcast, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{podcast}</Badge>
+                        )) : 
+                        formatList(details.favoritePodcasts).split(", ").map((podcast, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{podcast}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Pencil size={18} />} 
+                  label="Favorite Quote" 
+                  value={details.favoriteQuote || "Not specified"} 
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="personality" className="bg-gray-900 rounded-xl overflow-hidden border-none">
+            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
+              <h3 className="text-xl font-medium flex items-center">
+                <BrainCircuit size={20} className="mr-2 text-purple-400" />
+                Personality & Growth
+              </h3>
+            </AccordionTrigger>
+            <AccordionContent className="px-4">
+              <div className="space-y-3 mb-4">
+                <DetailItem 
+                  icon={<Trophy size={18} />} 
+                  label="Growth Goals" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.growthGoals) ? 
+                        details.growthGoals.map((goal, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{goal}</Badge>
+                        )) : 
+                        formatList(details.growthGoals).split(", ").map((goal, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{goal}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Gem size={18} />} 
+                  label="Hidden Talents" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.hiddenTalents) ? 
+                        details.hiddenTalents.map((talent, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{talent}</Badge>
+                        )) : 
+                        formatList(details.hiddenTalents).split(", ").map((talent, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{talent}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Star size={18} />} 
+                  label="Favorite Memory" 
+                  value={details.favoriteMemory || "Not specified"} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<ThermometerSun size={18} />} 
+                  label="Stress Relievers" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.stressRelievers) ? 
+                        details.stressRelievers.map((reliever, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{reliever}</Badge>
+                        )) : 
+                        formatList(details.stressRelievers).split(", ").map((reliever, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{reliever}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Globe size={18} />} 
+                  label="Charity Involvement" 
+                  value={details.charityInvolvement || "Not specified"} 
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="creatives" className="bg-gray-900 rounded-xl overflow-hidden border-none">
+            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
+              <h3 className="text-xl font-medium flex items-center">
+                <Palette size={20} className="mr-2 text-pink-400" />
+                Creative & Lifestyle
+              </h3>
+            </AccordionTrigger>
+            <AccordionContent className="px-4">
+              <div className="space-y-3 mb-4">
+                <DetailItem 
+                  icon={<Palette size={18} />} 
+                  label="Creative Pursuits" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.creativePursuits) ? 
+                        details.creativePursuits.map((pursuit, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{pursuit}</Badge>
+                        )) : 
+                        formatList(details.creativePursuits).split(", ").map((pursuit, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{pursuit}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Home size={18} />} 
+                  label="Dream Home" 
+                  value={details.dreamHome || "Not specified"} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Car size={18} />} 
+                  label="Transportation" 
+                  value={details.transportationPreference || "Not specified"} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Cpu size={18} />} 
+                  label="Tech Skills" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.techSkills) ? 
+                        details.techSkills.map((skill, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{skill}</Badge>
+                        )) : 
+                        formatList(details.techSkills).split(", ").map((skill, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{skill}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Briefcase size={18} />} 
+                  label="Work Environment" 
+                  value={details.workEnvironment || "Not specified"} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<MountainSnow size={18} />} 
+                  label="Favorite Season" 
+                  value={details.favoriteSeason || "Not specified"} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Cloud size={18} />} 
+                  label="Ideal Weather" 
+                  value={details.idealWeather || "Not specified"} 
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="travel" className="bg-gray-900 rounded-xl overflow-hidden border-none">
+            <AccordionTrigger className="px-4 py-3 text-white hover:no-underline hover:bg-gray-800">
+              <h3 className="text-xl font-medium flex items-center">
+                <Plane size={20} className="mr-2 text-teal-400" />
+                Travel
+              </h3>
+            </AccordionTrigger>
+            <AccordionContent className="px-4">
+              <div className="space-y-3 mb-4">
+                <DetailItem 
+                  icon={<Plane size={18} />} 
+                  label="Travel Frequency" 
+                  value={details.travelFrequency} 
+                />
+                
+                <Separator className="bg-gray-800" />
+                
+                <DetailItem 
+                  icon={<Palmtree size={18} />} 
+                  label="Dream Vacation" 
+                  value={details.dreamVacation || "Not specified"} 
                 />
               </div>
             </AccordionContent>
@@ -588,7 +891,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
           </div>
         </Card>
         
-        <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "favorites", "more"]} className="space-y-6">
+        <Accordion type="multiple" defaultValue={["basics", "lifestyle", "relationships", "interests", "favorites", "more", "personality", "creative", "travel"]} className="space-y-6">
           <AccordionItem value="basics" className="rounded-xl border border-tinder-rose/10 shadow-md overflow-hidden">
             <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-tinder-rose/5 to-transparent hover:no-underline">
               <h3 className="text-xl font-medium text-tinder-rose flex items-center">
@@ -603,7 +906,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                   label="Basics" 
                   value={
                     <div className="flex flex-wrap gap-2 mt-1">
-                      <Badge variant="outline" className={tinderBadgeStyle}>{details.height}</Badge>
+                      <Badge variant="outline" className={tinderBadgeStyle}>{heightInCm}</Badge>
                       <Badge variant="outline" className={tinderBadgeStyle}>{details.bodyType}</Badge>
                       <Badge variant="outline" className={tinderBadgeStyle}>{details.ethnicity}</Badge>
                     </div>
@@ -613,7 +916,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                 <Separator />
                 
                 <DetailItem 
-                  icon={<Pencil size={18} />} 
+                  icon={<Church size={18} />} 
                   label="Beliefs" 
                   value={
                     <div className="flex flex-wrap gap-2 mt-1">
@@ -706,6 +1009,30 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                   icon={<Clock4 size={18} />} 
                   label="Work-Life Balance" 
                   value={details.workLifeBalance || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Utensils size={18} />} 
+                  label="Dietary Preferences" 
+                  value={details.dietaryPreferences || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Sun size={18} />} 
+                  label="Morning Routine" 
+                  value={details.morningRoutine || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Moon size={18} />} 
+                  label="Evening Routine" 
+                  value={details.eveningRoutine || "Not specified"} 
                 />
               </div>
             </AccordionContent>
@@ -851,6 +1178,44 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                     label="Career Ambitions" 
                     value={details.careerAmbitions || "Not specified"} 
                   />
+                  
+                  <Separator />
+                  
+                  <DetailItem 
+                    icon={<Headphones size={18} />} 
+                    label="Music Instruments" 
+                    value={
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {Array.isArray(details.musicInstruments) ? 
+                          details.musicInstruments.map((instrument, i) => (
+                            <Badge key={i} variant="outline" className={tinderBadgeStyle}>{instrument}</Badge>
+                          )) : 
+                          formatList(details.musicInstruments).split(", ").map((instrument, i) => (
+                            <Badge key={i} variant="outline" className={tinderBadgeStyle}>{instrument}</Badge>
+                          ))
+                        }
+                      </div>
+                    } 
+                  />
+                  
+                  <Separator />
+                  
+                  <DetailItem 
+                    icon={<Puzzle size={18} />} 
+                    label="Favorite Games" 
+                    value={
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {Array.isArray(details.favoriteGames) ? 
+                          details.favoriteGames.map((game, i) => (
+                            <Badge key={i} variant="outline" className={tinderBadgeStyle}>{game}</Badge>
+                          )) : 
+                          formatList(details.favoriteGames).split(", ").map((game, i) => (
+                            <Badge key={i} variant="outline" className={tinderBadgeStyle}>{game}</Badge>
+                          ))
+                        }
+                      </div>
+                    } 
+                  />
                 </div>
               </div>
             </AccordionContent>
@@ -912,6 +1277,31 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                     ))}
                   </div>
                 </div>
+                
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Headphones size={16} className="text-tinder-peach" />
+                    <span className="text-sm font-medium">Podcasts</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {Array.isArray(details.favoritePodcasts) ? 
+                      details.favoritePodcasts.map((podcast, i) => (
+                        <Badge key={i} variant="outline" className={tinderBadgeStyle}>{podcast}</Badge>
+                      )) : 
+                      formatList(details.favoritePodcasts).split(", ").map((podcast, i) => (
+                        <Badge key={i} variant="outline" className={tinderBadgeStyle}>{podcast}</Badge>
+                      ))
+                    }
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Pencil size={16} className="text-tinder-peach" />
+                    <span className="text-sm font-medium">Favorite Quote</span>
+                  </div>
+                  <p className="text-muted-foreground italic">"{details.favoriteQuote || "Not specified"}"</p>
+                </div>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -920,7 +1310,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
             <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-tinder-rose/5 to-transparent hover:no-underline">
               <h3 className="text-xl font-medium text-tinder-rose flex items-center">
                 <Languages size={18} className="mr-2" />
-                More
+                Communication
               </h3>
             </AccordionTrigger>
             <AccordionContent className="px-6">
@@ -941,23 +1331,220 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-2">Travel</h4>
+                  <h4 className="font-medium mb-2">Communication</h4>
                   <div className="space-y-1">
                     <DetailItem 
-                      icon={<Plane size={18} />} 
-                      label="Travel Frequency" 
-                      value={details.travelFrequency} 
+                      icon={<MessageCircle size={18} />} 
+                      label="Communication Style" 
+                      value={details.communicationStyle || "Not specified"} 
                     />
                     
                     <Separator />
                     
                     <DetailItem 
-                      icon={<Palmtree size={18} />} 
-                      label="Dream Vacation" 
-                      value={details.dreamVacation || "Not specified"} 
+                      icon={<Brain size={18} />} 
+                      label="Decision Making" 
+                      value={details.decisionMakingStyle || "Not specified"} 
                     />
                   </div>
                 </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="personality" className="rounded-xl border border-purple-200 shadow-md overflow-hidden">
+            <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-purple-100 to-transparent hover:no-underline">
+              <h3 className="text-xl font-medium text-purple-500 flex items-center">
+                <BrainCircuit size={18} className="mr-2" />
+                Personality & Growth
+              </h3>
+            </AccordionTrigger>
+            <AccordionContent className="px-6">
+              <div className="space-y-6 py-4">
+                <DetailItem 
+                  icon={<Trophy size={18} />} 
+                  label="Growth Goals" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.growthGoals) ? 
+                        details.growthGoals.map((goal, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{goal}</Badge>
+                        )) : 
+                        formatList(details.growthGoals).split(", ").map((goal, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{goal}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Gem size={18} />} 
+                  label="Hidden Talents" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.hiddenTalents) ? 
+                        details.hiddenTalents.map((talent, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{talent}</Badge>
+                        )) : 
+                        formatList(details.hiddenTalents).split(", ").map((talent, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{talent}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Star size={18} />} 
+                  label="Favorite Memory" 
+                  value={details.favoriteMemory || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<ThermometerSun size={18} />} 
+                  label="Stress Relievers" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.stressRelievers) ? 
+                        details.stressRelievers.map((reliever, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{reliever}</Badge>
+                        )) : 
+                        formatList(details.stressRelievers).split(", ").map((reliever, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{reliever}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Globe size={18} />} 
+                  label="Charity Involvement" 
+                  value={details.charityInvolvement || "Not specified"} 
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="creative" className="rounded-xl border border-pink-200 shadow-md overflow-hidden">
+            <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-pink-100 to-transparent hover:no-underline">
+              <h3 className="text-xl font-medium text-pink-500 flex items-center">
+                <Palette size={18} className="mr-2" />
+                Creative & Lifestyle
+              </h3>
+            </AccordionTrigger>
+            <AccordionContent className="px-6">
+              <div className="space-y-6 py-4">
+                <DetailItem 
+                  icon={<Palette size={18} />} 
+                  label="Creative Pursuits" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.creativePursuits) ? 
+                        details.creativePursuits.map((pursuit, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{pursuit}</Badge>
+                        )) : 
+                        formatList(details.creativePursuits).split(", ").map((pursuit, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{pursuit}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Home size={18} />} 
+                  label="Dream Home" 
+                  value={details.dreamHome || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Car size={18} />} 
+                  label="Transportation" 
+                  value={details.transportationPreference || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Cpu size={18} />} 
+                  label="Tech Skills" 
+                  value={
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Array.isArray(details.techSkills) ? 
+                        details.techSkills.map((skill, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{skill}</Badge>
+                        )) : 
+                        formatList(details.techSkills).split(", ").map((skill, i) => (
+                          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{skill}</Badge>
+                        ))
+                      }
+                    </div>
+                  } 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Briefcase size={18} />} 
+                  label="Work Environment" 
+                  value={details.workEnvironment || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<MountainSnow size={18} />} 
+                  label="Favorite Season" 
+                  value={details.favoriteSeason || "Not specified"} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Cloud size={18} />} 
+                  label="Ideal Weather" 
+                  value={details.idealWeather || "Not specified"} 
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="travel" className="rounded-xl border border-teal-200 shadow-md overflow-hidden">
+            <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-teal-100 to-transparent hover:no-underline">
+              <h3 className="text-xl font-medium text-teal-600 flex items-center">
+                <Plane size={18} className="mr-2" />
+                Travel
+              </h3>
+            </AccordionTrigger>
+            <AccordionContent className="px-6">
+              <div className="space-y-6 py-4">
+                <DetailItem 
+                  icon={<Plane size={18} />} 
+                  label="Travel Frequency" 
+                  value={details.travelFrequency} 
+                />
+                
+                <Separator />
+                
+                <DetailItem 
+                  icon={<Palmtree size={18} />} 
+                  label="Dream Vacation" 
+                  value={details.dreamVacation || "Not specified"} 
+                />
               </div>
             </AccordionContent>
           </AccordionItem>

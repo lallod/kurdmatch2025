@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -28,7 +29,7 @@ const profiles = [
     ],
     details: {
       about: "Hi there! I'm Sophia, a UX designer with a passion for creating beautiful and functional digital experiences. When I'm not designing, you'll find me hiking in the mountains, trying new restaurants, or curling up with a good book. I believe in living life to the fullest and finding beauty in the small moments. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quiet evenings at home.",
-      height: "5'7\"",
+      height: "170 cm",
       bodyType: "Athletic",
       ethnicity: "Mixed",
       education: "Master's in Design, Stanford University",
@@ -65,7 +66,28 @@ const profiles = [
       workLifeBalance: "Values boundaries between work and personal life",
       careerAmbitions: "Working towards creative director position",
       hobbies: ["Film photography", "Ceramics", "Rock climbing", "Cooking new cuisines"],
-      values: ["Authenticity", "Kindness", "Growth", "Adventure", "Balance"]
+      values: ["Authenticity", "Kindness", "Growth", "Adventure", "Balance"],
+      // New profile information fields
+      dietaryPreferences: "Mostly plant-based, occasional seafood",
+      favoriteQuote: "Design is not just what it looks like and feels like. Design is how it works.",
+      morningRoutine: "Meditation, coffee, and morning walk before work",
+      eveningRoutine: "Reading with herbal tea, journaling, and early to bed",
+      favoriteSeason: "Fall",
+      idealWeather: "Slightly cool with sunshine",
+      creativePursuits: ["Watercolor painting", "Digital illustration", "Handmade ceramics"],
+      dreamHome: "Mountain cabin with modern interior and large windows",
+      transportationPreference: "Bicycle for local, train for travel",
+      techSkills: ["UI/UX design", "Figma", "Adobe Creative Suite", "Basic coding"],
+      musicInstruments: ["Piano (intermediate)", "Guitar (beginner)"],
+      favoriteGames: ["Chess", "Settlers of Catan", "Zelda series"],
+      favoritePodcasts: ["Design Matters", "99% Invisible", "The Daily"],
+      charityInvolvement: "Volunteer design work for environmental nonprofits",
+      growthGoals: ["Improve public speaking", "Learn a new language", "Start a side business"],
+      hiddenTalents: ["Perfect pitch", "Can identify most typefaces by name"],
+      favoriteMemory: "Watching sunrise from a mountain peak after an overnight hike",
+      stressRelievers: ["Yoga", "Forest walks", "Pottery class"],
+      workEnvironment: "Creative, collaborative spaces with natural light",
+      decisionMakingStyle: "Thoughtful and research-based, but also trust intuition"
     }
   },
   {
@@ -86,7 +108,7 @@ const profiles = [
     ],
     details: {
       about: "Hey! I'm Emma, a marketing manager at a tech startup with a passion for storytelling and building brands. Outside of work, I love exploring new restaurants, going to live music events, and taking dance classes. I'm an avid reader and always have a book in my bag. Looking for someone who is curious about the world, enjoys trying new things, and values meaningful conversations.",
-      height: "5'6\"",
+      height: "168 cm",
       bodyType: "Average",
       ethnicity: "Caucasian",
       education: "Bachelor's in Marketing, NYU",
@@ -123,7 +145,28 @@ const profiles = [
       workLifeBalance: "Working on finding better balance",
       careerAmbitions: "Building my own agency someday",
       hobbies: ["Wine tasting", "Poetry writing", "Amateur photography", "Cooking classes"],
-      values: ["Honesty", "Creativity", "Connection", "Growth", "Joy"]
+      values: ["Honesty", "Creativity", "Connection", "Growth", "Joy"],
+      // New profile information fields
+      dietaryPreferences: "Omnivore with a sweet tooth",
+      favoriteQuote: "The future belongs to those who believe in the beauty of their dreams.",
+      morningRoutine: "Hit snooze button twice, strong coffee, quick breakfast",
+      eveningRoutine: "Late dinner, Netflix, social media catch-up",
+      favoriteSeason: "Summer",
+      idealWeather: "Warm enough for sundresses",
+      creativePursuits: ["Poetry writing", "Food styling", "Instagram content creation"],
+      dreamHome: "Modern loft in the heart of the city with roof access",
+      transportationPreference: "Subway and rideshare apps",
+      techSkills: ["Digital marketing", "Social media strategy", "Basic graphic design"],
+      musicInstruments: ["Sang in choir in high school"],
+      favoriteGames: ["Cards Against Humanity", "Mario Kart", "Scrabble"],
+      favoritePodcasts: ["How I Built This", "Crime Junkie", "Call Her Daddy"],
+      charityInvolvement: "Fundraising committee for local animal shelter",
+      growthGoals: ["Learn to code", "Travel to 30 countries before 30", "Mentor younger women"],
+      hiddenTalents: ["Remembering song lyrics", "Finding amazing vintage pieces"],
+      favoriteMemory: "Impromptu dance party that broke out at a street festival in Barcelona",
+      stressRelievers: ["Dancing", "Bubble baths", "Reality TV"],
+      workEnvironment: "High-energy, fast-paced, collaborative spaces",
+      decisionMakingStyle: "Quick and intuitive, trust my gut feeling"
     }
   },
   {
@@ -144,7 +187,7 @@ const profiles = [
     ],
     details: {
       about: "Hi there, I'm Olivia! I'm a software engineer by day and a musician by night. I play guitar in a local indie band and love the Austin music scene. When I'm not coding or playing music, I enjoy paddleboarding on Lady Bird Lake, trying out new craft breweries, and taking my dog hiking. Looking for someone who is passionate about their interests and open to adventures big and small.",
-      height: "5'9\"",
+      height: "175 cm",
       bodyType: "Athletic",
       ethnicity: "Hispanic",
       education: "BS in Computer Science, UT Austin",
@@ -181,7 +224,28 @@ const profiles = [
       workLifeBalance: "Setting clear boundaries to make time for music",
       careerAmbitions: "Creating my own software while continuing to pursue music",
       hobbies: ["Home recording studio", "Learning new instruments", "Woodworking", "Rock climbing"],
-      values: ["Authenticity", "Creativity", "Freedom", "Connection", "Growth"]
+      values: ["Authenticity", "Creativity", "Freedom", "Connection", "Growth"],
+      // New profile information fields
+      dietaryPreferences: "Flexitarian, local and sustainable focus",
+      favoriteQuote: "The code is more what you'd call guidelines than actual rules.",
+      morningRoutine: "Early run with the dog, cold brew, coding time before meetings",
+      eveningRoutine: "Band practice or jam sessions, sunset paddleboarding when possible",
+      favoriteSeason: "Spring",
+      idealWeather: "Warm days with cool evenings",
+      creativePursuits: ["Songwriting", "Audio production", "Open source contributions"],
+      dreamHome: "Modern ranch house with recording studio and outdoor space",
+      transportationPreference: "Electric car, bike for short trips",
+      techSkills: ["Full stack development", "Machine learning", "Audio engineering"],
+      musicInstruments: ["Guitar (advanced)", "Bass (intermediate)", "Drums (beginner)"],
+      favoriteGames: ["Tabletop RPGs", "Strategy games", "Retro console games"],
+      favoritePodcasts: ["Syntax", "Radiolab", "Song Exploder"],
+      charityInvolvement: "Teaching coding to underprivileged youth, animal rescue volunteer",
+      growthGoals: ["Release an album", "Learn embedded systems", "Become fluent in Portuguese"],
+      hiddenTalents: ["Perfect pitch", "Excellent spatial memory", "Can solve Rubik's cube in under a minute"],
+      favoriteMemory: "Writing and performing an original song that got local radio play",
+      stressRelievers: ["Trail running", "Guitar practice", "Brewery hopping"],
+      workEnvironment: "Remote with occasional office days, standing desk setup",
+      decisionMakingStyle: "Analytical with data, but creative with solutions"
     }
   }
 ];
