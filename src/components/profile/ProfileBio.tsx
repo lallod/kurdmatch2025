@@ -23,7 +23,7 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
     
     // Simulate AI processing delay
     setTimeout(() => {
-      const newBio = "Hi there! I'm a UX Designer with a passion for creating beautiful digital experiences. I love hiking in the mountains, trying new restaurants in San Francisco, and curling up with good books like The Alchemist. As a Libra with ENFJ personality, I value deep connections and communication. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quality time together.";
+      const newBio = about || "Hi there! I'm a UX Designer with a passion for creating beautiful digital experiences. I love hiking in the mountains, trying new restaurants in San Francisco, and curling up with good books like The Alchemist. As a Libra with ENFJ personality, I value deep connections and communication. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quality time together.";
       setGeneratedBio(newBio);
       setIsGenerating(false);
       

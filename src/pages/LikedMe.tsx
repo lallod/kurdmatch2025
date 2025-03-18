@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +27,7 @@ const LikedMe = () => {
       distance: "2 miles away",
       matchPercentage: 95,
       premium: true,
-      bio: "Software engineer by day, amateur chef by night. Love hiking and photography.",
+      bio: "I'm a software engineer passionate about building products that make a difference. When I'm not coding, you'll find me hiking trails, experimenting with new recipes, or capturing moments through my camera lens. I believe in continuous learning and personal growth. Looking for someone who enjoys meaningful conversations and adventures.",
       interests: ["Hiking", "Cooking", "Photography", "Travel"],
       isLikedBack: false,
       details: {
