@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, X, Filter, MessageCircle, ArrowLeft } from 'lucide-react';
+import { Heart, X, Filter, MessageCircle, ArrowLeft, Bot, Sparkles } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
@@ -442,7 +441,7 @@ const LikedMe = () => {
             </div>
           </div>
         ) : (
-          // Basic profile view (existing code)
+          // Basic profile view with updated bio styling
           <div className="animate-fade-in">
             <div className="flex items-center gap-2 mb-4">
               <Button variant="ghost" size="icon" onClick={handleCloseProfile} className="mr-2">
@@ -476,7 +475,23 @@ const LikedMe = () => {
                 {selectedProfile.matchPercentage}% Match
               </Badge>
               
-              <p className="my-4 text-muted-foreground">{selectedProfile.bio}</p>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-sm font-medium">Bio</h4>
+                  <div className="text-xs bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent font-medium flex items-center">
+                    <Bot size={12} className="mr-1 text-tinder-orange" />
+                    AI Generated
+                  </div>
+                </div>
+                <div className="bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 p-3 rounded-lg border-l-4 border-tinder-rose">
+                  <p className="text-muted-foreground text-sm leading-relaxed italic relative">
+                    {selectedProfile.bio}
+                    <span className="absolute -bottom-1 -right-1 opacity-50">
+                      <Sparkles size={12} className="text-tinder-orange" />
+                    </span>
+                  </p>
+                </div>
+              </div>
               
               <div className="mt-4">
                 <h4 className="font-medium mb-2">Interests</h4>
