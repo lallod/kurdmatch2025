@@ -6,20 +6,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church } from 'lucide-react';
+import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church, Calendar } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import DetailEditor from '@/components/DetailEditor';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const AdminDashboard = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("basic");
   const [isSubscriber] = useState(false); // Mock subscription status - set to false by default
   const [isProcessing, setIsProcessing] = useState(false);
-  
+  const [birthDate, setBirthDate] = useState<Date>();
+
   const handleSave = () => {
     setIsProcessing(true);
     
@@ -31,6 +36,20 @@ const AdminDashboard = () => {
         description: "Your profile changes have been processed and optimized.",
       });
     }, 1500);
+  };
+
+  const calculateAge = (birthDate?: Date): number => {
+    if (!birthDate) return 0;
+    
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age;
   };
 
   return (
@@ -105,6 +124,43 @@ const AdminDashboard = () => {
                       Name
                     </Label>
                     <Input id="name" defaultValue="Sophia" className="neo-border focus-within:neo-glow transition-shadow" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="birthDate" className="flex items-center">
+                      <Calendar size={14} className="mr-1 text-tinder-rose" />
+                      Date of Birth
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal neo-border focus-within:neo-glow transition-shadow",
+                            !birthDate && "text-muted-foreground"
+                          )}
+                        >
+                          {birthDate ? format(birthDate, "PPP") : <span>Select date of birth</span>}
+                          <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={birthDate}
+                          onSelect={setBirthDate}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1950-01-01")
+                          }
+                          initialFocus
+                          className="p-3 pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    {birthDate && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Age: {calculateAge(birthDate)} years
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="age" className="flex items-center">
