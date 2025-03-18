@@ -44,7 +44,7 @@ interface Field {
   name: string;
   label: string;
   value: string;
-  type?: 'text' | 'select' | 'radio' | 'checkbox' | 'textarea';
+  type?: 'text' | 'select' | 'radio' | 'checkbox' | 'textarea' | 'listInput';
   options?: string[];
 }
 

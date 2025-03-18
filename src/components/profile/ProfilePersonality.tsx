@@ -27,23 +27,29 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
   formatList,
   isMobile
 }) => {
+  // Helper function to render badge lists
+  const renderBadgeList = (items: string[] | string | undefined) => {
+    if (!items) return null;
+    
+    const itemList = Array.isArray(items) 
+      ? items 
+      : formatList(items).split(", ");
+    
+    return (
+      <div className="flex flex-wrap gap-2 mt-1">
+        {itemList.map((item, i) => (
+          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{item}</Badge>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6 py-4">
       <DetailItem 
         icon={<Trophy size={18} />} 
         label="Growth Goals" 
-        value={
-          <div className="flex flex-wrap gap-2 mt-1">
-            {Array.isArray(details.growthGoals) ? 
-              details.growthGoals.map((goal, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{goal}</Badge>
-              )) : 
-              formatList(details.growthGoals).split(", ").map((goal, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{goal}</Badge>
-              ))
-            }
-          </div>
-        } 
+        value={renderBadgeList(details.growthGoals)} 
       />
       
       <Separator />
@@ -51,18 +57,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
       <DetailItem 
         icon={<Gem size={18} />} 
         label="Hidden Talents" 
-        value={
-          <div className="flex flex-wrap gap-2 mt-1">
-            {Array.isArray(details.hiddenTalents) ? 
-              details.hiddenTalents.map((talent, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{talent}</Badge>
-              )) : 
-              formatList(details.hiddenTalents).split(", ").map((talent, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{talent}</Badge>
-              ))
-            }
-          </div>
-        } 
+        value={renderBadgeList(details.hiddenTalents)} 
       />
       
       <Separator />
@@ -78,18 +73,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
       <DetailItem 
         icon={<ThermometerSun size={18} />} 
         label="Stress Relievers" 
-        value={
-          <div className="flex flex-wrap gap-2 mt-1">
-            {Array.isArray(details.stressRelievers) ? 
-              details.stressRelievers.map((reliever, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{reliever}</Badge>
-              )) : 
-              formatList(details.stressRelievers).split(", ").map((reliever, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{reliever}</Badge>
-              ))
-            }
-          </div>
-        } 
+        value={renderBadgeList(details.stressRelievers)} 
       />
       
       <Separator />
