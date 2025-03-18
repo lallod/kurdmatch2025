@@ -57,11 +57,8 @@ const ViewedMe = () => {
   ];
 
   const handleProfileClick = (profileId: number) => {
-    // Navigate to profile page with ID
+    // Navigate directly to the profile page with ID
     navigate(`/profile/${profileId}`);
-    
-    // For demo purposes, we'll just go to the index page which has profile data
-    navigate('/');
   };
 
   return (
