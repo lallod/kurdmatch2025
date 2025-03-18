@@ -172,20 +172,22 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             return (
               <div 
                 key={photoIndex} 
-                className="relative rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity"
+                className="relative rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={() => handlePhotoClick(photoIndex)}
               >
-                <img
-                  src={photo}
-                  alt={`Photo ${photoIndex + 1}`}
-                  className="w-full h-full object-cover transition-opacity duration-300"
-                  onLoad={() => handleImageLoad(photoIndex)}
-                />
-                {idx === 0 && currentSet === 0 && (
-                  <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
-                    Main Photo
-                  </div>
-                )}
+                <AspectRatio ratio={9/16} className="w-full">
+                  <img
+                    src={photo}
+                    alt={`Photo ${photoIndex + 1}`}
+                    className="w-full h-full object-cover transition-opacity duration-300"
+                    onLoad={() => handleImageLoad(photoIndex)}
+                  />
+                  {idx === 0 && currentSet === 0 && (
+                    <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                      Main Photo
+                    </div>
+                  )}
+                </AspectRatio>
               </div>
             );
           })}
