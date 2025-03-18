@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church, Calendar } from 'lucide-react';
+import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church, Calendar, Lock, AlertCircle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import DetailEditor from '@/components/DetailEditor';
@@ -17,6 +17,7 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
 
 const AdminDashboard = () => {
   const { toast } = useToast();
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
   const [isSubscriber] = useState(false); // Mock subscription status - set to false by default
   const [isProcessing, setIsProcessing] = useState(false);
   const [birthDate, setBirthDate] = useState<Date>();
+  const [isOnline, setIsOnline] = useState(true);
 
   const handleSave = () => {
     setIsProcessing(true);
@@ -51,6 +53,20 @@ const AdminDashboard = () => {
     
     return age;
   };
+
+  const PremiumFeatureOverlay = ({ children }: { children: React.ReactNode }) => (
+    <div className="relative">
+      {children}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="bg-white/60 backdrop-blur-sm px-4 py-2 rounded-lg border border-tinder-rose/20 shadow-sm">
+          <p className="text-sm font-medium text-tinder-rose flex items-center">
+            <Lock size={16} className="mr-2" />
+            Premium feature only
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 relative overflow-hidden">
@@ -123,7 +139,13 @@ const AdminDashboard = () => {
                       <User size={14} className="mr-1 text-tinder-rose" />
                       Name
                     </Label>
-                    <Input id="name" defaultValue="Sophia" className="neo-border focus-within:neo-glow transition-shadow" />
+                    <Input 
+                      id="name" 
+                      defaultValue="Sophia" 
+                      className="neo-border focus-within:neo-glow transition-shadow opacity-70"
+                      disabled={true}
+                    />
+                    <p className="text-xs text-muted-foreground">Name cannot be changed</p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="birthDate" className="flex items-center">
@@ -163,18 +185,26 @@ const AdminDashboard = () => {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="age" className="flex items-center">
-                      <User size={14} className="mr-1 text-tinder-rose" />
-                      Age
-                    </Label>
-                    <Input id="age" type="number" defaultValue={29} className="neo-border focus-within:neo-glow transition-shadow" />
-                  </div>
-                  <div className="space-y-2">
                     <Label htmlFor="location" className="flex items-center">
                       <User size={14} className="mr-1 text-tinder-rose" />
                       Location
                     </Label>
-                    <Input id="location" defaultValue="San Francisco, CA" className="neo-border focus-within:neo-glow transition-shadow" />
+                    {isSubscriber ? (
+                      <Input 
+                        id="location" 
+                        defaultValue="San Francisco, CA" 
+                        className="neo-border focus-within:neo-glow transition-shadow" 
+                      />
+                    ) : (
+                      <PremiumFeatureOverlay>
+                        <Input 
+                          id="location" 
+                          defaultValue="San Francisco, CA" 
+                          className="neo-border opacity-70 cursor-not-allowed" 
+                          disabled={true}
+                        />
+                      </PremiumFeatureOverlay>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="occupation" className="flex items-center">
@@ -191,11 +221,54 @@ const AdminDashboard = () => {
                     <Input id="company" defaultValue="Design Studio" className="neo-border focus-within:neo-glow transition-shadow" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastActive" className="flex items-center">
-                      <User size={14} className="mr-1 text-tinder-rose" />
-                      Last Active
+                    <Label htmlFor="lastActive" className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <User size={14} className="mr-1 text-tinder-rose" />
+                        Online Status
+                      </div>
+                      {isSubscriber ? (
+                        <Switch 
+                          id="lastActive" 
+                          checked={isOnline} 
+                          onCheckedChange={setIsOnline} 
+                          className="data-[state=checked]:bg-tinder-rose"
+                        />
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Badge variant="outline" className="text-xs border-tinder-rose text-tinder-rose cursor-pointer flex items-center gap-1">
+                                <Wand2 size={12} />
+                                Premium Only
+                              </Badge>
+                            </DialogTrigger>
+                            <DialogContent className="neo-card bg-white/90 backdrop-blur-md">
+                              <DialogHeader>
+                                <DialogTitle className="ai-text-gradient">AI Premium Feature</DialogTitle>
+                                <DialogDescription>
+                                  Changing your online status is a premium feature available only to subscribers.
+                                  <div className="mt-4">
+                                    <Button className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90 neo-glow">
+                                      <Sparkles size={16} className="mr-2" />
+                                      Upgrade to Premium
+                                    </Button>
+                                  </div>
+                                </DialogDescription>
+                              </DialogHeader>
+                            </DialogContent>
+                          </Dialog>
+                          <Switch 
+                            id="lastActive" 
+                            checked={isOnline} 
+                            disabled={true}
+                            className="data-[state=checked]:bg-gray-400 opacity-70 cursor-not-allowed"
+                          />
+                        </div>
+                      )}
                     </Label>
-                    <Input id="lastActive" defaultValue="2 hours ago" className="neo-border focus-within:neo-glow transition-shadow" />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {isOnline ? "Show as online" : "Show as offline"}
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -470,4 +543,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-

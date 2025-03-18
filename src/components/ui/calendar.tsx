@@ -15,21 +15,17 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
-  function CustomCaption({ displayMonth, goToMonth }: { displayMonth: Date; goToMonth: (date: Date) => void }) {
+  const CustomCaption = React.useCallback(({ 
+    displayMonth, 
+    onMonthChange 
+  }: {
+    displayMonth: Date;
+    onMonthChange: (date: Date) => void;
+  }) => {
     const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
     const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
     ];
     
     return (
@@ -39,7 +35,7 @@ function Calendar({
           onValueChange={(value) => {
             const newDate = new Date(displayMonth);
             newDate.setMonth(parseInt(value));
-            goToMonth(newDate);
+            onMonthChange(newDate);
           }}
         >
           <SelectTrigger className="h-7 w-[110px] text-xs font-medium">
@@ -59,7 +55,7 @@ function Calendar({
           onValueChange={(value) => {
             const newDate = new Date(displayMonth);
             newDate.setFullYear(parseInt(value));
-            goToMonth(newDate);
+            onMonthChange(newDate);
           }}
         >
           <SelectTrigger className="h-7 w-[80px] text-xs font-medium">
@@ -75,7 +71,7 @@ function Calendar({
         </Select>
       </div>
     );
-  }
+  }, []);
 
   return (
     <DayPicker
