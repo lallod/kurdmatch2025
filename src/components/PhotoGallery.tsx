@@ -300,11 +300,15 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             </button>
             
             <div className="w-full h-full flex items-center justify-center">
-              <img 
-                src={photos[selectedPhotoIndex]} 
-                alt={`Full size photo ${selectedPhotoIndex + 1}`}
-                className="h-full w-auto max-h-[calc(100vh-80px)] object-contain" 
-              />
+              <div className="h-full max-h-[calc(100vh-80px)] flex items-center justify-center">
+                <AspectRatio ratio={9/16} className="h-auto max-h-[calc(100vh-80px)] w-auto max-w-[90vw]">
+                  <img 
+                    src={photos[selectedPhotoIndex]} 
+                    alt={`Full size photo ${selectedPhotoIndex + 1}`}
+                    className="w-full h-full object-cover" 
+                  />
+                </AspectRatio>
+              </div>
             </div>
             
             <div className="absolute bottom-16 left-0 right-0 flex justify-center gap-2 z-20">
