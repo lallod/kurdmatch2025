@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Heart, X, Star, Info, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -76,7 +75,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
 
     api.on("select", handleSelect);
     
-    // Initial index
     setCurrentIndex(api.selectedScrollSnap() || 0);
 
     return () => {
@@ -154,15 +152,12 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     </div>
   );
 
-  // For desktop and mobile, we'll show 4 photos in a grid with navigation
   const getPhotoGridLayout = () => {
-    // Prepare 4 photos to display, using placeholders if needed
     const displayPhotos = [...photos];
     while (displayPhotos.length < 4) {
       displayPhotos.push("https://images.unsplash.com/photo-1518770660439-4636190af475");
     }
     
-    // Calculate which set of 4 photos to show based on currentIndex
     const currentSet = Math.floor(currentIndex / 4);
     const startIdx = currentSet * 4;
     const photosToShow = displayPhotos.slice(startIdx, startIdx + 4);
@@ -194,7 +189,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           })}
         </div>
         
-        {/* Navigation arrows for grid view */}
         {photos.length > 4 && (
           <>
             <button 
@@ -229,7 +223,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           </>
         )}
         
-        {/* Grid set indicator */}
         {photos.length > 4 && (
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full z-20">
             Set {currentSet + 1} of {Math.ceil(displayPhotos.length / 4)}
@@ -241,12 +234,10 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
 
   return (
     <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
-      {/* Grid view for both desktop and mobile */}
       <div className="block w-full h-full border border-tinder-rose/20 rounded-xl overflow-hidden">
         {getPhotoGridLayout()}
       </div>
       
-      {/* Hidden carousel for navigation */}
       <div 
         className="hidden"
         ref={carouselRef}
@@ -278,15 +269,13 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
         </Carousel>
       </div>
       
-      {/* Full-size photo dialog */}
       <Dialog open={photoDialogOpen} onOpenChange={setPhotoDialogOpen}>
-        <DialogContent className="max-w-5xl w-[90vw] h-[80vh] p-0 border-none bg-black/95">
+        <DialogContent className="max-w-none w-screen h-screen p-0 m-0 border-none bg-black">
           <DialogClose className="absolute right-4 top-4 z-50 bg-black/50 p-2 rounded-full text-white hover:bg-black/70">
             <X size={20} />
           </DialogClose>
           
           <div className="relative w-full h-full flex items-center justify-center">
-            {/* Photo navigation buttons */}
             <button 
               className="absolute left-4 p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors z-20"
               onClick={() => navigatePhoto('prev')}
@@ -301,16 +290,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
               <ChevronRight size={30} />
             </button>
             
-            {/* Full-size photo */}
-            <div className="w-full h-full flex items-center justify-center p-8">
+            <div className="w-full h-full flex items-center justify-center">
               <img 
                 src={photos[selectedPhotoIndex]} 
                 alt={`Full size photo ${selectedPhotoIndex + 1}`}
-                className="max-h-full max-w-full object-contain" 
+                className="w-full h-full object-contain" 
               />
             </div>
             
-            {/* Photo counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
               {selectedPhotoIndex + 1} / {photos.length}
             </div>
@@ -318,7 +305,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
         </DialogContent>
       </Dialog>
       
-      {/* Swipe instructions for mobile */}
       <div className="mt-2 text-center">
         <p className="text-sm text-gray-500">
           <span className="inline-flex items-center">
