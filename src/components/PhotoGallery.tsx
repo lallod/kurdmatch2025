@@ -307,11 +307,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       
       <div className="mt-2 text-center">
         <p className="text-sm text-gray-500">
-          <span className="inline-flex items-center">
-            <ChevronLeft size={16} className="mr-1" /> 
-            Swipe to navigate between photo sets 
-            <ChevronRight size={16} className="ml-1" />
-          </span>
+          
         </p>
       </div>
     </section>
