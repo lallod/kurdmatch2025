@@ -1,12 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ProfileDetails from '@/components/ProfileDetails';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Heart, ArrowDown, Lock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, X, MessageCircle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
 
@@ -253,6 +251,9 @@ const profiles = [
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
+  const [startX, setStartX] = useState(0);
+  const [offsetX, setOffsetX] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
   const isMobile = useIsMobile();
 
   const profileData = profiles[currentProfileIndex];
@@ -270,11 +271,54 @@ const Index = () => {
     // Go to next profile
     const nextIndex = (currentProfileIndex + 1) % profiles.length;
     setCurrentProfileIndex(nextIndex);
-    toast.success(`You disliked ${profileData.name}'s profile`, {
+    toast.info(`You passed on ${profileData.name}`, {
       description: "Showing you the next profile",
       position: "bottom-center",
       duration: 3000,
     });
+  };
+
+  const handleLike = () => {
+    // Go to next profile with like notification
+    const nextIndex = (currentProfileIndex + 1) % profiles.length;
+    setCurrentProfileIndex(nextIndex);
+    toast.success(`You liked ${profileData.name}!`, {
+      description: "We'll let them know",
+      position: "bottom-center",
+      duration: 3000,
+    });
+  };
+
+  // Touch handlers for swiping
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setStartX(e.touches[0].clientX);
+    setIsSwiping(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isSwiping) return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startX;
+    // Limit the drag distance
+    if (Math.abs(diff) < 150) {
+      setOffsetX(diff);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsSwiping(false);
+    
+    // If swipe distance is significant, consider it a swipe
+    if (offsetX > 80) {
+      // Swiped right (like)
+      handleLike();
+    } else if (offsetX < -80) {
+      // Swiped left (dislike)
+      handleDislike();
+    }
+    
+    // Reset offset
+    setOffsetX(0);
   };
 
   if (isLoading) {
@@ -291,50 +335,89 @@ const Index = () => {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="fixed top-4 right-4 z-50">
-        <Link to="/admin">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white flex items-center gap-2"
-          >
-            <Lock size={16} />
-            Admin
-          </Button>
-        </Link>
+    <main 
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-24"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div 
+        className={`transition-transform duration-300 ${offsetX !== 0 ? 'scale-[0.98]' : ''}`}
+        style={{
+          transform: `translateX(${offsetX}px) rotate(${offsetX * 0.05}deg)`,
+        }}
+      >
+        <div className="relative overflow-hidden">
+          <ProfileHeader
+            name={profileData.name}
+            age={profileData.age}
+            location={profileData.location}
+            occupation={profileData.occupation}
+            lastActive={profileData.lastActive}
+            verified={profileData.verified}
+            profileImage={profileData.profileImage}
+          />
+          
+          {/* Swiping indicators */}
+          {offsetX > 50 && (
+            <div className="absolute top-1/2 left-8 transform -translate-y-1/2 rounded-full bg-green-500/90 p-3 animate-pulse z-20">
+              <Heart size={40} className="text-white" />
+            </div>
+          )}
+          
+          {offsetX < -50 && (
+            <div className="absolute top-1/2 right-8 transform -translate-y-1/2 rounded-full bg-red-500/90 p-3 animate-pulse z-20">
+              <X size={40} className="text-white" />
+            </div>
+          )}
+        </div>
+        
+        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
+        
+        <ScrollArea className="max-h-[40vh] md:max-h-[40vh] overflow-hidden">
+          <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
+            <PhotoGallery 
+              photos={profileData.photos} 
+              name={profileData.name} 
+              age={profileData.age} 
+            />
+          </div>
+        </ScrollArea>
       </div>
       
-      <ProfileHeader
-        name={profileData.name}
-        age={profileData.age}
-        location={profileData.location}
-        occupation={profileData.occupation}
-        lastActive={profileData.lastActive}
-        verified={profileData.verified}
-        profileImage={profileData.profileImage}
-        onDislike={handleDislike}
-      />
-      
-      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
-      
-      <ScrollArea className="max-h-[60vh] md:max-h-[65vh] overflow-hidden">
-        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
-          <PhotoGallery 
-            photos={profileData.photos} 
-            name={profileData.name} 
-            age={profileData.age} 
-          />
-        </div>
-      </ScrollArea>
-      
-      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-orange/30 to-transparent"></div>
-      
-      <ProfileDetails details={profileData.details} />
-      
-      <footer className="w-full py-6 md:py-8 px-4 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} Dating Profile App</p>
-      </footer>
+      <div className="fixed bottom-24 left-0 right-0 flex justify-center gap-4 px-4 py-2 z-20">
+        <Button
+          size="lg"
+          variant="outline"
+          className="h-16 w-16 rounded-full bg-white border-gray-300 shadow-lg flex items-center justify-center"
+          onClick={handleDislike}
+        >
+          <X size={30} className="text-red-500" />
+        </Button>
+        
+        <Button
+          size="lg"
+          variant="outline"
+          className="h-16 w-16 rounded-full bg-white border-gray-300 shadow-lg flex items-center justify-center"
+          onClick={() => {
+            toast.info(`Message sent to ${profileData.name}`, {
+              position: "bottom-center",
+              duration: 3000,
+            });
+          }}
+        >
+          <MessageCircle size={30} className="text-blue-500" />
+        </Button>
+        
+        <Button
+          size="lg"
+          variant="outline"
+          className="h-16 w-16 rounded-full bg-white border-gray-300 shadow-lg flex items-center justify-center"
+          onClick={handleLike}
+        >
+          <Heart size={30} className="text-green-500" />
+        </Button>
+      </div>
     </main>
   );
 };
