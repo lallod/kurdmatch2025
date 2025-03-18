@@ -132,7 +132,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
 
   return (
     <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
-      <div className="relative w-full h-full rounded-xl overflow-hidden shadow-lg border border-tinder-rose/20"
+      <div 
+        className="relative w-full aspect-[3/4] md:aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-tinder-rose/20"
         ref={carouselRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -140,49 +141,60 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       >
         <Carousel 
           className="w-full h-full" 
-          opts={{ loop: true }}
+          opts={{ loop: true, dragFree: true }}
           setApi={setApi}
         >
           <CarouselContent className="h-full">
             {photos.map((photo, index) => (
               <CarouselItem key={index} className="h-full">
                 {renderProgressBar(currentIndex)}
-                <img
-                  src={photo}
-                  alt={`Photo ${index + 1}`}
-                  className={cn(
-                    "w-full h-full object-cover transition-opacity duration-300",
-                    isLoaded[index] ? "opacity-100" : "opacity-0"
+                <div className="relative h-full w-full overflow-hidden">
+                  <img
+                    src={photo}
+                    alt={`Photo ${index + 1}`}
+                    className={cn(
+                      "absolute inset-0 w-full h-full object-cover transition-opacity duration-300",
+                      isLoaded[index] ? "opacity-100" : "opacity-0"
+                    )}
+                    onLoad={() => handleImageLoad(index)}
+                  />
+                  
+                  {/* Overlay gradient for better text visibility */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+                  
+                  {renderPhotoInfo(index)}
+                  
+                  {swipeDirection === 'right' && index === currentIndex && (
+                    <div className="absolute inset-0 flex items-center justify-center animate-fade-in z-30">
+                      <div className="transform rotate-12 bg-green-500/80 text-white text-3xl md:text-4xl font-bold py-2 px-6 md:px-8 rounded-xl border-4 border-white shadow-lg">
+                        LIKE
+                      </div>
+                    </div>
                   )}
-                  onLoad={() => handleImageLoad(index)}
-                />
-                {renderPhotoInfo(index)}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10"></div>
-                
-                {swipeDirection === 'right' && index === currentIndex && (
-                  <div className="absolute inset-0 flex items-center justify-center animate-fade-in">
-                    <div className="transform rotate-12 bg-green-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white shadow-lg">
-                      LIKE
+                  
+                  {swipeDirection === 'left' && index === currentIndex && (
+                    <div className="absolute inset-0 flex items-center justify-center animate-fade-in z-30">
+                      <div className="transform -rotate-12 bg-red-500/80 text-white text-3xl md:text-4xl font-bold py-2 px-6 md:px-8 rounded-xl border-4 border-white shadow-lg">
+                        NOPE
+                      </div>
                     </div>
-                  </div>
-                )}
-                
-                {swipeDirection === 'left' && index === currentIndex && (
-                  <div className="absolute inset-0 flex items-center justify-center animate-fade-in">
-                    <div className="transform -rotate-12 bg-red-500/80 text-white text-4xl font-bold py-2 px-8 rounded-xl border-4 border-white shadow-lg">
-                      NOPE
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
           
-          {renderControls()}
+          {!isMobile && renderControls()}
           
           <CarouselPrevious className="hidden" />
           <CarouselNext className="hidden" />
         </Carousel>
+        
+        {isMobile && (
+          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-white/70 text-sm font-medium px-4 py-2 rounded-full bg-black/30 backdrop-blur-sm z-20">
+            Swipe to navigate photos
+          </div>
+        )}
       </div>
     </section>
   );

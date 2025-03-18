@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -10,7 +9,6 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
 
-// Sample profiles data - in a real app this would come from an API
 const profiles = [
   {
     id: 1,
@@ -232,14 +230,11 @@ const Index = () => {
         <Link to="/admin">
           <Button 
             variant="outline" 
-            size={isMobile ? "icon" : "sm"} 
-            className={`
-              bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white
-              ${!isMobile && 'flex items-center gap-2'}
-            `}
+            size="sm"
+            className="bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white flex items-center gap-2"
           >
             <Lock size={16} />
-            {!isMobile && "Admin"}
+            Admin
           </Button>
         </Link>
       </div>
@@ -257,7 +252,7 @@ const Index = () => {
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
-      <ScrollArea className="max-h-[50vh] sm:max-h-[55vh] md:max-h-[60vh] overflow-hidden">
+      <ScrollArea className="max-h-[60vh] md:max-h-[65vh] overflow-hidden">
         <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
           <PhotoGallery 
             photos={profileData.photos} 
