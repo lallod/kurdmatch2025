@@ -29,7 +29,7 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
       toast({
         title: "Bio Generated",
         description: "AI has created a personalized bio based on your profile.",
-        variant: "success",
+        variant: "default",
       });
     }, 1500);
   };
@@ -38,7 +38,7 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
     toast({
       title: "Bio Applied",
       description: "Your profile has been updated with the AI-generated bio.",
-      variant: "success",
+      variant: "default",
     });
     // In a real app, this would update the profile in the database
   };
