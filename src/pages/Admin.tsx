@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2 } from 'lucide-react';
+import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import DetailEditor from '@/components/DetailEditor';
@@ -287,6 +287,18 @@ const AdminDashboard = () => {
                         { name: "ethnicity", label: "Ethnicity", value: "Mixed", type: "select" },
                         { name: "zodiacSign", label: "Zodiac Sign", value: "Libra", type: "select" },
                         { name: "personalityType", label: "Personality Type", value: "ENFJ", type: "select" },
+                      ]}
+                      selectionMode={true}
+                    />
+                    
+                    <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
+                    
+                    <DetailEditor 
+                      icon={<Church size={18} />} 
+                      title="Beliefs" 
+                      fields={[
+                        { name: "religion", label: "Religion", value: "Spiritual", type: "select" },
+                        { name: "politicalViews", label: "Political Views", value: "Moderate", type: "select" },
                       ]}
                       selectionMode={true}
                     />
