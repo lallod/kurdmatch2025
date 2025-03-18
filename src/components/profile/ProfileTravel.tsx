@@ -18,7 +18,7 @@ const ProfileTravel: React.FC<ProfileTravelProps> = ({ details, isMobile }) => {
   return (
     <div className="space-y-6 py-4">
       <DetailItem 
-        icon={<Plane size={18} className={isMobile ? "text-white" : ""} />} 
+        icon={<Plane size={18} />} 
         label="Travel Frequency" 
         value={details.travelFrequency} 
       />
@@ -26,7 +26,7 @@ const ProfileTravel: React.FC<ProfileTravelProps> = ({ details, isMobile }) => {
       <Separator className={isMobile ? "bg-gray-800" : ""} />
       
       <DetailItem 
-        icon={<Palmtree size={18} className={isMobile ? "text-white" : ""} />} 
+        icon={<Palmtree size={18} />} 
         label="Dream Vacation" 
         value={details.dreamVacation || "Not specified"} 
       />
