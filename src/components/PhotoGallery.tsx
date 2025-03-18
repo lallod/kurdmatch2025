@@ -130,59 +130,103 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     </div>
   );
 
-  // For desktop, we'll show multiple photos
-  const getMultiPhotoLayout = () => {
-    // Ensure we always have exactly 4 photos to display
-    const displayPhotos = photos.length >= 4 ? photos.slice(0, 4) : [...photos];
-    
-    // Fill missing photos with placeholders if needed
+  // For desktop and mobile, we'll show 4 photos in a grid with navigation
+  const getPhotoGridLayout = () => {
+    // Prepare 4 photos to display, using placeholders if needed
+    const displayPhotos = [...photos];
     while (displayPhotos.length < 4) {
       displayPhotos.push("https://images.unsplash.com/photo-1518770660439-4636190af475");
     }
     
+    // Calculate which set of 4 photos to show based on currentIndex
+    const currentSet = Math.floor(currentIndex / 4);
+    const startIdx = currentSet * 4;
+    const photosToShow = displayPhotos.slice(startIdx, startIdx + 4);
+    
     return (
-      <div className="grid grid-cols-2 gap-2 p-2 h-full">
-        {displayPhotos.map((photo, index) => (
-          <div 
-            key={index} 
-            className={cn(
-              "relative rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity",
-              index === 0 ? "col-span-1 row-span-1" : ""
-            )}
-            onClick={() => {
-              api?.scrollTo(index);
-            }}
-          >
-            <img
-              src={photo}
-              alt={`Photo ${index + 1}`}
-              className="w-full h-full object-cover transition-opacity duration-300"
-              onLoad={() => handleImageLoad(index)}
-            />
-            {index === 0 && (
-              <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
-                Main Photo
+      <div className="relative w-full h-full">
+        <div className="grid grid-cols-2 gap-2 p-2 h-full">
+          {photosToShow.map((photo, idx) => {
+            const photoIndex = startIdx + idx;
+            return (
+              <div 
+                key={photoIndex} 
+                className="relative rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => {
+                  api?.scrollTo(photoIndex);
+                }}
+              >
+                <img
+                  src={photo}
+                  alt={`Photo ${photoIndex + 1}`}
+                  className="w-full h-full object-cover transition-opacity duration-300"
+                  onLoad={() => handleImageLoad(photoIndex)}
+                />
+                {idx === 0 && currentSet === 0 && (
+                  <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                    Main Photo
+                  </div>
+                )}
               </div>
-            )}
+            );
+          })}
+        </div>
+        
+        {/* Navigation arrows for grid view */}
+        {photos.length > 4 && (
+          <>
+            <button 
+              className={cn(
+                "absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 flex items-center justify-center z-20 shadow-lg transition-opacity",
+                currentSet === 0 ? "opacity-50 cursor-not-allowed" : "opacity-100 hover:bg-white"
+              )}
+              onClick={() => {
+                if (currentSet > 0) {
+                  api?.scrollTo((currentSet - 1) * 4);
+                }
+              }}
+              disabled={currentSet === 0}
+            >
+              <ChevronLeft size={24} />
+            </button>
+            
+            <button 
+              className={cn(
+                "absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 flex items-center justify-center z-20 shadow-lg transition-opacity",
+                (currentSet + 1) * 4 >= displayPhotos.length ? "opacity-50 cursor-not-allowed" : "opacity-100 hover:bg-white"
+              )}
+              onClick={() => {
+                if ((currentSet + 1) * 4 < displayPhotos.length) {
+                  api?.scrollTo((currentSet + 1) * 4);
+                }
+              }}
+              disabled={(currentSet + 1) * 4 >= displayPhotos.length}
+            >
+              <ChevronRight size={24} />
+            </button>
+          </>
+        )}
+        
+        {/* Grid set indicator */}
+        {photos.length > 4 && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full z-20">
+            Set {currentSet + 1} of {Math.ceil(displayPhotos.length / 4)}
           </div>
-        ))}
+        )}
       </div>
     );
   };
 
   return (
     <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
-      {!isMobile && (
-        <div className="block md:block w-full h-full border border-tinder-rose/20 rounded-xl overflow-hidden">
-          {getMultiPhotoLayout()}
-        </div>
-      )}
+      {/* Grid view for both desktop and mobile */}
+      <div className="block w-full h-full border border-tinder-rose/20 rounded-xl overflow-hidden">
+        {getPhotoGridLayout()}
+      </div>
       
+      {/* Hidden carousel for navigation */}
       <div 
-        className={cn(
-          "relative w-full aspect-[3/4] md:aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-tinder-rose/20",
-          !isMobile && "hidden"
-        )}
+        className="hidden"
         ref={carouselRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -196,54 +240,31 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           <CarouselContent className="h-full">
             {photos.map((photo, index) => (
               <CarouselItem key={index} className="h-full">
-                {renderProgressBar(currentIndex)}
-                <div className="relative h-full w-full overflow-hidden">
+                <div className="relative h-full w-full">
                   <img
                     src={photo}
                     alt={`Photo ${index + 1}`}
-                    className={cn(
-                      "absolute inset-0 w-full h-full object-cover transition-opacity duration-300",
-                      isLoaded[index] ? "opacity-100" : "opacity-0"
-                    )}
+                    className="w-full h-full object-cover"
                     onLoad={() => handleImageLoad(index)}
                   />
-                  
-                  {/* Overlay gradient for better text visibility */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
-                  
-                  {renderPhotoInfo(index)}
-                  
-                  {swipeDirection === 'right' && index === currentIndex && (
-                    <div className="absolute inset-0 flex items-center justify-center animate-fade-in z-30">
-                      <div className="transform rotate-12 bg-green-500/80 text-white text-3xl md:text-4xl font-bold py-2 px-6 md:px-8 rounded-xl border-4 border-white shadow-lg">
-                        LIKE
-                      </div>
-                    </div>
-                  )}
-                  
-                  {swipeDirection === 'left' && index === currentIndex && (
-                    <div className="absolute inset-0 flex items-center justify-center animate-fade-in z-30">
-                      <div className="transform -rotate-12 bg-red-500/80 text-white text-3xl md:text-4xl font-bold py-2 px-6 md:px-8 rounded-xl border-4 border-white shadow-lg">
-                        NOPE
-                      </div>
-                    </div>
-                  )}
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          
-          {!isMobile && renderControls()}
-          
           <CarouselPrevious className="hidden" />
           <CarouselNext className="hidden" />
         </Carousel>
-        
-        {isMobile && (
-          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-white/70 text-sm font-medium px-4 py-2 rounded-full bg-black/30 backdrop-blur-sm z-20">
-            Swipe to navigate photos
-          </div>
-        )}
+      </div>
+      
+      {/* Swipe instructions for mobile */}
+      <div className="mt-2 text-center">
+        <p className="text-sm text-gray-500">
+          <span className="inline-flex items-center">
+            <ChevronLeft size={16} className="mr-1" /> 
+            Swipe to navigate between photo sets 
+            <ChevronRight size={16} className="ml-1" />
+          </span>
+        </p>
       </div>
     </section>
   );
