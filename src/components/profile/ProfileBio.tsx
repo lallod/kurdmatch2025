@@ -134,7 +134,7 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
         </p>
         <div className="mt-3 flex items-center">
           <Bot size={12} className="text-tinder-orange mr-1" />
-          <span className="text-xs text-muted-foreground">This bio was automatically generated based on profile information</span>
+          <span className="text-xs text-muted-foreground">AI automatically analyzes your profile data to create this personalized bio</span>
         </div>
       </div>
     </div>

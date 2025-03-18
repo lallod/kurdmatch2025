@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -490,6 +491,10 @@ const LikedMe = () => {
                       <Sparkles size={12} className="text-tinder-orange" />
                     </span>
                   </p>
+                  <div className="mt-2 flex items-center">
+                    <Bot size={12} className="text-tinder-orange mr-1" />
+                    <span className="text-xs text-muted-foreground">AI automatically creates personalized bios from user profile information</span>
+                  </div>
                 </div>
               </div>
               
