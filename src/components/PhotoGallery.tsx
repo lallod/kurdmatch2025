@@ -16,6 +16,7 @@ import {
   Dialog,
   DialogContent,
   DialogClose,
+  DialogTitle,
 } from './ui/dialog';
 
 interface PhotoGalleryProps {
@@ -275,6 +276,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       
       <Dialog open={photoDialogOpen} onOpenChange={setPhotoDialogOpen}>
         <DialogContent className="max-w-none w-screen h-screen p-0 m-0 border-none bg-black">
+          <DialogTitle className="sr-only">Photo Gallery</DialogTitle>
           <DialogClose className="absolute right-4 top-4 z-50 bg-black/50 p-2 rounded-full text-white hover:bg-black/70">
             <X size={20} />
           </DialogClose>
@@ -295,8 +297,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             </button>
             
             <div className="w-full h-full flex items-center justify-center">
-              <div className="w-auto h-full max-w-[calc(9/16*100vh)] mx-auto flex items-center">
-                <AspectRatio ratio={9/16} className="h-full w-full">
+              <div className="h-full max-h-screen flex items-center justify-center">
+                <AspectRatio ratio={9/16} className="h-full max-h-[80vh] w-auto">
                   <img 
                     src={photos[selectedPhotoIndex]} 
                     alt={`Full size photo ${selectedPhotoIndex + 1}`}
