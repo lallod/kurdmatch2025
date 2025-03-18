@@ -11,6 +11,11 @@ import {
   CarouselNext,
   type CarouselApi
 } from './ui/carousel';
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+} from './ui/dialog';
 
 interface PhotoGalleryProps {
   photos: string[];
@@ -26,6 +31,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
   const isMobile = useIsMobile();
+  const [photoDialogOpen, setPhotoDialogOpen] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   
   const handleImageLoad = (index: number) => {
     const newLoadedState = [...isLoaded];
@@ -76,6 +83,23 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       api.off("select", handleSelect);
     };
   }, [api]);
+
+  const handlePhotoClick = (photoIndex: number) => {
+    setSelectedPhotoIndex(photoIndex);
+    setPhotoDialogOpen(true);
+  };
+
+  const navigatePhoto = (direction: 'next' | 'prev') => {
+    if (direction === 'next') {
+      setSelectedPhotoIndex((prev) => 
+        prev === photos.length - 1 ? 0 : prev + 1
+      );
+    } else {
+      setSelectedPhotoIndex((prev) => 
+        prev === 0 ? photos.length - 1 : prev - 1
+      );
+    }
+  };
 
   const renderPhotoInfo = (index: number) => (
     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-10">
@@ -152,9 +176,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
               <div 
                 key={photoIndex} 
                 className="relative rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => {
-                  api?.scrollTo(photoIndex);
-                }}
+                onClick={() => handlePhotoClick(photoIndex)}
               >
                 <img
                   src={photo}
@@ -255,6 +277,46 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           <CarouselNext className="hidden" />
         </Carousel>
       </div>
+      
+      {/* Full-size photo dialog */}
+      <Dialog open={photoDialogOpen} onOpenChange={setPhotoDialogOpen}>
+        <DialogContent className="max-w-5xl w-[90vw] h-[80vh] p-0 border-none bg-black/95">
+          <DialogClose className="absolute right-4 top-4 z-50 bg-black/50 p-2 rounded-full text-white hover:bg-black/70">
+            <X size={20} />
+          </DialogClose>
+          
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Photo navigation buttons */}
+            <button 
+              className="absolute left-4 p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors z-20"
+              onClick={() => navigatePhoto('prev')}
+            >
+              <ChevronLeft size={30} />
+            </button>
+            
+            <button 
+              className="absolute right-4 p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors z-20"
+              onClick={() => navigatePhoto('next')}
+            >
+              <ChevronRight size={30} />
+            </button>
+            
+            {/* Full-size photo */}
+            <div className="w-full h-full flex items-center justify-center p-8">
+              <img 
+                src={photos[selectedPhotoIndex]} 
+                alt={`Full size photo ${selectedPhotoIndex + 1}`}
+                className="max-h-full max-w-full object-contain" 
+              />
+            </div>
+            
+            {/* Photo counter */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+              {selectedPhotoIndex + 1} / {photos.length}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       
       {/* Swipe instructions for mobile */}
       <div className="mt-2 text-center">
