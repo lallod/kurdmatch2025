@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import ProfileDetails from "@/components/ProfileDetails";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const LikedMe = () => {
   const { toast } = useToast();
@@ -348,8 +348,6 @@ const LikedMe = () => {
   };
 
   const applyFilters = () => {
-    // This would typically filter the data from the API
-    // Here we're just closing the filter panel for demo purposes
     setShowFilters(false);
     
     toast({
@@ -377,7 +375,6 @@ const LikedMe = () => {
     <div className="min-h-screen pt-8 px-4 pb-24">
       {selectedProfile ? (
         showFullProfile ? (
-          // Full detailed profile view using ProfileDetails component
           <div className="animate-fade-in">
             <div className="flex items-center gap-2 mb-4">
               <Button variant="ghost" size="icon" onClick={handleBackToProfile} className="mr-2">
@@ -442,7 +439,6 @@ const LikedMe = () => {
             </div>
           </div>
         ) : (
-          // Basic profile view with updated bio styling
           <div className="animate-fade-in">
             <div className="flex items-center gap-2 mb-4">
               <Button variant="ghost" size="icon" onClick={handleCloseProfile} className="mr-2">
@@ -480,8 +476,18 @@ const LikedMe = () => {
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-medium">Bio</h4>
                   <div className="text-xs bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent font-medium flex items-center">
-                    <Bot size={12} className="mr-1 text-tinder-orange" />
-                    AI Generated
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Bot size={12} className="text-tinder-orange" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="bg-white/90 backdrop-blur-sm border border-tinder-rose/10">
+                          <p className="text-xs text-muted-foreground">
+                            AI automatically creates personalized bios from user profile information
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
                 <div className="bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 p-3 rounded-lg border-l-4 border-tinder-rose">
@@ -491,10 +497,6 @@ const LikedMe = () => {
                       <Sparkles size={12} className="text-tinder-orange" />
                     </span>
                   </p>
-                  <div className="mt-2 flex items-center">
-                    <Bot size={12} className="text-tinder-orange mr-1" />
-                    <span className="text-xs text-muted-foreground">AI automatically creates personalized bios from user profile information</span>
-                  </div>
                 </div>
               </div>
               
@@ -547,7 +549,6 @@ const LikedMe = () => {
           </div>
         )
       ) : showFilters ? (
-        // Filter panel
         <div className="animate-fade-in">
           <div className="flex items-center justify-between mb-6">
             <Button variant="ghost" onClick={() => setShowFilters(false)}>
@@ -602,7 +603,6 @@ const LikedMe = () => {
           </div>
         </div>
       ) : (
-        // Main liked list view
         <>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">

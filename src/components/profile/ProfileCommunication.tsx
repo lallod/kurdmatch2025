@@ -6,6 +6,7 @@ import {
   Languages, MessageCircle, Brain, Bot
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ProfileCommunicationProps {
   details: {
@@ -42,9 +43,19 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
       <div>
         <h4 className="font-medium mb-2 flex items-center">
           Communication
-          <span className="ml-2 text-xs bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent font-medium flex items-center">
-            <Bot size={12} className="mr-1 text-tinder-orange" />
-            AI Analyzed
+          <span className="ml-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Bot size={12} className="text-tinder-orange" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="bg-white/90 backdrop-blur-sm border border-tinder-rose/10">
+                  <p className="text-xs text-muted-foreground">
+                    AI analyzes communication style based on profile data
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </span>
         </h4>
         <div className="space-y-1">

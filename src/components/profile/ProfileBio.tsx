@@ -4,6 +4,7 @@ import { User, Sparkles, Wand2, Bot, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ProfileBioProps {
   about: string;
@@ -133,8 +134,18 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
           </span>
         </p>
         <div className="mt-3 flex items-center">
-          <Bot size={12} className="text-tinder-orange mr-1" />
-          <span className="text-xs text-muted-foreground">AI automatically analyzes your profile data to create this personalized bio</span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Bot size={12} className="text-tinder-orange" />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="bg-white/90 backdrop-blur-sm border border-tinder-rose/10">
+                <p className="text-xs text-muted-foreground">
+                  AI automatically analyzes your profile data to create this personalized bio
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
     </div>
