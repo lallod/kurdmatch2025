@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -467,6 +468,64 @@ const AdminDashboard = () => {
                           options: ["Never", "Rarely", "Yearly", "Several times per year", "Monthly"] },
                         { name: "communicationStyle", label: "Communication Style", value: "Direct and thoughtful", type: "select" },
                         { name: "petPeeves", label: "Pet Peeves", value: "Tardiness, Poor communication, Rudeness to service workers" },
+                      ]}
+                      selectionMode={true}
+                    />
+                    
+                    <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
+                    
+                    <DetailEditor 
+                      icon={<Brain size={18} />} 
+                      title="Personality & Growth" 
+                      fields={[
+                        { name: "growthGoals", label: "Growth Goals", value: "Improve public speaking, Learn a new language, Start a side business", 
+                          type: "listInput" },
+                        { name: "hiddenTalents", label: "Hidden Talents", value: "Perfect pitch, Can identify most typefaces by name", 
+                          type: "listInput" },
+                        { name: "favoriteMemory", label: "Favorite Memory", value: "Watching sunrise from a mountain peak after an overnight hike" },
+                        { name: "stressRelievers", label: "Stress Relievers", value: "Yoga, Forest walks, Pottery class", 
+                          type: "listInput" },
+                        { name: "charityInvolvement", label: "Charity Involvement", value: "Volunteer design work for environmental nonprofits" },
+                        { name: "decisionMakingStyle", label: "Decision Making Style", value: "Thoughtful and research-based, but also trust intuition" },
+                      ]}
+                      selectionMode={true}
+                    />
+                    
+                    <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
+                    
+                    <DetailEditor 
+                      icon={<Cpu size={18} />} 
+                      title="Creative & Lifestyle" 
+                      fields={[
+                        { name: "creativePursuits", label: "Creative Pursuits", value: "Watercolor painting, Digital illustration, Handmade ceramics", 
+                          type: "listInput" },
+                        { name: "dreamHome", label: "Dream Home", value: "Mountain cabin with modern interior and large windows" },
+                        { name: "transportationPreference", label: "Transportation", value: "Bicycle for local, train for travel" },
+                        { name: "techSkills", label: "Tech Skills", value: "UI/UX design, Figma, Adobe Creative Suite, Basic coding", 
+                          type: "listInput" },
+                        { name: "workEnvironment", label: "Work Environment", value: "Creative, collaborative spaces with natural light" },
+                        { name: "favoriteSeason", label: "Favorite Season", value: "Fall", 
+                          options: ["Spring", "Summer", "Fall", "Winter"] },
+                        { name: "idealWeather", label: "Ideal Weather", value: "Slightly cool with sunshine" },
+                        { name: "morningRoutine", label: "Morning Routine", value: "Meditation, coffee, and morning walk before work" },
+                        { name: "eveningRoutine", label: "Evening Routine", value: "Reading with herbal tea, journaling, and early to bed" },
+                        { name: "dietaryPreferences", label: "Dietary Preferences", value: "Mostly plant-based, occasional seafood" },
+                      ]}
+                      selectionMode={true}
+                    />
+                    
+                    <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
+                    
+                    <DetailEditor 
+                      icon={<Music size={18} />} 
+                      title="Talents & Skills" 
+                      fields={[
+                        { name: "musicInstruments", label: "Music Instruments", value: "Piano (intermediate), Guitar (beginner)", 
+                          type: "listInput" },
+                        { name: "favoriteGames", label: "Favorite Games", value: "Chess, Settlers of Catan, Zelda series", 
+                          type: "listInput" },
+                        { name: "languages", label: "Languages", value: "English (Native), French (Conversational), Spanish (Basic)", 
+                          type: "listInput" },
                       ]}
                       selectionMode={true}
                     />

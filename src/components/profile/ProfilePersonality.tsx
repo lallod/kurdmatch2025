@@ -3,7 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Trophy, Gem, Star, ThermometerSun, Globe
+  Trophy, Gem, Star, ThermometerSun, Globe, Brain
 } from 'lucide-react';
 import DetailItem from './DetailItem';
 
@@ -14,6 +14,7 @@ interface ProfilePersonalityProps {
     favoriteMemory?: string;
     stressRelievers?: string[] | string;
     charityInvolvement?: string;
+    decisionMakingStyle?: string;
   };
   tinderBadgeStyle: string;
   formatList: (value: string[] | string | undefined) => string;
@@ -97,6 +98,14 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
         icon={<Globe size={18} />} 
         label="Charity Involvement" 
         value={details.charityInvolvement || "Not specified"} 
+      />
+      
+      <Separator />
+      
+      <DetailItem 
+        icon={<Brain size={18} />} 
+        label="Decision Making Style" 
+        value={details.decisionMakingStyle || "Not specified"} 
       />
     </div>
   );
