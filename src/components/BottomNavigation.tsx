@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, Heart, MessageCircle } from 'lucide-react';
+import { Home, Eye, Heart, MessageCircle, UserRound } from 'lucide-react';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -16,7 +16,7 @@ const BottomNavigation = () => {
     },
     {
       name: 'Viewed Me',
-      icon: User,
+      icon: Eye,
       path: '/viewed-me',
     },
     {
@@ -31,13 +31,13 @@ const BottomNavigation = () => {
     },
     {
       name: 'My Profile',
-      icon: User,
+      icon: UserRound,
       path: '/my-profile',
     },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-950 shadow-lg border-t border-gray-200 dark:border-gray-800 py-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-950 shadow-lg border-t border-gray-200 dark:border-gray-800 py-3">
       <div className="flex items-center justify-around max-w-md mx-auto">
         {navItems.map((item) => {
           const isActive = currentPath === item.path;
@@ -47,20 +47,20 @@ const BottomNavigation = () => {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center px-3 py-2 rounded-lg transition-colors",
+                "flex items-center justify-center p-3 rounded-full transition-colors",
                 isActive 
-                  ? "text-tinder-rose" 
-                  : "text-gray-500 hover:text-tinder-rose"
+                  ? "text-tinder-rose bg-rose-50 dark:bg-rose-950/30" 
+                  : "text-gray-500 hover:text-tinder-rose hover:bg-rose-50/50 dark:hover:bg-rose-950/20"
               )}
+              aria-label={item.name}
             >
               <item.icon 
-                size={24} 
+                size={26} 
                 className={cn(
                   "transition-all",
                   isActive ? "stroke-tinder-rose" : "stroke-gray-500"
                 )} 
               />
-              <span className="text-xs mt-1 font-medium">{item.name}</span>
             </Link>
           );
         })}
