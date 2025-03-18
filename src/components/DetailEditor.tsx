@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -62,26 +62,61 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
   selectionMode = false
 }) => {
   const [editMode, setEditMode] = useState(false);
+  
+  const processedFields = fields.map(field => {
+    if (field.name === 'height' && field.value.includes("'")) {
+      return {
+        ...field,
+        value: convertHeightToCm(field.value)
+      };
+    }
+    return field;
+  });
+
   const [editedFields, setEditedFields] = useState<Record<string, string>>(
-    fields.reduce((acc, field) => ({ ...acc, [field.name]: field.value }), {})
+    processedFields.reduce((acc, field) => ({ ...acc, [field.name]: field.value }), {})
   );
   
   const [listItems, setListItems] = useState<Record<string, string[]>>(
-    fields.reduce((acc, field) => ({ 
+    processedFields.reduce((acc, field) => ({ 
       ...acc, 
       [field.name]: field.value.split(', ') 
     }), {})
   );
   
   const [newItems, setNewItems] = useState<Record<string, string>>(
-    fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+    processedFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
   );
 
   const [fieldEditStates, setFieldEditStates] = useState<Record<string, boolean>>(
-    fields.reduce((acc, field) => ({ ...acc, [field.name]: false }), {})
+    processedFields.reduce((acc, field) => ({ ...acc, [field.name]: false }), {})
   );
 
+  function convertHeightToCm(height: string): string {
+    if (height.toLowerCase().includes("cm")) {
+      return height;
+    }
+    
+    if (height.includes("'")) {
+      const parts = height.split("'");
+      const feet = parseInt(parts[0], 10);
+      const inches = parts[1] ? parseInt(parts[1].replace('"', ''), 10) : 0;
+      
+      const cm = Math.round(feet * 30.48 + inches * 2.54);
+      return `${cm} cm`;
+    }
+    
+    if (!isNaN(Number(height))) {
+      return `${height} cm`;
+    }
+    
+    return height;
+  }
+
   const handleFieldChange = (name: string, value: string) => {
+    if (name === 'height' && value.includes("'")) {
+      value = convertHeightToCm(value);
+    }
     setEditedFields(prev => ({ ...prev, [name]: value }));
   };
 
@@ -123,6 +158,19 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
   const getOptions = (field: Field) => {
     if (field.options) return field.options;
     return OPTIONS[field.name as keyof typeof OPTIONS] || [];
+  };
+
+  const getFormattedOptions = (field: Field) => {
+    const options = getOptions(field);
+    if (field.name === 'height') {
+      return options.map(option => {
+        if (option.includes("'")) {
+          return convertHeightToCm(option);
+        }
+        return option;
+      });
+    }
+    return options;
   };
 
   return (
@@ -209,7 +257,7 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
         <div className="space-y-4">
           {fields.map((field) => {
             const fieldType = field.type || (selectionMode && getOptions(field).length > 0 ? 'select' : 'text');
-            const options = getOptions(field);
+            const options = field.name === 'height' ? getFormattedOptions(field) : getOptions(field);
             
             return (
               <div key={field.name} className="space-y-2">
