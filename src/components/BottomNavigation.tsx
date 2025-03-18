@@ -32,7 +32,7 @@ const BottomNavigation = () => {
     {
       name: 'My Profile',
       icon: UserRound,
-      path: '/my-profile',
+      path: '/admin',
     },
   ];
 
