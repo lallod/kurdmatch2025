@@ -134,21 +134,6 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
           </div>
           <h3 className="text-lg font-medium">{title}</h3>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => editMode ? handleSave() : setEditMode(true)}
-        >
-          {editMode ? (
-            <>
-              <Check size={16} className="mr-1" /> Save All
-            </>
-          ) : (
-            <>
-              <Edit size={16} className="mr-1" /> Edit All
-            </>
-          )}
-        </Button>
       </div>
 
       {listMode ? (
