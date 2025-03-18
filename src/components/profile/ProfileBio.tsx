@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, Sparkles, Wand2 } from 'lucide-react';
+import { User, Sparkles, Wand2, Bot, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -11,15 +11,22 @@ interface ProfileBioProps {
 
 const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
   const [isSubscriber] = useState(false); // Mock subscription status
+  const [isGenerating, setIsGenerating] = useState(false);
   
   // Function to simulate generating a bio based on profile information
   const generateBio = () => {
-    // In a real implementation, this would use the profile data to generate a bio
-    return "Hi there! I'm a UX Designer with a passion for creating beautiful digital experiences. I love hiking in the mountains, trying new restaurants in San Francisco, and curling up with good books like The Alchemist. As a Libra with ENFJ personality, I value deep connections and communication. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quality time together.";
+    setIsGenerating(true);
+    
+    // Simulate AI processing delay
+    setTimeout(() => {
+      setIsGenerating(false);
+      // In a real implementation, this would use the profile data to generate a bio
+      return "Hi there! I'm a UX Designer with a passion for creating beautiful digital experiences. I love hiking in the mountains, trying new restaurants in San Francisco, and curling up with good books like The Alchemist. As a Libra with ENFJ personality, I value deep connections and communication. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quality time together.";
+    }, 1500);
   };
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 relative">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-medium text-tinder-rose flex items-center">
           <User size={18} className="mr-2" />
@@ -27,7 +34,7 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
         </h3>
         <div className="flex items-center gap-2">
           <div className="text-xs bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent font-medium flex items-center">
-            <Sparkles size={14} className="mr-1 text-tinder-orange" />
+            <Bot size={14} className="mr-1 text-tinder-orange" />
             AI Generated
           </div>
           
@@ -36,30 +43,56 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-xs border-tinder-rose text-tinder-rose hover:bg-tinder-rose/5 flex items-center gap-1"
+                className="text-xs border-tinder-rose text-tinder-rose hover:bg-tinder-rose/5 flex items-center gap-1 neo-border"
               >
-                <Wand2 size={14} />
+                <Wand2 size={14} className="shimmer" />
                 Generate Bio
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="neo-card bg-white/90 backdrop-blur-md">
               <DialogHeader>
-                <DialogTitle>AI Bio Generation</DialogTitle>
+                <DialogTitle className="ai-text-gradient flex items-center">
+                  <Brain size={18} className="mr-2" />
+                  AI Bio Generation
+                </DialogTitle>
                 <DialogDescription>
                   {isSubscriber ? (
                     <>
                       <p className="mb-4">Generate a personalized bio based on your profile information.</p>
-                      <div className="bg-gray-50 p-4 rounded-md border mb-4">
-                        <p className="text-sm font-medium">{generateBio()}</p>
+                      <div className="bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 p-4 rounded-md border neo-border mb-4 relative">
+                        {isGenerating ? (
+                          <div className="flex flex-col items-center py-4 space-y-2">
+                            <div className="relative w-8 h-8">
+                              <div className="absolute inset-0 rounded-full bg-tinder-rose/20 animate-ping"></div>
+                              <Brain size={24} className="text-tinder-rose relative z-10 ai-pulse" />
+                            </div>
+                            <p className="text-sm text-tinder-rose">Generating personalized bio...</p>
+                          </div>
+                        ) : (
+                          <p className="text-sm font-medium">{generateBio()}</p>
+                        )}
                       </div>
-                      <Button className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90">
+                      <Button className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90 neo-glow">
+                        <Sparkles size={16} className="mr-2" />
                         Apply Generated Bio
                       </Button>
                     </>
                   ) : (
                     <>
                       <p className="mb-4">AI bio generation is a premium feature available only to subscribers.</p>
-                      <Button className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90">
+                      <div className="relative mb-4 overflow-hidden rounded-md border neo-border">
+                        <div className="absolute inset-0 bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 backdrop-blur-sm flex items-center justify-center">
+                          <div className="text-center p-4">
+                            <Bot size={24} className="mx-auto mb-2 text-tinder-rose" />
+                            <p className="text-sm font-medium text-gray-600">Subscriber-only feature</p>
+                          </div>
+                        </div>
+                        <div className="bg-gray-100 p-4 opacity-50">
+                          <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ipsum sed enim finibus ultrices.</p>
+                        </div>
+                      </div>
+                      <Button className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90 neo-glow">
+                        <Sparkles size={16} className="mr-2" />
                         Upgrade to Premium
                       </Button>
                     </>
@@ -70,8 +103,13 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
           </Dialog>
         </div>
       </div>
-      <div className="bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 p-5 rounded-lg border-l-4 border-tinder-rose">
-        <p className="text-muted-foreground leading-relaxed italic">{about}</p>
+      <div className="bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 p-5 rounded-lg border-l-4 border-tinder-rose neo-glow">
+        <p className="text-muted-foreground leading-relaxed italic relative">
+          {about}
+          <span className="absolute -bottom-1 -right-1 opacity-50">
+            <Sparkles size={14} className="text-tinder-orange" />
+          </span>
+        </p>
       </div>
     </div>
   );
