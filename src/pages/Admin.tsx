@@ -152,7 +152,7 @@ const AdminDashboard = () => {
                             date > new Date() || date < new Date("1950-01-01")
                           }
                           initialFocus
-                          className="p-3 pointer-events-auto"
+                          className="p-3"
                         />
                       </PopoverContent>
                     </Popover>
@@ -470,3 +470,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
