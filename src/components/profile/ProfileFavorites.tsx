@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { 
-  BookOpen, Film, Music, Utensils, Headphones, Pencil, Youtube, Spotify
+  BookOpen, Film, Music, Utensils, Headphones, Pencil, Youtube, ExternalLink
 } from 'lucide-react';
 
 interface ProfileFavoritesProps {
@@ -29,7 +29,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
   const getMusicIcon = (music: string) => {
     const lowerCaseMusic = music.toLowerCase();
     if (lowerCaseMusic.includes('spotify') || lowerCaseMusic.includes('spoti.fi')) {
-      return <Spotify size={12} className="ml-1 text-green-500" />;
+      return <ExternalLink size={12} className="ml-1 text-green-500" />;
     }
     if (lowerCaseMusic.includes('youtube') || lowerCaseMusic.includes('youtu.be')) {
       return <Youtube size={12} className="ml-1 text-red-500" />;

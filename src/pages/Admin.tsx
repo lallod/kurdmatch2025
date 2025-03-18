@@ -588,9 +588,9 @@ const AdminDashboard = () => {
                 <div className="space-y-6">
                   <DetailEditor 
                     icon={<Music size={18} />} 
-                    title="Music" 
+                    title="Music Links" 
                     fields={[
-                      { name: "musicGenre", label: "Music Genres", value: "Indie Folk, Jazz, Classic Rock, Electronic" },
+                      { name: "musicLinks", label: "Spotify/YouTube Links", value: "https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd, https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
                     ]}
                     listMode={true}
                   />
