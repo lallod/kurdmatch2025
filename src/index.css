@@ -1,5 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -52,6 +53,11 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     overscroll-behavior: none;
+    font-family: 'Poppins', 'Inter', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
   }
 }
 
@@ -86,6 +92,22 @@
   
   .action-button-big {
     @apply flex items-center justify-center w-20 h-20 rounded-full shadow-lg transform transition-all duration-300;
+  }
+  
+  .ai-text-gradient {
+    @apply bg-gradient-to-r from-tinder-rose via-tinder-orange to-tinder-peach bg-clip-text text-transparent;
+  }
+  
+  .ai-badge {
+    @apply bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 text-tinder-rose border-tinder-rose/20 hover:border-tinder-rose/40 transition-colors;
+  }
+  
+  .ai-card {
+    @apply bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .ai-icon-container {
+    @apply bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 text-tinder-rose;
   }
 }
 

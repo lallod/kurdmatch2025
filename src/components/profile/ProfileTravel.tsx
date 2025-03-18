@@ -16,7 +16,7 @@ interface ProfileTravelProps {
 
 const ProfileTravel: React.FC<ProfileTravelProps> = ({ details, isMobile }) => {
   return (
-    <div className="space-y-6 py-4">
+    <div className="space-y-6 py-4 animate-fade-in">
       <DetailItem 
         icon={<Plane size={18} />} 
         label="Travel Frequency" 

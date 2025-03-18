@@ -31,7 +31,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
   isMobile
 }) => {
   return (
-    <div className="space-y-1 py-4">
+    <div className="space-y-1 py-4 animate-fade-in">
       <DetailItem 
         icon={<Wine size={18} />} 
         label="Drinking" 

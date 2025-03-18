@@ -19,7 +19,7 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value }) => {
           {icon}
         </div>
         <div className="flex-1">
-          <p className="text-sm text-gray-400">{label}</p>
+          <p className="text-sm text-gray-400 font-medium">{label}</p>
           <div className="font-medium text-white mt-1">{value}</div>
         </div>
       </div>
@@ -28,11 +28,11 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value }) => {
   
   return (
     <div className="flex items-start gap-3 py-3">
-      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-secondary text-primary">
+      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 text-tinder-rose">
         {icon}
       </div>
       <div className="flex-1">
-        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-sm text-muted-foreground font-medium">{label}</p>
         <div className="font-medium mt-1">{value}</div>
       </div>
     </div>
