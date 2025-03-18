@@ -6,7 +6,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Heart, X, Filter, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import ProfileDetails from "@/components/ProfileDetails";
 
 const LikedMe = () => {
   const { toast } = useToast();
@@ -21,7 +22,68 @@ const LikedMe = () => {
       premium: true,
       bio: "Software engineer by day, amateur chef by night. Love hiking and photography.",
       interests: ["Hiking", "Cooking", "Photography", "Travel"],
-      isLikedBack: false
+      isLikedBack: false,
+      details: {
+        about: "I'm a software engineer passionate about building products that make a difference. When I'm not coding, you'll find me hiking trails, experimenting with new recipes, or capturing moments through my camera lens. I believe in continuous learning and personal growth. Looking for someone who enjoys meaningful conversations and adventures.",
+        height: "6'1\"",
+        bodyType: "Athletic",
+        ethnicity: "Caucasian",
+        education: "Master's in Computer Science",
+        occupation: "Software Engineer",
+        company: "Tech Innovations Inc.",
+        religion: "Agnostic",
+        politicalViews: "Moderate",
+        drinking: "Social drinker",
+        smoking: "Non-smoker",
+        relationshipGoals: "Long-term relationship",
+        wantChildren: "Someday",
+        havePets: "Dog lover",
+        languages: ["English", "Spanish", "Python", "JavaScript"],
+        interests: ["Hiking", "Cooking", "Photography", "Traveling", "Reading"],
+        favoriteBooks: ["Sapiens", "Clean Code", "The Alchemist"],
+        favoriteMovies: ["Inception", "The Social Network", "Interstellar"],
+        favoriteMusic: ["Alternative Rock", "Jazz", "Electronic"],
+        favoriteFoods: ["Italian", "Thai", "Homemade pasta"],
+        exerciseHabits: "4-5 times per week",
+        zodiacSign: "Leo",
+        personalityType: "INTJ",
+        sleepSchedule: "Night owl",
+        travelFrequency: "Every few months",
+        communicationStyle: "Direct and thoughtful",
+        loveLanguage: "Quality Time",
+        petPeeves: ["Lateness", "People who don't listen", "Poor communication"],
+        dreamVacation: "Backpacking through Southeast Asia",
+        weekendActivities: ["Hiking local trails", "Farmers markets", "Coding side projects", "Photography"],
+        financialHabits: "Saver with occasional splurges",
+        idealDate: "A hike followed by dinner at a unique local restaurant",
+        childrenStatus: "No children",
+        familyCloseness: "Close with immediate family",
+        friendshipStyle: "Small circle of close friends",
+        workLifeBalance: "Prioritize balance but ambitious",
+        careerAmbitions: "Building impactful tech products",
+        hobbies: ["Film photography", "Cooking international cuisine", "Rock climbing"],
+        values: ["Integrity", "Growth", "Adventure", "Authenticity"],
+        dietaryPreferences: "Everything in moderation",
+        favoriteQuote: "The best way to predict the future is to create it.",
+        morningRoutine: "Coffee, meditation, coding",
+        eveningRoutine: "Reading, planning tomorrow",
+        favoriteSeason: "Fall",
+        idealWeather: "Crisp, sunny days with a light breeze",
+        creativePursuits: ["Photography", "Cooking", "DIY tech projects"],
+        dreamHome: "Modern cabin near mountains and tech hub",
+        transportationPreference: "Electric car for commuting, bike for leisure",
+        techSkills: ["Full-stack development", "Machine learning", "Mobile development"],
+        musicInstruments: ["Guitar (beginner)"],
+        favoriteGames: ["Chess", "Strategy board games", "The Witcher 3"],
+        favoritePodcasts: ["How I Built This", "Syntax", "Radiolab"],
+        charityInvolvement: "Volunteer coding teacher for underprivileged youth",
+        growthGoals: ["Learn a new language", "Improve photography skills", "Build a sustainable side business"],
+        hiddenTalents: ["Perfect pizza dough from scratch", "Identifying bird species by calls"],
+        favoriteMemory: "Solo backpacking through Norway's fjords",
+        stressRelievers: ["Trail running", "Cooking complex dishes", "Photography expeditions"],
+        workEnvironment: "Remote with occasional office days",
+        decisionMakingStyle: "Data-driven with intuition when needed"
+      }
     },
     {
       id: 2,
@@ -33,7 +95,68 @@ const LikedMe = () => {
       premium: false,
       bio: "Art teacher who loves dancing and painting. Always looking for new adventures!",
       interests: ["Art", "Dancing", "Museums", "Coffee"],
-      isLikedBack: false
+      isLikedBack: false,
+      details: {
+        about: "Art is my passion and profession. I teach elementary school art and love to inspire young minds to express themselves creatively. On weekends, you'll find me at dance studios, art galleries, or cozy coffee shops sketching people. I believe life should be a canvas for experiences and connections.",
+        height: "5'4\"",
+        bodyType: "Petite",
+        ethnicity: "Korean American",
+        education: "BFA in Fine Arts, Teaching Credential",
+        occupation: "Art Teacher",
+        company: "Riverside Elementary School",
+        religion: "Buddhist",
+        politicalViews: "Progressive",
+        drinking: "Occasional",
+        smoking: "Never",
+        relationshipGoals: "Meaningful connection",
+        wantChildren: "Yes, someday",
+        havePets: "Cat person",
+        languages: ["English", "Korean", "Conversational French"],
+        interests: ["Painting", "Dancing", "Museums", "Coffee culture", "Hiking"],
+        favoriteBooks: ["The Artist's Way", "Little Fires Everywhere", "Pachinko"],
+        favoriteMovies: ["Amelie", "Spirited Away", "Portrait of a Lady on Fire"],
+        favoriteMusic: ["Indie Pop", "Classical", "K-pop", "Jazz"],
+        favoriteFoods: ["Korean", "Mediterranean", "Desserts"],
+        exerciseHabits: "Dance 3x weekly, yoga",
+        zodiacSign: "Pisces",
+        personalityType: "ENFP",
+        sleepSchedule: "Early bird",
+        travelFrequency: "School breaks and summers",
+        communicationStyle: "Expressive and empathetic",
+        loveLanguage: "Words of Affirmation and Physical Touch",
+        petPeeves: ["Rudeness to service workers", "Closed-mindedness"],
+        dreamVacation: "Art tour through Europe's museums",
+        weekendActivities: ["Dance classes", "Painting outdoors", "Museum visits", "Brunch with friends"],
+        financialHabits: "Budget-conscious with splurges on art supplies",
+        idealDate: "Gallery opening followed by trying a new restaurant",
+        childrenStatus: "No children yet",
+        familyCloseness: "Very close with parents and younger sister",
+        friendshipStyle: "Wide circle of diverse friends",
+        workLifeBalance: "Creative in both work and personal life",
+        careerAmbitions: "Open my own art education program",
+        hobbies: ["Contemporary dance", "Watercolor", "Ceramics", "Urban sketching"],
+        values: ["Creativity", "Compassion", "Cultural appreciation", "Growth"],
+        dietaryPreferences: "Mostly plant-based",
+        favoriteQuote: "Every child is an artist. The problem is how to remain an artist once we grow up.",
+        morningRoutine: "Stretching, tea, journaling",
+        eveningRoutine: "Reading, skincare ritual",
+        favoriteSeason: "Spring",
+        idealWeather: "Warm with a gentle breeze",
+        creativePursuits: ["Mixed media art", "Modern dance", "Pottery"],
+        dreamHome: "Bright loft with studio space",
+        transportationPreference: "Public transit and walking",
+        techSkills: ["Digital art", "Basic website design"],
+        musicInstruments: ["Piano", "Dabbling in ukulele"],
+        favoriteGames: ["Pictionary", "Creative storytelling games"],
+        favoritePodcasts: ["99% Invisible", "The Moth", "Art For Your Ear"],
+        charityInvolvement: "Art therapy program volunteer",
+        growthGoals: ["Master oil painting", "Learn ballroom dance", "Visit every major art museum"],
+        hiddenTalents: ["Can draw accurate portraits from memory", "Korean cooking"],
+        favoriteMemory: "Solo trip to Kyoto during cherry blossom season",
+        stressRelievers: ["Improvisational dance", "Painting abstracts", "Long walks"],
+        workEnvironment: "Colorful classroom with student art everywhere",
+        decisionMakingStyle: "Intuitive with consideration for others"
+      }
     },
     {
       id: 3,
@@ -45,7 +168,68 @@ const LikedMe = () => {
       premium: true,
       bio: "Financial analyst, fitness enthusiast, and dog lover. Looking for someone to share adventures with.",
       interests: ["Fitness", "Dogs", "Finance", "Reading"],
-      isLikedBack: false
+      isLikedBack: false,
+      details: {
+        about: "Numbers and data tell stories that fascinate me. As a financial analyst, I help businesses make sense of their finances, but my analytical mind takes a break when I'm hitting the gym or hiking with my golden retriever, Max. I value financial literacy, physical health, and genuine connections with people and my community.",
+        height: "6'0\"",
+        bodyType: "Athletic",
+        ethnicity: "African American",
+        education: "MBA in Finance",
+        occupation: "Financial Analyst",
+        company: "Global Investments Partners",
+        religion: "Christian",
+        politicalViews: "Moderate Conservative",
+        drinking: "Rarely",
+        smoking: "Never",
+        relationshipGoals: "Serious relationship leading to marriage",
+        wantChildren: "Yes, 2-3 kids",
+        havePets: "1 golden retriever named Max",
+        languages: ["English", "Basic Spanish"],
+        interests: ["Fitness", "Personal finance", "Dogs", "Reading", "Hiking"],
+        favoriteBooks: ["Rich Dad Poor Dad", "Atomic Habits", "Principles"],
+        favoriteMovies: ["The Pursuit of Happyness", "Moneyball", "John Wick"],
+        favoriteMusic: ["Hip-hop", "R&B", "Jazz", "Workout playlists"],
+        favoriteFoods: ["Grilled meats", "Protein-packed meals", "Soul food", "Occasional BBQ"],
+        exerciseHabits: "5-6 days a week, mix of strength and cardio",
+        zodiacSign: "Taurus",
+        personalityType: "ESTJ",
+        sleepSchedule: "Early to bed, early to rise",
+        travelFrequency: "2-3 planned trips yearly",
+        communicationStyle: "Clear, direct, sometimes blunt",
+        loveLanguage: "Acts of Service",
+        petPeeves: ["Financial irresponsibility", "Tardiness", "Lack of ambition"],
+        dreamVacation: "Safari in Tanzania",
+        weekendActivities: ["Long hikes with Max", "Meal prepping", "Reading financial news", "Community service"],
+        financialHabits: "Strategic saver and investor",
+        idealDate: "Active outdoor adventure followed by meaningful conversation",
+        childrenStatus: "No children yet",
+        familyCloseness: "Weekly calls with parents, mentor to younger cousins",
+        friendshipStyle: "Quality over quantity, loyal to core group",
+        workLifeBalance: "Structured schedule with clear boundaries",
+        careerAmbitions: "Chief Financial Officer or own financial advisory firm",
+        hobbies: ["Trail running", "Investing", "Dog training", "Volunteering"],
+        values: ["Discipline", "Integrity", "Growth", "Community"],
+        dietaryPreferences: "High protein, moderate carb",
+        favoriteQuote: "It's not about timing the market, but time in the market.",
+        morningRoutine: "5AM workout, protein breakfast, financial news",
+        eveningRoutine: "Walk with Max, review budget, read",
+        favoriteSeason: "Summer",
+        idealWeather: "Warm and sunny for outdoor activities",
+        creativePursuits: ["Financial modeling for personal projects"],
+        dreamHome: "Modern house with home gym and large yard for Max",
+        transportationPreference: "Reliable SUV",
+        techSkills: ["Excel expert", "Financial modeling", "Investment apps"],
+        musicInstruments: ["None currently"],
+        favoriteGames: ["Fantasy football", "Chess", "Monopoly (ironically)"],
+        favoritePodcasts: ["Planet Money", "The Dave Ramsey Show", "Jocko Podcast"],
+        charityInvolvement: "Financial literacy teacher for underprivileged youth",
+        growthGoals: ["Get CFA certification", "Run a marathon", "Build wealth to support future family"],
+        hiddenTalents: ["Amazing with dogs, can train any breed", "Excellent cook of protein-rich meals"],
+        favoriteMemory: "Summiting Mt. Rainier with my father",
+        stressRelievers: ["Heavy lifting sessions", "Long walks with Max", "Budgeting (yes, really)"],
+        workEnvironment: "Organized, minimal, data-focused",
+        decisionMakingStyle: "Data-driven with clear pros/cons analysis"
+      }
     },
     {
       id: 4,
@@ -57,7 +241,68 @@ const LikedMe = () => {
       premium: false,
       bio: "Tech startup founder, avid reader, and coffee addict. Let's discuss our favorite books over coffee!",
       interests: ["Startups", "Reading", "Coffee", "Technology"],
-      isLikedBack: false
+      isLikedBack: false,
+      details: {
+        about: "Building the future one line of code at a time. As the founder of a tech startup focused on sustainable solutions, I'm passionate about using technology to solve real-world problems. When I'm not coding or in meetings, you'll find me in a corner of a coffee shop with a book or brainstorming new ideas. Looking for someone who challenges my thinking and shares my curiosity about the world.",
+        height: "5'6\"",
+        bodyType: "Average",
+        ethnicity: "Latina",
+        education: "BS in Computer Science",
+        occupation: "Tech Startup Founder",
+        company: "EcoTech Solutions",
+        religion: "Spiritual but not religious",
+        politicalViews: "Progressive",
+        drinking: "Social drinker",
+        smoking: "Never",
+        relationshipGoals: "Partner in crime and life",
+        wantChildren: "Open but not decided",
+        havePets: "Plant parent only for now",
+        languages: ["English", "Spanish", "Portuguese", "JavaScript", "Python"],
+        interests: ["Tech innovation", "Reading", "Specialty coffee", "Sustainability", "Minimalism"],
+        favoriteBooks: ["Dune", "Bad Blood", "Sapiens", "Women Who Run With Wolves"],
+        favoriteMovies: ["Ex Machina", "Arrival", "Blade Runner 2049", "Coco"],
+        favoriteMusic: ["Indie electronic", "Latin alternative", "Ambient for coding"],
+        favoriteFoods: ["Mexican", "Vietnamese", "Specialty coffee"],
+        exerciseHabits: "Morning runs, standing desk, weekend hikes",
+        zodiacSign: "Aquarius",
+        personalityType: "ENTP",
+        sleepSchedule: "Night owl with early meetings",
+        travelFrequency: "Workations in different cities",
+        communicationStyle: "Direct but empathetic",
+        loveLanguage: "Intellectual connection and Quality Time",
+        petPeeves: ["Close-mindedness", "Tech illiteracy", "Wasteful consumption"],
+        dreamVacation: "Month-long working trip to different innovation hubs globally",
+        weekendActivities: ["Hackathons", "Reading at new coffee shops", "Farmers markets", "Coding passion projects"],
+        financialHabits: "Strategic investing in startups and crypto",
+        idealDate: "Coffee tasting followed by a visit to a bookstore or tech event",
+        childrenStatus: "No children",
+        familyCloseness: "Close with family despite geographic distance",
+        friendshipStyle: "Deep connections with fellow entrepreneurs",
+        workLifeBalance: "Startup life means blurred lines, but trying to improve",
+        careerAmbitions: "Create technology that positively impacts millions",
+        hobbies: ["Coffee roasting", "Tech tinkering", "Speed reading", "Urban gardening"],
+        values: ["Innovation", "Sustainability", "Knowledge", "Authenticity"],
+        dietaryPreferences: "Flexitarian leaning vegetarian",
+        favoriteQuote: "The best way to predict the future is to invent it.",
+        morningRoutine: "Quick run, cold shower, espresso, emails",
+        eveningRoutine: "Reading, planning tomorrow, occasional nightcap coding session",
+        favoriteSeason: "Spring for new beginnings",
+        idealWeather: "Moderate with light rain for productive coding days",
+        creativePursuits: ["UX design", "Technical writing", "App development"],
+        dreamHome: "Smart home with sustainable features and home office",
+        transportationPreference: "Electric scooter or rideshare",
+        techSkills: ["Full-stack development", "UI/UX design", "Data analysis", "Pitch deck creation"],
+        musicInstruments: ["Used to play piano", "Want to learn synthesizer"],
+        favoriteGames: ["Strategy board games", "Coding challenges", "Chess"],
+        favoritePodcasts: ["How I Built This", "Reply All", "StartUp", "The Daily"],
+        charityInvolvement: "Mentor for women in STEM programs",
+        growthGoals: ["Scale startup to Series B", "Learn hardware development", "Improve public speaking"],
+        hiddenTalents: ["Can identify coffee origin by taste", "Speed reading 400 wpm"],
+        favoriteMemory: "The moment my first startup received funding",
+        stressRelievers: ["Espresso making ritual", "Coding for fun not work", "Urban walks"],
+        workEnvironment: "Creative chaos with whiteboards and multiple screens",
+        decisionMakingStyle: "Data-informed but willing to take calculated risks"
+      }
     }
   ]);
 
@@ -118,85 +363,169 @@ const LikedMe = () => {
     (!filterPremiumOnly || profile.premium)
   );
 
+  const [showFullProfile, setShowFullProfile] = useState(false);
+
+  const handleViewFullProfile = () => {
+    setShowFullProfile(true);
+  };
+
+  const handleBackToProfile = () => {
+    setShowFullProfile(false);
+  };
+
   return (
     <div className="min-h-screen pt-8 px-4 pb-24">
       {selectedProfile ? (
-        // Detailed profile view
-        <div className="animate-fade-in">
-          <div className="flex items-center gap-2 mb-4">
-            <Button variant="ghost" size="icon" onClick={handleCloseProfile} className="mr-2">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h2 className="text-xl font-bold">{selectedProfile.name}'s Profile</h2>
-          </div>
-          
-          <div className="relative h-80 rounded-xl overflow-hidden mb-4">
-            <img 
-              src={selectedProfile.avatar} 
-              alt={selectedProfile.name} 
-              className="w-full h-full object-cover"
-            />
-            {selectedProfile.premium && (
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-gradient-tinder text-white border-0">
-                  Premium
-                </Badge>
-              </div>
-            )}
-          </div>
-          
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-xl font-bold">{selectedProfile.name}</h3>
-              <span className="text-lg">{selectedProfile.age}</span>
+        showFullProfile ? (
+          // Full detailed profile view using ProfileDetails component
+          <div className="animate-fade-in">
+            <div className="flex items-center gap-2 mb-4">
+              <Button variant="ghost" size="icon" onClick={handleBackToProfile} className="mr-2">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h2 className="text-xl font-bold">{selectedProfile.name}'s Complete Profile</h2>
             </div>
-            <p className="text-sm text-muted-foreground mb-1">{selectedProfile.distance}</p>
-            <Badge variant="outline" className="mb-4 bg-tinder-rose/5 text-tinder-rose border-tinder-rose/10">
-              {selectedProfile.matchPercentage}% Match
-            </Badge>
             
-            <p className="my-4 text-muted-foreground">{selectedProfile.bio}</p>
-            
-            <div className="mt-4">
-              <h4 className="font-medium mb-2">Interests</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedProfile.interests.map((interest, idx) => (
-                  <Badge key={idx} variant="secondary" className="py-1">
-                    {interest}
+            <div className="relative h-60 rounded-xl overflow-hidden mb-6">
+              <img 
+                src={selectedProfile.avatar} 
+                alt={selectedProfile.name} 
+                className="w-full h-full object-cover"
+              />
+              {selectedProfile.premium && (
+                <div className="absolute top-4 right-4">
+                  <Badge className="bg-gradient-tinder text-white border-0">
+                    Premium
                   </Badge>
-                ))}
-              </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-2 mb-6">
+              <h3 className="text-2xl font-bold">{selectedProfile.name}</h3>
+              <span className="text-xl">{selectedProfile.age}</span>
+              <Badge variant="outline" className="ml-2 bg-tinder-rose/5 text-tinder-rose border-tinder-rose/10">
+                {selectedProfile.matchPercentage}% Match
+              </Badge>
+            </div>
+            
+            <ScrollArea className="h-[calc(100vh-300px)]">
+              <ProfileDetails details={selectedProfile.details} />
+            </ScrollArea>
+            
+            <div className="fixed bottom-24 left-0 right-0 flex items-center justify-center gap-4 bg-background/80 backdrop-blur-sm p-4 border-t">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="rounded-full p-4 h-14 w-14 border-gray-300"
+                onClick={() => handleDislike(selectedProfile.id)}
+              >
+                <X className="h-6 w-6 text-gray-500" />
+              </Button>
+              
+              {!selectedProfile.isLikedBack ? (
+                <Button 
+                  size="lg" 
+                  className="rounded-full p-4 h-14 w-14 bg-gradient-tinder hover:opacity-90 border-none"
+                  onClick={() => handleLikeBack(selectedProfile.id)}
+                >
+                  <Heart className="h-6 w-6 text-white" />
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  className="rounded-full p-4 h-14 w-14 bg-primary hover:bg-primary/90"
+                >
+                  <MessageCircle className="h-6 w-6 text-white" />
+                </Button>
+              )}
             </div>
           </div>
-          
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="rounded-full p-4 h-14 w-14 border-gray-300"
-              onClick={() => handleDislike(selectedProfile.id)}
-            >
-              <X className="h-6 w-6 text-gray-500" />
-            </Button>
+        ) : (
+          // Basic profile view (existing code)
+          <div className="animate-fade-in">
+            <div className="flex items-center gap-2 mb-4">
+              <Button variant="ghost" size="icon" onClick={handleCloseProfile} className="mr-2">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h2 className="text-xl font-bold">{selectedProfile.name}'s Profile</h2>
+            </div>
             
-            {!selectedProfile.isLikedBack ? (
+            <div className="relative h-80 rounded-xl overflow-hidden mb-4">
+              <img 
+                src={selectedProfile.avatar} 
+                alt={selectedProfile.name} 
+                className="w-full h-full object-cover"
+              />
+              {selectedProfile.premium && (
+                <div className="absolute top-4 right-4">
+                  <Badge className="bg-gradient-tinder text-white border-0">
+                    Premium
+                  </Badge>
+                </div>
+              )}
+            </div>
+            
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-xl font-bold">{selectedProfile.name}</h3>
+                <span className="text-lg">{selectedProfile.age}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-1">{selectedProfile.distance}</p>
+              <Badge variant="outline" className="mb-4 bg-tinder-rose/5 text-tinder-rose border-tinder-rose/10">
+                {selectedProfile.matchPercentage}% Match
+              </Badge>
+              
+              <p className="my-4 text-muted-foreground">{selectedProfile.bio}</p>
+              
+              <div className="mt-4">
+                <h4 className="font-medium mb-2">Interests</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedProfile.interests.map((interest, idx) => (
+                    <Badge key={idx} variant="secondary" className="py-1">
+                      {interest}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              
               <Button 
-                size="lg" 
-                className="rounded-full p-4 h-14 w-14 bg-gradient-tinder hover:opacity-90 border-none"
-                onClick={() => handleLikeBack(selectedProfile.id)}
+                className="w-full mt-6 bg-gradient-to-r from-tinder-rose to-tinder-orange text-white"
+                onClick={handleViewFullProfile}
               >
-                <Heart className="h-6 w-6 text-white" />
+                View Full Profile
               </Button>
-            ) : (
+            </div>
+            
+            <div className="flex items-center justify-center gap-4 mt-6">
               <Button 
+                variant="outline" 
                 size="lg" 
-                className="rounded-full p-4 h-14 w-14 bg-primary hover:bg-primary/90"
+                className="rounded-full p-4 h-14 w-14 border-gray-300"
+                onClick={() => handleDislike(selectedProfile.id)}
               >
-                <MessageCircle className="h-6 w-6 text-white" />
+                <X className="h-6 w-6 text-gray-500" />
               </Button>
-            )}
+              
+              {!selectedProfile.isLikedBack ? (
+                <Button 
+                  size="lg" 
+                  className="rounded-full p-4 h-14 w-14 bg-gradient-tinder hover:opacity-90 border-none"
+                  onClick={() => handleLikeBack(selectedProfile.id)}
+                >
+                  <Heart className="h-6 w-6 text-white" />
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  className="rounded-full p-4 h-14 w-14 bg-primary hover:bg-primary/90"
+                >
+                  <MessageCircle className="h-6 w-6 text-white" />
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        )
       ) : showFilters ? (
         // Filter panel
         <div className="animate-fade-in">
