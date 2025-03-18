@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { User, Sparkles, Wand2, Bot, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProfileBioProps {
   about: string;
@@ -12,17 +13,34 @@ interface ProfileBioProps {
 const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
   const [isSubscriber] = useState(false); // Mock subscription status
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedBio, setGeneratedBio] = useState<string>("");
+  const { toast } = useToast();
   
-  // Function to simulate generating a bio based on profile information
+  // Function to generate a bio based on profile information
   const generateBio = () => {
     setIsGenerating(true);
     
     // Simulate AI processing delay
     setTimeout(() => {
+      const newBio = "Hi there! I'm a UX Designer with a passion for creating beautiful digital experiences. I love hiking in the mountains, trying new restaurants in San Francisco, and curling up with good books like The Alchemist. As a Libra with ENFJ personality, I value deep connections and communication. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quality time together.";
+      setGeneratedBio(newBio);
       setIsGenerating(false);
-      // In a real implementation, this would use the profile data to generate a bio
-      return "Hi there! I'm a UX Designer with a passion for creating beautiful digital experiences. I love hiking in the mountains, trying new restaurants in San Francisco, and curling up with good books like The Alchemist. As a Libra with ENFJ personality, I value deep connections and communication. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quality time together.";
+      
+      toast({
+        title: "Bio Generated",
+        description: "AI has created a personalized bio based on your profile.",
+        variant: "success",
+      });
     }, 1500);
+  };
+
+  const applyGeneratedBio = () => {
+    toast({
+      title: "Bio Applied",
+      description: "Your profile has been updated with the AI-generated bio.",
+      variant: "success",
+    });
+    // In a real app, this would update the profile in the database
   };
 
   return (
@@ -69,12 +87,16 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
                             <p className="text-sm text-tinder-rose">Generating personalized bio...</p>
                           </div>
                         ) : (
-                          <p className="text-sm font-medium">{generateBio()}</p>
+                          <p className="text-sm font-medium">{generatedBio}</p>
                         )}
                       </div>
-                      <Button className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90 neo-glow">
+                      <Button 
+                        className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90 neo-glow"
+                        onClick={isGenerating ? undefined : generatedBio ? applyGeneratedBio : generateBio}
+                        disabled={isGenerating}
+                      >
                         <Sparkles size={16} className="mr-2" />
-                        Apply Generated Bio
+                        {generatedBio ? "Apply Generated Bio" : "Generate Bio"}
                       </Button>
                     </>
                   ) : (
