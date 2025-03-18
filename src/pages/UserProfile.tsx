@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Heart } from 'lucide-react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ProfileDetails from '@/components/ProfileDetails';
