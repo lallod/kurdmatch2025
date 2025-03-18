@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import ProfileDetails from "@/components/ProfileDetails";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import PhotoGallery from "@/components/PhotoGallery";
 
 const LikedMe = () => {
   const { toast } = useToast();
@@ -17,6 +19,12 @@ const LikedMe = () => {
       name: "Aiden Taylor",
       age: 28,
       avatar: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=150&q=80",
+      photos: [
+        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80"
+      ],
       distance: "2 miles away",
       matchPercentage: 95,
       premium: true,
@@ -90,6 +98,11 @@ const LikedMe = () => {
       name: "Isabella Kim",
       age: 26,
       avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=150&q=80",
+      photos: [
+        "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80"
+      ],
       distance: "5 miles away",
       matchPercentage: 87,
       premium: false,
@@ -163,6 +176,11 @@ const LikedMe = () => {
       name: "Ethan Johnson",
       age: 31,
       avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=150&q=80",
+      photos: [
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80"
+      ],
       distance: "7 miles away",
       matchPercentage: 82,
       premium: true,
@@ -236,6 +254,13 @@ const LikedMe = () => {
       name: "Zoe Martinez",
       age: 24,
       avatar: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=150&q=80",
+      photos: [
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80"
+      ],
       distance: "10 miles away",
       matchPercentage: 78,
       premium: false,
@@ -383,14 +408,14 @@ const LikedMe = () => {
               <h2 className="text-xl font-bold">{selectedProfile.name}'s Complete Profile</h2>
             </div>
             
-            <div className="relative h-60 rounded-xl overflow-hidden mb-6">
-              <img 
-                src={selectedProfile.avatar} 
-                alt={selectedProfile.name} 
-                className="w-full h-full object-cover"
+            <div className="mb-6">
+              <PhotoGallery 
+                photos={selectedProfile.photos} 
+                name={selectedProfile.name} 
+                age={selectedProfile.age} 
               />
               {selectedProfile.premium && (
-                <div className="absolute top-4 right-4">
+                <div className="mt-2 flex justify-end">
                   <Badge className="bg-gradient-tinder text-white border-0">
                     Premium
                   </Badge>
@@ -447,14 +472,14 @@ const LikedMe = () => {
               <h2 className="text-xl font-bold">{selectedProfile.name}'s Profile</h2>
             </div>
             
-            <div className="relative h-80 rounded-xl overflow-hidden mb-4">
-              <img 
-                src={selectedProfile.avatar} 
-                alt={selectedProfile.name} 
-                className="w-full h-full object-cover"
+            <div className="mb-4">
+              <PhotoGallery 
+                photos={selectedProfile.photos} 
+                name={selectedProfile.name} 
+                age={selectedProfile.age} 
               />
               {selectedProfile.premium && (
-                <div className="absolute top-4 right-4">
+                <div className="mt-2 flex justify-end">
                   <Badge className="bg-gradient-tinder text-white border-0">
                     Premium
                   </Badge>
