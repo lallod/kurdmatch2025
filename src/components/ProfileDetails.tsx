@@ -16,7 +16,6 @@ import {
   CloudSun
 } from 'lucide-react';
 
-// Import all the smaller components
 import DetailItem from './profile/DetailItem';
 import ProfileBio from './profile/ProfileBio';
 import ProfileQuickStats from './profile/ProfileQuickStats';
@@ -71,7 +70,6 @@ interface ProfileDetailsProps {
     careerAmbitions?: string;
     hobbies?: string[] | string;
     values?: string[] | string;
-    // New profile information fields
     dietaryPreferences?: string;
     favoriteQuote?: string;
     morningRoutine?: string;
@@ -122,7 +120,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
           isMobile={isMobile}
         />
         
-        <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives"]} className="w-full space-y-4">
+        <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives", "travel"]} className="w-full space-y-4">
           <AccordionItem value="basics" className="rounded-xl overflow-hidden border border-tinder-rose/10 shadow-md">
             <AccordionTrigger className="px-4 py-3 hover:no-underline bg-gradient-to-r from-tinder-rose/5 to-transparent">
               <h3 className="text-xl font-medium flex items-center text-tinder-rose">
@@ -423,3 +421,4 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
 };
 
 export default ProfileDetails;
+
