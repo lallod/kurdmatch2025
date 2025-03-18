@@ -3,7 +3,6 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Eye, Clock } from 'lucide-react';
 
 const ViewedMe = () => {
@@ -64,44 +63,28 @@ const ViewedMe = () => {
         </Badge>
       </div>
 
-      <Card className="overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Profile</TableHead>
-              <TableHead>Time</TableHead>
-              <TableHead>Match</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {viewedProfiles.map((profile) => (
-              <TableRow key={profile.id} className="hover:bg-muted/30">
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={profile.avatar} alt={profile.name} />
-                      <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-center gap-1">
-                        <span className="font-medium">{profile.name}</span>
-                        <span className="text-muted-foreground">{profile.age}</span>
-                      </div>
-                      {!profile.hasViewed && (
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
-                          New
-                        </Badge>
-                      )}
+      <div className="grid grid-cols-1 gap-4">
+        {viewedProfiles.map((profile) => (
+          <Card key={profile.id} className="overflow-hidden hover:bg-muted/30 transition-colors">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={profile.avatar} alt={profile.name} />
+                    <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="flex items-center gap-1">
+                      <span className="font-medium">{profile.name}</span>
+                      <span className="text-muted-foreground">{profile.age}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>{profile.viewedAt}</span>
                     </div>
                   </div>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span className="text-sm">{profile.viewedAt}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
+                </div>
+                <div className="flex flex-col items-end gap-2">
                   <Badge className={`${
                     profile.compatibilityScore > 90 
                       ? 'bg-green-100 text-green-700 border-green-200' 
@@ -109,14 +92,19 @@ const ViewedMe = () => {
                         ? 'bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20'
                         : 'bg-orange-100 text-orange-700 border-orange-200'
                   }`}>
-                    {profile.compatibilityScore}%
+                    {profile.compatibilityScore}% match
                   </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+                  {!profile.hasViewed && (
+                    <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                      New
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {viewedProfiles.length === 0 && (
         <div className="flex flex-col items-center justify-center h-[60vh] text-center">
