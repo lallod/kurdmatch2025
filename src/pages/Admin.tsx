@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church, Calendar, Lock, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles, Bot, Brain, Zap, Cpu, CircuitBoard, Wand2, Church, Calendar, Lock, AlertCircle, Map } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import DetailEditor from '@/components/DetailEditor';
@@ -419,6 +419,20 @@ const AdminDashboard = () => {
                         { name: "personalityType", label: "Personality Type", value: "ENFJ", type: "select" },
                       ]}
                       selectionMode={true}
+                    />
+                    
+                    <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
+                    
+                    <DetailEditor 
+                      icon={<Map size={18} />} 
+                      title="Interests & Hobbies" 
+                      fields={[
+                        { name: "interests", label: "Interests", value: "Hiking, Photography, Cooking, Yoga, Travel, Art, Reading, Board games", 
+                          type: "listInput" },
+                        { name: "hobbies", label: "Hobbies", value: "Film photography, Ceramics, Rock climbing, Cooking new cuisines", 
+                          type: "listInput" },
+                      ]}
+                      listMode={true}
                     />
                     
                     <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
