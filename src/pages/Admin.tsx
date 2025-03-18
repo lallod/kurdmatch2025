@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils } from 'lucide-react';
+import { ArrowLeft, Save, Image, User, Heart, BookOpen, Music, Coffee, Film, Utensils, Sparkles } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import DetailEditor from '@/components/DetailEditor';
@@ -85,7 +85,13 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="about">About</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="about">About</Label>
+                    <div className="text-xs bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent font-medium flex items-center">
+                      <Sparkles size={14} className="mr-1 text-tinder-orange" />
+                      AI Generated
+                    </div>
+                  </div>
                   <Textarea id="about" rows={6} defaultValue="Hi there! I'm Sophia, a UX designer with a passion for creating beautiful and functional digital experiences. When I'm not designing, you'll find me hiking in the mountains, trying new restaurants, or curling up with a good book. I believe in living life to the fullest and finding beauty in the small moments. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quiet evenings at home." />
                 </div>
               </CardContent>
