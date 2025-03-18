@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -78,6 +79,11 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
     fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
   );
 
+  // New state to track which field is being edited individually
+  const [fieldEditStates, setFieldEditStates] = useState<Record<string, boolean>>(
+    fields.reduce((acc, field) => ({ ...acc, [field.name]: false }), {})
+  );
+
   const handleFieldChange = (name: string, value: string) => {
     setEditedFields(prev => ({ ...prev, [name]: value }));
   };
@@ -102,6 +108,23 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
   const handleSave = () => {
     setEditMode(false);
     // Here you would typically save the data to your backend
+  };
+
+  // Toggle edit mode for a specific field
+  const toggleFieldEditMode = (fieldName: string) => {
+    setFieldEditStates(prev => ({ 
+      ...prev, 
+      [fieldName]: !prev[fieldName] 
+    }));
+  };
+
+  // Save a specific field
+  const saveField = (fieldName: string) => {
+    setFieldEditStates(prev => ({ 
+      ...prev, 
+      [fieldName]: false 
+    }));
+    // Here you would save only this specific field to your backend
   };
 
   // Get options for a field, either from the field itself or from predefined options
@@ -143,13 +166,31 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
             <div key={field.name} className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor={field.name}>{field.label}</Label>
+                {!editMode && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => toggleFieldEditMode(field.name)}
+                    className="text-primary"
+                  >
+                    {fieldEditStates[field.name] ? (
+                      <>
+                        <Save size={16} className="mr-1" /> Save
+                      </>
+                    ) : (
+                      <>
+                        <Edit size={16} className="mr-1" /> Edit
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
               
               <div className="flex flex-wrap gap-2 mb-2">
                 {listItems[field.name].map((item, index) => (
                   <Badge key={index} variant="secondary" className="pl-2 pr-1 py-1.5">
                     {item}
-                    {editMode && (
+                    {(editMode || fieldEditStates[field.name]) && (
                       <Button 
                         variant="ghost" 
                         size="icon" 
@@ -163,7 +204,7 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
                 ))}
               </div>
               
-              {editMode && (
+              {(editMode || fieldEditStates[field.name]) && (
                 <div className="flex gap-2">
                   <Input
                     id={`new-${field.name}`}
@@ -174,6 +215,14 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
                   />
                   <Button size="sm" onClick={() => handleAddItem(field.name)}>
                     <PlusCircle size={16} className="mr-1" /> Add
+                  </Button>
+                </div>
+              )}
+              
+              {fieldEditStates[field.name] && !editMode && (
+                <div className="flex justify-end mt-2">
+                  <Button size="sm" onClick={() => saveField(field.name)}>
+                    <Check size={16} className="mr-1" /> Save {field.label}
                   </Button>
                 </div>
               )}
@@ -190,9 +239,27 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
               <div key={field.name} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor={field.name}>{field.label}</Label>
+                  {!editMode && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => toggleFieldEditMode(field.name)}
+                      className="text-primary"
+                    >
+                      {fieldEditStates[field.name] ? (
+                        <>
+                          <Save size={16} className="mr-1" /> Save
+                        </>
+                      ) : (
+                        <>
+                          <Edit size={16} className="mr-1" /> Edit
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
                 
-                {editMode ? (
+                {(editMode || fieldEditStates[field.name]) ? (
                   <>
                     {fieldType === 'textarea' && (
                       <Textarea
@@ -242,6 +309,14 @@ const DetailEditor: React.FC<DetailEditorProps> = ({
                           </div>
                         ))}
                       </RadioGroup>
+                    )}
+                    
+                    {fieldEditStates[field.name] && !editMode && (
+                      <div className="flex justify-end mt-2">
+                        <Button size="sm" onClick={() => saveField(field.name)}>
+                          <Check size={16} className="mr-1" /> Save {field.label}
+                        </Button>
+                      </div>
                     )}
                   </>
                 ) : (
