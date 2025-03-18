@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,10 +11,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import DetailEditor from '@/components/DetailEditor';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const AdminDashboard = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("basic");
+  const [isSubscriber] = useState(false); // Mock subscription status - set to false by default
   
   const handleSave = () => {
     toast({
@@ -87,12 +89,46 @@ const AdminDashboard = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="about">About</Label>
-                    <div className="text-xs bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent font-medium flex items-center">
-                      <Sparkles size={14} className="mr-1 text-tinder-orange" />
-                      AI Generated
+                    <div className="flex items-center gap-2">
+                      <div className="text-xs bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent font-medium flex items-center">
+                        <Sparkles size={14} className="mr-1 text-tinder-orange" />
+                        AI Generated
+                      </div>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Badge variant="outline" className="text-xs border-tinder-rose text-tinder-rose cursor-pointer">
+                            Subscribers Only
+                          </Badge>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Subscriber Feature</DialogTitle>
+                            <DialogDescription>
+                              Editing AI-generated bio content is a premium feature available only to subscribers.
+                              {!isSubscriber && (
+                                <div className="mt-4">
+                                  <Button className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90">
+                                    Upgrade to Premium
+                                  </Button>
+                                </div>
+                              )}
+                            </DialogDescription>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
-                  <Textarea id="about" rows={6} defaultValue="Hi there! I'm Sophia, a UX designer with a passion for creating beautiful and functional digital experiences. When I'm not designing, you'll find me hiking in the mountains, trying new restaurants, or curling up with a good book. I believe in living life to the fullest and finding beauty in the small moments. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quiet evenings at home." />
+                  <Textarea 
+                    id="about" 
+                    rows={6} 
+                    defaultValue="Hi there! I'm Sophia, a UX designer with a passion for creating beautiful and functional digital experiences. When I'm not designing, you'll find me hiking in the mountains, trying new restaurants, or curling up with a good book. I believe in living life to the fullest and finding beauty in the small moments. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quiet evenings at home." 
+                    disabled={!isSubscriber}
+                    className={!isSubscriber ? "opacity-70 cursor-not-allowed" : ""}
+                  />
+                  {!isSubscriber && (
+                    <p className="text-xs text-tinder-rose mt-1">Subscribe to premium to edit AI-generated content</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
