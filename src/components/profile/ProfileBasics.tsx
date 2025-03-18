@@ -27,10 +27,12 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
   formatList,
   isMobile
 }) => {
-  // Convert height from feet/inches to centimeters
-  const heightInCm = details.height.includes("'") 
-    ? `${Math.round(parseInt(details.height.split("'")[0]) * 30.48 + parseInt(details.height.split("'")[1]) * 2.54)} cm` 
-    : details.height;
+  // Check if height is already in cm format, otherwise convert from feet/inches
+  const heightInCm = details.height.includes("cm") 
+    ? details.height // Already in cm format
+    : details.height.includes("'") 
+      ? `${Math.round(parseInt(details.height.split("'")[0]) * 30.48 + parseInt(details.height.split("'")[1]) * 2.54)} cm` 
+      : details.height;
 
   return (
     <div className="space-y-1 py-4">
