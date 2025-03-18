@@ -132,14 +132,22 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
 
   // For desktop, we'll show multiple photos
   const getMultiPhotoLayout = () => {
+    // Ensure we always have exactly 4 photos to display
+    const displayPhotos = photos.length >= 4 ? photos.slice(0, 4) : [...photos];
+    
+    // Fill missing photos with placeholders if needed
+    while (displayPhotos.length < 4) {
+      displayPhotos.push("https://images.unsplash.com/photo-1518770660439-4636190af475");
+    }
+    
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-2 h-full">
-        {photos.map((photo, index) => (
+      <div className="grid grid-cols-2 gap-2 p-2 h-full">
+        {displayPhotos.map((photo, index) => (
           <div 
             key={index} 
             className={cn(
               "relative rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity",
-              index === 0 ? "col-span-2 row-span-2" : ""
+              index === 0 ? "col-span-1 row-span-1" : ""
             )}
             onClick={() => {
               api?.scrollTo(index);
@@ -148,12 +156,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             <img
               src={photo}
               alt={`Photo ${index + 1}`}
-              className={cn(
-                "absolute inset-0 w-full h-full object-cover transition-opacity duration-300",
-                isLoaded[index] ? "opacity-100" : "opacity-0"
-              )}
+              className="w-full h-full object-cover transition-opacity duration-300"
               onLoad={() => handleImageLoad(index)}
             />
+            {index === 0 && (
+              <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                Main Photo
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -163,7 +173,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   return (
     <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
       {!isMobile && (
-        <div className="hidden md:block w-full h-full">
+        <div className="block md:block w-full h-full border border-tinder-rose/20 rounded-xl overflow-hidden">
           {getMultiPhotoLayout()}
         </div>
       )}
@@ -240,4 +250,3 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
 };
 
 export default PhotoGallery;
-
