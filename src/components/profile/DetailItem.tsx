@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 
 interface DetailItemProps {
   icon: React.ReactNode;
@@ -10,7 +9,8 @@ interface DetailItemProps {
 }
 
 const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value }) => {
-  const isMobile = false; // Will be replaced by the useIsMobile hook in the parent component
+  // This will be replaced by the actual isMobile value from the parent component
+  const isMobile = false;
   
   if (isMobile) {
     return (
