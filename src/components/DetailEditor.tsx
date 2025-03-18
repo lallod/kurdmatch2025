@@ -6,11 +6,46 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, X, Edit, Check } from 'lucide-react';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
+
+// Define options for common dropdown fields
+const OPTIONS = {
+  bodyType: ['Athletic', 'Average', 'Slim', 'Muscular', 'Curvy', 'Full Figured'],
+  height: ['5\'0"', '5\'1"', '5\'2"', '5\'3"', '5\'4"', '5\'5"', '5\'6"', '5\'7"', '5\'8"', '5\'9"', '5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"', '6\'4"'],
+  ethnicity: ['White', 'Black', 'Hispanic', 'Asian', 'Middle Eastern', 'Mixed', 'Other'],
+  zodiacSign: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'],
+  personalityType: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'],
+  relationshipGoals: ['Casual dating', 'Long-term relationship', 'Marriage', 'Not sure yet', 'Just making friends'],
+  wantChildren: ['Want children', 'Don\'t want children', 'Have children', 'Open to children'],
+  childrenStatus: ['No children', 'Have children', 'Have children and want more'],
+  familyCloseness: ['Very close with family', 'Somewhat close with family', 'Not close with family'],
+  exerciseHabits: ['Regular - 4-5 times per week', 'Occasional - 1-3 times per week', 'Rarely', 'Never'],
+  sleepSchedule: ['Early bird', 'Night owl', 'Regular schedule', 'Irregular schedule'],
+  financialHabits: ['Saver', 'Spender', 'Balanced', 'Saver with occasional splurges', 'Financial planner'],
+  communicationStyle: ['Direct and thoughtful', 'Emotionally expressive', 'Reserved and thoughtful', 'Open and honest', 'Analytical'],
+  workLifeBalance: ['Work focused', 'Life focused', 'Balanced', 'Values boundaries between work and personal life'],
+  favoriteSeason: ['Spring', 'Summer', 'Fall', 'Winter'],
+  drinking: ['Never', 'Rarely', 'Socially', 'Regularly'],
+  smoking: ['Never', 'Socially', 'Regularly', 'Trying to quit'],
+  religion: ['Christian', 'Catholic', 'Jewish', 'Muslim', 'Hindu', 'Buddhist', 'Spiritual', 'Agnostic', 'Atheist', 'Other'],
+  politicalViews: ['Liberal', 'Moderate', 'Conservative', 'Not political', 'Other'],
+  loveLanguage: ['Quality Time', 'Physical Touch', 'Words of Affirmation', 'Acts of Service', 'Receiving Gifts'],
+};
 
 interface Field {
   name: string;
   label: string;
   value: string;
+  type?: 'text' | 'select' | 'radio' | 'checkbox' | 'textarea';
+  options?: string[];
 }
 
 interface DetailEditorProps {
@@ -18,9 +53,16 @@ interface DetailEditorProps {
   title: string;
   fields: Field[];
   listMode?: boolean;
+  selectionMode?: boolean;
 }
 
-const DetailEditor: React.FC<DetailEditorProps> = ({ icon, title, fields, listMode = false }) => {
+const DetailEditor: React.FC<DetailEditorProps> = ({ 
+  icon, 
+  title, 
+  fields, 
+  listMode = false,
+  selectionMode = false
+}) => {
   const [editMode, setEditMode] = useState(false);
   const [editedFields, setEditedFields] = useState<Record<string, string>>(
     fields.reduce((acc, field) => ({ ...acc, [field.name]: field.value }), {})
@@ -61,6 +103,12 @@ const DetailEditor: React.FC<DetailEditorProps> = ({ icon, title, fields, listMo
   const handleSave = () => {
     setEditMode(false);
     // Here you would typically save the data to your backend
+  };
+
+  // Get options for a field, either from the field itself or from predefined options
+  const getOptions = (field: Field) => {
+    if (field.options) return field.options;
+    return OPTIONS[field.name as keyof typeof OPTIONS] || [];
   };
 
   return (
@@ -133,29 +181,72 @@ const DetailEditor: React.FC<DetailEditorProps> = ({ icon, title, fields, listMo
         </div>
       ) : (
         <div className="space-y-4">
-          {fields.map((field) => (
-            <div key={field.name} className="space-y-2">
-              <Label htmlFor={field.name}>{field.label}</Label>
-              {editMode ? (
-                field.value.length > 50 ? (
-                  <Textarea
-                    id={field.name}
-                    value={editedFields[field.name]}
-                    onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                    rows={3}
-                  />
+          {fields.map((field) => {
+            const fieldType = field.type || (selectionMode && getOptions(field).length > 0 ? 'select' : 'text');
+            const options = getOptions(field);
+            
+            return (
+              <div key={field.name} className="space-y-2">
+                <Label htmlFor={field.name}>{field.label}</Label>
+                
+                {editMode ? (
+                  <>
+                    {fieldType === 'textarea' && (
+                      <Textarea
+                        id={field.name}
+                        value={editedFields[field.name]}
+                        onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                        rows={3}
+                      />
+                    )}
+                    
+                    {fieldType === 'text' && (
+                      <Input
+                        id={field.name}
+                        value={editedFields[field.name]}
+                        onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                      />
+                    )}
+                    
+                    {fieldType === 'select' && options.length > 0 && (
+                      <Select
+                        value={editedFields[field.name]}
+                        onValueChange={(value) => handleFieldChange(field.name, value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={`Select ${field.label}`} />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-72">
+                          {options.map((option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                    
+                    {fieldType === 'radio' && options.length > 0 && (
+                      <RadioGroup
+                        value={editedFields[field.name]}
+                        onValueChange={(value) => handleFieldChange(field.name, value)}
+                        className="flex flex-col space-y-1"
+                      >
+                        {options.map((option) => (
+                          <div key={option} className="flex items-center space-x-2">
+                            <RadioGroupItem value={option} id={`${field.name}-${option}`} />
+                            <Label htmlFor={`${field.name}-${option}`}>{option}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                  </>
                 ) : (
-                  <Input
-                    id={field.name}
-                    value={editedFields[field.name]}
-                    onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                  />
-                )
-              ) : (
-                <div className="p-2 rounded-md bg-secondary/50">{editedFields[field.name]}</div>
-              )}
-            </div>
-          ))}
+                  <div className="p-2 rounded-md bg-secondary/50">{editedFields[field.name]}</div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

@@ -282,12 +282,13 @@ const AdminDashboard = () => {
                       icon={<User size={18} />} 
                       title="Basic Info" 
                       fields={[
-                        { name: "height", label: "Height", value: "5'7\"" },
-                        { name: "bodyType", label: "Body Type", value: "Athletic" },
-                        { name: "ethnicity", label: "Ethnicity", value: "Mixed" },
-                        { name: "zodiacSign", label: "Zodiac Sign", value: "Libra" },
-                        { name: "personalityType", label: "Personality Type", value: "ENFJ" },
-                      ]} 
+                        { name: "height", label: "Height", value: "5'7\"", type: "select" },
+                        { name: "bodyType", label: "Body Type", value: "Athletic", type: "select" },
+                        { name: "ethnicity", label: "Ethnicity", value: "Mixed", type: "select" },
+                        { name: "zodiacSign", label: "Zodiac Sign", value: "Libra", type: "select" },
+                        { name: "personalityType", label: "Personality Type", value: "ENFJ", type: "select" },
+                      ]}
+                      selectionMode={true}
                     />
                     
                     <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
@@ -296,14 +297,16 @@ const AdminDashboard = () => {
                       icon={<Heart size={18} />} 
                       title="Relationship" 
                       fields={[
-                        { name: "relationshipGoals", label: "Relationship Goals", value: "Looking for a serious relationship" },
-                        { name: "wantChildren", label: "Children Plans", value: "Open to children" },
-                        { name: "childrenStatus", label: "Children Status", value: "No children" },
-                        { name: "familyCloseness", label: "Family Closeness", value: "Very close with family" },
+                        { name: "relationshipGoals", label: "Relationship Goals", value: "Looking for a serious relationship", type: "select" },
+                        { name: "wantChildren", label: "Children Plans", value: "Open to children", type: "select" },
+                        { name: "childrenStatus", label: "Children Status", value: "No children", type: "select" },
+                        { name: "familyCloseness", label: "Family Closeness", value: "Very close with family", type: "select" },
                         { name: "friendshipStyle", label: "Friendship Style", value: "Small circle of close friends" },
-                        { name: "loveLanguage", label: "Love Language", value: "Quality Time, Words of Affirmation" },
+                        { name: "loveLanguage", label: "Love Language", value: "Quality Time, Words of Affirmation", type: "select", 
+                          options: ["Quality Time", "Words of Affirmation", "Physical Touch", "Acts of Service", "Receiving Gifts"] },
                         { name: "idealDate", label: "Ideal Date", value: "A hike followed by dinner at a local restaurant" },
-                      ]} 
+                      ]}
+                      selectionMode={true}
                     />
                     
                     <Separator className="bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20" />
@@ -312,17 +315,19 @@ const AdminDashboard = () => {
                       icon={<BookOpen size={18} />} 
                       title="Lifestyle & Interests" 
                       fields={[
-                        { name: "exerciseHabits", label: "Exercise Habits", value: "Regular - 4-5 times per week" },
-                        { name: "sleepSchedule", label: "Sleep Schedule", value: "Early bird" },
-                        { name: "financialHabits", label: "Financial Habits", value: "Saver with occasional splurges" },
-                        { name: "workLifeBalance", label: "Work-Life Balance", value: "Values boundaries between work and personal life" },
+                        { name: "exerciseHabits", label: "Exercise Habits", value: "Regular - 4-5 times per week", type: "select" },
+                        { name: "sleepSchedule", label: "Sleep Schedule", value: "Early bird", type: "select" },
+                        { name: "financialHabits", label: "Financial Habits", value: "Saver with occasional splurges", type: "select" },
+                        { name: "workLifeBalance", label: "Work-Life Balance", value: "Values boundaries between work and personal life", type: "select" },
                         { name: "careerAmbitions", label: "Career Ambitions", value: "Working towards creative director position" },
                         { name: "weekendActivities", label: "Weekend Activities", value: "Farmers markets, Hiking trails, Art exhibitions, Cozy coffee shops" },
                         { name: "dreamVacation", label: "Dream Vacation", value: "Backpacking through Southeast Asia" },
-                        { name: "travelFrequency", label: "Travel Frequency", value: "Several times per year" },
-                        { name: "communicationStyle", label: "Communication Style", value: "Direct and thoughtful" },
+                        { name: "travelFrequency", label: "Travel Frequency", value: "Several times per year",
+                          options: ["Never", "Rarely", "Yearly", "Several times per year", "Monthly"] },
+                        { name: "communicationStyle", label: "Communication Style", value: "Direct and thoughtful", type: "select" },
                         { name: "petPeeves", label: "Pet Peeves", value: "Tardiness, Poor communication, Rudeness to service workers" },
-                      ]} 
+                      ]}
+                      selectionMode={true}
                     />
                   </div>
                 </CardContent>
