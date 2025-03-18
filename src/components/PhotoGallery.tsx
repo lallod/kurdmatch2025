@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Heart, X, Star, Info, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -294,8 +295,18 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
               <img 
                 src={photos[selectedPhotoIndex]} 
                 alt={`Full size photo ${selectedPhotoIndex + 1}`}
-                className="w-full h-full object-contain" 
+                className="max-h-screen max-w-screen w-full h-full object-contain" 
               />
+            </div>
+            
+            <div className="absolute bottom-16 left-0 right-0 flex justify-center gap-2 z-20">
+              {photos.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${selectedPhotoIndex === index ? 'bg-white' : 'bg-white/50'}`}
+                  onClick={() => setSelectedPhotoIndex(index)}
+                />
+              ))}
             </div>
             
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
