@@ -130,10 +130,49 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
     </div>
   );
 
+  // For desktop, we'll show multiple photos
+  const getMultiPhotoLayout = () => {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-2 h-full">
+        {photos.map((photo, index) => (
+          <div 
+            key={index} 
+            className={cn(
+              "relative rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity",
+              index === 0 ? "col-span-2 row-span-2" : ""
+            )}
+            onClick={() => {
+              api?.scrollTo(index);
+            }}
+          >
+            <img
+              src={photo}
+              alt={`Photo ${index + 1}`}
+              className={cn(
+                "absolute inset-0 w-full h-full object-cover transition-opacity duration-300",
+                isLoaded[index] ? "opacity-100" : "opacity-0"
+              )}
+              onLoad={() => handleImageLoad(index)}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
+      {!isMobile && (
+        <div className="hidden md:block w-full h-full">
+          {getMultiPhotoLayout()}
+        </div>
+      )}
+      
       <div 
-        className="relative w-full aspect-[3/4] md:aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-tinder-rose/20"
+        className={cn(
+          "relative w-full aspect-[3/4] md:aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-tinder-rose/20",
+          !isMobile && "hidden"
+        )}
         ref={carouselRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -201,3 +240,4 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
 };
 
 export default PhotoGallery;
+
