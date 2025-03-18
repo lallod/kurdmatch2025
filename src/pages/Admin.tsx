@@ -100,9 +100,8 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="outline" className="ai-badge flex items-center gap-1">
-              <Brain size={14} />
-              <span>AI Powered</span>
+            <Badge variant="icon" className="ai-badge">
+              <Brain size={16} />
             </Badge>
             <Button 
               onClick={handleSave} 
@@ -642,4 +641,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
