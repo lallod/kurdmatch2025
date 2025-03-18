@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Heart, X, Star, Info, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -17,6 +16,7 @@ import {
   DialogContent,
   DialogClose,
   DialogTitle,
+  DialogDescription,
 } from './ui/dialog';
 
 interface PhotoGalleryProps {
@@ -277,6 +277,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       <Dialog open={photoDialogOpen} onOpenChange={setPhotoDialogOpen}>
         <DialogContent className="max-w-none w-screen h-screen p-0 m-0 border-none bg-black">
           <DialogTitle className="sr-only">Photo Gallery</DialogTitle>
+          <DialogDescription className="sr-only">
+            View full-size photos
+          </DialogDescription>
           <DialogClose className="absolute right-4 top-4 z-50 bg-black/50 p-2 rounded-full text-white hover:bg-black/70">
             <X size={20} />
           </DialogClose>
@@ -297,15 +300,11 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             </button>
             
             <div className="w-full h-full flex items-center justify-center">
-              <div className="h-full max-h-screen flex items-center justify-center">
-                <AspectRatio ratio={9/16} className="h-full max-h-[80vh] w-auto">
-                  <img 
-                    src={photos[selectedPhotoIndex]} 
-                    alt={`Full size photo ${selectedPhotoIndex + 1}`}
-                    className="w-full h-full object-cover" 
-                  />
-                </AspectRatio>
-              </div>
+              <img 
+                src={photos[selectedPhotoIndex]} 
+                alt={`Full size photo ${selectedPhotoIndex + 1}`}
+                className="h-full w-auto max-h-[calc(100vh-80px)] object-contain" 
+              />
             </div>
             
             <div className="absolute bottom-16 left-0 right-0 flex justify-center gap-2 z-20">
