@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -76,7 +75,6 @@ interface ProfileDetailsProps {
     personalityType: string;
     sleepSchedule: string;
     travelFrequency: string;
-    // Extended info fields
     communicationStyle?: string;
     loveLanguage?: string;
     petPeeves?: string[] | string;
@@ -102,7 +100,6 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
     ? "rounded-full bg-gray-800 text-white border-gray-700" 
     : "rounded-full bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 border-tinder-rose/20 text-tinder-rose";
 
-  // Helper function to format arrays or strings for display
   const formatList = (value: string[] | string | undefined) => {
     if (!value) return "";
     if (Array.isArray(value)) return value.join(", ");
@@ -111,10 +108,47 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
 
   if (isMobile) {
     return (
-      <section className="w-full animate-fade-up">
-        <div className="mb-6">
-          <h2 className="text-2xl font-medium text-white mb-3">About Me</h2>
-          <p className="text-gray-300 leading-relaxed">{details.about}</p>
+      <section className="w-full animate-fade-up px-4 py-6">
+        <div className="mb-6 bg-gray-900 rounded-xl p-5 shadow-lg border border-gray-800">
+          <h2 className="text-2xl font-medium text-white mb-3 flex items-center">
+            <User size={20} className="mr-2 text-tinder-rose" />
+            About Me
+          </h2>
+          <p className="text-gray-300 leading-relaxed border-l-4 border-tinder-rose/40 pl-4 italic">{details.about}</p>
+          
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="bg-gray-800/60 rounded-lg p-3 flex flex-col items-center text-center">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-tinder-rose/20 mb-2">
+                <GraduationCap size={16} className="text-tinder-rose" />
+              </div>
+              <span className="text-xs text-gray-400">Education</span>
+              <span className="text-sm text-white font-medium mt-1">{details.education.split(',')[0]}</span>
+            </div>
+            
+            <div className="bg-gray-800/60 rounded-lg p-3 flex flex-col items-center text-center">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-tinder-orange/20 mb-2">
+                <Briefcase size={16} className="text-tinder-orange" />
+              </div>
+              <span className="text-xs text-gray-400">Work</span>
+              <span className="text-sm text-white font-medium mt-1">{details.occupation}</span>
+            </div>
+            
+            <div className="bg-gray-800/60 rounded-lg p-3 flex flex-col items-center text-center">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-tinder-peach/20 mb-2">
+                <Heart size={16} className="text-tinder-peach" />
+              </div>
+              <span className="text-xs text-gray-400">Looking for</span>
+              <span className="text-sm text-white font-medium mt-1">{details.relationshipGoals.split('looking for ')[1]}</span>
+            </div>
+            
+            <div className="bg-gray-800/60 rounded-lg p-3 flex flex-col items-center text-center">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-400/20 mb-2">
+                <Star size={16} className="text-blue-400" />
+              </div>
+              <span className="text-xs text-gray-400">Zodiac</span>
+              <span className="text-sm text-white font-medium mt-1">{details.zodiacSign}</span>
+            </div>
+          </div>
         </div>
         
         <Tabs defaultValue="basics" className="w-full">
@@ -481,7 +515,6 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
     );
   }
 
-  // Desktop view
   return (
     <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fade-up" style={{ animationDelay: '0.2s' }}>
       <div className="mb-12">
@@ -501,11 +534,61 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
         <TabsContent value="about" className="space-y-8 animate-fade-up">
           <Card className="p-6 shadow-lg rounded-xl bg-white/90 backdrop-blur-sm border-tinder-rose/10">
             <div className="mb-6">
-              <h3 className="text-xl font-medium mb-4 text-tinder-rose">Bio</h3>
-              <p className="text-muted-foreground leading-relaxed">{details.about}</p>
+              <h3 className="text-xl font-medium mb-4 text-tinder-rose flex items-center">
+                <User size={18} className="mr-2" />
+                Bio
+              </h3>
+              <div className="bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 p-5 rounded-lg border-l-4 border-tinder-rose">
+                <p className="text-muted-foreground leading-relaxed italic">{details.about}</p>
+              </div>
             </div>
             
             <Separator className="my-6" />
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-tinder-rose/10 mr-3">
+                    <GraduationCap size={16} className="text-tinder-rose" />
+                  </div>
+                  <h4 className="text-sm font-medium">Education</h4>
+                </div>
+                <p className="text-sm text-gray-600">{details.education}</p>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-tinder-orange/10 mr-3">
+                    <Briefcase size={16} className="text-tinder-orange" />
+                  </div>
+                  <h4 className="text-sm font-medium">Work</h4>
+                </div>
+                <p className="text-sm text-gray-600">{details.occupation} at {details.company}</p>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-tinder-peach/10 mr-3">
+                    <Heart size={16} className="text-tinder-peach" />
+                  </div>
+                  <h4 className="text-sm font-medium">Relationship Goals</h4>
+                </div>
+                <p className="text-sm text-gray-600">{details.relationshipGoals}</p>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-400/10 mr-3">
+                    <Star size={16} className="text-blue-400" />
+                  </div>
+                  <h4 className="text-sm font-medium">Personality</h4>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline" className={tinderBadgeStyle}>{details.zodiacSign}</Badge>
+                  <Badge variant="outline" className={tinderBadgeStyle}>{details.personalityType}</Badge>
+                </div>
+              </div>
+            </div>
             
             <div className="space-y-1">
               <DetailItem 
@@ -516,40 +599,6 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
                     <Badge variant="outline" className={tinderBadgeStyle}>{details.height}</Badge>
                     <Badge variant="outline" className={tinderBadgeStyle}>{details.bodyType}</Badge>
                     <Badge variant="outline" className={tinderBadgeStyle}>{details.ethnicity}</Badge>
-                  </div>
-                } 
-              />
-              
-              <Separator />
-              
-              <DetailItem 
-                icon={<Star size={18} />} 
-                label="Zodiac & Personality" 
-                value={
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    <Badge variant="outline" className={tinderBadgeStyle}>{details.zodiacSign}</Badge>
-                    <Badge variant="outline" className={tinderBadgeStyle}>{details.personalityType}</Badge>
-                  </div>
-                } 
-              />
-              
-              <Separator />
-              
-              <DetailItem 
-                icon={<GraduationCap size={18} />} 
-                label="Education" 
-                value={details.education} 
-              />
-              
-              <Separator />
-              
-              <DetailItem 
-                icon={<Briefcase size={18} />} 
-                label="Work" 
-                value={
-                  <div>
-                    <div>{details.occupation}</div>
-                    <div className="text-sm text-muted-foreground">{details.company}</div>
                   </div>
                 } 
               />
