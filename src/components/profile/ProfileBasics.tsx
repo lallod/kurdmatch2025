@@ -27,12 +27,35 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
   formatList,
   isMobile
 }) => {
-  // Check if height is already in cm format, otherwise convert from feet/inches
-  const heightInCm = details.height.includes("cm") 
-    ? details.height // Already in cm format
-    : details.height.includes("'") 
-      ? `${Math.round(parseInt(details.height.split("'")[0]) * 30.48 + parseInt(details.height.split("'")[1]) * 2.54)} cm` 
-      : details.height;
+  // Function to convert height from feet/inches to cm
+  const convertHeightToCm = (height: string): string => {
+    // If already contains "cm", return as is
+    if (height.toLowerCase().includes("cm")) {
+      return height;
+    }
+    
+    // If in format like "5'7"" or similar feet/inches format
+    if (height.includes("'")) {
+      const parts = height.split("'");
+      const feet = parseInt(parts[0], 10);
+      const inches = parts[1] ? parseInt(parts[1], 10) : 0;
+      
+      // Convert to cm: 1 foot = 30.48 cm, 1 inch = 2.54 cm
+      const cm = Math.round(feet * 30.48 + inches * 2.54);
+      return `${cm} cm`;
+    }
+    
+    // If it's already a number (assuming in cm)
+    if (!isNaN(Number(height))) {
+      return `${height} cm`;
+    }
+    
+    // Return original if format is not recognized
+    return height;
+  };
+
+  // Get the height in cm format
+  const heightInCm = convertHeightToCm(details.height);
 
   return (
     <div className="space-y-1 py-4">
