@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Heart, X, Star, Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { AspectRatio } from './ui/aspect-ratio';
 import { 
   Carousel,
   CarouselContent,
@@ -292,11 +293,15 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
             </button>
             
             <div className="w-full h-full flex items-center justify-center">
-              <img 
-                src={photos[selectedPhotoIndex]} 
-                alt={`Full size photo ${selectedPhotoIndex + 1}`}
-                className="max-h-screen max-w-screen w-full h-full object-contain" 
-              />
+              <div className="w-auto h-full max-w-[calc(9/16*100vh)] mx-auto flex items-center">
+                <AspectRatio ratio={9/16} className="h-full w-full">
+                  <img 
+                    src={photos[selectedPhotoIndex]} 
+                    alt={`Full size photo ${selectedPhotoIndex + 1}`}
+                    className="w-full h-full object-cover" 
+                  />
+                </AspectRatio>
+              </div>
             </div>
             
             <div className="absolute bottom-16 left-0 right-0 flex justify-center gap-2 z-20">
