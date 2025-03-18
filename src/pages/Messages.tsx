@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Paperclip, Mic } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -47,7 +46,7 @@ const Messages = () => {
     {
       id: 3,
       name: "Sophia Rodriguez",
-      avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=150&q=80",
+      avatar: "https://images.unsplash.com/photo-1518770660439-4636190af44d?auto=format&fit=crop&w=150&q=80",
       lastMessage: "Did you see that new movie we talked about?",
       time: "2 days ago",
       unread: false,
@@ -160,9 +159,6 @@ const Messages = () => {
 
         {/* Message input */}
         <div className="border-t p-3 flex items-end gap-2">
-          <Button variant="ghost" size="icon" className="flex-shrink-0">
-            <Paperclip className="h-5 w-5" />
-          </Button>
           <Textarea 
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
