@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { 
-  BookOpen, Film, Music, Utensils, Headphones, Pencil
+  BookOpen, Film, Music, Utensils, Headphones, Pencil, Youtube, Spotify
 } from 'lucide-react';
 
 interface ProfileFavoritesProps {
@@ -25,6 +25,18 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
   formatList,
   isMobile
 }) => {
+  // Helper function to determine if a music entry is from Spotify or YouTube
+  const getMusicIcon = (music: string) => {
+    const lowerCaseMusic = music.toLowerCase();
+    if (lowerCaseMusic.includes('spotify') || lowerCaseMusic.includes('spoti.fi')) {
+      return <Spotify size={12} className="ml-1 text-green-500" />;
+    }
+    if (lowerCaseMusic.includes('youtube') || lowerCaseMusic.includes('youtu.be')) {
+      return <Youtube size={12} className="ml-1 text-red-500" />;
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-6 py-4">
       <div>
@@ -58,7 +70,12 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
         </div>
         <div className="flex flex-wrap gap-2">
           {details.favoriteMusic.map((music, index) => (
-            <Badge key={index} variant="outline" className={tinderBadgeStyle}>{music}</Badge>
+            <Badge key={index} variant="outline" className={tinderBadgeStyle}>
+              <span className="flex items-center">
+                {music}
+                {getMusicIcon(music)}
+              </span>
+            </Badge>
           ))}
         </div>
       </div>
