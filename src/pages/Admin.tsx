@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -96,7 +97,7 @@ const AdminDashboard = () => {
             </Link>
             <div className="flex items-center">
               <Bot size={20} className="mr-2 text-tinder-rose" />
-              <h1 className="text-xl font-semibold ai-text-gradient">AI Admin Console</h1>
+              <h1 className="text-xl font-semibold ai-text-gradient">Edit Profile</h1>
             </div>
           </div>
           <div className="flex items-center gap-3">
