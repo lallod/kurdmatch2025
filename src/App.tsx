@@ -29,6 +29,7 @@ const App = () => (
             <Route path="/liked-me" element={<LikedMe />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/my-profile" element={<MyProfile />} />
+            <Route path="/profile/:id" element={<Index />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNavigation />

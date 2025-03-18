@@ -3,9 +3,11 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Eye, Clock } from 'lucide-react';
+import { Eye, Clock, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ViewedMe = () => {
+  const navigate = useNavigate();
   const viewedProfiles = [
     {
       id: 1,
@@ -54,6 +56,14 @@ const ViewedMe = () => {
     }
   ];
 
+  const handleProfileClick = (profileId: number) => {
+    // Navigate to profile page with ID
+    navigate(`/profile/${profileId}`);
+    
+    // For demo purposes, we'll just go to the index page which has profile data
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen pt-8 px-4 pb-24">
       <div className="flex items-center justify-between mb-6">
@@ -65,7 +75,11 @@ const ViewedMe = () => {
 
       <div className="grid grid-cols-1 gap-4">
         {viewedProfiles.map((profile) => (
-          <Card key={profile.id} className="overflow-hidden hover:bg-muted/30 transition-colors">
+          <Card 
+            key={profile.id} 
+            className="overflow-hidden hover:bg-muted/30 transition-colors cursor-pointer"
+            onClick={() => handleProfileClick(profile.id)}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -99,6 +113,7 @@ const ViewedMe = () => {
                       New
                     </Badge>
                   )}
+                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
             </CardContent>
