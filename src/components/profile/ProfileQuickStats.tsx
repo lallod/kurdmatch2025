@@ -119,11 +119,10 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           <div className={iconContainerClass}>
             <Star size={16} className="text-blue-400" />
           </div>
-          <h4 className="text-sm font-medium">Personality</h4>
+          <h4 className="text-sm font-medium">Zodiac</h4>
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline" className={`${tinderBadgeStyle} transition-all duration-300 hover:shadow-[0_0_10px_rgba(253,41,123,0.3)]`}>{zodiacSign}</Badge>
-          <Badge variant="outline" className={`${tinderBadgeStyle} transition-all duration-300 hover:shadow-[0_0_10px_rgba(253,41,123,0.3)]`}>{personalityType}</Badge>
         </div>
       </div>
     </div>
@@ -131,4 +130,3 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
 };
 
 export default ProfileQuickStats;
-
