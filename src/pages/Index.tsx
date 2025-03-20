@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -6,6 +7,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { ArrowLeft, ArrowRight, Heart, X, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
+import MatchPopup from '@/components/MatchPopup';
 
 const profiles = [
   {
@@ -253,6 +255,8 @@ const Index = () => {
   const [startX, setStartX] = useState(0);
   const [offsetX, setOffsetX] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
+  const [showMatchPopup, setShowMatchPopup] = useState(false);
+  const [matchedProfile, setMatchedProfile] = useState<{id: number, name: string, profileImage: string} | null>(null);
   const isMobile = useIsMobile();
 
   const profileData = profiles[currentProfileIndex];
@@ -266,9 +270,36 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Simulate a 40% chance of a match when liking someone
+  const checkForMatch = (profileId: number) => {
+    const isMatch = Math.random() < 0.4; // 40% chance of match
+    
+    if (isMatch) {
+      const profile = profiles.find(p => p.id === profileId);
+      if (profile) {
+        setMatchedProfile({
+          id: profile.id,
+          name: profile.name,
+          profileImage: profile.profileImage
+        });
+        setShowMatchPopup(true);
+      }
+    }
+    
+    return isMatch;
+  };
+
+  // Filter already viewed profiles to avoid showing them again
+  const getNextUnviewedProfile = () => {
+    // In a real app, you'd have a more sophisticated algorithm
+    // Here we just wrap around the existing profiles array
+    const nextIndex = (currentProfileIndex + 1) % profiles.length;
+    return nextIndex;
+  };
+
   const handleDislike = () => {
     // Go to next profile
-    const nextIndex = (currentProfileIndex + 1) % profiles.length;
+    const nextIndex = getNextUnviewedProfile();
     setCurrentProfileIndex(nextIndex);
     toast.info(`You passed on ${profileData.name}`, {
       description: "Showing you the next profile",
@@ -278,14 +309,21 @@ const Index = () => {
   };
 
   const handleLike = () => {
-    // Go to next profile with like notification
-    const nextIndex = (currentProfileIndex + 1) % profiles.length;
+    // Check if it's a match
+    const isMatch = checkForMatch(profileData.id);
+    
+    // Go to next profile
+    const nextIndex = getNextUnviewedProfile();
     setCurrentProfileIndex(nextIndex);
-    toast.success(`You liked ${profileData.name}!`, {
-      description: "We'll let them know",
-      position: "bottom-center",
-      duration: 3000,
-    });
+    
+    // Only show the toast if there's no match (otherwise the popup will show)
+    if (!isMatch) {
+      toast.success(`You liked ${profileData.name}!`, {
+        description: "We'll let them know",
+        position: "bottom-center",
+        duration: 3000,
+      });
+    }
   };
 
   // Touch handlers for swiping
@@ -419,6 +457,13 @@ const Index = () => {
           <Heart size={30} className="text-green-500" />
         </Button>
       </div>
+
+      {/* Match Popup */}
+      <MatchPopup 
+        isOpen={showMatchPopup}
+        onClose={() => setShowMatchPopup(false)}
+        matchedProfile={matchedProfile}
+      />
     </main>
   );
 };
