@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Settings, Pencil } from 'lucide-react';
+import { Settings, Pencil, Bell, Lock, Eye, ShieldAlert, KeyRound, Trash2 } from 'lucide-react';
 
 const AccountSettings: React.FC = () => {
   return (
@@ -10,7 +10,7 @@ const AccountSettings: React.FC = () => {
         <h2 className="text-xl font-semibold">Account Settings</h2>
         <Button variant="outline" size="sm" className="gap-2">
           <Settings size={16} />
-          Manage
+          Manage Settings
         </Button>
       </div>
       <p className="text-muted-foreground mb-6">
@@ -20,7 +20,10 @@ const AccountSettings: React.FC = () => {
       <div className="space-y-6">
         <div className="border rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium">Profile Visibility</h3>
+            <div className="flex items-center gap-2">
+              <Eye size={18} className="text-tinder-rose" />
+              <h3 className="font-medium">Profile Visibility</h3>
+            </div>
             <Button variant="edit">
               <Pencil size={16} />
             </Button>
@@ -28,13 +31,19 @@ const AccountSettings: React.FC = () => {
           <p className="text-sm text-muted-foreground mb-4">Control who can see your profile</p>
           <div className="flex items-center justify-between">
             <span>Show me in discovery</span>
-            <Button variant="outline" size="sm">Edit</Button>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Settings size={14} />
+              Edit
+            </Button>
           </div>
         </div>
         
         <div className="border rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium">Notification Settings</h3>
+            <div className="flex items-center gap-2">
+              <Bell size={18} className="text-tinder-rose" />
+              <h3 className="font-medium">Notification Settings</h3>
+            </div>
             <Button variant="edit">
               <Pencil size={16} />
             </Button>
@@ -42,13 +51,19 @@ const AccountSettings: React.FC = () => {
           <p className="text-sm text-muted-foreground mb-4">Manage your notification preferences</p>
           <div className="flex items-center justify-between">
             <span>Email and push notifications</span>
-            <Button variant="outline" size="sm">Edit</Button>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Settings size={14} />
+              Edit
+            </Button>
           </div>
         </div>
         
         <div className="border rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium">Privacy</h3>
+            <div className="flex items-center gap-2">
+              <ShieldAlert size={18} className="text-tinder-rose" />
+              <h3 className="font-medium">Privacy</h3>
+            </div>
             <Button variant="edit">
               <Pencil size={16} />
             </Button>
@@ -56,13 +71,19 @@ const AccountSettings: React.FC = () => {
           <p className="text-sm text-muted-foreground mb-4">Control your privacy settings</p>
           <div className="flex items-center justify-between">
             <span>Location sharing and data usage</span>
-            <Button variant="outline" size="sm">Edit</Button>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Settings size={14} />
+              Edit
+            </Button>
           </div>
         </div>
         
         <div className="border rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium">Change Password</h3>
+            <div className="flex items-center gap-2">
+              <KeyRound size={18} className="text-tinder-rose" />
+              <h3 className="font-medium">Change Password</h3>
+            </div>
             <Button variant="edit">
               <Pencil size={16} />
             </Button>
@@ -70,13 +91,19 @@ const AccountSettings: React.FC = () => {
           <p className="text-sm text-muted-foreground mb-4">Update your account password</p>
           <div className="flex items-center justify-between">
             <span>Password and security</span>
-            <Button variant="outline" size="sm">Edit</Button>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Settings size={14} />
+              Edit
+            </Button>
           </div>
         </div>
         
         <div className="border rounded-lg p-4 border-destructive/20 bg-destructive/5">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-destructive">Danger Zone</h3>
+            <div className="flex items-center gap-2">
+              <Trash2 size={18} className="text-destructive" />
+              <h3 className="font-medium text-destructive">Danger Zone</h3>
+            </div>
             <Button variant="edit" className="text-destructive">
               <Pencil size={16} />
             </Button>
@@ -84,7 +111,10 @@ const AccountSettings: React.FC = () => {
           <p className="text-sm text-muted-foreground mb-4">Permanent actions for your account</p>
           <div className="flex items-center justify-between">
             <span>Delete account</span>
-            <Button variant="destructive" size="sm">Delete</Button>
+            <Button variant="destructive" size="sm" className="gap-2">
+              <Trash2 size={14} />
+              Delete
+            </Button>
           </div>
         </div>
       </div>

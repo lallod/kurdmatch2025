@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Pencil } from 'lucide-react';
+import { Pencil, Settings } from 'lucide-react';
 import ProfileHeader from '@/components/ProfileHeader';
 import ProfileSections from '@/components/my-profile/ProfileSections';
 import PhotoManagement from '@/components/my-profile/PhotoManagement';
@@ -93,12 +93,21 @@ const MyProfile = () => {
                 distance={profileData.distance}
                 kurdistanRegion={profileData.kurdistanRegion}
               />
-              <Button variant="edit" className="absolute top-4 right-4">
+              <Button variant="outline" size="sm" className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm gap-2">
                 <Pencil size={16} />
+                Edit Profile
               </Button>
             </div>
             
-            <ProfileSections profileData={profileData} />
+            <div className="relative">
+              <ProfileSections profileData={profileData} />
+              <div className="absolute top-0 right-0 p-4">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Pencil size={16} />
+                  Edit Sections
+                </Button>
+              </div>
+            </div>
           </TabsContent>
           
           <TabsContent value="photos" className="space-y-6">

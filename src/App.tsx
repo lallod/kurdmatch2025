@@ -12,7 +12,6 @@ import LikedMe from "./pages/LikedMe";
 import Messages from "./pages/Messages";
 import MyProfile from "./pages/MyProfile";
 import ProfilePage from "./pages/ProfilePage";
-import UserProfile from "./pages/UserProfile";
 import BottomNavigation from "./components/BottomNavigation";
 
 const queryClient = new QueryClient();
@@ -30,7 +29,7 @@ const App = () => (
             <Route path="/viewed-me" element={<ViewedMe />} />
             <Route path="/liked-me" element={<LikedMe />} />
             <Route path="/messages" element={<Messages />} />
-            <Route path="/my-profile" element={<UserProfile />} />
+            <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
