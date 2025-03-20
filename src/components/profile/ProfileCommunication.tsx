@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Languages, MessageCircle, Brain, Bot, Pencil
+  Languages, MessageCircle, Brain, Bot, Pencil, ArrowLeft
 } from 'lucide-react';
 import DetailItem from './DetailItem';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DetailEditor from '@/components/DetailEditor';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -44,7 +44,15 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
             <SheetContent className="w-full sm:max-w-md overflow-y-auto">
               <ScrollArea className="h-[calc(100vh-5rem)]">
                 <div className="py-6 pr-6">
-                  <h3 className="text-lg font-semibold mb-6">Edit Languages</h3>
+                  <div className="flex items-center gap-2 mb-6">
+                    <SheetClose asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <ArrowLeft size={18} />
+                        <span className="sr-only">Back</span>
+                      </Button>
+                    </SheetClose>
+                    <h3 className="text-lg font-semibold">Edit Languages</h3>
+                  </div>
                   <div className="space-y-4">
                     <p className="text-sm text-muted-foreground">
                       Select the languages you speak. You can select up to 5 languages.
@@ -101,7 +109,15 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
             <SheetContent className="w-full sm:max-w-md overflow-y-auto">
               <ScrollArea className="h-[calc(100vh-5rem)]">
                 <div className="py-6 pr-6">
-                  <h3 className="text-lg font-semibold mb-6">Edit Communication</h3>
+                  <div className="flex items-center gap-2 mb-6">
+                    <SheetClose asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <ArrowLeft size={18} />
+                        <span className="sr-only">Back</span>
+                      </Button>
+                    </SheetClose>
+                    <h3 className="text-lg font-semibold">Edit Communication</h3>
+                  </div>
                   <DetailEditor
                     icon={<MessageCircle size={18} />}
                     title="Your Communication Style"
