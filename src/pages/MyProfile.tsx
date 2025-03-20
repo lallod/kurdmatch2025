@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -7,7 +8,8 @@ import ProfileHeader from '@/components/ProfileHeader';
 import DetailEditor from '@/components/DetailEditor';
 import { 
   User, Settings, Image, Heart, BookOpen, Palette, MapPin, Languages,
-  BrainCircuit, LifeBuoy, CalendarDays, Plane, Music, Film, Utensils, Podcast
+  BrainCircuit, LifeBuoy, CalendarDays, Plane, Music, Film, Utensils, Podcast,
+  Pencil
 } from 'lucide-react';
 
 type KurdistanRegion = 'South-Kurdistan' | 'West-Kurdistan' | 'East-Kurdistan' | 'North-Kurdistan';
@@ -68,7 +70,13 @@ const MyProfile = () => {
   return (
     <div className="min-h-screen pt-4 px-4 pb-24">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">My Profile</h1>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Pencil size={16} />
+            Edit Profile
+          </Button>
+        </div>
         
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid grid-cols-3 mb-6">
@@ -78,21 +86,43 @@ const MyProfile = () => {
           </TabsList>
           
           <TabsContent value="profile" className="space-y-6">
-            <ProfileHeader 
-              name={profileData.name}
-              age={profileData.age}
-              location={profileData.location}
-              occupation={profileData.occupation}
-              lastActive={profileData.lastActive}
-              verified={profileData.verified}
-              profileImage={galleryImages[0]}
-              distance={profileData.distance}
-              kurdistanRegion={profileData.kurdistanRegion}
-            />
+            <div className="relative">
+              <ProfileHeader 
+                name={profileData.name}
+                age={profileData.age}
+                location={profileData.location}
+                occupation={profileData.occupation}
+                lastActive={profileData.lastActive}
+                verified={profileData.verified}
+                profileImage={galleryImages[0]}
+                distance={profileData.distance}
+                kurdistanRegion={profileData.kurdistanRegion}
+              />
+              <Button variant="edit" className="absolute top-4 right-4">
+                <Pencil size={16} />
+              </Button>
+            </div>
             
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Profile Sections</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">Profile Sections</h2>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Pencil size={16} />
+                        Edit Sections
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <h3 className="text-lg font-semibold mb-6">Edit Sections</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Choose which sections to display on your profile
+                      </p>
+                      {/* Section toggles would go here */}
+                    </SheetContent>
+                  </Sheet>
+                </div>
                 <p className="text-muted-foreground mb-6">
                   Update your profile information to help others get to know you better.
                 </p>
@@ -100,7 +130,7 @@ const MyProfile = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <Button variant="outline" className="w-full justify-between h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/10">
                             <User className="h-5 w-5 text-primary" />
@@ -110,6 +140,7 @@ const MyProfile = () => {
                             <p className="text-sm text-muted-foreground">Height, body type, ethnicity</p>
                           </div>
                         </div>
+                        <Pencil size={16} className="text-muted-foreground" />
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -133,7 +164,7 @@ const MyProfile = () => {
                   
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <Button variant="outline" className="w-full justify-between h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/10">
                             <Heart className="h-5 w-5 text-primary" />
@@ -143,6 +174,7 @@ const MyProfile = () => {
                             <p className="text-sm text-muted-foreground">Hobbies, activities, passions</p>
                           </div>
                         </div>
+                        <Pencil size={16} className="text-muted-foreground" />
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -165,7 +197,7 @@ const MyProfile = () => {
                   
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <Button variant="outline" className="w-full justify-between h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/10">
                             <BookOpen className="h-5 w-5 text-primary" />
@@ -175,6 +207,7 @@ const MyProfile = () => {
                             <p className="text-sm text-muted-foreground">Bio, lifestyle, values</p>
                           </div>
                         </div>
+                        <Pencil size={16} className="text-muted-foreground" />
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -197,7 +230,7 @@ const MyProfile = () => {
                   
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <Button variant="outline" className="w-full justify-between h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/10">
                             <Languages className="h-5 w-5 text-primary" />
@@ -207,6 +240,7 @@ const MyProfile = () => {
                             <p className="text-sm text-muted-foreground">Languages you speak</p>
                           </div>
                         </div>
+                        <Pencil size={16} className="text-muted-foreground" />
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -228,7 +262,7 @@ const MyProfile = () => {
                   
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <Button variant="outline" className="w-full justify-between h-auto p-4 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/10">
                             <MapPin className="h-5 w-5 text-primary" />
@@ -238,6 +272,7 @@ const MyProfile = () => {
                             <p className="text-sm text-muted-foreground">Where you're from</p>
                           </div>
                         </div>
+                        <Pencil size={16} className="text-muted-foreground" />
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -264,7 +299,13 @@ const MyProfile = () => {
           
           <TabsContent value="photos" className="space-y-6">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">My Photos</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">My Photos</h2>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Pencil size={16} />
+                  Edit Photo Settings
+                </Button>
+              </div>
               <p className="text-muted-foreground mb-6">
                 Upload and manage your profile photos. The first photo will be your main profile picture.
               </p>
@@ -342,14 +383,25 @@ const MyProfile = () => {
           
           <TabsContent value="settings" className="space-y-6">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Account Settings</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Account Settings</h2>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Settings size={16} />
+                  Manage
+                </Button>
+              </div>
               <p className="text-muted-foreground mb-6">
                 Manage your account settings and preferences.
               </p>
               
               <div className="space-y-6">
                 <div className="border rounded-lg p-4">
-                  <h3 className="font-medium mb-2">Profile Visibility</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium">Profile Visibility</h3>
+                    <Button variant="edit">
+                      <Pencil size={16} />
+                    </Button>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-4">Control who can see your profile</p>
                   <div className="flex items-center justify-between">
                     <span>Show me in discovery</span>
@@ -358,7 +410,12 @@ const MyProfile = () => {
                 </div>
                 
                 <div className="border rounded-lg p-4">
-                  <h3 className="font-medium mb-2">Notification Settings</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium">Notification Settings</h3>
+                    <Button variant="edit">
+                      <Pencil size={16} />
+                    </Button>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-4">Manage your notification preferences</p>
                   <div className="flex items-center justify-between">
                     <span>Email and push notifications</span>
@@ -367,7 +424,12 @@ const MyProfile = () => {
                 </div>
                 
                 <div className="border rounded-lg p-4">
-                  <h3 className="font-medium mb-2">Privacy</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium">Privacy</h3>
+                    <Button variant="edit">
+                      <Pencil size={16} />
+                    </Button>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-4">Control your privacy settings</p>
                   <div className="flex items-center justify-between">
                     <span>Location sharing and data usage</span>
@@ -376,7 +438,12 @@ const MyProfile = () => {
                 </div>
                 
                 <div className="border rounded-lg p-4">
-                  <h3 className="font-medium mb-2">Change Password</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium">Change Password</h3>
+                    <Button variant="edit">
+                      <Pencil size={16} />
+                    </Button>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-4">Update your account password</p>
                   <div className="flex items-center justify-between">
                     <span>Password and security</span>
@@ -385,7 +452,12 @@ const MyProfile = () => {
                 </div>
                 
                 <div className="border rounded-lg p-4 border-destructive/20 bg-destructive/5">
-                  <h3 className="font-medium mb-2 text-destructive">Danger Zone</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium text-destructive">Danger Zone</h3>
+                    <Button variant="edit" className="text-destructive">
+                      <Pencil size={16} />
+                    </Button>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-4">Permanent actions for your account</p>
                   <div className="flex items-center justify-between">
                     <span>Delete account</span>
