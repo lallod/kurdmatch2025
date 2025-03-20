@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -106,7 +107,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
 
   if (isMobile) {
     return (
-      <section className="w-full animate-fade-up px-4 py-6">
+      <section className="w-full animate-fade-up px-4 pb-20">
         <ProfileBio about={details.about} isMobile={isMobile} />
         
         <ProfileQuickStats 
@@ -241,7 +242,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
   }
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-4 py-16 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+    <section className="w-full max-w-5xl mx-auto px-4 pb-20 animate-fade-up" style={{ animationDelay: '0.2s' }}>
       <div className="mb-8">
         <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">About</span>
         <h2 className="text-3xl font-light mt-1">Profile Details</h2>
@@ -421,4 +422,3 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
 };
 
 export default ProfileDetails;
-

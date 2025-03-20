@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
 import ProfileHeader from '@/components/ProfileHeader';
 import PhotoGallery from '@/components/PhotoGallery';
 import ProfileDetails from '@/components/ProfileDetails';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 const UserProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -125,15 +123,13 @@ const UserProfile = () => {
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
       
-      <ScrollArea className="max-h-[60vh] md:max-h-[65vh] overflow-hidden">
-        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
-          <PhotoGallery 
-            photos={profileData.photos} 
-            name={profileData.name} 
-            age={profileData.age} 
-          />
-        </div>
-      </ScrollArea>
+      <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
+        <PhotoGallery 
+          photos={profileData.photos} 
+          name={profileData.name} 
+          age={profileData.age} 
+        />
+      </div>
       
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-orange/30 to-transparent"></div>
       
