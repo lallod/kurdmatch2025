@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -11,10 +10,11 @@ import {
   BrainCircuit, LifeBuoy, CalendarDays, Plane, Music, Film, Utensils, Podcast
 } from 'lucide-react';
 
+type KurdistanRegion = 'South-Kurdistan' | 'West-Kurdistan' | 'East-Kurdistan' | 'North-Kurdistan';
+
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState('general');
   
-  // Mock user data
   const profileData = {
     name: "Sarah",
     age: 28,
@@ -24,7 +24,7 @@ const MyProfile = () => {
     verified: true,
     profileImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80",
     distance: 8,
-    kurdistanRegion: "South-Kurdistan",
+    kurdistanRegion: "South-Kurdistan" as KurdistanRegion,
     bio: "Designer, hiker, and coffee enthusiast. Looking for someone who enjoys meaningful conversation and outdoor adventure.",
     height: "5'7\"",
     bodyType: "Athletic",
@@ -37,7 +37,6 @@ const MyProfile = () => {
     languages: ["English", "Kurdish", "Farsi"]
   };
   
-  // Mock gallery images
   const [galleryImages, setGalleryImages] = useState([
     profileData.profileImage,
     "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80",
@@ -45,30 +44,23 @@ const MyProfile = () => {
     "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80"
   ]);
 
-  // Function to handle image upload
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      // In a real app, you would upload the file to a server
-      // Here we're just creating a local URL
       const newImageUrl = URL.createObjectURL(files[0]);
       
-      // Add the new image to the gallery
       setGalleryImages(prev => [newImageUrl, ...prev]);
     }
   };
 
-  // Function to remove an image from the gallery
   const removeImage = (index: number) => {
     setGalleryImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Function to set an image as the profile picture
   const setAsProfilePic = (index: number) => {
-    if (index === 0) return; // Already the profile pic
+    if (index === 0) return;
     
     const newGallery = [...galleryImages];
-    // Swap the selected image with the first one (profile pic)
     [newGallery[0], newGallery[index]] = [newGallery[index], newGallery[0]];
     setGalleryImages(newGallery);
   };
