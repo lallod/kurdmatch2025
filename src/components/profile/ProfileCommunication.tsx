@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DetailEditor from '@/components/DetailEditor';
+import LanguageSelector from '@/components/LanguageSelector';
 
 interface ProfileCommunicationProps {
   details: {
@@ -27,6 +28,8 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
   tinderBadgeStyle,
   isMobile
 }) => {
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(details.languages || []);
+
   return (
     <div className="space-y-6 py-4">
       <div>
@@ -42,14 +45,16 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
               <ScrollArea className="h-[calc(100vh-5rem)]">
                 <div className="py-6 pr-6">
                   <h3 className="text-lg font-semibold mb-6">Edit Languages</h3>
-                  <DetailEditor
-                    icon={<Languages size={18} />}
-                    title="Languages You Speak"
-                    fields={[
-                      { name: 'languages', label: 'Languages', value: details.languages.join(', ') }
-                    ]}
-                    listMode={true}
-                  />
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Select the languages you speak. You can select up to 5 languages.
+                    </p>
+                    <LanguageSelector 
+                      selectedLanguages={selectedLanguages}
+                      onChange={setSelectedLanguages}
+                      maxItems={5}
+                    />
+                  </div>
                 </div>
               </ScrollArea>
             </SheetContent>
