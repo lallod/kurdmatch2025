@@ -2,17 +2,51 @@ import React, { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic, Plus } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 const Messages = () => {
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
   const [newMessage, setNewMessage] = useState('');
   
+  const newMatches = [
+    {
+      id: 101,
+      name: "Lily Chen",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      matchTime: "2 hours ago",
+    },
+    {
+      id: 102,
+      name: "Mark Johnson",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
+      matchTime: "Yesterday",
+    },
+    {
+      id: 103,
+      name: "Sophia Lee",
+      avatar: "https://images.unsplash.com/photo-1607503873903-c5e95f80d7b9?auto=format&fit=crop&w=150&q=80",
+      matchTime: "3 days ago",
+    },
+    {
+      id: 104,
+      name: "David Brown",
+      avatar: "https://images.unsplash.com/photo-1567784177951-6fa58317e16b?auto=format&fit=crop&w=150&q=80",
+      matchTime: "4 days ago",
+    },
+    {
+      id: 105,
+      name: "Nina Williams",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
+      matchTime: "5 days ago",
+    }
+  ];
+
   const conversations = [
     {
       id: 1,
@@ -90,10 +124,8 @@ const Messages = () => {
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
     
-    // In a real app, we would send this message to a server
     console.log("Sending message:", newMessage);
     
-    // For demo purposes, we'll just clear the input
     setNewMessage('');
   };
 
@@ -110,7 +142,6 @@ const Messages = () => {
 
     return (
       <div className="flex flex-col h-screen pb-24">
-        {/* Chat header */}
         <div className="flex items-center p-4 border-b">
           <Button 
             variant="ghost" 
@@ -132,7 +163,6 @@ const Messages = () => {
           </div>
         </div>
 
-        {/* Chat messages */}
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4">
             {conversation.messages.map((message) => (
@@ -157,7 +187,6 @@ const Messages = () => {
           </div>
         </ScrollArea>
 
-        {/* Message input */}
         <div className="border-t p-3 flex items-end gap-2">
           <Textarea 
             value={newMessage}
@@ -186,7 +215,46 @@ const Messages = () => {
   }
 
   return (
-    <div className="min-h-screen pt-8 px-4 pb-24">
+    <div className="min-h-screen pt-4 px-4 pb-24">
+      <div className="mb-6">
+        <h2 className="text-sm font-medium text-muted-foreground mb-3">New Matches</h2>
+        
+        <Carousel className="w-full">
+          <CarouselContent className="-ml-2">
+            {newMatches.map((match) => (
+              <CarouselItem key={match.id} className="pl-2 basis-20">
+                <div 
+                  className="relative flex flex-col items-center cursor-pointer"
+                  onClick={() => {
+                    console.log("Starting chat with", match.name);
+                    // Here you would typically create a new conversation and select it
+                  }}
+                >
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-tinder-rose to-tinder-orange p-0.5">
+                      <div className="absolute inset-0.5 rounded-full bg-background"></div>
+                    </div>
+                    <Avatar className="h-16 w-16 border-2 border-background">
+                      <AvatarImage src={match.avatar} alt={match.name} />
+                      <AvatarFallback>{match.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <span className="text-xs mt-1 text-center w-full truncate">{match.name}</span>
+                </div>
+              </CarouselItem>
+            ))}
+            <CarouselItem className="pl-2 basis-20">
+              <div className="flex flex-col items-center cursor-pointer">
+                <Avatar className="h-16 w-16 bg-muted">
+                  <Plus className="h-6 w-6 text-muted-foreground" />
+                </Avatar>
+                <span className="text-xs mt-1 text-muted-foreground">Find more</span>
+              </div>
+            </CarouselItem>
+          </CarouselContent>
+        </Carousel>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Messages</h1>
         <Badge variant="outline" className="bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20">
