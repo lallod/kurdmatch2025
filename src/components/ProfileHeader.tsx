@@ -2,8 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Verified, X } from 'lucide-react';
+import { MapPin, Navigation, Verified } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProfileHeaderProps {
@@ -14,6 +13,8 @@ interface ProfileHeaderProps {
   lastActive: string;
   verified: boolean;
   profileImage: string;
+  distance?: number; // Distance in km
+  kurdistanRegion?: 'West-Kurdistan' | 'East-Kurdistan' | 'North-Kurdistan' | 'South-Kurdistan';
   onDislike?: () => void;
 }
 
@@ -25,6 +26,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   lastActive,
   verified,
   profileImage,
+  distance = 12, // Default distance if not provided
+  kurdistanRegion = 'South-Kurdistan', // Default region if not provided
   onDislike,
 }) => {
   const isMobile = useIsMobile();
@@ -84,30 +87,20 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
 
           <div className="flex flex-wrap gap-2 md:gap-3 mt-4 md:mt-6 justify-center md:justify-start">
-            <Button 
-              size={isMobile ? "default" : "lg"} 
-              className="rounded-full shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2 bg-gradient-tinder text-white"
-            >
-              <MessageCircle size={isMobile ? 14 : 16} />
-              <span>Message</span>
-            </Button>
-            <Button 
-              size={isMobile ? "default" : "lg"} 
-              variant="outline" 
-              className="rounded-full bg-white backdrop-blur-sm border-tinder-rose text-tinder-rose hover:bg-tinder-light hover:text-tinder-rose hover:border-tinder-rose shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
-            >
-              <Heart size={isMobile ? 14 : 16} className="animate-pulse-heart" />
-              <span>Like</span>
-            </Button>
-            <Button 
-              size={isMobile ? "default" : "lg"} 
-              variant="outline" 
-              className="rounded-full bg-white backdrop-blur-sm border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
-              onClick={onDislike}
-            >
-              <X size={isMobile ? 14 : 16} />
-              <span>Dislike</span>
-            </Button>
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-full shadow-sm">
+              <Navigation size={isMobile ? 14 : 16} className="text-tinder-rose" />
+              <span className="font-medium">{distance} km away</span>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-full shadow-sm">
+              <MapPin size={isMobile ? 14 : 16} className="text-tinder-rose" />
+              <span className="font-medium">{kurdistanRegion}</span>
+            </div>
+            
+            <Badge variant="outline" className="px-3 py-2 rounded-full bg-white/80 backdrop-blur-sm flex items-center gap-1">
+              <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Online now</span>
+            </Badge>
           </div>
         </div>
       </div>
