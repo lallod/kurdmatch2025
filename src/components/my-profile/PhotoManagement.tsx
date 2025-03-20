@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Image, User } from 'lucide-react';
+import { Camera, Image, Pencil, User } from 'lucide-react';
 
 interface PhotoManagementProps {
   galleryImages: string[];
@@ -54,6 +54,25 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
                 alt={`Photo ${index + 1}`} 
                 className="w-full h-full object-cover"
               />
+              
+              {/* Edit button on main profile photo */}
+              {index === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="bg-white/80 backdrop-blur-sm border-0 hover:bg-white/90 rounded-full absolute bottom-2 right-2 opacity-80 group-hover:opacity-100 transition-opacity"
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onImageUpload}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    <Camera size={16} />
+                  </Button>
+                </div>
+              )}
             </div>
             
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 rounded-lg">
