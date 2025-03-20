@@ -90,7 +90,7 @@ const MatchPopup = ({ isOpen, onClose, matchedProfile }: MatchPopupProps) => {
             <Button 
               onClick={handleKeepSwiping} 
               variant="outline" 
-              className="w-full border-white text-white hover:bg-white/20"
+              className="w-full border-white text-black hover:bg-white/20"
             >
               Keep Swiping
             </Button>
