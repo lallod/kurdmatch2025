@@ -3,10 +3,14 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Languages, MessageCircle, Brain, Bot
+  Languages, MessageCircle, Brain, Bot, Pencil
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import DetailEditor from '@/components/DetailEditor';
 
 interface ProfileCommunicationProps {
   details: {
@@ -26,7 +30,31 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
   return (
     <div className="space-y-6 py-4">
       <div>
-        <h4 className="font-medium mb-2">Languages</h4>
+        <h4 className="font-medium mb-2 flex items-center justify-between">
+          <span>Languages</span>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="edit" className="ml-2">
+                <Pencil size={16} />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+              <ScrollArea className="h-[calc(100vh-5rem)]">
+                <div className="py-6 pr-6">
+                  <h3 className="text-lg font-semibold mb-6">Edit Languages</h3>
+                  <DetailEditor
+                    icon={<Languages size={18} />}
+                    title="Languages You Speak"
+                    fields={[
+                      { name: 'languages', label: 'Languages', value: details.languages.join(', ') }
+                    ]}
+                    listMode={true}
+                  />
+                </div>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
+        </h4>
         <DetailItem 
           icon={<Languages size={18} />} 
           label="Can speak" 
@@ -41,22 +69,46 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
       </div>
       
       <div>
-        <h4 className="font-medium mb-2 flex items-center">
-          Communication
-          <span className="ml-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Bot size={12} className="text-tinder-orange" />
-                </TooltipTrigger>
-                <TooltipContent side="top" className="bg-white/90 backdrop-blur-sm border border-tinder-rose/10">
-                  <p className="text-xs text-muted-foreground">
-                    AI analyzes communication style based on profile data
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+        <h4 className="font-medium mb-2 flex items-center justify-between">
+          <span className="flex items-center">
+            Communication
+            <span className="ml-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Bot size={12} className="text-tinder-orange" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="bg-white/90 backdrop-blur-sm border border-tinder-rose/10">
+                    <p className="text-xs text-muted-foreground">
+                      AI analyzes communication style based on profile data
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </span>
           </span>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="edit" className="ml-2">
+                <Pencil size={16} />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+              <ScrollArea className="h-[calc(100vh-5rem)]">
+                <div className="py-6 pr-6">
+                  <h3 className="text-lg font-semibold mb-6">Edit Communication</h3>
+                  <DetailEditor
+                    icon={<MessageCircle size={18} />}
+                    title="Your Communication Style"
+                    fields={[
+                      { name: 'communicationStyle', label: 'Communication Style', value: details.communicationStyle || '', type: 'select' },
+                      { name: 'decisionMakingStyle', label: 'Decision Making Style', value: details.decisionMakingStyle || '', type: 'select' },
+                    ]}
+                  />
+                </div>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
         </h4>
         <div className="space-y-1">
           <DetailItem 
