@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic, Plus } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -243,14 +243,6 @@ const Messages = () => {
                 </div>
               </CarouselItem>
             ))}
-            <CarouselItem className="pl-2 basis-20">
-              <div className="flex flex-col items-center cursor-pointer">
-                <Avatar className="h-16 w-16 bg-muted">
-                  <Plus className="h-6 w-6 text-muted-foreground" />
-                </Avatar>
-                <span className="text-xs mt-1 text-muted-foreground">Find more</span>
-              </div>
-            </CarouselItem>
           </CarouselContent>
         </Carousel>
       </div>
