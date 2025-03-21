@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MapPin, Search } from 'lucide-react';
+import { MapPin, Search, Navigation, MapPinOff } from 'lucide-react';
 import { SheetContent } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DetailEditor from '@/components/DetailEditor';
@@ -10,6 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 interface LocationSectionProps {
   profileData: {
@@ -44,12 +47,34 @@ const cities = [
 
 const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
   const [location, setLocation] = useState(profileData.location);
+  const [isUsingCurrentLocation, setIsUsingCurrentLocation] = useState(true);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState<string>("current");
   
   const filteredCities = cities.filter(city => 
     city.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleLocationDetection = () => {
+    // In a real app, this would use the browser's geolocation API
+    // For demonstration, we'll just set it to a placeholder
+    setLocation("Current Location (San Francisco, CA)");
+    setIsUsingCurrentLocation(true);
+  };
+
+  const handleManualLocationSelect = (selectedLocation: string) => {
+    setLocation(selectedLocation);
+    setIsUsingCurrentLocation(false);
+    setOpen(false);
+  };
+
+  const toggleLocationMode = (checked: boolean) => {
+    setIsUsingCurrentLocation(checked);
+    if (checked) {
+      handleLocationDetection();
+    }
+  };
 
   return (
     <ProfileSectionButton
@@ -71,50 +96,76 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
               </div>
               
               <div className="space-y-4">
+                {/* Current/Manual Location Toggle */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="use-current-location" className="text-sm">Use my current location</Label>
+                    <Switch 
+                      id="use-current-location" 
+                      checked={isUsingCurrentLocation} 
+                      onCheckedChange={toggleLocationMode}
+                    />
+                  </div>
+                </div>
+                
+                {/* Location Display & Edit */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="location" className="text-sm font-medium">City & State</label>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="text-primary h-7 px-2"
-                        >
-                          Edit
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0" align="end" side="top">
-                        <Command className="rounded-lg border shadow-md">
-                          <CommandInput 
-                            placeholder="Search for a city or country..." 
-                            value={search}
-                            onValueChange={setSearch}
-                            className="h-9"
-                          />
-                          <CommandList>
-                            <CommandEmpty>No location found.</CommandEmpty>
-                            <CommandGroup heading="Locations">
-                              {filteredCities.map((city) => (
-                                <CommandItem
-                                  key={city}
-                                  value={city}
-                                  onSelect={(currentValue) => {
-                                    setLocation(currentValue);
-                                    setOpen(false);
-                                  }}
-                                >
-                                  <MapPin className="mr-2 h-4 w-4" />
-                                  {city}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <label htmlFor="location" className="text-sm font-medium">
+                      {isUsingCurrentLocation ? "Current Location" : "City & State"}
+                    </label>
+                    {!isUsingCurrentLocation && (
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-primary h-7 px-2"
+                          >
+                            Edit
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0" align="end" side="top">
+                          <Command className="rounded-lg border shadow-md">
+                            <CommandInput 
+                              placeholder="Search for a city or country..." 
+                              value={search}
+                              onValueChange={setSearch}
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No location found.</CommandEmpty>
+                              <CommandGroup heading="Locations">
+                                {filteredCities.map((city) => (
+                                  <CommandItem
+                                    key={city}
+                                    value={city}
+                                    onSelect={handleManualLocationSelect}
+                                  >
+                                    <MapPin className="mr-2 h-4 w-4" />
+                                    {city}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                    {isUsingCurrentLocation && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-primary h-7 px-2"
+                        onClick={handleLocationDetection}
+                      >
+                        <Navigation size={16} className="mr-1" />
+                        Update
+                      </Button>
+                    )}
                   </div>
-                  <div className="p-3 bg-muted rounded-md">
+                  <div className="p-3 bg-muted rounded-md flex items-center">
+                    {isUsingCurrentLocation ? <Navigation size={16} className="mr-2 text-primary" /> : <MapPin size={16} className="mr-2 text-primary" />}
                     {location}
                   </div>
                 </div>
