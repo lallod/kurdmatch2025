@@ -126,21 +126,36 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
           </Dialog>
         </div>
       </div>
-      <div className="bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 p-5 rounded-lg border-l-4 border-tinder-rose neo-glow">
-        <p className="text-muted-foreground leading-relaxed italic relative">
+      <div className="backdrop-blur-md bg-black/5 border border-tinder-rose/20 p-5 rounded-2xl relative overflow-hidden shadow-lg">
+        {/* AI-like decorative elements */}
+        <div className="absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 rounded-full blur-xl"></div>
+        <div className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-br from-tinder-orange/30 to-tinder-rose/10 rounded-full blur-lg"></div>
+        
+        {/* Animated circuit pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-tinder-rose/50 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-tinder-orange/50 to-transparent"></div>
+          <div className="absolute top-0 left-0 h-full w-0.5 bg-gradient-to-b from-transparent via-tinder-rose/50 to-transparent"></div>
+          <div className="absolute top-0 right-0 h-full w-0.5 bg-gradient-to-b from-transparent via-tinder-orange/50 to-transparent"></div>
+        </div>
+        
+        <p className="text-muted-foreground leading-relaxed italic relative z-10 font-light">
           {about}
-          <span className="absolute -bottom-1 -right-1 opacity-50">
-            <Sparkles size={14} className="text-tinder-orange" />
+          <span className="absolute -bottom-1 -right-1 opacity-70">
+            <Sparkles size={14} className="text-tinder-orange animate-pulse" />
           </span>
         </p>
         <div className="mt-3 flex items-center">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Bot size={12} className="text-tinder-orange" />
+                <div className="flex items-center gap-1 text-xs text-tinder-rose/80">
+                  <Bot size={12} className="text-tinder-orange" />
+                  <span className="font-mono">AI_analyzed</span>
+                </div>
               </TooltipTrigger>
-              <TooltipContent side="top" className="bg-white/90 backdrop-blur-sm border border-tinder-rose/10">
-                <p className="text-xs text-muted-foreground">
+              <TooltipContent side="top" className="backdrop-blur-md bg-black/40 border border-tinder-rose/30 text-white">
+                <p className="text-xs">
                   AI automatically analyzes your profile data to create this personalized bio
                 </p>
               </TooltipContent>
