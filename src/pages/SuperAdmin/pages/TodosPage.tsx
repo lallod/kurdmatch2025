@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -123,11 +122,21 @@ const TodosPage = () => {
   ]);
   
   const [activeTab, setActiveTab] = useState<'all' | 'todo' | 'in-progress' | 'completed'>('all');
-  const [newTodo, setNewTodo] = useState({
+  const [newTodo, setNewTodo] = useState<{
+    title: string;
+    description: string;
+    status: 'todo' | 'in-progress' | 'completed';
+    priority: 'low' | 'medium' | 'high';
+    dueDate: string;
+    assignee: {
+      name: string;
+      avatar: string;
+    }
+  }>({
     title: '',
     description: '',
-    status: 'todo' as const,
-    priority: 'medium' as const,
+    status: 'todo',
+    priority: 'medium',
     dueDate: '',
     assignee: {
       name: 'Mohammad Reza',
@@ -245,7 +254,9 @@ const TodosPage = () => {
                     <Label htmlFor="task-priority">Priority</Label>
                     <Select 
                       defaultValue={newTodo.priority}
-                      onValueChange={(value) => setNewTodo({...newTodo, priority: value as 'low' | 'medium' | 'high'})}
+                      onValueChange={(value: 'low' | 'medium' | 'high') => 
+                        setNewTodo({...newTodo, priority: value})
+                      }
                     >
                       <SelectTrigger id="task-priority">
                         <SelectValue placeholder="Select priority" />
@@ -262,7 +273,9 @@ const TodosPage = () => {
                     <Label htmlFor="task-status">Status</Label>
                     <Select 
                       defaultValue={newTodo.status}
-                      onValueChange={(value) => setNewTodo({...newTodo, status: value as 'todo' | 'in-progress' | 'completed'})}
+                      onValueChange={(value: 'todo' | 'in-progress' | 'completed') => 
+                        setNewTodo({...newTodo, status: value})
+                      }
                     >
                       <SelectTrigger id="task-status">
                         <SelectValue placeholder="Select status" />
