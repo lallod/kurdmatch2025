@@ -21,41 +21,14 @@ interface LocationSectionProps {
   };
 }
 
-// Sample cities for demonstration - in a real app, this would come from an API
-const cities = [
-  "San Francisco, CA, USA",
-  "New York, NY, USA",
-  "Los Angeles, CA, USA",
-  "Chicago, IL, USA",
-  "Seattle, WA, USA",
-  "Boston, MA, USA",
-  "Austin, TX, USA",
-  "Denver, CO, USA",
-  "Portland, OR, USA",
-  "Miami, FL, USA",
-  "London, UK",
-  "Paris, France",
-  "Berlin, Germany",
-  "Tokyo, Japan",
-  "Sydney, Australia",
-  "Toronto, Canada",
-  "Vancouver, Canada",
-  "Dubai, UAE",
-  "Stockholm, Sweden",
-  "Amsterdam, Netherlands"
-];
-
 const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
   const [location, setLocation] = useState(profileData.location);
   const [isUsingCurrentLocation, setIsUsingCurrentLocation] = useState(true);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const { toast } = useToast();
-  
-  const filteredCities = cities.filter(city => 
-    city.toLowerCase().includes(search.toLowerCase())
-  );
 
   // Function to handle real geolocation detection
   const handleLocationDetection = () => {
@@ -147,8 +120,65 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
     );
   };
 
-  const handleManualLocationSelect = (selectedLocation: string) => {
-    setLocation(selectedLocation);
+  // Function to search locations using Nominatim API
+  const searchLocation = async (query: string) => {
+    if (!query || query.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      // Use OpenStreetMap Nominatim API for location search
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=7`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to search locations');
+      }
+      
+      const data = await response.json();
+      setSearchResults(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error searching locations:", error);
+      setIsLoading(false);
+      setSearchResults([]);
+      toast({
+        title: "Search error",
+        description: "Could not search for locations. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Format the display text for a location search result
+  const formatLocationResult = (result: any) => {
+    const address = result.address;
+    
+    if (!address) return result.display_name;
+    
+    const city = address.city || address.town || address.village || '';
+    const state = address.state || '';
+    const country = address.country || '';
+    
+    if (city && state && country) {
+      return `${city}, ${state}, ${country}`;
+    } else if (city && (state || country)) {
+      return `${city}, ${state || country}`;
+    } else if (state && country) {
+      return `${state}, ${country}`;
+    } else {
+      return result.display_name.split(',').slice(0, 3).join(',');
+    }
+  };
+
+  const handleManualLocationSelect = (selectedLocation: any) => {
+    const formattedLocation = formatLocationResult(selectedLocation);
+    setLocation(formattedLocation);
     setIsUsingCurrentLocation(false);
     setOpen(false);
   };
@@ -159,6 +189,15 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
       handleLocationDetection();
     }
   };
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      searchLocation(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   // Try to get location on initial load if using current location
   useEffect(() => {
@@ -203,7 +242,7 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <label htmlFor="location" className="text-sm font-medium">
-                      {isUsingCurrentLocation ? "Current Location" : "City & State"}
+                      {isUsingCurrentLocation ? "Current Location" : "City & Country"}
                     </label>
                     {!isUsingCurrentLocation && (
                       <Popover open={open} onOpenChange={setOpen}>
@@ -216,7 +255,7 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
                             Edit
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="p-0" align="end" side="top">
+                        <PopoverContent className="p-0" align="end" side="top" width="300px">
                           <Command className="rounded-lg border shadow-md">
                             <CommandInput 
                               placeholder="Search for a city or country..." 
@@ -225,16 +264,22 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
                               className="h-9"
                             />
                             <CommandList>
-                              <CommandEmpty>No location found.</CommandEmpty>
+                              {isLoading && (
+                                <div className="py-6 text-center">
+                                  <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                                  <p className="text-sm text-muted-foreground mt-2">Searching locations...</p>
+                                </div>
+                              )}
+                              <CommandEmpty>No locations found. Try a different search.</CommandEmpty>
                               <CommandGroup heading="Locations">
-                                {filteredCities.map((city) => (
+                                {searchResults.map((result) => (
                                   <CommandItem
-                                    key={city}
-                                    value={city}
-                                    onSelect={handleManualLocationSelect}
+                                    key={result.place_id}
+                                    value={result.display_name}
+                                    onSelect={() => handleManualLocationSelect(result)}
                                   >
                                     <MapPin className="mr-2 h-4 w-4" />
-                                    {city}
+                                    {formatLocationResult(result)}
                                   </CommandItem>
                                 ))}
                               </CommandGroup>
