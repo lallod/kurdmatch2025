@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, MessageSquare, ImageIcon, Activity } from 'lucide-react';
+import { Users, MessageSquare, ImageIcon, Activity, Tag, Settings } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Dashboard = () => {
   // Mock data - in a real app, these would come from API calls
