@@ -29,25 +29,28 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('all');
 
-  const filteredLanguages = () => {
-    if (activeTab === 'all') {
-      return allLanguages.filter(language => 
-        language.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    } else if (activeTab === 'middle-eastern') {
-      return languageCategories.middleEastern.filter(language => 
-        language.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    } else if (activeTab === 'kurdish') {
-      return languageCategories.kurdishDialects.filter(language => 
-        language.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    } else if (activeTab === 'european') {
-      return languageCategories.european.filter(language => 
-        language.toLowerCase().includes(searchValue.toLowerCase())
-      );
+  const getFilteredLanguages = () => {
+    const searchLower = searchValue.toLowerCase();
+    
+    switch(activeTab) {
+      case 'middle-eastern':
+        return languageCategories.middleEastern.filter(language => 
+          language.toLowerCase().includes(searchLower)
+        );
+      case 'kurdish':
+        return languageCategories.kurdishDialects.filter(language => 
+          language.toLowerCase().includes(searchLower)
+        );
+      case 'european':
+        return languageCategories.european.filter(language => 
+          language.toLowerCase().includes(searchLower)
+        );
+      case 'all':
+      default:
+        return allLanguages.filter(language => 
+          language.toLowerCase().includes(searchLower)
+        );
     }
-    return [];
   };
 
   const toggleLanguage = (language: string) => {
@@ -63,6 +66,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const removeLanguage = (language: string) => {
     onChange(selectedLanguages.filter(l => l !== language));
   };
+
+  const filteredLanguages = getFilteredLanguages();
 
   return (
     <div className="space-y-4">
@@ -102,7 +107,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[320px] p-0" align="start">
-          <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex items-center border-b px-3 bg-gray-50">
               <TabsList className="grid grid-cols-4 w-full bg-transparent h-12">
                 <TabsTrigger value="all" className="data-[state=active]:bg-white rounded-t-md data-[state=active]:border-b-2 data-[state=active]:border-tinder-rose data-[state=active]:shadow-none">All</TabsTrigger>
@@ -136,14 +141,14 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             
             <ScrollArea className="h-[300px] rounded-b-lg">
               <div className="p-2">
-                {filteredLanguages().length === 0 ? (
+                {filteredLanguages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 px-4 text-gray-500">
                     <Search className="h-8 w-8 mb-2 opacity-50" />
                     <p className="text-sm text-center">No languages found matching "{searchValue}"</p>
                   </div>
                 ) : (
                   <div className="space-y-1">
-                    {filteredLanguages().map(language => (
+                    {filteredLanguages.map(language => (
                       <div 
                         key={language}
                         className={`
