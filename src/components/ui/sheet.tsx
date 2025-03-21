@@ -1,7 +1,6 @@
-
 import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { cva, type VariantProps } from "class-variance-authority"
-import { ArrowLeft, X } from "lucide-react"
+import { X } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -72,11 +71,7 @@ const SheetContent = React.forwardRef<
       </SheetPrimitive.Description>
       
       {children}
-      <div className="absolute right-4 top-4 flex items-center gap-2">
-        <SheetPrimitive.Close className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
-          <ArrowLeft className="h-5 w-5" />
-          <span className="sr-only">Go back</span>
-        </SheetPrimitive.Close>
+      <div className="absolute right-4 top-4">
         <SheetPrimitive.Close className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
