@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Eye, Heart, MessageCircle, UserRound } from 'lucide-react';
+import { Home, Eye, Heart, MessageCircle, UserRound, Search } from 'lucide-react';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -15,14 +15,14 @@ const BottomNavigation = () => {
       path: '/',
     },
     {
-      name: 'Viewed Me',
-      icon: Eye,
-      path: '/viewed-me',
+      name: 'Discovery',
+      icon: Search,
+      path: '/discovery',
     },
     {
-      name: 'Liked Me',
-      icon: Heart,
-      path: '/liked-me',
+      name: 'Profile Views',
+      icon: Eye,
+      path: '/viewed-me',
     },
     {
       name: 'Messages',
