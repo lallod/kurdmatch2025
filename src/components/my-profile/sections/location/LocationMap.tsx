@@ -60,12 +60,11 @@ const LocationMap: React.FC<LocationMapProps> = ({
   return (
     <div className="rounded-md overflow-hidden border border-gray-200 shadow-sm">
       <MapContainer
-        center={position}
-        zoom={zoom}
         style={{ height, width }}
+        // Instead of directly setting center and zoom on MapContainer,
+        // we'll use the MapUpdater component to set these values
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={position} />
