@@ -24,9 +24,10 @@ interface ProfileSectionsProps {
     location: string;
     kurdistanRegion: KurdistanRegion;
   };
+  onEditSections?: () => void;
 }
 
-const ProfileSections: React.FC<ProfileSectionsProps> = ({ profileData }) => {
+const ProfileSections: React.FC<ProfileSectionsProps> = ({ profileData, onEditSections }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="p-6">
@@ -34,7 +35,15 @@ const ProfileSections: React.FC<ProfileSectionsProps> = ({ profileData }) => {
           <h2 className="text-xl font-semibold">Profile Sections</h2>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2"
+                onClick={onEditSections ? (e) => {
+                  e.preventDefault();
+                  onEditSections();
+                } : undefined}
+              >
                 <Pencil size={16} />
                 Edit Sections
               </Button>

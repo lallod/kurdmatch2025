@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,9 +7,11 @@ import ProfileSections from '@/components/my-profile/ProfileSections';
 import PhotoManagement from '@/components/my-profile/PhotoManagement';
 import AccountSettings from '@/components/my-profile/AccountSettings';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState('general');
+  const [isEditingSections, setIsEditingSections] = useState(false);
   
   const profileData: ProfileData = {
     name: "Sarah",
@@ -62,6 +63,10 @@ const MyProfile = () => {
     setGalleryImages(newGallery);
   };
 
+  const handleEditSections = () => {
+    setIsEditingSections(true);
+  };
+
   return (
     <div className="min-h-screen pt-4 px-4 pb-24">
       <div className="max-w-4xl mx-auto">
@@ -100,9 +105,17 @@ const MyProfile = () => {
             </div>
             
             <div className="relative">
-              <ProfileSections profileData={profileData} />
+              <ProfileSections 
+                profileData={profileData} 
+                onEditSections={handleEditSections}
+              />
               <div className="absolute top-0 right-0 p-4">
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={handleEditSections}
+                >
                   <Pencil size={16} />
                   Edit Sections
                 </Button>
@@ -124,6 +137,20 @@ const MyProfile = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={isEditingSections} onOpenChange={setIsEditingSections}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Profile Sections</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <p className="text-sm text-muted-foreground">
+              Choose which sections to display on your profile
+            </p>
+            {/* Section toggles would be implemented here */}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
