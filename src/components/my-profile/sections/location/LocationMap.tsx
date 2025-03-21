@@ -48,11 +48,12 @@ const LocationMap: React.FC<LocationMapProps> = ({
         center={position}
         zoom={zoom}
         style={{ height: '100%', width: '100%' }}
+        attributionControl={true}
       >
         <ChangeView center={position} zoom={zoom} />
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <Marker position={position} />
         <MapEvents onClick={handleMapClick} />
