@@ -1,62 +1,74 @@
 
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import fixLeafletIcon from './leaflet-icon-fix';
-
-// Component to handle map events
-const MapEvents = ({ onClick }: { onClick: (e: any) => void }) => {
-  useMapEvents({
-    click: onClick,
-  });
-  return null;
-};
-
-// Component to handle changing the map view
-const ChangeView = ({ center, zoom }: { center: [number, number], zoom: number }) => {
-  const map = useMap();
-  map.setView(center, zoom);
-  return null;
-};
+import { fixLeafletIcon } from './leaflet-icon-fix';
 
 interface LocationMapProps {
   position: [number, number];
-  onClick: (lat: number, lng: number) => void;
-  zoom?: number;
+  onClick?: (lat: number, lng: number) => void;
   height?: string;
+  width?: string;
+  zoom?: number;
 }
 
-const LocationMap: React.FC<LocationMapProps> = ({
-  position,
+// This component allows us to update the center of the map when position changes
+const MapUpdater: React.FC<{ position: [number, number]; zoom: number }> = ({ position, zoom }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    map.setView(position, zoom);
+  }, [map, position, zoom]);
+  
+  return null;
+};
+
+// This component handles map clicks and reports coordinates
+const MapClicker: React.FC<{ onClick?: (lat: number, lng: number) => void }> = ({ onClick }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (!onClick) return;
+    
+    const handleClick = (e: any) => {
+      const { lat, lng } = e.latlng;
+      onClick(lat, lng);
+    };
+    
+    map.on('click', handleClick);
+    
+    return () => {
+      map.off('click', handleClick);
+    };
+  }, [map, onClick]);
+  
+  return null;
+};
+
+const LocationMap: React.FC<LocationMapProps> = ({ 
+  position, 
   onClick,
-  zoom = 3,
-  height = '300px'
+  height = '300px',
+  width = '100%',
+  zoom = 5
 }) => {
-  // Fix Leaflet default icon issue
+  // Fix Leaflet icon issue on load
   useEffect(() => {
     fixLeafletIcon();
   }, []);
 
-  const handleMapClick = (e: any) => {
-    const { lat, lng } = e.latlng;
-    onClick(lat, lng);
-  };
-
   return (
-    <div className="w-full rounded-md border border-input overflow-hidden" style={{ height }}>
+    <div className="rounded-md overflow-hidden border border-gray-200 shadow-sm">
       <MapContainer
-        center={position}
-        zoom={zoom}
-        style={{ height: '100%', width: '100%' }}
-        attributionControl={true}
+        style={{ height, width }}
+        attributionControl={false}
       >
-        <ChangeView center={position} zoom={zoom} />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <Marker position={position} />
-        <MapEvents onClick={handleMapClick} />
+        <MapUpdater position={position} zoom={zoom} />
+        <MapClicker onClick={onClick} />
       </MapContainer>
     </div>
   );

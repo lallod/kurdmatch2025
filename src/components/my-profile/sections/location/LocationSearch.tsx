@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import { Search, Loader2, Globe } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -8,11 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 
 interface LocationSearchProps {
   onLocationSelect: (location: any) => void;
-  buttonLabel: string;
+  buttonLabel: string | ((search: string) => string);
   searchPlaceholder: string;
   emptyMessage: string;
   icon: React.ReactElement;
   width?: string;
+  recentSearches?: any[];
 }
 
 const LocationSearch: React.FC<LocationSearchProps> = ({
@@ -22,6 +23,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
   emptyMessage,
   icon,
   width,
+  recentSearches = [],
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -114,20 +116,25 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
     searchLocation(value);
   };
 
+  const displayLabel = typeof buttonLabel === 'function' ? buttonLabel(search) : buttonLabel;
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button 
           variant="outline" 
           size="sm" 
-          className="h-8 gap-1"
+          className="w-full justify-between h-10 px-3 gap-1"
         >
-          {React.cloneElement(icon, { size: 14 })}
-          {buttonLabel}
+          <div className="flex items-center gap-2 truncate">
+            {React.cloneElement(icon, { size: 14, className: "text-muted-foreground flex-shrink-0" })}
+            <span className="truncate">{displayLabel}</span>
+          </div>
+          <Search size={14} className="text-muted-foreground flex-shrink-0" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0" align="end" side="top" style={{ width: width || "auto" }}>
-        <Command className="rounded-lg border shadow-md">
+      <PopoverContent className="p-0" align="start" style={{ width: width || "auto" }}>
+        <Command>
           <CommandInput 
             placeholder={searchPlaceholder} 
             value={search}
@@ -135,28 +142,52 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
             className="h-9"
           />
           <CommandList>
-            {isLoading && (
+            {isLoading ? (
               <div className="py-6 text-center">
-                <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                <p className="text-sm text-muted-foreground mt-2">Searching locations...</p>
+                <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Searching locations...</p>
               </div>
+            ) : (
+              <>
+                <CommandEmpty>{emptyMessage}</CommandEmpty>
+                
+                {searchResults.length > 0 && (
+                  <CommandGroup heading="Search Results">
+                    {searchResults.map((result) => (
+                      <CommandItem
+                        key={result.place_id}
+                        value={result.display_name}
+                        onSelect={() => {
+                          onLocationSelect(result);
+                          setOpen(false);
+                        }}
+                      >
+                        <Globe className="mr-2 h-4 w-4" />
+                        <span className="truncate">{formatLocationResult(result)}</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+                
+                {recentSearches.length > 0 && searchResults.length === 0 && !search && (
+                  <CommandGroup heading="Recent Searches">
+                    {recentSearches.map((result) => (
+                      <CommandItem
+                        key={result.place_id}
+                        value={result.display_name}
+                        onSelect={() => {
+                          onLocationSelect(result);
+                          setOpen(false);
+                        }}
+                      >
+                        <Globe className="mr-2 h-4 w-4" />
+                        <span className="truncate">{formatLocationResult(result)}</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+              </>
             )}
-            <CommandEmpty>{emptyMessage}</CommandEmpty>
-            <CommandGroup heading="Locations">
-              {searchResults.map((result) => (
-                <CommandItem
-                  key={result.place_id}
-                  value={result.display_name}
-                  onSelect={() => {
-                    onLocationSelect(result);
-                    setOpen(false);
-                  }}
-                >
-                  {React.cloneElement(icon, { className: "mr-2 h-4 w-4" })}
-                  {formatLocationResult(result)}
-                </CommandItem>
-              ))}
-            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>
