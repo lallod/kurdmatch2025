@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User, Sparkles, Wand2, Bot, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,16 +11,14 @@ interface ProfileBioProps {
 }
 
 const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
-  const [isSubscriber] = useState(false); // Mock subscription status
+  const [isSubscriber] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedBio, setGeneratedBio] = useState<string>("");
   const { toast } = useToast();
   
-  // Function to generate a bio based on profile information
   const generateBio = () => {
     setIsGenerating(true);
     
-    // Simulate AI processing delay
     setTimeout(() => {
       const newBio = about || "Hi there! I'm a UX Designer with a passion for creating beautiful digital experiences. I love hiking in the mountains, trying new restaurants in San Francisco, and curling up with good books like The Alchemist. As a Libra with ENFJ personality, I value deep connections and communication. Looking for someone who shares my sense of adventure and appreciation for both the outdoors and quality time together.";
       setGeneratedBio(newBio);
@@ -41,7 +38,6 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
       description: "Your profile has been updated with the AI-generated bio.",
       variant: "default",
     });
-    // In a real app, this would update the profile in the database
   };
 
   return (
@@ -126,41 +122,42 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
           </Dialog>
         </div>
       </div>
-      <div className="backdrop-blur-md bg-black/5 border border-tinder-rose/20 p-5 rounded-2xl relative overflow-hidden shadow-lg">
-        {/* AI-like decorative elements */}
-        <div className="absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 rounded-full blur-xl"></div>
-        <div className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-br from-tinder-orange/30 to-tinder-rose/10 rounded-full blur-lg"></div>
+      <div className="relative rounded-2xl overflow-hidden shadow-lg">
+        <div className="absolute inset-0 bg-gradient-to-br from-tinder-rose/10 via-white/80 to-tinder-orange/10 backdrop-blur-md"></div>
         
-        {/* Animated circuit pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-tinder-rose/50 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-tinder-orange/50 to-transparent"></div>
-          <div className="absolute top-0 left-0 h-full w-0.5 bg-gradient-to-b from-transparent via-tinder-rose/50 to-transparent"></div>
-          <div className="absolute top-0 right-0 h-full w-0.5 bg-gradient-to-b from-transparent via-tinder-orange/50 to-transparent"></div>
-        </div>
+        <div className="absolute -top-6 -right-6 w-16 h-16 bg-gradient-to-br from-tinder-rose/30 to-tinder-orange/20 rounded-full blur-xl"></div>
+        <div className="absolute bottom-4 left-10 w-20 h-8 bg-gradient-to-r from-tinder-orange/20 to-tinder-rose/10 rounded-full blur-lg"></div>
+        <div className="absolute top-10 left-4 w-4 h-12 bg-gradient-to-b from-tinder-rose/20 to-transparent rounded-full blur-md"></div>
         
-        <p className="text-muted-foreground leading-relaxed italic relative z-10 font-light">
-          {about}
-          <span className="absolute -bottom-1 -right-1 opacity-70">
-            <Sparkles size={14} className="text-tinder-orange animate-pulse" />
-          </span>
-        </p>
-        <div className="mt-3 flex items-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <div className="flex items-center gap-1 text-xs text-tinder-rose/80">
-                  <Bot size={12} className="text-tinder-orange" />
-                  <span className="font-mono">AI_analyzed</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="backdrop-blur-md bg-black/40 border border-tinder-rose/30 text-white">
-                <p className="text-xs">
-                  AI automatically analyzes your profile data to create this personalized bio
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="absolute inset-0 border-2 border-tinder-orange/20 rounded-2xl"></div>
+        
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-40"></div>
+        
+        <div className="relative z-10 p-6">
+          <p className="text-foreground leading-relaxed font-medium relative z-10 text-balance">
+            {about}
+            <span className="absolute -bottom-1 -right-1">
+              <Sparkles size={16} className="text-tinder-orange animate-pulse opacity-70" />
+            </span>
+          </p>
+          
+          <div className="mt-4 flex items-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 shadow-sm">
+                    <Bot size={14} className="text-tinder-orange" />
+                    <span className="text-xs font-medium text-tinder-rose/90">AI Enhanced</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="bg-white backdrop-blur-lg border border-tinder-rose/20 shadow-lg">
+                  <p className="text-xs font-medium">
+                    AI analyzed your profile to create this enhanced bio
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </div>
     </div>
