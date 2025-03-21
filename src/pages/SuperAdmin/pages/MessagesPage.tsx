@@ -74,7 +74,7 @@ const MessagesPage = () => {
       content: 'I'm planning to visit your city next...',
       date: '2023-05-11 16:05',
       isRead: false
-    },
+    }
   ];
 
   const filteredMessages = mockMessages.filter(message =>
