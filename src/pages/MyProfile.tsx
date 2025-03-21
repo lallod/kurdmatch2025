@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Pencil, Settings, Shield } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Pencil, Settings } from 'lucide-react';
 import ProfileHeader from '@/components/ProfileHeader';
 import ProfileSections from '@/components/my-profile/ProfileSections';
 import PhotoManagement from '@/components/my-profile/PhotoManagement';
@@ -79,18 +78,10 @@ const MyProfile = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">My Profile</h1>
-          <div className="flex gap-2">
-            <Link to="/super-admin">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Shield size={16} />
-                Super Admin
-              </Button>
-            </Link>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Pencil size={16} />
-              Edit Profile
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Pencil size={16} />
+            Edit Profile
+          </Button>
         </div>
         
         <Tabs defaultValue="profile" className="w-full">
