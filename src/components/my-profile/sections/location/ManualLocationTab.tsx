@@ -1,9 +1,8 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { MapPin, Search } from 'lucide-react';
 import LocationSearch from './LocationSearch';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import LocationMap from './LocationMap';
 
 interface ManualLocationTabProps {
   location: string;
@@ -14,90 +13,34 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
   location,
   onLocationSelect
 }) => {
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const map = useRef<any>(null);
-  const marker = useRef<any>(null);
-  const [mapInitialized, setMapInitialized] = useState(false);
-  const [apiKey, setApiKey] = useState<string>('');
-  const [showApiKeyInput, setShowApiKeyInput] = useState(true);
-
-  // Initialize the map when the API key is provided
-  useEffect(() => {
-    if (!apiKey || !mapContainerRef.current || mapInitialized) return;
-    
-    const initializeMap = async () => {
-      try {
-        // Import mapboxgl dynamically
-        const mapboxgl = (await import('mapbox-gl')).default;
-        await import('mapbox-gl/dist/mapbox-gl.css');
-        
-        // Set access token
-        mapboxgl.accessToken = apiKey;
-        
-        // Create new map
-        map.current = new mapboxgl.Map({
-          container: mapContainerRef.current,
-          style: 'mapbox://styles/mapbox/streets-v11',
-          center: [0, 20], // Default to center of the world
-          zoom: 1.5
-        });
-        
-        // Add navigation controls
-        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-        
-        // Add event listener for map clicks
-        map.current.on('click', (e: any) => {
-          const { lng, lat } = e.lngLat;
-          
-          // Update marker position
-          if (marker.current) marker.current.remove();
-          
-          marker.current = new mapboxgl.Marker({ color: '#FF0000' })
-            .setLngLat([lng, lat])
-            .addTo(map.current);
-          
-          // Reverse geocode to get location info
-          reverseGeocode(lng, lat);
-        });
-        
-        setMapInitialized(true);
-        setShowApiKeyInput(false);
-      } catch (error) {
-        console.error("Error initializing map:", error);
-      }
-    };
-    
-    initializeMap();
-  }, [apiKey, mapInitialized]);
-
-  // Reverse geocode coordinates to get location name
-  const reverseGeocode = async (lng: number, lat: number) => {
+  const [position, setPosition] = useState<[number, number]>([20, 0]);
+  
+  // Reverse geocode to get location details from coordinates
+  const reverseGeocode = async (lat: number, lng: number) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${apiKey}&types=place,region,country`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+        { headers: { 'Accept-Language': 'en', 'User-Agent': 'KurdMatch App' } }
       );
       
-      if (!response.ok) throw new Error('Geocoding failed');
+      if (!response.ok) throw new Error('Reverse geocoding failed');
       
       const data = await response.json();
-      
-      if (data.features && data.features.length > 0) {
-        const locationData = {
-          display_name: data.features[0].place_name,
-          address: {
-            city: data.features.find((f: any) => f.place_type.includes('place'))?.text,
-            state: data.features.find((f: any) => f.place_type.includes('region'))?.text,
-            country: data.features.find((f: any) => f.place_type.includes('country'))?.text,
-          },
-          lat,
-          lon: lng
-        };
-        
-        onLocationSelect(locationData);
-      }
+      onLocationSelect({
+        display_name: data.display_name,
+        address: data.address,
+        lat,
+        lon: lng
+      });
     } catch (error) {
       console.error("Error during reverse geocoding:", error);
     }
+  };
+
+  // Handle map click
+  const handleMapClick = (lat: number, lng: number) => {
+    setPosition([lat, lng]);
+    reverseGeocode(lat, lng);
   };
 
   return (
@@ -114,41 +57,11 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
         </div>
       </div>
       
-      {showApiKeyInput && (
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p className="text-sm font-medium text-yellow-800 mb-2">Mapbox API Key Required</p>
-          <p className="text-xs text-yellow-700 mb-3">
-            To use the map feature, please enter your Mapbox public token. 
-            You can get one from <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="underline">mapbox.com</a>.
-          </p>
-          <div className="flex gap-2">
-            <Input 
-              type="text" 
-              placeholder="Enter Mapbox public token" 
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="h-8 text-xs"
-            />
-            <Button 
-              size="sm" 
-              onClick={() => apiKey && setShowApiKeyInput(false)}
-              className="h-8"
-            >
-              Apply
-            </Button>
-          </div>
-        </div>
-      )}
-      
       {/* Map container */}
-      <div 
-        ref={mapContainerRef} 
-        className={`w-full h-[300px] rounded-md border border-input ${!mapInitialized ? 'bg-muted flex items-center justify-center' : ''}`}
-      >
-        {!mapInitialized && !showApiKeyInput && (
-          <p className="text-muted-foreground text-sm">Loading map...</p>
-        )}
-      </div>
+      <LocationMap 
+        position={position}
+        onClick={handleMapClick}
+      />
 
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium">Search Location</label>
@@ -156,24 +69,11 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
           onLocationSelect={(selected) => {
             onLocationSelect(selected);
             
-            // If map is initialized, update the marker and center the map
-            if (mapInitialized && map.current) {
-              const lon = parseFloat(selected.lon);
+            // Update marker position
+            if (selected.lat && selected.lon) {
               const lat = parseFloat(selected.lat);
-              
-              // Center map on selected location
-              map.current.flyTo({
-                center: [lon, lat],
-                zoom: 10
-              });
-              
-              // Update marker
-              if (marker.current) marker.current.remove();
-              
-              const mapboxgl = require('mapbox-gl');
-              marker.current = new mapboxgl.Marker({ color: '#FF0000' })
-                .setLngLat([lon, lat])
-                .addTo(map.current);
+              const lon = parseFloat(selected.lon);
+              setPosition([lat, lon]);
             }
           }}
           buttonLabel="Search City"
