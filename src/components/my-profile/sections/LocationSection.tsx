@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { MapPin, Search, Navigation, MapPinOff } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Search, Navigation, MapPinOff, Loader2 } from 'lucide-react';
 import { SheetContent } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DetailEditor from '@/components/DetailEditor';
@@ -10,9 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 interface LocationSectionProps {
   profileData: {
@@ -50,17 +50,101 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
   const [isUsingCurrentLocation, setIsUsingCurrentLocation] = useState(true);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<string>("current");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   
   const filteredCities = cities.filter(city => 
     city.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Function to handle real geolocation detection
   const handleLocationDetection = () => {
-    // In a real app, this would use the browser's geolocation API
-    // For demonstration, we'll just set it to a placeholder
-    setLocation("Current Location (San Francisco, CA)");
-    setIsUsingCurrentLocation(true);
+    if (!navigator.geolocation) {
+      toast({
+        title: "Geolocation not supported",
+        description: "Your browser doesn't support geolocation services.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          // Use OpenStreetMap Nominatim API for geocoding (free to use with appropriate attribution)
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to get location information');
+          }
+          
+          const data = await response.json();
+          const formattedAddress = data.display_name;
+          
+          // Use a more concise format if available
+          const city = data.address.city || data.address.town || data.address.village || '';
+          const state = data.address.state || '';
+          const country = data.address.country || '';
+          
+          let formattedLocation = '';
+          if (city && (state || country)) {
+            formattedLocation = `${city}, ${state || country}`;
+          } else {
+            // Fallback to display name if structured data is incomplete
+            formattedLocation = formattedAddress;
+          }
+          
+          setLocation(formattedLocation);
+          setIsLoading(false);
+          
+          toast({
+            title: "Location updated",
+            description: "Your current location has been set."
+          });
+        } catch (error) {
+          console.error("Error getting location:", error);
+          setIsLoading(false);
+          toast({
+            title: "Location error",
+            description: "Could not determine your location. Please try again.",
+            variant: "destructive"
+          });
+        }
+      },
+      (error) => {
+        setIsLoading(false);
+        let errorMessage = "Could not determine your location.";
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location permission denied. Please enable location services in your browser settings.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            break;
+        }
+        
+        toast({
+          title: "Location error",
+          description: errorMessage,
+          variant: "destructive"
+        });
+      },
+      { 
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   };
 
   const handleManualLocationSelect = (selectedLocation: string) => {
@@ -75,6 +159,13 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
       handleLocationDetection();
     }
   };
+
+  // Try to get location on initial load if using current location
+  useEffect(() => {
+    if (isUsingCurrentLocation) {
+      handleLocationDetection();
+    }
+  }, []);
 
   return (
     <ProfileSectionButton
@@ -158,15 +249,26 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
                         size="sm" 
                         className="text-primary h-7 px-2"
                         onClick={handleLocationDetection}
+                        disabled={isLoading}
                       >
-                        <Navigation size={16} className="mr-1" />
-                        Update
+                        {isLoading ? (
+                          <Loader2 size={16} className="mr-1 animate-spin" />
+                        ) : (
+                          <Navigation size={16} className="mr-1" />
+                        )}
+                        {isLoading ? "Updating..." : "Update"}
                       </Button>
                     )}
                   </div>
                   <div className="p-3 bg-muted rounded-md flex items-center">
-                    {isUsingCurrentLocation ? <Navigation size={16} className="mr-2 text-primary" /> : <MapPin size={16} className="mr-2 text-primary" />}
-                    {location}
+                    {isLoading ? (
+                      <Loader2 size={16} className="mr-2 text-primary animate-spin" />
+                    ) : isUsingCurrentLocation ? (
+                      <Navigation size={16} className="mr-2 text-primary" />
+                    ) : (
+                      <MapPin size={16} className="mr-2 text-primary" />
+                    )}
+                    {isLoading ? "Detecting location..." : location}
                   </div>
                 </div>
                 
