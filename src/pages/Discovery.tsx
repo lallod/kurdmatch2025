@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -132,12 +131,11 @@ const Discovery = () => {
       religion: "all",
       bodyType: "all",
       language: "all",
-      heightRange: [150, 200], // Height in cm
+      heightRange: [150, 200],
       dietaryPreference: ""
     }
   });
   
-  // Extended profile data with more details
   const allProfiles: Profile[] = [
     {
       id: 1,
@@ -317,46 +315,34 @@ const Discovery = () => {
     setIsFilterExpanded(false);
   };
 
-  // Filter profiles based on selected filters
   const filteredProfiles = allProfiles.filter(profile => {
     const values = form.getValues();
     
-    // Filter by area
     const matchesArea = selectedArea === "all" || profile.area === selectedArea;
     
-    // Filter by age range
     const matchesAge = profile.age >= values.ageRange[0] && profile.age <= values.ageRange[1];
     
-    // Filter by distance
     const matchesDistance = profile.distance <= values.distance;
     
-    // Filter by compatibility score
     const matchesCompatibility = profile.compatibilityScore >= values.minCompatibility;
     
-    // Filter by occupation
     const matchesOccupation = !values.occupationFilter || 
       (profile.occupation && profile.occupation.toLowerCase().includes(values.occupationFilter.toLowerCase()));
     
-    // Filter by interests
     const matchesInterests = !values.hasInterests || (profile.interests && profile.interests.length > 0);
     
-    // Filter by religion
     const matchesReligion = values.religion === "all" || 
       (profile.religion && profile.religion === values.religion);
     
-    // Filter by body type
     const matchesBodyType = values.bodyType === "all" || 
       (profile.bodyType && profile.bodyType === values.bodyType);
     
-    // Filter by language
     const matchesLanguage = values.language === "all" || 
       (profile.languages && profile.languages.includes(values.language));
     
-    // Filter by height
     const height = profile.height ? parseInt(profile.height) : 0;
     const matchesHeight = height >= values.heightRange[0] && height <= values.heightRange[1];
     
-    // Filter by dietary preference
     const matchesDietary = !values.dietaryPreference || 
       (profile.dietaryPreferences && profile.dietaryPreferences.toLowerCase().includes(values.dietaryPreference.toLowerCase()));
     
@@ -774,23 +760,22 @@ const Discovery = () => {
               </div>
               
               <div className="flex flex-wrap gap-1 mt-3">
-                {/* Show profile details as mini badges */}
                 {profile.religion && (
-                  <Badge variant="secondary" size="sm" className="text-xs flex items-center gap-1">
+                  <Badge variant="secondary" className="text-xs flex items-center gap-1">
                     <Book className="h-3 w-3" />
                     {profile.religion}
                   </Badge>
                 )}
                 
                 {profile.languages && profile.languages.length > 0 && (
-                  <Badge variant="secondary" size="sm" className="text-xs flex items-center gap-1">
+                  <Badge variant="secondary" className="text-xs flex items-center gap-1">
                     <Languages className="h-3 w-3" />
                     {profile.languages[0]}{profile.languages.length > 1 ? ` +${profile.languages.length - 1}` : ''}
                   </Badge>
                 )}
                 
                 {profile.dietaryPreferences && (
-                  <Badge variant="secondary" size="sm" className="text-xs flex items-center gap-1">
+                  <Badge variant="secondary" className="text-xs flex items-center gap-1">
                     <UtensilsCrossed className="h-3 w-3" />
                     {profile.dietaryPreferences}
                   </Badge>
