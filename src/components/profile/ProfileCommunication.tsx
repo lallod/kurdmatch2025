@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DetailEditor from '@/components/DetailEditor';
 import LanguageSelector from '@/components/LanguageSelector';
+import { toast } from 'sonner';
 
 interface ProfileCommunicationProps {
   details: {
@@ -29,6 +30,12 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
   isMobile
 }) => {
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(details.languages || []);
+  const [profileLanguages, setProfileLanguages] = useState<string[]>(details.languages || []);
+
+  const handleSaveLanguages = () => {
+    setProfileLanguages(selectedLanguages);
+    toast.success("Languages saved successfully!");
+  };
 
   return (
     <div className="space-y-6 py-4">
@@ -49,12 +56,6 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
                 <div className="py-6 pr-2">
                   <SheetHeader className="mb-6">
                     <div className="flex items-center gap-2">
-                      <SheetClose asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <ArrowLeft size={18} />
-                          <span className="sr-only">Back</span>
-                        </Button>
-                      </SheetClose>
                       <SheetTitle className="text-left">Edit Languages</SheetTitle>
                     </div>
                   </SheetHeader>
@@ -71,7 +72,10 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
                     
                     <div className="mt-8 flex justify-end">
                       <SheetClose asChild>
-                        <Button className="bg-tinder-rose hover:bg-tinder-rose/90">
+                        <Button 
+                          className="bg-tinder-rose hover:bg-tinder-rose/90"
+                          onClick={handleSaveLanguages}
+                        >
                           Save Changes
                         </Button>
                       </SheetClose>
@@ -87,9 +91,13 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
           label="Can speak" 
           value={
             <div className="flex flex-wrap gap-2 mt-1">
-              {details.languages.map((language, index) => (
-                <Badge key={index} variant="outline" className={tinderBadgeStyle}>{language}</Badge>
-              ))}
+              {profileLanguages.length > 0 ? (
+                profileLanguages.map((language, index) => (
+                  <Badge key={index} variant="outline" className={tinderBadgeStyle}>{language}</Badge>
+                ))
+              ) : (
+                <span className="text-gray-500">No languages selected</span>
+              )}
             </div>
           } 
         />
@@ -126,12 +134,6 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
                 <div className="py-6 pr-2">
                   <SheetHeader className="mb-6">
                     <div className="flex items-center gap-2">
-                      <SheetClose asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <ArrowLeft size={18} />
-                          <span className="sr-only">Back</span>
-                        </Button>
-                      </SheetClose>
                       <SheetTitle className="text-left">Edit Communication</SheetTitle>
                     </div>
                   </SheetHeader>

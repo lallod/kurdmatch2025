@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Check, ChevronDown, Globe, Search, X, Languages, Sparkles } from 'lucide-react';
+import { Check, ChevronDown, Globe, Search, X, Languages, Sparkles, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import {
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { allLanguages, languageCategories } from '@/data/languages';
+import { toast } from 'sonner';
 
 interface LanguageSelectorProps {
   selectedLanguages: string[];
@@ -28,6 +29,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const [customLanguage, setCustomLanguage] = useState('');
 
   const getFilteredLanguages = () => {
     const searchLower = searchValue.toLowerCase();
@@ -65,6 +67,41 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   const removeLanguage = (language: string) => {
     onChange(selectedLanguages.filter(l => l !== language));
+  };
+
+  const addCustomLanguage = () => {
+    if (!customLanguage.trim()) {
+      return;
+    }
+    
+    const formattedLanguage = customLanguage.trim();
+    
+    // Check if language already exists
+    if (allLanguages.some(lang => lang.toLowerCase() === formattedLanguage.toLowerCase())) {
+      toast.error(`${formattedLanguage} already exists in the language list`);
+      return;
+    }
+    
+    // Check if already added to selected languages
+    if (selectedLanguages.some(lang => lang.toLowerCase() === formattedLanguage.toLowerCase())) {
+      toast.error(`${formattedLanguage} is already selected`);
+      return;
+    }
+    
+    // Limit check
+    if (selectedLanguages.length >= maxItems) {
+      toast.error(`You can select up to ${maxItems} languages`);
+      return;
+    }
+    
+    onChange([...selectedLanguages, formattedLanguage]);
+    setCustomLanguage('');
+    toast.success(`Added ${formattedLanguage} to your languages`);
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchValue(''); // Reset search when changing tabs
   };
 
   const filteredLanguages = getFilteredLanguages();
@@ -109,7 +146,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[340px] p-0 neo-glow border-tinder-rose/10" align="start">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <div className="flex items-center border-b px-3 bg-gradient-to-r from-gray-50 to-white">
               <TabsList className="grid grid-cols-4 w-full bg-transparent h-12">
                 <TabsTrigger 
@@ -158,6 +195,32 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                     <X size={12} />
                   </Button>
                 )}
+              </div>
+            </div>
+            
+            {/* Add custom language section */}
+            <div className="p-2 border-b">
+              <div className="flex gap-2 items-center">
+                <Input
+                  placeholder="Add custom language..."
+                  value={customLanguage}
+                  onChange={(e) => setCustomLanguage(e.target.value)}
+                  className="h-9 neo-border focus-visible:ring-tinder-rose/20"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCustomLanguage();
+                    }
+                  }}
+                />
+                <Button 
+                  size="sm"
+                  onClick={addCustomLanguage}
+                  className="bg-tinder-rose hover:bg-tinder-rose/90 flex items-center gap-1"
+                >
+                  <Plus size={16} />
+                  Add
+                </Button>
               </div>
             </div>
             
