@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, ChevronDown, Globe, Search, X, Languages, Sparkles, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
@@ -30,37 +30,49 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   const [customLanguage, setCustomLanguage] = useState('');
+  const [displayedLanguages, setDisplayedLanguages] = useState<string[]>(allLanguages);
+
+  // Update displayed languages when tab or search changes
+  useEffect(() => {
+    setDisplayedLanguages(getFilteredLanguages());
+  }, [activeTab, searchValue]);
 
   const getFilteredLanguages = () => {
     const searchLower = searchValue.toLowerCase();
     
+    let filteredList: string[] = [];
+    
     switch(activeTab) {
       case 'middle-eastern':
-        return languageCategories.middleEastern.filter(language => 
-          language.toLowerCase().includes(searchLower)
-        );
+        filteredList = languageCategories.middleEastern;
+        break;
       case 'kurdish':
-        return languageCategories.kurdishDialects.filter(language => 
-          language.toLowerCase().includes(searchLower)
-        );
+        filteredList = languageCategories.kurdishDialects;
+        break;
       case 'european':
-        return languageCategories.european.filter(language => 
-          language.toLowerCase().includes(searchLower)
-        );
+        filteredList = languageCategories.european;
+        break;
       case 'all':
       default:
-        return allLanguages.filter(language => 
-          language.toLowerCase().includes(searchLower)
-        );
+        filteredList = allLanguages;
+        break;
     }
+    
+    // Apply search filter
+    return filteredList.filter(language => 
+      language.toLowerCase().includes(searchLower)
+    );
   };
 
   const toggleLanguage = (language: string) => {
+    console.log('Toggling language:', language);
     if (selectedLanguages.includes(language)) {
       onChange(selectedLanguages.filter(l => l !== language));
     } else {
       if (selectedLanguages.length < maxItems) {
         onChange([...selectedLanguages, language]);
+      } else {
+        toast.error(`You can select up to ${maxItems} languages`);
       }
     }
   };
@@ -100,11 +112,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   };
 
   const handleTabChange = (value: string) => {
+    console.log('Tab changed to:', value);
     setActiveTab(value);
     setSearchValue(''); // Reset search when changing tabs
   };
-
-  const filteredLanguages = getFilteredLanguages();
 
   return (
     <div className="space-y-4">
@@ -226,14 +237,14 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             
             <ScrollArea className="h-[300px] rounded-b-lg">
               <div className="p-2">
-                {filteredLanguages.length === 0 ? (
+                {displayedLanguages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 px-4 text-gray-500">
                     <Search className="h-8 w-8 mb-2 opacity-50 text-tinder-rose/30" />
                     <p className="text-sm text-center">No languages found matching "{searchValue}"</p>
                   </div>
                 ) : (
                   <div className="space-y-1">
-                    {filteredLanguages.map(language => (
+                    {displayedLanguages.map(language => (
                       <div 
                         key={language}
                         className={`
@@ -247,6 +258,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                         onClick={() => {
                           if (selectedLanguages.length < maxItems || selectedLanguages.includes(language)) {
                             toggleLanguage(language);
+                          } else {
+                            toast.error(`You can select up to ${maxItems} languages`);
                           }
                         }}
                       >

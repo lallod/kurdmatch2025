@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Languages, MessageCircle, Brain, Bot, Pencil, ArrowLeft, Globe
+  Languages, MessageCircle, Brain, Bot, Pencil, Globe
 } from 'lucide-react';
 import DetailItem from './DetailItem';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,13 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(details.languages || []);
   const [profileLanguages, setProfileLanguages] = useState<string[]>(details.languages || []);
 
+  const handleLanguageChange = (languages: string[]) => {
+    console.log('Languages changed:', languages);
+    setSelectedLanguages(languages);
+  };
+
   const handleSaveLanguages = () => {
+    console.log('Saving languages:', selectedLanguages);
     setProfileLanguages(selectedLanguages);
     toast.success("Languages saved successfully!");
   };
@@ -66,7 +72,7 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
                     </p>
                     <LanguageSelector 
                       selectedLanguages={selectedLanguages}
-                      onChange={setSelectedLanguages}
+                      onChange={handleLanguageChange}
                       maxItems={5}
                     />
                     
