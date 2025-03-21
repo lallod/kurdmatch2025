@@ -24,7 +24,10 @@ import {
   CircleUser, 
   Tag, 
   Check, 
-  MoreHorizontal 
+  MoreHorizontal,
+  Search,
+  Filter,
+  X
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -122,6 +125,8 @@ const TodosPage = () => {
   ]);
   
   const [activeTab, setActiveTab] = useState<'all' | 'todo' | 'in-progress' | 'completed'>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'low' | 'medium' | 'high'>('all');
   const [newTodo, setNewTodo] = useState<{
     title: string;
     description: string;
@@ -191,9 +196,29 @@ const TodosPage = () => {
     });
   };
   
-  const filteredTodos = activeTab === 'all' 
-    ? todos 
-    : todos.filter(todo => todo.status === activeTab);
+  const handleDeleteTodo = (todoId: number) => {
+    const updatedTodos = todos.filter(todo => todo.id !== todoId);
+    setTodos(updatedTodos);
+    
+    toast({
+      title: "Task Deleted",
+      description: "Task has been deleted successfully.",
+    });
+  }
+  
+  const clearFilters = () => {
+    setSearchTerm('');
+    setPriorityFilter('all');
+  };
+  
+  const filteredTodos = todos
+    .filter(todo => activeTab === 'all' ? true : todo.status === activeTab)
+    .filter(todo => priorityFilter === 'all' ? true : todo.priority === priorityFilter)
+    .filter(todo => 
+      searchTerm === '' ? true : 
+      todo.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      todo.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   
   const priorityColorMap = {
     low: 'bg-blue-100 text-blue-800',
@@ -218,7 +243,6 @@ const TodosPage = () => {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Task Creation Section */}
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
@@ -310,7 +334,6 @@ const TodosPage = () => {
           </Card>
         </div>
         
-        {/* Task List Section */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader className="pb-2">
@@ -329,13 +352,66 @@ const TodosPage = () => {
                   <TabsTrigger value="completed">Completed</TabsTrigger>
                 </TabsList>
               </Tabs>
+              
+              <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                <div className="relative flex-grow">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                  <Input
+                    placeholder="Search tasks..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button 
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-2.5 top-2.5 text-gray-500 hover:text-gray-700"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+                
+                <div className="w-full sm:w-auto min-w-[150px]">
+                  <Select 
+                    value={priorityFilter} 
+                    onValueChange={(v) => setPriorityFilter(v as 'all' | 'low' | 'medium' | 'high')}
+                  >
+                    <SelectTrigger>
+                      <div className="flex items-center">
+                        <Filter size={14} className="mr-2" />
+                        <span>Priority</span>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Priorities</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {(searchTerm || priorityFilter !== 'all') && (
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={clearFilters}
+                    className="flex-shrink-0"
+                  >
+                    <X size={18} />
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <TabsContent value={activeTab} className="mt-0">
                 <div className="space-y-3">
                   {filteredTodos.length === 0 ? (
                     <div className="text-center py-6 text-gray-500">
-                      No tasks found in this category
+                      {searchTerm || priorityFilter !== 'all' 
+                        ? "No tasks found matching your filters" 
+                        : "No tasks found in this category"}
                     </div>
                   ) : (
                     filteredTodos.map(todo => (
@@ -397,7 +473,12 @@ const TodosPage = () => {
                                   Set as Completed
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>Edit Task</DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-500">Delete Task</DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  className="text-red-500"
+                                  onClick={() => handleDeleteTodo(todo.id)}
+                                >
+                                  Delete Task
+                                </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
