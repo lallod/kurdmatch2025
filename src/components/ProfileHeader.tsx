@@ -1,9 +1,12 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, Verified, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
+
 interface ProfileHeaderProps {
   name: string;
   age: number;
@@ -14,6 +17,7 @@ interface ProfileHeaderProps {
   profileImage: string;
   onDislike?: () => void;
 }
+
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   name,
   age,
@@ -25,6 +29,23 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onDislike
 }) => {
   const isMobile = useIsMobile();
+  
+  const handleMessage = () => {
+    toast.success(`Message sent to ${name}!`);
+  };
+  
+  const handleLike = () => {
+    toast.success(`You liked ${name}!`);
+  };
+  
+  const handleDislike = () => {
+    if (onDislike) {
+      onDislike();
+    } else {
+      toast.info(`You passed on ${name}`);
+    }
+  };
+  
   return <div className="relative w-full">
       <div className="absolute inset-0 overflow-hidden">
         <div className="w-full h-full" style={{
@@ -42,7 +63,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-8 md:py-16 lg:py-24 flex flex-col md:flex-row items-center gap-6 md:gap-8">
         <div className="relative">
           <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] md:w-[280px] md:h-[280px] rounded-full overflow-hidden border-4 border-white shadow-xl transition-transform-slow hover:scale-[1.02]">
-            
+            <img 
+              src={profileImage} 
+              alt={`${name}'s profile`} 
+              className="w-full h-full object-cover"
+            />
           </div>
           {verified && <div className="absolute bottom-3 right-3 bg-white text-primary rounded-full p-1 shadow-md">
               <Verified size={isMobile ? 16 : 20} className="text-blue-500" />
@@ -69,15 +94,29 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
 
           <div className="flex flex-wrap gap-2 md:gap-3 mt-4 md:mt-6 justify-center md:justify-start">
-            <Button size={isMobile ? "default" : "lg"} className="rounded-full shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2 bg-gradient-tinder text-white">
+            <Button 
+              size={isMobile ? "default" : "lg"} 
+              className="rounded-full shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2 bg-gradient-tinder text-white"
+              onClick={handleMessage}
+            >
               <MessageCircle size={isMobile ? 14 : 16} />
               <span>Message</span>
             </Button>
-            <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full bg-white backdrop-blur-sm border-tinder-rose text-tinder-rose hover:bg-tinder-light hover:text-tinder-rose hover:border-tinder-rose shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2">
+            <Button 
+              size={isMobile ? "default" : "lg"} 
+              variant="outline" 
+              className="rounded-full bg-white backdrop-blur-sm border-tinder-rose text-tinder-rose hover:bg-tinder-light hover:text-tinder-rose hover:border-tinder-rose shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
+              onClick={handleLike}
+            >
               <Heart size={isMobile ? 14 : 16} className="animate-pulse-heart" />
               <span>Like</span>
             </Button>
-            <Button size={isMobile ? "default" : "lg"} variant="outline" className="rounded-full bg-white backdrop-blur-sm border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2" onClick={onDislike}>
+            <Button 
+              size={isMobile ? "default" : "lg"} 
+              variant="outline" 
+              className="rounded-full bg-white backdrop-blur-sm border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2" 
+              onClick={handleDislike}
+            >
               <X size={isMobile ? 14 : 16} />
               <span>Dislike</span>
             </Button>
@@ -86,4 +125,5 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       </div>
     </div>;
 };
+
 export default ProfileHeader;

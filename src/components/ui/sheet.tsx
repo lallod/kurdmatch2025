@@ -63,6 +63,14 @@ const SheetContent = React.forwardRef<
       className={cn(sheetVariants({ side }), className)}
       {...props}
     >
+      {/* Adding hidden title and description for accessibility */}
+      <SheetPrimitive.Title className="sr-only">
+        Settings Panel
+      </SheetPrimitive.Title>
+      <SheetPrimitive.Description className="sr-only">
+        Dialog for editing settings
+      </SheetPrimitive.Description>
+      
       {children}
       <div className="absolute right-4 top-4 flex items-center gap-2">
         <SheetPrimitive.Close className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
