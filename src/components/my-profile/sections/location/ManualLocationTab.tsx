@@ -14,6 +14,18 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
 }) => {
   return (
     <div className="space-y-2">
+      <div className="bg-blue-50 p-2 rounded-md border border-blue-200 mb-3">
+        <div className="flex items-start gap-2">
+          <MapPin size={18} className="text-blue-500 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-blue-800">Manual Location</p>
+            <p className="text-xs text-blue-700">
+              Set your exact location by searching for your city or region.
+            </p>
+          </div>
+        </div>
+      </div>
+      
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium">Search Location</label>
         <LocationSearch 

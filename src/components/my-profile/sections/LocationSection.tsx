@@ -41,10 +41,15 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          // Use OpenStreetMap Nominatim API for geocoding (free to use with appropriate attribution)
+          // Use OpenStreetMap Nominatim API for geocoding
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
-            { headers: { 'Accept-Language': 'en' } }
+            { 
+              headers: { 
+                'Accept-Language': 'en',
+                'User-Agent': 'KurdMatch App' // Identify the app to the API service
+              } 
+            }
           );
           
           if (!response.ok) {
@@ -52,19 +57,23 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
           }
           
           const data = await response.json();
-          const formattedAddress = data.display_name;
           
           // Use a more concise format if available
-          const city = data.address.city || data.address.town || data.address.village || '';
-          const state = data.address.state || '';
-          const country = data.address.country || '';
+          const address = data.address || {};
+          const city = address.city || address.town || address.village || '';
+          const state = address.state || address.county || '';
+          const country = address.country || '';
           
           let formattedLocation = '';
-          if (city && (state || country)) {
+          if (city && state && country) {
+            formattedLocation = `${city}, ${state}, ${country}`;
+          } else if (city && (state || country)) {
             formattedLocation = `${city}, ${state || country}`;
+          } else if (state && country) {
+            formattedLocation = `${state}, ${country}`;
           } else {
             // Fallback to display name if structured data is incomplete
-            formattedLocation = formattedAddress;
+            formattedLocation = data.display_name.split(',').slice(0, 3).join(',');
           }
           
           setLocation(formattedLocation);
@@ -116,12 +125,10 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
 
   // Format the display text for a location search result
   const formatLocationResult = (result: any) => {
-    const address = result.address;
-    
-    if (!address) return result.display_name;
+    const address = result.address || {};
     
     const city = address.city || address.town || address.village || '';
-    const state = address.state || '';
+    const state = address.state || address.county || address.region || '';
     const country = address.country || '';
     
     if (city && state && country) {
@@ -130,6 +137,8 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
       return `${city}, ${state || country}`;
     } else if (state && country) {
       return `${state}, ${country}`;
+    } else if (country) {
+      return country;
     } else {
       return result.display_name.split(',').slice(0, 3).join(',');
     }

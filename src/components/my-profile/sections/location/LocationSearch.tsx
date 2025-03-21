@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import { Search, Loader2, Globe } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -29,9 +29,9 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const { toast } = useToast();
 
-  // Function to search locations using Nominatim API
+  // Function to search locations using Nominatim API with improved parameters
   const searchLocation = async (query: string) => {
-    if (!query || query.length < 3) {
+    if (!query || query.length < 2) {
       setSearchResults([]);
       return;
     }
@@ -39,10 +39,15 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
     setIsLoading(true);
     
     try {
-      // Use OpenStreetMap Nominatim API for location search
+      // Use OpenStreetMap Nominatim API with improved parameters
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=7`,
-        { headers: { 'Accept-Language': 'en' } }
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=10&featuretype=city&accept-language=en`,
+        { 
+          headers: { 
+            'Accept-Language': 'en',
+            'User-Agent': 'KurdMatch App' // Identify the app to the API service
+          } 
+        }
       );
       
       if (!response.ok) {
@@ -50,7 +55,22 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
       }
       
       const data = await response.json();
-      setSearchResults(data);
+      
+      // Filter for results that are likely to be cities or significant places
+      const filteredResults = data.filter((result: any) => {
+        // Check if the result has a 'city', 'town', 'village', or 'state' property
+        const address = result.address || {};
+        return (
+          address.city || 
+          address.town || 
+          address.village || 
+          address.state ||
+          address.country ||
+          ["city", "town", "administrative", "place"].includes(result.type)
+        );
+      });
+      
+      setSearchResults(filteredResults);
       setIsLoading(false);
     } catch (error) {
       console.error("Error searching locations:", error);
@@ -64,28 +84,31 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
     }
   };
 
-  // Format the display text for a location search result
+  // Improved function to format the display text for a location search result
   const formatLocationResult = (result: any) => {
-    const address = result.address;
+    const address = result.address || {};
     
-    if (!address) return result.display_name;
-    
+    // Try to extract the most relevant location information
     const city = address.city || address.town || address.village || '';
-    const state = address.state || '';
+    const state = address.state || address.county || address.region || '';
     const country = address.country || '';
     
+    // Create a well-formatted location string
     if (city && state && country) {
       return `${city}, ${state}, ${country}`;
     } else if (city && (state || country)) {
       return `${city}, ${state || country}`;
     } else if (state && country) {
       return `${state}, ${country}`;
+    } else if (country) {
+      return country;
     } else {
+      // Fallback: create a shorter display name by taking first few parts
       return result.display_name.split(',').slice(0, 3).join(',');
     }
   };
 
-  // Handle search input change with debounce
+  // Handle search input change
   const handleSearchChange = (value: string) => {
     setSearch(value);
     searchLocation(value);
@@ -103,7 +126,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
           {buttonLabel}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0" align="end" side="top" width={width}>
+      <PopoverContent className="p-0" align="end" side="top" style={{ width: width || "auto" }}>
         <Command className="rounded-lg border shadow-md">
           <CommandInput 
             placeholder={searchPlaceholder} 
