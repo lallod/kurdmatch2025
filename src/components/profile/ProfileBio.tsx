@@ -152,7 +152,7 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
                 </TooltipTrigger>
                 <TooltipContent side="top" className="bg-white backdrop-blur-lg border border-tinder-rose/20 shadow-lg">
                   <p className="text-xs font-medium">
-                    AI analyzed your profile to create this enhanced bio
+                    AI analyzed this profile to create an enhanced bio
                   </p>
                 </TooltipContent>
               </Tooltip>
