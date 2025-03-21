@@ -3,13 +3,14 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import LocationTabs from './LocationTabs';
+import type { KurdistanRegion } from '@/types/profile';
 
 interface LocationSectionContentProps {
   location: string;
   activeTab: string;
   isLoading: boolean;
   passportLocation: string;
-  kurdistanRegion: string;
+  kurdistanRegion: KurdistanRegion;
   onTabChange: (value: string) => void;
   onDetectLocation: () => void;
   onManualLocationSelect: (location: any) => void;
