@@ -71,7 +71,7 @@ const MessagesPage = () => {
       id: '5',
       sender: 'Emily Brown',
       recipient: 'Lisa Anderson',
-      content: 'I'm planning to visit your city next...',
+      content: "I'm planning to visit your city next...",
       date: '2023-05-11 16:05',
       isRead: false
     }
