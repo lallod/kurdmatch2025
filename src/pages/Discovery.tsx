@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Search, MapPin, Users, Filter } from 'lucide-react';
+import { MapPin, Users, Filter, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
   Select, 
@@ -14,6 +13,26 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel
+} from "@/components/ui/dropdown-menu";
+import { 
+  Form, 
+  FormControl, 
+  FormField, 
+  FormItem, 
+  FormLabel 
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { Switch } from "@/components/ui/switch";
 import { KurdistanRegion } from '@/types/profile';
 
 const areas = [
@@ -36,12 +55,37 @@ interface Profile {
   compatibilityScore: number;
   kurdistanRegion?: KurdistanRegion;
   area: string;
+  interests?: string[];
+  occupation?: string;
+}
+
+interface FilterFormValues {
+  area: string;
+  ageRange: [number, number];
+  distance: number;
+  minCompatibility: number;
+  hasInterests: boolean;
+  occupationFilter: string;
+  showVerifiedOnly: boolean;
 }
 
 const Discovery = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedArea, setSelectedArea] = useState("all");
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+  const [activeFilters, setActiveFilters] = useState(0);
+  
+  const form = useForm<FilterFormValues>({
+    defaultValues: {
+      area: "all",
+      ageRange: [18, 50],
+      distance: 50,
+      minCompatibility: 70,
+      hasInterests: false,
+      occupationFilter: "",
+      showVerifiedOnly: false
+    }
+  });
   
   const allProfiles: Profile[] = [
     {
@@ -52,7 +96,9 @@ const Discovery = () => {
       avatar: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=150&q=80",
       distance: 5,
       compatibilityScore: 92,
-      area: "us"
+      area: "us",
+      interests: ["Photography", "Hiking", "Coding"],
+      occupation: "Software Engineer"
     },
     {
       id: 2,
@@ -63,7 +109,9 @@ const Discovery = () => {
       distance: 12,
       compatibilityScore: 88,
       kurdistanRegion: "South-Kurdistan",
-      area: "South-Kurdistan"
+      area: "South-Kurdistan",
+      interests: ["Cooking", "Reading", "Travel"],
+      occupation: "Teacher"
     },
     {
       id: 3,
@@ -74,7 +122,9 @@ const Discovery = () => {
       distance: 8,
       compatibilityScore: 76,
       kurdistanRegion: "West-Kurdistan",
-      area: "West-Kurdistan"
+      area: "West-Kurdistan",
+      interests: ["Music", "Politics", "History"],
+      occupation: "Journalist"
     },
     {
       id: 4,
@@ -84,7 +134,9 @@ const Discovery = () => {
       avatar: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=150&q=80",
       distance: 3,
       compatibilityScore: 85,
-      area: "us"
+      area: "us",
+      interests: ["Fashion", "Art", "Film"],
+      occupation: "Designer"
     },
     {
       id: 5,
@@ -95,7 +147,9 @@ const Discovery = () => {
       distance: 15,
       compatibilityScore: 91,
       kurdistanRegion: "East-Kurdistan",
-      area: "East-Kurdistan"
+      area: "East-Kurdistan",
+      interests: ["Technology", "Sports", "Reading"],
+      occupation: "IT Consultant"
     },
     {
       id: 6,
@@ -106,7 +160,9 @@ const Discovery = () => {
       distance: 7,
       compatibilityScore: 95,
       kurdistanRegion: "North-Kurdistan",
-      area: "North-Kurdistan"
+      area: "North-Kurdistan",
+      interests: ["Language", "Culture", "Education"],
+      occupation: "Linguist"
     },
     {
       id: 7,
@@ -116,7 +172,9 @@ const Discovery = () => {
       avatar: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=150&q=80",
       distance: 20,
       compatibilityScore: 87,
-      area: "eu"
+      area: "eu",
+      interests: ["Travel", "Music", "Food"],
+      occupation: "Chef"
     },
     {
       id: 8,
@@ -126,22 +184,72 @@ const Discovery = () => {
       avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
       distance: 25,
       compatibilityScore: 90,
-      area: "eu"
+      area: "eu",
+      interests: ["Fashion", "Art", "Photography"],
+      occupation: "Photographer"
     }
   ];
 
-  // Filter profiles based on search query and selected area
-  const filteredProfiles = allProfiles.filter(profile => {
-    const matchesSearch = profile.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                        profile.location.toLowerCase().includes(searchQuery.toLowerCase());
+  const applyFilters = (formValues: FilterFormValues) => {
+    const { area, ageRange, distance, minCompatibility, hasInterests, occupationFilter, showVerifiedOnly } = formValues;
+    let count = 0;
     
+    if (area !== "all") count++;
+    if (distance < 50) count++;
+    if (minCompatibility > 70) count++;
+    if (hasInterests) count++;
+    if (occupationFilter) count++;
+    if (showVerifiedOnly) count++;
+    if (ageRange[0] > 18 || ageRange[1] < 50) count++;
+    
+    setActiveFilters(count);
+    setSelectedArea(area);
+    setIsFilterExpanded(false);
+  };
+
+  // Filter profiles based on selected filters
+  const filteredProfiles = allProfiles.filter(profile => {
+    const values = form.getValues();
+    
+    // Filter by area
     const matchesArea = selectedArea === "all" || profile.area === selectedArea;
     
-    return matchesSearch && matchesArea;
+    // Filter by age range
+    const matchesAge = profile.age >= values.ageRange[0] && profile.age <= values.ageRange[1];
+    
+    // Filter by distance
+    const matchesDistance = profile.distance <= values.distance;
+    
+    // Filter by compatibility score
+    const matchesCompatibility = profile.compatibilityScore >= values.minCompatibility;
+    
+    // Filter by occupation
+    const matchesOccupation = !values.occupationFilter || 
+      (profile.occupation && profile.occupation.toLowerCase().includes(values.occupationFilter.toLowerCase()));
+    
+    // Filter by interests
+    const matchesInterests = !values.hasInterests || (profile.interests && profile.interests.length > 0);
+    
+    return matchesArea && matchesAge && matchesDistance && matchesCompatibility && 
+           matchesOccupation && matchesInterests;
   });
 
   const handleProfileClick = (profileId: number) => {
     navigate(`/profile/${profileId}`);
+  };
+
+  const resetFilters = () => {
+    form.reset({
+      area: "all",
+      ageRange: [18, 50],
+      distance: 50,
+      minCompatibility: 70,
+      hasInterests: false,
+      occupationFilter: "",
+      showVerifiedOnly: false
+    });
+    setSelectedArea("all");
+    setActiveFilters(0);
   };
 
   return (
@@ -150,17 +258,7 @@ const Discovery = () => {
         <h1 className="text-2xl font-bold mb-6">Discover People</h1>
         
         <div className="flex flex-col sm:flex-row gap-3 mb-5">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by name or location"
-              className="pl-9"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <div className="w-full sm:w-52">
+          <div className="w-full">
             <Select value={selectedArea} onValueChange={setSelectedArea}>
               <SelectTrigger>
                 <SelectValue placeholder="All Regions" />
@@ -174,6 +272,145 @@ const Discovery = () => {
               </SelectContent>
             </Select>
           </div>
+          
+          <DropdownMenu open={isFilterExpanded} onOpenChange={setIsFilterExpanded}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 whitespace-nowrap">
+                <Filter className="h-4 w-4" />
+                <span>Filters</span>
+                {activeFilters > 0 && (
+                  <Badge className="ml-1 bg-tinder-rose text-white h-5 w-5 flex items-center justify-center p-0 text-xs rounded-full">
+                    {activeFilters}
+                  </Badge>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-72 p-4">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(applyFilters)} className="space-y-4">
+                  <DropdownMenuLabel className="font-bold">Filter Profiles</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="ageRange"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Age Range: {field.value[0]} - {field.value[1]}</FormLabel>
+                          <FormControl>
+                            <Slider 
+                              defaultValue={field.value} 
+                              min={18} 
+                              max={70} 
+                              step={1} 
+                              onValueChange={field.onChange}
+                              className="mt-2" 
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="distance"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Distance: {field.value} miles</FormLabel>
+                          <FormControl>
+                            <Slider 
+                              defaultValue={[field.value]} 
+                              min={1} 
+                              max={100} 
+                              step={1} 
+                              onValueChange={(value) => field.onChange(value[0])}
+                              className="mt-2" 
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="minCompatibility"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Minimum Compatibility: {field.value}%</FormLabel>
+                          <FormControl>
+                            <Slider 
+                              defaultValue={[field.value]} 
+                              min={50} 
+                              max={100} 
+                              step={5} 
+                              onValueChange={(value) => field.onChange(value[0])}
+                              className="mt-2" 
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="hasInterests"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <Checkbox 
+                              checked={field.value} 
+                              onCheckedChange={field.onChange} 
+                            />
+                          </FormControl>
+                          <FormLabel className="!mt-0">Has interests</FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="showVerifiedOnly"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <Switch 
+                              checked={field.value} 
+                              onCheckedChange={field.onChange} 
+                            />
+                          </FormControl>
+                          <FormLabel className="!mt-0">Verified profiles only</FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <div className="flex justify-between pt-2">
+                    <Button type="button" variant="outline" size="sm" onClick={resetFilters}>
+                      Reset
+                    </Button>
+                    <Button type="submit" size="sm">Apply Filters</Button>
+                  </div>
+                </form>
+              </Form>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         <div className="flex justify-between items-center mb-4">
@@ -182,10 +419,17 @@ const Discovery = () => {
             <span>{filteredProfiles.length} people found</span>
           </div>
           
-          <Button variant="outline" size="sm" className="gap-1">
-            <Filter className="h-4 w-4" />
-            <span>More Filters</span>
-          </Button>
+          {activeFilters > 0 && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-1 text-red-500 border-red-200 hover:bg-red-50"
+              onClick={resetFilters}
+            >
+              <X className="h-4 w-4" />
+              <span>Clear filters</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -211,6 +455,11 @@ const Discovery = () => {
                     <MapPin className="h-3.5 w-3.5" />
                     <span>{profile.location}</span>
                   </div>
+                  {profile.occupation && (
+                    <div className="text-sm text-muted-foreground">
+                      {profile.occupation}
+                    </div>
+                  )}
                 </div>
               </div>
               
@@ -233,6 +482,16 @@ const Discovery = () => {
                   </Badge>
                 )}
               </div>
+              
+              {profile.interests && profile.interests.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {profile.interests.slice(0, 3).map((interest, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {interest}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -241,10 +500,10 @@ const Discovery = () => {
       {filteredProfiles.length === 0 && (
         <div className="flex flex-col items-center justify-center h-[60vh] text-center">
           <div className="bg-muted/30 p-4 rounded-full mb-4">
-            <Search className="h-8 w-8 text-muted-foreground" />
+            <Filter className="h-8 w-8 text-muted-foreground" />
           </div>
           <p className="text-muted-foreground">No matching profiles found</p>
-          <p className="text-sm text-muted-foreground mt-1">Try adjusting your search criteria</p>
+          <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
         </div>
       )}
     </div>
