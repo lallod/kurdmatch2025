@@ -1,12 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Verified, X } from 'lucide-react';
+import { Heart, MessageCircle, Verified, X, Palette } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { KurdistanRegion } from '@/types/profile';
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface ProfileHeaderProps {
   name: string;
@@ -19,7 +24,25 @@ interface ProfileHeaderProps {
   distance?: number;
   kurdistanRegion?: KurdistanRegion;
   onDislike?: () => void;
+  backgroundColor?: string;
+  onBackgroundColorChange?: (color: string) => void;
 }
+
+const backgroundColors = [
+  "#F1F0FB", // Soft Gray
+  "#E5DEFF", // Soft Purple
+  "#D3E4FD", // Soft Blue
+  "#FFDEE2", // Soft Pink
+  "#FDE1D3", // Soft Peach
+  "#FEF7CD", // Soft Yellow
+  "#F2FCE2", // Soft Green
+  "#FD297B", // Tinder Rose
+  "#FF5864", // Tinder Orange
+  "#9b87f5", // Primary Purple
+  "#D946EF", // Magenta Pink
+  "#F97316", // Bright Orange
+  "#0EA5E9", // Ocean Blue
+];
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   name,
@@ -31,9 +54,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   profileImage,
   distance,
   kurdistanRegion,
-  onDislike
+  onDislike,
+  backgroundColor = "#F1F0FB",
+  onBackgroundColorChange
 }) => {
   const isMobile = useIsMobile();
+  const [localBgColor, setLocalBgColor] = useState(backgroundColor);
   
   const handleMessage = () => {
     toast.success(`Message sent to ${name}!`);
@@ -50,10 +76,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       toast.info(`You passed on ${name}`);
     }
   };
+
+  const handleColorChange = (color: string) => {
+    setLocalBgColor(color);
+    if (onBackgroundColorChange) {
+      onBackgroundColorChange(color);
+    }
+    toast.success("Profile background color updated!");
+  };
   
   return <div className="relative w-full">
       <div className="absolute inset-0 overflow-hidden">
         <div className="w-full h-full" style={{
+        backgroundColor: localBgColor,
         backgroundImage: `url(${profileImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -135,6 +170,45 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               <X size={isMobile ? 14 : 16} />
               <span>Dislike</span>
             </Button>
+            
+            {onBackgroundColorChange && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    size={isMobile ? "default" : "lg"}
+                    variant="outline"
+                    className="rounded-full bg-white backdrop-blur-sm border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
+                  >
+                    <Palette size={isMobile ? 14 : 16} />
+                    <span>Theme</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-3" align="end">
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-sm">Change Background</h4>
+                    <p className="text-xs text-muted-foreground">Pick a color for your profile background</p>
+                    <div className="grid grid-cols-5 gap-2 pt-2">
+                      {backgroundColors.map((color) => (
+                        <button
+                          key={color}
+                          className={cn(
+                            "w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center",
+                            localBgColor === color ? "border-black shadow-md scale-110" : "border-transparent hover:scale-110"
+                          )}
+                          style={{ backgroundColor: color }}
+                          onClick={() => handleColorChange(color)}
+                          aria-label={`Set background color to ${color}`}
+                        >
+                          {localBgColor === color && (
+                            <span className="bg-white w-2 h-2 rounded-full" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         </div>
       </div>

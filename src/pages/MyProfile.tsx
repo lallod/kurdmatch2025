@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState('general');
   const [isEditingSections, setIsEditingSections] = useState(false);
+  const [profileBgColor, setProfileBgColor] = useState("#F1F0FB");
   
   const profileData: ProfileData = {
     name: "Sarah",
@@ -68,6 +69,10 @@ const MyProfile = () => {
     setIsEditingSections(true);
   };
 
+  const handleBackgroundColorChange = (color: string) => {
+    setProfileBgColor(color);
+  };
+
   return (
     <div className="min-h-screen pt-4 px-4 pb-24">
       <div className="max-w-4xl mx-auto">
@@ -98,6 +103,8 @@ const MyProfile = () => {
                 profileImage={galleryImages[0]}
                 distance={profileData.distance}
                 kurdistanRegion={profileData.kurdistanRegion}
+                backgroundColor={profileBgColor}
+                onBackgroundColorChange={handleBackgroundColorChange}
               />
               <Button variant="outline" size="sm" className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm gap-2">
                 <Pencil size={16} />
@@ -110,7 +117,6 @@ const MyProfile = () => {
                 profileData={profileData} 
                 onEditSections={handleEditSections}
               />
-              {/* Removed the Edit Sections button from here */}
             </div>
           </TabsContent>
           
