@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, Users, Filter, X } from 'lucide-react';
+import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { 
@@ -34,6 +34,7 @@ import {
 import { useForm } from "react-hook-form";
 import { Switch } from "@/components/ui/switch";
 import { KurdistanRegion } from '@/types/profile';
+import { Input } from '@/components/ui/input';
 
 const areas = [
   { name: "All Regions", value: "all" },
@@ -43,6 +44,40 @@ const areas = [
   { name: "North Kurdistan", value: "North-Kurdistan" },
   { name: "United States", value: "us" },
   { name: "Europe", value: "eu" }
+];
+
+const religions = [
+  { name: "All Religions", value: "all" },
+  { name: "Christian", value: "christian" },
+  { name: "Muslim", value: "muslim" },
+  { name: "Jewish", value: "jewish" },
+  { name: "Hindu", value: "hindu" },
+  { name: "Buddhist", value: "buddhist" },
+  { name: "Spiritual", value: "spiritual" },
+  { name: "Atheist", value: "atheist" },
+  { name: "Agnostic", value: "agnostic" },
+  { name: "Other", value: "other" }
+];
+
+const bodyTypes = [
+  { name: "All Body Types", value: "all" },
+  { name: "Athletic", value: "athletic" },
+  { name: "Average", value: "average" },
+  { name: "Slim", value: "slim" },
+  { name: "Curvy", value: "curvy" },
+  { name: "Muscular", value: "muscular" }
+];
+
+const languageOptions = [
+  { name: "All Languages", value: "all" },
+  { name: "Kurdish", value: "kurdish" },
+  { name: "English", value: "english" },
+  { name: "Arabic", value: "arabic" },
+  { name: "Turkish", value: "turkish" },
+  { name: "Persian", value: "persian" },
+  { name: "German", value: "german" },
+  { name: "French", value: "french" },
+  { name: "Spanish", value: "spanish" }
 ];
 
 interface Profile {
@@ -57,6 +92,11 @@ interface Profile {
   area: string;
   interests?: string[];
   occupation?: string;
+  religion?: string;
+  bodyType?: string;
+  languages?: string[];
+  dietaryPreferences?: string;
+  height?: string;
 }
 
 interface FilterFormValues {
@@ -67,6 +107,11 @@ interface FilterFormValues {
   hasInterests: boolean;
   occupationFilter: string;
   showVerifiedOnly: boolean;
+  religion: string;
+  bodyType: string;
+  language: string;
+  heightRange: [number, number];
+  dietaryPreference: string;
 }
 
 const Discovery = () => {
@@ -83,10 +128,16 @@ const Discovery = () => {
       minCompatibility: 70,
       hasInterests: false,
       occupationFilter: "",
-      showVerifiedOnly: false
+      showVerifiedOnly: false,
+      religion: "all",
+      bodyType: "all",
+      language: "all",
+      heightRange: [150, 200], // Height in cm
+      dietaryPreference: ""
     }
   });
   
+  // Extended profile data with more details
   const allProfiles: Profile[] = [
     {
       id: 1,
@@ -98,7 +149,12 @@ const Discovery = () => {
       compatibilityScore: 92,
       area: "us",
       interests: ["Photography", "Hiking", "Coding"],
-      occupation: "Software Engineer"
+      occupation: "Software Engineer",
+      religion: "agnostic",
+      bodyType: "athletic",
+      languages: ["english", "spanish"],
+      height: "185",
+      dietaryPreferences: "Vegetarian"
     },
     {
       id: 2,
@@ -111,7 +167,12 @@ const Discovery = () => {
       kurdistanRegion: "South-Kurdistan",
       area: "South-Kurdistan",
       interests: ["Cooking", "Reading", "Travel"],
-      occupation: "Teacher"
+      occupation: "Teacher",
+      religion: "muslim",
+      bodyType: "average",
+      languages: ["kurdish", "english", "arabic"],
+      height: "165",
+      dietaryPreferences: "No restrictions"
     },
     {
       id: 3,
@@ -124,7 +185,12 @@ const Discovery = () => {
       kurdistanRegion: "West-Kurdistan",
       area: "West-Kurdistan",
       interests: ["Music", "Politics", "History"],
-      occupation: "Journalist"
+      occupation: "Journalist",
+      religion: "christian",
+      bodyType: "slim",
+      languages: ["kurdish", "english", "arabic", "turkish"],
+      height: "178",
+      dietaryPreferences: "No restrictions"
     },
     {
       id: 4,
@@ -136,7 +202,12 @@ const Discovery = () => {
       compatibilityScore: 85,
       area: "us",
       interests: ["Fashion", "Art", "Film"],
-      occupation: "Designer"
+      occupation: "Designer",
+      religion: "spiritual",
+      bodyType: "slim",
+      languages: ["english", "french"],
+      height: "170",
+      dietaryPreferences: "Pescatarian"
     },
     {
       id: 5,
@@ -149,7 +220,12 @@ const Discovery = () => {
       kurdistanRegion: "East-Kurdistan",
       area: "East-Kurdistan",
       interests: ["Technology", "Sports", "Reading"],
-      occupation: "IT Consultant"
+      occupation: "IT Consultant",
+      religion: "muslim",
+      bodyType: "muscular",
+      languages: ["kurdish", "persian", "english"],
+      height: "182",
+      dietaryPreferences: "No restrictions"
     },
     {
       id: 6,
@@ -162,7 +238,12 @@ const Discovery = () => {
       kurdistanRegion: "North-Kurdistan",
       area: "North-Kurdistan",
       interests: ["Language", "Culture", "Education"],
-      occupation: "Linguist"
+      occupation: "Linguist",
+      religion: "muslim",
+      bodyType: "average",
+      languages: ["kurdish", "turkish", "english"],
+      height: "163",
+      dietaryPreferences: "No restrictions"
     },
     {
       id: 7,
@@ -174,7 +255,12 @@ const Discovery = () => {
       compatibilityScore: 87,
       area: "eu",
       interests: ["Travel", "Music", "Food"],
-      occupation: "Chef"
+      occupation: "Chef",
+      religion: "atheist",
+      bodyType: "average",
+      languages: ["english", "german"],
+      height: "180",
+      dietaryPreferences: "No restrictions"
     },
     {
       id: 8,
@@ -186,12 +272,31 @@ const Discovery = () => {
       compatibilityScore: 90,
       area: "eu",
       interests: ["Fashion", "Art", "Photography"],
-      occupation: "Photographer"
+      occupation: "Photographer",
+      religion: "catholic",
+      bodyType: "slim",
+      languages: ["english", "french"],
+      height: "168",
+      dietaryPreferences: "Vegan"
     }
   ];
 
   const applyFilters = (formValues: FilterFormValues) => {
-    const { area, ageRange, distance, minCompatibility, hasInterests, occupationFilter, showVerifiedOnly } = formValues;
+    const { 
+      area, 
+      ageRange, 
+      distance, 
+      minCompatibility, 
+      hasInterests, 
+      occupationFilter, 
+      showVerifiedOnly,
+      religion,
+      bodyType,
+      language,
+      heightRange,
+      dietaryPreference
+    } = formValues;
+    
     let count = 0;
     
     if (area !== "all") count++;
@@ -201,6 +306,11 @@ const Discovery = () => {
     if (occupationFilter) count++;
     if (showVerifiedOnly) count++;
     if (ageRange[0] > 18 || ageRange[1] < 50) count++;
+    if (religion !== "all") count++;
+    if (bodyType !== "all") count++;
+    if (language !== "all") count++;
+    if (heightRange[0] > 150 || heightRange[1] < 200) count++;
+    if (dietaryPreference) count++;
     
     setActiveFilters(count);
     setSelectedArea(area);
@@ -230,8 +340,29 @@ const Discovery = () => {
     // Filter by interests
     const matchesInterests = !values.hasInterests || (profile.interests && profile.interests.length > 0);
     
+    // Filter by religion
+    const matchesReligion = values.religion === "all" || 
+      (profile.religion && profile.religion === values.religion);
+    
+    // Filter by body type
+    const matchesBodyType = values.bodyType === "all" || 
+      (profile.bodyType && profile.bodyType === values.bodyType);
+    
+    // Filter by language
+    const matchesLanguage = values.language === "all" || 
+      (profile.languages && profile.languages.includes(values.language));
+    
+    // Filter by height
+    const height = profile.height ? parseInt(profile.height) : 0;
+    const matchesHeight = height >= values.heightRange[0] && height <= values.heightRange[1];
+    
+    // Filter by dietary preference
+    const matchesDietary = !values.dietaryPreference || 
+      (profile.dietaryPreferences && profile.dietaryPreferences.toLowerCase().includes(values.dietaryPreference.toLowerCase()));
+    
     return matchesArea && matchesAge && matchesDistance && matchesCompatibility && 
-           matchesOccupation && matchesInterests;
+           matchesOccupation && matchesInterests && matchesReligion && 
+           matchesBodyType && matchesLanguage && matchesHeight && matchesDietary;
   });
 
   const handleProfileClick = (profileId: number) => {
@@ -246,7 +377,12 @@ const Discovery = () => {
       minCompatibility: 70,
       hasInterests: false,
       occupationFilter: "",
-      showVerifiedOnly: false
+      showVerifiedOnly: false,
+      religion: "all",
+      bodyType: "all",
+      language: "all",
+      heightRange: [150, 200],
+      dietaryPreference: ""
     });
     setSelectedArea("all");
     setActiveFilters(0);
@@ -285,7 +421,7 @@ const Discovery = () => {
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-72 p-4">
+            <DropdownMenuContent className="w-80 p-4 max-h-[80vh] overflow-y-auto">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(applyFilters)} className="space-y-4">
                   <DropdownMenuLabel className="font-bold">Filter Profiles</DropdownMenuLabel>
@@ -354,6 +490,159 @@ const Discovery = () => {
                               step={5} 
                               onValueChange={(value) => field.onChange(value[0])}
                               className="mt-2" 
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="religion"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Religion</FormLabel>
+                          <Select 
+                            value={field.value} 
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="All Religions" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {religions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="bodyType"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Body Type</FormLabel>
+                          <Select 
+                            value={field.value} 
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="All Body Types" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {bodyTypes.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="language"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Languages</FormLabel>
+                          <Select 
+                            value={field.value} 
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="All Languages" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {languageOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="heightRange"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Height (cm): {field.value[0]} - {field.value[1]}</FormLabel>
+                          <FormControl>
+                            <Slider 
+                              defaultValue={field.value} 
+                              min={140} 
+                              max={220} 
+                              step={1} 
+                              onValueChange={field.onChange}
+                              className="mt-2" 
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="dietaryPreference"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Dietary Preference</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="e.g. Vegan, Vegetarian"
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuGroup>
+                    <FormField
+                      control={form.control}
+                      name="occupationFilter"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>Occupation contains</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="e.g. Engineer, Teacher"
+                              value={field.value}
+                              onChange={field.onChange}
                             />
                           </FormControl>
                         </FormItem>
@@ -456,7 +745,8 @@ const Discovery = () => {
                     <span>{profile.location}</span>
                   </div>
                   {profile.occupation && (
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Briefcase className="h-3.5 w-3.5" />
                       {profile.occupation}
                     </div>
                   )}
@@ -483,10 +773,35 @@ const Discovery = () => {
                 )}
               </div>
               
+              <div className="flex flex-wrap gap-1 mt-3">
+                {/* Show profile details as mini badges */}
+                {profile.religion && (
+                  <Badge variant="secondary" size="sm" className="text-xs flex items-center gap-1">
+                    <Book className="h-3 w-3" />
+                    {profile.religion}
+                  </Badge>
+                )}
+                
+                {profile.languages && profile.languages.length > 0 && (
+                  <Badge variant="secondary" size="sm" className="text-xs flex items-center gap-1">
+                    <Languages className="h-3 w-3" />
+                    {profile.languages[0]}{profile.languages.length > 1 ? ` +${profile.languages.length - 1}` : ''}
+                  </Badge>
+                )}
+                
+                {profile.dietaryPreferences && (
+                  <Badge variant="secondary" size="sm" className="text-xs flex items-center gap-1">
+                    <UtensilsCrossed className="h-3 w-3" />
+                    {profile.dietaryPreferences}
+                  </Badge>
+                )}
+              </div>
+              
               {profile.interests && profile.interests.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
                   {profile.interests.slice(0, 3).map((interest, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
+                    <Badge key={index} variant="outline" className="text-xs flex items-center gap-1">
+                      <Heart className="h-3 w-3" />
                       {interest}
                     </Badge>
                   ))}
