@@ -257,6 +257,8 @@ const Index = () => {
   const [isSwiping, setIsSwiping] = useState(false);
   const [showMatchPopup, setShowMatchPopup] = useState(false);
   const [matchedProfile, setMatchedProfile] = useState<{id: number, name: string, profileImage: string} | null>(null);
+  const [showNextProfileNotification, setShowNextProfileNotification] = useState(false);
+  const [passedProfile, setPassedProfile] = useState<{id: number, name: string} | null>(null);
   const isMobile = useIsMobile();
 
   const profileData = profiles[currentProfileIndex];
@@ -298,9 +300,20 @@ const Index = () => {
   };
 
   const handleDislike = () => {
+    // Store the passed profile data
+    const currentProfile = {
+      id: profileData.id,
+      name: profileData.name
+    };
+    setPassedProfile(currentProfile);
+    
+    // Show the notification
+    setShowNextProfileNotification(true);
+    
     // Go to next profile
     const nextIndex = getNextUnviewedProfile();
     setCurrentProfileIndex(nextIndex);
+    
     toast.info(`You passed on ${profileData.name}`, {
       description: "Showing you the next profile",
       position: "bottom-center",
@@ -464,6 +477,14 @@ const Index = () => {
         onClose={() => setShowMatchPopup(false)}
         matchedProfile={matchedProfile}
       />
+      
+      {/* Passed Profile Notification */}
+      {passedProfile && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gray-900/95 text-white flex items-center gap-2 z-30">
+          <X size={18} className="text-red-500" />
+          <p className="text-sm">You passed on {passedProfile.name}</p>
+        </div>
+      )}
     </main>
   );
 };

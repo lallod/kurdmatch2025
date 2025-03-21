@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
-import { User, Sparkles, Bot } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import React from 'react';
+import { User, Sparkles } from 'lucide-react';
 
 interface ProfileBioProps {
   about: string;
@@ -34,24 +33,6 @@ const ProfileBio: React.FC<ProfileBioProps> = ({ about, isMobile }) => {
               <Sparkles size={16} className="text-tinder-orange animate-pulse opacity-70" />
             </span>
           </p>
-          
-          <div className="mt-4 flex items-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 shadow-sm">
-                    <Bot size={14} className="text-tinder-orange" />
-                    <span className="text-xs font-medium text-tinder-rose/90">AI Enhanced</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="bg-white backdrop-blur-lg border border-tinder-rose/20 shadow-lg">
-                  <p className="text-xs font-medium">
-                    AI analyzed this profile to create an enhanced bio
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
         </div>
       </div>
     </div>
