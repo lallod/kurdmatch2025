@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -109,17 +110,7 @@ const MyProfile = () => {
                 profileData={profileData} 
                 onEditSections={handleEditSections}
               />
-              <div className="absolute top-0 right-0 p-4">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="gap-2"
-                  onClick={handleEditSections}
-                >
-                  <Pencil size={16} />
-                  Edit Sections
-                </Button>
-              </div>
+              {/* Removed the Edit Sections button from here */}
             </div>
           </TabsContent>
           
