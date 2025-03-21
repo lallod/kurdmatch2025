@@ -11,7 +11,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Search, UserPlus, Edit, Trash2, User, Filter } from 'lucide-react';
+import { 
+  Search, 
+  Filter, 
+  Users, 
+  Eye, 
+  Trash2, 
+  Edit, 
+  UserPlus,
+  Ban,
+  Star,
+  UserCheck,
+  Mail 
+} from 'lucide-react';
 import { 
   Pagination, 
   PaginationContent, 
@@ -20,87 +32,181 @@ import {
   PaginationNext, 
   PaginationPrevious
 } from '@/components/ui/pagination';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface User {
   id: string;
   name: string;
   email: string;
-  status: 'active' | 'inactive' | 'suspended';
-  region: string;
-  registrationDate: string;
+  registeredDate: string;
+  status: 'active' | 'inactive' | 'banned';
+  role: 'user' | 'premium' | 'moderator';
   lastActive: string;
+  photosCount: number;
 }
 
 const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
   
   // Mock user data - in a real app, this would come from an API
   const mockUsers: User[] = [
     {
       id: '1',
       name: 'Sarah Johnson',
-      email: 'sarah@example.com',
+      email: 'sarah.j@example.com',
+      registeredDate: '2023-01-15',
       status: 'active',
-      region: 'South-Kurdistan',
-      registrationDate: '2023-01-15',
-      lastActive: '2 hours ago'
+      role: 'premium',
+      lastActive: '2023-05-15 14:30',
+      photosCount: 12
     },
     {
       id: '2',
-      name: 'Michael Smith',
-      email: 'michael@example.com',
+      name: 'David Wilson',
+      email: 'david.w@example.com',
+      registeredDate: '2023-02-22',
       status: 'active',
-      region: 'North-Kurdistan',
-      registrationDate: '2023-02-21',
-      lastActive: '5 days ago'
+      role: 'user',
+      lastActive: '2023-05-14 09:15',
+      photosCount: 5
     },
     {
       id: '3',
-      name: 'Emily Brown',
-      email: 'emily@example.com',
+      name: 'Lisa Anderson',
+      email: 'lisa.a@example.com',
+      registeredDate: '2023-03-10',
       status: 'inactive',
-      region: 'East-Kurdistan',
-      registrationDate: '2023-03-18',
-      lastActive: '1 month ago'
+      role: 'user',
+      lastActive: '2023-04-30 18:45',
+      photosCount: 3
     },
     {
       id: '4',
-      name: 'David Wilson',
-      email: 'david@example.com',
-      status: 'suspended',
-      region: 'West-Kurdistan',
-      registrationDate: '2023-01-09',
-      lastActive: '2 months ago'
+      name: 'Michael Smith',
+      email: 'michael.s@example.com',
+      registeredDate: '2023-01-05',
+      status: 'banned',
+      role: 'user',
+      lastActive: '2023-03-12 11:20',
+      photosCount: 0
     },
     {
       id: '5',
-      name: 'Lisa Anderson',
-      email: 'lisa@example.com',
+      name: 'Emily Brown',
+      email: 'emily.b@example.com',
+      registeredDate: '2023-04-18',
       status: 'active',
-      region: 'South-Kurdistan',
-      registrationDate: '2023-04-12',
-      lastActive: '1 day ago'
-    },
+      role: 'moderator',
+      lastActive: '2023-05-11 16:05',
+      photosCount: 8
+    }
   ];
 
-  const getStatusColor = (status: string) => {
+  // Apply filters
+  let filteredUsers = mockUsers;
+  
+  // Filter by search term
+  if (searchTerm) {
+    filteredUsers = filteredUsers.filter(user =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+  
+  // Filter by tab
+  if (activeTab === "active") {
+    filteredUsers = filteredUsers.filter(user => user.status === 'active');
+  } else if (activeTab === "inactive") {
+    filteredUsers = filteredUsers.filter(user => user.status === 'inactive');
+  } else if (activeTab === "banned") {
+    filteredUsers = filteredUsers.filter(user => user.status === 'banned');
+  }
+  
+  // Filter by status
+  if (statusFilter !== "all") {
+    filteredUsers = filteredUsers.filter(user => user.status === statusFilter);
+  }
+  
+  // Filter by role
+  if (roleFilter !== "all") {
+    filteredUsers = filteredUsers.filter(user => user.role === roleFilter);
+  }
+
+  const handleViewUser = (id: string) => {
+    console.log(`Viewing user with ID: ${id}`);
+    // In a real app, you would navigate to a user detail page
+  };
+
+  const handleEditUser = (id: string) => {
+    console.log(`Editing user with ID: ${id}`);
+    // In a real app, you would open a dialog or navigate to an edit page
+  };
+
+  const handleDeleteUser = (id: string) => {
+    console.log(`Deleting user with ID: ${id}`);
+    // In a real app, you would show a confirmation dialog and send a delete request
+  };
+
+  const handleBanUser = (id: string) => {
+    console.log(`Banning user with ID: ${id}`);
+    // In a real app, you would update the user's status
+  };
+
+  const handleUpgradeUser = (id: string) => {
+    console.log(`Upgrading user with ID: ${id}`);
+    // In a real app, you would change the user's role
+  };
+
+  const handleMessageUser = (id: string) => {
+    console.log(`Sending message to user with ID: ${id}`);
+    // In a real app, you would open a message composer
+  };
+
+  const getStatusColor = (status: User['status']) => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800';
       case 'inactive':
-        return 'bg-gray-100 text-gray-800';
-      case 'suspended':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'banned':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const filteredUsers = mockUsers.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.region.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const getRoleColor = (role: User['role']) => {
+    switch (role) {
+      case 'premium':
+        return 'bg-purple-100 text-purple-800';
+      case 'moderator':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -113,20 +219,72 @@ const UsersPage = () => {
       </div>
 
       <Card className="p-4">
+        <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="all">All Users</TabsTrigger>
+            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="inactive">Inactive</TabsTrigger>
+            <TabsTrigger value="banned">Banned</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search users by name, email, or region..."
+              placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
-          <Button variant="outline" className="gap-2">
-            <Filter size={16} />
-            Filters
-          </Button>
+          <Dialog open={filterDialogOpen} onOpenChange={setFilterDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Filter size={16} />
+                Filters
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Filter Users</DialogTitle>
+                <DialogDescription>
+                  Set filters to narrow down your user list
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="banned">Banned</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="role">Role</Label>
+                  <Select value={roleFilter} onValueChange={setRoleFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Filter by role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="premium">Premium</SelectItem>
+                      <SelectItem value="moderator">Moderator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={() => setFilterDialogOpen(false)}>Apply Filters</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="rounded-md border overflow-hidden">
@@ -136,46 +294,62 @@ const UsersPage = () => {
                 <TableHead className="w-12">ID</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Registered</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Region</TableHead>
-                <TableHead>Registration Date</TableHead>
+                <TableHead>Role</TableHead>
                 <TableHead>Last Active</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
+                <TableHead>Photos</TableHead>
+                <TableHead className="w-32">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.id}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                        <User size={16} className="text-gray-600" />
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">{user.id}</TableCell>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.registeredDate}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
+                        {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                      </span>
+                    </TableCell>
+                    <TableCell>{user.lastActive}</TableCell>
+                    <TableCell>{user.photosCount}</TableCell>
+                    <TableCell>
+                      <div className="flex space-x-1">
+                        <Button variant="ghost" size="icon" onClick={() => handleViewUser(user.id)} title="View User">
+                          <Eye size={16} />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleEditUser(user.id)} title="Edit User">
+                          <Edit size={16} />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleBanUser(user.id)} title="Ban User">
+                          <Ban size={16} />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleUpgradeUser(user.id)} title="Upgrade User">
+                          <Star size={16} />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleMessageUser(user.id)} title="Message User">
+                          <Mail size={16} />
+                        </Button>
                       </div>
-                      {user.name}
-                    </div>
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
-                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                    </span>
-                  </TableCell>
-                  <TableCell>{user.region}</TableCell>
-                  <TableCell>{user.registrationDate}</TableCell>
-                  <TableCell>{user.lastActive}</TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button variant="ghost" size="icon">
-                        <Edit size={16} />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={9} className="text-center py-4">
+                    No users found matching your criteria
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>
