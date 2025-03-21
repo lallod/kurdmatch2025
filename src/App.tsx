@@ -14,6 +14,7 @@ import MyProfile from "./pages/MyProfile";
 import ProfilePage from "./pages/ProfilePage";
 import Discovery from "./pages/Discovery";
 import BottomNavigation from "./components/BottomNavigation";
+import SuperAdmin from "./pages/SuperAdmin";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="/discovery" element={<Discovery />} />
+            <Route path="/super-admin/*" element={<SuperAdmin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNavigation />
