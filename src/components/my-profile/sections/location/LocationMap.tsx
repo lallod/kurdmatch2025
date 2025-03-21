@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { fixLeafletIcon } from './leaflet-icon-fix';
+import fixLeafletIcon from './leaflet-icon-fix';
 
 interface LocationMapProps {
   position: [number, number];
@@ -60,10 +60,12 @@ const LocationMap: React.FC<LocationMapProps> = ({
   return (
     <div className="rounded-md overflow-hidden border border-gray-200 shadow-sm">
       <MapContainer
+        center={position}
+        zoom={zoom}
         style={{ height, width }}
-        attributionControl={false}
       >
         <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={position} />
