@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, Verified, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
+import { KurdistanRegion } from '@/types/profile';
 
 interface ProfileHeaderProps {
   name: string;
@@ -15,6 +16,8 @@ interface ProfileHeaderProps {
   lastActive: string;
   verified: boolean;
   profileImage: string;
+  distance?: number;
+  kurdistanRegion?: KurdistanRegion;
   onDislike?: () => void;
 }
 
@@ -26,6 +29,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   lastActive,
   verified,
   profileImage,
+  distance,
+  kurdistanRegion,
   onDislike
 }) => {
   const isMobile = useIsMobile();
@@ -91,6 +96,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <Badge variant="outline" className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm">
               Active {lastActive}
             </Badge>
+            {distance && (
+              <Badge variant="outline" className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm">
+                {distance} miles away
+              </Badge>
+            )}
+            {kurdistanRegion && (
+              <Badge variant="outline" className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm">
+                {kurdistanRegion}
+              </Badge>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-2 md:gap-3 mt-4 md:mt-6 justify-center md:justify-start">
