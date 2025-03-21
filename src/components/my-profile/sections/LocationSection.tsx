@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { MapPin, Search, Navigation, MapPinOff, Loader2 } from 'lucide-react';
+import { MapPin, Search, Navigation, MapPinOff, Loader2, Globe } from 'lucide-react';
 import { SheetContent } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DetailEditor from '@/components/DetailEditor';
@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface LocationSectionProps {
   profileData: {
@@ -24,11 +25,18 @@ interface LocationSectionProps {
 const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
   const [location, setLocation] = useState(profileData.location);
   const [isUsingCurrentLocation, setIsUsingCurrentLocation] = useState(true);
+  const [locationMode, setLocationMode] = useState<'current' | 'manual' | 'passport'>('current');
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('current');
+  const [passportLocation, setPassportLocation] = useState("");
+  const [passportSearch, setPassportSearch] = useState("");
+  const [passportSearchResults, setPassportSearchResults] = useState<any[]>([]);
+  const [passportOpen, setPassportOpen] = useState(false);
+  const [passportLoading, setPassportLoading] = useState(false);
 
   // Function to handle real geolocation detection
   const handleLocationDetection = () => {
@@ -121,13 +129,13 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
   };
 
   // Function to search locations using Nominatim API
-  const searchLocation = async (query: string) => {
+  const searchLocation = async (query: string, setResults: React.Dispatch<React.SetStateAction<any[]>>, setLoadingState: React.Dispatch<React.SetStateAction<boolean>>) => {
     if (!query || query.length < 3) {
-      setSearchResults([]);
+      setResults([]);
       return;
     }
 
-    setIsLoading(true);
+    setLoadingState(true);
     
     try {
       // Use OpenStreetMap Nominatim API for location search
@@ -141,12 +149,12 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
       }
       
       const data = await response.json();
-      setSearchResults(data);
-      setIsLoading(false);
+      setResults(data);
+      setLoadingState(false);
     } catch (error) {
       console.error("Error searching locations:", error);
-      setIsLoading(false);
-      setSearchResults([]);
+      setLoadingState(false);
+      setResults([]);
       toast({
         title: "Search error",
         description: "Could not search for locations. Please try again.",
@@ -179,25 +187,78 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
   const handleManualLocationSelect = (selectedLocation: any) => {
     const formattedLocation = formatLocationResult(selectedLocation);
     setLocation(formattedLocation);
+    setLocationMode('manual');
     setIsUsingCurrentLocation(false);
     setOpen(false);
+    
+    toast({
+      title: "Location updated",
+      description: "Your location has been manually set to " + formattedLocation
+    });
+  };
+
+  const handlePassportLocationSelect = (selectedLocation: any) => {
+    const formattedLocation = formatLocationResult(selectedLocation);
+    setPassportLocation(formattedLocation);
+    setLocation(formattedLocation); // Also update the main location
+    setLocationMode('passport');
+    setIsUsingCurrentLocation(false);
+    setPassportOpen(false);
+    
+    toast({
+      title: "Passport location set",
+      description: "You're now browsing from " + formattedLocation,
+      variant: "default"
+    });
   };
 
   const toggleLocationMode = (checked: boolean) => {
     setIsUsingCurrentLocation(checked);
     if (checked) {
+      setLocationMode('current');
       handleLocationDetection();
+    } else {
+      setLocationMode('manual');
     }
   };
 
-  // Debounce search input
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    
+    if (value === 'current') {
+      setLocationMode('current');
+      setIsUsingCurrentLocation(true);
+      handleLocationDetection();
+    } else if (value === 'manual') {
+      setLocationMode('manual');
+      setIsUsingCurrentLocation(false);
+    } else if (value === 'passport') {
+      setLocationMode('passport');
+      setIsUsingCurrentLocation(false);
+      
+      if (passportLocation) {
+        setLocation(passportLocation);
+      }
+    }
+  };
+
+  // Debounce search input for manual location
   useEffect(() => {
     const timer = setTimeout(() => {
-      searchLocation(search);
+      searchLocation(search, setSearchResults, setIsLoading);
     }, 500);
 
     return () => clearTimeout(timer);
   }, [search]);
+
+  // Debounce search input for passport location
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      searchLocation(passportSearch, setPassportSearchResults, setPassportLoading);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [passportSearch]);
 
   // Try to get location on initial load if using current location
   useEffect(() => {
@@ -226,96 +287,177 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
               </div>
               
               <div className="space-y-4">
-                {/* Current/Manual Location Toggle */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Label htmlFor="use-current-location" className="text-sm">Use my current location</Label>
-                    <Switch 
-                      id="use-current-location" 
-                      checked={isUsingCurrentLocation} 
-                      onCheckedChange={toggleLocationMode}
-                    />
-                  </div>
-                </div>
-                
-                {/* Location Display & Edit */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="location" className="text-sm font-medium">
-                      {isUsingCurrentLocation ? "Current Location" : "City & Country"}
-                    </label>
-                    {!isUsingCurrentLocation && (
-                      <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="text-primary h-7 px-2"
-                          >
-                            Edit
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-0" align="end" side="top" width="300px">
-                          <Command className="rounded-lg border shadow-md">
-                            <CommandInput 
-                              placeholder="Search for a city or country..." 
-                              value={search}
-                              onValueChange={setSearch}
-                              className="h-9"
-                            />
-                            <CommandList>
-                              {isLoading && (
-                                <div className="py-6 text-center">
-                                  <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                                  <p className="text-sm text-muted-foreground mt-2">Searching locations...</p>
-                                </div>
-                              )}
-                              <CommandEmpty>No locations found. Try a different search.</CommandEmpty>
-                              <CommandGroup heading="Locations">
-                                {searchResults.map((result) => (
-                                  <CommandItem
-                                    key={result.place_id}
-                                    value={result.display_name}
-                                    onSelect={() => handleManualLocationSelect(result)}
-                                  >
-                                    <MapPin className="mr-2 h-4 w-4" />
-                                    {formatLocationResult(result)}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                    {isUsingCurrentLocation && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-primary h-7 px-2"
-                        onClick={handleLocationDetection}
-                        disabled={isLoading}
-                      >
+                <Tabs defaultValue="current" value={activeTab} onValueChange={handleTabChange} className="w-full">
+                  <TabsList className="w-full grid grid-cols-3">
+                    <TabsTrigger value="current">Current</TabsTrigger>
+                    <TabsTrigger value="manual">Manual</TabsTrigger>
+                    <TabsTrigger value="passport">Passport</TabsTrigger>
+                  </TabsList>
+                  
+                  {/* Current Location Tab */}
+                  <TabsContent value="current" className="space-y-4 mt-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">Device Location</label>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-primary h-7 px-2"
+                          onClick={handleLocationDetection}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <Loader2 size={16} className="mr-1 animate-spin" />
+                          ) : (
+                            <Navigation size={16} className="mr-1" />
+                          )}
+                          {isLoading ? "Updating..." : "Update"}
+                        </Button>
+                      </div>
+                      <div className="p-3 bg-muted rounded-md flex items-center">
                         {isLoading ? (
-                          <Loader2 size={16} className="mr-1 animate-spin" />
+                          <Loader2 size={16} className="mr-2 text-primary animate-spin" />
                         ) : (
-                          <Navigation size={16} className="mr-1" />
+                          <Navigation size={16} className="mr-2 text-primary" />
                         )}
-                        {isLoading ? "Updating..." : "Update"}
-                      </Button>
-                    )}
-                  </div>
-                  <div className="p-3 bg-muted rounded-md flex items-center">
-                    {isLoading ? (
-                      <Loader2 size={16} className="mr-2 text-primary animate-spin" />
-                    ) : isUsingCurrentLocation ? (
-                      <Navigation size={16} className="mr-2 text-primary" />
-                    ) : (
-                      <MapPin size={16} className="mr-2 text-primary" />
-                    )}
-                    {isLoading ? "Detecting location..." : location}
-                  </div>
-                </div>
+                        {isLoading ? "Detecting location..." : location}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        This uses your device's GPS to determine your exact location.
+                      </p>
+                    </div>
+                  </TabsContent>
+                  
+                  {/* Manual Location Tab */}
+                  <TabsContent value="manual" className="space-y-4 mt-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">Search Location</label>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-8 gap-1"
+                            >
+                              <Search size={14} />
+                              Search City
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-0 w-[300px]" align="end" side="top">
+                            <Command className="rounded-lg border shadow-md">
+                              <CommandInput 
+                                placeholder="Search for a city or country..." 
+                                value={search}
+                                onValueChange={setSearch}
+                                className="h-9"
+                              />
+                              <CommandList>
+                                {isLoading && (
+                                  <div className="py-6 text-center">
+                                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                                    <p className="text-sm text-muted-foreground mt-2">Searching locations...</p>
+                                  </div>
+                                )}
+                                <CommandEmpty>No locations found. Try a different search.</CommandEmpty>
+                                <CommandGroup heading="Locations">
+                                  {searchResults.map((result) => (
+                                    <CommandItem
+                                      key={result.place_id}
+                                      value={result.display_name}
+                                      onSelect={() => handleManualLocationSelect(result)}
+                                    >
+                                      <MapPin className="mr-2 h-4 w-4" />
+                                      {formatLocationResult(result)}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <div className="p-3 bg-muted rounded-md flex items-center">
+                        <MapPin size={16} className="mr-2 text-primary" />
+                        {location || "No location set"}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Manually set your location to your actual city or region.
+                      </p>
+                    </div>
+                  </TabsContent>
+                  
+                  {/* Passport Tab */}
+                  <TabsContent value="passport" className="space-y-4 mt-4">
+                    <div className="space-y-2">
+                      <div className="bg-amber-50 p-2 rounded-md border border-amber-200 mb-3">
+                        <div className="flex items-start gap-2">
+                          <Globe size={18} className="text-amber-500 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium text-amber-800">Travel Mode</p>
+                            <p className="text-xs text-amber-700">
+                              Set your location anywhere in the world to match with people from different cities or countries.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">Explore Location</label>
+                        <Popover open={passportOpen} onOpenChange={setPassportOpen}>
+                          <PopoverTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-8 gap-1"
+                            >
+                              <Globe size={14} />
+                              Search Globally
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-0 w-[300px]" align="end" side="top">
+                            <Command className="rounded-lg border shadow-md">
+                              <CommandInput 
+                                placeholder="Search any city in the world..." 
+                                value={passportSearch}
+                                onValueChange={setPassportSearch}
+                                className="h-9"
+                              />
+                              <CommandList>
+                                {passportLoading && (
+                                  <div className="py-6 text-center">
+                                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                                    <p className="text-sm text-muted-foreground mt-2">Searching global locations...</p>
+                                  </div>
+                                )}
+                                <CommandEmpty>No locations found. Try a different search.</CommandEmpty>
+                                <CommandGroup heading="Global Locations">
+                                  {passportSearchResults.map((result) => (
+                                    <CommandItem
+                                      key={result.place_id}
+                                      value={result.display_name}
+                                      onSelect={() => handlePassportLocationSelect(result)}
+                                    >
+                                      <Globe className="mr-2 h-4 w-4" />
+                                      {formatLocationResult(result)}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <div className="p-3 bg-muted rounded-md flex items-center">
+                        <Globe size={16} className="mr-2 text-primary" />
+                        {passportLocation || location || "No passport location set"}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Virtual location for exploring matches in other cities worldwide.
+                      </p>
+                    </div>
+                  </TabsContent>
+                </Tabs>
                 
                 <DetailEditor
                   icon={<MapPin size={18} />}
