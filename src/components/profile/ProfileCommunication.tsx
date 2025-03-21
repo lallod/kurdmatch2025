@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Languages, MessageCircle, Brain, Bot, Pencil, ArrowLeft
+  Languages, MessageCircle, Brain, Bot, Pencil, ArrowLeft, Globe
 } from 'lucide-react';
 import DetailItem from './DetailItem';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DetailEditor from '@/components/DetailEditor';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -34,34 +34,48 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
     <div className="space-y-6 py-4">
       <div>
         <h4 className="font-medium mb-2 flex items-center justify-between">
-          <span>Languages</span>
+          <span className="flex items-center">
+            <Globe size={18} className="mr-2 text-tinder-orange/70" />
+            Languages
+          </span>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="edit" className="ml-2">
-                <Pencil size={16} />
+              <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full hover:bg-gray-100">
+                <Pencil size={16} className="text-gray-500" />
               </Button>
             </SheetTrigger>
             <SheetContent className="w-full sm:max-w-md overflow-y-auto">
               <ScrollArea className="h-[calc(100vh-5rem)]">
-                <div className="py-6 pr-6">
-                  <div className="flex items-center gap-2 mb-6">
-                    <SheetClose asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <ArrowLeft size={18} />
-                        <span className="sr-only">Back</span>
-                      </Button>
-                    </SheetClose>
-                    <h3 className="text-lg font-semibold">Edit Languages</h3>
-                  </div>
+                <div className="py-6 pr-2">
+                  <SheetHeader className="mb-6">
+                    <div className="flex items-center gap-2">
+                      <SheetClose asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <ArrowLeft size={18} />
+                          <span className="sr-only">Back</span>
+                        </Button>
+                      </SheetClose>
+                      <SheetTitle className="text-left">Edit Languages</SheetTitle>
+                    </div>
+                  </SheetHeader>
+                  
                   <div className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      Select the languages you speak. You can select up to 5 languages.
+                      Select the languages you speak or wish to practice. You can select up to 5 languages.
                     </p>
                     <LanguageSelector 
                       selectedLanguages={selectedLanguages}
                       onChange={setSelectedLanguages}
                       maxItems={5}
                     />
+                    
+                    <div className="mt-8 flex justify-end">
+                      <SheetClose asChild>
+                        <Button className="bg-tinder-rose hover:bg-tinder-rose/90">
+                          Save Changes
+                        </Button>
+                      </SheetClose>
+                    </div>
                   </div>
                 </div>
               </ScrollArea>
@@ -84,6 +98,7 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
       <div>
         <h4 className="font-medium mb-2 flex items-center justify-between">
           <span className="flex items-center">
+            <MessageCircle size={18} className="mr-2 text-tinder-orange/70" />
             Communication
             <span className="ml-2">
               <TooltipProvider>
@@ -102,22 +117,25 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
           </span>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="edit" className="ml-2">
-                <Pencil size={16} />
+              <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full hover:bg-gray-100">
+                <Pencil size={16} className="text-gray-500" />
               </Button>
             </SheetTrigger>
             <SheetContent className="w-full sm:max-w-md overflow-y-auto">
               <ScrollArea className="h-[calc(100vh-5rem)]">
-                <div className="py-6 pr-6">
-                  <div className="flex items-center gap-2 mb-6">
-                    <SheetClose asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <ArrowLeft size={18} />
-                        <span className="sr-only">Back</span>
-                      </Button>
-                    </SheetClose>
-                    <h3 className="text-lg font-semibold">Edit Communication</h3>
-                  </div>
+                <div className="py-6 pr-2">
+                  <SheetHeader className="mb-6">
+                    <div className="flex items-center gap-2">
+                      <SheetClose asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <ArrowLeft size={18} />
+                          <span className="sr-only">Back</span>
+                        </Button>
+                      </SheetClose>
+                      <SheetTitle className="text-left">Edit Communication</SheetTitle>
+                    </div>
+                  </SheetHeader>
+                  
                   <DetailEditor
                     icon={<MessageCircle size={18} />}
                     title="Your Communication Style"
