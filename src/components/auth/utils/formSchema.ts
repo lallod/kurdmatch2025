@@ -35,6 +35,13 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
         } else {
           schemaObject[question.id] = z.string().optional();
         }
+      } else if (question.profileField === 'height') {
+        // Special validation for height field
+        if (question.required) {
+          schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
+        } else {
+          schemaObject[question.id] = z.string().optional();
+        }
       } else if (question.required) {
         schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
       } else {

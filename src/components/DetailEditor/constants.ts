@@ -1,7 +1,14 @@
-
 export const OPTIONS = {
   bodyType: ['Athletic', 'Average', 'Slim', 'Muscular', 'Curvy', 'Full Figured', 'Petite', 'Stocky', 'Heavyset'],
-  height: ['5\'0"', '5\'1"', '5\'2"', '5\'3"', '5\'4"', '5\'5"', '5\'6"', '5\'7"', '5\'8"', '5\'9"', '5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"', '6\'4"', '6\'5"', '6\'6"', '6\'7"', '6\'8"'],
+  height: [
+    "155 cm", "156 cm", "157 cm", "158 cm", "159 cm", "160 cm", 
+    "161 cm", "162 cm", "163 cm", "164 cm", "165 cm", "166 cm", 
+    "167 cm", "168 cm", "169 cm", "170 cm", "171 cm", "172 cm", 
+    "173 cm", "174 cm", "175 cm", "176 cm", "177 cm", "178 cm", 
+    "179 cm", "180 cm", "181 cm", "182 cm", "183 cm", "184 cm", 
+    "185 cm", "186 cm", "187 cm", "188 cm", "189 cm", "190 cm", 
+    "191 cm", "192 cm", "193 cm", "194 cm", "195 cm"
+  ],
   ethnicity: ['White', 'Black', 'Hispanic', 'Asian', 'Middle Eastern', 'Kurdish', 'Persian', 'Arab', 'Turkish', 'Mixed', 'Other'],
   zodiacSign: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'],
   personalityType: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'],
