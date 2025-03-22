@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -33,7 +32,6 @@ import {
   Lock, 
   Key, 
   Eye, 
-  Brain,
   FileText 
 } from 'lucide-react';
 import { 
@@ -53,6 +51,7 @@ import {
 } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { AIBanner } from '../components/payments/AIBanner';
 
 const RolesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -60,7 +59,6 @@ const RolesPage = () => {
   const [newRoleOpen, setNewRoleOpen] = useState(false);
   const [editPermissions, setEditPermissions] = useState(false);
 
-  // Mock data for roles
   const roles = [
     {
       id: 'role-1',
@@ -264,13 +262,11 @@ const RolesPage = () => {
     }
   ];
 
-  // Filter roles based on search term
   const filteredRoles = roles.filter(role => {
     return role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
            role.description.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  // Role icon component
   const getRoleIcon = (roleName: string) => {
     switch (roleName) {
       case 'Super Admin':
@@ -286,7 +282,6 @@ const RolesPage = () => {
     }
   };
 
-  // Mock functions
   const handleViewRole = (role: any) => {
     setSelectedRole(role);
     setEditPermissions(false);
@@ -307,14 +302,7 @@ const RolesPage = () => {
         </Button>
       </div>
 
-      {/* AI banner */}
-      <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
-        <Brain size={24} className="text-tinder-rose mr-3" />
-        <div>
-          <h3 className="font-semibold text-gray-800">AI-Enhanced Role Recommendations</h3>
-          <p className="text-sm text-gray-600">Our AI system analyzes user activity patterns to suggest optimal role configurations and permission sets</p>
-        </div>
-      </div>
+      <AIBanner type="all" collapsible={true} />
 
       <Tabs defaultValue="all">
         <TabsList className="mb-4">
@@ -405,7 +393,6 @@ const RolesPage = () => {
             </CardContent>
           </Card>
 
-          {/* Role Recommendations */}
           <Card>
             <CardHeader>
               <CardTitle>AI Role Recommendations</CardTitle>
@@ -466,7 +453,6 @@ const RolesPage = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Role Details Dialog */}
       {selectedRole && (
         <Dialog open={!!selectedRole} onOpenChange={() => setSelectedRole(null)}>
           <DialogContent className="sm:max-w-[700px]">
@@ -708,7 +694,6 @@ const RolesPage = () => {
         </Dialog>
       )}
 
-      {/* New Role Dialog */}
       <Dialog open={newRoleOpen} onOpenChange={setNewRoleOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>

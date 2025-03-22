@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -40,6 +39,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { AIBanner } from '../components/payments/AIBanner';
 
 interface User {
   id: string;
@@ -61,7 +61,6 @@ const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userDetailMode, setUserDetailMode] = useState<'view' | 'edit'>('view');
   
-  // Mock user data - in a real app, this would come from an API
   const mockUsers: User[] = [
     {
       id: '001',
@@ -150,18 +149,15 @@ const UsersPage = () => {
   ];
 
   const filteredUsers = mockUsers.filter(user => {
-    // Apply search filter
     const matchesSearch = 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.location.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Apply status filter
     const matchesStatus = 
       statusFilter === 'all' || 
       user.status === statusFilter;
     
-    // Apply role filter
     const matchesRole = 
       roleFilter === 'all' || 
       user.role === roleFilter;
@@ -231,6 +227,8 @@ const UsersPage = () => {
           </Button>
         </div>
       </div>
+
+      <AIBanner type="user" collapsible={true} />
 
       <Card>
         <CardContent className="pt-6">
@@ -363,7 +361,6 @@ const UsersPage = () => {
         </CardContent>
       </Card>
 
-      {/* User Detail Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={closeDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
