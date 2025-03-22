@@ -5,16 +5,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
 import { LandingPageContent, initialContent } from '../types';
 
-export const useLandingPageContent = () => {
+export const useLandingPageContent = (retryCount = 0) => {
   const { toast } = useToast();
   const [content, setContent] = useState<LandingPageContent>(initialContent);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Load content from the database on hook initialization
   useEffect(() => {
     const fetchLandingPageContent = async () => {
       setLoading(true);
+      setError(null);
       
       try {
         const { data, error } = await supabase
@@ -25,6 +27,7 @@ export const useLandingPageContent = () => {
         
         if (error) {
           console.error('Error fetching landing page content:', error);
+          setError(`Failed to load content: ${error.message}`);
           toast({
             title: "Failed to load content",
             description: "Could not load landing page content from the database.",
@@ -47,22 +50,46 @@ export const useLandingPageContent = () => {
             setContent(contentData as unknown as LandingPageContent);
           } else {
             console.error('Invalid landing page content format:', contentData);
+            setError('The content stored in the database has an invalid format.');
             toast({
               title: "Invalid content format",
               description: "The content stored in the database has an invalid format.",
               variant: "destructive"
             });
           }
+        } else {
+          // No data found, initialize the database with default content
+          console.log('No landing page content found, initializing with defaults');
+          const { error: insertError } = await supabase
+            .from('landing_page_content')
+            .insert({ 
+              id: 1,
+              content: initialContent as unknown as Json,
+              updated_at: new Date().toISOString()
+            });
+            
+          if (insertError) {
+            console.error('Error initializing landing page content:', insertError);
+            setError(`Failed to initialize content: ${insertError.message}`);
+          } else {
+            setContent(initialContent);
+          }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error:', error);
+        setError(`An unexpected error occurred: ${error.message}`);
+        toast({
+          title: "An error occurred",
+          description: "An unexpected error occurred while loading the content.",
+          variant: "destructive"
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchLandingPageContent();
-  }, [toast]);
+  }, [toast, retryCount]);
 
   // Update hero section content
   const updateHero = (field: keyof LandingPageContent['hero'], value: string) => {
@@ -128,6 +155,7 @@ export const useLandingPageContent = () => {
   // Save all changes to the database
   const saveChanges = async () => {
     setSaving(true);
+    setError(null);
     
     try {
       // Explicitly cast the content to Json type as expected by Supabase
@@ -143,6 +171,7 @@ export const useLandingPageContent = () => {
       
       if (error) {
         console.error('Error saving landing page content:', error);
+        setError(`Failed to save content: ${error.message}`);
         toast({
           title: "Failed to save content",
           description: "Could not save landing page content to the database.",
@@ -154,8 +183,9 @@ export const useLandingPageContent = () => {
           description: "Landing page content has been updated successfully.",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
+      setError(`An unexpected error occurred: ${error.message}`);
       toast({
         title: "An error occurred",
         description: "An unexpected error occurred while saving the content.",
@@ -169,6 +199,7 @@ export const useLandingPageContent = () => {
   return {
     content,
     loading,
+    error,
     saving,
     updateHero,
     updateFeatureTitle,
