@@ -26,6 +26,8 @@ const RegistrationQuestionsPage = () => {
     isSelectAll,
     activeTab,
     searchQuery,
+    previewQuestion,
+    setPreviewQuestion,
     setActiveTab,
     setSearchQuery,
     toggleQuestionSelection,
@@ -102,6 +104,7 @@ const RegistrationQuestionsPage = () => {
                     onToggleSelection={toggleQuestionSelection}
                     onEdit={setEditingQuestion}
                     onDelete={handleDeleteQuestion}
+                    onPreview={setPreviewQuestion}
                   />
                 </TabsContent>
               </Tabs>
@@ -111,7 +114,7 @@ const RegistrationQuestionsPage = () => {
 
         <div className="w-1/3 space-y-6">
           <QuestionCategoriesSection />
-          <QuestionPreviewCard />
+          <QuestionPreviewCard question={previewQuestion} />
         </div>
       </div>
 

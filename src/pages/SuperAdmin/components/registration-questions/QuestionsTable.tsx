@@ -23,6 +23,7 @@ interface QuestionsTableProps {
   onToggleSelection: (id: string) => void;
   onEdit: (question: QuestionItem) => void;
   onDelete: (id: string) => void;
+  onPreview: (question: QuestionItem) => void;
 }
 
 const QuestionsTable: React.FC<QuestionsTableProps> = ({
@@ -32,7 +33,8 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
   onToggleSelectAll,
   onToggleSelection,
   onEdit,
-  onDelete
+  onDelete,
+  onPreview
 }) => {
   const { toast } = useToast();
 
@@ -117,6 +119,7 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
                       variant="ghost"
                       size="icon"
                       onClick={() => {
+                        onPreview(question);
                         toast({
                           title: "Preview",
                           description: `Previewing: ${question.text}`,

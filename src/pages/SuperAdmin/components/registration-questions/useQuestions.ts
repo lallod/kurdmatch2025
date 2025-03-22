@@ -196,6 +196,7 @@ export const useQuestions = () => {
   const [isSelectAll, setIsSelectAll] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [previewQuestion, setPreviewQuestion] = useState<QuestionItem | null>(questions[0] || null);
 
   // Filter questions based on active tab and search query
   const filteredQuestions = questions.filter(question => {
@@ -285,6 +286,11 @@ export const useQuestions = () => {
       prev.map(q => q.id === updatedQuestion.id ? updatedQuestion : q)
     );
     
+    // Update preview question if it's the one being edited
+    if (previewQuestion && previewQuestion.id === updatedQuestion.id) {
+      setPreviewQuestion(updatedQuestion);
+    }
+    
     toast({
       title: "Success",
       description: "Question updated successfully",
@@ -327,6 +333,9 @@ export const useQuestions = () => {
     
     setQuestions(prev => [...prev, newQuestion]);
     
+    // Set the new question as the preview
+    setPreviewQuestion(newQuestion);
+    
     toast({
       title: "Success",
       description: "New question added successfully",
@@ -342,6 +351,8 @@ export const useQuestions = () => {
     isSelectAll,
     activeTab,
     searchQuery,
+    previewQuestion,
+    setPreviewQuestion,
     setActiveTab,
     setSearchQuery,
     toggleQuestionSelection,
