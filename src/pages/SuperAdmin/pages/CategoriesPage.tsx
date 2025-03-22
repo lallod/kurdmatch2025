@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   Search, Plus, Edit, Trash2, Save, X, FileUp, FileDown, 
-  AlertTriangle, CheckCircle, Filter, PlusCircle, Tag 
+  AlertTriangle, CheckCircle, Filter, PlusCircle, Tag, User
 } from 'lucide-react';
 import { 
   Dialog, 
@@ -44,10 +44,31 @@ interface Category {
   id: string;
   name: string;
   type: string;
+  profileField: string;
   usageCount: number;
   isActive: boolean;
   createdAt: string;
 }
+
+const PROFILE_FIELDS = [
+  { value: 'interests', label: 'Interests' },
+  { value: 'hobbies', label: 'Hobbies' },
+  { value: 'values', label: 'Values' },
+  { value: 'languages', label: 'Languages' },
+  { value: 'personality', label: 'Personality Type' },
+  { value: 'communication', label: 'Communication Style' },
+  { value: 'weekendActivities', label: 'Weekend Activities' },
+  { value: 'creativePursuits', label: 'Creative Pursuits' },
+  { value: 'favoritePodcasts', label: 'Favorite Podcasts' },
+  { value: 'favoriteBooks', label: 'Favorite Books' },
+  { value: 'favoriteMovies', label: 'Favorite Movies' },
+  { value: 'favoriteMusic', label: 'Favorite Music' },
+  { value: 'favoriteFoods', label: 'Favorite Foods' },
+  { value: 'favoriteGames', label: 'Favorite Games' },
+  { value: 'growthGoals', label: 'Growth Goals' },
+  { value: 'hiddenTalents', label: 'Hidden Talents' },
+  { value: 'stressRelievers', label: 'Stress Relievers' }
+];
 
 const categorySchema = z.object({
   name: z.string().min(2, {
@@ -57,6 +78,9 @@ const categorySchema = z.object({
   }),
   type: z.string().min(1, {
     message: "Category type is required."
+  }),
+  profileField: z.string().min(1, {
+    message: "Profile field is required."
   }),
   isActive: z.boolean().default(true)
 });
@@ -80,6 +104,7 @@ const CategoriesPage = () => {
       id: '1',
       name: 'Sports',
       type: 'interest',
+      profileField: 'interests',
       usageCount: 1245,
       isActive: true,
       createdAt: '2022-01-15'
@@ -88,6 +113,7 @@ const CategoriesPage = () => {
       id: '2',
       name: 'Travel',
       type: 'interest',
+      profileField: 'interests',
       usageCount: 2356,
       isActive: true,
       createdAt: '2022-01-15'
@@ -96,6 +122,7 @@ const CategoriesPage = () => {
       id: '3',
       name: 'Music',
       type: 'interest',
+      profileField: 'interests',
       usageCount: 1987,
       isActive: true,
       createdAt: '2022-01-20'
@@ -104,6 +131,7 @@ const CategoriesPage = () => {
       id: '4',
       name: 'Movies',
       type: 'interest',
+      profileField: 'interests',
       usageCount: 1542,
       isActive: true,
       createdAt: '2022-01-22'
@@ -112,6 +140,7 @@ const CategoriesPage = () => {
       id: '5',
       name: 'Foodie',
       type: 'lifestyle',
+      profileField: 'favoriteFoods',
       usageCount: 876,
       isActive: true,
       createdAt: '2022-02-05'
@@ -120,6 +149,7 @@ const CategoriesPage = () => {
       id: '6',
       name: 'Fitness',
       type: 'lifestyle',
+      profileField: 'interests',
       usageCount: 1324,
       isActive: true,
       createdAt: '2022-02-10'
@@ -128,6 +158,7 @@ const CategoriesPage = () => {
       id: '7',
       name: 'Photography',
       type: 'hobby',
+      profileField: 'hobbies',
       usageCount: 765,
       isActive: true,
       createdAt: '2022-02-15'
@@ -136,6 +167,7 @@ const CategoriesPage = () => {
       id: '8',
       name: 'Gaming',
       type: 'hobby',
+      profileField: 'hobbies',
       usageCount: 1102,
       isActive: true,
       createdAt: '2022-02-20'
@@ -144,6 +176,7 @@ const CategoriesPage = () => {
       id: '9',
       name: 'Reading',
       type: 'hobby',
+      profileField: 'hobbies',
       usageCount: 893,
       isActive: true,
       createdAt: '2022-03-01'
@@ -152,6 +185,7 @@ const CategoriesPage = () => {
       id: '10',
       name: 'Outdoors',
       type: 'lifestyle',
+      profileField: 'weekendActivities',
       usageCount: 654,
       isActive: false,
       createdAt: '2022-03-05'
@@ -159,7 +193,7 @@ const CategoriesPage = () => {
   ]);
 
   const [editingValues, setEditingValues] = useState<{
-    [key: string]: { name: string; type: string; isActive: boolean }
+    [key: string]: { name: string; type: string; profileField: string; isActive: boolean }
   }>({});
 
   const form = useForm<CategoryFormValues>({
@@ -167,6 +201,7 @@ const CategoriesPage = () => {
     defaultValues: {
       name: '',
       type: '',
+      profileField: '',
       isActive: true
     }
   });
@@ -176,6 +211,7 @@ const CategoriesPage = () => {
     defaultValues: {
       name: '',
       type: '',
+      profileField: '',
       isActive: true
     }
   });
@@ -201,6 +237,7 @@ const CategoriesPage = () => {
             ...cat,
             name: editingValues[category.id].name,
             type: editingValues[category.id].type,
+            profileField: editingValues[category.id].profileField,
             isActive: editingValues[category.id].isActive
           };
         }
@@ -216,6 +253,7 @@ const CategoriesPage = () => {
         [category.id]: {
           name: category.name,
           type: category.type,
+          profileField: category.profileField,
           isActive: category.isActive
         }
       });
@@ -233,7 +271,7 @@ const CategoriesPage = () => {
 
   const handleEditChange = (
     categoryId: string, 
-    field: 'name' | 'type' | 'isActive', 
+    field: 'name' | 'type' | 'profileField' | 'isActive', 
     value: string | boolean
   ) => {
     setEditingValues({
@@ -250,6 +288,7 @@ const CategoriesPage = () => {
     editForm.reset({
       name: category.name,
       type: category.type,
+      profileField: category.profileField,
       isActive: category.isActive
     });
     setIsEditCategoryOpen(true);
@@ -265,6 +304,7 @@ const CategoriesPage = () => {
       id: `${categories.length + 1}`,
       name: data.name,
       type: data.type,
+      profileField: data.profileField,
       usageCount: 0,
       isActive: data.isActive,
       createdAt: new Date().toISOString().split('T')[0]
@@ -285,6 +325,7 @@ const CategoriesPage = () => {
           ...category,
           name: data.name,
           type: data.type,
+          profileField: data.profileField,
           isActive: data.isActive
         };
       }
@@ -373,6 +414,11 @@ const CategoriesPage = () => {
 
   const categoryCounts = countCategoriesByType();
 
+  const getProfileFieldLabel = (fieldValue: string) => {
+    const field = PROFILE_FIELDS.find(f => f.value === fieldValue);
+    return field ? field.label : fieldValue;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -446,6 +492,7 @@ const CategoriesPage = () => {
                   <TableHead className="w-[80px]">ID</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Type</TableHead>
+                  <TableHead>Profile Field</TableHead>
                   <TableHead>Usage Count</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created Date</TableHead>
@@ -494,6 +541,30 @@ const CategoriesPage = () => {
                         ) : (
                           <Badge variant="outline" className="capitalize">
                             {category.type}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {editableCategories[category.id] ? (
+                          <Select 
+                            value={editingValues[category.id]?.profileField} 
+                            onValueChange={(value) => handleEditChange(category.id, 'profileField', value)}
+                          >
+                            <SelectTrigger className="h-8 px-2 py-0">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[200px]">
+                              {PROFILE_FIELDS.map(field => (
+                                <SelectItem key={field.value} value={field.value}>
+                                  {field.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                            <User size={12} className="mr-1" />
+                            {getProfileFieldLabel(category.profileField)}
                           </Badge>
                         )}
                       </TableCell>
@@ -570,7 +641,7 @@ const CategoriesPage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-6">
+                    <TableCell colSpan={9} className="text-center py-6">
                       No categories found
                     </TableCell>
                   </TableRow>
@@ -630,6 +701,37 @@ const CategoriesPage = () => {
                         <SelectItem value="hobby">Hobby</SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="profileField"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Profile Field</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select profile field" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="max-h-[200px]">
+                        {PROFILE_FIELDS.map(profileField => (
+                          <SelectItem key={profileField.value} value={profileField.value}>
+                            {profileField.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select which profile section this category will appear in
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -716,6 +818,37 @@ const CategoriesPage = () => {
                         <SelectItem value="hobby">Hobby</SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={editForm.control}
+                name="profileField"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Profile Field</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select profile field" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="max-h-[200px]">
+                        {PROFILE_FIELDS.map(profileField => (
+                          <SelectItem key={profileField.value} value={profileField.value}>
+                            {profileField.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select which profile section this category will appear in
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -831,4 +964,3 @@ const CategoriesPage = () => {
 };
 
 export default CategoriesPage;
-
