@@ -4,7 +4,6 @@ import { useLandingPageContent } from './LandingPageEditor/hooks/useLandingPageC
 import EditorHeader from './LandingPageEditor/components/EditorHeader';
 import EditorTabs from './LandingPageEditor/components/EditorTabs';
 
-// Direct implementation instead of importing from index.tsx to avoid circular references
 const LandingPageEditor = () => {
   const {
     content,
