@@ -12,6 +12,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
 import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
+import Logo from './Logo';
 
 const HeroSection: React.FC = () => {
   return (
@@ -36,6 +37,10 @@ const HeroSection: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
+        <div className="mb-8">
+          <Logo size="large" />
+        </div>
+        
         <div className="flex flex-col md:flex-row items-center gap-8">
           <div className="flex-1 space-y-8">
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-900/30 border border-purple-700/30 text-sm text-purple-300 backdrop-blur-sm">
