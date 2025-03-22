@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Form } from '@/components/ui/form';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import StepIndicator from './components/StepIndicator';
 import FormNavigation from './components/FormNavigation';
 import FormContent from './components/FormContent';
+import SocialLogin from './components/SocialLogin';
 import { systemQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/systemQuestions';
 import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 import { useRegistrationForm } from './hooks/useRegistrationForm';
@@ -37,6 +37,8 @@ const DynamicRegistrationForm = () => {
           currentStep={currentStep} 
           setCurrentStep={setCurrentStep} 
         />
+        
+        {currentStep === 0 && <SocialLogin />}
         
         <FormContent 
           currentStep={currentStep}

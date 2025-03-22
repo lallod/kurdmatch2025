@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import SocialLogin from './components/SocialLogin';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -108,7 +108,16 @@ const LoginForm = () => {
           )}
         />
         
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <input 
+              type="checkbox" 
+              id="remember" 
+              className="h-4 w-4 rounded border-gray-600/50 bg-transparent" 
+            />
+            <label htmlFor="remember" className="text-sm text-gray-400">Remember me</label>
+          </div>
+          
           <Button 
             type="button" 
             variant="link" 
@@ -128,6 +137,8 @@ const LoginForm = () => {
             "Sign in"
           )}
         </Button>
+        
+        <SocialLogin />
       </form>
     </Form>
   );
