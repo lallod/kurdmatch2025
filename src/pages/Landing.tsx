@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight, Heart, Shield, MessageSquare, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { Json } from '@/integrations/supabase/types';
 
 type LandingPageData = {
   title: string;
@@ -51,6 +52,32 @@ const FeatureIcon = ({ index }: { index: number }) => {
   }
 };
 
+// Helper function to safely parse content from the database
+const parseContent = (data: { content: Json } | null): LandingPageData => {
+  if (!data || !data.content) {
+    return DEFAULT_CONTENT;
+  }
+  
+  // If content is already an object with the right properties, return it
+  const content = data.content as any;
+  
+  // Validate that the content has the required properties
+  if (
+    typeof content === 'object' && 
+    content !== null &&
+    typeof content.title === 'string' &&
+    typeof content.subtitle === 'string' &&
+    typeof content.description === 'string' &&
+    typeof content.callToAction === 'string' &&
+    Array.isArray(content.features)
+  ) {
+    return content as LandingPageData;
+  }
+  
+  // Return default content if validation fails
+  return DEFAULT_CONTENT;
+};
+
 const Landing = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['landingPageContent'],
@@ -64,22 +91,18 @@ const Landing = () => {
 
         if (error) {
           console.error("Error fetching landing page content:", error);
-          return { content: DEFAULT_CONTENT };
-        }
-        
-        if (!data) {
-          return { content: DEFAULT_CONTENT };
+          return null;
         }
         
         return data;
       } catch (err) {
         console.error("Error in landing page query:", err);
-        return { content: DEFAULT_CONTENT };
+        return null;
       }
     }
   });
 
-  const content = data?.content || DEFAULT_CONTENT;
+  const content = parseContent(data);
 
   if (isLoading) {
     return (
