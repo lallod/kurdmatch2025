@@ -9,7 +9,458 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          likee_id: string | null
+          liker_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          likee_id?: string | null
+          liker_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          likee_id?: string | null
+          liker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_likee_id_fkey"
+            columns: ["likee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_liker_id_fkey"
+            columns: ["liker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          id: string
+          matched_at: string | null
+          user1_id: string | null
+          user2_id: string | null
+        }
+        Insert: {
+          id?: string
+          matched_at?: string | null
+          user1_id?: string | null
+          user2_id?: string | null
+        }
+        Update: {
+          id?: string
+          matched_at?: string | null
+          user1_id?: string | null
+          user2_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_user1_id_fkey"
+            columns: ["user1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user2_id_fkey"
+            columns: ["user2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          read: boolean | null
+          recipient_id: string | null
+          sender_id: string | null
+          text: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          recipient_id?: string | null
+          sender_id?: string | null
+          text: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          recipient_id?: string | null
+          sender_id?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photos: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_primary: boolean | null
+          profile_id: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          profile_id?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          profile_id?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          age: number
+          bio: string | null
+          body_type: string | null
+          career_ambitions: string | null
+          charity_involvement: string | null
+          children_status: string | null
+          communication_style: string | null
+          company: string | null
+          created_at: string | null
+          creative_pursuits: string[] | null
+          decision_making_style: string | null
+          dietary_preferences: string | null
+          dream_home: string | null
+          dream_vacation: string | null
+          drinking: string | null
+          education: string | null
+          ethnicity: string | null
+          evening_routine: string | null
+          exercise_habits: string | null
+          family_closeness: string | null
+          favorite_books: string[] | null
+          favorite_foods: string[] | null
+          favorite_games: string[] | null
+          favorite_memory: string | null
+          favorite_movies: string[] | null
+          favorite_music: string[] | null
+          favorite_podcasts: string[] | null
+          favorite_quote: string | null
+          favorite_season: string | null
+          financial_habits: string | null
+          friendship_style: string | null
+          growth_goals: string[] | null
+          have_pets: string | null
+          height: string | null
+          hidden_talents: string[] | null
+          hobbies: string[] | null
+          id: string
+          ideal_date: string | null
+          ideal_weather: string | null
+          interests: string[] | null
+          kurdistan_region: string | null
+          languages: string[] | null
+          last_active: string | null
+          location: string
+          love_language: string | null
+          morning_routine: string | null
+          music_instruments: string[] | null
+          name: string
+          occupation: string | null
+          personality_type: string | null
+          pet_peeves: string[] | null
+          political_views: string | null
+          profile_image: string | null
+          relationship_goals: string | null
+          religion: string | null
+          sleep_schedule: string | null
+          smoking: string | null
+          stress_relievers: string[] | null
+          tech_skills: string[] | null
+          transportation_preference: string | null
+          travel_frequency: string | null
+          values: string[] | null
+          verified: boolean | null
+          want_children: string | null
+          weekend_activities: string[] | null
+          work_environment: string | null
+          work_life_balance: string | null
+          zodiac_sign: string | null
+        }
+        Insert: {
+          age: number
+          bio?: string | null
+          body_type?: string | null
+          career_ambitions?: string | null
+          charity_involvement?: string | null
+          children_status?: string | null
+          communication_style?: string | null
+          company?: string | null
+          created_at?: string | null
+          creative_pursuits?: string[] | null
+          decision_making_style?: string | null
+          dietary_preferences?: string | null
+          dream_home?: string | null
+          dream_vacation?: string | null
+          drinking?: string | null
+          education?: string | null
+          ethnicity?: string | null
+          evening_routine?: string | null
+          exercise_habits?: string | null
+          family_closeness?: string | null
+          favorite_books?: string[] | null
+          favorite_foods?: string[] | null
+          favorite_games?: string[] | null
+          favorite_memory?: string | null
+          favorite_movies?: string[] | null
+          favorite_music?: string[] | null
+          favorite_podcasts?: string[] | null
+          favorite_quote?: string | null
+          favorite_season?: string | null
+          financial_habits?: string | null
+          friendship_style?: string | null
+          growth_goals?: string[] | null
+          have_pets?: string | null
+          height?: string | null
+          hidden_talents?: string[] | null
+          hobbies?: string[] | null
+          id: string
+          ideal_date?: string | null
+          ideal_weather?: string | null
+          interests?: string[] | null
+          kurdistan_region?: string | null
+          languages?: string[] | null
+          last_active?: string | null
+          location: string
+          love_language?: string | null
+          morning_routine?: string | null
+          music_instruments?: string[] | null
+          name: string
+          occupation?: string | null
+          personality_type?: string | null
+          pet_peeves?: string[] | null
+          political_views?: string | null
+          profile_image?: string | null
+          relationship_goals?: string | null
+          religion?: string | null
+          sleep_schedule?: string | null
+          smoking?: string | null
+          stress_relievers?: string[] | null
+          tech_skills?: string[] | null
+          transportation_preference?: string | null
+          travel_frequency?: string | null
+          values?: string[] | null
+          verified?: boolean | null
+          want_children?: string | null
+          weekend_activities?: string[] | null
+          work_environment?: string | null
+          work_life_balance?: string | null
+          zodiac_sign?: string | null
+        }
+        Update: {
+          age?: number
+          bio?: string | null
+          body_type?: string | null
+          career_ambitions?: string | null
+          charity_involvement?: string | null
+          children_status?: string | null
+          communication_style?: string | null
+          company?: string | null
+          created_at?: string | null
+          creative_pursuits?: string[] | null
+          decision_making_style?: string | null
+          dietary_preferences?: string | null
+          dream_home?: string | null
+          dream_vacation?: string | null
+          drinking?: string | null
+          education?: string | null
+          ethnicity?: string | null
+          evening_routine?: string | null
+          exercise_habits?: string | null
+          family_closeness?: string | null
+          favorite_books?: string[] | null
+          favorite_foods?: string[] | null
+          favorite_games?: string[] | null
+          favorite_memory?: string | null
+          favorite_movies?: string[] | null
+          favorite_music?: string[] | null
+          favorite_podcasts?: string[] | null
+          favorite_quote?: string | null
+          favorite_season?: string | null
+          financial_habits?: string | null
+          friendship_style?: string | null
+          growth_goals?: string[] | null
+          have_pets?: string | null
+          height?: string | null
+          hidden_talents?: string[] | null
+          hobbies?: string[] | null
+          id?: string
+          ideal_date?: string | null
+          ideal_weather?: string | null
+          interests?: string[] | null
+          kurdistan_region?: string | null
+          languages?: string[] | null
+          last_active?: string | null
+          location?: string
+          love_language?: string | null
+          morning_routine?: string | null
+          music_instruments?: string[] | null
+          name?: string
+          occupation?: string | null
+          personality_type?: string | null
+          pet_peeves?: string[] | null
+          political_views?: string | null
+          profile_image?: string | null
+          relationship_goals?: string | null
+          religion?: string | null
+          sleep_schedule?: string | null
+          smoking?: string | null
+          stress_relievers?: string[] | null
+          tech_skills?: string[] | null
+          transportation_preference?: string | null
+          travel_frequency?: string | null
+          values?: string[] | null
+          verified?: boolean | null
+          want_children?: string | null
+          weekend_activities?: string[] | null
+          work_environment?: string | null
+          work_life_balance?: string | null
+          zodiac_sign?: string | null
+        }
+        Relationships: []
+      }
+      registration_questions: {
+        Row: {
+          category: string
+          display_order: number
+          enabled: boolean | null
+          field_options: string[] | null
+          field_type: string
+          id: string
+          is_system_field: boolean | null
+          placeholder: string | null
+          profile_field: string | null
+          registration_step: string
+          required: boolean | null
+          text: string
+        }
+        Insert: {
+          category: string
+          display_order: number
+          enabled?: boolean | null
+          field_options?: string[] | null
+          field_type: string
+          id: string
+          is_system_field?: boolean | null
+          placeholder?: string | null
+          profile_field?: string | null
+          registration_step: string
+          required?: boolean | null
+          text: string
+        }
+        Update: {
+          category?: string
+          display_order?: number
+          enabled?: boolean | null
+          field_options?: string[] | null
+          field_type?: string
+          id?: string
+          is_system_field?: boolean | null
+          placeholder?: string | null
+          profile_field?: string | null
+          registration_step?: string
+          required?: boolean | null
+          text?: string
+        }
+        Relationships: []
+      }
+      social_login_providers: {
+        Row: {
+          client_id: string | null
+          client_secret: string | null
+          enabled: boolean | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          client_secret?: string | null
+          enabled?: boolean | null
+          id: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          client_secret?: string | null
+          enabled?: boolean | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
