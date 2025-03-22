@@ -4,7 +4,10 @@ import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questio
 
 // Create a schema builder based on the questions
 export const createDynamicSchema = (questions: QuestionItem[]) => {
-  const schemaObject: Record<string, any> = {};
+  const schemaObject: Record<string, any> = {
+    // Add photos field validation
+    photos: z.array(z.string()).optional(),
+  };
   
   questions.forEach(question => {
     if (question.enabled) {

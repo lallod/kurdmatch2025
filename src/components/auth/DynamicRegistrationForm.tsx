@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,6 +8,7 @@ import { createDynamicSchema } from './utils/formSchema';
 import StepIndicator from './components/StepIndicator';
 import FormNavigation from './components/FormNavigation';
 import FieldRenderer from './components/FieldRenderer';
+import PhotoUploadStep from './components/PhotoUploadStep';
 import { systemQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/systemQuestions';
 import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 
@@ -17,51 +17,52 @@ const DynamicRegistrationForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   
-  // Combine system questions with custom questions (in a real app, this would come from an API)
   const [questions, setQuestions] = useState<QuestionItem[]>([...systemQuestions, ...initialQuestions]);
   
-  // Filter only enabled questions
   const enabledQuestions = questions.filter(q => q.enabled);
   
-  // Define the 6 steps based on categories in Super Admin dashboard
   const stepCategories = [
     { name: 'Account', category: 'Account' },
     { name: 'Basics', category: 'Basics' },
     { name: 'Lifestyle', category: 'Lifestyle' },
     { name: 'Beliefs', category: 'Beliefs' },
     { name: 'Physical', category: 'Physical' },
-    { name: 'Preferences', category: 'Preferences' }
+    { name: 'Preferences', category: 'Preferences' },
+    { name: 'Photos', category: 'Photos' }
   ];
   
-  // Group questions by category for the 6 steps
   const steps = stepCategories.map(step => {
+    if (step.category === 'Photos') {
+      return {
+        name: step.name,
+        questions: []
+      };
+    }
+    
     return {
       name: step.name,
       questions: enabledQuestions.filter(q => {
         if (step.category === 'Account') {
           return q.registrationStep === 'Account';
         } else if (step.category === 'Basics') {
-          // Map Personal step questions to Basics category
           return q.category === step.name || q.registrationStep === 'Personal';
         } else if (step.category === 'Lifestyle' || step.category === 'Physical' || step.category === 'Beliefs' || step.category === 'Preferences') {
-          // Map Profile and Preferences step questions to their respective categories
           return q.category === step.name && (q.registrationStep === 'Profile' || q.registrationStep === 'Preferences');
         }
         return q.category === step.name;
       })
     };
-  }).filter(step => step.questions.length > 0);
+  }).filter(step => step.questions.length > 0 || step.name === 'Photos');
   
-  // Create dynamic schema
   const dynamicSchema = createDynamicSchema(enabledQuestions);
   type FormValues = typeof dynamicSchema._type;
   
-  // Get initial form values
   const getDefaultValues = () => {
-    const defaults: Record<string, string> = {};
+    const defaults: Record<string, any> = {
+      photos: []
+    };
     
     enabledQuestions.forEach(q => {
-      // Skip AI-generated fields (like bio) in form values
       if (q.profileField !== 'bio') {
         defaults[q.id] = '';
       }
@@ -80,34 +81,26 @@ const DynamicRegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Generate an AI bio for the user if bio question exists
       const bioQuestion = enabledQuestions.find(q => q.profileField === 'bio');
       let processedData = { ...data };
       
       if (bioQuestion) {
-        // In a real app, this would call an AI service to generate bio
         const generatedBio = generateAIBio(data, enabledQuestions);
-        
-        // Add the AI-generated bio to the form data
         processedData[bioQuestion.id] = generatedBio;
       }
       
-      // Remove password from console log in real apps
       const dataForLogging = { ...processedData };
       if ('password' in dataForLogging) {
         dataForLogging.password = '********';
       }
       console.log('Registration form submitted with data:', dataForLogging);
       
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
         title: "Success!",
         description: "Your account has been created successfully.",
       });
-      
-      // Would typically redirect to login page or dashboard
     } catch (error) {
       console.error('Registration error:', error);
       toast({
@@ -121,15 +114,26 @@ const DynamicRegistrationForm = () => {
   };
 
   const nextStep = async () => {
-    // Get field names for the current step (excluding AI-generated fields)
-    const currentFields = steps[currentStep].questions
-      .filter(q => q.profileField !== 'bio')
-      .map(q => q.id);
+    if (currentStep === steps.length - 1) {
+      const photos = form.getValues('photos') || [];
+      if (!Array.isArray(photos) || photos.length === 0) {
+        form.setError('photos', { 
+          type: 'manual', 
+          message: 'Please upload at least one photo' 
+        });
+        return;
+      }
+    } else {
+      const currentFields = steps[currentStep].questions
+        .filter(q => q.profileField !== 'bio')
+        .map(q => q.id);
+      
+      const isValid = await form.trigger(currentFields as any);
+      
+      if (!isValid) return;
+    }
     
-    // Validate only the fields in the current step
-    const isValid = await form.trigger(currentFields as any);
-    
-    if (isValid && currentStep < steps.length - 1) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -140,23 +144,19 @@ const DynamicRegistrationForm = () => {
     }
   };
 
-  // Simulate AI bio generation based on form data
   const generateAIBio = (formData: Record<string, string>, questions: QuestionItem[]) => {
-    // Find questions for relevant fields to use in bio generation
     const firstNameQ = questions.find(q => q.profileField === 'firstName');
     const occupationQ = questions.find(q => q.profileField === 'occupation');
     const locationQ = questions.find(q => q.profileField === 'location');
     const hobbiesQ = questions.find(q => q.profileField === 'exerciseHabits');
     const relationshipGoalsQ = questions.find(q => q.profileField === 'relationshipGoals');
     
-    // Get values if questions exist
     const firstName = firstNameQ ? formData[firstNameQ.id] || 'there' : 'there';
     const occupation = occupationQ ? formData[occupationQ.id] : '';
     const location = locationQ ? formData[locationQ.id] : '';
     const hobbies = hobbiesQ ? formData[hobbiesQ.id] : '';
     const relationshipGoals = relationshipGoalsQ ? formData[relationshipGoalsQ.id] : '';
     
-    // Generate a more comprehensive bio template
     let bio = `Hi, I'm ${firstName}`;
     
     if (occupation) {
@@ -192,13 +192,17 @@ const DynamicRegistrationForm = () => {
         />
         
         <div className="space-y-6">
-          {steps[currentStep]?.questions.map((question) => (
-            <FieldRenderer 
-              key={question.id} 
-              question={question} 
-              form={form} 
-            />
-          ))}
+          {currentStep === steps.length - 1 ? (
+            <PhotoUploadStep form={form} />
+          ) : (
+            steps[currentStep]?.questions.map((question) => (
+              <FieldRenderer 
+                key={question.id} 
+                question={question} 
+                form={form} 
+              />
+            ))
+          )}
         </div>
         
         <FormNavigation 
