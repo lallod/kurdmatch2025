@@ -1,33 +1,85 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Facebook, Mail, Loader2 } from 'lucide-react';
-
-// This would typically come from a centralized config or API
-const ENABLED_PROVIDERS = {
-  facebook: true,
-  gmail: true
-};
+import { supabase } from '@/integrations/supabase/client';
 
 interface SocialLoginProps {
   isLoading?: boolean;
 }
 
+interface SocialProvider {
+  id: string;
+  name: string;
+  enabled: boolean;
+  client_id?: string;
+  client_secret?: string;
+}
+
 const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
   const { toast } = useToast();
+  const [providers, setProviders] = useState<Record<string, boolean>>({});
+  const [loadingProviders, setLoadingProviders] = useState(true);
 
-  const handleSocialLogin = (provider: string) => {
+  useEffect(() => {
+    async function loadSocialProviders() {
+      try {
+        const { data, error } = await supabase
+          .from('social_login_providers')
+          .select();
+        
+        if (error) throw error;
+        
+        const enabledProviders = (data as SocialProvider[]).reduce((acc, provider) => {
+          acc[provider.id] = provider.enabled;
+          return acc;
+        }, {} as Record<string, boolean>);
+        
+        setProviders(enabledProviders);
+      } catch (error) {
+        console.error('Error loading social providers:', error);
+        // Fallback to default values
+        setProviders({
+          facebook: true,
+          gmail: true
+        });
+      } finally {
+        setLoadingProviders(false);
+      }
+    }
+    
+    loadSocialProviders();
+  }, []);
+
+  const handleSocialLogin = async (provider: string) => {
     // In a real app, this would integrate with an auth provider
     console.log(`Logging in with ${provider}`);
     
+    // For now, just show toast
     toast({
       title: "Coming Soon",
       description: `${provider} login will be available soon.`,
     });
+    
+    // Example of how to implement once ready:
+    // if (provider === 'google') {
+    //   await supabase.auth.signInWithOAuth({
+    //     provider: 'google',
+    //   });
+    // }
   };
 
-  if (!ENABLED_PROVIDERS.facebook && !ENABLED_PROVIDERS.gmail) {
+  if (loadingProviders) {
+    return (
+      <div className="flex justify-center py-4">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // If no providers are enabled, don't render anything
+  if (!providers.facebook && !providers.gmail) {
     return null;
   }
 
@@ -45,7 +97,7 @@ const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {ENABLED_PROVIDERS.facebook && (
+        {providers.facebook && (
           <Button 
             variant="outline" 
             className="bg-white/5 hover:bg-white/10 border-gray-600/50"
@@ -61,7 +113,7 @@ const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
           </Button>
         )}
         
-        {ENABLED_PROVIDERS.gmail && (
+        {providers.gmail && (
           <Button 
             variant="outline" 
             className="bg-white/5 hover:bg-white/10 border-gray-600/50"
