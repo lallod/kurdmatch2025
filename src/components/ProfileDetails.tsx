@@ -22,6 +22,7 @@ interface ProfileDetailsProps {
     havePets: string;
     languages: string[];
     interests: string[];
+    hobbies?: string[] | string;
     favoriteBooks: string[];
     favoriteMovies: string[];
     favoriteMusic: string[];
@@ -43,7 +44,6 @@ interface ProfileDetailsProps {
     friendshipStyle?: string;
     workLifeBalance?: string;
     careerAmbitions?: string;
-    hobbies?: string[] | string;
     values?: string[] | string;
     dietaryPreferences?: string;
     favoriteQuote?: string;
@@ -65,6 +65,28 @@ interface ProfileDetailsProps {
     stressRelievers?: string[] | string;
     workEnvironment?: string;
     decisionMakingStyle?: string;
+    relationshipType?: string;
+    livingArrangement?: string;
+    petsOwned?: string[] | string;
+    favoriteAuthors?: string[] | string;
+    favoriteTV?: string[] | string;
+    favoriteDirectors?: string[] | string;
+    favoriteDishes?: string[] | string;
+    coffeeOrTea?: string;
+    audiobooks?: string;
+    favoriteTeams?: string[] | string;
+    favoriteSports?: string[] | string;
+    outdoorActivities?: string[] | string;
+    boardGames?: string;
+    videoGames?: string;
+    favoriteDestinations?: string[] | string;
+    travelWishlist?: string[] | string;
+    localHangouts?: string;
+    concertExperience?: string;
+    creativeHobbies?: string[] | string;
+    sportsActivities?: string[] | string;
+    idealDateActivities?: string[] | string;
+    readingHabits?: string;
   };
 }
 
