@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -12,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
 import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
-import { Brain, Sparkles, Zap, Layers, Code, Bot } from 'lucide-react';
+import { Brain, Sparkles, Zap, Layers, Code, Bot, Heart, Globe, Users } from 'lucide-react';
 
 const Landing = () => {
   const [showAIAnimation, setShowAIAnimation] = useState(false);
@@ -45,17 +46,17 @@ const Landing = () => {
             <div className="flex-1 space-y-8">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-900/30 border border-purple-700/30 text-sm text-purple-300 backdrop-blur-sm">
                 <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
-                <span>AI-Powered Matching Technology</span>
+                <span>Connecting Kurds Worldwide</span>
               </div>
               
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
                 Find Your
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 ml-2">Perfect Match</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 ml-2">Kurdish Match</span>
               </h1>
               
               <p className="text-xl text-gray-300">
-                Our AI algorithm analyzes your unique preferences and personality 
-                to connect you with truly compatible partners.
+                The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan 
+                and the diaspora, bringing together singles who share our rich heritage and values.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -65,7 +66,7 @@ const Landing = () => {
                   onClick={() => setShowAIAnimation(true)}
                 >
                   <Zap className="mr-2 h-5 w-5" />
-                  Get Started
+                  Join Our Community
                 </Button>
                 <Button size="lg" variant="outline" className="text-purple-300 border-purple-700/50 hover:bg-purple-900/20">
                   Learn More
@@ -79,7 +80,7 @@ const Landing = () => {
                   ))}
                 </div>
                 <div>
-                  <span className="text-white font-semibold">10,000+</span> people joined this month
+                  <span className="text-white font-semibold">10,000+</span> Kurdish singles have already joined
                 </div>
               </div>
             </div>
@@ -89,7 +90,7 @@ const Landing = () => {
                 <CardHeader className="space-y-1">
                   <CardTitle className="text-2xl text-white">Join Our Community</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Sign in to your account or create a new one
+                    Connect with Kurdish singles from around the world
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -118,23 +119,82 @@ const Landing = () => {
       {/* Features Section */}
       <div className="py-16 relative z-10 bg-indigo-950/80 backdrop-blur-lg border-t border-indigo-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-white">AI-Powered Features</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-white">Connecting Kurdish Hearts</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <FeatureCard 
-              icon={<Brain className="h-6 w-6" />}
-              title="Smart Matching"
-              description="Our advanced algorithm learns from your preferences to find ideal matches."
+              icon={<Globe className="h-6 w-6" />}
+              title="Worldwide Connection"
+              description="Connect with Kurdish singles from all regions of Kurdistan and across the global diaspora."
             />
             <FeatureCard 
-              icon={<Bot className="h-6 w-6" />}
-              title="AI Conversation Assistant"
-              description="Get personalized conversation starters based on shared interests."
+              icon={<Users className="h-6 w-6" />}
+              title="Cultural Understanding"
+              description="Find someone who shares your Kurdish heritage, traditions, and values."
             />
             <FeatureCard 
-              icon={<Layers className="h-6 w-6" />}
-              title="Deep Compatibility"
-              description="Multi-dimensional analysis ensures connections beyond superficial traits."
+              icon={<Heart className="h-6 w-6" />}
+              title="Meaningful Relationships"
+              description="Build connections based on shared cultural identity and personal compatibility."
             />
+          </div>
+        </div>
+      </div>
+
+      {/* Kurdistan Heritage Section */}
+      <div className="py-16 relative z-10 bg-gradient-to-b from-indigo-950/80 to-purple-950/80">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-white mb-4">Celebrating Kurdish Heritage</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Whether you're from Bakur, Bashur, Rojava, Rojhelat, or part of the diaspora, 
+              our platform helps you find someone who understands your unique background.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-12">
+            <div className="bg-indigo-900/20 p-8 rounded-xl border border-indigo-800/30">
+              <h3 className="text-2xl font-bold text-white mb-4">For Kurds Everywhere</h3>
+              <p className="text-gray-300 mb-6">
+                Our community welcomes Kurdish people from all walks of life and all parts of the world. Whether 
+                you were born in Kurdistan or abroad, our platform helps you connect with others who share your heritage.
+              </p>
+              <ul className="space-y-2 text-gray-300">
+                <li className="flex items-center">
+                  <span className="h-5 w-5 mr-2 rounded-full bg-purple-500 flex items-center justify-center text-white">✓</span>
+                  Connect with Kurds from different regions
+                </li>
+                <li className="flex items-center">
+                  <span className="h-5 w-5 mr-2 rounded-full bg-purple-500 flex items-center justify-center text-white">✓</span>
+                  Share your unique cultural experiences
+                </li>
+                <li className="flex items-center">
+                  <span className="h-5 w-5 mr-2 rounded-full bg-purple-500 flex items-center justify-center text-white">✓</span>
+                  Find partners who understand your background
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-indigo-900/20 p-8 rounded-xl border border-indigo-800/30">
+              <h3 className="text-2xl font-bold text-white mb-4">Preserving Our Culture</h3>
+              <p className="text-gray-300 mb-6">
+                We believe that fostering relationships within our community helps preserve and celebrate 
+                our rich Kurdish culture, language, and traditions for generations to come.
+              </p>
+              <ul className="space-y-2 text-gray-300">
+                <li className="flex items-center">
+                  <span className="h-5 w-5 mr-2 rounded-full bg-purple-500 flex items-center justify-center text-white">✓</span>
+                  Filter by dialect and regional background
+                </li>
+                <li className="flex items-center">
+                  <span className="h-5 w-5 mr-2 rounded-full bg-purple-500 flex items-center justify-center text-white">✓</span>
+                  Share your favorite Kurdish traditions
+                </li>
+                <li className="flex items-center">
+                  <span className="h-5 w-5 mr-2 rounded-full bg-purple-500 flex items-center justify-center text-white">✓</span>
+                  Build relationships based on shared values
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -144,7 +204,7 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
-              <p className="text-sm text-gray-500">© 2023 AI Dating. All rights reserved.</p>
+              <p className="text-sm text-gray-500">© 2023 Kurdish Dating. All rights reserved.</p>
             </div>
             <div className="flex space-x-4">
               <Link to="/terms" className="text-sm text-gray-500 hover:text-purple-400 transition-colors">
