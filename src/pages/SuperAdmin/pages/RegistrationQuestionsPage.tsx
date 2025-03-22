@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -753,3 +754,1289 @@ const RegistrationQuestionsPage = () => {
     setIsDeleteConfirmOpen(false);
     toast.success(`Question "${selectedQuestion.questionText}" deleted successfully`);
   };
+
+  // Handle opening dialogs
+  const openAddQuestionDialog = () => {
+    form.reset();
+    setIsAddQuestionOpen(true);
+  };
+
+  const openEditQuestionDialog = (question: RegistrationQuestion) => {
+    setSelectedQuestion(question);
+    editForm.reset({
+      questionText: question.questionText,
+      description: question.description || '',
+      category: question.category,
+      step: question.step,
+      profileField: question.profileField,
+      questionType: question.questionType,
+      options: question.options || '',
+      required: question.required,
+      order: question.order,
+      active: question.active,
+      aiRecommended: question.aiRecommended,
+      conditionalQuestion: question.conditionalQuestion,
+      parentQuestion: question.parentQuestion || '',
+      conditionalValue: question.conditionalValue || ''
+    });
+    setIsEditQuestionOpen(true);
+  };
+
+  const openDeleteConfirmDialog = (question: RegistrationQuestion) => {
+    setSelectedQuestion(question);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const openPreviewDialog = (question: RegistrationQuestion) => {
+    setSelectedQuestion(question);
+    setPreviewStep(question.step);
+    setIsPreviewOpen(true);
+  };
+
+  // Duplicate question
+  const duplicateQuestion = (question: RegistrationQuestion) => {
+    const newQuestion: RegistrationQuestion = {
+      ...question,
+      id: `${questions.length + 1}`,
+      questionText: `Copy of ${question.questionText}`,
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: undefined
+    };
+    
+    setQuestions([...questions, newQuestion]);
+    toast.success(`Question "${question.questionText}" duplicated successfully`);
+  };
+
+  // Toggle question active state
+  const toggleQuestionActive = (question: RegistrationQuestion) => {
+    const updatedQuestions = questions.map(q => {
+      if (q.id === question.id) {
+        return {
+          ...q,
+          active: !q.active,
+          updatedAt: new Date().toISOString().split('T')[0]
+        };
+      }
+      return q;
+    });
+    
+    setQuestions(updatedQuestions);
+    toast.success(`Question "${question.questionText}" ${question.active ? 'deactivated' : 'activated'} successfully`);
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Registration Questions</h1>
+          <p className="text-muted-foreground">
+            Manage questions used during the user registration process
+          </p>
+        </div>
+        <Button onClick={openAddQuestionDialog} className="shrink-0">
+          <Plus className="mr-2 h-4 w-4" />
+          Add Question
+        </Button>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-4">
+        <Card className="w-full lg:w-64 shrink-0">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-md font-medium">Filters</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Categories</Label>
+                <Badge variant="outline" className="text-xs font-normal">
+                  {categoryCounts.all}
+                </Badge>
+              </div>
+              <div className="space-y-1">
+                <Button
+                  variant={filterCategory === 'all' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className="justify-between w-full font-normal"
+                  onClick={() => setFilterCategory('all')}
+                >
+                  All Categories
+                  <Badge variant="outline" className="ml-2">{categoryCounts.all}</Badge>
+                </Button>
+                {QUESTION_CATEGORIES.map(category => (
+                  categoryCounts[category.value] && (
+                    <Button
+                      key={category.value}
+                      variant={filterCategory === category.value ? 'secondary' : 'ghost'} 
+                      size="sm" 
+                      className="justify-between w-full font-normal"
+                      onClick={() => setFilterCategory(category.value)}
+                    >
+                      {category.label}
+                      <Badge variant="outline" className="ml-2">{categoryCounts[category.value] || 0}</Badge>
+                    </Button>
+                  )
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Registration Steps</Label>
+                <Badge variant="outline" className="text-xs font-normal">
+                  {stepCounts.all}
+                </Badge>
+              </div>
+              <div className="space-y-1">
+                <Button
+                  variant={filterStep === 'all' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className="justify-between w-full font-normal"
+                  onClick={() => setFilterStep('all')}
+                >
+                  All Steps
+                  <Badge variant="outline" className="ml-2">{stepCounts.all}</Badge>
+                </Button>
+                {REGISTRATION_STEPS.map(step => (
+                  stepCounts[step.value] && (
+                    <Button
+                      key={step.value}
+                      variant={filterStep === step.value ? 'secondary' : 'ghost'} 
+                      size="sm" 
+                      className="justify-between w-full font-normal"
+                      onClick={() => setFilterStep(step.value)}
+                    >
+                      {step.label}
+                      <Badge variant="outline" className="ml-2">{stepCounts[step.value] || 0}</Badge>
+                    </Button>
+                  )
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Question Types</Label>
+                <Badge variant="outline" className="text-xs font-normal">
+                  {typeCounts.all}
+                </Badge>
+              </div>
+              <div className="space-y-1">
+                <Button
+                  variant={filterType === 'all' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className="justify-between w-full font-normal"
+                  onClick={() => setFilterType('all')}
+                >
+                  All Types
+                  <Badge variant="outline" className="ml-2">{typeCounts.all}</Badge>
+                </Button>
+                {QUESTION_TYPES.map(type => (
+                  typeCounts[type.value] && (
+                    <Button
+                      key={type.value}
+                      variant={filterType === type.value ? 'secondary' : 'ghost'} 
+                      size="sm" 
+                      className="justify-between w-full font-normal"
+                      onClick={() => setFilterType(type.value)}
+                    >
+                      {type.label}
+                      <Badge variant="outline" className="ml-2">{typeCounts[type.value] || 0}</Badge>
+                    </Button>
+                  )
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex-1 space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-md font-medium">
+                  Registration Questions
+                </CardTitle>
+                <div className="flex items-center space-x-2">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder="Search questions..."
+                      className="pl-8 w-60"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[300px]">
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 font-medium flex items-center"
+                        onClick={() => sortQuestions('questionText')}
+                      >
+                        Question
+                        {sortColumn === 'questionText' && (
+                          <ArrowUpDown className="ml-1 h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 font-medium flex items-center"
+                        onClick={() => sortQuestions('category')}
+                      >
+                        Category
+                        {sortColumn === 'category' && (
+                          <ArrowUpDown className="ml-1 h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 font-medium flex items-center"
+                        onClick={() => sortQuestions('step')}
+                      >
+                        Step
+                        {sortColumn === 'step' && (
+                          <ArrowUpDown className="ml-1 h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 font-medium flex items-center"
+                        onClick={() => sortQuestions('questionType')}
+                      >
+                        Type
+                        {sortColumn === 'questionType' && (
+                          <ArrowUpDown className="ml-1 h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="text-center">Required</TableHead>
+                    <TableHead className="text-center">Active</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredAndSortedQuestions.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center h-32">
+                        <div className="flex flex-col items-center justify-center text-muted-foreground">
+                          <ClipboardList className="h-12 w-12 mb-2" />
+                          <h3 className="text-lg font-medium">No questions found</h3>
+                          <p>Try changing your filters or add a new question.</p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredAndSortedQuestions.map((question) => (
+                      <TableRow key={question.id} className={!question.active ? 'opacity-60' : ''}>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span>{question.questionText}</span>
+                            {question.description && (
+                              <span className="text-sm text-muted-foreground">
+                                {question.description.length > 50 
+                                  ? `${question.description.slice(0, 50)}...` 
+                                  : question.description}
+                              </span>
+                            )}
+                            <div className="flex mt-1 space-x-1">
+                              {question.aiRecommended && (
+                                <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 border-green-200 text-xs">
+                                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                                  AI Recommended
+                                </Badge>
+                              )}
+                              {question.conditionalQuestion && (
+                                <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200 text-xs">
+                                  <ArrowRight className="mr-1 h-3 w-3" />
+                                  Conditional
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="font-normal">
+                            {getCategoryLabel(question.category)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="font-normal">
+                            {getStepLabel(question.step)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="font-normal">
+                            {getTypeLabel(question.questionType)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {question.required ? (
+                            <Badge className="bg-green-500 hover:bg-green-500">Yes</Badge>
+                          ) : (
+                            <Badge variant="outline">No</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Switch 
+                            checked={question.active}
+                            onCheckedChange={() => toggleQuestionActive(question)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-1">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => openPreviewDialog(question)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => openEditQuestionDialog(question)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => duplicateQuestion(question)}
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => openDeleteConfirmDialog(question)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Add Question Dialog */}
+      <Dialog open={isAddQuestionOpen} onOpenChange={setIsAddQuestionOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Registration Question</DialogTitle>
+            <DialogDescription>
+              Create a new question for the registration process.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(addNewQuestion)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="questionText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Question Text</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter question text" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      The text of the question as it will appear to users.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter a description or hint for this question"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Additional information to help users understand what to input.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {QUESTION_CATEGORIES.map((category) => (
+                            <SelectItem key={category.value} value={category.value}>
+                              {category.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The category this question belongs to.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="step"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Registration Step</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a step" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {REGISTRATION_STEPS.map((step) => (
+                            <SelectItem key={step.value} value={step.value}>
+                              {step.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The registration step where this question will appear.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="profileField"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Profile Field</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a profile field" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {PROFILE_FIELDS.map((profileField) => (
+                            <SelectItem key={profileField.value} value={profileField.value}>
+                              {profileField.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The profile field this question data will be saved to.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="questionType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Question Type</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a question type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {QUESTION_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The type of input for this question.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {['select', 'multiselect', 'radio', 'checkbox', 'scale'].includes(watchQuestionType) && (
+                <FormField
+                  control={form.control}
+                  name="options"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Options</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter options, separated by commas"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Comma-separated list of options for this question.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="required"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Required</FormLabel>
+                        <FormDescription>
+                          User must answer this question to proceed.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Active</FormLabel>
+                        <FormDescription>
+                          Question is active and will be shown to users.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="aiRecommended"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>AI Recommended</FormLabel>
+                        <FormDescription>
+                          This is an AI-recommended question.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Display Order</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="1"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Order in which the question appears in its step.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="conditionalQuestion"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Conditional Question</FormLabel>
+                      <FormDescription>
+                        This question only appears based on an answer to another question.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {watchConditionalQuestion && parentQuestions.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="parentQuestion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Parent Question</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select parent question" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {parentQuestions.map((question) => (
+                              <SelectItem key={question.id} value={question.id}>
+                                {question.questionText}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Question that controls whether this question appears.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="conditionalValue"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Conditional Value</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Value that triggers this question" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Value from parent question that makes this question appear.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsAddQuestionOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save Question</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Question Dialog */}
+      <Dialog open={isEditQuestionOpen} onOpenChange={setIsEditQuestionOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Registration Question</DialogTitle>
+            <DialogDescription>
+              Update the registration question.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...editForm}>
+            <form onSubmit={editForm.handleSubmit(updateQuestion)} className="space-y-6">
+              {/* Same form fields as Add Question Dialog */}
+              <FormField
+                control={editForm.control}
+                name="questionText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Question Text</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter question text" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      The text of the question as it will appear to users.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter a description or hint for this question"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Additional information to help users understand what to input.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {QUESTION_CATEGORIES.map((category) => (
+                            <SelectItem key={category.value} value={category.value}>
+                              {category.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The category this question belongs to.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="step"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Registration Step</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a step" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {REGISTRATION_STEPS.map((step) => (
+                            <SelectItem key={step.value} value={step.value}>
+                              {step.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The registration step where this question will appear.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="profileField"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Profile Field</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a profile field" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {PROFILE_FIELDS.map((profileField) => (
+                            <SelectItem key={profileField.value} value={profileField.value}>
+                              {profileField.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The profile field this question data will be saved to.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="questionType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Question Type</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a question type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {QUESTION_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The type of input for this question.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {['select', 'multiselect', 'radio', 'checkbox', 'scale'].includes(editWatchQuestionType) && (
+                <FormField
+                  control={editForm.control}
+                  name="options"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Options</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter options, separated by commas"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Comma-separated list of options for this question.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="required"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Required</FormLabel>
+                        <FormDescription>
+                          User must answer this question to proceed.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Active</FormLabel>
+                        <FormDescription>
+                          Question is active and will be shown to users.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="aiRecommended"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>AI Recommended</FormLabel>
+                        <FormDescription>
+                          This is an AI-recommended question.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={editForm.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Display Order</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="1"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Order in which the question appears in its step.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="conditionalQuestion"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Conditional Question</FormLabel>
+                      <FormDescription>
+                        This question only appears based on an answer to another question.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {editWatchConditionalQuestion && parentQuestions.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={editForm.control}
+                    name="parentQuestion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Parent Question</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select parent question" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {parentQuestions.map((question) => (
+                              <SelectItem key={question.id} value={question.id}>
+                                {question.questionText}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Question that controls whether this question appears.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={editForm.control}
+                    name="conditionalValue"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Conditional Value</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Value that triggers this question" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Value from parent question that makes this question appear.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsEditQuestionOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Update Question</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Question</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this question? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="p-4 border rounded-md bg-muted/50 my-4">
+            <p className="font-medium">{selectedQuestion?.questionText}</p>
+            {selectedQuestion?.description && (
+              <p className="text-sm text-muted-foreground mt-1">{selectedQuestion.description}</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={deleteQuestion}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Preview Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Question Preview</DialogTitle>
+            <DialogDescription>
+              Preview how this question will appear to users during registration.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedQuestion && (
+            <div className="space-y-6">
+              <div className="p-6 border rounded-lg bg-card">
+                <h3 className="font-semibold text-lg mb-1">
+                  {selectedQuestion.questionText}
+                </h3>
+                {selectedQuestion.description && (
+                  <p className="text-muted-foreground mb-4">{selectedQuestion.description}</p>
+                )}
+                <div className="pt-2">
+                  {(() => {
+                    switch(selectedQuestion.questionType) {
+                      case 'text':
+                        return <Input placeholder="Enter your answer..." />;
+                      case 'textarea':
+                        return <Textarea placeholder="Enter your answer..." />;
+                      case 'select':
+                        return (
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select an option" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedQuestion.options?.split(',').map((option, index) => (
+                                <SelectItem key={index} value={option.trim()}>
+                                  {option.trim()}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        );
+                      case 'radio':
+                        return (
+                          <div className="space-y-2">
+                            {selectedQuestion.options?.split(',').map((option, index) => (
+                              <div key={index} className="flex items-center space-x-2">
+                                <input type="radio" id={`option-${index}`} name="radio-group" />
+                                <Label htmlFor={`option-${index}`}>{option.trim()}</Label>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      case 'checkbox':
+                        return (
+                          <div className="space-y-2">
+                            {selectedQuestion.options?.split(',').map((option, index) => (
+                              <div key={index} className="flex items-center space-x-2">
+                                <input type="checkbox" id={`checkbox-${index}`} />
+                                <Label htmlFor={`checkbox-${index}`}>{option.trim()}</Label>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      default:
+                        return <div className="text-muted-foreground">Preview not available for this question type.</div>;
+                    }
+                  })()}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium mb-2">Question Settings</h4>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Category:</span>
+                      <span>{getCategoryLabel(selectedQuestion.category)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Registration Step:</span>
+                      <span>{getStepLabel(selectedQuestion.step)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Profile Field:</span>
+                      <span>{getFieldLabel(selectedQuestion.profileField)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Type:</span>
+                      <span>{getTypeLabel(selectedQuestion.questionType)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Required:</span>
+                      <span>{selectedQuestion.required ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Active:</span>
+                      <span>{selectedQuestion.active ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">AI Recommended:</span>
+                      <span>{selectedQuestion.aiRecommended ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Display Order:</span>
+                      <span>{selectedQuestion.order}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-2">Conditional Logic</h4>
+                  {selectedQuestion.conditionalQuestion ? (
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Parent Question:</span>
+                        <span>{getParentQuestionLabel(selectedQuestion.parentQuestion || '')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Conditional Value:</span>
+                        <span>{selectedQuestion.conditionalValue}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">This question is not conditional.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={() => setIsPreviewOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default RegistrationQuestionsPage;
