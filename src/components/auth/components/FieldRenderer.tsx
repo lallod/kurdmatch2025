@@ -26,8 +26,8 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
     // System field badge (takes precedence over regular required badge)
     if (question.isSystemField) {
       badges.push(
-        <Badge key="system" variant="outline" className="flex items-center gap-0.5 bg-blue-900/30 text-blue-300 border-blue-700/30 text-[10px] px-1.5 py-0">
-          <Lock size={10} />
+        <Badge key="system" variant="outline" className="flex items-center gap-0 bg-blue-900/30 text-blue-300 border-blue-700/30 text-[10px] px-1.5 py-0">
+          <Lock size={10} className="mr-0.5" />
           Required
         </Badge>
       );
@@ -44,8 +44,8 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
     // AI-Generated badge
     if (question.profileField === 'bio') {
       badges.push(
-        <Badge key="ai" variant="outline" className="flex items-center gap-0.5 bg-purple-900/30 text-purple-300 border-purple-700/30 text-[10px] px-1.5 py-0">
-          <Bot size={10} />
+        <Badge key="ai" variant="outline" className="flex items-center gap-0 bg-purple-900/30 text-purple-300 border-purple-700/30 text-[10px] px-1.5 py-0">
+          <Bot size={10} className="mr-0.5" />
           AI-Generated
         </Badge>
       );
