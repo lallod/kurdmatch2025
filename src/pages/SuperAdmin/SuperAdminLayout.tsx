@@ -10,7 +10,8 @@ import {
   Settings, 
   ChevronLeft, 
   ChevronRight, 
-  LogOut 
+  LogOut,
+  ClipboardList
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -29,6 +30,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
     { path: '/super-admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { path: '/super-admin/users', icon: <Users size={20} />, label: 'Users Management' },
     { path: '/super-admin/categories', icon: <Tag size={20} />, label: 'Categories' },
+    { path: '/super-admin/registration-questions', icon: <ClipboardList size={20} />, label: 'Registration Questions' },
     { path: '/super-admin/messages', icon: <MessageSquare size={20} />, label: 'Messages' },
     { path: '/super-admin/photos', icon: <ImageIcon size={20} />, label: 'Photos' },
     { path: '/super-admin/settings', icon: <Settings size={20} />, label: 'Settings' },

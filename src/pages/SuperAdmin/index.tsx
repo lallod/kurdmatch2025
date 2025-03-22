@@ -8,6 +8,7 @@ import CategoriesPage from './pages/CategoriesPage';
 import MessagesPage from './pages/MessagesPage';
 import PhotosPage from './pages/PhotosPage';
 import SettingsPage from './pages/SettingsPage';
+import RegistrationQuestionsPage from './pages/RegistrationQuestionsPage';
 
 const SuperAdmin = () => {
   return (
@@ -19,6 +20,7 @@ const SuperAdmin = () => {
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/photos" element={<PhotosPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/registration-questions" element={<RegistrationQuestionsPage />} />
       </Routes>
     </SuperAdminLayout>
   );
