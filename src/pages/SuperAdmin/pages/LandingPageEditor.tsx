@@ -56,6 +56,14 @@ interface LandingPageContent {
   footer: FooterContent;
 }
 
+// Type for the database record
+interface LandingPageRecord {
+  id: number;
+  content: LandingPageContent;
+  created_at?: string;
+  updated_at?: string;
+}
+
 // Mock data until we connect to the database
 const initialContent: LandingPageContent = {
   hero: {
@@ -125,6 +133,7 @@ const LandingPageEditor = () => {
         const { data, error } = await supabase
           .from('landing_page_content')
           .select('*')
+          .limit(1)
           .single();
         
         if (error) {
@@ -135,7 +144,9 @@ const LandingPageEditor = () => {
             variant: "destructive"
           });
         } else if (data) {
-          setContent(data.content);
+          // Type assertion since we know the structure
+          const record = data as unknown as LandingPageRecord;
+          setContent(record.content);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -216,7 +227,7 @@ const LandingPageEditor = () => {
       const { error } = await supabase
         .from('landing_page_content')
         .upsert({ 
-          id: 1, // Assuming a single row for the landing page content
+          id: 1, // Using a fixed ID since we only have one record for landing page
           content: content,
           updated_at: new Date().toISOString()
         });
