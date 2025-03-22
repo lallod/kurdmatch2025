@@ -4,7 +4,9 @@ import { useLandingPageContent } from './hooks/useLandingPageContent';
 import EditorHeader from './components/EditorHeader';
 import EditorTabs from './components/EditorTabs';
 
-const LandingPageEditor = () => {
+// This file now exists solely for backward compatibility
+// The actual implementation is in ../LandingPageEditor.tsx
+const LandingPageEditorContent = () => {
   const {
     content,
     saving,
@@ -34,4 +36,4 @@ const LandingPageEditor = () => {
   );
 };
 
-export default LandingPageEditor;
+export default LandingPageEditorContent;
