@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Plus, Filter, Download, Trash2, Edit, Eye, Save, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import QuestionCategoriesSection from '../components/registration-questions/QuestionCategoriesSection';
 import QuestionPreviewCard from '../components/registration-questions/QuestionPreviewCard';
 import { useToast } from "@/hooks/use-toast";
+import { QuestionItem } from '../components/registration-questions/types';
 
 const RegistrationQuestionsPage = () => {
   const { toast } = useToast();
@@ -40,7 +40,6 @@ const RegistrationQuestionsPage = () => {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [isSelectAll, setIsSelectAll] = useState(false);
 
-  // Dummy data for questions based on profile details
   const [questions, setQuestions] = useState<QuestionItem[]>([
     {
       id: '1', 
@@ -226,7 +225,6 @@ const RegistrationQuestionsPage = () => {
     }
   ]);
 
-  // New question form state
   const [newQuestion, setNewQuestion] = useState<Partial<QuestionItem>>({
     text: '',
     category: 'Basics',
@@ -240,7 +238,6 @@ const RegistrationQuestionsPage = () => {
     profileField: ''
   });
 
-  // Filter questions by tab and search query
   const filteredQuestions = questions.filter(question => {
     const matchesSearch = question.text.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           question.category.toLowerCase().includes(searchQuery.toLowerCase());
@@ -261,14 +258,12 @@ const RegistrationQuestionsPage = () => {
     return false;
   });
 
-  // Toggle question selection for bulk actions
   const toggleQuestionSelection = (id: string) => {
     setSelectedQuestions(prev => 
       prev.includes(id) ? prev.filter(qId => qId !== id) : [...prev, id]
     );
   };
 
-  // Toggle select all questions
   const toggleSelectAll = () => {
     if (isSelectAll) {
       setSelectedQuestions([]);
@@ -278,7 +273,6 @@ const RegistrationQuestionsPage = () => {
     setIsSelectAll(!isSelectAll);
   };
 
-  // Handle bulk delete of selected questions
   const handleBulkDelete = () => {
     if (selectedQuestions.length === 0) return;
     
@@ -292,7 +286,6 @@ const RegistrationQuestionsPage = () => {
     });
   };
 
-  // Handle bulk enable/disable of selected questions
   const handleBulkToggleEnabled = (enable: boolean) => {
     if (selectedQuestions.length === 0) return;
     
@@ -306,7 +299,6 @@ const RegistrationQuestionsPage = () => {
     });
   };
 
-  // Handle question edit submission
   const handleEditSubmit = () => {
     if (!editingQuestion) return;
     
@@ -322,7 +314,6 @@ const RegistrationQuestionsPage = () => {
     });
   };
 
-  // Handle new question submission
   const handleNewQuestionSubmit = () => {
     if (!newQuestion.text) {
       toast({
@@ -351,7 +342,6 @@ const RegistrationQuestionsPage = () => {
     
     setIsAddDialogOpen(false);
     
-    // Reset new question form
     setNewQuestion({
       text: '',
       category: 'Basics',
@@ -359,7 +349,7 @@ const RegistrationQuestionsPage = () => {
       required: false,
       enabled: true,
       registrationStep: 'Personal',
-      displayOrder: questions.length + 2, // +1 for the question we just added
+      displayOrder: questions.length + 2,
       placeholder: '',
       fieldOptions: [],
       profileField: ''
@@ -371,7 +361,6 @@ const RegistrationQuestionsPage = () => {
     });
   };
 
-  // Handle adding a field option
   const handleAddFieldOption = (option: string, isEdit = false) => {
     if (!option.trim()) return;
     
@@ -388,7 +377,6 @@ const RegistrationQuestionsPage = () => {
     }
   };
 
-  // Handle removing a field option
   const handleRemoveFieldOption = (index: number, isEdit = false) => {
     if (isEdit && editingQuestion) {
       const newOptions = [...(editingQuestion.fieldOptions || [])];
@@ -420,7 +408,6 @@ const RegistrationQuestionsPage = () => {
           <Button
             variant="outline"
             onClick={() => {
-              // Export questions logic
               toast({
                 title: "Export Started",
                 description: "Questions exported to CSV successfully",
@@ -605,7 +592,6 @@ const RegistrationQuestionsPage = () => {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => {
-                                      // Preview question logic
                                       toast({
                                         title: "Preview",
                                         description: `Previewing: ${question.text}`,
@@ -648,7 +634,6 @@ const RegistrationQuestionsPage = () => {
         </div>
       </div>
 
-      {/* Edit Question Dialog */}
       <Dialog open={!!editingQuestion} onOpenChange={(open) => !open && setEditingQuestion(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -832,7 +817,6 @@ const RegistrationQuestionsPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Add Question Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
