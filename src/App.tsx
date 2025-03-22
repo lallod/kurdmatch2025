@@ -15,6 +15,7 @@ import ProfilePage from "./pages/ProfilePage";
 import Discovery from "./pages/Discovery";
 import BottomNavigation from "./components/BottomNavigation";
 import SuperAdmin from "./pages/SuperAdmin";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,8 @@ const App = () => (
       <BrowserRouter>
         <div className="w-full pb-20">
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/home" element={<Index />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/viewed-me" element={<ViewedMe />} />
             <Route path="/liked-me" element={<LikedMe />} />
