@@ -30,17 +30,17 @@ const Logo: React.FC<LogoProps> = ({ size = 'medium', withText = true }) => {
   const currentSize = sizes[size];
 
   return (
-    <div className={`flex items-center gap-2 ${currentSize.container}`}>
+    <div className={`flex items-center gap-2 ${currentSize.container} hover:scale-105 transition-transform duration-300`}>
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-sm opacity-70"></div>
-        <div className="relative bg-gradient-to-r from-purple-400 to-pink-500 p-2 rounded-full z-10">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-sm opacity-70 animate-pulse"></div>
+        <div className="relative bg-gradient-to-r from-purple-500 to-pink-600 p-2 rounded-full z-10">
           <Heart className="text-white" size={currentSize.icon} fill="white" strokeWidth={2} />
         </div>
       </div>
       
       {withText && (
         <div className="flex flex-col">
-          <span className={`font-bold ${currentSize.text} text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500`}>
+          <span className={`font-bold ${currentSize.text} text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-600`}>
             KurdMatch
           </span>
           {size === 'large' && (
