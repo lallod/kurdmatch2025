@@ -40,6 +40,12 @@ const DynamicRegistrationForm = () => {
       questions: enabledQuestions.filter(q => {
         if (step.category === 'Account') {
           return q.registrationStep === 'Account';
+        } else if (step.category === 'Basics') {
+          // Map Personal step questions to Basics category
+          return q.category === step.name || q.registrationStep === 'Personal';
+        } else if (step.category === 'Lifestyle' || step.category === 'Physical' || step.category === 'Beliefs' || step.category === 'Preferences') {
+          // Map Profile and Preferences step questions to their respective categories
+          return q.category === step.name && (q.registrationStep === 'Profile' || q.registrationStep === 'Preferences');
         }
         return q.category === step.name;
       })

@@ -121,7 +121,7 @@ export const systemQuestions: QuestionItem[] = [
     fieldType: 'text',
     required: false,
     enabled: true,
-    registrationStep: 'Lifestyle',
+    registrationStep: 'Profile', // Changed from "Lifestyle" to "Profile"
     displayOrder: 1,
     placeholder: 'Your job title',
     fieldOptions: [],
@@ -149,7 +149,7 @@ export const systemQuestions: QuestionItem[] = [
     fieldType: 'select',
     required: false,
     enabled: true,
-    registrationStep: 'Physical',
+    registrationStep: 'Profile', // Changed from "Physical" to "Profile"
     displayOrder: 1,
     placeholder: 'Select your height',
     fieldOptions: [
