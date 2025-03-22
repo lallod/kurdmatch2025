@@ -484,7 +484,7 @@ const RegistrationQuestionsPage = () => {
                         <CardDescription>
                           {step === 'basic-info' && 'Essential information to get started'}
                           {step === 'personal-details' && 'Help others get to know you better'}
-                          {step === 'preferences' && 'Tell us what you're looking for'}
+                          {step === 'preferences' && 'Tell us what you\'re looking for'}
                           {step === 'profile-completion' && 'Final details to complete your profile'}
                         </CardDescription>
                       </CardHeader>
