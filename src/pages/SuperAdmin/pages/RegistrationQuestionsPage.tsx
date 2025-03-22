@@ -1,514 +1,409 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Search, Plus, Filter, Download, Trash2, Edit, Eye, Save, X } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle,
-  DialogTrigger
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { toast } from "sonner";
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  MoveVertical,
-  Eye,
-  Check,
-  X,
-  SlidersHorizontal,
-  ArrowUpDown
-} from "lucide-react";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
-// Define question types
-const questionTypes = [
-  { id: 'text', label: 'Text Input' },
-  { id: 'textarea', label: 'Text Area' },
-  { id: 'number', label: 'Number Input' },
-  { id: 'select', label: 'Select Dropdown' },
-  { id: 'multiselect', label: 'Multi-Select Dropdown' },
-  { id: 'radio', label: 'Radio Buttons' },
-  { id: 'checkbox', label: 'Checkboxes' },
-  { id: 'date', label: 'Date Picker' },
-  { id: 'time', label: 'Time Picker' },
-  { id: 'email', label: 'Email Input' },
-  { id: 'phone', label: 'Phone Number' },
-  { id: 'url', label: 'URL Input' },
-  { id: 'range', label: 'Range Slider' },
-  { id: 'color', label: 'Color Picker' },
-  { id: 'file', label: 'File Upload' },
-  { id: 'imageSelect', label: 'Image Selection' },
-  { id: 'rating', label: 'Rating Scale' },
-  { id: 'likert', label: 'Likert Scale' },
-  { id: 'matrix', label: 'Matrix Questions' },
-  { id: 'ranking', label: 'Ranking Questions' }
-];
-
-// Define interface for question category
-interface QuestionCategory {
-  id: string;
-  name: string;
-  description: string;
-  order: number;
-  active: boolean;
-}
-
-// Define interface for registration question
-interface RegistrationQuestion {
-  id: string;
-  categoryId: string;
-  text: string;
-  type: string;
-  required: boolean;
-  order: number;
-  active: boolean;
-  options?: string[];
-  placeholder?: string;
-  helpText?: string;
-  validation?: string;
-}
-
-// Mock data for categories
-const initialCategories: QuestionCategory[] = [
-  { id: 'basic', name: 'Basic Information', description: 'Basic user information', order: 1, active: true },
-  { id: 'preferences', name: 'User Preferences', description: 'Preferences for matching', order: 2, active: true },
-  { id: 'interests', name: 'Interests & Hobbies', description: 'User interests and hobbies', order: 3, active: true },
-];
-
-// Mock data for questions
-const initialQuestions: RegistrationQuestion[] = [
-  { 
-    id: 'q1', 
-    categoryId: 'basic', 
-    text: 'What is your name?', 
-    type: 'text', 
-    required: true, 
-    order: 1, 
-    active: true,
-    placeholder: 'Enter your full name',
-    helpText: 'Please provide your full name as it appears on your ID'
-  },
-  { 
-    id: 'q2', 
-    categoryId: 'basic', 
-    text: 'What is your age?', 
-    type: 'number', 
-    required: true, 
-    order: 2, 
-    active: true,
-    validation: 'min:18,max:100'
-  },
-  { 
-    id: 'q3', 
-    categoryId: 'preferences', 
-    text: 'What are you looking for?', 
-    type: 'radio', 
-    required: true, 
-    order: 1, 
-    active: true,
-    options: ['Friendship', 'Dating', 'Long-term relationship']
-  },
-  { 
-    id: 'q4', 
-    categoryId: 'interests', 
-    text: 'Select your interests', 
-    type: 'checkbox', 
-    required: false, 
-    order: 1, 
-    active: true,
-    options: ['Sports', 'Music', 'Movies', 'Books', 'Travel', 'Food']
-  }
-];
-
-// Schema for category form
-const categoryFormSchema = z.object({
-  name: z.string().min(1, { message: "Category name is required" }),
-  description: z.string().optional(),
-  active: z.boolean().default(true),
-});
-
-// Schema for question form
-const questionFormSchema = z.object({
-  categoryId: z.string().min(1, { message: "Category is required" }),
-  text: z.string().min(1, { message: "Question text is required" }),
-  type: z.string().min(1, { message: "Question type is required" }),
-  required: z.boolean().default(false),
-  active: z.boolean().default(true),
-  options: z.string().optional(),
-  placeholder: z.string().optional(),
-  helpText: z.string().optional(),
-  validation: z.string().optional(),
-});
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import QuestionCategoriesSection from '../components/registration-questions/QuestionCategoriesSection';
+import QuestionPreviewCard from '../components/registration-questions/QuestionPreviewCard';
+import { useToast } from "@/hooks/use-toast";
 
 const RegistrationQuestionsPage = () => {
-  const [categories, setCategories] = useState<QuestionCategory[]>(initialCategories);
-  const [questions, setQuestions] = useState<RegistrationQuestion[]>(initialQuestions);
-  const [activeTab, setActiveTab] = useState<string>("categories");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [showPreview, setShowPreview] = useState<boolean>(false);
-  
-  // Dialog states
-  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState<boolean>(false);
-  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState<boolean>(false);
-  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<QuestionCategory | null>(null);
-  
-  const [isAddQuestionOpen, setIsAddQuestionOpen] = useState<boolean>(false);
-  const [isEditQuestionOpen, setIsEditQuestionOpen] = useState<boolean>(false);
-  const [isDeleteQuestionOpen, setIsDeleteQuestionOpen] = useState<boolean>(false);
-  const [selectedQuestion, setSelectedQuestion] = useState<RegistrationQuestion | null>(null);
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editingQuestion, setEditingQuestion] = useState<QuestionItem | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
+  const [isSelectAll, setIsSelectAll] = useState(false);
 
-  // Category form
-  const categoryForm = useForm<z.infer<typeof categoryFormSchema>>({
-    resolver: zodResolver(categoryFormSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      active: true,
+  // Dummy data for questions based on profile details
+  const [questions, setQuestions] = useState<QuestionItem[]>([
+    {
+      id: '1', 
+      text: 'What is your height?', 
+      category: 'Basics',
+      fieldType: 'text', 
+      required: true,
+      enabled: true,
+      registrationStep: 'Personal',
+      displayOrder: 1,
+      placeholder: 'e.g., 175 cm',
+      fieldOptions: [],
+      profileField: 'height'
     },
-  });
-
-  // Question form
-  const questionForm = useForm<z.infer<typeof questionFormSchema>>({
-    resolver: zodResolver(questionFormSchema),
-    defaultValues: {
-      categoryId: "",
-      text: "",
-      type: "",
+    {
+      id: '2', 
+      text: 'What are your hobbies?', 
+      category: 'Interests',
+      fieldType: 'multi-select', 
       required: false,
-      active: true,
-      options: "",
-      placeholder: "",
-      helpText: "",
-      validation: "",
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 2,
+      placeholder: 'Select your hobbies',
+      fieldOptions: ['Photography', 'Reading', 'Sports', 'Music', 'Travel', 'Cooking', 'Gaming', 'Art'],
+      profileField: 'hobbies'
     },
+    {
+      id: '3', 
+      text: 'What is your body type?', 
+      category: 'Physical',
+      fieldType: 'select', 
+      required: true,
+      enabled: true,
+      registrationStep: 'Personal',
+      displayOrder: 3,
+      placeholder: 'Select your body type',
+      fieldOptions: ['Athletic', 'Average', 'Slim', 'Muscular', 'Curvy', 'Plus Size'],
+      profileField: 'bodyType'
+    },
+    {
+      id: '4', 
+      text: 'What is your ethnicity?', 
+      category: 'Basics',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Personal',
+      displayOrder: 4,
+      placeholder: 'Select your ethnicity',
+      fieldOptions: ['Asian', 'Black/African', 'Caucasian', 'Hispanic/Latino', 'Middle Eastern', 'Mixed', 'Other'],
+      profileField: 'ethnicity'
+    },
+    {
+      id: '5', 
+      text: 'What is your religion?', 
+      category: 'Beliefs',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 5,
+      placeholder: 'Select your religion',
+      fieldOptions: ['Christian', 'Muslim', 'Jewish', 'Hindu', 'Buddhist', 'Spiritual but not religious', 'Atheist', 'Agnostic', 'Other'],
+      profileField: 'religion'
+    },
+    {
+      id: '6', 
+      text: 'What are your political views?', 
+      category: 'Beliefs',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 6,
+      placeholder: 'Select your political views',
+      fieldOptions: ['Conservative', 'Moderate', 'Liberal', 'Progressive', 'Libertarian', 'Apolitical', 'Other'],
+      profileField: 'politicalViews'
+    },
+    {
+      id: '7', 
+      text: 'What are your values?', 
+      category: 'Beliefs',
+      fieldType: 'multi-select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 7,
+      placeholder: 'Select your values',
+      fieldOptions: ['Family', 'Honesty', 'Loyalty', 'Ambition', 'Compassion', 'Freedom', 'Adventure', 'Creativity', 'Growth', 'Authenticity'],
+      profileField: 'values'
+    },
+    {
+      id: '8', 
+      text: 'What languages do you speak?', 
+      category: 'Basics',
+      fieldType: 'multi-select', 
+      required: true,
+      enabled: true,
+      registrationStep: 'Personal',
+      displayOrder: 8,
+      placeholder: 'Select languages',
+      fieldOptions: ['English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese', 'Arabic', 'Russian', 'Portuguese', 'Italian'],
+      profileField: 'languages'
+    },
+    {
+      id: '9', 
+      text: 'What are your relationship goals?', 
+      category: 'Relationships',
+      fieldType: 'select', 
+      required: true,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 9,
+      placeholder: 'Select your relationship goals',
+      fieldOptions: ['Long-term relationship', 'Marriage', 'Casual dating', 'Making friends', 'Still figuring it out'],
+      profileField: 'relationshipGoals'
+    },
+    {
+      id: '10', 
+      text: 'Do you want children?', 
+      category: 'Relationships',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 10,
+      placeholder: 'Select your preference',
+      fieldOptions: ['Want children', 'Don\'t want children', 'Have children already', 'Open to children', 'Not sure yet'],
+      profileField: 'wantChildren'
+    },
+    {
+      id: '11', 
+      text: 'Do you have pets?', 
+      category: 'Lifestyle',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 11,
+      placeholder: 'Select pet status',
+      fieldOptions: ['Dog owner', 'Cat owner', 'Both dog and cat', 'Other pets', 'No pets but love them', 'No pets and prefer none'],
+      profileField: 'havePets'
+    },
+    {
+      id: '12', 
+      text: 'What are your exercise habits?', 
+      category: 'Lifestyle',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 12,
+      placeholder: 'Select exercise frequency',
+      fieldOptions: ['Daily', 'Several times a week', 'Once a week', 'Occasionally', 'Rarely', 'Never'],
+      profileField: 'exerciseHabits'
+    },
+    {
+      id: '13', 
+      text: 'What is your zodiac sign?', 
+      category: 'Beliefs',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 13,
+      placeholder: 'Select your zodiac sign',
+      fieldOptions: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'],
+      profileField: 'zodiacSign'
+    },
+    {
+      id: '14', 
+      text: 'What is your personality type?', 
+      category: 'Personality',
+      fieldType: 'select', 
+      required: false,
+      enabled: true,
+      registrationStep: 'Profile',
+      displayOrder: 14,
+      placeholder: 'Select your personality type',
+      fieldOptions: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'],
+      profileField: 'personalityType'
+    }
+  ]);
+
+  // New question form state
+  const [newQuestion, setNewQuestion] = useState<Partial<QuestionItem>>({
+    text: '',
+    category: 'Basics',
+    fieldType: 'text',
+    required: false,
+    enabled: true,
+    registrationStep: 'Personal',
+    displayOrder: questions.length + 1,
+    placeholder: '',
+    fieldOptions: [],
+    profileField: ''
   });
 
-  // Handle drag and drop for categories
-  const handleDragEndCategories = (result: any) => {
-    if (!result.destination) return;
+  // Filter questions by tab and search query
+  const filteredQuestions = questions.filter(question => {
+    const matchesSearch = question.text.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          question.category.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const items = Array.from(categories);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    if (activeTab === 'all') return matchesSearch;
+    if (activeTab === 'basic') return question.category === 'Basics' && matchesSearch;
+    if (activeTab === 'lifestyle') return question.category === 'Lifestyle' && matchesSearch;
+    if (activeTab === 'beliefs') return question.category === 'Beliefs' && matchesSearch;
+    if (activeTab === 'relationships') return question.category === 'Relationships' && matchesSearch;
+    if (activeTab === 'personality') return question.category === 'Personality' && matchesSearch;
+    if (activeTab === 'interests') return question.category === 'Interests' && matchesSearch;
+    if (activeTab === 'physical') return question.category === 'Physical' && matchesSearch;
+    if (activeTab === 'required') return question.required && matchesSearch;
+    if (activeTab === 'optional') return !question.required && matchesSearch;
+    if (activeTab === 'enabled') return question.enabled && matchesSearch;
+    if (activeTab === 'disabled') return !question.enabled && matchesSearch;
     
-    // Update order property
-    const updatedItems = items.map((item, index) => ({
-      ...item,
-      order: index + 1
-    }));
-    
-    setCategories(updatedItems);
-    toast.success("Categories order updated successfully");
+    return false;
+  });
+
+  // Toggle question selection for bulk actions
+  const toggleQuestionSelection = (id: string) => {
+    setSelectedQuestions(prev => 
+      prev.includes(id) ? prev.filter(qId => qId !== id) : [...prev, id]
+    );
   };
-  
-  // Handle drag and drop for questions
-  const handleDragEndQuestions = (result: any) => {
-    if (!result.destination) return;
+
+  // Toggle select all questions
+  const toggleSelectAll = () => {
+    if (isSelectAll) {
+      setSelectedQuestions([]);
+    } else {
+      setSelectedQuestions(filteredQuestions.map(q => q.id));
+    }
+    setIsSelectAll(!isSelectAll);
+  };
+
+  // Handle bulk delete of selected questions
+  const handleBulkDelete = () => {
+    if (selectedQuestions.length === 0) return;
     
-    const items = Array.from(questions);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    setQuestions(prev => prev.filter(q => !selectedQuestions.includes(q.id)));
+    setSelectedQuestions([]);
+    setIsSelectAll(false);
     
-    // Update order property for questions within the same category
-    const categoryId = reorderedItem.categoryId;
-    const categoryQuestions = items.filter(q => q.categoryId === categoryId);
-    
-    const updatedItems = items.map(item => {
-      if (item.categoryId === categoryId) {
-        const index = categoryQuestions.findIndex(q => q.id === item.id);
-        return {
-          ...item,
-          order: index + 1
-        };
-      }
-      return item;
+    toast({
+      title: "Success",
+      description: `${selectedQuestions.length} questions deleted successfully`,
     });
-    
-    setQuestions(updatedItems);
-    toast.success("Questions order updated successfully");
   };
 
-  // Filter questions by category and search term
-  const getFilteredQuestions = (categoryId: string) => {
-    return questions
-      .filter(q => q.categoryId === categoryId)
-      .filter(q => q.text.toLowerCase().includes(searchTerm.toLowerCase()))
-      .sort((a, b) => a.order - b.order);
-  };
-
-  // Add new category
-  const handleAddCategory = (data: z.infer<typeof categoryFormSchema>) => {
-    const newCategory: QuestionCategory = {
-      id: `category-${Date.now()}`,
-      name: data.name,
-      description: data.description || "",
-      order: categories.length + 1,
-      active: data.active,
-    };
+  // Handle bulk enable/disable of selected questions
+  const handleBulkToggleEnabled = (enable: boolean) => {
+    if (selectedQuestions.length === 0) return;
     
-    setCategories([...categories, newCategory]);
-    setIsAddCategoryOpen(false);
-    categoryForm.reset();
-    toast.success("Category added successfully");
-  };
-
-  // Edit category
-  const handleEditCategory = (data: z.infer<typeof categoryFormSchema>) => {
-    if (!selectedCategory) return;
-    
-    const updatedCategories = categories.map(cat => 
-      cat.id === selectedCategory.id 
-        ? { 
-            ...cat, 
-            name: data.name, 
-            description: data.description || "", 
-            active: data.active 
-          } 
-        : cat
+    setQuestions(prev => 
+      prev.map(q => selectedQuestions.includes(q.id) ? {...q, enabled: enable} : q)
     );
     
-    setCategories(updatedCategories);
-    setIsEditCategoryOpen(false);
-    setSelectedCategory(null);
-    toast.success("Category updated successfully");
+    toast({
+      title: "Success",
+      description: `${selectedQuestions.length} questions ${enable ? 'enabled' : 'disabled'} successfully`,
+    });
   };
 
-  // Delete category
-  const handleDeleteCategory = () => {
-    if (!selectedCategory) return;
+  // Handle question edit submission
+  const handleEditSubmit = () => {
+    if (!editingQuestion) return;
     
-    const updatedCategories = categories.filter(cat => cat.id !== selectedCategory.id);
-    // Remove questions in this category or assign them to another category
-    const updatedQuestions = questions.filter(q => q.categoryId !== selectedCategory.id);
-    
-    setCategories(updatedCategories);
-    setQuestions(updatedQuestions);
-    setIsDeleteCategoryOpen(false);
-    setSelectedCategory(null);
-    toast.success("Category deleted successfully");
-  };
-
-  // Add new question
-  const handleAddQuestion = (data: z.infer<typeof questionFormSchema>) => {
-    const newQuestion: RegistrationQuestion = {
-      id: `question-${Date.now()}`,
-      categoryId: data.categoryId,
-      text: data.text,
-      type: data.type,
-      required: data.required,
-      active: data.active,
-      order: questions.filter(q => q.categoryId === data.categoryId).length + 1,
-      options: data.options ? data.options.split(',').map(opt => opt.trim()) : undefined,
-      placeholder: data.placeholder,
-      helpText: data.helpText,
-      validation: data.validation,
-    };
-    
-    setQuestions([...questions, newQuestion]);
-    setIsAddQuestionOpen(false);
-    questionForm.reset();
-    toast.success("Question added successfully");
-  };
-
-  // Edit question
-  const handleEditQuestion = (data: z.infer<typeof questionFormSchema>) => {
-    if (!selectedQuestion) return;
-    
-    const updatedQuestions = questions.map(q => 
-      q.id === selectedQuestion.id 
-        ? { 
-            ...q, 
-            categoryId: data.categoryId,
-            text: data.text,
-            type: data.type,
-            required: data.required,
-            active: data.active,
-            options: data.options ? data.options.split(',').map(opt => opt.trim()) : undefined,
-            placeholder: data.placeholder,
-            helpText: data.helpText,
-            validation: data.validation,
-          } 
-        : q
+    setQuestions(prev => 
+      prev.map(q => q.id === editingQuestion.id ? editingQuestion : q)
     );
     
-    setQuestions(updatedQuestions);
-    setIsEditQuestionOpen(false);
-    setSelectedQuestion(null);
-    toast.success("Question updated successfully");
-  };
-
-  // Delete question
-  const handleDeleteQuestion = () => {
-    if (!selectedQuestion) return;
+    setEditingQuestion(null);
     
-    const updatedQuestions = questions.filter(q => q.id !== selectedQuestion.id);
+    toast({
+      title: "Success",
+      description: "Question updated successfully",
+    });
+  };
+
+  // Handle new question submission
+  const handleNewQuestionSubmit = () => {
+    if (!newQuestion.text) {
+      toast({
+        title: "Error",
+        description: "Question text is required",
+        variant: "destructive"
+      });
+      return;
+    }
     
-    setQuestions(updatedQuestions);
-    setIsDeleteQuestionOpen(false);
-    setSelectedQuestion(null);
-    toast.success("Question deleted successfully");
-  };
-
-  // Open edit category dialog
-  const openEditCategoryDialog = (category: QuestionCategory) => {
-    setSelectedCategory(category);
-    categoryForm.reset({
-      name: category.name,
-      description: category.description,
-      active: category.active,
+    const newId = (Math.max(...questions.map(q => parseInt(q.id))) + 1).toString();
+    
+    setQuestions(prev => [...prev, {
+      id: newId,
+      text: newQuestion.text!,
+      category: newQuestion.category || 'Basics',
+      fieldType: newQuestion.fieldType || 'text',
+      required: newQuestion.required || false,
+      enabled: newQuestion.enabled !== undefined ? newQuestion.enabled : true,
+      registrationStep: newQuestion.registrationStep || 'Personal',
+      displayOrder: newQuestion.displayOrder || prev.length + 1,
+      placeholder: newQuestion.placeholder || '',
+      fieldOptions: newQuestion.fieldOptions || [],
+      profileField: newQuestion.profileField || ''
+    }]);
+    
+    setIsAddDialogOpen(false);
+    
+    // Reset new question form
+    setNewQuestion({
+      text: '',
+      category: 'Basics',
+      fieldType: 'text',
+      required: false,
+      enabled: true,
+      registrationStep: 'Personal',
+      displayOrder: questions.length + 2, // +1 for the question we just added
+      placeholder: '',
+      fieldOptions: [],
+      profileField: ''
     });
-    setIsEditCategoryOpen(true);
-  };
-
-  // Open edit question dialog
-  const openEditQuestionDialog = (question: RegistrationQuestion) => {
-    setSelectedQuestion(question);
-    questionForm.reset({
-      categoryId: question.categoryId,
-      text: question.text,
-      type: question.type,
-      required: question.required,
-      active: question.active,
-      options: question.options?.join(', '),
-      placeholder: question.placeholder,
-      helpText: question.helpText,
-      validation: question.validation,
+    
+    toast({
+      title: "Success",
+      description: "New question added successfully",
     });
-    setIsEditQuestionOpen(true);
   };
 
-  // Dynamic form component for preview
-  const DynamicFormField = ({ question }: { question: RegistrationQuestion }) => {
-    switch (question.type) {
-      case 'text':
-      case 'email':
-      case 'url':
-      case 'phone':
-        return (
-          <Input 
-            placeholder={question.placeholder} 
-            type={question.type === 'email' ? 'email' : 
-                 question.type === 'url' ? 'url' : 'text'} 
-          />
-        );
-      case 'textarea':
-        return <Textarea placeholder={question.placeholder} />;
-      case 'number':
-        return <Input type="number" placeholder={question.placeholder} />;
-      case 'select':
-        return (
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an option" />
-            </SelectTrigger>
-            <SelectContent>
-              {question.options?.map((option, i) => (
-                <SelectItem key={i} value={option}>{option}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
-      case 'radio':
-        return (
-          <RadioGroup>
-            {question.options?.map((option, i) => (
-              <div key={i} className="flex items-center space-x-2">
-                <RadioGroupItem value={option} id={`${question.id}-${i}`} />
-                <Label htmlFor={`${question.id}-${i}`}>{option}</Label>
-              </div>
-            ))}
-          </RadioGroup>
-        );
-      case 'checkbox':
-        return (
-          <div className="space-y-2">
-            {question.options?.map((option, i) => (
-              <div key={i} className="flex items-center space-x-2">
-                <Checkbox id={`${question.id}-${i}`} />
-                <Label htmlFor={`${question.id}-${i}`}>{option}</Label>
-              </div>
-            ))}
-          </div>
-        );
-      case 'date':
-        return <Input type="date" />;
-      case 'time':
-        return <Input type="time" />;
-      case 'range':
-        return <Input type="range" min="0" max="100" />;
-      case 'color':
-        return <Input type="color" />;
-      case 'file':
-        return <Input type="file" />;
-      case 'rating':
-        return (
-          <div className="flex space-x-2">
-            {[1, 2, 3, 4, 5].map(rating => (
-              <Button 
-                key={rating} 
-                variant="outline" 
-                size="sm"
-                className="h-10 w-10"
-              >
-                {rating}
-              </Button>
-            ))}
-          </div>
-        );
-      default:
-        return <Input />;
+  // Handle adding a field option
+  const handleAddFieldOption = (option: string, isEdit = false) => {
+    if (!option.trim()) return;
+    
+    if (isEdit && editingQuestion) {
+      setEditingQuestion({
+        ...editingQuestion,
+        fieldOptions: [...(editingQuestion.fieldOptions || []), option.trim()]
+      });
+    } else {
+      setNewQuestion({
+        ...newQuestion,
+        fieldOptions: [...(newQuestion.fieldOptions || []), option.trim()]
+      });
+    }
+  };
+
+  // Handle removing a field option
+  const handleRemoveFieldOption = (index: number, isEdit = false) => {
+    if (isEdit && editingQuestion) {
+      const newOptions = [...(editingQuestion.fieldOptions || [])];
+      newOptions.splice(index, 1);
+      setEditingQuestion({
+        ...editingQuestion,
+        fieldOptions: newOptions
+      });
+    } else {
+      const newOptions = [...(newQuestion.fieldOptions || [])];
+      newOptions.splice(index, 1);
+      setNewQuestion({
+        ...newQuestion,
+        fieldOptions: newOptions
+      });
     }
   };
 
@@ -516,849 +411,607 @@ const RegistrationQuestionsPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Registration Questions Management</h1>
-          <p className="text-muted-foreground">Manage questions and categories for user registration</p>
+          <h1 className="text-3xl font-bold">Registration Questions</h1>
+          <p className="text-muted-foreground">
+            Manage the questions users are asked during the registration process
+          </p>
         </div>
         <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            onClick={() => setShowPreview(!showPreview)}
-            className="flex items-center"
+          <Button
+            variant="outline"
+            onClick={() => {
+              // Export questions logic
+              toast({
+                title: "Export Started",
+                description: "Questions exported to CSV successfully",
+              });
+            }}
           >
-            <Eye className="mr-2 h-4 w-4" />
-            {showPreview ? "Hide Preview" : "Show Preview"}
+            <Download className="mr-2 h-4 w-4" /> Export
+          </Button>
+          <Button onClick={() => setIsAddDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> Add Question
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Main management interface */}
-        <div className={`${showPreview ? 'md:w-1/2' : 'w-full'}`}>
+      <div className="flex space-x-4">
+        <div className="w-2/3 space-y-6">
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Registration Questions Configuration</CardTitle>
-                  <CardDescription>Add, edit, and organize registration questions and categories</CardDescription>
+                  <CardTitle>Registration Questions</CardTitle>
+                  <CardDescription>
+                    Configure questions users will answer during registration
+                  </CardDescription>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2">
                   <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
+                      type="search"
                       placeholder="Search questions..."
-                      className="pl-8 w-[200px]"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-8 w-[250px]"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
-                  {activeTab === "categories" && (
-                    <Button onClick={() => setIsAddCategoryOpen(true)}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Category
-                    </Button>
-                  )}
-                  {activeTab === "questions" && (
-                    <Button onClick={() => setIsAddQuestionOpen(true)}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Question
-                    </Button>
-                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Filter className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel>Filter Questions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setActiveTab('required')}>
+                        Required Questions
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('optional')}>
+                        Optional Questions
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('enabled')}>
+                        Enabled Questions
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('disabled')}>
+                        Disabled Questions
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="mb-4">
-                  <TabsTrigger value="categories">Categories</TabsTrigger>
-                  <TabsTrigger value="questions">Questions</TabsTrigger>
+              <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="grid grid-cols-7 mb-4">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="basic">Basics</TabsTrigger>
+                  <TabsTrigger value="lifestyle">Lifestyle</TabsTrigger>
+                  <TabsTrigger value="beliefs">Beliefs</TabsTrigger>
+                  <TabsTrigger value="relationships">Relationships</TabsTrigger>
+                  <TabsTrigger value="personality">Personality</TabsTrigger>
+                  <TabsTrigger value="interests">Interests</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="categories">
-                  <DragDropContext onDragEnd={handleDragEndCategories}>
-                    <Droppable droppableId="categories">
-                      {(provided) => (
-                        <div 
-                          {...provided.droppableProps} 
-                          ref={provided.innerRef}
+                <TabsContent value={activeTab} className="space-y-4">
+                  {selectedQuestions.length > 0 && (
+                    <div className="bg-secondary/30 p-2 rounded-lg flex items-center justify-between">
+                      <span className="text-sm">{selectedQuestions.length} questions selected</span>
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleBulkToggleEnabled(true)}
                         >
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead className="w-10"></TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Description</TableHead>
-                                <TableHead>Order</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {categories
-                                .sort((a, b) => a.order - b.order)
-                                .map((category, index) => (
-                                  <Draggable 
-                                    key={category.id} 
-                                    draggableId={category.id} 
-                                    index={index}
+                          Enable
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleBulkToggleEnabled(false)}
+                        >
+                          Disable
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={handleBulkDelete}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="border rounded-lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[40px]">
+                            <Checkbox 
+                              checked={isSelectAll} 
+                              onCheckedChange={toggleSelectAll} 
+                            />
+                          </TableHead>
+                          <TableHead className="w-[200px]">Question</TableHead>
+                          <TableHead className="w-[120px]">Category</TableHead>
+                          <TableHead className="w-[100px]">Field Type</TableHead>
+                          <TableHead className="w-[100px]">Required</TableHead>
+                          <TableHead className="w-[100px]">Status</TableHead>
+                          <TableHead className="w-[120px]">Registration Step</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredQuestions.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
+                              No questions found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredQuestions.map((question) => (
+                            <TableRow key={question.id}>
+                              <TableCell>
+                                <Checkbox 
+                                  checked={selectedQuestions.includes(question.id)} 
+                                  onCheckedChange={() => toggleQuestionSelection(question.id)} 
+                                />
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                {question.text}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="capitalize">
+                                  {question.category}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className="capitalize">
+                                  {question.fieldType}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                {question.required ? (
+                                  <Badge className="bg-primary/10 text-primary">Required</Badge>
+                                ) : (
+                                  <Badge variant="outline">Optional</Badge>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {question.enabled ? (
+                                  <Badge className="bg-green-100 text-green-800">Enabled</Badge>
+                                ) : (
+                                  <Badge className="bg-red-100 text-red-800">Disabled</Badge>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="capitalize">
+                                  {question.registrationStep}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end space-x-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setEditingQuestion(question)}
                                   >
-                                    {(provided) => (
-                                      <TableRow 
-                                        ref={provided.innerRef} 
-                                        {...provided.draggableProps}
-                                      >
-                                        <TableCell>
-                                          <div {...provided.dragHandleProps} className="cursor-move">
-                                            <MoveVertical size={16} />
-                                          </div>
-                                        </TableCell>
-                                        <TableCell className="font-medium">{category.name}</TableCell>
-                                        <TableCell>{category.description}</TableCell>
-                                        <TableCell>{category.order}</TableCell>
-                                        <TableCell>
-                                          <span className={`px-2 py-1 rounded-full text-xs ${category.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                            {category.active ? 'Active' : 'Inactive'}
-                                          </span>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                          <div className="flex justify-end space-x-2">
-                                            <Button 
-                                              variant="ghost" 
-                                              size="icon" 
-                                              onClick={() => openEditCategoryDialog(category)}
-                                            >
-                                              <Edit size={16} />
-                                            </Button>
-                                            <Button 
-                                              variant="ghost" 
-                                              size="icon"
-                                              onClick={() => {
-                                                setSelectedCategory(category);
-                                                setIsDeleteCategoryOpen(true);
-                                              }}
-                                            >
-                                              <Trash2 size={16} />
-                                            </Button>
-                                          </div>
-                                        </TableCell>
-                                      </TableRow>
-                                    )}
-                                  </Draggable>
-                                ))}
-                              {provided.placeholder}
-                            </TableBody>
-                          </Table>
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-                </TabsContent>
-
-                <TabsContent value="questions">
-                  <Tabs defaultValue={categories[0]?.id}>
-                    <TabsList className="mb-4">
-                      {categories.map(category => (
-                        <TabsTrigger key={category.id} value={category.id}>
-                          {category.name}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-
-                    {categories.map(category => (
-                      <TabsContent key={category.id} value={category.id}>
-                        <DragDropContext onDragEnd={handleDragEndQuestions}>
-                          <Droppable droppableId={`questions-${category.id}`}>
-                            {(provided) => (
-                              <div 
-                                {...provided.droppableProps} 
-                                ref={provided.innerRef}
-                              >
-                                <Table>
-                                  <TableHeader>
-                                    <TableRow>
-                                      <TableHead className="w-10"></TableHead>
-                                      <TableHead>Question</TableHead>
-                                      <TableHead>Type</TableHead>
-                                      <TableHead>Required</TableHead>
-                                      <TableHead>Status</TableHead>
-                                      <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {getFilteredQuestions(category.id).map((question, index) => (
-                                      <Draggable 
-                                        key={question.id} 
-                                        draggableId={question.id} 
-                                        index={index}
-                                      >
-                                        {(provided) => (
-                                          <TableRow 
-                                            ref={provided.innerRef} 
-                                            {...provided.draggableProps}
-                                          >
-                                            <TableCell>
-                                              <div {...provided.dragHandleProps} className="cursor-move">
-                                                <MoveVertical size={16} />
-                                              </div>
-                                            </TableCell>
-                                            <TableCell className="font-medium">{question.text}</TableCell>
-                                            <TableCell>
-                                              {questionTypes.find(t => t.id === question.type)?.label || question.type}
-                                            </TableCell>
-                                            <TableCell>
-                                              {question.required ? 
-                                                <Check className="h-4 w-4 text-green-600" /> : 
-                                                <X className="h-4 w-4 text-gray-400" />
-                                              }
-                                            </TableCell>
-                                            <TableCell>
-                                              <span className={`px-2 py-1 rounded-full text-xs ${question.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                                {question.active ? 'Active' : 'Inactive'}
-                                              </span>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                              <div className="flex justify-end space-x-2">
-                                                <Button 
-                                                  variant="ghost" 
-                                                  size="icon" 
-                                                  onClick={() => openEditQuestionDialog(question)}
-                                                >
-                                                  <Edit size={16} />
-                                                </Button>
-                                                <Button 
-                                                  variant="ghost" 
-                                                  size="icon"
-                                                  onClick={() => {
-                                                    setSelectedQuestion(question);
-                                                    setIsDeleteQuestionOpen(true);
-                                                  }}
-                                                >
-                                                  <Trash2 size={16} />
-                                                </Button>
-                                              </div>
-                                            </TableCell>
-                                          </TableRow>
-                                        )}
-                                      </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                  </TableBody>
-                                </Table>
-                              </div>
-                            )}
-                          </Droppable>
-                        </DragDropContext>
-                      </TabsContent>
-                    ))}
-                  </Tabs>
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => {
+                                      // Preview question logic
+                                      toast({
+                                        title: "Preview",
+                                        description: `Previewing: ${question.text}`,
+                                      });
+                                    }}
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-destructive"
+                                    onClick={() => {
+                                      setQuestions(prev => prev.filter(q => q.id !== question.id));
+                                      toast({
+                                        title: "Success",
+                                        description: "Question deleted successfully",
+                                      });
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
         </div>
 
-        {/* Preview panel */}
-        {showPreview && (
-          <div className="md:w-1/2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Registration Form Preview</CardTitle>
-                <CardDescription>Live preview of the registration form</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6 p-4 border rounded-md bg-white">
-                  {categories
-                    .filter(cat => cat.active)
-                    .sort((a, b) => a.order - b.order)
-                    .map(category => (
-                      <div key={category.id} className="space-y-4">
-                        <h3 className="text-lg font-semibold border-b pb-2">{category.name}</h3>
-                        
-                        {questions
-                          .filter(q => q.categoryId === category.id && q.active)
-                          .sort((a, b) => a.order - b.order)
-                          .map(question => (
-                            <div key={question.id} className="space-y-2">
-                              <div className="flex items-center">
-                                <Label className="text-sm font-medium">{question.text}</Label>
-                                {question.required && (
-                                  <span className="text-red-500 ml-1">*</span>
-                                )}
-                              </div>
-                              
-                              {question.helpText && (
-                                <p className="text-xs text-muted-foreground">{question.helpText}</p>
-                              )}
-                              
-                              <DynamicFormField question={question} />
-                            </div>
-                          ))}
-                      </div>
-                    ))}
-                    
-                  <div className="pt-4">
-                    <Button className="w-full">Submit Registration</Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        <div className="w-1/3 space-y-6">
+          <QuestionCategoriesSection />
+          <QuestionPreviewCard />
+        </div>
       </div>
 
-      {/* Category Dialogs */}
-      <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+      {/* Edit Question Dialog */}
+      <Dialog open={!!editingQuestion} onOpenChange={(open) => !open && setEditingQuestion(null)}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Add Category</DialogTitle>
+            <DialogTitle>Edit Registration Question</DialogTitle>
             <DialogDescription>
-              Create a new category for registration questions.
+              Make changes to the registration question below
             </DialogDescription>
           </DialogHeader>
-          <Form {...categoryForm}>
-            <form onSubmit={categoryForm.handleSubmit(handleAddCategory)} className="space-y-4">
-              <FormField
-                control={categoryForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter category name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={categoryForm.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Enter description" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={categoryForm.control}
-                name="active"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                    <div className="space-y-0.5">
-                      <FormLabel>Active</FormLabel>
-                      <FormDescription>
-                        Enable or disable this category
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <DialogFooter>
-                <Button type="submit">Add Category</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>
-              Make changes to the selected category.
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...categoryForm}>
-            <form onSubmit={categoryForm.handleSubmit(handleEditCategory)} className="space-y-4">
-              <FormField
-                control={categoryForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter category name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={categoryForm.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Enter description" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={categoryForm.control}
-                name="active"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                    <div className="space-y-0.5">
-                      <FormLabel>Active</FormLabel>
-                      <FormDescription>
-                        Enable or disable this category
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <DialogFooter>
-                <Button type="submit">Update Category</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Delete Category</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this category? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground py-2">
-            All questions in this category will be permanently deleted.
-          </p>
+          
+          {editingQuestion && (
+            <div className="grid gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-question-text">Question Text</Label>
+                  <Input
+                    id="edit-question-text"
+                    value={editingQuestion.text}
+                    onChange={(e) => setEditingQuestion({...editingQuestion, text: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-category">Category</Label>
+                  <Select
+                    value={editingQuestion.category}
+                    onValueChange={(value) => setEditingQuestion({...editingQuestion, category: value})}
+                  >
+                    <SelectTrigger id="edit-category">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Basics">Basics</SelectItem>
+                      <SelectItem value="Lifestyle">Lifestyle</SelectItem>
+                      <SelectItem value="Beliefs">Beliefs</SelectItem>
+                      <SelectItem value="Relationships">Relationships</SelectItem>
+                      <SelectItem value="Personality">Personality</SelectItem>
+                      <SelectItem value="Interests">Interests</SelectItem>
+                      <SelectItem value="Physical">Physical</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-field-type">Field Type</Label>
+                  <Select
+                    value={editingQuestion.fieldType}
+                    onValueChange={(value) => setEditingQuestion({...editingQuestion, fieldType: value as any})}
+                  >
+                    <SelectTrigger id="edit-field-type">
+                      <SelectValue placeholder="Select field type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="text">Text</SelectItem>
+                      <SelectItem value="textarea">Textarea</SelectItem>
+                      <SelectItem value="select">Select</SelectItem>
+                      <SelectItem value="multi-select">Multi Select</SelectItem>
+                      <SelectItem value="radio">Radio</SelectItem>
+                      <SelectItem value="checkbox">Checkbox</SelectItem>
+                      <SelectItem value="date">Date</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-registration-step">Registration Step</Label>
+                  <Select
+                    value={editingQuestion.registrationStep}
+                    onValueChange={(value) => setEditingQuestion({...editingQuestion, registrationStep: value})}
+                  >
+                    <SelectTrigger id="edit-registration-step">
+                      <SelectValue placeholder="Select registration step" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Account">Account</SelectItem>
+                      <SelectItem value="Personal">Personal</SelectItem>
+                      <SelectItem value="Profile">Profile</SelectItem>
+                      <SelectItem value="Preferences">Preferences</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-placeholder">Placeholder Text</Label>
+                  <Input
+                    id="edit-placeholder"
+                    value={editingQuestion.placeholder}
+                    onChange={(e) => setEditingQuestion({...editingQuestion, placeholder: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-profile-field">Profile Field Mapping</Label>
+                  <Input
+                    id="edit-profile-field"
+                    value={editingQuestion.profileField}
+                    onChange={(e) => setEditingQuestion({...editingQuestion, profileField: e.target.value})}
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="edit-required"
+                    checked={editingQuestion.required}
+                    onCheckedChange={(checked) => 
+                      setEditingQuestion({...editingQuestion, required: !!checked})
+                    }
+                  />
+                  <Label htmlFor="edit-required">Required</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="edit-enabled"
+                    checked={editingQuestion.enabled}
+                    onCheckedChange={(checked) => 
+                      setEditingQuestion({...editingQuestion, enabled: !!checked})
+                    }
+                  />
+                  <Label htmlFor="edit-enabled">Enabled</Label>
+                </div>
+              </div>
+              
+              {(editingQuestion.fieldType === 'select' || 
+                editingQuestion.fieldType === 'multi-select' || 
+                editingQuestion.fieldType === 'radio') && (
+                <div className="space-y-2">
+                  <Label>Field Options</Label>
+                  <div className="flex space-x-2">
+                    <Input
+                      placeholder="Add a new option"
+                      id="edit-field-option"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const input = e.currentTarget;
+                          handleAddFieldOption(input.value, true);
+                          input.value = '';
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        const input = document.getElementById('edit-field-option') as HTMLInputElement;
+                        handleAddFieldOption(input.value, true);
+                        input.value = '';
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {editingQuestion.fieldOptions?.map((option, index) => (
+                      <Badge key={index} variant="secondary" className="py-1 pl-2 pr-1">
+                        {option}
+                        <button
+                          type="button"
+                          className="ml-1 text-muted-foreground hover:text-foreground"
+                          onClick={() => handleRemoveFieldOption(index, true)}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
           <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsDeleteCategoryOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setEditingQuestion(null)}>
               Cancel
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleDeleteCategory}
-            >
-              Delete
+            <Button onClick={handleEditSubmit}>
+              <Save className="mr-2 h-4 w-4" /> Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Question Dialogs */}
-      <Dialog open={isAddQuestionOpen} onOpenChange={setIsAddQuestionOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+      {/* Add Question Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Add Question</DialogTitle>
+            <DialogTitle>Add New Registration Question</DialogTitle>
             <DialogDescription>
-              Create a new registration question.
+              Create a new question for the registration process
             </DialogDescription>
           </DialogHeader>
-          <Form {...questionForm}>
-            <form onSubmit={questionForm.handleSubmit(handleAddQuestion)} className="space-y-4">
-              <FormField
-                control={questionForm.control}
-                name="categoryId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map(category => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={questionForm.control}
-                name="text"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Question Text</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter question text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={questionForm.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Question Type</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select question type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {questionTypes.map(type => (
-                            <SelectItem key={type.id} value={type.id}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {questionForm.watch("type") && ["select", "multiselect", "radio", "checkbox", "imageSelect"].includes(questionForm.watch("type")) && (
-                <FormField
-                  control={questionForm.control}
-                  name="options"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Options</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} placeholder="Enter options separated by commas" />
-                      </FormControl>
-                      <FormDescription>
-                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <FormField
-                control={questionForm.control}
-                name="placeholder"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Placeholder</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter placeholder text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={questionForm.control}
-                name="helpText"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Help Text</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter help text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={questionForm.control}
-                name="validation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Validation Rules</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="e.g., min:5,max:100" />
-                    </FormControl>
-                    <FormDescription>
-                      Enter validation rules in format: rule:value (e.g., min:5,max:100)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={questionForm.control}
-                  name="required"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <div className="space-y-0.5">
-                        <FormLabel>Required</FormLabel>
-                        <FormDescription>
-                          Is this question required?
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={questionForm.control}
-                  name="active"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <div className="space-y-0.5">
-                        <FormLabel>Active</FormLabel>
-                        <FormDescription>
-                          Enable or disable this question
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
+          
+          <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="question-text">Question Text</Label>
+                <Input
+                  id="question-text"
+                  value={newQuestion.text}
+                  onChange={(e) => setNewQuestion({...newQuestion, text: e.target.value})}
+                  placeholder="e.g., What are your favorite hobbies?"
                 />
               </div>
-
-              <DialogFooter>
-                <Button type="submit">Add Question</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isEditQuestionOpen} onOpenChange={setIsEditQuestionOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Edit Question</DialogTitle>
-            <DialogDescription>
-              Make changes to the selected question.
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...questionForm}>
-            <form onSubmit={questionForm.handleSubmit(handleEditQuestion)} className="space-y-4">
-              <FormField
-                control={questionForm.control}
-                name="categoryId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map(category => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={questionForm.control}
-                name="text"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Question Text</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter question text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={questionForm.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Question Type</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select question type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {questionTypes.map(type => (
-                            <SelectItem key={type.id} value={type.id}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {questionForm.watch("type") && ["select", "multiselect", "radio", "checkbox", "imageSelect"].includes(questionForm.watch("type")) && (
-                <FormField
-                  control={questionForm.control}
-                  name="options"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Options</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} placeholder="Enter options separated by commas" />
-                      </FormControl>
-                      <FormDescription>
-                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <FormField
-                control={questionForm.control}
-                name="placeholder"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Placeholder</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter placeholder text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={questionForm.control}
-                name="helpText"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Help Text</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter help text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={questionForm.control}
-                name="validation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Validation Rules</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="e.g., min:5,max:100" />
-                    </FormControl>
-                    <FormDescription>
-                      Enter validation rules in format: rule:value (e.g., min:5,max:100)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={questionForm.control}
-                  name="required"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <div className="space-y-0.5">
-                        <FormLabel>Required</FormLabel>
-                        <FormDescription>
-                          Is this question required?
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={questionForm.control}
-                  name="active"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <div className="space-y-0.5">
-                        <FormLabel>Active</FormLabel>
-                        <FormDescription>
-                          Enable or disable this question
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select
+                  value={newQuestion.category}
+                  onValueChange={(value) => setNewQuestion({...newQuestion, category: value})}
+                >
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Basics">Basics</SelectItem>
+                    <SelectItem value="Lifestyle">Lifestyle</SelectItem>
+                    <SelectItem value="Beliefs">Beliefs</SelectItem>
+                    <SelectItem value="Relationships">Relationships</SelectItem>
+                    <SelectItem value="Personality">Personality</SelectItem>
+                    <SelectItem value="Interests">Interests</SelectItem>
+                    <SelectItem value="Physical">Physical</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="field-type">Field Type</Label>
+                <Select
+                  value={newQuestion.fieldType}
+                  onValueChange={(value) => setNewQuestion({...newQuestion, fieldType: value as any})}
+                >
+                  <SelectTrigger id="field-type">
+                    <SelectValue placeholder="Select field type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="text">Text</SelectItem>
+                    <SelectItem value="textarea">Textarea</SelectItem>
+                    <SelectItem value="select">Select</SelectItem>
+                    <SelectItem value="multi-select">Multi Select</SelectItem>
+                    <SelectItem value="radio">Radio</SelectItem>
+                    <SelectItem value="checkbox">Checkbox</SelectItem>
+                    <SelectItem value="date">Date</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="registration-step">Registration Step</Label>
+                <Select
+                  value={newQuestion.registrationStep}
+                  onValueChange={(value) => setNewQuestion({...newQuestion, registrationStep: value})}
+                >
+                  <SelectTrigger id="registration-step">
+                    <SelectValue placeholder="Select registration step" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Account">Account</SelectItem>
+                    <SelectItem value="Personal">Personal</SelectItem>
+                    <SelectItem value="Profile">Profile</SelectItem>
+                    <SelectItem value="Preferences">Preferences</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="placeholder">Placeholder Text</Label>
+                <Input
+                  id="placeholder"
+                  value={newQuestion.placeholder}
+                  onChange={(e) => setNewQuestion({...newQuestion, placeholder: e.target.value})}
+                  placeholder="e.g., Enter your hobbies"
                 />
               </div>
-
-              <DialogFooter>
-                <Button type="submit">Update Question</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isDeleteQuestionOpen} onOpenChange={setIsDeleteQuestionOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Delete Question</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this question? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
+              <div className="space-y-2">
+                <Label htmlFor="profile-field">Profile Field Mapping</Label>
+                <Input
+                  id="profile-field"
+                  value={newQuestion.profileField}
+                  onChange={(e) => setNewQuestion({...newQuestion, profileField: e.target.value})}
+                  placeholder="e.g., hobbies"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="required"
+                  checked={newQuestion.required}
+                  onCheckedChange={(checked) => 
+                    setNewQuestion({...newQuestion, required: !!checked})
+                  }
+                />
+                <Label htmlFor="required">Required</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="enabled"
+                  checked={newQuestion.enabled}
+                  onCheckedChange={(checked) => 
+                    setNewQuestion({...newQuestion, enabled: !!checked})
+                  }
+                />
+                <Label htmlFor="enabled">Enabled</Label>
+              </div>
+            </div>
+            
+            {(newQuestion.fieldType === 'select' || 
+              newQuestion.fieldType === 'multi-select' || 
+              newQuestion.fieldType === 'radio') && (
+              <div className="space-y-2">
+                <Label>Field Options</Label>
+                <div className="flex space-x-2">
+                  <Input
+                    placeholder="Add a new option"
+                    id="field-option"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const input = e.currentTarget;
+                        handleAddFieldOption(input.value);
+                        input.value = '';
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      const input = document.getElementById('field-option') as HTMLInputElement;
+                      handleAddFieldOption(input.value);
+                      input.value = '';
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {newQuestion.fieldOptions?.map((option, index) => (
+                    <Badge key={index} variant="secondary" className="py-1 pl-2 pr-1">
+                      {option}
+                      <button
+                        type="button"
+                        className="ml-1 text-muted-foreground hover:text-foreground"
+                        onClick={() => handleRemoveFieldOption(index)}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
           <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsDeleteQuestionOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
               Cancel
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleDeleteQuestion}
-            >
-              Delete
+            <Button onClick={handleNewQuestionSubmit}>
+              <Plus className="mr-2 h-4 w-4" /> Add Question
             </Button>
           </DialogFooter>
         </DialogContent>
