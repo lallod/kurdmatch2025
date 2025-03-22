@@ -224,7 +224,7 @@ const LandingPageEditor = () => {
     setSaving(true);
     
     try {
-      // Cast the content to Json type as expected by Supabase
+      // Explicitly cast the content to Json type as expected by Supabase
       const contentAsJson = content as unknown as Json;
       
       const { error } = await supabase
