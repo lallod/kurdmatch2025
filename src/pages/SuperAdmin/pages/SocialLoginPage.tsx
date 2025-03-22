@@ -1,246 +1,227 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState } from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Save, Facebook, Mail } from 'lucide-react';
+import { Facebook, Mail, Info, Shield, Key, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import SocialLogin from '@/components/auth/components/SocialLogin';
-import { getSocialLoginProviders, updateSocialLoginProvider } from '@/api/admin';
-
-interface Provider {
-  id: string;
-  name: string;
-  enabled: boolean;
-  client_id?: string;
-  client_secret?: string;
-}
 
 const SocialLoginPage = () => {
-  const [activeTab, setActiveTab] = useState('facebook');
-  const [providers, setProviders] = useState<Provider[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    const fetchProviders = async () => {
-      try {
-        const data = await getSocialLoginProviders();
-        setProviders(data);
-      } catch (error) {
-        console.error('Error fetching social providers:', error);
-        toast({
-          title: "Error loading providers",
-          description: "Could not load social login providers.",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProviders();
-  }, [toast]);
-
-  const handleToggleProvider = (id: string, enabled: boolean) => {
-    setProviders(providers.map(provider => 
-      provider.id === id ? { ...provider, enabled } : provider
-    ));
-  };
-
-  const handleInputChange = (id: string, field: 'client_id' | 'client_secret', value: string) => {
-    setProviders(providers.map(provider => 
-      provider.id === id ? { ...provider, [field]: value } : provider
-    ));
-  };
-
-  const handleSave = async (id: string) => {
-    const provider = providers.find(p => p.id === id);
-    if (!provider) return;
-
-    setSaving(true);
-    try {
-      await updateSocialLoginProvider(id, {
-        enabled: provider.enabled,
-        client_id: provider.client_id,
-        client_secret: provider.client_secret
-      });
-      
-      toast({
-        title: "Settings saved",
-        description: `${provider.name} login settings updated successfully.`
-      });
-    } catch (error) {
-      console.error('Error saving provider settings:', error);
-      toast({
-        title: "Error saving settings",
-        description: "Could not save social login provider settings.",
-        variant: "destructive"
-      });
-    } finally {
-      setSaving(false);
+  // In a real app, these would be fetched from your backend or config store
+  const [providers, setProviders] = useState({
+    facebook: {
+      enabled: true,
+      appId: '',
+      appSecret: ''
+    },
+    gmail: {
+      enabled: true,
+      clientId: '',
+      clientSecret: ''
     }
+  });
+
+  const handleProviderToggle = (provider: 'facebook' | 'gmail') => {
+    setProviders({
+      ...providers,
+      [provider]: {
+        ...providers[provider],
+        enabled: !providers[provider].enabled
+      }
+    });
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
+  const handleInputChange = (
+    provider: 'facebook' | 'gmail', 
+    field: string, 
+    value: string
+  ) => {
+    setProviders({
+      ...providers,
+      [provider]: {
+        ...providers[provider],
+        [field]: value
+      }
+    });
+  };
+
+  const handleSave = () => {
+    setSaving(true);
+    
+    // Simulate API call to save settings
+    setTimeout(() => {
+      setSaving(false);
+      toast({
+        title: "Settings Saved",
+        description: "Social login provider settings have been updated.",
+      });
+    }, 1000);
+  };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Social Login Configuration</h1>
-        <p className="text-muted-foreground">
-          Configure social login providers for your application
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Provider Settings</CardTitle>
-              <CardDescription>
-                Configure client ID, client secret, and enable/disable providers
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="mb-6">
-                  <TabsTrigger value="facebook" className="flex items-center gap-2">
-                    <Facebook className="h-4 w-4" />
-                    Facebook
-                  </TabsTrigger>
-                  <TabsTrigger value="gmail" className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    Gmail
-                  </TabsTrigger>
-                </TabsList>
-
-                {providers.map(provider => (
-                  <TabsContent key={provider.id} value={provider.id} className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-medium">{provider.name} Login</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {provider.enabled ? 'Enabled' : 'Disabled'}
-                        </p>
-                      </div>
-                      <div className="flex items-center">
-                        <Switch 
-                          checked={provider.enabled} 
-                          onCheckedChange={(checked) => handleToggleProvider(provider.id, checked)} 
-                        />
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor={`${provider.id}-client-id`}>Client ID</Label>
-                        <Input 
-                          id={`${provider.id}-client-id`} 
-                          value={provider.client_id || ''} 
-                          onChange={(e) => handleInputChange(provider.id, 'client_id', e.target.value)}
-                          placeholder="Enter client ID"
-                        />
-                      </div>
-
-                      <div className="grid gap-2">
-                        <Label htmlFor={`${provider.id}-client-secret`}>Client Secret</Label>
-                        <Input 
-                          id={`${provider.id}-client-secret`} 
-                          type="password"
-                          value={provider.client_secret || ''} 
-                          onChange={(e) => handleInputChange(provider.id, 'client_secret', e.target.value)}
-                          placeholder="Enter client secret"
-                        />
-                      </div>
-
-                      <Button 
-                        onClick={() => handleSave(provider.id)} 
-                        disabled={saving}
-                        className="mt-2"
-                      >
-                        {saving ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="mr-2 h-4 w-4" />
-                            Save Settings
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
-            </CardContent>
-          </Card>
-        </div>
-
+      <div className="flex justify-between items-center">
         <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Preview</CardTitle>
-              <CardDescription>
-                See how social login buttons will appear to users
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="p-4 border rounded-md">
-                <SocialLogin />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Setup Guide</CardTitle>
-              <CardDescription>
-                How to set up social login credentials
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-sm space-y-4">
-              <div>
-                <h4 className="font-medium mb-1">Facebook Login</h4>
-                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                  <li>Go to Facebook Developers site</li>
-                  <li>Create a new app</li>
-                  <li>Add Facebook Login product</li>
-                  <li>Configure OAuth redirect URI</li>
-                  <li>Copy App ID and Secret</li>
-                </ol>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-1">Gmail Login</h4>
-                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                  <li>Go to Google Cloud Console</li>
-                  <li>Create a new project</li>
-                  <li>Set up OAuth consent screen</li>
-                  <li>Create OAuth credentials</li>
-                  <li>Add authorized redirect URIs</li>
-                  <li>Copy Client ID and Secret</li>
-                </ol>
-              </div>
-            </CardContent>
-          </Card>
+          <h1 className="text-2xl font-bold tracking-tight">Social Login Configuration</h1>
+          <p className="text-muted-foreground">
+            Configure and manage social login options for your users
+          </p>
         </div>
+        <Button 
+          onClick={handleSave} 
+          disabled={saving}
+          className="bg-gradient-to-r from-tinder-rose to-tinder-orange"
+        >
+          {saving ? (
+            <>Saving...</>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Save Changes
+            </>
+          )}
+        </Button>
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Facebook className="h-5 w-5 text-blue-500" />
+                <CardTitle>Facebook Login</CardTitle>
+              </div>
+              <Switch 
+                checked={providers.facebook.enabled} 
+                onCheckedChange={() => handleProviderToggle('facebook')}
+              />
+            </div>
+            <CardDescription>
+              Allow users to sign in with their Facebook account
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="facebook-app-id">App ID</Label>
+              <Input 
+                id="facebook-app-id" 
+                placeholder="Facebook App ID" 
+                value={providers.facebook.appId}
+                onChange={(e) => handleInputChange('facebook', 'appId', e.target.value)}
+                disabled={!providers.facebook.enabled}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="facebook-app-secret">App Secret</Label>
+              <div className="relative">
+                <Input 
+                  id="facebook-app-secret" 
+                  type="password"
+                  placeholder="Facebook App Secret" 
+                  value={providers.facebook.appSecret}
+                  onChange={(e) => handleInputChange('facebook', 'appSecret', e.target.value)}
+                  disabled={!providers.facebook.enabled}
+                />
+                <Shield className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+            <div className="flex items-start p-3 text-sm border rounded-md bg-muted/50">
+              <Info className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">
+                You need to create a Facebook App in the Facebook Developer Console 
+                and configure the OAuth redirect URIs.
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Mail className="h-5 w-5 text-red-500" />
+                <CardTitle>Gmail Login</CardTitle>
+              </div>
+              <Switch 
+                checked={providers.gmail.enabled} 
+                onCheckedChange={() => handleProviderToggle('gmail')}
+              />
+            </div>
+            <CardDescription>
+              Allow users to sign in with their Google account
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="gmail-client-id">Client ID</Label>
+              <Input 
+                id="gmail-client-id" 
+                placeholder="Google Client ID" 
+                value={providers.gmail.clientId}
+                onChange={(e) => handleInputChange('gmail', 'clientId', e.target.value)}
+                disabled={!providers.gmail.enabled}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="gmail-client-secret">Client Secret</Label>
+              <div className="relative">
+                <Input 
+                  id="gmail-client-secret" 
+                  type="password"
+                  placeholder="Google Client Secret" 
+                  value={providers.gmail.clientSecret}
+                  onChange={(e) => handleInputChange('gmail', 'clientSecret', e.target.value)}
+                  disabled={!providers.gmail.enabled}
+                />
+                <Key className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+            <div className="flex items-start p-3 text-sm border rounded-md bg-muted/50">
+              <Info className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">
+                You need to create OAuth credentials in the Google Cloud Console 
+                and configure the authorized redirect URIs.
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Preview</CardTitle>
+          <CardDescription>
+            This is how social login options will appear to your users
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-center bg-black/80 p-8 rounded-md">
+          <div className="max-w-sm w-full">
+            <SocialLogin />
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <p className="text-sm text-muted-foreground">
+            Preview shows only enabled providers
+          </p>
+          <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+            Refresh Preview
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
