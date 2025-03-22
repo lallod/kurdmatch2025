@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -165,24 +166,28 @@ const DynamicRegistrationForm = () => {
               {question.required && <span className="text-red-400 text-sm">*</span>}
             </FormLabel>
             
-            <FormControl>
-              {question.fieldType === 'text' && (
+            {question.fieldType === 'text' && (
+              <FormControl>
                 <Input
                   placeholder={question.placeholder}
                   className="bg-indigo-900/20 border-indigo-800 focus:border-purple-500 text-white"
                   {...field}
                 />
-              )}
-              
-              {question.fieldType === 'textarea' && (
+              </FormControl>
+            )}
+            
+            {question.fieldType === 'textarea' && (
+              <FormControl>
                 <Textarea
                   placeholder={question.placeholder}
                   className="bg-indigo-900/20 border-indigo-800 focus:border-purple-500 text-white resize-none"
                   {...field}
                 />
-              )}
-              
-              {question.fieldType === 'select' && (
+              </FormControl>
+            )}
+            
+            {question.fieldType === 'select' && (
+              <FormControl>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -198,9 +203,11 @@ const DynamicRegistrationForm = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              )}
-              
-              {question.fieldType === 'radio' && (
+              </FormControl>
+            )}
+            
+            {question.fieldType === 'radio' && (
+              <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -215,9 +222,11 @@ const DynamicRegistrationForm = () => {
                     </div>
                   ))}
                 </RadioGroup>
-              )}
-              
-              {question.fieldType === 'checkbox' && (
+              </FormControl>
+            )}
+            
+            {question.fieldType === 'checkbox' && (
+              <FormControl>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id={question.id}
@@ -234,8 +243,8 @@ const DynamicRegistrationForm = () => {
                     {question.placeholder}
                   </label>
                 </div>
-              )}
-            </FormControl>
+              </FormControl>
+            )}
             <FormMessage className="text-red-400" />
           </FormItem>
         )}
