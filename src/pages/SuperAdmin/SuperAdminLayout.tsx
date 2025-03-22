@@ -26,7 +26,8 @@ import {
   UserCog,
   CreditCard,
   Wallet,
-  Facebook
+  Facebook,
+  Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -48,6 +49,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
     { path: '/super-admin/payments', icon: <CreditCard size={20} />, label: 'Payments' },
     { path: '/super-admin/verification', icon: <UserCheck size={20} />, label: 'User Verification' },
     { path: '/super-admin/moderation', icon: <Flag size={20} />, label: 'Content Moderation' },
+    { path: '/super-admin/landing-page', icon: <Home size={20} />, label: 'Landing Page' },
     { path: '/super-admin/analytics', icon: <BarChart size={20} />, label: 'Advanced Analytics' },
     { path: '/super-admin/ab-testing', icon: <TestTube size={20} />, label: 'A/B Testing' },
     { path: '/super-admin/system-health', icon: <ServerCrash size={20} />, label: 'System Health' },

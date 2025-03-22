@@ -22,6 +22,7 @@ import BulkActionsPage from './pages/BulkActionsPage';
 import SubscribersPage from './pages/SubscribersPage';
 import PaymentsPage from './pages/PaymentsPage';
 import SocialLoginPage from './pages/SocialLoginPage';
+import LandingPageEditor from './pages/LandingPageEditor';
 
 const SuperAdmin = () => {
   return (
@@ -47,6 +48,7 @@ const SuperAdmin = () => {
         <Route path="/subscribers" element={<SubscribersPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
         <Route path="/social-login" element={<SocialLoginPage />} />
+        <Route path="/landing-page" element={<LandingPageEditor />} />
       </Routes>
     </SuperAdminLayout>
   );
