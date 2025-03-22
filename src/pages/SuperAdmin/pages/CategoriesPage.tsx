@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -50,24 +51,103 @@ interface Category {
   createdAt: string;
 }
 
+// Comprehensive list of all profile fields based on the provided images
 const PROFILE_FIELDS = [
-  { value: 'interests', label: 'Interests' },
-  { value: 'hobbies', label: 'Hobbies' },
-  { value: 'values', label: 'Values' },
-  { value: 'languages', label: 'Languages' },
-  { value: 'personality', label: 'Personality Type' },
-  { value: 'communication', label: 'Communication Style' },
-  { value: 'weekendActivities', label: 'Weekend Activities' },
-  { value: 'creativePursuits', label: 'Creative Pursuits' },
-  { value: 'favoritePodcasts', label: 'Favorite Podcasts' },
-  { value: 'favoriteBooks', label: 'Favorite Books' },
-  { value: 'favoriteMovies', label: 'Favorite Movies' },
-  { value: 'favoriteMusic', label: 'Favorite Music' },
-  { value: 'favoriteFoods', label: 'Favorite Foods' },
-  { value: 'favoriteGames', label: 'Favorite Games' },
-  { value: 'growthGoals', label: 'Growth Goals' },
-  { value: 'hiddenTalents', label: 'Hidden Talents' },
-  { value: 'stressRelievers', label: 'Stress Relievers' }
+  // Basic Info & Personal Details
+  { value: 'basics', label: 'Basics', group: 'Personal' },
+  { value: 'height', label: 'Height', group: 'Personal' },
+  { value: 'bodyType', label: 'Body Type', group: 'Personal' },
+  { value: 'ethnicity', label: 'Ethnicity', group: 'Personal' },
+  { value: 'education', label: 'Education', group: 'Personal' },
+  { value: 'occupation', label: 'Occupation', group: 'Personal' },
+  { value: 'company', label: 'Company', group: 'Personal' },
+  { value: 'zodiacSign', label: 'Zodiac Sign', group: 'Personal' },
+  { value: 'personalityType', label: 'Personality Type', group: 'Personal' },
+  
+  // Beliefs & Values
+  { value: 'religion', label: 'Religion', group: 'Beliefs' },
+  { value: 'politicalViews', label: 'Political Views', group: 'Beliefs' },
+  { value: 'values', label: 'Values', group: 'Beliefs' },
+  
+  // Lifestyle
+  { value: 'lifestyle', label: 'Lifestyle', group: 'Lifestyle' },
+  { value: 'drinking', label: 'Drinking', group: 'Lifestyle' },
+  { value: 'smoking', label: 'Smoking', group: 'Lifestyle' },
+  { value: 'exerciseHabits', label: 'Exercise Habits', group: 'Lifestyle' },
+  { value: 'sleepSchedule', label: 'Sleep Schedule', group: 'Lifestyle' },
+  { value: 'financialHabits', label: 'Financial Habits', group: 'Lifestyle' },
+  { value: 'weekendActivities', label: 'Weekend Activities', group: 'Lifestyle' },
+  { value: 'workLifeBalance', label: 'Work-Life Balance', group: 'Lifestyle' },
+  { value: 'dietaryPreferences', label: 'Dietary Preferences', group: 'Lifestyle' },
+  { value: 'morningRoutine', label: 'Morning Routine', group: 'Lifestyle' },
+  { value: 'eveningRoutine', label: 'Evening Routine', group: 'Lifestyle' },
+  
+  // Relationships
+  { value: 'relationships', label: 'Relationships', group: 'Relationships' },
+  { value: 'relationshipGoals', label: 'Relationship Goals', group: 'Relationships' },
+  { value: 'wantChildren', label: 'Want Children', group: 'Relationships' },
+  { value: 'childrenStatus', label: 'Children Status', group: 'Relationships' },
+  { value: 'familyCloseness', label: 'Family Closeness', group: 'Relationships' },
+  { value: 'friendshipStyle', label: 'Friendship Style', group: 'Relationships' },
+  { value: 'loveLanguage', label: 'Love Language', group: 'Relationships' },
+  { value: 'idealDate', label: 'Ideal Date', group: 'Relationships' },
+  { value: 'petPeeves', label: 'Pet Peeves', group: 'Relationships' },
+  { value: 'havePets', label: 'Have Pets', group: 'Relationships' },
+  
+  // Communication
+  { value: 'languages', label: 'Languages', group: 'Communication' },
+  { value: 'communicationStyle', label: 'Communication Style', group: 'Communication' },
+  { value: 'decisionMakingStyle', label: 'Decision Making Style', group: 'Communication' },
+  
+  // Interests & Hobbies
+  { value: 'interests', label: 'Interests', group: 'Interests' },
+  { value: 'hobbies', label: 'Hobbies', group: 'Interests' },
+  { value: 'creativePursuits', label: 'Creative Pursuits', group: 'Interests' },
+  { value: 'careerAmbitions', label: 'Career Ambitions', group: 'Interests' },
+  { value: 'musicInstruments', label: 'Music Instruments', group: 'Interests' },
+  { value: 'techSkills', label: 'Tech Skills', group: 'Interests' },
+  
+  // Favorites
+  { value: 'favoriteBooks', label: 'Favorite Books', group: 'Favorites' },
+  { value: 'favoriteMovies', label: 'Favorite Movies', group: 'Favorites' },
+  { value: 'favoriteMusic', label: 'Favorite Music', group: 'Favorites' },
+  { value: 'favoriteFoods', label: 'Favorite Foods', group: 'Favorites' },
+  { value: 'favoriteGames', label: 'Favorite Games', group: 'Favorites' },
+  { value: 'favoritePodcasts', label: 'Favorite Podcasts', group: 'Favorites' },
+  { value: 'favoriteSeason', label: 'Favorite Season', group: 'Favorites' },
+  { value: 'favoriteQuote', label: 'Favorite Quote', group: 'Favorites' },
+  { value: 'favoriteMemory', label: 'Favorite Memory', group: 'Favorites' },
+  
+  // Travel & Location
+  { value: 'travelFrequency', label: 'Travel Frequency', group: 'Travel' },
+  { value: 'dreamVacation', label: 'Dream Vacation', group: 'Travel' },
+  { value: 'transportationPreference', label: 'Transportation Preference', group: 'Travel' },
+  
+  // Growth & Development
+  { value: 'growthGoals', label: 'Growth Goals', group: 'Growth' },
+  { value: 'hiddenTalents', label: 'Hidden Talents', group: 'Growth' },
+  { value: 'stressRelievers', label: 'Stress Relievers', group: 'Growth' },
+  { value: 'charityInvolvement', label: 'Charity Involvement', group: 'Growth' },
+  
+  // Living Preferences
+  { value: 'dreamHome', label: 'Dream Home', group: 'Living' },
+  { value: 'workEnvironment', label: 'Work Environment', group: 'Living' },
+  { value: 'idealWeather', label: 'Ideal Weather', group: 'Living' }
+];
+
+const CATEGORY_TYPES = [
+  { value: 'basic', label: 'Basic Info' },
+  { value: 'interest', label: 'Interest' },
+  { value: 'lifestyle', label: 'Lifestyle' },
+  { value: 'hobby', label: 'Hobby' },
+  { value: 'relationship', label: 'Relationship' },
+  { value: 'value', label: 'Value' },
+  { value: 'preference', label: 'Preference' },
+  { value: 'skill', label: 'Skill' },
+  { value: 'trait', label: 'Personality Trait' },
+  { value: 'favorite', label: 'Favorite' },
+  { value: 'goal', label: 'Goal' },
+  { value: 'habit', label: 'Habit' }
 ];
 
 const categorySchema = z.object({
@@ -90,6 +170,7 @@ type CategoryFormValues = z.infer<typeof categorySchema>;
 const CategoriesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [filterField, setFilterField] = useState('all');
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -99,96 +180,148 @@ const CategoriesPage = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   
+  // Expanded initial categories data that covers all the profile sections shown in the images
   const [categories, setCategories] = useState<Category[]>([
+    // Basics
     {
       id: '1',
-      name: 'Sports',
-      type: 'interest',
-      profileField: 'interests',
-      usageCount: 1245,
+      name: 'Height (170 cm)',
+      type: 'basic',
+      profileField: 'height',
+      usageCount: 1845,
       isActive: true,
       createdAt: '2022-01-15'
     },
     {
       id: '2',
-      name: 'Travel',
-      type: 'interest',
-      profileField: 'interests',
-      usageCount: 2356,
+      name: 'Athletic',
+      type: 'basic',
+      profileField: 'bodyType',
+      usageCount: 1356,
       isActive: true,
-      createdAt: '2022-01-15'
+      createdAt: '2022-01-16'
     },
     {
       id: '3',
-      name: 'Music',
-      type: 'interest',
-      profileField: 'interests',
-      usageCount: 1987,
+      name: 'Mixed',
+      type: 'basic',
+      profileField: 'ethnicity',
+      usageCount: 987,
       isActive: true,
-      createdAt: '2022-01-20'
+      createdAt: '2022-01-17'
     },
+    // Interests & Hobbies
     {
       id: '4',
-      name: 'Movies',
+      name: 'Hiking',
       type: 'interest',
       profileField: 'interests',
-      usageCount: 1542,
+      usageCount: 2456,
       isActive: true,
-      createdAt: '2022-01-22'
+      createdAt: '2022-01-18'
     },
     {
       id: '5',
-      name: 'Foodie',
-      type: 'lifestyle',
-      profileField: 'favoriteFoods',
-      usageCount: 876,
-      isActive: true,
-      createdAt: '2022-02-05'
-    },
-    {
-      id: '6',
-      name: 'Fitness',
-      type: 'lifestyle',
-      profileField: 'interests',
-      usageCount: 1324,
-      isActive: true,
-      createdAt: '2022-02-10'
-    },
-    {
-      id: '7',
       name: 'Photography',
       type: 'hobby',
       profileField: 'hobbies',
+      usageCount: 1876,
+      isActive: true,
+      createdAt: '2022-01-19'
+    },
+    {
+      id: '6',
+      name: 'Cooking',
+      type: 'interest',
+      profileField: 'interests',
+      usageCount: 2134,
+      isActive: true,
+      createdAt: '2022-01-20'
+    },
+    // Values & Beliefs
+    {
+      id: '7',
+      name: 'Spiritual but not religious',
+      type: 'value',
+      profileField: 'religion',
       usageCount: 765,
       isActive: true,
-      createdAt: '2022-02-15'
+      createdAt: '2022-01-21'
     },
     {
       id: '8',
-      name: 'Gaming',
-      type: 'hobby',
-      profileField: 'hobbies',
-      usageCount: 1102,
+      name: 'Moderate',
+      type: 'value',
+      profileField: 'politicalViews',
+      usageCount: 653,
       isActive: true,
-      createdAt: '2022-02-20'
+      createdAt: '2022-01-22'
     },
+    // Lifestyle
     {
       id: '9',
-      name: 'Reading',
-      type: 'hobby',
-      profileField: 'hobbies',
-      usageCount: 893,
+      name: 'Social drinker',
+      type: 'lifestyle',
+      profileField: 'drinking',
+      usageCount: 1432,
       isActive: true,
-      createdAt: '2022-03-01'
+      createdAt: '2022-01-23'
     },
     {
       id: '10',
-      name: 'Outdoors',
+      name: 'Never',
       type: 'lifestyle',
-      profileField: 'weekendActivities',
-      usageCount: 654,
-      isActive: false,
-      createdAt: '2022-03-05'
+      profileField: 'smoking',
+      usageCount: 1876,
+      isActive: true,
+      createdAt: '2022-01-24'
+    },
+    {
+      id: '11',
+      name: 'Regular - 4-5 times per week',
+      type: 'lifestyle',
+      profileField: 'exerciseHabits',
+      usageCount: 934,
+      isActive: true,
+      createdAt: '2022-01-25'
+    },
+    // Relationships
+    {
+      id: '12',
+      name: 'Looking for a serious relationship',
+      type: 'relationship',
+      profileField: 'relationshipGoals',
+      usageCount: 2345,
+      isActive: true,
+      createdAt: '2022-01-26'
+    },
+    {
+      id: '13',
+      name: 'Open to children',
+      type: 'relationship',
+      profileField: 'wantChildren',
+      usageCount: 1654,
+      isActive: true,
+      createdAt: '2022-01-27'
+    },
+    // Favorites
+    {
+      id: '14',
+      name: 'The Alchemist',
+      type: 'favorite',
+      profileField: 'favoriteBooks',
+      usageCount: 743,
+      isActive: true,
+      createdAt: '2022-01-28'
+    },
+    {
+      id: '15',
+      name: 'Japanese',
+      type: 'favorite',
+      profileField: 'favoriteFoods',
+      usageCount: 1231,
+      isActive: true,
+      createdAt: '2022-01-29'
     }
   ]);
 
@@ -224,7 +357,11 @@ const CategoriesPage = () => {
       filterType === 'all' || 
       category.type === filterType;
     
-    return matchesSearch && matchesType;
+    const matchesField = 
+      filterField === 'all' || 
+      category.profileField === filterField;
+    
+    return matchesSearch && matchesType && matchesField;
   });
 
   const toggleEditMode = (category: Category) => {
@@ -383,8 +520,8 @@ const CategoriesPage = () => {
   };
 
   const exportCategories = () => {
-    const dataToExport = filteredCategories.map(({ id, name, type, usageCount, isActive, createdAt }) => ({
-      id, name, type, usageCount, isActive, createdAt
+    const dataToExport = filteredCategories.map(({ id, name, type, profileField, usageCount, isActive, createdAt }) => ({
+      id, name, type, profileField, usageCount, isActive, createdAt
     }));
     
     const jsonString = JSON.stringify(dataToExport, null, 2);
@@ -412,11 +549,33 @@ const CategoriesPage = () => {
     return counts;
   };
 
+  const countCategoriesByField = () => {
+    const counts: Record<string, number> = { all: 0 };
+    
+    categories.forEach(category => {
+      counts.all += 1;
+      counts[category.profileField] = (counts[category.profileField] || 0) + 1;
+    });
+    
+    return counts;
+  };
+
   const categoryCounts = countCategoriesByType();
+  const fieldCounts = countCategoriesByField();
 
   const getProfileFieldLabel = (fieldValue: string) => {
     const field = PROFILE_FIELDS.find(f => f.value === fieldValue);
     return field ? field.label : fieldValue;
+  };
+
+  const getCategoryTypeLabel = (typeValue: string) => {
+    const type = CATEGORY_TYPES.find(t => t.value === typeValue);
+    return type ? type.label : typeValue.charAt(0).toUpperCase() + typeValue.slice(1);
+  };
+
+  const getProfileFieldGroup = (fieldValue: string) => {
+    const field = PROFILE_FIELDS.find(f => f.value === fieldValue);
+    return field ? field.group : 'Other';
   };
 
   return (
@@ -458,9 +617,34 @@ const CategoriesPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Types ({categoryCounts.all || 0})</SelectItem>
-                  <SelectItem value="interest">Interest ({categoryCounts.interest || 0})</SelectItem>
-                  <SelectItem value="lifestyle">Lifestyle ({categoryCounts.lifestyle || 0})</SelectItem>
-                  <SelectItem value="hobby">Hobby ({categoryCounts.hobby || 0})</SelectItem>
+                  {CATEGORY_TYPES.map(type => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label} ({categoryCounts[type.value] || 0})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={filterField} onValueChange={setFilterField}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Filter by profile field" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px]">
+                  <SelectItem value="all">All Fields ({fieldCounts.all || 0})</SelectItem>
+                  
+                  {/* Group the fields for better organization */}
+                  {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
+                    <React.Fragment key={group}>
+                      <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                        {group}
+                      </div>
+                      {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
+                        <SelectItem key={field.value} value={field.value}>
+                          {field.label} ({fieldCounts[field.value] || 0})
+                        </SelectItem>
+                      ))}
+                    </React.Fragment>
+                  ))}
                 </SelectContent>
               </Select>
               
@@ -489,10 +673,11 @@ const CategoriesPage = () => {
                       className="rounded"
                     />
                   </TableHead>
-                  <TableHead className="w-[80px]">ID</TableHead>
+                  <TableHead className="w-[60px]">ID</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Profile Field</TableHead>
+                  <TableHead>Field Group</TableHead>
                   <TableHead>Usage Count</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created Date</TableHead>
@@ -533,14 +718,16 @@ const CategoriesPage = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="interest">Interest</SelectItem>
-                              <SelectItem value="lifestyle">Lifestyle</SelectItem>
-                              <SelectItem value="hobby">Hobby</SelectItem>
+                              {CATEGORY_TYPES.map(type => (
+                                <SelectItem key={type.value} value={type.value}>
+                                  {type.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         ) : (
                           <Badge variant="outline" className="capitalize">
-                            {category.type}
+                            {getCategoryTypeLabel(category.type)}
                           </Badge>
                         )}
                       </TableCell>
@@ -554,10 +741,17 @@ const CategoriesPage = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="max-h-[200px]">
-                              {PROFILE_FIELDS.map(field => (
-                                <SelectItem key={field.value} value={field.value}>
-                                  {field.label}
-                                </SelectItem>
+                              {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
+                                <React.Fragment key={group}>
+                                  <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                                    {group}
+                                  </div>
+                                  {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
+                                    <SelectItem key={field.value} value={field.value}>
+                                      {field.label}
+                                    </SelectItem>
+                                  ))}
+                                </React.Fragment>
                               ))}
                             </SelectContent>
                           </Select>
@@ -568,25 +762,25 @@ const CategoriesPage = () => {
                           </Badge>
                         )}
                       </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-gray-50">
+                          {getProfileFieldGroup(category.profileField)}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{category.usageCount}</TableCell>
                       <TableCell>
                         {editableCategories[category.id] ? (
-                          <Select 
-                            value={editingValues[category.id]?.isActive ? 'active' : 'inactive'} 
-                            onValueChange={(value) => handleEditChange(
-                              category.id, 
-                              'isActive', 
-                              value === 'active'
-                            )}
-                          >
-                            <SelectTrigger className="h-8 px-2 py-0">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="active">Active</SelectItem>
-                              <SelectItem value="inactive">Inactive</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <div className="flex items-center">
+                            <Switch 
+                              checked={editingValues[category.id]?.isActive} 
+                              onCheckedChange={(checked) => handleEditChange(
+                                category.id, 
+                                'isActive', 
+                                checked
+                              )}
+                              className="h-5 w-9"
+                            />
+                          </div>
                         ) : (
                           <Badge className={`${
                             category.isActive 
@@ -641,7 +835,7 @@ const CategoriesPage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-6">
+                    <TableCell colSpan={10} className="text-center py-6">
                       No categories found
                     </TableCell>
                   </TableRow>
@@ -653,7 +847,7 @@ const CategoriesPage = () => {
       </Card>
 
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Add New Category</DialogTitle>
             <DialogDescription>
@@ -696,9 +890,11 @@ const CategoriesPage = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="interest">Interest</SelectItem>
-                        <SelectItem value="lifestyle">Lifestyle</SelectItem>
-                        <SelectItem value="hobby">Hobby</SelectItem>
+                        {CATEGORY_TYPES.map(type => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -721,11 +917,18 @@ const CategoriesPage = () => {
                           <SelectValue placeholder="Select profile field" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="max-h-[200px]">
-                        {PROFILE_FIELDS.map(profileField => (
-                          <SelectItem key={profileField.value} value={profileField.value}>
-                            {profileField.label}
-                          </SelectItem>
+                      <SelectContent className="max-h-[300px]">
+                        {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
+                          <React.Fragment key={group}>
+                            <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                              {group}
+                            </div>
+                            {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
+                              <SelectItem key={field.value} value={field.value}>
+                                {field.label}
+                              </SelectItem>
+                            ))}
+                          </React.Fragment>
                         ))}
                       </SelectContent>
                     </Select>
@@ -770,7 +973,7 @@ const CategoriesPage = () => {
       </Dialog>
 
       <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Category</DialogTitle>
             <DialogDescription>
@@ -813,9 +1016,11 @@ const CategoriesPage = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="interest">Interest</SelectItem>
-                        <SelectItem value="lifestyle">Lifestyle</SelectItem>
-                        <SelectItem value="hobby">Hobby</SelectItem>
+                        {CATEGORY_TYPES.map(type => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -838,11 +1043,18 @@ const CategoriesPage = () => {
                           <SelectValue placeholder="Select profile field" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="max-h-[200px]">
-                        {PROFILE_FIELDS.map(profileField => (
-                          <SelectItem key={profileField.value} value={profileField.value}>
-                            {profileField.label}
-                          </SelectItem>
+                      <SelectContent className="max-h-[300px]">
+                        {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
+                          <React.Fragment key={group}>
+                            <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                              {group}
+                            </div>
+                            {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
+                              <SelectItem key={field.value} value={field.value}>
+                                {field.label}
+                              </SelectItem>
+                            ))}
+                          </React.Fragment>
                         ))}
                       </SelectContent>
                     </Select>
