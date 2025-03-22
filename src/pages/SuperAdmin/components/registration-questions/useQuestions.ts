@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { QuestionItem } from './types';
 import { initialQuestions } from './data/sampleQuestions';
+import { systemQuestions } from './data/systemQuestions';
 import { filterQuestions, getCategoryCount } from './utils/questionUtils';
 import { 
   createQuestion, 
@@ -13,7 +14,9 @@ import {
 
 export const useQuestions = () => {
   const { toast } = useToast();
-  const [questions, setQuestions] = useState<QuestionItem[]>(initialQuestions);
+  // Combine system questions with initial questions
+  const allQuestions = [...systemQuestions, ...initialQuestions];
+  const [questions, setQuestions] = useState<QuestionItem[]>(allQuestions);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [isSelectAll, setIsSelectAll] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
@@ -25,6 +28,17 @@ export const useQuestions = () => {
 
   // Toggle selection of a question
   const toggleQuestionSelection = (id: string) => {
+    // Don't allow selecting system fields
+    const question = questions.find(q => q.id === id);
+    if (question?.isSystemField) {
+      toast({
+        title: "Cannot select system field",
+        description: "System fields cannot be modified in bulk operations",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setSelectedQuestions(prev => 
       prev.includes(id) ? prev.filter(qId => qId !== id) : [...prev, id]
     );
@@ -35,7 +49,10 @@ export const useQuestions = () => {
     if (isSelectAll) {
       setSelectedQuestions([]);
     } else {
-      setSelectedQuestions(filteredQuestions.map(q => q.id));
+      // Only select non-system fields
+      setSelectedQuestions(filteredQuestions
+        .filter(q => !q.isSystemField)
+        .map(q => q.id));
     }
     setIsSelectAll(!isSelectAll);
   };
@@ -67,6 +84,17 @@ export const useQuestions = () => {
 
   // Individual operations
   const handleDeleteQuestion = (id: string) => {
+    // Don't allow deleting system fields
+    const question = questions.find(q => q.id === id);
+    if (question?.isSystemField) {
+      toast({
+        title: "Cannot delete system field",
+        description: "System fields are required for user registration",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setQuestions(prev => deleteQuestionsById(prev, [id]));
     
     // Also remove from selected if it was selected
@@ -79,6 +107,13 @@ export const useQuestions = () => {
   };
 
   const handleUpdateQuestion = (updatedQuestion: QuestionItem) => {
+    // Don't allow changing isSystemField property
+    const existingQuestion = questions.find(q => q.id === updatedQuestion.id);
+    if (existingQuestion?.isSystemField) {
+      // Preserve the isSystemField property
+      updatedQuestion.isSystemField = true;
+    }
+    
     setQuestions(prev => updateQuestion(prev, updatedQuestion));
     
     // Update preview question if it's the one being edited

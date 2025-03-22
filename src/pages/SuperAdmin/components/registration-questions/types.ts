@@ -11,4 +11,5 @@ export interface QuestionItem {
   placeholder: string;
   fieldOptions: string[];
   profileField: string;
+  isSystemField?: boolean; // New field to identify system fields that should be protected
 }

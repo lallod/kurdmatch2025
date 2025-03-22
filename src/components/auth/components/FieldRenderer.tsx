@@ -7,7 +7,8 @@ import {
   TextAreaField, 
   SelectField, 
   RadioField, 
-  CheckboxField 
+  CheckboxField,
+  DateField
 } from '../form-fields';
 
 interface FieldRendererProps {
@@ -27,6 +28,8 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
       return <RadioField question={question} form={form} />;
     case 'checkbox':
       return <CheckboxField question={question} form={form} />;
+    case 'date':
+      return <DateField question={question} form={form} />;
     default:
       return <TextField question={question} form={form} />;
   }

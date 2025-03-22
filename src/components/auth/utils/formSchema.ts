@@ -9,7 +9,19 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
   questions.forEach(question => {
     if (question.enabled) {
       // Add appropriate validation based on field type and required status
-      if (question.required) {
+      if (question.fieldType === 'date') {
+        if (question.required) {
+          schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
+        } else {
+          schemaObject[question.id] = z.string().optional();
+        }
+      } else if (question.fieldType === 'email' || question.profileField === 'email') {
+        if (question.required) {
+          schemaObject[question.id] = z.string().email({ message: `Please enter a valid email address` });
+        } else {
+          schemaObject[question.id] = z.string().email({ message: `Please enter a valid email address` }).optional();
+        }
+      } else if (question.required) {
         schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
       } else {
         schemaObject[question.id] = z.string().optional();

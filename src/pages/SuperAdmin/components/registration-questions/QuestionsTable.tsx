@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Edit, Eye, Trash2 } from 'lucide-react';
+import { Edit, Eye, Trash2, Lock } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { QuestionItem } from './types';
 import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface QuestionsTableProps {
   questions: QuestionItem[];
@@ -49,6 +50,7 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
                 onCheckedChange={onToggleSelectAll} 
               />
             </TableHead>
+            <TableHead className="w-[30px]"></TableHead>
             <TableHead className="w-[200px]">Question</TableHead>
             <TableHead className="w-[120px]">Category</TableHead>
             <TableHead className="w-[100px]">Field Type</TableHead>
@@ -61,21 +63,43 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
         <TableBody>
           {questions.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
+              <TableCell colSpan={9} className="text-center py-4 text-muted-foreground">
                 No questions found
               </TableCell>
             </TableRow>
           ) : (
             questions.map((question) => (
-              <TableRow key={question.id}>
+              <TableRow key={question.id} className={question.isSystemField ? "bg-muted/30" : ""}>
                 <TableCell>
                   <Checkbox 
                     checked={selectedQuestions.includes(question.id)} 
                     onCheckedChange={() => onToggleSelection(question.id)} 
+                    disabled={question.isSystemField}
                   />
+                </TableCell>
+                <TableCell>
+                  {question.isSystemField && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Lock className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>System field - some operations are restricted</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                 </TableCell>
                 <TableCell className="font-medium">
                   {question.text}
+                  {question.profileField && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Maps to: {question.profileField}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline" className="capitalize">
@@ -133,6 +157,7 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
                       size="icon"
                       className="text-destructive"
                       onClick={() => onDelete(question.id)}
+                      disabled={question.isSystemField}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
