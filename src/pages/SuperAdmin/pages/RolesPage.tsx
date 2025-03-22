@@ -33,7 +33,8 @@ import {
   Lock, 
   Key, 
   Eye, 
-  Brain 
+  Brain,
+  FileText 
 } from 'lucide-react';
 import { 
   Dialog, 

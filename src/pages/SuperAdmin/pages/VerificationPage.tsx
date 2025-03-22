@@ -24,7 +24,8 @@ import {
   UserX, 
   Eye, 
   Clock, 
-  Filter 
+  Filter,
+  Brain 
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 

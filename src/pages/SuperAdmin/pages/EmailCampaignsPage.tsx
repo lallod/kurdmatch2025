@@ -24,7 +24,7 @@ import {
   Search, 
   Mail, 
   CalendarClock, 
-  UserGroup, 
+  Users, 
   Edit, 
   Trash, 
   Copy, 
