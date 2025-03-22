@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -44,19 +43,14 @@ const createDynamicSchema = (questions: QuestionItem[]) => {
   
   questions.forEach(question => {
     if (question.enabled) {
-      // Start with a base string schema
-      let fieldSchema = z.string();
-      
-      // Add validation based on field type and required status
+      // Add appropriate validation based on field type and required status
       if (question.required) {
-        fieldSchema = fieldSchema.min(1, { message: `${question.text} is required` });
+        schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
       } else {
-        // For optional fields, use optional() but preserve the string validator
-        fieldSchema = fieldSchema.optional();
+        schemaObject[question.id] = z.string().optional();
       }
       
       // Additional type-specific validation could be added here
-      schemaObject[question.id] = fieldSchema;
     }
   });
   
