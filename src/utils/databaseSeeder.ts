@@ -4,6 +4,7 @@ import { initialQuestions } from '@/pages/SuperAdmin/components/registration-que
 import { systemQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/systemQuestions';
 import { mockUsers } from '@/pages/SuperAdmin/components/users/UserData';
 import { mockRoles } from '@/pages/SuperAdmin/components/roles/RoleData';
+import { toDbQuestion } from '@/pages/SuperAdmin/components/registration-questions/types';
 
 export const seedDatabase = async () => {
   console.log('Starting database seeding...');
@@ -19,10 +20,11 @@ export const seedDatabase = async () => {
     
     if (!existingQuestions || existingQuestions.length === 0) {
       const allQuestions = [...systemQuestions, ...initialQuestions];
+      const dbQuestions = allQuestions.map(toDbQuestion);
       
       const { error } = await supabase
         .from('registration_questions')
-        .insert(allQuestions);
+        .insert(dbQuestions);
       
       if (error) throw error;
       console.log('Registration questions seeded successfully!');

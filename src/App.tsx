@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -19,6 +18,7 @@ import './App.css';
 import BottomNavigation from './components/BottomNavigation';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const ProtectedRoute = () => {
   const { user, loading } = useSupabaseAuth();
@@ -35,7 +35,6 @@ const ProtectedRoute = () => {
   return <Outlet />;
 };
 
-// Function to check if user has superadmin role - simplified for demo
 const SuperAdminRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
@@ -89,7 +88,6 @@ const SuperAdminRoute = () => {
   return <Outlet />;
 };
 
-// Function to check if user is authenticated and redirect to home if they are
 const PublicOnlyRoute = () => {
   const { user, loading } = useSupabaseAuth();
   
@@ -108,15 +106,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
         <Route path="/landing" element={<Landing />} />
         
-        {/* Auth Routes - only accessible when not logged in */}
         <Route element={<PublicOnlyRoute />}>
           <Route path="/auth" element={<Auth />} />
         </Route>
         
-        {/* Protected Routes - require login */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Index />} />
           <Route path="/messages" element={<Messages />} />
@@ -129,12 +124,10 @@ function App() {
           <Route path="/admin/*" element={<Admin />} />
         </Route>
         
-        {/* Super Admin Routes - require super admin role */}
         <Route element={<SuperAdminRoute />}>
           <Route path="/super-admin/*" element={<SuperAdmin />} />
         </Route>
         
-        {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       

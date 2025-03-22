@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
+import { QuestionItem, toDbQuestion, fromDbQuestion, QuestionItemDB } from '@/pages/SuperAdmin/components/registration-questions/types';
 
 export const getUserRoles = async () => {
   const { data: { session } } = await supabase.auth.getSession();
@@ -26,25 +26,27 @@ export const isUserSuperAdmin = async () => {
 };
 
 // Registration Questions Management
-export const getRegistrationQuestions = async () => {
+export const getRegistrationQuestions = async (): Promise<QuestionItem[]> => {
   const { data, error } = await supabase
     .from('registration_questions')
     .select()
     .order('display_order');
   
   if (error) throw error;
-  return data;
+  return data.map(fromDbQuestion);
 };
 
-export const saveRegistrationQuestion = async (question: QuestionItem) => {
+export const saveRegistrationQuestion = async (question: QuestionItem): Promise<QuestionItem> => {
+  const dbQuestion = toDbQuestion(question);
+  
   const { data, error } = await supabase
     .from('registration_questions')
-    .upsert(question)
+    .upsert(dbQuestion)
     .select()
     .single();
   
   if (error) throw error;
-  return data;
+  return fromDbQuestion(data);
 };
 
 export const deleteRegistrationQuestion = async (id: string) => {
