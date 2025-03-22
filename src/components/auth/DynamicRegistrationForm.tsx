@@ -1,62 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { 
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { 
-  User, 
-  Heart, 
-  Coffee, 
-  Brain, 
-  Star, 
-  Activity, 
-  Scroll,
-  CornerDownRight, 
-  Loader2 
-} from 'lucide-react';
+import { Form } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
-
-// Create a schema builder based on the questions
-const createDynamicSchema = (questions: QuestionItem[]) => {
-  const schemaObject: Record<string, any> = {};
-  
-  questions.forEach(question => {
-    if (question.enabled) {
-      // Add appropriate validation based on field type and required status
-      if (question.required) {
-        schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
-      } else {
-        schemaObject[question.id] = z.string().optional();
-      }
-      
-      // Additional type-specific validation could be added here
-    }
-  });
-  
-  return z.object(schemaObject);
-};
+import { createDynamicSchema } from './utils/formSchema';
+import StepIndicator from './components/StepIndicator';
+import FormNavigation from './components/FormNavigation';
+import FieldRenderer from './components/FieldRenderer';
 
 const DynamicRegistrationForm = () => {
   const { toast } = useToast();
@@ -74,7 +27,7 @@ const DynamicRegistrationForm = () => {
   
   // Create dynamic schema
   const dynamicSchema = createDynamicSchema(questions);
-  type FormValues = z.infer<typeof dynamicSchema>;
+  type FormValues = typeof dynamicSchema._type;
   
   const form = useForm<FormValues>({
     resolver: zodResolver(dynamicSchema),
@@ -86,8 +39,6 @@ const DynamicRegistrationForm = () => {
     }, {} as Record<string, string>),
     mode: 'onChange',
   });
-  
-  const { formState } = form;
 
   const handleSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -135,215 +86,32 @@ const DynamicRegistrationForm = () => {
     }
   };
 
-  // Get icon for category
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Basics': return <User className="h-4 w-4" />;
-      case 'Relationships': return <Heart className="h-4 w-4" />;
-      case 'Lifestyle': return <Coffee className="h-4 w-4" />;
-      case 'Beliefs': return <Scroll className="h-4 w-4" />;
-      case 'Personality': return <Brain className="h-4 w-4" />;
-      case 'Interests': return <Star className="h-4 w-4" />;
-      case 'Physical': return <Activity className="h-4 w-4" />;
-      default: return <User className="h-4 w-4" />;
-    }
-  };
-
-  // Render field based on question type
-  const renderField = (question: QuestionItem) => {
-    return (
-      <FormField
-        key={question.id}
-        control={form.control}
-        name={question.id}
-        render={({ field }) => (
-          <FormItem className="space-y-3">
-            <FormLabel className="flex items-center space-x-2 text-gray-200">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-900/50 text-purple-400">
-                {getCategoryIcon(question.category)}
-              </span>
-              <span>{question.text}</span>
-              {question.required && <span className="text-red-400 text-sm">*</span>}
-            </FormLabel>
-            
-            {question.fieldType === 'text' && (
-              <FormControl>
-                <Input
-                  placeholder={question.placeholder}
-                  className="bg-indigo-900/20 border-indigo-800 focus:border-purple-500 text-white"
-                  {...field}
-                />
-              </FormControl>
-            )}
-            
-            {question.fieldType === 'textarea' && (
-              <FormControl>
-                <Textarea
-                  placeholder={question.placeholder}
-                  className="bg-indigo-900/20 border-indigo-800 focus:border-purple-500 text-white resize-none"
-                  {...field}
-                />
-              </FormControl>
-            )}
-            
-            {question.fieldType === 'select' && (
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="bg-indigo-900/20 border-indigo-800 focus:border-purple-500 text-white">
-                    <SelectValue placeholder={question.placeholder} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-indigo-950 border-indigo-800">
-                    {question.fieldOptions.map((option, index) => (
-                      <SelectItem key={index} value={option} className="focus:bg-indigo-900">
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-            )}
-            
-            {question.fieldType === 'radio' && (
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-2"
-                >
-                  {question.fieldOptions.map((option, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={`${question.id}-${index}`} className="border-indigo-700 text-purple-500" />
-                      <label htmlFor={`${question.id}-${index}`} className="text-gray-300">
-                        {option}
-                      </label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            )}
-            
-            {question.fieldType === 'checkbox' && (
-              <FormControl>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={question.id}
-                    checked={field.value === 'true'}
-                    onCheckedChange={(checked) => {
-                      field.onChange(checked ? 'true' : 'false');
-                    }}
-                    className="border-indigo-700 data-[state=checked]:bg-purple-600"
-                  />
-                  <label
-                    htmlFor={question.id}
-                    className="text-sm font-medium leading-none text-gray-300"
-                  >
-                    {question.placeholder}
-                  </label>
-                </div>
-              </FormControl>
-            )}
-            <FormMessage className="text-red-400" />
-          </FormItem>
-        )}
-      />
-    );
-  };
-  
-  // Render step progress indicator
-  const renderStepIndicator = () => {
-    return (
-      <div className="flex justify-center items-center mb-6 relative">
-        {steps.map((step, idx) => (
-          <React.Fragment key={idx}>
-            <div 
-              className={`flex flex-col items-center cursor-pointer z-10 ${
-                idx < currentStep 
-                  ? "text-purple-400" 
-                  : idx === currentStep 
-                    ? "text-white" 
-                    : "text-gray-600"
-              }`}
-              onClick={() => idx < currentStep && setCurrentStep(idx)}
-            >
-              <div className={`
-                w-8 h-8 rounded-full flex items-center justify-center 
-                ${idx < currentStep 
-                  ? "bg-purple-900/50 border-2 border-purple-500" 
-                  : idx === currentStep 
-                    ? "bg-indigo-700 border-2 border-indigo-500 animate-pulse" 
-                    : "bg-gray-800 border-2 border-gray-700"}
-              `}>
-                {idx + 1}
-              </div>
-              <span className={`text-xs mt-1 ${
-                idx < currentStep ? "font-medium" : idx === currentStep ? "font-medium" : ""
-              }`}>
-                {step.name}
-              </span>
-            </div>
-            {idx < steps.length - 1 && (
-              <div className={`w-16 h-0.5 ${
-                idx < currentStep ? "bg-purple-700" : "bg-gray-800"
-              }`} />
-            )}
-          </React.Fragment>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        {renderStepIndicator()}
+        <StepIndicator 
+          steps={steps} 
+          currentStep={currentStep} 
+          setCurrentStep={setCurrentStep} 
+        />
         
         <div className="space-y-4">
-          {steps[currentStep]?.questions.map(renderField)}
+          {steps[currentStep]?.questions.map((question) => (
+            <FieldRenderer 
+              key={question.id} 
+              question={question} 
+              form={form} 
+            />
+          ))}
         </div>
         
-        <div className="flex justify-between mt-6">
-          {currentStep > 0 ? (
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={prevStep}
-              className="gap-2 text-purple-400 border-purple-800 hover:bg-purple-900/30"
-            >
-              Back
-            </Button>
-          ) : (
-            <div></div>
-          )}
-          
-          {currentStep < steps.length - 1 ? (
-            <Button 
-              type="button" 
-              onClick={nextStep}
-              className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
-            >
-              Next
-              <CornerDownRight size={16} />
-            </Button>
-          ) : (
-            <Button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Creating Account...
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </Button>
-          )}
-        </div>
+        <FormNavigation 
+          currentStep={currentStep}
+          totalSteps={steps.length}
+          isSubmitting={isSubmitting}
+          onPrevious={prevStep}
+          onNext={nextStep}
+        />
       </form>
     </Form>
   );
