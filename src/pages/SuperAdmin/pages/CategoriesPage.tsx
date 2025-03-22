@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -29,11 +28,13 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
+  FormDescription
 } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -74,7 +75,6 @@ const CategoriesPage = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   
-  // Mock categories data - in a real app, this would come from an API
   const [categories, setCategories] = useState<Category[]>([
     {
       id: '1',
@@ -181,11 +181,9 @@ const CategoriesPage = () => {
   });
 
   const filteredCategories = categories.filter(category => {
-    // Apply search filter
     const matchesSearch = 
       category.name.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Apply type filter
     const matchesType = 
       filterType === 'all' || 
       category.type === filterType;
@@ -196,7 +194,6 @@ const CategoriesPage = () => {
   const toggleEditMode = (category: Category) => {
     const newEditableCategories = { ...editableCategories };
     
-    // If already in edit mode, save changes
     if (editableCategories[category.id]) {
       const updatedCategories = categories.map(cat => {
         if (cat.id === category.id && editingValues[category.id]) {
@@ -214,7 +211,6 @@ const CategoriesPage = () => {
       newEditableCategories[category.id] = false;
       toast.success(`Category "${category.name}" updated successfully`);
     } else {
-      // Enter edit mode
       setEditingValues({
         ...editingValues,
         [category.id]: {
@@ -585,7 +581,6 @@ const CategoriesPage = () => {
         </CardContent>
       </Card>
 
-      {/* Add Category Dialog */}
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
         <DialogContent>
           <DialogHeader>
@@ -672,7 +667,6 @@ const CategoriesPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Category Dialog */}
       <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
         <DialogContent>
           <DialogHeader>
@@ -759,7 +753,6 @@ const CategoriesPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
         <DialogContent>
           <DialogHeader>
@@ -783,7 +776,6 @@ const CategoriesPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Bulk Action Dialog */}
       <Dialog open={isBulkActionOpen} onOpenChange={setIsBulkActionOpen}>
         <DialogContent>
           <DialogHeader>
@@ -839,3 +831,4 @@ const CategoriesPage = () => {
 };
 
 export default CategoriesPage;
+
