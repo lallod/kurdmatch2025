@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
@@ -25,8 +26,8 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
     // System field badge (takes precedence over regular required badge)
     if (question.isSystemField) {
       badges.push(
-        <Badge key="system" variant="outline" className="flex items-center gap-1 bg-blue-900/30 text-blue-300 border-blue-700/30">
-          <Lock size={12} />
+        <Badge key="system" variant="outline" className="flex items-center gap-0.5 bg-blue-900/30 text-blue-300 border-blue-700/30 text-[10px] px-1.5 py-0">
+          <Lock size={10} />
           Required
         </Badge>
       );
@@ -34,7 +35,7 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
     // Only show regular required badge if not a system field
     else if (question.required) {
       badges.push(
-        <Badge key="required" variant="outline" className="bg-amber-900/30 text-amber-300 border-amber-700/30">
+        <Badge key="required" variant="outline" className="bg-amber-900/30 text-amber-300 border-amber-700/30 text-[10px] px-1.5 py-0">
           Required
         </Badge>
       );
@@ -43,15 +44,15 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
     // AI-Generated badge
     if (question.profileField === 'bio') {
       badges.push(
-        <Badge key="ai" variant="outline" className="flex items-center gap-1 bg-purple-900/30 text-purple-300 border-purple-700/30">
-          <Bot size={12} />
+        <Badge key="ai" variant="outline" className="flex items-center gap-0.5 bg-purple-900/30 text-purple-300 border-purple-700/30 text-[10px] px-1.5 py-0">
+          <Bot size={10} />
           AI-Generated
         </Badge>
       );
     }
     
     return badges.length > 0 ? (
-      <div className="flex gap-2">{badges}</div>
+      <div className="flex gap-1">{badges}</div>
     ) : null;
   };
   
@@ -59,7 +60,7 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
   if (question.profileField === 'bio') {
     return (
       <div className="space-y-3">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-end items-center">
           {renderBadges()}
         </div>
         <p className="text-xs text-muted-foreground">
@@ -72,7 +73,7 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
   // Render normal field for non-AI fields
   return (
     <div className="space-y-3">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-end items-center">
         {renderBadges()}
       </div>
       
