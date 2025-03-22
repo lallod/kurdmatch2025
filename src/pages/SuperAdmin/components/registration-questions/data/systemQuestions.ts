@@ -46,6 +46,20 @@ export const systemQuestions: QuestionItem[] = [
   },
   {
     id: 'sys-4',
+    text: 'Password',
+    category: 'Basics',
+    fieldType: 'text',
+    required: true,
+    enabled: true,
+    registrationStep: 'Account',
+    displayOrder: 4,
+    placeholder: 'Create a secure password',
+    fieldOptions: [],
+    profileField: 'password',
+    isSystemField: true
+  },
+  {
+    id: 'sys-5',
     text: 'Date of Birth',
     category: 'Basics',
     fieldType: 'date',
@@ -59,7 +73,7 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: 'sys-5',
+    id: 'sys-6',
     text: 'Location',
     category: 'Basics',
     fieldType: 'text',
@@ -73,21 +87,21 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: 'sys-6',
+    id: 'sys-7',
     text: 'Phone Number',
     category: 'Basics',
     fieldType: 'text',
     required: false,
     enabled: true,
     registrationStep: 'Account',
-    displayOrder: 4,
+    displayOrder: 5,
     placeholder: 'Your phone number',
     fieldOptions: [],
     profileField: 'phoneNumber',
     isSystemField: true
   },
   {
-    id: 'sys-7',
+    id: 'sys-8',
     text: 'Gender',
     category: 'Basics',
     fieldType: 'select',
@@ -101,13 +115,13 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: 'sys-8',
+    id: 'sys-9',
     text: 'Occupation',
     category: 'Lifestyle',
     fieldType: 'text',
     required: false,
     enabled: true,
-    registrationStep: 'Profile',
+    registrationStep: 'Lifestyle',
     displayOrder: 1,
     placeholder: 'Your job title',
     fieldOptions: [],
@@ -115,28 +129,28 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: 'sys-9',
+    id: 'sys-10',
     text: 'About Me',
     category: 'Basics',
     fieldType: 'textarea',
     required: false,
     enabled: true,
     registrationStep: 'Profile',
-    displayOrder: 2,
+    displayOrder: 1,
     placeholder: 'AI will generate your bio automatically',
     fieldOptions: [],
     profileField: 'bio',
     isSystemField: true
   },
   {
-    id: 'sys-10',
+    id: 'sys-11',
     text: 'Height',
     category: 'Physical',
     fieldType: 'select',
     required: false,
     enabled: true,
-    registrationStep: 'Profile',
-    displayOrder: 3,
+    registrationStep: 'Physical',
+    displayOrder: 1,
     placeholder: 'Select your height',
     fieldOptions: [
       "155 cm", "156 cm", "157 cm", "158 cm", "159 cm", "160 cm", 

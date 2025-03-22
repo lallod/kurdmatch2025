@@ -28,6 +28,16 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
         } else {
           schemaObject[question.id] = z.string().email({ message: `Please enter a valid email address` }).optional();
         }
+      } else if (question.profileField === 'password') {
+        // Add password validation
+        if (question.required) {
+          schemaObject[question.id] = z.string().min(8, { message: `Password must be at least 8 characters` })
+            .refine(val => /[A-Z]/.test(val), { message: 'Password must contain at least one uppercase letter' })
+            .refine(val => /[a-z]/.test(val), { message: 'Password must contain at least one lowercase letter' })
+            .refine(val => /[0-9]/.test(val), { message: 'Password must contain at least one number' });
+        } else {
+          schemaObject[question.id] = z.string().min(8).optional();
+        }
       } else if (question.fieldType === 'multi-select') {
         // Handle multi-select fields (they will be comma-separated strings in this implementation)
         if (question.required) {

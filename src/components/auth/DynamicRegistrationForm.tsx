@@ -23,13 +23,28 @@ const DynamicRegistrationForm = () => {
   // Filter only enabled questions
   const enabledQuestions = questions.filter(q => q.enabled);
   
-  // Group questions by registration step
-  const steps = [
-    { name: 'Account', questions: enabledQuestions.filter(q => q.registrationStep === 'Account') },
-    { name: 'Personal', questions: enabledQuestions.filter(q => q.registrationStep === 'Personal') },
-    { name: 'Profile', questions: enabledQuestions.filter(q => q.registrationStep === 'Profile') },
-    { name: 'Preferences', questions: enabledQuestions.filter(q => q.registrationStep === 'Preferences') }
-  ].filter(step => step.questions.length > 0);
+  // Define the 6 steps based on categories in Super Admin dashboard
+  const stepCategories = [
+    { name: 'Account', category: 'Account' },
+    { name: 'Basics', category: 'Basics' },
+    { name: 'Lifestyle', category: 'Lifestyle' },
+    { name: 'Beliefs', category: 'Beliefs' },
+    { name: 'Physical', category: 'Physical' },
+    { name: 'Preferences', category: 'Preferences' }
+  ];
+  
+  // Group questions by category for the 6 steps
+  const steps = stepCategories.map(step => {
+    return {
+      name: step.name,
+      questions: enabledQuestions.filter(q => {
+        if (step.category === 'Account') {
+          return q.registrationStep === 'Account';
+        }
+        return q.category === step.name;
+      })
+    };
+  }).filter(step => step.questions.length > 0);
   
   // Create dynamic schema
   const dynamicSchema = createDynamicSchema(enabledQuestions);
@@ -71,8 +86,12 @@ const DynamicRegistrationForm = () => {
         processedData[bioQuestion.id] = generatedBio;
       }
       
-      // In a real app, this would connect to an auth service
-      console.log('Registration form submitted with data:', processedData);
+      // Remove password from console log in real apps
+      const dataForLogging = { ...processedData };
+      if ('password' in dataForLogging) {
+        dataForLogging.password = '********';
+      }
+      console.log('Registration form submitted with data:', dataForLogging);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
