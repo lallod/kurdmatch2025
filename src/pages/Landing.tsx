@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -13,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
 import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
-import { Brain, Sparkles, Zap, Layers, Code, Robot } from 'lucide-react';
+import { Brain, Sparkles, Zap, Layers, Code, Bot } from 'lucide-react';
 
 const Landing = () => {
   const [showAIAnimation, setShowAIAnimation] = useState(false);
@@ -127,7 +126,7 @@ const Landing = () => {
               description="Our advanced algorithm learns from your preferences to find ideal matches."
             />
             <FeatureCard 
-              icon={<Robot className="h-6 w-6" />}
+              icon={<Bot className="h-6 w-6" />}
               title="AI Conversation Assistant"
               description="Get personalized conversation starters based on shared interests."
             />

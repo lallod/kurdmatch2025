@@ -44,17 +44,19 @@ const createDynamicSchema = (questions: QuestionItem[]) => {
   
   questions.forEach(question => {
     if (question.enabled) {
-      let schema = z.string();
+      // Start with a base string schema
+      let fieldSchema = z.string();
       
       // Add validation based on field type and required status
       if (question.required) {
-        schema = schema.min(1, { message: `${question.text} is required` });
+        fieldSchema = fieldSchema.min(1, { message: `${question.text} is required` });
       } else {
-        schema = schema.optional();
+        // For optional fields, use optional() but preserve the string validator
+        fieldSchema = fieldSchema.optional();
       }
       
       // Additional type-specific validation could be added here
-      schemaObject[question.id] = schema;
+      schemaObject[question.id] = fieldSchema;
     }
   });
   
