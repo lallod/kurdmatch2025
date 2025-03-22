@@ -1,1874 +1,1337 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Search, Plus, Edit, Trash2, Save, Eye, 
-  AlertTriangle, ClipboardList, Filter, ArrowUpDown, 
-  Copy, ArrowRight, CheckCircle2
-} from 'lucide-react';
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { 
   Dialog, 
   DialogContent, 
   DialogDescription, 
   DialogFooter, 
   DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog';
-import { 
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { OPTIONS } from '@/components/DetailEditor/constants';
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "sonner";
+import { 
+  Plus, 
+  Search, 
+  Edit, 
+  Trash2, 
+  MoveVertical,
+  Eye,
+  Check,
+  X,
+  SlidersHorizontal,
+  ArrowUpDown
+} from "lucide-react";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-// Extended from profile types
-const QUESTION_CATEGORIES = [
-  { value: 'basics', label: 'Basics', description: 'Essential profile information' },
-  { value: 'appearance', label: 'Appearance', description: 'Physical appearance details' },
-  { value: 'lifestyle', label: 'Lifestyle', description: 'Daily habits and preferences' },
-  { value: 'relationships', label: 'Relationships', description: 'Relationship goals and preferences' },
-  { value: 'personality', label: 'Personality', description: 'Character traits and attitudes' },
-  { value: 'interests', label: 'Interests & Hobbies', description: 'Activities and passions' },
-  { value: 'values', label: 'Values & Beliefs', description: 'Personal values and beliefs' },
-  { value: 'communication', label: 'Communication', description: 'Communication style and languages' },
-  { value: 'preferences', label: 'Preferences', description: 'Dating and partner preferences' },
-  { value: 'cultural', label: 'Cultural', description: 'Cultural background and traditions' },
-  { value: 'favorites', label: 'Favorites', description: 'Favorite things and activities' },
-  { value: 'growth', label: 'Growth & Goals', description: 'Personal development and ambitions' },
-  { value: 'living', label: 'Living & Home', description: 'Living situation and preferences' },
-  { value: 'travel', label: 'Travel', description: 'Travel experiences and preferences' },
-  { value: 'career', label: 'Career', description: 'Professional life and ambitions' },
+// Define question types
+const questionTypes = [
+  { id: 'text', label: 'Text Input' },
+  { id: 'textarea', label: 'Text Area' },
+  { id: 'number', label: 'Number Input' },
+  { id: 'select', label: 'Select Dropdown' },
+  { id: 'multiselect', label: 'Multi-Select Dropdown' },
+  { id: 'radio', label: 'Radio Buttons' },
+  { id: 'checkbox', label: 'Checkboxes' },
+  { id: 'date', label: 'Date Picker' },
+  { id: 'time', label: 'Time Picker' },
+  { id: 'email', label: 'Email Input' },
+  { id: 'phone', label: 'Phone Number' },
+  { id: 'url', label: 'URL Input' },
+  { id: 'range', label: 'Range Slider' },
+  { id: 'color', label: 'Color Picker' },
+  { id: 'file', label: 'File Upload' },
+  { id: 'imageSelect', label: 'Image Selection' },
+  { id: 'rating', label: 'Rating Scale' },
+  { id: 'likert', label: 'Likert Scale' },
+  { id: 'matrix', label: 'Matrix Questions' },
+  { id: 'ranking', label: 'Ranking Questions' }
 ];
 
-// Comprehensive question field mapping based on profile details
-const PROFILE_FIELDS = [
-  // Basic Info
-  { value: 'firstName', label: 'First Name', category: 'basics', recommended: true },
-  { value: 'lastName', label: 'Last Name', category: 'basics', recommended: true },
-  { value: 'age', label: 'Age', category: 'basics', recommended: true },
-  { value: 'birthdate', label: 'Date of Birth', category: 'basics', recommended: true },
-  { value: 'gender', label: 'Gender', category: 'basics', recommended: true },
-  { value: 'interestedIn', label: 'Interested In', category: 'basics', recommended: true },
-  { value: 'location', label: 'Location', category: 'basics', recommended: true },
-  { value: 'kurdistanRegion', label: 'Kurdistan Region', category: 'basics', recommended: true },
-  
-  // Appearance
-  { value: 'height', label: 'Height', category: 'appearance', recommended: true },
-  { value: 'bodyType', label: 'Body Type', category: 'appearance', recommended: false },
-  { value: 'ethnicity', label: 'Ethnicity', category: 'appearance', recommended: false },
-  { value: 'eyeColor', label: 'Eye Color', category: 'appearance', recommended: false },
-  { value: 'hairColor', label: 'Hair Color', category: 'appearance', recommended: false },
-  { value: 'hairStyle', label: 'Hair Style', category: 'appearance', recommended: false },
-  
-  // Lifestyle
-  { value: 'drinking', label: 'Drinking', category: 'lifestyle', recommended: true },
-  { value: 'smoking', label: 'Smoking', category: 'lifestyle', recommended: true },
-  { value: 'exerciseHabits', label: 'Exercise Habits', category: 'lifestyle', recommended: false },
-  { value: 'dietaryPreferences', label: 'Dietary Preferences', category: 'lifestyle', recommended: false },
-  { value: 'sleepSchedule', label: 'Sleep Schedule', category: 'lifestyle', recommended: false },
-  { value: 'morningRoutine', label: 'Morning Routine', category: 'lifestyle', recommended: false },
-  { value: 'eveningRoutine', label: 'Evening Routine', category: 'lifestyle', recommended: false },
-  { value: 'workLifeBalance', label: 'Work-Life Balance', category: 'lifestyle', recommended: false },
-  { value: 'financialHabits', label: 'Financial Habits', category: 'lifestyle', recommended: false },
-  { value: 'weekendActivities', label: 'Weekend Activities', category: 'lifestyle', recommended: false },
-  
-  // Relationships
-  { value: 'relationshipGoals', label: 'Relationship Goals', category: 'relationships', recommended: true },
-  { value: 'relationshipStatus', label: 'Relationship Status', category: 'relationships', recommended: true },
-  { value: 'wantChildren', label: 'Want Children', category: 'relationships', recommended: false },
-  { value: 'childrenStatus', label: 'Children Status', category: 'relationships', recommended: false },
-  { value: 'familyCloseness', label: 'Family Closeness', category: 'relationships', recommended: false },
-  { value: 'friendshipStyle', label: 'Friendship Style', category: 'relationships', recommended: false },
-  { value: 'loveLanguage', label: 'Love Language', category: 'relationships', recommended: true },
-  { value: 'idealDate', label: 'Ideal Date', category: 'relationships', recommended: false },
-  { value: 'petPeeves', label: 'Pet Peeves', category: 'relationships', recommended: false },
-  { value: 'havePets', label: 'Have Pets', category: 'relationships', recommended: false },
-  
-  // Personality
-  { value: 'personalityType', label: 'Personality Type', category: 'personality', recommended: true },
-  { value: 'zodiacSign', label: 'Zodiac Sign', category: 'personality', recommended: true },
-  { value: 'communicationStyle', label: 'Communication Style', category: 'personality', recommended: true },
-  { value: 'decisionMakingStyle', label: 'Decision Making Style', category: 'personality', recommended: false },
-  { value: 'stressRelievers', label: 'Stress Relievers', category: 'personality', recommended: false },
-  { value: 'growthGoals', label: 'Growth Goals', category: 'personality', recommended: false },
-  { value: 'hiddenTalents', label: 'Hidden Talents', category: 'personality', recommended: false },
-  
-  // Interests & Hobbies
-  { value: 'interests', label: 'Interests', category: 'interests', recommended: true },
-  { value: 'hobbies', label: 'Hobbies', category: 'interests', recommended: true },
-  { value: 'creativePursuits', label: 'Creative Pursuits', category: 'interests', recommended: false },
-  { value: 'sports', label: 'Sports', category: 'interests', recommended: false },
-  { value: 'musicInstruments', label: 'Music Instruments', category: 'interests', recommended: false },
-  { value: 'outdoorActivities', label: 'Outdoor Activities', category: 'interests', recommended: false },
-  
-  // Values & Beliefs
-  { value: 'religion', label: 'Religion', category: 'values', recommended: true },
-  { value: 'politicalViews', label: 'Political Views', category: 'values', recommended: true },
-  { value: 'values', label: 'Values', category: 'values', recommended: true },
-  { value: 'lifeMotto', label: 'Life Motto', category: 'values', recommended: false },
-  { value: 'charityInvolvement', label: 'Charity Involvement', category: 'values', recommended: false },
-  
-  // Communication
-  { value: 'languages', label: 'Languages', category: 'communication', recommended: true },
-  { value: 'textingStyle', label: 'Texting Style', category: 'communication', recommended: false },
-  { value: 'conflictResolution', label: 'Conflict Resolution', category: 'communication', recommended: false },
-  
-  // Preferences
-  { value: 'partnerAgeRange', label: 'Partner Age Range', category: 'preferences', recommended: true },
-  { value: 'partnerHeightRange', label: 'Partner Height Range', category: 'preferences', recommended: false },
-  { value: 'partnerDistanceRange', label: 'Partner Distance Range', category: 'preferences', recommended: true },
-  { value: 'dealBreakers', label: 'Deal Breakers', category: 'preferences', recommended: true },
-  { value: 'mustHaves', label: 'Must Haves', category: 'preferences', recommended: true },
-  
-  // Favorites
-  { value: 'favoriteBooks', label: 'Favorite Books', category: 'favorites', recommended: false },
-  { value: 'favoriteMovies', label: 'Favorite Movies', category: 'favorites', recommended: false },
-  { value: 'favoriteMusic', label: 'Favorite Music', category: 'favorites', recommended: false },
-  { value: 'favoriteFoods', label: 'Favorite Foods', category: 'favorites', recommended: false },
-  { value: 'favoriteGames', label: 'Favorite Games', category: 'favorites', recommended: false },
-  { value: 'favoritePodcasts', label: 'Favorite Podcasts', category: 'favorites', recommended: false },
-  { value: 'favoriteSeason', label: 'Favorite Season', category: 'favorites', recommended: false },
-  { value: 'favoriteQuote', label: 'Favorite Quote', category: 'favorites', recommended: false },
-  { value: 'favoriteMemory', label: 'Favorite Memory', category: 'favorites', recommended: false },
-  
-  // Growth & Goals
-  { value: 'careerAmbitions', label: 'Career Ambitions', category: 'growth', recommended: false },
-  { value: 'personalGoals', label: 'Personal Goals', category: 'growth', recommended: false },
-  { value: 'learningInterests', label: 'Learning Interests', category: 'growth', recommended: false },
-  { value: 'selfImprovementAreas', label: 'Self-Improvement Areas', category: 'growth', recommended: false },
-  
-  // Living
-  { value: 'livingArrangement', label: 'Living Arrangement', category: 'living', recommended: false },
-  { value: 'dreamHome', label: 'Dream Home', category: 'living', recommended: false },
-  { value: 'workEnvironment', label: 'Work Environment', category: 'living', recommended: false },
-  { value: 'idealWeather', label: 'Ideal Weather', category: 'living', recommended: false },
-  
-  // Travel
-  { value: 'travelFrequency', label: 'Travel Frequency', category: 'travel', recommended: false },
-  { value: 'dreamVacation', label: 'Dream Vacation', category: 'travel', recommended: false },
-  { value: 'travelStyle', label: 'Travel Style', category: 'travel', recommended: false },
-  { value: 'transportationPreference', label: 'Transportation Preference', category: 'travel', recommended: false },
-  
-  // Career
-  { value: 'occupation', label: 'Occupation', category: 'career', recommended: true },
-  { value: 'company', label: 'Company', category: 'career', recommended: false },
-  { value: 'education', label: 'Education', category: 'career', recommended: true },
-  { value: 'techSkills', label: 'Tech Skills', category: 'career', recommended: false },
-  { value: 'workSchedule', label: 'Work Schedule', category: 'career', recommended: false },
-];
+// Define interface for question category
+interface QuestionCategory {
+  id: string;
+  name: string;
+  description: string;
+  order: number;
+  active: boolean;
+}
 
-// Question input types
-const QUESTION_TYPES = [
-  { value: 'text', label: 'Text Input', description: 'Short text answer' },
-  { value: 'textarea', label: 'Text Area', description: 'Long text answer' },
-  { value: 'select', label: 'Dropdown Select', description: 'Choose one option from a list' },
-  { value: 'multiselect', label: 'Multi-Select', description: 'Choose multiple options from a list' },
-  { value: 'radio', label: 'Radio Buttons', description: 'Choose one option with radio buttons' },
-  { value: 'checkbox', label: 'Checkboxes', description: 'Choose multiple options with checkboxes' },
-  { value: 'slider', label: 'Slider', description: 'Select a value within a range' },
-  { value: 'range', label: 'Range Selector', description: 'Select a range of values (min/max)' },
-  { value: 'date', label: 'Date Picker', description: 'Select a date' },
-  { value: 'number', label: 'Number Input', description: 'Enter a numeric value' },
-  { value: 'boolean', label: 'Yes/No', description: 'Simple yes or no choice' },
-  { value: 'scale', label: 'Scale Rating', description: 'Rate on a scale (e.g., 1-5)' },
-  { value: 'avatar', label: 'Profile Picture', description: 'Upload profile photo' },
-  { value: 'gallery', label: 'Photo Gallery', description: 'Upload multiple photos' }
-];
-
-// Comprehensive list of registration steps
-const REGISTRATION_STEPS = [
-  { value: 'welcome', label: 'Welcome', description: 'Introduction to the registration process' },
-  { value: 'basics', label: 'Basic Info', description: 'Essential information collection' },
-  { value: 'photos', label: 'Photos', description: 'Photo upload and management' },
-  { value: 'appearance', label: 'Appearance', description: 'Physical traits and appearance' },
-  { value: 'profile', label: 'Create Profile', description: 'Profile customization' },
-  { value: 'lifestyle', label: 'Lifestyle', description: 'Daily habits and preferences' },
-  { value: 'interests', label: 'Interests', description: 'Hobbies and activities' },
-  { value: 'preferences', label: 'Preferences', description: 'Partner and matching preferences' },
-  { value: 'personality', label: 'Personality', description: 'Personality traits assessment' },
-  { value: 'values', label: 'Values', description: 'Personal values and beliefs' },
-  { value: 'verification', label: 'Verification', description: 'Identity verification' },
-  { value: 'matching', label: 'Matching', description: 'Matching algorithm customization' },
-  { value: 'notification', label: 'Notifications', description: 'Notification preferences' },
-  { value: 'complete', label: 'Complete', description: 'Registration completion' }
-];
-
-// Form schema for registration questions
-const questionSchema = z.object({
-  questionText: z.string().min(3, {
-    message: "Question text must be at least 3 characters."
-  }).max(200, {
-    message: "Question text must not exceed 200 characters."
-  }),
-  description: z.string().max(500, {
-    message: "Description must not exceed 500 characters."
-  }).optional(),
-  category: z.string().min(1, {
-    message: "Category is required."
-  }),
-  step: z.string().min(1, {
-    message: "Registration step is required."
-  }),
-  profileField: z.string().min(1, {
-    message: "Profile field is required."
-  }),
-  questionType: z.string().min(1, {
-    message: "Question type is required."
-  }),
-  options: z.string().optional(),
-  required: z.boolean().default(false),
-  order: z.number().int().positive().default(1),
-  active: z.boolean().default(true),
-  aiRecommended: z.boolean().default(false),
-  conditionalQuestion: z.boolean().default(false),
-  parentQuestion: z.string().optional(),
-  conditionalValue: z.string().optional(),
-});
-
-type QuestionFormValues = z.infer<typeof questionSchema>;
-
+// Define interface for registration question
 interface RegistrationQuestion {
   id: string;
-  questionText: string;
-  description?: string;
-  category: string;
-  step: string;
-  profileField: string;
-  questionType: string;
-  options?: string;
+  categoryId: string;
+  text: string;
+  type: string;
   required: boolean;
   order: number;
   active: boolean;
-  aiRecommended: boolean;
-  conditionalQuestion: boolean;
-  parentQuestion?: string;
-  conditionalValue?: string;
-  createdAt: string;
-  updatedAt?: string;
+  options?: string[];
+  placeholder?: string;
+  helpText?: string;
+  validation?: string;
 }
 
-// Sample question examples based on the detailed fields
-const demoQuestions: RegistrationQuestion[] = [
-  {
-    id: '1',
-    questionText: 'What is your first name?',
-    description: 'Your first name will be shown on your profile',
-    category: 'basics',
-    step: 'basics',
-    profileField: 'firstName',
-    questionType: 'text',
-    required: true,
-    order: 1,
+// Mock data for categories
+const initialCategories: QuestionCategory[] = [
+  { id: 'basic', name: 'Basic Information', description: 'Basic user information', order: 1, active: true },
+  { id: 'preferences', name: 'User Preferences', description: 'Preferences for matching', order: 2, active: true },
+  { id: 'interests', name: 'Interests & Hobbies', description: 'User interests and hobbies', order: 3, active: true },
+];
+
+// Mock data for questions
+const initialQuestions: RegistrationQuestion[] = [
+  { 
+    id: 'q1', 
+    categoryId: 'basic', 
+    text: 'What is your name?', 
+    type: 'text', 
+    required: true, 
+    order: 1, 
     active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-15'
+    placeholder: 'Enter your full name',
+    helpText: 'Please provide your full name as it appears on your ID'
   },
-  {
-    id: '2',
-    questionText: 'What is your height?',
-    category: 'appearance',
-    step: 'appearance',
-    profileField: 'height',
-    questionType: 'select',
-    options: OPTIONS.height.join(','),
-    required: true,
-    order: 1,
+  { 
+    id: 'q2', 
+    categoryId: 'basic', 
+    text: 'What is your age?', 
+    type: 'number', 
+    required: true, 
+    order: 2, 
     active: true,
-    aiRecommended: true,
-    conditionalQuestion: false,
-    createdAt: '2023-01-15'
+    validation: 'min:18,max:100'
   },
-  {
-    id: '3',
-    questionText: 'What type of relationship are you looking for?',
-    description: 'This helps us find better matches for you',
-    category: 'relationships',
-    step: 'preferences',
-    profileField: 'relationshipGoals',
-    questionType: 'radio',
-    options: OPTIONS.relationshipGoals.join(','),
-    required: true,
-    order: 1,
+  { 
+    id: 'q3', 
+    categoryId: 'preferences', 
+    text: 'What are you looking for?', 
+    type: 'radio', 
+    required: true, 
+    order: 1, 
     active: true,
-    aiRecommended: true,
-    conditionalQuestion: false,
-    createdAt: '2023-01-16'
+    options: ['Friendship', 'Dating', 'Long-term relationship']
   },
-  {
-    id: '4',
-    questionText: 'Select your interests',
-    description: 'Choose activities you enjoy',
-    category: 'interests',
-    step: 'interests',
-    profileField: 'interests',
-    questionType: 'multiselect',
-    options: 'Hiking,Photography,Travel,Reading,Cooking,Art,Music,Sports,Dancing,Technology,Fashion,Gaming,Movies,Fitness,Meditation,Wine Tasting,Volunteering,Nature,History,Science',
-    required: true,
-    order: 1,
+  { 
+    id: 'q4', 
+    categoryId: 'interests', 
+    text: 'Select your interests', 
+    type: 'checkbox', 
+    required: false, 
+    order: 1, 
     active: true,
-    aiRecommended: true,
-    conditionalQuestion: false,
-    createdAt: '2023-01-17'
-  },
-  {
-    id: '5',
-    questionText: 'Do you drink alcohol?',
-    category: 'lifestyle',
-    step: 'lifestyle',
-    profileField: 'drinking',
-    questionType: 'select',
-    options: OPTIONS.drinking.join(','),
-    required: true,
-    order: 1,
-    active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-18'
-  },
-  {
-    id: '6',
-    questionText: 'What\'s your body type?',
-    category: 'appearance',
-    step: 'appearance',
-    profileField: 'bodyType',
-    questionType: 'select',
-    options: OPTIONS.bodyType.join(','),
-    required: false,
-    order: 2,
-    active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-19'
-  },
-  {
-    id: '7',
-    questionText: 'What languages do you speak?',
-    description: 'Select all that apply',
-    category: 'communication',
-    step: 'profile',
-    profileField: 'languages',
-    questionType: 'multiselect',
-    options: 'English,Kurdish,Arabic,Persian,Turkish,German,French,Spanish,Italian,Russian,Chinese,Japanese',
-    required: true,
-    order: 1,
-    active: true,
-    aiRecommended: true,
-    conditionalQuestion: false,
-    createdAt: '2023-01-20'
-  },
-  {
-    id: '8',
-    questionText: 'Tell us about yourself',
-    description: 'This will appear as your bio',
-    category: 'basics',
-    step: 'profile',
-    profileField: 'bio',
-    questionType: 'textarea',
-    required: true,
-    order: 3,
-    active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-21'
-  },
-  {
-    id: '9',
-    questionText: 'What are your deal breakers?',
-    description: 'Qualities you absolutely don\'t want in a partner',
-    category: 'preferences',
-    step: 'preferences',
-    profileField: 'dealBreakers',
-    questionType: 'multiselect',
-    options: 'Smoking,Drinking,Having children,Not wanting children,Distance,Religious differences,Political differences,Pets,Career focus',
-    required: false,
-    order: 2,
-    active: true,
-    aiRecommended: true,
-    conditionalQuestion: false,
-    createdAt: '2023-01-22'
-  },
-  {
-    id: '10',
-    questionText: 'What\'s your love language?',
-    category: 'relationships',
-    step: 'personality',
-    profileField: 'loveLanguage',
-    questionType: 'select',
-    options: OPTIONS.loveLanguage.join(','),
-    required: false,
-    order: 2,
-    active: true,
-    aiRecommended: true,
-    conditionalQuestion: false,
-    createdAt: '2023-01-23'
-  },
-  {
-    id: '11',
-    questionText: 'What is your occupation?',
-    category: 'career',
-    step: 'basics',
-    profileField: 'occupation',
-    questionType: 'text',
-    required: true,
-    order: 4,
-    active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-24'
-  },
-  {
-    id: '12',
-    questionText: 'What is your education level?',
-    category: 'career',
-    step: 'basics',
-    profileField: 'education',
-    questionType: 'select',
-    options: 'High School,Some College,Associate\'s Degree,Bachelor\'s Degree,Master\'s Degree,PhD,Professional Degree,Trade School',
-    required: false,
-    order: 5,
-    active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-25'
-  },
-  {
-    id: '13',
-    questionText: 'Do you want children?',
-    category: 'relationships',
-    step: 'preferences',
-    profileField: 'wantChildren',
-    questionType: 'select',
-    options: OPTIONS.wantChildren.join(','),
-    required: false,
-    order: 3,
-    active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-26'
-  },
-  {
-    id: '14',
-    questionText: 'Do you have children?',
-    category: 'relationships',
-    step: 'basics',
-    profileField: 'childrenStatus',
-    questionType: 'select',
-    options: OPTIONS.childrenStatus.join(','),
-    required: false,
-    order: 6,
-    active: true,
-    aiRecommended: false,
-    conditionalQuestion: false,
-    createdAt: '2023-01-27'
-  },
-  {
-    id: '15',
-    questionText: 'What\'s your communication style?',
-    category: 'personality',
-    step: 'personality',
-    profileField: 'communicationStyle',
-    questionType: 'select',
-    options: OPTIONS.communicationStyle.join(','),
-    required: false,
-    order: 1,
-    active: true,
-    aiRecommended: true,
-    conditionalQuestion: false,
-    createdAt: '2023-01-28'
+    options: ['Sports', 'Music', 'Movies', 'Books', 'Travel', 'Food']
   }
 ];
 
+// Schema for category form
+const categoryFormSchema = z.object({
+  name: z.string().min(1, { message: "Category name is required" }),
+  description: z.string().optional(),
+  active: z.boolean().default(true),
+});
+
+// Schema for question form
+const questionFormSchema = z.object({
+  categoryId: z.string().min(1, { message: "Category is required" }),
+  text: z.string().min(1, { message: "Question text is required" }),
+  type: z.string().min(1, { message: "Question type is required" }),
+  required: z.boolean().default(false),
+  active: z.boolean().default(true),
+  options: z.string().optional(),
+  placeholder: z.string().optional(),
+  helpText: z.string().optional(),
+  validation: z.string().optional(),
+});
+
 const RegistrationQuestionsPage = () => {
-  const [questions, setQuestions] = useState<RegistrationQuestion[]>(demoQuestions);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [filterStep, setFilterStep] = useState('all');
-  const [filterType, setFilterType] = useState('all');
-  const [isAddQuestionOpen, setIsAddQuestionOpen] = useState(false);
-  const [isEditQuestionOpen, setIsEditQuestionOpen] = useState(false);
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [selectedQuestion, setSelectedQuestion] = useState<RegistrationQuestion | null>(null);
-  const [parentQuestions, setParentQuestions] = useState<RegistrationQuestion[]>([]);
-  const [previewStep, setPreviewStep] = useState<string>('basics');
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [categories, setCategories] = useState<QuestionCategory[]>(initialCategories);
+  const [questions, setQuestions] = useState<RegistrationQuestion[]>(initialQuestions);
+  const [activeTab, setActiveTab] = useState<string>("categories");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showPreview, setShowPreview] = useState<boolean>(false);
   
-  const form = useForm<QuestionFormValues>({
-    resolver: zodResolver(questionSchema),
+  // Dialog states
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState<boolean>(false);
+  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState<boolean>(false);
+  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<QuestionCategory | null>(null);
+  
+  const [isAddQuestionOpen, setIsAddQuestionOpen] = useState<boolean>(false);
+  const [isEditQuestionOpen, setIsEditQuestionOpen] = useState<boolean>(false);
+  const [isDeleteQuestionOpen, setIsDeleteQuestionOpen] = useState<boolean>(false);
+  const [selectedQuestion, setSelectedQuestion] = useState<RegistrationQuestion | null>(null);
+
+  // Category form
+  const categoryForm = useForm<z.infer<typeof categoryFormSchema>>({
+    resolver: zodResolver(categoryFormSchema),
     defaultValues: {
-      questionText: '',
-      description: '',
-      category: '',
-      step: '',
-      profileField: '',
-      questionType: '',
-      options: '',
-      required: false,
-      order: 1,
+      name: "",
+      description: "",
       active: true,
-      aiRecommended: false,
-      conditionalQuestion: false,
-      parentQuestion: '',
-      conditionalValue: ''
-    }
+    },
   });
 
-  const editForm = useForm<QuestionFormValues>({
-    resolver: zodResolver(questionSchema),
+  // Question form
+  const questionForm = useForm<z.infer<typeof questionFormSchema>>({
+    resolver: zodResolver(questionFormSchema),
     defaultValues: {
-      questionText: '',
-      description: '',
-      category: '',
-      step: '',
-      profileField: '',
-      questionType: '',
-      options: '',
+      categoryId: "",
+      text: "",
+      type: "",
       required: false,
-      order: 1,
       active: true,
-      aiRecommended: false,
-      conditionalQuestion: false,
-      parentQuestion: '',
-      conditionalValue: ''
-    }
+      options: "",
+      placeholder: "",
+      helpText: "",
+      validation: "",
+    },
   });
 
-  // Form watch functions
-  const watchQuestionType = form.watch('questionType');
-  const watchConditionalQuestion = form.watch('conditionalQuestion');
-  const editWatchQuestionType = editForm.watch('questionType');
-  const editWatchConditionalQuestion = editForm.watch('conditionalQuestion');
-
-  // Effect to update parent questions list
-  React.useEffect(() => {
-    const potentialParents = questions.filter(q => 
-      ['select', 'radio', 'boolean', 'multiselect', 'checkbox'].includes(q.questionType)
-    );
-    setParentQuestions(potentialParents);
-  }, [questions]);
-
-  // Sort function
-  const sortQuestions = (column: string) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(column);
-      setSortDirection('asc');
-    }
-  };
-
-  // Filter and sort questions
-  const filteredAndSortedQuestions = React.useMemo(() => {
-    let filtered = questions.filter(question => {
-      const matchesSearch = 
-        question.questionText.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (question.description && question.description.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchesCategory = 
-        filterCategory === 'all' || 
-        question.category === filterCategory;
-      
-      const matchesStep = 
-        filterStep === 'all' || 
-        question.step === filterStep;
-      
-      const matchesType = 
-        filterType === 'all' || 
-        question.questionType === filterType;
-      
-      return matchesSearch && matchesCategory && matchesStep && matchesType;
-    });
-
-    if (sortColumn) {
-      filtered = [...filtered].sort((a, b) => {
-        const valueA = a[sortColumn as keyof RegistrationQuestion];
-        const valueB = b[sortColumn as keyof RegistrationQuestion];
-        
-        let comparison = 0;
-        if (valueA < valueB) {
-          comparison = -1;
-        } else if (valueA > valueB) {
-          comparison = 1;
-        }
-        
-        return sortDirection === 'asc' ? comparison : -comparison;
-      });
-    }
-
-    return filtered;
-  }, [questions, searchTerm, filterCategory, filterStep, filterType, sortColumn, sortDirection]);
-
-  // Get counts for filter badges
-  const getCategoryCounts = () => {
-    const counts: Record<string, number> = { all: 0 };
+  // Handle drag and drop for categories
+  const handleDragEndCategories = (result: any) => {
+    if (!result.destination) return;
     
-    questions.forEach(question => {
-      counts.all += 1;
-      counts[question.category] = (counts[question.category] || 0) + 1;
+    const items = Array.from(categories);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    // Update order property
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+    
+    setCategories(updatedItems);
+    toast.success("Categories order updated successfully");
+  };
+  
+  // Handle drag and drop for questions
+  const handleDragEndQuestions = (result: any) => {
+    if (!result.destination) return;
+    
+    const items = Array.from(questions);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    // Update order property for questions within the same category
+    const categoryId = reorderedItem.categoryId;
+    const categoryQuestions = items.filter(q => q.categoryId === categoryId);
+    
+    const updatedItems = items.map(item => {
+      if (item.categoryId === categoryId) {
+        const index = categoryQuestions.findIndex(q => q.id === item.id);
+        return {
+          ...item,
+          order: index + 1
+        };
+      }
+      return item;
     });
     
-    return counts;
+    setQuestions(updatedItems);
+    toast.success("Questions order updated successfully");
   };
 
-  const getStepCounts = () => {
-    const counts: Record<string, number> = { all: 0 };
-    
-    questions.forEach(question => {
-      counts.all += 1;
-      counts[question.step] = (counts[question.step] || 0) + 1;
-    });
-    
-    return counts;
+  // Filter questions by category and search term
+  const getFilteredQuestions = (categoryId: string) => {
+    return questions
+      .filter(q => q.categoryId === categoryId)
+      .filter(q => q.text.toLowerCase().includes(searchTerm.toLowerCase()))
+      .sort((a, b) => a.order - b.order);
   };
 
-  const getTypeCounts = () => {
-    const counts: Record<string, number> = { all: 0 };
-    
-    questions.forEach(question => {
-      counts.all += 1;
-      counts[question.questionType] = (counts[question.questionType] || 0) + 1;
-    });
-    
-    return counts;
-  };
-
-  const categoryCounts = getCategoryCounts();
-  const stepCounts = getStepCounts();
-  const typeCounts = getTypeCounts();
-
-  // Helper functions
-  const getCategoryLabel = (value: string) => {
-    const category = QUESTION_CATEGORIES.find(c => c.value === value);
-    return category ? category.label : value;
-  };
-
-  const getStepLabel = (value: string) => {
-    const step = REGISTRATION_STEPS.find(s => s.value === value);
-    return step ? step.label : value;
-  };
-
-  const getTypeLabel = (value: string) => {
-    const type = QUESTION_TYPES.find(t => t.value === value);
-    return type ? type.label : value;
-  };
-
-  const getFieldLabel = (value: string) => {
-    const field = PROFILE_FIELDS.find(f => f.value === value);
-    return field ? field.label : value;
-  };
-
-  const getParentQuestionLabel = (id: string) => {
-    const question = questions.find(q => q.id === id);
-    return question ? question.questionText : id;
-  };
-
-  // Form handlers
-  const addNewQuestion = (data: QuestionFormValues) => {
-    const newQuestion: RegistrationQuestion = {
-      id: `${questions.length + 1}`,
-      questionText: data.questionText,
-      description: data.description,
-      category: data.category,
-      step: data.step,
-      profileField: data.profileField,
-      questionType: data.questionType,
-      options: data.options,
-      required: data.required,
-      order: data.order,
+  // Add new category
+  const handleAddCategory = (data: z.infer<typeof categoryFormSchema>) => {
+    const newCategory: QuestionCategory = {
+      id: `category-${Date.now()}`,
+      name: data.name,
+      description: data.description || "",
+      order: categories.length + 1,
       active: data.active,
-      aiRecommended: data.aiRecommended,
-      conditionalQuestion: data.conditionalQuestion,
-      parentQuestion: data.conditionalQuestion ? data.parentQuestion : undefined,
-      conditionalValue: data.conditionalQuestion ? data.conditionalValue : undefined,
-      createdAt: new Date().toISOString().split('T')[0]
+    };
+    
+    setCategories([...categories, newCategory]);
+    setIsAddCategoryOpen(false);
+    categoryForm.reset();
+    toast.success("Category added successfully");
+  };
+
+  // Edit category
+  const handleEditCategory = (data: z.infer<typeof categoryFormSchema>) => {
+    if (!selectedCategory) return;
+    
+    const updatedCategories = categories.map(cat => 
+      cat.id === selectedCategory.id 
+        ? { 
+            ...cat, 
+            name: data.name, 
+            description: data.description || "", 
+            active: data.active 
+          } 
+        : cat
+    );
+    
+    setCategories(updatedCategories);
+    setIsEditCategoryOpen(false);
+    setSelectedCategory(null);
+    toast.success("Category updated successfully");
+  };
+
+  // Delete category
+  const handleDeleteCategory = () => {
+    if (!selectedCategory) return;
+    
+    const updatedCategories = categories.filter(cat => cat.id !== selectedCategory.id);
+    // Remove questions in this category or assign them to another category
+    const updatedQuestions = questions.filter(q => q.categoryId !== selectedCategory.id);
+    
+    setCategories(updatedCategories);
+    setQuestions(updatedQuestions);
+    setIsDeleteCategoryOpen(false);
+    setSelectedCategory(null);
+    toast.success("Category deleted successfully");
+  };
+
+  // Add new question
+  const handleAddQuestion = (data: z.infer<typeof questionFormSchema>) => {
+    const newQuestion: RegistrationQuestion = {
+      id: `question-${Date.now()}`,
+      categoryId: data.categoryId,
+      text: data.text,
+      type: data.type,
+      required: data.required,
+      active: data.active,
+      order: questions.filter(q => q.categoryId === data.categoryId).length + 1,
+      options: data.options ? data.options.split(',').map(opt => opt.trim()) : undefined,
+      placeholder: data.placeholder,
+      helpText: data.helpText,
+      validation: data.validation,
     };
     
     setQuestions([...questions, newQuestion]);
     setIsAddQuestionOpen(false);
-    form.reset();
-    toast.success(`Question "${data.questionText}" added successfully`);
+    questionForm.reset();
+    toast.success("Question added successfully");
   };
 
-  const updateQuestion = (data: QuestionFormValues) => {
+  // Edit question
+  const handleEditQuestion = (data: z.infer<typeof questionFormSchema>) => {
     if (!selectedQuestion) return;
     
-    const updatedQuestions = questions.map(question => {
-      if (question.id === selectedQuestion.id) {
-        return {
-          ...question,
-          questionText: data.questionText,
-          description: data.description,
-          category: data.category,
-          step: data.step,
-          profileField: data.profileField,
-          questionType: data.questionType,
-          options: data.options,
-          required: data.required,
-          order: data.order,
-          active: data.active,
-          aiRecommended: data.aiRecommended,
-          conditionalQuestion: data.conditionalQuestion,
-          parentQuestion: data.conditionalQuestion ? data.parentQuestion : undefined,
-          conditionalValue: data.conditionalQuestion ? data.conditionalValue : undefined,
-          updatedAt: new Date().toISOString().split('T')[0]
-        };
-      }
-      return question;
-    });
+    const updatedQuestions = questions.map(q => 
+      q.id === selectedQuestion.id 
+        ? { 
+            ...q, 
+            categoryId: data.categoryId,
+            text: data.text,
+            type: data.type,
+            required: data.required,
+            active: data.active,
+            options: data.options ? data.options.split(',').map(opt => opt.trim()) : undefined,
+            placeholder: data.placeholder,
+            helpText: data.helpText,
+            validation: data.validation,
+          } 
+        : q
+    );
     
     setQuestions(updatedQuestions);
     setIsEditQuestionOpen(false);
-    toast.success(`Question "${data.questionText}" updated successfully`);
+    setSelectedQuestion(null);
+    toast.success("Question updated successfully");
   };
 
-  const deleteQuestion = () => {
+  // Delete question
+  const handleDeleteQuestion = () => {
     if (!selectedQuestion) return;
     
-    setQuestions(questions.filter(question => question.id !== selectedQuestion.id));
-    setIsDeleteConfirmOpen(false);
-    toast.success(`Question "${selectedQuestion.questionText}" deleted successfully`);
+    const updatedQuestions = questions.filter(q => q.id !== selectedQuestion.id);
+    
+    setQuestions(updatedQuestions);
+    setIsDeleteQuestionOpen(false);
+    setSelectedQuestion(null);
+    toast.success("Question deleted successfully");
   };
 
-  // Handle opening dialogs
-  const openAddQuestionDialog = () => {
-    form.reset();
-    setIsAddQuestionOpen(true);
+  // Open edit category dialog
+  const openEditCategoryDialog = (category: QuestionCategory) => {
+    setSelectedCategory(category);
+    categoryForm.reset({
+      name: category.name,
+      description: category.description,
+      active: category.active,
+    });
+    setIsEditCategoryOpen(true);
   };
 
+  // Open edit question dialog
   const openEditQuestionDialog = (question: RegistrationQuestion) => {
     setSelectedQuestion(question);
-    editForm.reset({
-      questionText: question.questionText,
-      description: question.description || '',
-      category: question.category,
-      step: question.step,
-      profileField: question.profileField,
-      questionType: question.questionType,
-      options: question.options || '',
+    questionForm.reset({
+      categoryId: question.categoryId,
+      text: question.text,
+      type: question.type,
       required: question.required,
-      order: question.order,
       active: question.active,
-      aiRecommended: question.aiRecommended,
-      conditionalQuestion: question.conditionalQuestion,
-      parentQuestion: question.parentQuestion || '',
-      conditionalValue: question.conditionalValue || ''
+      options: question.options?.join(', '),
+      placeholder: question.placeholder,
+      helpText: question.helpText,
+      validation: question.validation,
     });
     setIsEditQuestionOpen(true);
   };
 
-  const openDeleteConfirmDialog = (question: RegistrationQuestion) => {
-    setSelectedQuestion(question);
-    setIsDeleteConfirmOpen(true);
-  };
-
-  const openPreviewDialog = (question: RegistrationQuestion) => {
-    setSelectedQuestion(question);
-    setPreviewStep(question.step);
-    setIsPreviewOpen(true);
-  };
-
-  // Duplicate question
-  const duplicateQuestion = (question: RegistrationQuestion) => {
-    const newQuestion: RegistrationQuestion = {
-      ...question,
-      id: `${questions.length + 1}`,
-      questionText: `Copy of ${question.questionText}`,
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: undefined
-    };
-    
-    setQuestions([...questions, newQuestion]);
-    toast.success(`Question "${question.questionText}" duplicated successfully`);
-  };
-
-  // Toggle question active state
-  const toggleQuestionActive = (question: RegistrationQuestion) => {
-    const updatedQuestions = questions.map(q => {
-      if (q.id === question.id) {
-        return {
-          ...q,
-          active: !q.active,
-          updatedAt: new Date().toISOString().split('T')[0]
-        };
-      }
-      return q;
-    });
-    
-    setQuestions(updatedQuestions);
-    toast.success(`Question "${question.questionText}" ${question.active ? 'deactivated' : 'activated'} successfully`);
+  // Dynamic form component for preview
+  const DynamicFormField = ({ question }: { question: RegistrationQuestion }) => {
+    switch (question.type) {
+      case 'text':
+      case 'email':
+      case 'url':
+      case 'phone':
+        return (
+          <Input 
+            placeholder={question.placeholder} 
+            type={question.type === 'email' ? 'email' : 
+                 question.type === 'url' ? 'url' : 'text'} 
+          />
+        );
+      case 'textarea':
+        return <Textarea placeholder={question.placeholder} />;
+      case 'number':
+        return <Input type="number" placeholder={question.placeholder} />;
+      case 'select':
+        return (
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {question.options?.map((option, i) => (
+                <SelectItem key={i} value={option}>{option}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      case 'radio':
+        return (
+          <RadioGroup>
+            {question.options?.map((option, i) => (
+              <div key={i} className="flex items-center space-x-2">
+                <RadioGroupItem value={option} id={`${question.id}-${i}`} />
+                <Label htmlFor={`${question.id}-${i}`}>{option}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        );
+      case 'checkbox':
+        return (
+          <div className="space-y-2">
+            {question.options?.map((option, i) => (
+              <div key={i} className="flex items-center space-x-2">
+                <Checkbox id={`${question.id}-${i}`} />
+                <Label htmlFor={`${question.id}-${i}`}>{option}</Label>
+              </div>
+            ))}
+          </div>
+        );
+      case 'date':
+        return <Input type="date" />;
+      case 'time':
+        return <Input type="time" />;
+      case 'range':
+        return <Input type="range" min="0" max="100" />;
+      case 'color':
+        return <Input type="color" />;
+      case 'file':
+        return <Input type="file" />;
+      case 'rating':
+        return (
+          <div className="flex space-x-2">
+            {[1, 2, 3, 4, 5].map(rating => (
+              <Button 
+                key={rating} 
+                variant="outline" 
+                size="sm"
+                className="h-10 w-10"
+              >
+                {rating}
+              </Button>
+            ))}
+          </div>
+        );
+      default:
+        return <Input />;
+    }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Registration Questions</h1>
-          <p className="text-muted-foreground">
-            Manage questions used during the user registration process
-          </p>
+          <h1 className="text-3xl font-bold">Registration Questions Management</h1>
+          <p className="text-muted-foreground">Manage questions and categories for user registration</p>
         </div>
-        <Button onClick={openAddQuestionDialog} className="shrink-0">
-          <Plus className="mr-2 h-4 w-4" />
-          Add Question
-        </Button>
+        <div className="flex space-x-2">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowPreview(!showPreview)}
+            className="flex items-center"
+          >
+            <Eye className="mr-2 h-4 w-4" />
+            {showPreview ? "Hide Preview" : "Show Preview"}
+          </Button>
+        </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4">
-        <Card className="w-full lg:w-64 shrink-0">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-md font-medium">Filters</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Categories</Label>
-                <Badge variant="outline" className="text-xs font-normal">
-                  {categoryCounts.all}
-                </Badge>
-              </div>
-              <div className="space-y-1">
-                <Button
-                  variant={filterCategory === 'all' ? 'secondary' : 'ghost'} 
-                  size="sm" 
-                  className="justify-between w-full font-normal"
-                  onClick={() => setFilterCategory('all')}
-                >
-                  All Categories
-                  <Badge variant="outline" className="ml-2">{categoryCounts.all}</Badge>
-                </Button>
-                {QUESTION_CATEGORIES.map(category => (
-                  categoryCounts[category.value] && (
-                    <Button
-                      key={category.value}
-                      variant={filterCategory === category.value ? 'secondary' : 'ghost'} 
-                      size="sm" 
-                      className="justify-between w-full font-normal"
-                      onClick={() => setFilterCategory(category.value)}
-                    >
-                      {category.label}
-                      <Badge variant="outline" className="ml-2">{categoryCounts[category.value] || 0}</Badge>
-                    </Button>
-                  )
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Registration Steps</Label>
-                <Badge variant="outline" className="text-xs font-normal">
-                  {stepCounts.all}
-                </Badge>
-              </div>
-              <div className="space-y-1">
-                <Button
-                  variant={filterStep === 'all' ? 'secondary' : 'ghost'} 
-                  size="sm" 
-                  className="justify-between w-full font-normal"
-                  onClick={() => setFilterStep('all')}
-                >
-                  All Steps
-                  <Badge variant="outline" className="ml-2">{stepCounts.all}</Badge>
-                </Button>
-                {REGISTRATION_STEPS.map(step => (
-                  stepCounts[step.value] && (
-                    <Button
-                      key={step.value}
-                      variant={filterStep === step.value ? 'secondary' : 'ghost'} 
-                      size="sm" 
-                      className="justify-between w-full font-normal"
-                      onClick={() => setFilterStep(step.value)}
-                    >
-                      {step.label}
-                      <Badge variant="outline" className="ml-2">{stepCounts[step.value] || 0}</Badge>
-                    </Button>
-                  )
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Question Types</Label>
-                <Badge variant="outline" className="text-xs font-normal">
-                  {typeCounts.all}
-                </Badge>
-              </div>
-              <div className="space-y-1">
-                <Button
-                  variant={filterType === 'all' ? 'secondary' : 'ghost'} 
-                  size="sm" 
-                  className="justify-between w-full font-normal"
-                  onClick={() => setFilterType('all')}
-                >
-                  All Types
-                  <Badge variant="outline" className="ml-2">{typeCounts.all}</Badge>
-                </Button>
-                {QUESTION_TYPES.map(type => (
-                  typeCounts[type.value] && (
-                    <Button
-                      key={type.value}
-                      variant={filterType === type.value ? 'secondary' : 'ghost'} 
-                      size="sm" 
-                      className="justify-between w-full font-normal"
-                      onClick={() => setFilterType(type.value)}
-                    >
-                      {type.label}
-                      <Badge variant="outline" className="ml-2">{typeCounts[type.value] || 0}</Badge>
-                    </Button>
-                  )
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex-1 space-y-4">
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Main management interface */}
+        <div className={`${showPreview ? 'md:w-1/2' : 'w-full'}`}>
           <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-md font-medium">
-                  Registration Questions
-                </CardTitle>
-                <div className="flex items-center space-x-2">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Registration Questions Configuration</CardTitle>
+                  <CardDescription>Add, edit, and organize registration questions and categories</CardDescription>
+                </div>
+                <div className="flex space-x-2">
                   <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                      type="search"
                       placeholder="Search questions..."
-                      className="pl-8 w-60"
+                      className="pl-8 w-[200px]"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
+                  {activeTab === "categories" && (
+                    <Button onClick={() => setIsAddCategoryOpen(true)}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Category
+                    </Button>
+                  )}
+                  {activeTab === "questions" && (
+                    <Button onClick={() => setIsAddQuestionOpen(true)}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Question
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[300px]">
-                      <Button 
-                        variant="ghost" 
-                        className="p-0 font-medium flex items-center"
-                        onClick={() => sortQuestions('questionText')}
-                      >
-                        Question
-                        {sortColumn === 'questionText' && (
-                          <ArrowUpDown className="ml-1 h-4 w-4" />
-                        )}
-                      </Button>
-                    </TableHead>
-                    <TableHead>
-                      <Button 
-                        variant="ghost" 
-                        className="p-0 font-medium flex items-center"
-                        onClick={() => sortQuestions('category')}
-                      >
-                        Category
-                        {sortColumn === 'category' && (
-                          <ArrowUpDown className="ml-1 h-4 w-4" />
-                        )}
-                      </Button>
-                    </TableHead>
-                    <TableHead>
-                      <Button 
-                        variant="ghost" 
-                        className="p-0 font-medium flex items-center"
-                        onClick={() => sortQuestions('step')}
-                      >
-                        Step
-                        {sortColumn === 'step' && (
-                          <ArrowUpDown className="ml-1 h-4 w-4" />
-                        )}
-                      </Button>
-                    </TableHead>
-                    <TableHead>
-                      <Button 
-                        variant="ghost" 
-                        className="p-0 font-medium flex items-center"
-                        onClick={() => sortQuestions('questionType')}
-                      >
-                        Type
-                        {sortColumn === 'questionType' && (
-                          <ArrowUpDown className="ml-1 h-4 w-4" />
-                        )}
-                      </Button>
-                    </TableHead>
-                    <TableHead className="text-center">Required</TableHead>
-                    <TableHead className="text-center">Active</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAndSortedQuestions.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center h-32">
-                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                          <ClipboardList className="h-12 w-12 mb-2" />
-                          <h3 className="text-lg font-medium">No questions found</h3>
-                          <p>Try changing your filters or add a new question.</p>
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="mb-4">
+                  <TabsTrigger value="categories">Categories</TabsTrigger>
+                  <TabsTrigger value="questions">Questions</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="categories">
+                  <DragDropContext onDragEnd={handleDragEndCategories}>
+                    <Droppable droppableId="categories">
+                      {(provided) => (
+                        <div 
+                          {...provided.droppableProps} 
+                          ref={provided.innerRef}
+                        >
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="w-10"></TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Description</TableHead>
+                                <TableHead>Order</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {categories
+                                .sort((a, b) => a.order - b.order)
+                                .map((category, index) => (
+                                  <Draggable 
+                                    key={category.id} 
+                                    draggableId={category.id} 
+                                    index={index}
+                                  >
+                                    {(provided) => (
+                                      <TableRow 
+                                        ref={provided.innerRef} 
+                                        {...provided.draggableProps}
+                                      >
+                                        <TableCell>
+                                          <div {...provided.dragHandleProps} className="cursor-move">
+                                            <MoveVertical size={16} />
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="font-medium">{category.name}</TableCell>
+                                        <TableCell>{category.description}</TableCell>
+                                        <TableCell>{category.order}</TableCell>
+                                        <TableCell>
+                                          <span className={`px-2 py-1 rounded-full text-xs ${category.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                            {category.active ? 'Active' : 'Inactive'}
+                                          </span>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                          <div className="flex justify-end space-x-2">
+                                            <Button 
+                                              variant="ghost" 
+                                              size="icon" 
+                                              onClick={() => openEditCategoryDialog(category)}
+                                            >
+                                              <Edit size={16} />
+                                            </Button>
+                                            <Button 
+                                              variant="ghost" 
+                                              size="icon"
+                                              onClick={() => {
+                                                setSelectedCategory(category);
+                                                setIsDeleteCategoryOpen(true);
+                                              }}
+                                            >
+                                              <Trash2 size={16} />
+                                            </Button>
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                    )}
+                                  </Draggable>
+                                ))}
+                              {provided.placeholder}
+                            </TableBody>
+                          </Table>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredAndSortedQuestions.map((question) => (
-                      <TableRow key={question.id} className={!question.active ? 'opacity-60' : ''}>
-                        <TableCell className="font-medium">
-                          <div className="flex flex-col">
-                            <span>{question.questionText}</span>
-                            {question.description && (
-                              <span className="text-sm text-muted-foreground">
-                                {question.description.length > 50 
-                                  ? `${question.description.slice(0, 50)}...` 
-                                  : question.description}
-                              </span>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                </TabsContent>
+
+                <TabsContent value="questions">
+                  <Tabs defaultValue={categories[0]?.id}>
+                    <TabsList className="mb-4">
+                      {categories.map(category => (
+                        <TabsTrigger key={category.id} value={category.id}>
+                          {category.name}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+
+                    {categories.map(category => (
+                      <TabsContent key={category.id} value={category.id}>
+                        <DragDropContext onDragEnd={handleDragEndQuestions}>
+                          <Droppable droppableId={`questions-${category.id}`}>
+                            {(provided) => (
+                              <div 
+                                {...provided.droppableProps} 
+                                ref={provided.innerRef}
+                              >
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow>
+                                      <TableHead className="w-10"></TableHead>
+                                      <TableHead>Question</TableHead>
+                                      <TableHead>Type</TableHead>
+                                      <TableHead>Required</TableHead>
+                                      <TableHead>Status</TableHead>
+                                      <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {getFilteredQuestions(category.id).map((question, index) => (
+                                      <Draggable 
+                                        key={question.id} 
+                                        draggableId={question.id} 
+                                        index={index}
+                                      >
+                                        {(provided) => (
+                                          <TableRow 
+                                            ref={provided.innerRef} 
+                                            {...provided.draggableProps}
+                                          >
+                                            <TableCell>
+                                              <div {...provided.dragHandleProps} className="cursor-move">
+                                                <MoveVertical size={16} />
+                                              </div>
+                                            </TableCell>
+                                            <TableCell className="font-medium">{question.text}</TableCell>
+                                            <TableCell>
+                                              {questionTypes.find(t => t.id === question.type)?.label || question.type}
+                                            </TableCell>
+                                            <TableCell>
+                                              {question.required ? 
+                                                <Check className="h-4 w-4 text-green-600" /> : 
+                                                <X className="h-4 w-4 text-gray-400" />
+                                              }
+                                            </TableCell>
+                                            <TableCell>
+                                              <span className={`px-2 py-1 rounded-full text-xs ${question.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                {question.active ? 'Active' : 'Inactive'}
+                                              </span>
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                              <div className="flex justify-end space-x-2">
+                                                <Button 
+                                                  variant="ghost" 
+                                                  size="icon" 
+                                                  onClick={() => openEditQuestionDialog(question)}
+                                                >
+                                                  <Edit size={16} />
+                                                </Button>
+                                                <Button 
+                                                  variant="ghost" 
+                                                  size="icon"
+                                                  onClick={() => {
+                                                    setSelectedQuestion(question);
+                                                    setIsDeleteQuestionOpen(true);
+                                                  }}
+                                                >
+                                                  <Trash2 size={16} />
+                                                </Button>
+                                              </div>
+                                            </TableCell>
+                                          </TableRow>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                  </TableBody>
+                                </Table>
+                              </div>
                             )}
-                            <div className="flex mt-1 space-x-1">
-                              {question.aiRecommended && (
-                                <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 border-green-200 text-xs">
-                                  <CheckCircle2 className="mr-1 h-3 w-3" />
-                                  AI Recommended
-                                </Badge>
-                              )}
-                              {question.conditionalQuestion && (
-                                <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200 text-xs">
-                                  <ArrowRight className="mr-1 h-3 w-3" />
-                                  Conditional
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="font-normal">
-                            {getCategoryLabel(question.category)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="font-normal">
-                            {getStepLabel(question.step)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="font-normal">
-                            {getTypeLabel(question.questionType)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {question.required ? (
-                            <Badge className="bg-green-500 hover:bg-green-500">Yes</Badge>
-                          ) : (
-                            <Badge variant="outline">No</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Switch 
-                            checked={question.active}
-                            onCheckedChange={() => toggleQuestionActive(question)}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-1">
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => openPreviewDialog(question)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => openEditQuestionDialog(question)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => duplicateQuestion(question)}
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => openDeleteConfirmDialog(question)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                          </Droppable>
+                        </DragDropContext>
+                      </TabsContent>
+                    ))}
+                  </Tabs>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
+
+        {/* Preview panel */}
+        {showPreview && (
+          <div className="md:w-1/2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Registration Form Preview</CardTitle>
+                <CardDescription>Live preview of the registration form</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6 p-4 border rounded-md bg-white">
+                  {categories
+                    .filter(cat => cat.active)
+                    .sort((a, b) => a.order - b.order)
+                    .map(category => (
+                      <div key={category.id} className="space-y-4">
+                        <h3 className="text-lg font-semibold border-b pb-2">{category.name}</h3>
+                        
+                        {questions
+                          .filter(q => q.categoryId === category.id && q.active)
+                          .sort((a, b) => a.order - b.order)
+                          .map(question => (
+                            <div key={question.id} className="space-y-2">
+                              <div className="flex items-center">
+                                <Label className="text-sm font-medium">{question.text}</Label>
+                                {question.required && (
+                                  <span className="text-red-500 ml-1">*</span>
+                                )}
+                              </div>
+                              
+                              {question.helpText && (
+                                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                              )}
+                              
+                              <DynamicFormField question={question} />
+                            </div>
+                          ))}
+                      </div>
+                    ))}
+                    
+                  <div className="pt-4">
+                    <Button className="w-full">Submit Registration</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
 
-      {/* Add Question Dialog */}
-      <Dialog open={isAddQuestionOpen} onOpenChange={setIsAddQuestionOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      {/* Category Dialogs */}
+      <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add Registration Question</DialogTitle>
+            <DialogTitle>Add Category</DialogTitle>
             <DialogDescription>
-              Create a new question for the registration process.
+              Create a new category for registration questions.
             </DialogDescription>
           </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(addNewQuestion)} className="space-y-6">
+          <Form {...categoryForm}>
+            <form onSubmit={categoryForm.handleSubmit(handleAddCategory)} className="space-y-4">
               <FormField
-                control={form.control}
-                name="questionText"
+                control={categoryForm.control}
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Question Text</FormLabel>
+                    <FormLabel>Category Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter question text" {...field} />
+                      <Input {...field} placeholder="Enter category name" />
                     </FormControl>
-                    <FormDescription>
-                      The text of the question as it will appear to users.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
-                control={form.control}
+                control={categoryForm.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Enter a description or hint for this question"
-                        {...field}
-                      />
+                      <Textarea {...field} placeholder="Enter description" />
                     </FormControl>
-                    <FormDescription>
-                      Additional information to help users understand what to input.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {QUESTION_CATEGORIES.map((category) => (
-                            <SelectItem key={category.value} value={category.value}>
-                              {category.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The category this question belongs to.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="step"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Registration Step</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a step" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {REGISTRATION_STEPS.map((step) => (
-                            <SelectItem key={step.value} value={step.value}>
-                              {step.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The registration step where this question will appear.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="profileField"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Profile Field</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a profile field" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {PROFILE_FIELDS.map((profileField) => (
-                            <SelectItem key={profileField.value} value={profileField.value}>
-                              {profileField.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The profile field this question data will be saved to.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="questionType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Question Type</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a question type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {QUESTION_TYPES.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The type of input for this question.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {['select', 'multiselect', 'radio', 'checkbox', 'scale'].includes(watchQuestionType) && (
-                <FormField
-                  control={form.control}
-                  name="options"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Options</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter options, separated by commas"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Comma-separated list of options for this question.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="required"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Required</FormLabel>
-                        <FormDescription>
-                          User must answer this question to proceed.
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="active"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Active</FormLabel>
-                        <FormDescription>
-                          Question is active and will be shown to users.
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="aiRecommended"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>AI Recommended</FormLabel>
-                        <FormDescription>
-                          This is an AI-recommended question.
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
               <FormField
-                control={form.control}
-                name="order"
+                control={categoryForm.control}
+                name="active"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Display Order</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="1"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Order in which the question appears in its step.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="conditionalQuestion"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Active</FormLabel>
+                      <FormDescription>
+                        Enable or disable this category
+                      </FormDescription>
+                    </div>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Conditional Question</FormLabel>
-                      <FormDescription>
-                        This question only appears based on an answer to another question.
-                      </FormDescription>
-                    </div>
                   </FormItem>
                 )}
               />
-
-              {watchConditionalQuestion && parentQuestions.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="parentQuestion"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Parent Question</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select parent question" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {parentQuestions.map((question) => (
-                              <SelectItem key={question.id} value={question.id}>
-                                {question.questionText}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          Question that controls whether this question appears.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="conditionalValue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Conditional Value</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Value that triggers this question" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Value from parent question that makes this question appear.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
-
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsAddQuestionOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Save Question</Button>
+                <Button type="submit">Add Category</Button>
               </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Question Dialog */}
-      <Dialog open={isEditQuestionOpen} onOpenChange={setIsEditQuestionOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Registration Question</DialogTitle>
+            <DialogTitle>Edit Category</DialogTitle>
             <DialogDescription>
-              Update the registration question.
+              Make changes to the selected category.
             </DialogDescription>
           </DialogHeader>
-          <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(updateQuestion)} className="space-y-6">
-              {/* Same form fields as Add Question Dialog */}
+          <Form {...categoryForm}>
+            <form onSubmit={categoryForm.handleSubmit(handleEditCategory)} className="space-y-4">
               <FormField
-                control={editForm.control}
-                name="questionText"
+                control={categoryForm.control}
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Question Text</FormLabel>
+                    <FormLabel>Category Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter question text" {...field} />
+                      <Input {...field} placeholder="Enter category name" />
                     </FormControl>
-                    <FormDescription>
-                      The text of the question as it will appear to users.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
-                control={editForm.control}
+                control={categoryForm.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Enter a description or hint for this question"
-                        {...field}
-                      />
+                      <Textarea {...field} placeholder="Enter description" />
                     </FormControl>
-                    <FormDescription>
-                      Additional information to help users understand what to input.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={editForm.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {QUESTION_CATEGORIES.map((category) => (
-                            <SelectItem key={category.value} value={category.value}>
-                              {category.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The category this question belongs to.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={editForm.control}
-                  name="step"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Registration Step</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a step" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {REGISTRATION_STEPS.map((step) => (
-                            <SelectItem key={step.value} value={step.value}>
-                              {step.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The registration step where this question will appear.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={editForm.control}
-                  name="profileField"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Profile Field</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a profile field" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {PROFILE_FIELDS.map((profileField) => (
-                            <SelectItem key={profileField.value} value={profileField.value}>
-                              {profileField.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The profile field this question data will be saved to.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={editForm.control}
-                  name="questionType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Question Type</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a question type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {QUESTION_TYPES.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        The type of input for this question.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {['select', 'multiselect', 'radio', 'checkbox', 'scale'].includes(editWatchQuestionType) && (
-                <FormField
-                  control={editForm.control}
-                  name="options"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Options</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter options, separated by commas"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Comma-separated list of options for this question.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={editForm.control}
-                  name="required"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Required</FormLabel>
-                        <FormDescription>
-                          User must answer this question to proceed.
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={editForm.control}
-                  name="active"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Active</FormLabel>
-                        <FormDescription>
-                          Question is active and will be shown to users.
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={editForm.control}
-                  name="aiRecommended"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>AI Recommended</FormLabel>
-                        <FormDescription>
-                          This is an AI-recommended question.
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
               <FormField
-                control={editForm.control}
-                name="order"
+                control={categoryForm.control}
+                name="active"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Display Order</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="1"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Order in which the question appears in its step.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={editForm.control}
-                name="conditionalQuestion"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Active</FormLabel>
+                      <FormDescription>
+                        Enable or disable this category
+                      </FormDescription>
+                    </div>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Conditional Question</FormLabel>
-                      <FormDescription>
-                        This question only appears based on an answer to another question.
-                      </FormDescription>
-                    </div>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">Update Category</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete Category</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this category? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground py-2">
+            All questions in this category will be permanently deleted.
+          </p>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteCategoryOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteCategory}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Question Dialogs */}
+      <Dialog open={isAddQuestionOpen} onOpenChange={setIsAddQuestionOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add Question</DialogTitle>
+            <DialogDescription>
+              Create a new registration question.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...questionForm}>
+            <form onSubmit={questionForm.handleSubmit(handleAddQuestion)} className="space-y-4">
+              <FormField
+                control={questionForm.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map(category => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={questionForm.control}
+                name="text"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Question Text</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter question text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={questionForm.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Question Type</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select question type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {questionTypes.map(type => (
+                            <SelectItem key={type.id} value={type.id}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {editWatchConditionalQuestion && parentQuestions.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={editForm.control}
-                    name="parentQuestion"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Parent Question</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select parent question" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {parentQuestions.map((question) => (
-                              <SelectItem key={question.id} value={question.id}>
-                                {question.questionText}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          Question that controls whether this question appears.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={editForm.control}
-                    name="conditionalValue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Conditional Value</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Value that triggers this question" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Value from parent question that makes this question appear.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              {questionForm.watch("type") && ["select", "multiselect", "radio", "checkbox", "imageSelect"].includes(questionForm.watch("type")) && (
+                <FormField
+                  control={questionForm.control}
+                  name="options"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Options</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Enter options separated by commas" />
+                      </FormControl>
+                      <FormDescription>
+                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
 
+              <FormField
+                control={questionForm.control}
+                name="placeholder"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Placeholder</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter placeholder text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={questionForm.control}
+                name="helpText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Help Text</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter help text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={questionForm.control}
+                name="validation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Validation Rules</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g., min:5,max:100" />
+                    </FormControl>
+                    <FormDescription>
+                      Enter validation rules in format: rule:value (e.g., min:5,max:100)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={questionForm.control}
+                  name="required"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                      <div className="space-y-0.5">
+                        <FormLabel>Required</FormLabel>
+                        <FormDescription>
+                          Is this question required?
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={questionForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                      <div className="space-y-0.5">
+                        <FormLabel>Active</FormLabel>
+                        <FormDescription>
+                          Enable or disable this question
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsEditQuestionOpen(false)}>
-                  Cancel
-                </Button>
+                <Button type="submit">Add Question</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditQuestionOpen} onOpenChange={setIsEditQuestionOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit Question</DialogTitle>
+            <DialogDescription>
+              Make changes to the selected question.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...questionForm}>
+            <form onSubmit={questionForm.handleSubmit(handleEditQuestion)} className="space-y-4">
+              <FormField
+                control={questionForm.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map(category => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={questionForm.control}
+                name="text"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Question Text</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter question text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={questionForm.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Question Type</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select question type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {questionTypes.map(type => (
+                            <SelectItem key={type.id} value={type.id}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {questionForm.watch("type") && ["select", "multiselect", "radio", "checkbox", "imageSelect"].includes(questionForm.watch("type")) && (
+                <FormField
+                  control={questionForm.control}
+                  name="options"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Options</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Enter options separated by commas" />
+                      </FormControl>
+                      <FormDescription>
+                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <FormField
+                control={questionForm.control}
+                name="placeholder"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Placeholder</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter placeholder text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={questionForm.control}
+                name="helpText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Help Text</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter help text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={questionForm.control}
+                name="validation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Validation Rules</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g., min:5,max:100" />
+                    </FormControl>
+                    <FormDescription>
+                      Enter validation rules in format: rule:value (e.g., min:5,max:100)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={questionForm.control}
+                  name="required"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                      <div className="space-y-0.5">
+                        <FormLabel>Required</FormLabel>
+                        <FormDescription>
+                          Is this question required?
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={questionForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                      <div className="space-y-0.5">
+                        <FormLabel>Active</FormLabel>
+                        <FormDescription>
+                          Enable or disable this question
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DialogFooter>
                 <Button type="submit">Update Question</Button>
               </DialogFooter>
             </form>
@@ -1876,161 +1339,26 @@ const RegistrationQuestionsPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-        <DialogContent className="max-w-md">
+      <Dialog open={isDeleteQuestionOpen} onOpenChange={setIsDeleteQuestionOpen}>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Delete Question</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete this question? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <div className="p-4 border rounded-md bg-muted/50 my-4">
-            <p className="font-medium">{selectedQuestion?.questionText}</p>
-            {selectedQuestion?.description && (
-              <p className="text-sm text-muted-foreground mt-1">{selectedQuestion.description}</p>
-            )}
-          </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteQuestionOpen(false)}
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={deleteQuestion}>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteQuestion}
+            >
               Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Preview Dialog */}
-      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Question Preview</DialogTitle>
-            <DialogDescription>
-              Preview how this question will appear to users during registration.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedQuestion && (
-            <div className="space-y-6">
-              <div className="p-6 border rounded-lg bg-card">
-                <h3 className="font-semibold text-lg mb-1">
-                  {selectedQuestion.questionText}
-                </h3>
-                {selectedQuestion.description && (
-                  <p className="text-muted-foreground mb-4">{selectedQuestion.description}</p>
-                )}
-                <div className="pt-2">
-                  {(() => {
-                    switch(selectedQuestion.questionType) {
-                      case 'text':
-                        return <Input placeholder="Enter your answer..." />;
-                      case 'textarea':
-                        return <Textarea placeholder="Enter your answer..." />;
-                      case 'select':
-                        return (
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select an option" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {selectedQuestion.options?.split(',').map((option, index) => (
-                                <SelectItem key={index} value={option.trim()}>
-                                  {option.trim()}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        );
-                      case 'radio':
-                        return (
-                          <div className="space-y-2">
-                            {selectedQuestion.options?.split(',').map((option, index) => (
-                              <div key={index} className="flex items-center space-x-2">
-                                <input type="radio" id={`option-${index}`} name="radio-group" />
-                                <Label htmlFor={`option-${index}`}>{option.trim()}</Label>
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      case 'checkbox':
-                        return (
-                          <div className="space-y-2">
-                            {selectedQuestion.options?.split(',').map((option, index) => (
-                              <div key={index} className="flex items-center space-x-2">
-                                <input type="checkbox" id={`checkbox-${index}`} />
-                                <Label htmlFor={`checkbox-${index}`}>{option.trim()}</Label>
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      default:
-                        return <div className="text-muted-foreground">Preview not available for this question type.</div>;
-                    }
-                  })()}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium mb-2">Question Settings</h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Category:</span>
-                      <span>{getCategoryLabel(selectedQuestion.category)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Registration Step:</span>
-                      <span>{getStepLabel(selectedQuestion.step)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Profile Field:</span>
-                      <span>{getFieldLabel(selectedQuestion.profileField)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Type:</span>
-                      <span>{getTypeLabel(selectedQuestion.questionType)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Required:</span>
-                      <span>{selectedQuestion.required ? 'Yes' : 'No'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Active:</span>
-                      <span>{selectedQuestion.active ? 'Yes' : 'No'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">AI Recommended:</span>
-                      <span>{selectedQuestion.aiRecommended ? 'Yes' : 'No'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Display Order:</span>
-                      <span>{selectedQuestion.order}</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">Conditional Logic</h4>
-                  {selectedQuestion.conditionalQuestion ? (
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Parent Question:</span>
-                        <span>{getParentQuestionLabel(selectedQuestion.parentQuestion || '')}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Conditional Value:</span>
-                        <span>{selectedQuestion.conditionalValue}</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">This question is not conditional.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button onClick={() => setIsPreviewOpen(false)}>
-              Close
             </Button>
           </DialogFooter>
         </DialogContent>
