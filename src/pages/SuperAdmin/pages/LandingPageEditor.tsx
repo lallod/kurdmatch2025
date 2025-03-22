@@ -1,6 +1,6 @@
 
-// Import with a different name to avoid circular reference
-import LandingPageEditorComponent from './LandingPageEditor/index';
+// Import the component with a different name to avoid circular reference
+import LandingPageEditorContent from './LandingPageEditor/index';
 
 // Export the component 
-export default LandingPageEditorComponent;
+export default LandingPageEditorContent;
