@@ -19,6 +19,8 @@ import ExportsPage from './pages/ExportsPage';
 import AuditLogsPage from './pages/AuditLogsPage';
 import RolesPage from './pages/RolesPage';
 import BulkActionsPage from './pages/BulkActionsPage';
+import SubscribersPage from './pages/SubscribersPage';
+import PaymentsPage from './pages/PaymentsPage';
 
 const SuperAdmin = () => {
   return (
@@ -41,6 +43,8 @@ const SuperAdmin = () => {
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/photos" element={<PhotosPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/subscribers" element={<SubscribersPage />} />
+        <Route path="/payments" element={<PaymentsPage />} />
       </Routes>
     </SuperAdminLayout>
   );

@@ -7,948 +7,1084 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+} from "@/components/ui/table";
 import { 
-  Search, Plus, Edit, Trash2, Save, X, FileUp, FileDown, 
-  AlertTriangle, CheckCircle, Filter, PlusCircle, Tag, User
-} from 'lucide-react';
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle,
+  CardFooter
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { 
   Dialog, 
   DialogContent, 
   DialogDescription, 
   DialogFooter, 
   DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog';
-import { 
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from "@/components/ui/form";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "sonner";
+import { 
+  Plus, 
+  Search, 
+  Edit, 
+  Trash2, 
+  MoveVertical,
+  CheckCircle,
+  XCircle,
+  ArrowUpDown,
+  Brain,
+  Tag
+} from "lucide-react";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Textarea } from "@/components/ui/textarea";
 
+// Interface for category
 interface Category {
   id: string;
   name: string;
-  type: string;
-  profileField: string;
-  usageCount: number;
-  isActive: boolean;
+  description: string;
+  slug: string;
+  order: number;
+  active: boolean;
+  itemCount: number;
   createdAt: string;
+  updatedAt: string;
 }
 
-// Comprehensive list of all profile fields based on the provided images
-const PROFILE_FIELDS = [
-  // Basic Info & Personal Details
-  { value: 'basics', label: 'Basics', group: 'Personal' },
-  { value: 'height', label: 'Height', group: 'Personal' },
-  { value: 'bodyType', label: 'Body Type', group: 'Personal' },
-  { value: 'ethnicity', label: 'Ethnicity', group: 'Personal' },
-  { value: 'education', label: 'Education', group: 'Personal' },
-  { value: 'occupation', label: 'Occupation', group: 'Personal' },
-  { value: 'company', label: 'Company', group: 'Personal' },
-  { value: 'zodiacSign', label: 'Zodiac Sign', group: 'Personal' },
-  { value: 'personalityType', label: 'Personality Type', group: 'Personal' },
-  
-  // Beliefs & Values
-  { value: 'religion', label: 'Religion', group: 'Beliefs' },
-  { value: 'politicalViews', label: 'Political Views', group: 'Beliefs' },
-  { value: 'values', label: 'Values', group: 'Beliefs' },
-  
-  // Lifestyle
-  { value: 'lifestyle', label: 'Lifestyle', group: 'Lifestyle' },
-  { value: 'drinking', label: 'Drinking', group: 'Lifestyle' },
-  { value: 'smoking', label: 'Smoking', group: 'Lifestyle' },
-  { value: 'exerciseHabits', label: 'Exercise Habits', group: 'Lifestyle' },
-  { value: 'sleepSchedule', label: 'Sleep Schedule', group: 'Lifestyle' },
-  { value: 'financialHabits', label: 'Financial Habits', group: 'Lifestyle' },
-  { value: 'weekendActivities', label: 'Weekend Activities', group: 'Lifestyle' },
-  { value: 'workLifeBalance', label: 'Work-Life Balance', group: 'Lifestyle' },
-  { value: 'dietaryPreferences', label: 'Dietary Preferences', group: 'Lifestyle' },
-  { value: 'morningRoutine', label: 'Morning Routine', group: 'Lifestyle' },
-  { value: 'eveningRoutine', label: 'Evening Routine', group: 'Lifestyle' },
-  
-  // Relationships
-  { value: 'relationships', label: 'Relationships', group: 'Relationships' },
-  { value: 'relationshipGoals', label: 'Relationship Goals', group: 'Relationships' },
-  { value: 'wantChildren', label: 'Want Children', group: 'Relationships' },
-  { value: 'childrenStatus', label: 'Children Status', group: 'Relationships' },
-  { value: 'familyCloseness', label: 'Family Closeness', group: 'Relationships' },
-  { value: 'friendshipStyle', label: 'Friendship Style', group: 'Relationships' },
-  { value: 'loveLanguage', label: 'Love Language', group: 'Relationships' },
-  { value: 'idealDate', label: 'Ideal Date', group: 'Relationships' },
-  { value: 'petPeeves', label: 'Pet Peeves', group: 'Relationships' },
-  { value: 'havePets', label: 'Have Pets', group: 'Relationships' },
-  
-  // Communication
-  { value: 'languages', label: 'Languages', group: 'Communication' },
-  { value: 'communicationStyle', label: 'Communication Style', group: 'Communication' },
-  { value: 'decisionMakingStyle', label: 'Decision Making Style', group: 'Communication' },
-  
-  // Interests & Hobbies
-  { value: 'interests', label: 'Interests', group: 'Interests' },
-  { value: 'hobbies', label: 'Hobbies', group: 'Interests' },
-  { value: 'creativePursuits', label: 'Creative Pursuits', group: 'Interests' },
-  { value: 'careerAmbitions', label: 'Career Ambitions', group: 'Interests' },
-  { value: 'musicInstruments', label: 'Music Instruments', group: 'Interests' },
-  { value: 'techSkills', label: 'Tech Skills', group: 'Interests' },
-  
-  // Favorites
-  { value: 'favoriteBooks', label: 'Favorite Books', group: 'Favorites' },
-  { value: 'favoriteMovies', label: 'Favorite Movies', group: 'Favorites' },
-  { value: 'favoriteMusic', label: 'Favorite Music', group: 'Favorites' },
-  { value: 'favoriteFoods', label: 'Favorite Foods', group: 'Favorites' },
-  { value: 'favoriteGames', label: 'Favorite Games', group: 'Favorites' },
-  { value: 'favoritePodcasts', label: 'Favorite Podcasts', group: 'Favorites' },
-  { value: 'favoriteSeason', label: 'Favorite Season', group: 'Favorites' },
-  { value: 'favoriteQuote', label: 'Favorite Quote', group: 'Favorites' },
-  { value: 'favoriteMemory', label: 'Favorite Memory', group: 'Favorites' },
-  
-  // Travel & Location
-  { value: 'travelFrequency', label: 'Travel Frequency', group: 'Travel' },
-  { value: 'dreamVacation', label: 'Dream Vacation', group: 'Travel' },
-  { value: 'transportationPreference', label: 'Transportation Preference', group: 'Travel' },
-  
-  // Growth & Development
-  { value: 'growthGoals', label: 'Growth Goals', group: 'Growth' },
-  { value: 'hiddenTalents', label: 'Hidden Talents', group: 'Growth' },
-  { value: 'stressRelievers', label: 'Stress Relievers', group: 'Growth' },
-  { value: 'charityInvolvement', label: 'Charity Involvement', group: 'Growth' },
-  
-  // Living Preferences
-  { value: 'dreamHome', label: 'Dream Home', group: 'Living' },
-  { value: 'workEnvironment', label: 'Work Environment', group: 'Living' },
-  { value: 'idealWeather', label: 'Ideal Weather', group: 'Living' }
+// Mock data for categories
+const initialCategories: Category[] = [
+  { 
+    id: 'cat-1', 
+    name: 'Basic Information', 
+    description: 'General user information like name, age, location', 
+    slug: 'basic-info', 
+    order: 1, 
+    active: true, 
+    itemCount: 8,
+    createdAt: '2023-01-15',
+    updatedAt: '2023-05-20'
+  },
+  { 
+    id: 'cat-2', 
+    name: 'Interests & Hobbies', 
+    description: 'User interests, hobbies, and activities', 
+    slug: 'interests', 
+    order: 2, 
+    active: true, 
+    itemCount: 12,
+    createdAt: '2023-01-15',
+    updatedAt: '2023-06-10'
+  },
+  { 
+    id: 'cat-3', 
+    name: 'Education & Career', 
+    description: 'Educational background and career information', 
+    slug: 'education-career', 
+    order: 3, 
+    active: true, 
+    itemCount: 5,
+    createdAt: '2023-01-16',
+    updatedAt: '2023-04-05'
+  },
+  { 
+    id: 'cat-4', 
+    name: 'Lifestyle', 
+    description: 'Lifestyle preferences and habits', 
+    slug: 'lifestyle', 
+    order: 4, 
+    active: true, 
+    itemCount: 10,
+    createdAt: '2023-01-18',
+    updatedAt: '2023-05-30'
+  },
+  { 
+    id: 'cat-5', 
+    name: 'Relationship Goals', 
+    description: 'Relationship preferences and expectations', 
+    slug: 'relationship-goals', 
+    order: 5, 
+    active: true, 
+    itemCount: 6,
+    createdAt: '2023-01-20',
+    updatedAt: '2023-03-15'
+  },
+  { 
+    id: 'cat-6', 
+    name: 'Physical Attributes', 
+    description: 'Physical characteristics and appearance', 
+    slug: 'physical-attributes', 
+    order: 6, 
+    active: false, 
+    itemCount: 7,
+    createdAt: '2023-02-05',
+    updatedAt: '2023-04-12'
+  },
+  { 
+    id: 'cat-7', 
+    name: 'Travel Experience', 
+    description: 'Travel history and preferences', 
+    slug: 'travel', 
+    order: 7, 
+    active: true, 
+    itemCount: 4,
+    createdAt: '2023-02-10',
+    updatedAt: '2023-06-01'
+  },
 ];
 
-const CATEGORY_TYPES = [
-  { value: 'basic', label: 'Basic Info' },
-  { value: 'interest', label: 'Interest' },
-  { value: 'lifestyle', label: 'Lifestyle' },
-  { value: 'hobby', label: 'Hobby' },
-  { value: 'relationship', label: 'Relationship' },
-  { value: 'value', label: 'Value' },
-  { value: 'preference', label: 'Preference' },
-  { value: 'skill', label: 'Skill' },
-  { value: 'trait', label: 'Personality Trait' },
-  { value: 'favorite', label: 'Favorite' },
-  { value: 'goal', label: 'Goal' },
-  { value: 'habit', label: 'Habit' }
+// Interface for item
+interface Item {
+  id: string;
+  categoryId: string;
+  name: string;
+  description: string;
+  type: string;
+  order: number;
+  active: boolean;
+  options?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Mock data for items
+const initialItems: Item[] = [
+  {
+    id: 'item-1',
+    categoryId: 'cat-1',
+    name: 'Name',
+    description: 'User\'s full name',
+    type: 'text',
+    order: 1,
+    active: true,
+    createdAt: '2023-01-15',
+    updatedAt: '2023-01-15'
+  },
+  {
+    id: 'item-2',
+    categoryId: 'cat-1',
+    name: 'Age',
+    description: 'User\'s age',
+    type: 'number',
+    order: 2,
+    active: true,
+    createdAt: '2023-01-15',
+    updatedAt: '2023-01-15'
+  },
+  {
+    id: 'item-3',
+    categoryId: 'cat-1',
+    name: 'Location',
+    description: 'User\'s current location',
+    type: 'text',
+    order: 3,
+    active: true,
+    createdAt: '2023-01-15',
+    updatedAt: '2023-04-10'
+  },
+  {
+    id: 'item-4',
+    categoryId: 'cat-2',
+    name: 'Hobbies',
+    description: 'User\'s hobbies and interests',
+    type: 'multi-select',
+    order: 1,
+    active: true,
+    options: ['Reading', 'Travel', 'Cooking', 'Sports', 'Music', 'Movies', 'Art', 'Photography', 'Gaming', 'Hiking'],
+    createdAt: '2023-01-15',
+    updatedAt: '2023-06-10'
+  },
+  {
+    id: 'item-5',
+    categoryId: 'cat-2',
+    name: 'Sports',
+    description: 'Sports the user enjoys',
+    type: 'multi-select',
+    order: 2,
+    active: true,
+    options: ['Football', 'Basketball', 'Tennis', 'Swimming', 'Yoga', 'Running', 'Cycling', 'Golf', 'Volleyball'],
+    createdAt: '2023-01-16',
+    updatedAt: '2023-05-15'
+  },
+  {
+    id: 'item-6',
+    categoryId: 'cat-3',
+    name: 'Education Level',
+    description: 'Highest level of education completed',
+    type: 'select',
+    order: 1,
+    active: true,
+    options: ['High School', 'Associate Degree', 'Bachelor\'s Degree', 'Master\'s Degree', 'PhD', 'Other'],
+    createdAt: '2023-01-16',
+    updatedAt: '2023-01-25'
+  },
+  {
+    id: 'item-7',
+    categoryId: 'cat-3',
+    name: 'Occupation',
+    description: 'Current occupation or profession',
+    type: 'text',
+    order: 2,
+    active: true,
+    createdAt: '2023-01-16',
+    updatedAt: '2023-04-05'
+  }
 ];
 
-const categorySchema = z.object({
-  name: z.string().min(2, {
-    message: "Category name must be at least 2 characters."
-  }).max(50, {
-    message: "Category name must not exceed 50 characters."
-  }),
-  type: z.string().min(1, {
-    message: "Category type is required."
-  }),
-  profileField: z.string().min(1, {
-    message: "Profile field is required."
-  }),
-  isActive: z.boolean().default(true)
+// Schema for category form
+const categoryFormSchema = z.object({
+  name: z.string().min(1, { message: "Category name is required" }),
+  description: z.string().optional(),
+  slug: z.string().min(1, { message: "Slug is required" }),
+  active: z.boolean().default(true),
 });
 
-type CategoryFormValues = z.infer<typeof categorySchema>;
+// Schema for item form
+const itemFormSchema = z.object({
+  name: z.string().min(1, { message: "Item name is required" }),
+  description: z.string().optional(),
+  type: z.string().min(1, { message: "Item type is required" }),
+  active: z.boolean().default(true),
+  options: z.string().optional(),
+});
 
 const CategoriesPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [filterField, setFilterField] = useState('all');
-  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
-  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [items, setItems] = useState<Item[]>(initialItems);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [editableCategories, setEditableCategories] = useState<{ [key: string]: boolean }>({});
-  const [isBulkActionOpen, setIsBulkActionOpen] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectAll, setSelectAll] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("categories");
+  const [sortBy, setSortBy] = useState<string>("order");
+  const [sortOrder, setSortOrder] = useState<string>("asc");
   
-  // Expanded initial categories data that covers all the profile sections shown in the images
-  const [categories, setCategories] = useState<Category[]>([
-    // Basics
-    {
-      id: '1',
-      name: 'Height (170 cm)',
-      type: 'basic',
-      profileField: 'height',
-      usageCount: 1845,
-      isActive: true,
-      createdAt: '2022-01-15'
-    },
-    {
-      id: '2',
-      name: 'Athletic',
-      type: 'basic',
-      profileField: 'bodyType',
-      usageCount: 1356,
-      isActive: true,
-      createdAt: '2022-01-16'
-    },
-    {
-      id: '3',
-      name: 'Mixed',
-      type: 'basic',
-      profileField: 'ethnicity',
-      usageCount: 987,
-      isActive: true,
-      createdAt: '2022-01-17'
-    },
-    // Interests & Hobbies
-    {
-      id: '4',
-      name: 'Hiking',
-      type: 'interest',
-      profileField: 'interests',
-      usageCount: 2456,
-      isActive: true,
-      createdAt: '2022-01-18'
-    },
-    {
-      id: '5',
-      name: 'Photography',
-      type: 'hobby',
-      profileField: 'hobbies',
-      usageCount: 1876,
-      isActive: true,
-      createdAt: '2022-01-19'
-    },
-    {
-      id: '6',
-      name: 'Cooking',
-      type: 'interest',
-      profileField: 'interests',
-      usageCount: 2134,
-      isActive: true,
-      createdAt: '2022-01-20'
-    },
-    // Values & Beliefs
-    {
-      id: '7',
-      name: 'Spiritual but not religious',
-      type: 'value',
-      profileField: 'religion',
-      usageCount: 765,
-      isActive: true,
-      createdAt: '2022-01-21'
-    },
-    {
-      id: '8',
-      name: 'Moderate',
-      type: 'value',
-      profileField: 'politicalViews',
-      usageCount: 653,
-      isActive: true,
-      createdAt: '2022-01-22'
-    },
-    // Lifestyle
-    {
-      id: '9',
-      name: 'Social drinker',
-      type: 'lifestyle',
-      profileField: 'drinking',
-      usageCount: 1432,
-      isActive: true,
-      createdAt: '2022-01-23'
-    },
-    {
-      id: '10',
-      name: 'Never',
-      type: 'lifestyle',
-      profileField: 'smoking',
-      usageCount: 1876,
-      isActive: true,
-      createdAt: '2022-01-24'
-    },
-    {
-      id: '11',
-      name: 'Regular - 4-5 times per week',
-      type: 'lifestyle',
-      profileField: 'exerciseHabits',
-      usageCount: 934,
-      isActive: true,
-      createdAt: '2022-01-25'
-    },
-    // Relationships
-    {
-      id: '12',
-      name: 'Looking for a serious relationship',
-      type: 'relationship',
-      profileField: 'relationshipGoals',
-      usageCount: 2345,
-      isActive: true,
-      createdAt: '2022-01-26'
-    },
-    {
-      id: '13',
-      name: 'Open to children',
-      type: 'relationship',
-      profileField: 'wantChildren',
-      usageCount: 1654,
-      isActive: true,
-      createdAt: '2022-01-27'
-    },
-    // Favorites
-    {
-      id: '14',
-      name: 'The Alchemist',
-      type: 'favorite',
-      profileField: 'favoriteBooks',
-      usageCount: 743,
-      isActive: true,
-      createdAt: '2022-01-28'
-    },
-    {
-      id: '15',
-      name: 'Japanese',
-      type: 'favorite',
-      profileField: 'favoriteFoods',
-      usageCount: 1231,
-      isActive: true,
-      createdAt: '2022-01-29'
-    }
-  ]);
+  // Dialog states
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState<boolean>(false);
+  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState<boolean>(false);
+  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState<boolean>(false);
+  
+  const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
+  const [isEditItemOpen, setIsEditItemOpen] = useState<boolean>(false);
+  const [isDeleteItemOpen, setIsDeleteItemOpen] = useState<boolean>(false);
 
-  const [editingValues, setEditingValues] = useState<{
-    [key: string]: { name: string; type: string; profileField: string; isActive: boolean }
-  }>({});
-
-  const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categorySchema),
+  // Category form
+  const categoryForm = useForm<z.infer<typeof categoryFormSchema>>({
+    resolver: zodResolver(categoryFormSchema),
     defaultValues: {
-      name: '',
-      type: '',
-      profileField: '',
-      isActive: true
-    }
+      name: "",
+      description: "",
+      slug: "",
+      active: true,
+    },
   });
 
-  const editForm = useForm<CategoryFormValues>({
-    resolver: zodResolver(categorySchema),
+  // Item form
+  const itemForm = useForm<z.infer<typeof itemFormSchema>>({
+    resolver: zodResolver(itemFormSchema),
     defaultValues: {
-      name: '',
-      type: '',
-      profileField: '',
-      isActive: true
-    }
+      name: "",
+      description: "",
+      type: "",
+      active: true,
+      options: "",
+    },
   });
 
+  // Filter categories based on search term and status
   const filteredCategories = categories.filter(category => {
     const matchesSearch = 
-      category.name.toLowerCase().includes(searchTerm.toLowerCase());
+      category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      category.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesType = 
-      filterType === 'all' || 
-      category.type === filterType;
+    const matchesStatus = 
+      statusFilter === 'all' || 
+      (statusFilter === 'active' && category.active) ||
+      (statusFilter === 'inactive' && !category.active);
     
-    const matchesField = 
-      filterField === 'all' || 
-      category.profileField === filterField;
-    
-    return matchesSearch && matchesType && matchesField;
+    return matchesSearch && matchesStatus;
   });
 
-  const toggleEditMode = (category: Category) => {
-    const newEditableCategories = { ...editableCategories };
+  // Sort categories
+  const sortedCategories = [...filteredCategories].sort((a, b) => {
+    let comparison = 0;
     
-    if (editableCategories[category.id]) {
-      const updatedCategories = categories.map(cat => {
-        if (cat.id === category.id && editingValues[category.id]) {
-          return {
-            ...cat,
-            name: editingValues[category.id].name,
-            type: editingValues[category.id].type,
-            profileField: editingValues[category.id].profileField,
-            isActive: editingValues[category.id].isActive
-          };
-        }
-        return cat;
-      });
-      
-      setCategories(updatedCategories);
-      newEditableCategories[category.id] = false;
-      toast.success(`Category "${category.name}" updated successfully`);
-    } else {
-      setEditingValues({
-        ...editingValues,
-        [category.id]: {
-          name: category.name,
-          type: category.type,
-          profileField: category.profileField,
-          isActive: category.isActive
-        }
-      });
-      newEditableCategories[category.id] = true;
+    switch (sortBy) {
+      case "name":
+        comparison = a.name.localeCompare(b.name);
+        break;
+      case "order":
+        comparison = a.order - b.order;
+        break;
+      case "itemCount":
+        comparison = a.itemCount - b.itemCount;
+        break;
+      case "updatedAt":
+        comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+        break;
+      default:
+        comparison = a.order - b.order;
     }
     
-    setEditableCategories(newEditableCategories);
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+
+  // Filter items based on selected category and search term
+  const filteredItems = items.filter(item => {
+    const matchesCategory = selectedCategory ? item.categoryId === selectedCategory.id : true;
+    
+    const matchesSearch = 
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
+
+  // Sort items
+  const sortedItems = [...filteredItems].sort((a, b) => a.order - b.order);
+
+  // Handle drag and drop for categories
+  const handleDragEndCategories = (result: any) => {
+    if (!result.destination) return;
+    
+    const items = Array.from(categories);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    // Update order property
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+    
+    setCategories(updatedItems);
+    toast.success("Categories reordered successfully");
   };
 
-  const cancelEdit = (categoryId: string) => {
-    const newEditableCategories = { ...editableCategories };
-    newEditableCategories[categoryId] = false;
-    setEditableCategories(newEditableCategories);
-  };
-
-  const handleEditChange = (
-    categoryId: string, 
-    field: 'name' | 'type' | 'profileField' | 'isActive', 
-    value: string | boolean
-  ) => {
-    setEditingValues({
-      ...editingValues,
-      [categoryId]: {
-        ...editingValues[categoryId],
-        [field]: value
-      }
+  // Handle drag and drop for items
+  const handleDragEndItems = (result: any) => {
+    if (!result.destination) return;
+    
+    const itemsCopy = Array.from(items);
+    const categoryItems = itemsCopy.filter(item => item.categoryId === selectedCategory?.id);
+    
+    const [reorderedItem] = categoryItems.splice(result.source.index, 1);
+    categoryItems.splice(result.destination.index, 0, reorderedItem);
+    
+    // Update order property for items within the category
+    const updatedCategoryItems = categoryItems.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+    
+    // Merge updated category items with other items
+    const updatedAllItems = itemsCopy.map(item => {
+      const updatedItem = updatedCategoryItems.find(i => i.id === item.id);
+      return updatedItem || item;
     });
+    
+    setItems(updatedAllItems);
+    toast.success("Items reordered successfully");
   };
 
-  const openEditDialog = (category: Category) => {
-    setSelectedCategory(category);
-    editForm.reset({
-      name: category.name,
-      type: category.type,
-      profileField: category.profileField,
-      isActive: category.isActive
-    });
-    setIsEditCategoryOpen(true);
+  // Handle sort
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
   };
 
-  const confirmDeleteCategory = (category: Category) => {
-    setSelectedCategory(category);
-    setIsDeleteConfirmOpen(true);
-  };
-
-  const addNewCategory = (data: CategoryFormValues) => {
+  // Add new category
+  const handleAddCategory = (data: z.infer<typeof categoryFormSchema>) => {
     const newCategory: Category = {
-      id: `${categories.length + 1}`,
+      id: `cat-${Date.now()}`,
       name: data.name,
-      type: data.type,
-      profileField: data.profileField,
-      usageCount: 0,
-      isActive: data.isActive,
-      createdAt: new Date().toISOString().split('T')[0]
+      description: data.description || "",
+      slug: data.slug,
+      order: categories.length + 1,
+      active: data.active,
+      itemCount: 0,
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0],
     };
     
     setCategories([...categories, newCategory]);
     setIsAddCategoryOpen(false);
-    form.reset();
-    toast.success(`Category "${data.name}" added successfully`);
+    categoryForm.reset();
+    toast.success("Category added successfully");
   };
 
-  const updateCategory = (data: CategoryFormValues) => {
+  // Edit category
+  const handleEditCategory = (data: z.infer<typeof categoryFormSchema>) => {
     if (!selectedCategory) return;
     
-    const updatedCategories = categories.map(category => {
-      if (category.id === selectedCategory.id) {
-        return {
-          ...category,
-          name: data.name,
-          type: data.type,
-          profileField: data.profileField,
-          isActive: data.isActive
-        };
-      }
-      return category;
-    });
+    const updatedCategories = categories.map(cat => 
+      cat.id === selectedCategory.id 
+        ? { 
+            ...cat, 
+            name: data.name, 
+            description: data.description || "", 
+            slug: data.slug,
+            active: data.active,
+            updatedAt: new Date().toISOString().split('T')[0],
+          } 
+        : cat
+    );
     
     setCategories(updatedCategories);
     setIsEditCategoryOpen(false);
-    toast.success(`Category "${data.name}" updated successfully`);
+    setSelectedCategory(null);
+    toast.success("Category updated successfully");
   };
 
-  const deleteCategory = () => {
+  // Delete category
+  const handleDeleteCategory = () => {
     if (!selectedCategory) return;
     
-    setCategories(categories.filter(category => category.id !== selectedCategory.id));
-    setIsDeleteConfirmOpen(false);
-    toast.success(`Category "${selectedCategory.name}" deleted successfully`);
-  };
-
-  const toggleCategorySelection = (categoryId: string) => {
-    if (selectedCategories.includes(categoryId)) {
-      setSelectedCategories(selectedCategories.filter(id => id !== categoryId));
-    } else {
-      setSelectedCategories([...selectedCategories, categoryId]);
-    }
-  };
-
-  const toggleSelectAll = () => {
-    if (selectAll) {
-      setSelectedCategories([]);
-    } else {
-      setSelectedCategories(filteredCategories.map(category => category.id));
-    }
-    setSelectAll(!selectAll);
-  };
-
-  const bulkDelete = () => {
-    setCategories(categories.filter(category => !selectedCategories.includes(category.id)));
-    setSelectedCategories([]);
-    setIsBulkActionOpen(false);
-    toast.success(`${selectedCategories.length} categories deleted successfully`);
-  };
-
-  const bulkToggleActive = (active: boolean) => {
-    const updatedCategories = categories.map(category => {
-      if (selectedCategories.includes(category.id)) {
-        return { ...category, isActive: active };
-      }
-      return category;
-    });
+    const updatedCategories = categories.filter(cat => cat.id !== selectedCategory.id);
+    
+    // Remove items in this category
+    const updatedItems = items.filter(item => item.categoryId !== selectedCategory.id);
     
     setCategories(updatedCategories);
-    setIsBulkActionOpen(false);
-    toast.success(`${selectedCategories.length} categories updated successfully`);
+    setItems(updatedItems);
+    setIsDeleteCategoryOpen(false);
+    setSelectedCategory(null);
+    toast.success("Category deleted successfully");
   };
 
-  const exportCategories = () => {
-    const dataToExport = filteredCategories.map(({ id, name, type, profileField, usageCount, isActive, createdAt }) => ({
-      id, name, type, profileField, usageCount, isActive, createdAt
-    }));
+  // Add new item
+  const handleAddItem = (data: z.infer<typeof itemFormSchema>) => {
+    if (!selectedCategory) return;
     
-    const jsonString = JSON.stringify(dataToExport, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const newItem: Item = {
+      id: `item-${Date.now()}`,
+      categoryId: selectedCategory.id,
+      name: data.name,
+      description: data.description || "",
+      type: data.type,
+      order: filteredItems.length + 1,
+      active: data.active,
+      options: data.options ? data.options.split(',').map(opt => opt.trim()) : undefined,
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0],
+    };
     
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'categories-export.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    setItems([...items, newItem]);
     
-    toast.success('Categories exported successfully');
+    // Update item count in the category
+    const updatedCategories = categories.map(cat => 
+      cat.id === selectedCategory.id 
+        ? { ...cat, itemCount: cat.itemCount + 1 } 
+        : cat
+    );
+    
+    setCategories(updatedCategories);
+    setIsAddItemOpen(false);
+    itemForm.reset();
+    toast.success("Item added successfully");
   };
 
-  const countCategoriesByType = () => {
-    const counts: Record<string, number> = { all: 0 };
+  // Edit item
+  const handleEditItem = (data: z.infer<typeof itemFormSchema>) => {
+    if (!selectedItem) return;
     
-    categories.forEach(category => {
-      counts.all += 1;
-      counts[category.type] = (counts[category.type] || 0) + 1;
+    const updatedItems = items.map(item => 
+      item.id === selectedItem.id 
+        ? { 
+            ...item, 
+            name: data.name, 
+            description: data.description || "", 
+            type: data.type,
+            active: data.active,
+            options: data.options ? data.options.split(',').map(opt => opt.trim()) : undefined,
+            updatedAt: new Date().toISOString().split('T')[0],
+          } 
+        : item
+    );
+    
+    setItems(updatedItems);
+    setIsEditItemOpen(false);
+    setSelectedItem(null);
+    toast.success("Item updated successfully");
+  };
+
+  // Delete item
+  const handleDeleteItem = () => {
+    if (!selectedItem) return;
+    
+    const updatedItems = items.filter(item => item.id !== selectedItem.id);
+    
+    // Update item count in the category
+    const updatedCategories = categories.map(cat => 
+      cat.id === selectedItem.categoryId 
+        ? { ...cat, itemCount: cat.itemCount - 1 } 
+        : cat
+    );
+    
+    setItems(updatedItems);
+    setCategories(updatedCategories);
+    setIsDeleteItemOpen(false);
+    setSelectedItem(null);
+    toast.success("Item deleted successfully");
+  };
+
+  // Open edit category dialog
+  const openEditCategoryDialog = (category: Category) => {
+    setSelectedCategory(category);
+    categoryForm.reset({
+      name: category.name,
+      description: category.description,
+      slug: category.slug,
+      active: category.active,
     });
-    
-    return counts;
+    setIsEditCategoryOpen(true);
   };
 
-  const countCategoriesByField = () => {
-    const counts: Record<string, number> = { all: 0 };
-    
-    categories.forEach(category => {
-      counts.all += 1;
-      counts[category.profileField] = (counts[category.profileField] || 0) + 1;
+  // Open edit item dialog
+  const openEditItemDialog = (item: Item) => {
+    setSelectedItem(item);
+    itemForm.reset({
+      name: item.name,
+      description: item.description,
+      type: item.type,
+      active: item.active,
+      options: item.options?.join(', '),
     });
-    
-    return counts;
-  };
-
-  const categoryCounts = countCategoriesByType();
-  const fieldCounts = countCategoriesByField();
-
-  const getProfileFieldLabel = (fieldValue: string) => {
-    const field = PROFILE_FIELDS.find(f => f.value === fieldValue);
-    return field ? field.label : fieldValue;
-  };
-
-  const getCategoryTypeLabel = (typeValue: string) => {
-    const type = CATEGORY_TYPES.find(t => t.value === typeValue);
-    return type ? type.label : typeValue.charAt(0).toUpperCase() + typeValue.slice(1);
-  };
-
-  const getProfileFieldGroup = (fieldValue: string) => {
-    const field = PROFILE_FIELDS.find(f => f.value === fieldValue);
-    return field ? field.group : 'Other';
+    setIsEditItemOpen(true);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Categories Management</h1>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={() => exportCategories()}
-          >
-            <FileDown size={16} />
-            Export
-          </Button>
-          <Button onClick={() => setIsAddCategoryOpen(true)} className="gap-2">
-            <Plus size={16} />
-            Add New Category
-          </Button>
+        <div>
+          <h1 className="text-3xl font-bold">Categories Management</h1>
+          <p className="text-muted-foreground">Manage profile categories and items</p>
+        </div>
+        <div className="flex space-x-2">
+          {activeTab === "categories" ? (
+            <Button onClick={() => setIsAddCategoryOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Category
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => setIsAddItemOpen(true)}
+              disabled={!selectedCategory}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Item
+            </Button>
+          )}
         </div>
       </div>
 
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search categories..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <div className="flex flex-col md:flex-row gap-2">
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types ({categoryCounts.all || 0})</SelectItem>
-                  {CATEGORY_TYPES.map(type => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label} ({categoryCounts[type.value] || 0})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Select value={filterField} onValueChange={setFilterField}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Filter by profile field" />
-                </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  <SelectItem value="all">All Fields ({fieldCounts.all || 0})</SelectItem>
-                  
-                  {/* Group the fields for better organization */}
-                  {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
-                    <React.Fragment key={group}>
-                      <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                        {group}
+      {/* AI banner */}
+      <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
+        <Brain size={24} className="text-tinder-rose mr-3" />
+        <div>
+          <h3 className="font-semibold text-gray-800">AI-Enhanced Categories</h3>
+          <p className="text-sm text-gray-600">Our AI system analyzes user engagement and suggests optimal category organization</p>
+        </div>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="categories">Categories</TabsTrigger>
+          <TabsTrigger value="items">Items</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="categories">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Profile Categories</CardTitle>
+                  <CardDescription>Manage and organize profile categories</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search categories..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={statusFilter === 'all' ? 'default' : 'outline'} 
+                    onClick={() => setStatusFilter('all')}
+                    className="w-24"
+                  >
+                    All
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'active' ? 'default' : 'outline'} 
+                    onClick={() => setStatusFilter('active')}
+                    className="w-24"
+                  >
+                    Active
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'inactive' ? 'default' : 'outline'} 
+                    onClick={() => setStatusFilter('inactive')}
+                    className="w-24"
+                  >
+                    Inactive
+                  </Button>
+                </div>
+              </div>
+
+              <DragDropContext onDragEnd={handleDragEndCategories}>
+                <Droppable droppableId="categories">
+                  {(provided) => (
+                    <div 
+                      {...provided.droppableProps} 
+                      ref={provided.innerRef}
+                    >
+                      <div className="rounded-md border overflow-hidden">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-10"></TableHead>
+                              <TableHead 
+                                className="cursor-pointer"
+                                onClick={() => handleSort("name")}
+                              >
+                                <div className="flex items-center">
+                                  Name
+                                  {sortBy === "name" && (
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                  )}
+                                </div>
+                              </TableHead>
+                              <TableHead>Description</TableHead>
+                              <TableHead className="cursor-pointer" onClick={() => handleSort("order")}>
+                                <div className="flex items-center">
+                                  Order
+                                  {sortBy === "order" && (
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                  )}
+                                </div>
+                              </TableHead>
+                              <TableHead className="cursor-pointer" onClick={() => handleSort("itemCount")}>
+                                <div className="flex items-center">
+                                  Items
+                                  {sortBy === "itemCount" && (
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                  )}
+                                </div>
+                              </TableHead>
+                              <TableHead>Status</TableHead>
+                              <TableHead className="cursor-pointer" onClick={() => handleSort("updatedAt")}>
+                                <div className="flex items-center">
+                                  Updated
+                                  {sortBy === "updatedAt" && (
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                  )}
+                                </div>
+                              </TableHead>
+                              <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {sortedCategories.length > 0 ? (
+                              sortedCategories.map((category, index) => (
+                                <Draggable
+                                  key={category.id}
+                                  draggableId={category.id}
+                                  index={index}
+                                >
+                                  {(provided) => (
+                                    <TableRow
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                    >
+                                      <TableCell>
+                                        <div {...provided.dragHandleProps} className="cursor-move">
+                                          <MoveVertical size={16} />
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="font-medium">
+                                        <div className="flex items-center">
+                                          <Tag className="h-4 w-4 text-tinder-rose mr-2" />
+                                          {category.name}
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <div className="max-w-[250px] truncate" title={category.description}>
+                                          {category.description}
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>{category.order}</TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline" className="bg-gray-100">
+                                          {category.itemCount}
+                                        </Badge>
+                                      </TableCell>
+                                      <TableCell>
+                                        {category.active ? (
+                                          <div className="flex items-center">
+                                            <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                                            <span className="text-sm text-green-600">Active</span>
+                                          </div>
+                                        ) : (
+                                          <div className="flex items-center">
+                                            <XCircle className="h-4 w-4 text-gray-400 mr-1" />
+                                            <span className="text-sm text-gray-500">Inactive</span>
+                                          </div>
+                                        )}
+                                      </TableCell>
+                                      <TableCell>{category.updatedAt}</TableCell>
+                                      <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => {
+                                              setSelectedCategory(category);
+                                              setActiveTab("items");
+                                            }}
+                                          >
+                                            View Items
+                                          </Button>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => openEditCategoryDialog(category)}
+                                          >
+                                            <Edit size={16} />
+                                          </Button>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                              setSelectedCategory(category);
+                                              setIsDeleteCategoryOpen(true);
+                                            }}
+                                          >
+                                            <Trash2 size={16} />
+                                          </Button>
+                                        </div>
+                                      </TableCell>
+                                    </TableRow>
+                                  )}
+                                </Draggable>
+                              ))
+                            ) : (
+                              <TableRow>
+                                <TableCell colSpan={8} className="text-center py-6">
+                                  No categories found
+                                </TableCell>
+                              </TableRow>
+                            )}
+                            {provided.placeholder}
+                          </TableBody>
+                        </Table>
                       </div>
-                      {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
-                        <SelectItem key={field.value} value={field.value}>
-                          {field.label} ({fieldCounts[field.value] || 0})
-                        </SelectItem>
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              {selectedCategories.length > 0 && (
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsBulkActionOpen(true)}
-                  className="gap-2"
-                >
-                  <Tag size={16} />
-                  Bulk Actions ({selectedCategories.length})
-                </Button>
-              )}
-            </div>
-          </div>
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </CardContent>
+            <CardFooter className="border-t pt-6">
+              <div className="flex justify-between items-center w-full">
+                <p className="text-sm text-muted-foreground">Total categories: {categories.length}</p>
+                <p className="text-sm text-muted-foreground">
+                  Active: {categories.filter(cat => cat.active).length} | 
+                  Inactive: {categories.filter(cat => !cat.active).length}
+                </p>
+              </div>
+            </CardFooter>
+          </Card>
+        </TabsContent>
 
-          <div className="rounded-md border overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px] text-center">
-                    <input 
-                      type="checkbox" 
-                      checked={selectAll}
-                      onChange={toggleSelectAll}
-                      className="rounded"
-                    />
-                  </TableHead>
-                  <TableHead className="w-[60px]">ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Profile Field</TableHead>
-                  <TableHead>Field Group</TableHead>
-                  <TableHead>Usage Count</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCategories.length > 0 ? (
-                  filteredCategories.map((category) => (
-                    <TableRow key={category.id}>
-                      <TableCell className="text-center">
-                        <input 
-                          type="checkbox" 
-                          checked={selectedCategories.includes(category.id)}
-                          onChange={() => toggleCategorySelection(category.id)}
-                          className="rounded"
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">{category.id}</TableCell>
-                      <TableCell>
-                        {editableCategories[category.id] ? (
-                          <Input
-                            value={editingValues[category.id]?.name || ''}
-                            onChange={(e) => handleEditChange(category.id, 'name', e.target.value)}
-                            className="h-8 py-1"
-                          />
-                        ) : (
-                          category.name
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {editableCategories[category.id] ? (
-                          <Select 
-                            value={editingValues[category.id]?.type} 
-                            onValueChange={(value) => handleEditChange(category.id, 'type', value)}
-                          >
-                            <SelectTrigger className="h-8 px-2 py-0">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {CATEGORY_TYPES.map(type => (
-                                <SelectItem key={type.value} value={type.value}>
-                                  {type.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Badge variant="outline" className="capitalize">
-                            {getCategoryTypeLabel(category.type)}
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {editableCategories[category.id] ? (
-                          <Select 
-                            value={editingValues[category.id]?.profileField} 
-                            onValueChange={(value) => handleEditChange(category.id, 'profileField', value)}
-                          >
-                            <SelectTrigger className="h-8 px-2 py-0">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-[200px]">
-                              {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
-                                <React.Fragment key={group}>
-                                  <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                                    {group}
-                                  </div>
-                                  {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
-                                    <SelectItem key={field.value} value={field.value}>
-                                      {field.label}
-                                    </SelectItem>
-                                  ))}
-                                </React.Fragment>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-                            <User size={12} className="mr-1" />
-                            {getProfileFieldLabel(category.profileField)}
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="bg-gray-50">
-                          {getProfileFieldGroup(category.profileField)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{category.usageCount}</TableCell>
-                      <TableCell>
-                        {editableCategories[category.id] ? (
-                          <div className="flex items-center">
-                            <Switch 
-                              checked={editingValues[category.id]?.isActive} 
-                              onCheckedChange={(checked) => handleEditChange(
-                                category.id, 
-                                'isActive', 
-                                checked
-                              )}
-                              className="h-5 w-9"
-                            />
-                          </div>
-                        ) : (
-                          <Badge className={`${
-                            category.isActive 
-                              ? 'bg-green-100 text-green-800 hover:bg-green-100' 
-                              : 'bg-red-100 text-red-800 hover:bg-red-100'
-                          }`}>
-                            {category.isActive ? 'Active' : 'Inactive'}
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>{category.createdAt}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          {editableCategories[category.id] ? (
-                            <>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => toggleEditMode(category)}
-                              >
-                                <Save size={16} />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => cancelEdit(category.id)}
-                              >
-                                <X size={16} />
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => openEditDialog(category)}
-                              >
-                                <Edit size={16} />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => confirmDeleteCategory(category)}
-                              >
-                                <Trash2 size={16} />
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={10} className="text-center py-6">
-                      No categories found
-                    </TableCell>
-                  </TableRow>
+        <TabsContent value="items">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>
+                    {selectedCategory ? `Items in ${selectedCategory.name}` : 'All Category Items'}
+                  </CardTitle>
+                  <CardDescription>
+                    {selectedCategory 
+                      ? `Manage items in the "${selectedCategory.name}" category` 
+                      : 'Select a category to manage its items'}
+                  </CardDescription>
+                </div>
+                {selectedCategory && (
+                  <Button variant="outline" onClick={() => setSelectedCategory(null)}>
+                    View All Categories
+                  </Button>
                 )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {!selectedCategory ? (
+                <div className="flex flex-col gap-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Search categories..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {categories.map(category => (
+                      <Card 
+                        key={category.id} 
+                        className={`cursor-pointer hover:border-tinder-rose/50 transition-colors ${
+                          !category.active ? 'opacity-60' : ''
+                        }`}
+                        onClick={() => setSelectedCategory(category)}
+                      >
+                        <CardHeader className="pb-3">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">{category.name}</CardTitle>
+                            <Badge variant="outline" className="bg-gray-100">
+                              {category.itemCount} items
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                            {category.description}
+                          </p>
+                          {category.active ? (
+                            <div className="flex items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                              <span className="text-xs text-green-600">Active</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center">
+                              <XCircle className="h-4 w-4 text-gray-400 mr-1" />
+                              <span className="text-xs text-gray-500">Inactive</span>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        placeholder="Search items..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
 
+                  <DragDropContext onDragEnd={handleDragEndItems}>
+                    <Droppable droppableId={`items-${selectedCategory.id}`}>
+                      {(provided) => (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                        >
+                          <div className="rounded-md border overflow-hidden">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="w-10"></TableHead>
+                                  <TableHead>Name</TableHead>
+                                  <TableHead>Description</TableHead>
+                                  <TableHead>Type</TableHead>
+                                  <TableHead>Status</TableHead>
+                                  <TableHead>Last Updated</TableHead>
+                                  <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {sortedItems.length > 0 ? (
+                                  sortedItems.map((item, index) => (
+                                    <Draggable
+                                      key={item.id}
+                                      draggableId={item.id}
+                                      index={index}
+                                    >
+                                      {(provided) => (
+                                        <TableRow
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                        >
+                                          <TableCell>
+                                            <div {...provided.dragHandleProps} className="cursor-move">
+                                              <MoveVertical size={16} />
+                                            </div>
+                                          </TableCell>
+                                          <TableCell className="font-medium">{item.name}</TableCell>
+                                          <TableCell>
+                                            <div className="max-w-[250px] truncate" title={item.description}>
+                                              {item.description}
+                                            </div>
+                                          </TableCell>
+                                          <TableCell>
+                                            <Badge variant="outline">{item.type}</Badge>
+                                          </TableCell>
+                                          <TableCell>
+                                            {item.active ? (
+                                              <div className="flex items-center">
+                                                <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                                                <span className="text-sm text-green-600">Active</span>
+                                              </div>
+                                            ) : (
+                                              <div className="flex items-center">
+                                                <XCircle className="h-4 w-4 text-gray-400 mr-1" />
+                                                <span className="text-sm text-gray-500">Inactive</span>
+                                              </div>
+                                            )}
+                                          </TableCell>
+                                          <TableCell>{item.updatedAt}</TableCell>
+                                          <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                              <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => openEditItemDialog(item)}
+                                              >
+                                                <Edit size={16} />
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                  setSelectedItem(item);
+                                                  setIsDeleteItemOpen(true);
+                                                }}
+                                              >
+                                                <Trash2 size={16} />
+                                              </Button>
+                                            </div>
+                                          </TableCell>
+                                        </TableRow>
+                                      )}
+                                    </Draggable>
+                                  ))
+                                ) : (
+                                  <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-6">
+                                      No items found in this category
+                                    </TableCell>
+                                  </TableRow>
+                                )}
+                                {provided.placeholder}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Category Dialogs */}
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add New Category</DialogTitle>
+            <DialogTitle>Add Category</DialogTitle>
             <DialogDescription>
-              Create a new category for users to select in their profiles.
+              Create a new profile category
             </DialogDescription>
           </DialogHeader>
-          
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(addNewCategory)} className="space-y-4">
+          <Form {...categoryForm}>
+            <form onSubmit={categoryForm.handleSubmit(handleAddCategory)} className="space-y-4">
               <FormField
-                control={form.control}
+                control={categoryForm.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Category Name</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter category name" 
-                        {...field} 
-                      />
+                      <Input {...field} placeholder="Enter category name" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
               <FormField
-                control={form.control}
-                name="type"
+                control={categoryForm.control}
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {CATEGORY_TYPES.map(type => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="Enter description" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
               <FormField
-                control={form.control}
-                name="profileField"
+                control={categoryForm.control}
+                name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Profile Field</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select profile field" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-[300px]">
-                        {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
-                          <React.Fragment key={group}>
-                            <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                              {group}
-                            </div>
-                            {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
-                              <SelectItem key={field.value} value={field.value}>
-                                {field.label}
-                              </SelectItem>
-                            ))}
-                          </React.Fragment>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter slug (e.g., basic-info)" />
+                    </FormControl>
                     <FormDescription>
-                      Select which profile section this category will appear in
+                      Used in URLs and as a unique identifier
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
               <FormField
-                control={form.control}
-                name="isActive"
+                control={categoryForm.control}
+                name="active"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel>Active Status</FormLabel>
+                      <FormLabel>Active</FormLabel>
                       <FormDescription>
-                        Set whether this category is active and visible to users
+                        Enable or disable this category
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -960,11 +1096,7 @@ const CategoriesPage = () => {
                   </FormItem>
                 )}
               />
-              
               <DialogFooter>
-                <Button variant="outline" type="button" onClick={() => setIsAddCategoryOpen(false)}>
-                  Cancel
-                </Button>
                 <Button type="submit">Add Category</Button>
               </DialogFooter>
             </form>
@@ -973,108 +1105,66 @@ const CategoriesPage = () => {
       </Dialog>
 
       <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit Category</DialogTitle>
             <DialogDescription>
-              Make changes to the category details.
+              Make changes to the selected category
             </DialogDescription>
           </DialogHeader>
-          
-          <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(updateCategory)} className="space-y-4">
+          <Form {...categoryForm}>
+            <form onSubmit={categoryForm.handleSubmit(handleEditCategory)} className="space-y-4">
               <FormField
-                control={editForm.control}
+                control={categoryForm.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Category Name</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter category name" 
-                        {...field} 
-                      />
+                      <Input {...field} placeholder="Enter category name" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
               <FormField
-                control={editForm.control}
-                name="type"
+                control={categoryForm.control}
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {CATEGORY_TYPES.map(type => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="Enter description" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
               <FormField
-                control={editForm.control}
-                name="profileField"
+                control={categoryForm.control}
+                name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Profile Field</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select profile field" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-[300px]">
-                        {Array.from(new Set(PROFILE_FIELDS.map(f => f.group))).map(group => (
-                          <React.Fragment key={group}>
-                            <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                              {group}
-                            </div>
-                            {PROFILE_FIELDS.filter(f => f.group === group).map(field => (
-                              <SelectItem key={field.value} value={field.value}>
-                                {field.label}
-                              </SelectItem>
-                            ))}
-                          </React.Fragment>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter slug (e.g., basic-info)" />
+                    </FormControl>
                     <FormDescription>
-                      Select which profile section this category will appear in
+                      Used in URLs and as a unique identifier
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
               <FormField
-                control={editForm.control}
-                name="isActive"
+                control={categoryForm.control}
+                name="active"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel>Active Status</FormLabel>
+                      <FormLabel>Active</FormLabel>
                       <FormDescription>
-                        Set whether this category is active and visible to users
+                        Enable or disable this category
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -1086,87 +1176,301 @@ const CategoriesPage = () => {
                   </FormItem>
                 )}
               />
-              
               <DialogFooter>
-                <Button variant="outline" type="button" onClick={() => setIsEditCategoryOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Save Changes</Button>
+                <Button type="submit">Update Category</Button>
               </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-        <DialogContent>
+      <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>Delete Category</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the category "{selectedCategory?.name}"? This action cannot be undone.
+              Are you sure you want to delete this category? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center p-4 my-4 text-sm text-amber-800 rounded-lg bg-amber-50">
-            <AlertTriangle className="w-5 h-5 mr-2" />
-            <p>This category is used in {selectedCategory?.usageCount} user profiles. Deleting it may affect their experience.</p>
+          <div className="py-4">
+            {selectedCategory && (
+              <div className="space-y-2">
+                <p><strong>Name:</strong> {selectedCategory.name}</p>
+                <p><strong>Items:</strong> {selectedCategory.itemCount}</p>
+                <p className="text-red-600 text-sm mt-4">
+                  All items in this category will also be deleted.
+                </p>
+              </div>
+            )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteCategoryOpen(false)}
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={deleteCategory}>
-              Delete
+            <Button
+              variant="destructive"
+              onClick={handleDeleteCategory}
+            >
+              Delete Category
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isBulkActionOpen} onOpenChange={setIsBulkActionOpen}>
-        <DialogContent>
+      {/* Item Dialogs */}
+      <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Bulk Actions</DialogTitle>
+            <DialogTitle>Add Item</DialogTitle>
             <DialogDescription>
-              Apply actions to {selectedCategories.length} selected categories.
+              {selectedCategory ? `Add a new item to the "${selectedCategory.name}" category` : 'Add a new item'}
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-            <div className="flex flex-col gap-4">
-              <h3 className="text-sm font-medium">Status Actions</h3>
-              <Button 
-                variant="outline" 
-                className="justify-start gap-2" 
-                onClick={() => bulkToggleActive(true)}
-              >
-                <CheckCircle size={16} />
-                Set All Active
-              </Button>
-              <Button 
-                variant="outline" 
-                className="justify-start gap-2" 
-                onClick={() => bulkToggleActive(false)}
-              >
-                <X size={16} />
-                Set All Inactive
-              </Button>
-            </div>
-            
-            <div className="flex flex-col gap-4">
-              <h3 className="text-sm font-medium">Danger Zone</h3>
-              <Button 
-                variant="destructive" 
-                className="justify-start gap-2" 
-                onClick={bulkDelete}
-              >
-                <Trash2 size={16} />
-                Delete Selected
-              </Button>
-            </div>
+          <Form {...itemForm}>
+            <form onSubmit={itemForm.handleSubmit(handleAddItem)} className="space-y-4">
+              <FormField
+                control={itemForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Item Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter item name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="Enter description" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Type</FormLabel>
+                    <FormControl>
+                      <select 
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        {...field}
+                      >
+                        <option value="">Select type</option>
+                        <option value="text">Text</option>
+                        <option value="textarea">Textarea</option>
+                        <option value="number">Number</option>
+                        <option value="select">Select (Dropdown)</option>
+                        <option value="multi-select">Multi-Select</option>
+                        <option value="checkbox">Checkbox</option>
+                        <option value="radio">Radio</option>
+                        <option value="date">Date</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {(itemForm.watch("type") === "select" || 
+                itemForm.watch("type") === "multi-select" || 
+                itemForm.watch("type") === "checkbox" || 
+                itemForm.watch("type") === "radio") && (
+                <FormField
+                  control={itemForm.control}
+                  name="options"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Options</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Enter options, separated by commas" />
+                      </FormControl>
+                      <FormDescription>
+                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              <FormField
+                control={itemForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Active</FormLabel>
+                      <FormDescription>
+                        Enable or disable this item
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">Add Item</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Item</DialogTitle>
+            <DialogDescription>
+              Make changes to the selected item
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...itemForm}>
+            <form onSubmit={itemForm.handleSubmit(handleEditItem)} className="space-y-4">
+              <FormField
+                control={itemForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Item Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter item name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="Enter description" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Type</FormLabel>
+                    <FormControl>
+                      <select 
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        {...field}
+                      >
+                        <option value="">Select type</option>
+                        <option value="text">Text</option>
+                        <option value="textarea">Textarea</option>
+                        <option value="number">Number</option>
+                        <option value="select">Select (Dropdown)</option>
+                        <option value="multi-select">Multi-Select</option>
+                        <option value="checkbox">Checkbox</option>
+                        <option value="radio">Radio</option>
+                        <option value="date">Date</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {(itemForm.watch("type") === "select" || 
+                itemForm.watch("type") === "multi-select" || 
+                itemForm.watch("type") === "checkbox" || 
+                itemForm.watch("type") === "radio") && (
+                <FormField
+                  control={itemForm.control}
+                  name="options"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Options</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Enter options, separated by commas" />
+                      </FormControl>
+                      <FormDescription>
+                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              <FormField
+                control={itemForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Active</FormLabel>
+                      <FormDescription>
+                        Enable or disable this item
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">Update Item</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteItemOpen} onOpenChange={setIsDeleteItemOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete Item</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this item? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {selectedItem && (
+              <div className="space-y-2">
+                <p><strong>Name:</strong> {selectedItem.name}</p>
+                <p><strong>Type:</strong> {selectedItem.type}</p>
+              </div>
+            )}
           </div>
-          
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsBulkActionOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteItemOpen(false)}
+            >
               Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteItem}
+            >
+              Delete Item
             </Button>
           </DialogFooter>
         </DialogContent>

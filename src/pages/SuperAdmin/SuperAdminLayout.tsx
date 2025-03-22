@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -23,7 +22,9 @@ import {
   Download,
   FileText,
   ShieldCheck,
-  UserCog
+  UserCog,
+  CreditCard,
+  Wallet
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -41,6 +42,8 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const menuItems = [
     { path: '/super-admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { path: '/super-admin/users', icon: <Users size={20} />, label: 'Users Management' },
+    { path: '/super-admin/subscribers', icon: <Zap size={20} />, label: 'Subscribers' },
+    { path: '/super-admin/payments', icon: <CreditCard size={20} />, label: 'Payments' },
     { path: '/super-admin/verification', icon: <UserCheck size={20} />, label: 'User Verification' },
     { path: '/super-admin/moderation', icon: <Flag size={20} />, label: 'Content Moderation' },
     { path: '/super-admin/analytics', icon: <BarChart size={20} />, label: 'Advanced Analytics' },
@@ -107,11 +110,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                       } ${collapsed ? 'justify-center' : 'px-3'}`
                     }
                   >
-                    <span className={`transition-colors duration-200 ${
-                      item.path === '/super-admin/registration-questions' 
-                        ? 'text-tinder-rose' 
-                        : ''
-                    }`}>
+                    <span className="transition-colors duration-200">
                       {item.icon}
                     </span>
                     {!collapsed && <span className="ml-3">{item.label}</span>}
