@@ -80,11 +80,6 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
       <div className="flex justify-between items-center">
         <label className="text-sm font-medium">
           {question.text}
-          {question.profileField && (
-            <span className="text-xs text-muted-foreground ml-2">
-              (maps to: {question.profileField})
-            </span>
-          )}
         </label>
         {renderBadges()}
       </div>
