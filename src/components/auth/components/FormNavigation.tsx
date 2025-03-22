@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CornerDownRight, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
 
 interface FormNavigationProps {
   currentStep: number;
@@ -11,51 +11,47 @@ interface FormNavigationProps {
   onNext: () => void;
 }
 
-const FormNavigation = ({ 
-  currentStep, 
-  totalSteps, 
-  isSubmitting, 
-  onPrevious, 
-  onNext 
+const FormNavigation = ({
+  currentStep,
+  totalSteps,
+  isSubmitting,
+  onPrevious,
+  onNext
 }: FormNavigationProps) => {
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === totalSteps - 1;
+
   return (
-    <div className="flex justify-between mt-6">
-      {currentStep > 0 ? (
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={onPrevious}
-          className="gap-2 text-purple-400 border-purple-800 hover:bg-purple-900/30"
-        >
-          Back
-        </Button>
-      ) : (
-        <div></div>
-      )}
-      
-      {currentStep < totalSteps - 1 ? (
-        <Button 
-          type="button" 
-          onClick={onNext}
-          className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
-        >
-          Next
-          <CornerDownRight size={16} />
-        </Button>
-      ) : (
+    <div className="flex justify-between pt-4">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onPrevious}
+        disabled={isFirstStep || isSubmitting}
+        className="flex items-center gap-2"
+      >
+        <ArrowLeft size={16} />
+        Previous
+      </Button>
+
+      {isLastStep ? (
         <Button 
           type="submit" 
           disabled={isSubmitting}
-          className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
+          className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Creating Account...
-            </>
-          ) : (
-            "Create Account"
-          )}
+          {isSubmitting ? 'Creating Account...' : 'Complete Registration'}
+          <Send size={16} />
+        </Button>
+      ) : (
+        <Button 
+          type="button" 
+          onClick={onNext}
+          disabled={isSubmitting}
+          className="flex items-center gap-2"
+        >
+          Next
+          <ArrowRight size={16} />
         </Button>
       )}
     </div>

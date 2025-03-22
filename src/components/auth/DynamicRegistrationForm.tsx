@@ -1,44 +1,48 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { createDynamicSchema } from './utils/formSchema';
 import StepIndicator from './components/StepIndicator';
 import FormNavigation from './components/FormNavigation';
 import FieldRenderer from './components/FieldRenderer';
+import { systemQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/systemQuestions';
+import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 
 const DynamicRegistrationForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [questions, setQuestions] = useState<QuestionItem[]>(initialQuestions);
+  
+  // Combine system questions with custom questions (in a real app, this would come from an API)
+  const [questions, setQuestions] = useState<QuestionItem[]>([...systemQuestions, ...initialQuestions]);
+  
+  // Filter only enabled questions
+  const enabledQuestions = questions.filter(q => q.enabled);
   
   // Group questions by registration step
   const steps = [
-    { name: 'Account', questions: questions.filter(q => q.enabled && q.registrationStep === 'Account') },
-    { name: 'Personal', questions: questions.filter(q => q.enabled && q.registrationStep === 'Personal') },
-    { name: 'Profile', questions: questions.filter(q => q.enabled && q.registrationStep === 'Profile') },
-    { name: 'Preferences', questions: questions.filter(q => q.enabled && q.registrationStep === 'Preferences') }
+    { name: 'Account', questions: enabledQuestions.filter(q => q.registrationStep === 'Account') },
+    { name: 'Personal', questions: enabledQuestions.filter(q => q.registrationStep === 'Personal') },
+    { name: 'Profile', questions: enabledQuestions.filter(q => q.registrationStep === 'Profile') },
+    { name: 'Preferences', questions: enabledQuestions.filter(q => q.registrationStep === 'Preferences') }
   ].filter(step => step.questions.length > 0);
   
   // Create dynamic schema
-  const dynamicSchema = createDynamicSchema(questions);
+  const dynamicSchema = createDynamicSchema(enabledQuestions);
   type FormValues = typeof dynamicSchema._type;
   
   // Get initial form values
   const getDefaultValues = () => {
     const defaults: Record<string, string> = {};
     
-    questions.forEach(q => {
-      if (q.enabled) {
-        // Skip AI-generated fields (like bio) in form values
-        if (q.profileField !== 'bio') {
-          defaults[q.id] = '';
-        }
+    enabledQuestions.forEach(q => {
+      // Skip AI-generated fields (like bio) in form values
+      if (q.profileField !== 'bio') {
+        defaults[q.id] = '';
       }
     });
     
@@ -55,28 +59,27 @@ const DynamicRegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Generate an AI bio for the user
-      const bioQuestion = questions.find(q => q.profileField === 'bio');
+      // Generate an AI bio for the user if bio question exists
+      const bioQuestion = enabledQuestions.find(q => q.profileField === 'bio');
       let processedData = { ...data };
       
       if (bioQuestion) {
         // In a real app, this would call an AI service to generate bio
-        // For now, simulate an AI-generated bio
-        const generatedBio = generateAIBio(data);
+        const generatedBio = generateAIBio(data, enabledQuestions);
         
         // Add the AI-generated bio to the form data
         processedData[bioQuestion.id] = generatedBio;
       }
       
       // In a real app, this would connect to an auth service
-      console.log('Registration form submitted with AI bio:', processedData);
+      console.log('Registration form submitted with data:', processedData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
         title: "Success!",
-        description: "Your account has been created successfully with an AI-generated bio.",
+        description: "Your account has been created successfully.",
       });
       
       // Would typically redirect to login page or dashboard
@@ -113,18 +116,22 @@ const DynamicRegistrationForm = () => {
   };
 
   // Simulate AI bio generation based on form data
-  const generateAIBio = (formData: Record<string, string>) => {
+  const generateAIBio = (formData: Record<string, string>, questions: QuestionItem[]) => {
     // Find questions for relevant fields to use in bio generation
     const firstNameQ = questions.find(q => q.profileField === 'firstName');
     const occupationQ = questions.find(q => q.profileField === 'occupation');
     const locationQ = questions.find(q => q.profileField === 'location');
+    const hobbiesQ = questions.find(q => q.profileField === 'exerciseHabits');
+    const relationshipGoalsQ = questions.find(q => q.profileField === 'relationshipGoals');
     
     // Get values if questions exist
     const firstName = firstNameQ ? formData[firstNameQ.id] || 'there' : 'there';
     const occupation = occupationQ ? formData[occupationQ.id] : '';
     const location = locationQ ? formData[locationQ.id] : '';
+    const hobbies = hobbiesQ ? formData[hobbiesQ.id] : '';
+    const relationshipGoals = relationshipGoalsQ ? formData[relationshipGoalsQ.id] : '';
     
-    // Generate a basic bio template
+    // Generate a more comprehensive bio template
     let bio = `Hi, I'm ${firstName}`;
     
     if (occupation) {
@@ -135,7 +142,17 @@ const DynamicRegistrationForm = () => {
       bio += ` based in ${location}`;
     }
     
-    bio += `. I'm excited to join this community and connect with like-minded people!`;
+    bio += `. `;
+    
+    if (hobbies) {
+      bio += `I enjoy ${hobbies}. `;
+    }
+    
+    if (relationshipGoals) {
+      bio += `I'm looking for ${relationshipGoals}. `;
+    }
+    
+    bio += `I'm excited to connect with like-minded people!`;
     
     return bio;
   };
@@ -149,7 +166,7 @@ const DynamicRegistrationForm = () => {
           setCurrentStep={setCurrentStep} 
         />
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           {steps[currentStep]?.questions.map((question) => (
             <FieldRenderer 
               key={question.id} 

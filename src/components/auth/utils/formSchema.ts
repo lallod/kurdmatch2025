@@ -28,13 +28,18 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
         } else {
           schemaObject[question.id] = z.string().email({ message: `Please enter a valid email address` }).optional();
         }
+      } else if (question.fieldType === 'multi-select') {
+        // Handle multi-select fields (they will be comma-separated strings in this implementation)
+        if (question.required) {
+          schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
+        } else {
+          schemaObject[question.id] = z.string().optional();
+        }
       } else if (question.required) {
         schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
       } else {
         schemaObject[question.id] = z.string().optional();
       }
-      
-      // Additional type-specific validation could be added here
     }
   });
   
