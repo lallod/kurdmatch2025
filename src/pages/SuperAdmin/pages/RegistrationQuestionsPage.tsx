@@ -326,6 +326,14 @@ const RegistrationQuestionsPage = () => {
     
     const newId = (Math.max(...questions.map(q => parseInt(q.id))) + 1).toString();
     
+    const registrationStep: 'Account' | 'Personal' | 'Profile' | 'Preferences' = 
+      (newQuestion.registrationStep === 'Account' || 
+       newQuestion.registrationStep === 'Personal' || 
+       newQuestion.registrationStep === 'Profile' || 
+       newQuestion.registrationStep === 'Preferences') 
+        ? newQuestion.registrationStep 
+        : 'Personal';
+    
     setQuestions(prev => [...prev, {
       id: newId,
       text: newQuestion.text!,
@@ -333,7 +341,7 @@ const RegistrationQuestionsPage = () => {
       fieldType: newQuestion.fieldType || 'text',
       required: newQuestion.required || false,
       enabled: newQuestion.enabled !== undefined ? newQuestion.enabled : true,
-      registrationStep: newQuestion.registrationStep || 'Personal',
+      registrationStep: registrationStep,
       displayOrder: newQuestion.displayOrder || prev.length + 1,
       placeholder: newQuestion.placeholder || '',
       fieldOptions: newQuestion.fieldOptions || [],
@@ -701,7 +709,9 @@ const RegistrationQuestionsPage = () => {
                   <Label htmlFor="edit-registration-step">Registration Step</Label>
                   <Select
                     value={editingQuestion.registrationStep}
-                    onValueChange={(value) => setEditingQuestion({...editingQuestion, registrationStep: value})}
+                    onValueChange={(value: 'Account' | 'Personal' | 'Profile' | 'Preferences') => 
+                      setEditingQuestion({...editingQuestion, registrationStep: value})
+                    }
                   >
                     <SelectTrigger id="edit-registration-step">
                       <SelectValue placeholder="Select registration step" />
@@ -884,7 +894,9 @@ const RegistrationQuestionsPage = () => {
                 <Label htmlFor="registration-step">Registration Step</Label>
                 <Select
                   value={newQuestion.registrationStep}
-                  onValueChange={(value) => setNewQuestion({...newQuestion, registrationStep: value})}
+                  onValueChange={(value: 'Account' | 'Personal' | 'Profile' | 'Preferences') => 
+                    setNewQuestion({...newQuestion, registrationStep: value})
+                  }
                 >
                   <SelectTrigger id="registration-step">
                     <SelectValue placeholder="Select registration step" />
