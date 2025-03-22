@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { 
@@ -68,7 +67,7 @@ const HeroSection: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="register" className="w-full">
+                <Tabs defaultValue="login" className="w-full">
                   <TabsList className="grid w-full grid-cols-2 bg-gray-900/50">
                     <TabsTrigger value="login" className="data-[state=active]:bg-purple-800/30">Login</TabsTrigger>
                     <TabsTrigger value="register" className="data-[state=active]:bg-purple-800/30">Register</TabsTrigger>
