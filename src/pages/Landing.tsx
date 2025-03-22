@@ -12,54 +12,102 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
-import RegistrationForm from '@/components/auth/RegistrationForm';
+import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
+import { Brain, Sparkles, Zap, Layers, Code, Robot } from 'lucide-react';
 
 const Landing = () => {
+  const [showAIAnimation, setShowAIAnimation] = useState(false);
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-black to-indigo-950">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-primary/10 to-background py-16">
-        <div className="container mx-auto px-4">
+      <div className="relative py-16 overflow-hidden">
+        {/* Abstract AI background elements */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-30">
+          <div className="absolute w-full h-full bg-grid-white/5"></div>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div 
+              key={i}
+              className="absolute rounded-full shimmer"
+              style={{
+                width: `${Math.random() * 500 + 300}px`,
+                height: `${Math.random() * 500 + 300}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                background: `radial-gradient(circle, rgba(139,92,246,0.3) 0%, rgba(30,27,75,0) 70%)`,
+                transform: `scale(${Math.random() * 0.5 + 0.5})`,
+              }}
+            ></div>
+          ))}
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1 space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-                Find Your Perfect Match
+            <div className="flex-1 space-y-8">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-900/30 border border-purple-700/30 text-sm text-purple-300 backdrop-blur-sm">
+                <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
+                <span>AI-Powered Matching Technology</span>
+              </div>
+              
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
+                Find Your
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 ml-2">Perfect Match</span>
               </h1>
-              <p className="text-xl text-muted-foreground">
-                Join our community and connect with like-minded individuals based on your preferences and interests.
+              
+              <p className="text-xl text-gray-300">
+                Our AI algorithm analyzes your unique preferences and personality 
+                to connect you with truly compatible partners.
               </p>
+              
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="w-full sm:w-auto">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0"
+                  onClick={() => setShowAIAnimation(true)}
+                >
+                  <Zap className="mr-2 h-5 w-5" />
                   Get Started
                 </Button>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="text-purple-300 border-purple-700/50 hover:bg-purple-900/20">
                   Learn More
                 </Button>
               </div>
+              
+              <div className="flex items-center space-x-4 text-sm text-gray-400">
+                <div className="flex -space-x-2">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 border-2 border-indigo-900"></div>
+                  ))}
+                </div>
+                <div>
+                  <span className="text-white font-semibold">10,000+</span> people joined this month
+                </div>
+              </div>
             </div>
+            
             <div className="flex-1 mt-8 md:mt-0">
-              <Card className="w-full max-w-md mx-auto">
-                <CardHeader>
-                  <CardTitle>Join Our Community</CardTitle>
-                  <CardDescription>
+              <Card className="w-full max-w-md mx-auto backdrop-blur-md bg-white/10 border-gray-800/50 shadow-xl neo-card">
+                <CardHeader className="space-y-1">
+                  <CardTitle className="text-2xl text-white">Join Our Community</CardTitle>
+                  <CardDescription className="text-gray-400">
                     Sign in to your account or create a new one
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Tabs defaultValue="login" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="login">Login</TabsTrigger>
-                      <TabsTrigger value="register">Register</TabsTrigger>
+                  <Tabs defaultValue="register" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 bg-gray-900/50">
+                      <TabsTrigger value="login" className="data-[state=active]:bg-purple-800/30">Login</TabsTrigger>
+                      <TabsTrigger value="register" className="data-[state=active]:bg-purple-800/30">Register</TabsTrigger>
                     </TabsList>
                     <TabsContent value="login">
                       <LoginForm />
                     </TabsContent>
                     <TabsContent value="register">
-                      <RegistrationForm />
+                      <DynamicRegistrationForm />
                     </TabsContent>
                   </Tabs>
                 </CardContent>
-                <CardFooter className="flex justify-center text-sm text-muted-foreground">
+                <CardFooter className="flex justify-center text-sm text-gray-500">
                   By continuing, you agree to our Terms of Service and Privacy Policy
                 </CardFooter>
               </Card>
@@ -69,61 +117,44 @@ const Landing = () => {
       </div>
 
       {/* Features Section */}
-      <div className="py-16 bg-background">
+      <div className="py-16 relative z-10 bg-indigo-950/80 backdrop-blur-lg border-t border-indigo-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-white">AI-Powered Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 text-center space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold">Smart Matching</h3>
-              <p className="text-muted-foreground">Our advanced algorithm helps you find your perfect match based on your interests and preferences.</p>
-            </div>
-            <div className="p-6 text-center space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 16V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold">Safe & Secure</h3>
-              <p className="text-muted-foreground">Your privacy is our priority. We ensure all your data is protected and secure.</p>
-            </div>
-            <div className="p-6 text-center space-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold">Vibrant Community</h3>
-              <p className="text-muted-foreground">Join thousands of active users and find meaningful connections.</p>
-            </div>
+            <FeatureCard 
+              icon={<Brain className="h-6 w-6" />}
+              title="Smart Matching"
+              description="Our advanced algorithm learns from your preferences to find ideal matches."
+            />
+            <FeatureCard 
+              icon={<Robot className="h-6 w-6" />}
+              title="AI Conversation Assistant"
+              description="Get personalized conversation starters based on shared interests."
+            />
+            <FeatureCard 
+              icon={<Layers className="h-6 w-6" />}
+              title="Deep Compatibility"
+              description="Multi-dimensional analysis ensures connections beyond superficial traits."
+            />
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="py-8 bg-muted mt-auto">
+      <footer className="py-8 bg-black/60 backdrop-blur-sm mt-auto border-t border-gray-800">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
-              <p className="text-sm text-muted-foreground">© 2023 Dating App. All rights reserved.</p>
+              <p className="text-sm text-gray-500">© 2023 AI Dating. All rights reserved.</p>
             </div>
             <div className="flex space-x-4">
-              <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/terms" className="text-sm text-gray-500 hover:text-purple-400 transition-colors">
                 Terms
               </Link>
-              <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/privacy" className="text-sm text-gray-500 hover:text-purple-400 transition-colors">
                 Privacy
               </Link>
-              <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/contact" className="text-sm text-gray-500 hover:text-purple-400 transition-colors">
                 Contact
               </Link>
             </div>
@@ -133,5 +164,16 @@ const Landing = () => {
     </div>
   );
 };
+
+// Feature card component for the features section
+const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
+  <div className="p-6 text-center space-y-4 rounded-xl bg-indigo-900/20 border border-indigo-800/30 hover:bg-indigo-800/30 transition-colors neo-border group">
+    <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-xl flex items-center justify-center text-purple-400 mx-auto group-hover:scale-110 transition-transform duration-300">
+      {icon}
+    </div>
+    <h3 className="text-xl font-semibold text-white">{title}</h3>
+    <p className="text-gray-400">{description}</p>
+  </div>
+);
 
 export default Landing;
