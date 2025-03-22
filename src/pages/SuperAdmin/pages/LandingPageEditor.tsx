@@ -55,6 +55,24 @@ const LandingPageEditor = () => {
     );
   }
 
+  // Ensure content is defined before rendering tabs
+  if (!content) {
+    return (
+      <Alert variant="destructive" className="mb-6">
+        <AlertCircle className="h-4 w-4 mr-2" />
+        <AlertTitle>Content data is missing</AlertTitle>
+        <AlertDescription className="mt-2">
+          The landing page content could not be loaded properly.
+          <div className="mt-4">
+            <Button onClick={() => setRetryCount(prev => prev + 1)}>
+              Retry
+            </Button>
+          </div>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <EditorHeader saving={saving} onSave={saveChanges} />
