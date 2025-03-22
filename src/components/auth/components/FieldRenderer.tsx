@@ -60,9 +60,6 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
     return (
       <div className="space-y-3">
         <div className="flex justify-between items-center">
-          <label className="text-sm font-medium">
-            {question.text}
-          </label>
           {renderBadges()}
         </div>
         <p className="text-xs text-muted-foreground">
@@ -76,9 +73,6 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <label className="text-sm font-medium">
-          {question.text}
-        </label>
         {renderBadges()}
       </div>
       
