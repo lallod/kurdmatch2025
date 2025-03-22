@@ -4,13 +4,16 @@ import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questio
 
 // Create a schema builder based on the questions
 export const createDynamicSchema = (questions: QuestionItem[]) => {
-  const schemaObject: Record<string, any> = {
-    // Add photos field validation
-    photos: z.array(z.string()).optional(),
-  };
+  const schemaObject: Record<string, any> = {};
   
   questions.forEach(question => {
     if (question.enabled) {
+      // Special handling for photos
+      if (question.profileField === 'photos') {
+        schemaObject[question.id] = z.array(z.string()).min(1, { message: 'Please upload at least one photo' });
+        return;
+      }
+      
       // Skip validation for AI-generated fields (like bio)
       if (question.profileField === 'bio') {
         // No validation required for AI-generated bio
