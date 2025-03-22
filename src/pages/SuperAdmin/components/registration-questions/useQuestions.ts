@@ -218,6 +218,11 @@ export const useQuestions = () => {
     return false;
   });
 
+  // Get count of questions per category
+  const getCategoryCount = (categoryName: string) => {
+    return questions.filter(q => q.category === categoryName).length;
+  };
+
   // Toggle selection of a question
   const toggleQuestionSelection = (id: string) => {
     setSelectedQuestions(prev => 
@@ -345,6 +350,7 @@ export const useQuestions = () => {
     handleBulkToggleEnabled,
     handleDeleteQuestion,
     handleUpdateQuestion,
-    handleAddQuestion
+    handleAddQuestion,
+    getCategoryCount
   };
 };

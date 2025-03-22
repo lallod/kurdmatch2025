@@ -10,16 +10,21 @@ import {
   Activity, 
   Scroll 
 } from 'lucide-react';
+import { useQuestions } from './useQuestions';
 
 interface CategoryItemProps {
   icon: React.ReactNode;
   name: string;
   count: number;
   color: string;
+  onClick: () => void;
 }
 
-const CategoryItem: React.FC<CategoryItemProps> = ({ icon, name, count, color }) => (
-  <div className="flex items-center p-2 rounded-lg hover:bg-secondary/50 cursor-pointer">
+const CategoryItem: React.FC<CategoryItemProps> = ({ icon, name, count, color, onClick }) => (
+  <div 
+    className="flex items-center p-2 rounded-lg hover:bg-secondary/50 cursor-pointer"
+    onClick={onClick}
+  >
     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${color}`}>
       {icon}
     </div>
@@ -33,51 +38,68 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ icon, name, count, color })
 );
 
 const QuestionCategoriesSection = () => {
-  // Sample category data
+  const { questions, setActiveTab } = useQuestions();
+  
+  // Get count of questions per category
+  const getCategoryCount = (categoryName: string) => {
+    return questions.filter(q => q.category === categoryName).length;
+  };
+
+  // Map category names to their icon, color, and tab value
   const categories = [
     { 
       icon: <User size={16} />, 
       name: 'Basics', 
-      count: 12, 
-      color: 'bg-blue-100 text-blue-700' 
+      count: getCategoryCount('Basics'), 
+      color: 'bg-blue-100 text-blue-700',
+      tabValue: 'basic'
     },
     { 
       icon: <Heart size={16} />, 
       name: 'Relationships', 
-      count: 8, 
-      color: 'bg-red-100 text-red-700' 
+      count: getCategoryCount('Relationships'), 
+      color: 'bg-red-100 text-red-700',
+      tabValue: 'relationships'
     },
     { 
       icon: <Coffee size={16} />, 
       name: 'Lifestyle', 
-      count: 10, 
-      color: 'bg-amber-100 text-amber-700' 
+      count: getCategoryCount('Lifestyle'), 
+      color: 'bg-amber-100 text-amber-700',
+      tabValue: 'lifestyle'
     },
     { 
       icon: <Scroll size={16} />, 
       name: 'Beliefs', 
-      count: 6, 
-      color: 'bg-purple-100 text-purple-700' 
+      count: getCategoryCount('Beliefs'), 
+      color: 'bg-purple-100 text-purple-700',
+      tabValue: 'beliefs'
     },
     { 
       icon: <Brain size={16} />, 
       name: 'Personality', 
-      count: 5, 
-      color: 'bg-indigo-100 text-indigo-700' 
+      count: getCategoryCount('Personality'), 
+      color: 'bg-indigo-100 text-indigo-700',
+      tabValue: 'personality'
     },
     { 
       icon: <Star size={16} />, 
       name: 'Interests', 
-      count: 9, 
-      color: 'bg-green-100 text-green-700' 
+      count: getCategoryCount('Interests'), 
+      color: 'bg-green-100 text-green-700',
+      tabValue: 'interests'
     },
     { 
       icon: <Activity size={16} />, 
       name: 'Physical', 
-      count: 4, 
-      color: 'bg-orange-100 text-orange-700' 
+      count: getCategoryCount('Physical'), 
+      color: 'bg-orange-100 text-orange-700',
+      tabValue: 'physical'
     },
   ];
+
+  // Total questions count
+  const totalQuestions = questions.length;
 
   return (
     <Card>
@@ -85,6 +107,18 @@ const QuestionCategoriesSection = () => {
         <CardTitle>Question Categories</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
+        <div 
+          className="flex items-center p-2 rounded-lg hover:bg-secondary/50 cursor-pointer mb-2 border-b pb-3"
+          onClick={() => setActiveTab('all')}
+        >
+          <div className="ml-1 flex-1">
+            <p className="text-sm font-medium">All Questions</p>
+          </div>
+          <div className="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center">
+            <span className="text-xs">{totalQuestions}</span>
+          </div>
+        </div>
+
         {categories.map((category, index) => (
           <CategoryItem
             key={index}
@@ -92,6 +126,7 @@ const QuestionCategoriesSection = () => {
             name={category.name}
             count={category.count}
             color={category.color}
+            onClick={() => setActiveTab(category.tabValue)}
           />
         ))}
       </CardContent>
