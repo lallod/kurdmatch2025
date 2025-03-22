@@ -7,6 +7,7 @@ import UsersPage from './pages/UsersPage';
 import CategoriesPage from './pages/CategoriesPage';
 import MessagesPage from './pages/MessagesPage';
 import PhotosPage from './pages/PhotosPage';
+import SettingsPage from './pages/SettingsPage';
 
 const SuperAdmin = () => {
   return (
@@ -17,6 +18,7 @@ const SuperAdmin = () => {
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/photos" element={<PhotosPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </SuperAdminLayout>
   );

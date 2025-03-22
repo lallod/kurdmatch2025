@@ -10,20 +10,8 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { 
-  Search, 
-  Filter, 
-  Users, 
-  Eye, 
-  Trash2, 
-  Edit, 
-  UserPlus,
-  Ban,
-  Star,
-  UserCheck,
-  Mail 
-} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Search, Filter, Edit, Trash2, Eye, Download, UserPlus, MoreHorizontal, Ban } from 'lucide-react';
 import { 
   Pagination, 
   PaginationContent, 
@@ -32,350 +20,489 @@ import {
   PaginationNext, 
   PaginationPrevious
 } from '@/components/ui/pagination';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from '@/components/ui/dialog';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 
 interface User {
   id: string;
   name: string;
   email: string;
-  registeredDate: string;
-  status: 'active' | 'inactive' | 'banned';
-  role: 'user' | 'premium' | 'moderator';
+  role: string;
+  status: string;
+  location: string;
+  joinDate: string;
   lastActive: string;
-  photosCount: number;
+  photoCount: number;
+  messageCount: number;
 }
 
 const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [userDetailMode, setUserDetailMode] = useState<'view' | 'edit'>('view');
   
   // Mock user data - in a real app, this would come from an API
   const mockUsers: User[] = [
     {
-      id: '1',
-      name: 'Sarah Johnson',
-      email: 'sarah.j@example.com',
-      registeredDate: '2023-01-15',
+      id: '001',
+      name: 'Emma Johnson',
+      email: 'emma.johnson@example.com',
+      role: 'user',
       status: 'active',
+      location: 'New York, USA',
+      joinDate: '2023-01-15',
+      lastActive: '2023-05-18 09:32',
+      photoCount: 12,
+      messageCount: 68
+    },
+    {
+      id: '002',
+      name: 'James Smith',
+      email: 'james.smith@example.com',
       role: 'premium',
-      lastActive: '2023-05-15 14:30',
-      photosCount: 12
-    },
-    {
-      id: '2',
-      name: 'David Wilson',
-      email: 'david.w@example.com',
-      registeredDate: '2023-02-22',
       status: 'active',
-      role: 'user',
-      lastActive: '2023-05-14 09:15',
-      photosCount: 5
+      location: 'London, UK',
+      joinDate: '2022-11-23',
+      lastActive: '2023-05-17 15:47',
+      photoCount: 24,
+      messageCount: 129
     },
     {
-      id: '3',
-      name: 'Lisa Anderson',
-      email: 'lisa.a@example.com',
-      registeredDate: '2023-03-10',
-      status: 'inactive',
-      role: 'user',
-      lastActive: '2023-04-30 18:45',
-      photosCount: 3
-    },
-    {
-      id: '4',
-      name: 'Michael Smith',
-      email: 'michael.s@example.com',
-      registeredDate: '2023-01-05',
-      status: 'banned',
-      role: 'user',
-      lastActive: '2023-03-12 11:20',
-      photosCount: 0
-    },
-    {
-      id: '5',
-      name: 'Emily Brown',
-      email: 'emily.b@example.com',
-      registeredDate: '2023-04-18',
-      status: 'active',
+      id: '003',
+      name: 'Sophia Martinez',
+      email: 'sophia.martinez@example.com',
       role: 'moderator',
-      lastActive: '2023-05-11 16:05',
-      photosCount: 8
+      status: 'active',
+      location: 'Barcelona, Spain',
+      joinDate: '2022-08-05',
+      lastActive: '2023-05-18 11:20',
+      photoCount: 8,
+      messageCount: 215
+    },
+    {
+      id: '004',
+      name: 'Robert Wilson',
+      email: 'robert.wilson@example.com',
+      role: 'user',
+      status: 'inactive',
+      location: 'Sydney, Australia',
+      joinDate: '2023-02-28',
+      lastActive: '2023-04-30 16:05',
+      photoCount: 5,
+      messageCount: 27
+    },
+    {
+      id: '005',
+      name: 'Olivia Brown',
+      email: 'olivia.brown@example.com',
+      role: 'premium',
+      status: 'suspended',
+      location: 'Toronto, Canada',
+      joinDate: '2022-07-14',
+      lastActive: '2023-05-10 08:15',
+      photoCount: 18,
+      messageCount: 93
+    },
+    {
+      id: '006',
+      name: 'Daniel Lee',
+      email: 'daniel.lee@example.com',
+      role: 'admin',
+      status: 'active',
+      location: 'Seoul, South Korea',
+      joinDate: '2022-05-30',
+      lastActive: '2023-05-18 10:45',
+      photoCount: 15,
+      messageCount: 187
+    },
+    {
+      id: '007',
+      name: 'Charlotte Garcia',
+      email: 'charlotte.garcia@example.com',
+      role: 'user',
+      status: 'active',
+      location: 'Paris, France',
+      joinDate: '2023-03-12',
+      lastActive: '2023-05-17 22:30',
+      photoCount: 7,
+      messageCount: 45
     }
   ];
 
-  // Apply filters
-  let filteredUsers = mockUsers;
-  
-  // Filter by search term
-  if (searchTerm) {
-    filteredUsers = filteredUsers.filter(user =>
+  const filteredUsers = mockUsers.filter(user => {
+    // Apply search filter
+    const matchesSearch = 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
-  
-  // Filter by tab
-  if (activeTab === "active") {
-    filteredUsers = filteredUsers.filter(user => user.status === 'active');
-  } else if (activeTab === "inactive") {
-    filteredUsers = filteredUsers.filter(user => user.status === 'inactive');
-  } else if (activeTab === "banned") {
-    filteredUsers = filteredUsers.filter(user => user.status === 'banned');
-  }
-  
-  // Filter by status
-  if (statusFilter !== "all") {
-    filteredUsers = filteredUsers.filter(user => user.status === statusFilter);
-  }
-  
-  // Filter by role
-  if (roleFilter !== "all") {
-    filteredUsers = filteredUsers.filter(user => user.role === roleFilter);
-  }
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.location.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Apply status filter
+    const matchesStatus = 
+      statusFilter === 'all' || 
+      user.status === statusFilter;
+    
+    // Apply role filter
+    const matchesRole = 
+      roleFilter === 'all' || 
+      user.role === roleFilter;
+    
+    return matchesSearch && matchesStatus && matchesRole;
+  });
 
-  const handleViewUser = (id: string) => {
-    console.log(`Viewing user with ID: ${id}`);
-    // In a real app, you would navigate to a user detail page
-  };
-
-  const handleEditUser = (id: string) => {
-    console.log(`Editing user with ID: ${id}`);
-    // In a real app, you would open a dialog or navigate to an edit page
-  };
-
-  const handleDeleteUser = (id: string) => {
-    console.log(`Deleting user with ID: ${id}`);
-    // In a real app, you would show a confirmation dialog and send a delete request
-  };
-
-  const handleBanUser = (id: string) => {
-    console.log(`Banning user with ID: ${id}`);
-    // In a real app, you would update the user's status
-  };
-
-  const handleUpgradeUser = (id: string) => {
-    console.log(`Upgrading user with ID: ${id}`);
-    // In a real app, you would change the user's role
-  };
-
-  const handleMessageUser = (id: string) => {
-    console.log(`Sending message to user with ID: ${id}`);
-    // In a real app, you would open a message composer
-  };
-
-  const getStatusColor = (status: User['status']) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
       case 'inactive':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'banned':
-        return 'bg-red-100 text-red-800';
+        return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">Inactive</Badge>;
+      case 'suspended':
+        return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Suspended</Badge>;
       default:
-        return 'bg-gray-100 text-gray-800';
+        return <Badge>{status}</Badge>;
     }
   };
 
-  const getRoleColor = (role: User['role']) => {
+  const getRoleBadge = (role: string) => {
     switch (role) {
-      case 'premium':
-        return 'bg-purple-100 text-purple-800';
+      case 'admin':
+        return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">Admin</Badge>;
       case 'moderator':
-        return 'bg-blue-100 text-blue-800';
+        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Moderator</Badge>;
+      case 'premium':
+        return <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Premium</Badge>;
+      case 'user':
+        return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">User</Badge>;
       default:
-        return 'bg-gray-100 text-gray-800';
+        return <Badge>{role}</Badge>;
     }
+  };
+
+  const viewUser = (user: User) => {
+    setSelectedUser(user);
+    setUserDetailMode('view');
+  };
+
+  const editUser = (user: User) => {
+    setSelectedUser(user);
+    setUserDetailMode('edit');
+  };
+
+  const closeDialog = () => {
+    setSelectedUser(null);
+  };
+
+  const exportUsers = () => {
+    console.log('Exporting users...');
+    // In a real app, this would trigger a download of user data
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Users Management</h1>
-        <Button className="gap-2">
-          <UserPlus size={16} />
-          Add New User
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportUsers} className="gap-2">
+            <Download size={16} />
+            Export
+          </Button>
+          <Button className="gap-2">
+            <UserPlus size={16} />
+            Add User
+          </Button>
+        </div>
       </div>
 
-      <Card className="p-4">
-        <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="all">All Users</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="inactive">Inactive</TabsTrigger>
-            <TabsTrigger value="banned">Banned</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search by name or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search by name, email, or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="moderator">Moderator</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <Dialog open={filterDialogOpen} onOpenChange={setFilterDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Filter size={16} />
-                Filters
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Filter Users</DialogTitle>
-                <DialogDescription>
-                  Set filters to narrow down your user list
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Filter by status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="banned">Banned</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Select value={roleFilter} onValueChange={setRoleFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Filter by role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Roles</SelectItem>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="premium">Premium</SelectItem>
-                      <SelectItem value="moderator">Moderator</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={() => setFilterDialogOpen(false)}>Apply Filters</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
 
-        <div className="rounded-md border overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Registered</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Last Active</TableHead>
-                <TableHead>Photos</TableHead>
-                <TableHead className="w-32">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.id}</TableCell>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.registeredDate}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
-                        {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
-                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                      </span>
-                    </TableCell>
-                    <TableCell>{user.lastActive}</TableCell>
-                    <TableCell>{user.photosCount}</TableCell>
-                    <TableCell>
-                      <div className="flex space-x-1">
-                        <Button variant="ghost" size="icon" onClick={() => handleViewUser(user.id)} title="View User">
-                          <Eye size={16} />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleEditUser(user.id)} title="Edit User">
-                          <Edit size={16} />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleBanUser(user.id)} title="Ban User">
-                          <Ban size={16} />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleUpgradeUser(user.id)} title="Upgrade User">
-                          <Star size={16} />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleMessageUser(user.id)} title="Message User">
-                          <Mail size={16} />
-                        </Button>
-                      </div>
+          <div className="rounded-md border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[80px]">ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Join Date</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.id}</TableCell>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{getRoleBadge(user.role)}</TableCell>
+                      <TableCell>{getStatusBadge(user.status)}</TableCell>
+                      <TableCell>{user.location}</TableCell>
+                      <TableCell>{user.joinDate}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal size={16} />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => viewUser(user)}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => editUser(user)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit User
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600">
+                              <Ban className="mr-2 h-4 w-4" />
+                              Suspend User
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-600">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete User
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-6">
+                      No users found
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={9} className="text-center py-4">
-                    No users found matching your criteria
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-        <div className="mt-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">2</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">3</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+          <div className="mt-4">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious href="#" />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#" isActive>1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">2</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext href="#" />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </CardContent>
       </Card>
+
+      {/* User Detail Dialog */}
+      <Dialog open={!!selectedUser} onOpenChange={closeDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {userDetailMode === 'view' ? 'User Details' : 'Edit User'}
+            </DialogTitle>
+            <DialogDescription>
+              {userDetailMode === 'view' 
+                ? 'View complete information about this user.' 
+                : 'Make changes to the user profile.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedUser && (
+            <>
+              {userDetailMode === 'view' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Basic Information</h3>
+                      <div className="grid grid-cols-3 gap-4 mt-2">
+                        <div className="text-sm font-medium">Name:</div>
+                        <div className="col-span-2 text-sm">{selectedUser.name}</div>
+                        
+                        <div className="text-sm font-medium">Email:</div>
+                        <div className="col-span-2 text-sm">{selectedUser.email}</div>
+                        
+                        <div className="text-sm font-medium">Role:</div>
+                        <div className="col-span-2 text-sm">{getRoleBadge(selectedUser.role)}</div>
+                        
+                        <div className="text-sm font-medium">Status:</div>
+                        <div className="col-span-2 text-sm">{getStatusBadge(selectedUser.status)}</div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Location Information</h3>
+                      <div className="grid grid-cols-3 gap-4 mt-2">
+                        <div className="text-sm font-medium">Location:</div>
+                        <div className="col-span-2 text-sm">{selectedUser.location}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Account Information</h3>
+                      <div className="grid grid-cols-3 gap-4 mt-2">
+                        <div className="text-sm font-medium">Join Date:</div>
+                        <div className="col-span-2 text-sm">{selectedUser.joinDate}</div>
+                        
+                        <div className="text-sm font-medium">Last Active:</div>
+                        <div className="col-span-2 text-sm">{selectedUser.lastActive}</div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Activity Statistics</h3>
+                      <div className="grid grid-cols-3 gap-4 mt-2">
+                        <div className="text-sm font-medium">Photos:</div>
+                        <div className="col-span-2 text-sm">{selectedUser.photoCount}</div>
+                        
+                        <div className="text-sm font-medium">Messages:</div>
+                        <div className="col-span-2 text-sm">{selectedUser.messageCount}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" defaultValue={selectedUser.name} />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" defaultValue={selectedUser.email} />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="role">Role</Label>
+                        <Select defaultValue={selectedUser.role}>
+                          <SelectTrigger id="role">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="user">User</SelectItem>
+                            <SelectItem value="premium">Premium</SelectItem>
+                            <SelectItem value="moderator">Moderator</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="status">Status</Label>
+                        <Select defaultValue={selectedUser.status}>
+                          <SelectTrigger id="status">
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                            <SelectItem value="suspended">Suspended</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="location">Location</Label>
+                        <Input id="location" defaultValue={selectedUser.location} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <DialogFooter>
+                {userDetailMode === 'view' ? (
+                  <>
+                    <Button variant="outline" onClick={closeDialog}>Close</Button>
+                    <Button onClick={() => setUserDetailMode('edit')}>Edit User</Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" onClick={() => setUserDetailMode('view')}>Cancel</Button>
+                    <Button>Save Changes</Button>
+                  </>
+                )}
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

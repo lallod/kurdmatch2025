@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { 
   Users, 
@@ -13,13 +13,26 @@ import {
   Eye, 
   Clock, 
   UserPlus,
-  Mail
+  Mail,
+  Calendar,
+  Filter,
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Dashboard = () => {
+  const [timeRange, setTimeRange] = useState('month');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    // Simulate data reload
+    setTimeout(() => setRefreshing(false), 1000);
+  };
+
   // Mock data - in a real app, these would come from API calls
   const stats = [
     { 
@@ -84,12 +97,45 @@ const Dashboard = () => {
     profile_update: <Users size={16} className="text-gray-500" />,
   };
 
+  const engagementData = [
+    { name: 'Mon', likes: 120, views: 240, matches: 20 },
+    { name: 'Tue', likes: 150, views: 290, matches: 30 },
+    { name: 'Wed', likes: 180, views: 320, matches: 25 },
+    { name: 'Thu', likes: 130, views: 270, matches: 22 },
+    { name: 'Fri', likes: 190, views: 350, matches: 35 },
+    { name: 'Sat', likes: 210, views: 380, matches: 40 },
+    { name: 'Sun', likes: 170, views: 320, matches: 32 },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <div className="text-sm text-gray-500">
-          Last updated: {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Calendar size={16} />
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select time range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day">Last 24 hours</SelectItem>
+                <SelectItem value="week">Last 7 days</SelectItem>
+                <SelectItem value="month">Last 30 days</SelectItem>
+                <SelectItem value="year">Last year</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleRefresh} 
+            disabled={refreshing}
+            className="gap-2"
+          >
+            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </Button>
         </div>
       </div>
 
@@ -111,69 +157,113 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>User Activity Trends</CardTitle>
-            <CardDescription>Daily active users and conversations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart
-                data={userActivityData}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="users"
-                  stroke="#8884d8"
-                  activeDot={{ r: 8 }}
-                />
-                <Line type="monotone" dataKey="conversations" stroke="#82ca9d" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Activity Tabs */}
+      <Tabs defaultValue="users" className="w-full">
+        <TabsList className="grid grid-cols-3 w-[400px] mb-4">
+          <TabsTrigger value="users">User Activity</TabsTrigger>
+          <TabsTrigger value="engagement">Engagement</TabsTrigger>
+          <TabsTrigger value="distribution">Distribution</TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>User Distribution</CardTitle>
-            <CardDescription>Breakdown of user types</CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={userRoleData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
+        {/* User Activity Tab */}
+        <TabsContent value="users" className="grid grid-cols-1 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Activity Trends</CardTitle>
+              <CardDescription>Daily active users and conversations</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart
+                  data={userActivityData}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
                 >
-                  {userRoleData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="users"
+                    stroke="#8884d8"
+                    activeDot={{ r: 8 }}
+                  />
+                  <Line type="monotone" dataKey="conversations" stroke="#82ca9d" />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Engagement Tab */}
+        <TabsContent value="engagement">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Engagement Metrics</CardTitle>
+              <CardDescription>Likes, views, and matches over time</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={engagementData}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="likes" fill="#8884d8" />
+                  <Bar dataKey="views" fill="#82ca9d" />
+                  <Bar dataKey="matches" fill="#ffc658" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Distribution Tab */}
+        <TabsContent value="distribution">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Distribution</CardTitle>
+              <CardDescription>Breakdown of user types</CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={userRoleData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {userRoleData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Recent Activity */}
