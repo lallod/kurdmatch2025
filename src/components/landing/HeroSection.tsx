@@ -52,17 +52,6 @@ const HeroSection: React.FC = () => {
               The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan 
               and the diaspora, bringing together singles who share our rich heritage and values.
             </p>
-            
-            <div className="flex items-center space-x-4 text-sm text-gray-400">
-              <div className="flex -space-x-2">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 border-2 border-indigo-900"></div>
-                ))}
-              </div>
-              <div>
-                <span className="text-white font-semibold">10,000+</span> Kurdish singles have already joined
-              </div>
-            </div>
           </div>
           
           <div className="flex-1 mt-8 md:mt-0">
@@ -91,6 +80,18 @@ const HeroSection: React.FC = () => {
                 By continuing, you agree to our Terms of Service and Privacy Policy
               </CardFooter>
             </Card>
+            
+            {/* User statistics - moved after registration form */}
+            <div className="flex items-center space-x-4 text-sm text-gray-400 mt-4 justify-center">
+              <div className="flex -space-x-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 border-2 border-indigo-900"></div>
+                ))}
+              </div>
+              <div>
+                <span className="text-white font-semibold">10,000+</span> Kurdish singles have already joined
+              </div>
+            </div>
           </div>
         </div>
       </div>
