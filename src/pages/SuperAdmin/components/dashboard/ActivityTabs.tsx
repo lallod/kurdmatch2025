@@ -8,7 +8,7 @@ import UserDistributionChart from './UserDistributionChart';
 const ActivityTabs = () => {
   return (
     <Tabs defaultValue="users" className="w-full">
-      <TabsList className="grid grid-cols-3 w-[400px] mb-4">
+      <TabsList className="w-full sm:w-auto mb-4 grid grid-cols-3 sm:inline-flex">
         <TabsTrigger value="users">User Activity</TabsTrigger>
         <TabsTrigger value="engagement">Engagement</TabsTrigger>
         <TabsTrigger value="distribution">Distribution</TabsTrigger>

@@ -14,25 +14,29 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
       title: 'Total Users', 
       value: '12,345', 
       change: '+12% from last month', 
-      icon: <Users className="h-6 w-6 text-blue-500" /> 
+      icon: <Users className="h-6 w-6 text-blue-500" />,
+      trend: 'positive' as const
     },
     { 
       title: 'Active Conversations', 
       value: '843', 
       change: '+5% from last week', 
-      icon: <MessageSquare className="h-6 w-6 text-green-500" /> 
+      icon: <MessageSquare className="h-6 w-6 text-green-500" />,
+      trend: 'positive' as const
     },
     { 
       title: 'Photos Uploaded', 
       value: '32,567', 
       change: '+8% from last month', 
-      icon: <ImageIcon className="h-6 w-6 text-purple-500" /> 
+      icon: <ImageIcon className="h-6 w-6 text-purple-500" />,
+      trend: 'positive' as const
     },
     { 
       title: 'User Activity', 
       value: '7,891', 
-      change: '+15% from yesterday', 
-      icon: <Activity className="h-6 w-6 text-orange-500" /> 
+      change: '-3% from yesterday', 
+      icon: <Activity className="h-6 w-6 text-orange-500" />,
+      trend: 'negative' as const
     },
   ];
 
@@ -45,6 +49,7 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
           value={stat.value}
           change={stat.change}
           icon={stat.icon}
+          trend={stat.trend}
         />
       ))}
     </div>
