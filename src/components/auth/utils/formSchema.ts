@@ -8,6 +8,12 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
   
   questions.forEach(question => {
     if (question.enabled) {
+      // Skip validation for AI-generated fields (like bio)
+      if (question.profileField === 'bio') {
+        // No validation required for AI-generated bio
+        return;
+      }
+      
       // Add appropriate validation based on field type and required status
       if (question.fieldType === 'date') {
         if (question.required) {

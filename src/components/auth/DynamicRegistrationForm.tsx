@@ -29,14 +29,25 @@ const DynamicRegistrationForm = () => {
   const dynamicSchema = createDynamicSchema(questions);
   type FormValues = typeof dynamicSchema._type;
   
+  // Get initial form values
+  const getDefaultValues = () => {
+    const defaults: Record<string, string> = {};
+    
+    questions.forEach(q => {
+      if (q.enabled) {
+        // Skip AI-generated fields (like bio) in form values
+        if (q.profileField !== 'bio') {
+          defaults[q.id] = '';
+        }
+      }
+    });
+    
+    return defaults;
+  };
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(dynamicSchema),
-    defaultValues: questions.reduce((acc, q) => {
-      if (q.enabled) {
-        acc[q.id] = '';
-      }
-      return acc;
-    }, {} as Record<string, string>),
+    defaultValues: getDefaultValues(),
     mode: 'onChange',
   });
 
@@ -44,15 +55,28 @@ const DynamicRegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
+      // Generate an AI bio for the user
+      const bioQuestion = questions.find(q => q.profileField === 'bio');
+      let processedData = { ...data };
+      
+      if (bioQuestion) {
+        // In a real app, this would call an AI service to generate bio
+        // For now, simulate an AI-generated bio
+        const generatedBio = generateAIBio(data);
+        
+        // Add the AI-generated bio to the form data
+        processedData[bioQuestion.id] = generatedBio;
+      }
+      
       // In a real app, this would connect to an auth service
-      console.log('Registration form submitted:', data);
+      console.log('Registration form submitted with AI bio:', processedData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
         title: "Success!",
-        description: "Your account has been created successfully.",
+        description: "Your account has been created successfully with an AI-generated bio.",
       });
       
       // Would typically redirect to login page or dashboard
@@ -69,8 +93,10 @@ const DynamicRegistrationForm = () => {
   };
 
   const nextStep = async () => {
-    // Get field names for the current step
-    const currentFields = steps[currentStep].questions.map(q => q.id);
+    // Get field names for the current step (excluding AI-generated fields)
+    const currentFields = steps[currentStep].questions
+      .filter(q => q.profileField !== 'bio')
+      .map(q => q.id);
     
     // Validate only the fields in the current step
     const isValid = await form.trigger(currentFields as any);
@@ -84,6 +110,34 @@ const DynamicRegistrationForm = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
+  };
+
+  // Simulate AI bio generation based on form data
+  const generateAIBio = (formData: Record<string, string>) => {
+    // Find questions for relevant fields to use in bio generation
+    const firstNameQ = questions.find(q => q.profileField === 'firstName');
+    const occupationQ = questions.find(q => q.profileField === 'occupation');
+    const locationQ = questions.find(q => q.profileField === 'location');
+    
+    // Get values if questions exist
+    const firstName = firstNameQ ? formData[firstNameQ.id] || 'there' : 'there';
+    const occupation = occupationQ ? formData[occupationQ.id] : '';
+    const location = locationQ ? formData[locationQ.id] : '';
+    
+    // Generate a basic bio template
+    let bio = `Hi, I'm ${firstName}`;
+    
+    if (occupation) {
+      bio += `, working as a ${occupation}`;
+    }
+    
+    if (location) {
+      bio += ` based in ${location}`;
+    }
+    
+    bio += `. I'm excited to join this community and connect with like-minded people!`;
+    
+    return bio;
   };
 
   return (

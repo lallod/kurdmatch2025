@@ -123,7 +123,7 @@ export const systemQuestions: QuestionItem[] = [
     enabled: true,
     registrationStep: 'Profile',
     displayOrder: 2,
-    placeholder: 'Tell us a bit about yourself...',
+    placeholder: 'AI will generate your bio automatically',
     fieldOptions: [],
     profileField: 'bio',
     isSystemField: true
