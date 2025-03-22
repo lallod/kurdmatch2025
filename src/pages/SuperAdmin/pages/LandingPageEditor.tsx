@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -15,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Save, PenLine, Globe, ListChecks, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Json } from '@/integrations/supabase/types';
 
 // Define types for our landing page content
 interface HeroContent {
@@ -224,11 +224,14 @@ const LandingPageEditor = () => {
     setSaving(true);
     
     try {
+      // Cast the content to Json type as expected by Supabase
+      const contentAsJson = content as unknown as Json;
+      
       const { error } = await supabase
         .from('landing_page_content')
         .upsert({ 
           id: 1, // Using a fixed ID since we only have one record for landing page
-          content: content,
+          content: contentAsJson,
           updated_at: new Date().toISOString()
         });
       
