@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
@@ -23,11 +22,19 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
   const renderBadges = () => {
     const badges = [];
     
-    // System field badge
+    // System field badge (takes precedence over regular required badge)
     if (question.isSystemField) {
       badges.push(
         <Badge key="system" variant="outline" className="flex items-center gap-1 bg-blue-900/30 text-blue-300 border-blue-700/30">
           <Lock size={12} />
+          Required
+        </Badge>
+      );
+    }
+    // Only show regular required badge if not a system field
+    else if (question.required) {
+      badges.push(
+        <Badge key="required" variant="outline" className="bg-amber-900/30 text-amber-300 border-amber-700/30">
           Required
         </Badge>
       );
@@ -39,15 +46,6 @@ const FieldRenderer = ({ question, form }: FieldRendererProps) => {
         <Badge key="ai" variant="outline" className="flex items-center gap-1 bg-purple-900/30 text-purple-300 border-purple-700/30">
           <Bot size={12} />
           AI-Generated
-        </Badge>
-      );
-    }
-    
-    // Required badge
-    if (question.required && !question.isSystemField) {
-      badges.push(
-        <Badge key="required" variant="outline" className="bg-amber-900/30 text-amber-300 border-amber-700/30">
-          Required
         </Badge>
       );
     }
