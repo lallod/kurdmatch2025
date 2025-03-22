@@ -15,7 +15,8 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
         } else {
           schemaObject[question.id] = z.string().optional();
         }
-      } else if (question.fieldType === 'email' || question.profileField === 'email') {
+      } else if (question.profileField === 'email') {
+        // Check profileField instead of fieldType for email fields
         if (question.required) {
           schemaObject[question.id] = z.string().email({ message: `Please enter a valid email address` });
         } else {
