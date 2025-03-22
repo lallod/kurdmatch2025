@@ -2,9 +2,19 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Facebook, Mail } from 'lucide-react';
+import { Facebook, Mail, Loader2 } from 'lucide-react';
 
-const SocialLogin = () => {
+// This would typically come from a centralized config or API
+const ENABLED_PROVIDERS = {
+  facebook: true,
+  gmail: true
+};
+
+interface SocialLoginProps {
+  isLoading?: boolean;
+}
+
+const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
   const { toast } = useToast();
 
   const handleSocialLogin = (provider: string) => {
@@ -16,6 +26,10 @@ const SocialLogin = () => {
       description: `${provider} login will be available soon.`,
     });
   };
+
+  if (!ENABLED_PROVIDERS.facebook && !ENABLED_PROVIDERS.gmail) {
+    return null;
+  }
 
   return (
     <div className="space-y-3">
@@ -31,22 +45,37 @@ const SocialLogin = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Button 
-          variant="outline" 
-          className="bg-white/5 hover:bg-white/10 border-gray-600/50"
-          onClick={() => handleSocialLogin('Facebook')}
-        >
-          <Facebook className="mr-2 h-4 w-4 text-blue-500" />
-          Facebook
-        </Button>
-        <Button 
-          variant="outline" 
-          className="bg-white/5 hover:bg-white/10 border-gray-600/50"
-          onClick={() => handleSocialLogin('Gmail')}
-        >
-          <Mail className="mr-2 h-4 w-4 text-red-500" />
-          Gmail
-        </Button>
+        {ENABLED_PROVIDERS.facebook && (
+          <Button 
+            variant="outline" 
+            className="bg-white/5 hover:bg-white/10 border-gray-600/50"
+            onClick={() => handleSocialLogin('Facebook')}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Facebook className="mr-2 h-4 w-4 text-blue-500" />
+            )}
+            Facebook
+          </Button>
+        )}
+        
+        {ENABLED_PROVIDERS.gmail && (
+          <Button 
+            variant="outline" 
+            className="bg-white/5 hover:bg-white/10 border-gray-600/50"
+            onClick={() => handleSocialLogin('Gmail')}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Mail className="mr-2 h-4 w-4 text-red-500" />
+            )}
+            Gmail
+          </Button>
+        )}
       </div>
     </div>
   );
