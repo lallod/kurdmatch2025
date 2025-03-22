@@ -11,6 +11,7 @@ import {
   Scroll 
 } from 'lucide-react';
 import { useQuestions } from './useQuestions';
+import { getCategoryCount } from './utils/questionUtils';
 
 interface CategoryItemProps {
   icon: React.ReactNode;
@@ -40,59 +41,54 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ icon, name, count, color, o
 const QuestionCategoriesSection = () => {
   const { questions, setActiveTab } = useQuestions();
   
-  // Get count of questions per category
-  const getCategoryCount = (categoryName: string) => {
-    return questions.filter(q => q.category === categoryName).length;
-  };
-
   // Map category names to their icon, color, and tab value
   const categories = [
     { 
       icon: <User size={16} />, 
       name: 'Basics', 
-      count: getCategoryCount('Basics'), 
+      count: getCategoryCount(questions, 'Basics'), 
       color: 'bg-blue-100 text-blue-700',
       tabValue: 'basic'
     },
     { 
       icon: <Heart size={16} />, 
       name: 'Relationships', 
-      count: getCategoryCount('Relationships'), 
+      count: getCategoryCount(questions, 'Relationships'), 
       color: 'bg-red-100 text-red-700',
       tabValue: 'relationships'
     },
     { 
       icon: <Coffee size={16} />, 
       name: 'Lifestyle', 
-      count: getCategoryCount('Lifestyle'), 
+      count: getCategoryCount(questions, 'Lifestyle'), 
       color: 'bg-amber-100 text-amber-700',
       tabValue: 'lifestyle'
     },
     { 
       icon: <Scroll size={16} />, 
       name: 'Beliefs', 
-      count: getCategoryCount('Beliefs'), 
+      count: getCategoryCount(questions, 'Beliefs'), 
       color: 'bg-purple-100 text-purple-700',
       tabValue: 'beliefs'
     },
     { 
       icon: <Brain size={16} />, 
       name: 'Personality', 
-      count: getCategoryCount('Personality'), 
+      count: getCategoryCount(questions, 'Personality'), 
       color: 'bg-indigo-100 text-indigo-700',
       tabValue: 'personality'
     },
     { 
       icon: <Star size={16} />, 
       name: 'Interests', 
-      count: getCategoryCount('Interests'), 
+      count: getCategoryCount(questions, 'Interests'), 
       color: 'bg-green-100 text-green-700',
       tabValue: 'interests'
     },
     { 
       icon: <Activity size={16} />, 
       name: 'Physical', 
-      count: getCategoryCount('Physical'), 
+      count: getCategoryCount(questions, 'Physical'), 
       color: 'bg-orange-100 text-orange-700',
       tabValue: 'physical'
     },
