@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -58,20 +57,6 @@ const Landing = () => {
                 The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan 
                 and the diaspora, bringing together singles who share our rich heritage and values.
               </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0"
-                  onClick={() => setShowAIAnimation(true)}
-                >
-                  <Zap className="mr-2 h-5 w-5" />
-                  Join Our Community
-                </Button>
-                <Button size="lg" variant="outline" className="text-purple-300 border-purple-700/50 hover:bg-purple-900/20">
-                  Learn More
-                </Button>
-              </div>
               
               <div className="flex items-center space-x-4 text-sm text-gray-400">
                 <div className="flex -space-x-2">
