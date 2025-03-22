@@ -93,8 +93,8 @@ interface ProfileDetailsProps {
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
   const isMobile = useIsMobile();
   
-  // Common styles
-  const tinderBadgeStyle = "rounded-full bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 border-tinder-rose/20 text-tinder-rose";
+  // Common styles - enhanced with AI-friendly styling
+  const tinderBadgeStyle = "rounded-full bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 border border-tinder-rose/20 text-tinder-rose shadow-sm hover:shadow-md transition-all duration-300";
 
   // Utility function for formatting lists consistently
   const formatList = (value: string[] | string | undefined) => {

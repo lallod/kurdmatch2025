@@ -11,7 +11,9 @@ import {
   ChevronLeft, 
   ChevronRight, 
   LogOut,
-  ClipboardList
+  ClipboardList,
+  Zap,
+  Brain
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -37,24 +39,33 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* AI-inspired background pattern */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none z-0">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(253,41,123,0.05),transparent_50%)]"></div>
+        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_80%,rgba(255,88,100,0.05),transparent_50%)]"></div>
+      </div>
+      
       {/* Sidebar */}
       <aside 
-        className={`fixed top-0 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ${
+        className={`fixed top-0 left-0 z-40 h-screen backdrop-blur-sm bg-white/90 border-r border-tinder-rose/10 transition-all duration-300 ${
           collapsed ? 'w-16' : 'w-64'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Sidebar header */}
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between p-4 border-b border-tinder-rose/10">
             {!collapsed && (
-              <h2 className="text-xl font-bold text-gray-800">Super Admin</h2>
+              <div className="flex items-center">
+                <Brain size={20} className="mr-2 text-tinder-rose" />
+                <h2 className="text-xl font-bold ai-text-gradient">AI Admin</h2>
+              </div>
             )}
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={toggleSidebar} 
-              className="ml-auto"
+              className="ml-auto text-tinder-rose hover:bg-tinder-rose/5"
             >
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </Button>
@@ -69,12 +80,20 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                     to={item.path}
                     end={item.path === '/super-admin'}
                     className={({ isActive }) => 
-                      `flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 ${
-                        isActive ? 'bg-gray-100' : ''
+                      `flex items-center p-2 rounded-lg transition-all duration-200 ${
+                        isActive 
+                          ? 'bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 text-tinder-rose' 
+                          : 'hover:bg-gray-100 text-gray-700'
                       } ${collapsed ? 'justify-center' : 'px-3'}`
                     }
                   >
-                    <span className="text-gray-500">{item.icon}</span>
+                    <span className={`transition-colors duration-200 ${
+                      item.path === '/super-admin/registration-questions' 
+                        ? 'text-tinder-rose' 
+                        : ''
+                    }`}>
+                      {item.icon}
+                    </span>
                     {!collapsed && <span className="ml-3">{item.label}</span>}
                   </NavLink>
                 </li>
@@ -83,7 +102,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
           </nav>
           
           {/* Footer */}
-          <div className="p-4 border-t">
+          <div className="p-4 border-t border-tinder-rose/10">
             <NavLink
               to="/"
               className="flex items-center p-2 text-red-600 rounded-lg hover:bg-red-50"
@@ -97,7 +116,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
       
       {/* Main content */}
       <main className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-16' : 'ml-64'}`}>
-        <div className="p-6">
+        <div className="p-6 relative z-10">
           {children}
         </div>
       </main>

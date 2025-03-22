@@ -5,6 +5,7 @@ import StatsOverview from '../components/dashboard/StatsOverview';
 import ActivityTabs from '../components/dashboard/ActivityTabs';
 import RecentActivity from '../components/dashboard/RecentActivity';
 import QuickActions from '../components/dashboard/QuickActions';
+import { Brain } from 'lucide-react';
 
 const Dashboard = () => {
   const [timeRange, setTimeRange] = useState('month');
@@ -17,7 +18,20 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* AI-inspired background elements */}
+      <div className="absolute top-20 right-10 opacity-5 w-64 h-64 rounded-full bg-tinder-rose filter blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-20 left-10 opacity-5 w-32 h-32 rounded-full bg-tinder-orange filter blur-2xl pointer-events-none"></div>
+      
+      {/* AI banner */}
+      <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
+        <Brain size={24} className="text-tinder-rose mr-3" />
+        <div>
+          <h3 className="font-semibold text-gray-800">AI-Enhanced Admin Dashboard</h3>
+          <p className="text-sm text-gray-600">Smart analytics and intelligent user management features</p>
+        </div>
+      </div>
+      
       <DashboardHeader 
         timeRange={timeRange}
         setTimeRange={setTimeRange}
