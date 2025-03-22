@@ -1,3 +1,4 @@
 
-// Re-export the LandingPageEditor from the parent file to maintain backward compatibility
+// Re-export the LandingPageEditor component from the parent directory
+// This maintains compatibility with existing imports
 export { default } from '../LandingPageEditor';
