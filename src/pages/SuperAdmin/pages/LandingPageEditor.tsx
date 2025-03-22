@@ -1,4 +1,4 @@
 
-import LandingPageEditor from './LandingPageEditor';
+import LandingPageEditorComponent from './LandingPageEditor/index';
 
-export default LandingPageEditor;
+export default LandingPageEditorComponent;

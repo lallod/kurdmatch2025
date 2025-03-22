@@ -38,7 +38,28 @@ const LandingPageEditor = () => {
             variant: "destructive"
           });
         } else if (data) {
-          setContent(data.content as LandingPageContent);
+          // Type safety: convert data.content to LandingPageContent with proper type checking
+          const contentData = data.content as Json;
+          
+          // Only set the state if it has the expected structure
+          if (
+            typeof contentData === 'object' && 
+            contentData !== null && 
+            !Array.isArray(contentData) &&
+            'hero' in contentData && 
+            'features' in contentData && 
+            'kurdistan' in contentData && 
+            'footer' in contentData
+          ) {
+            setContent(contentData as unknown as LandingPageContent);
+          } else {
+            console.error('Invalid landing page content format:', contentData);
+            toast({
+              title: "Invalid content format",
+              description: "The content stored in the database has an invalid format.",
+              variant: "destructive"
+            });
+          }
         }
       } catch (error) {
         console.error('Error:', error);
