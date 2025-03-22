@@ -13,7 +13,17 @@ import {
   LogOut,
   ClipboardList,
   Zap,
-  Brain
+  Brain,
+  UserCheck,
+  Flag,
+  BarChart,
+  TestTube,
+  ServerCrash,
+  Mail,
+  Download,
+  FileText,
+  ShieldCheck,
+  UserCog
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -31,6 +41,16 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const menuItems = [
     { path: '/super-admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { path: '/super-admin/users', icon: <Users size={20} />, label: 'Users Management' },
+    { path: '/super-admin/verification', icon: <UserCheck size={20} />, label: 'User Verification' },
+    { path: '/super-admin/moderation', icon: <Flag size={20} />, label: 'Content Moderation' },
+    { path: '/super-admin/analytics', icon: <BarChart size={20} />, label: 'Advanced Analytics' },
+    { path: '/super-admin/ab-testing', icon: <TestTube size={20} />, label: 'A/B Testing' },
+    { path: '/super-admin/system-health', icon: <ServerCrash size={20} />, label: 'System Health' },
+    { path: '/super-admin/email-campaigns', icon: <Mail size={20} />, label: 'Email Campaigns' },
+    { path: '/super-admin/exports', icon: <Download size={20} />, label: 'Data Exports' },
+    { path: '/super-admin/audit-logs', icon: <FileText size={20} />, label: 'Audit Logs' },
+    { path: '/super-admin/roles', icon: <ShieldCheck size={20} />, label: 'Role Management' },
+    { path: '/super-admin/bulk-actions', icon: <UserCog size={20} />, label: 'Bulk User Actions' },
     { path: '/super-admin/categories', icon: <Tag size={20} />, label: 'Categories' },
     { path: '/super-admin/registration-questions', icon: <ClipboardList size={20} />, label: 'Registration Questions' },
     { path: '/super-admin/messages', icon: <MessageSquare size={20} />, label: 'Messages' },
