@@ -5,19 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import SocialLogin from '@/components/auth/components/SocialLogin';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdminSetup, setIsAdminSetup] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { signIn, signUp, user, ensureAdminExists } = useSupabaseAuth();
+  const { signIn, signUp, user } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -26,21 +23,6 @@ const Auth = () => {
     if (user) {
       navigate('/');
     }
-
-    // Check if we're setting up admin account
-    const adminSetup = async () => {
-      // This is the admin email we want to ensure exists
-      const adminEmail = 'lalo.peshawa@gmail.com';
-      const adminPassword = 'Hanasa2011';
-      
-      if (email === adminEmail || !email) {
-        setEmail(adminEmail);
-        setPassword(adminPassword);
-        setIsAdminSetup(true);
-      }
-    };
-    
-    adminSetup();
   }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,12 +33,7 @@ const Auth = () => {
     try {
       if (isSignUp) {
         // Handle sign up
-        if (!name.trim()) {
-          throw new Error('Name is required');
-        }
-
         const { error } = await signUp(email, password, {
-          name,
           email,
         });
 
@@ -67,19 +44,13 @@ const Auth = () => {
           description: "Please check your email to confirm your account.",
         });
         
-        // If using auto-confirm
+        // Switch to login form after successful signup
         setTimeout(() => {
           setIsSignUp(false);
         }, 2000);
       } else {
-        // For admin setup, ensure admin exists first
-        if (isAdminSetup) {
-          const adminCreated = await ensureAdminExists(email, password);
-          console.log('Admin account setup status:', adminCreated);
-        }
-
         // Handle login
-        console.log(`Attempting to sign in with: ${email} / ${password.replace(/./g, '*')}`);
+        console.log(`Attempting to sign in with: ${email}`);
         const { error } = await signIn(email, password);
 
         if (error) throw error;
@@ -97,14 +68,11 @@ const Auth = () => {
       // Set a user-friendly error message
       setErrorMessage(error.message || "Something went wrong. Please try again.");
       
-      // Only show toast for non-credential errors to avoid duplicate messages
-      if (error.code !== 'invalid_credentials') {
-        toast({
-          title: "Authentication failed",
-          description: error.message || "Something went wrong. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Authentication failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -132,21 +100,6 @@ const Auth = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {isSignUp && (
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                required={isSignUp}
-                disabled={isLoading}
-              />
-            </div>
-          )}
-          
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -156,7 +109,7 @@ const Auth = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.email@example.com"
               required
-              disabled={isLoading || isAdminSetup}
+              disabled={isLoading}
             />
           </div>
           
@@ -169,7 +122,7 @@ const Auth = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              disabled={isLoading || isAdminSetup}
+              disabled={isLoading}
             />
           </div>
           
@@ -188,33 +141,21 @@ const Auth = () => {
             )}
           </Button>
         </form>
-
-        <SocialLogin isLoading={isLoading} />
         
-        {!isAdminSetup && (
-          <div className="text-center mt-4">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setErrorMessage(null);
-              }}
-              className="text-sm text-gray-600 hover:text-gray-900"
-            >
-              {isSignUp 
-                ? 'Already have an account? Log in' 
-                : "Don't have an account? Sign up"}
-            </button>
-          </div>
-        )}
-
-        {isAdminSetup && (
-          <div className="text-center mt-4">
-            <p className="text-sm text-gray-600">
-              Attempting to log in with super admin credentials
-            </p>
-          </div>
-        )}
+        <div className="text-center mt-4">
+          <button
+            type="button"
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setErrorMessage(null);
+            }}
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            {isSignUp 
+              ? 'Already have an account? Log in' 
+              : "Don't have an account? Sign up"}
+          </button>
+        </div>
       </div>
     </div>
   );
