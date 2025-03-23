@@ -5,9 +5,10 @@ import { Download, UserPlus } from 'lucide-react';
 
 interface PageHeaderProps {
   onExport: () => void;
+  onAddUser: () => void;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ onExport }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ onExport, onAddUser }) => {
   return (
     <div className="flex justify-between items-center">
       <h1 className="text-3xl font-bold text-gray-900">Users Management</h1>
@@ -16,7 +17,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ onExport }) => {
           <Download size={16} />
           Export
         </Button>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={onAddUser}>
           <UserPlus size={16} />
           Add User
         </Button>

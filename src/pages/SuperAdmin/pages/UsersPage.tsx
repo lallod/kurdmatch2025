@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AIBanner } from '../components/payments/AIBanner';
@@ -7,6 +6,7 @@ import UserFilters from '../components/users/UserFilters';
 import UsersTable from '../components/users/UsersTable';
 import TablePagination from '../components/users/TablePagination';
 import UserDetailDialog from '../components/users/UserDetailDialog';
+import AddUserDialog from '../components/users/AddUserDialog';
 import { User } from '../components/users/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -21,91 +21,96 @@ const UsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [addUserDialogOpen, setAddUserDialogOpen] = useState(false);
   const usersPerPage = 10;
   const { toast } = useToast();
   
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      
+      // Count total users for pagination
+      const { count, error: countError } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
         
-        // Count total users for pagination
-        const { count, error: countError } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true });
-          
-        if (countError) throw countError;
-        setTotalUsers(count || 0);
-        
-        // Fetch profiles with pagination
-        const { data: profiles, error: profilesError } = await supabase
-          .from('profiles')
-          .select('*')
-          .range((currentPage - 1) * usersPerPage, currentPage * usersPerPage - 1);
-        
-        if (profilesError) throw profilesError;
-        
-        if (!profiles || profiles.length === 0) {
-          setUsers([]);
-          setLoading(false);
-          return;
-        }
-        
-        // Fetch roles for the profiles
-        const profileIds = profiles.map(profile => profile.id);
-        const { data: userRoles, error: rolesError } = await supabase
-          .from('user_roles')
-          .select('*')
-          .in('user_id', profileIds);
-          
-        if (rolesError) throw rolesError;
-        
-        // Transform profile data to match User interface
-        const userData: User[] = profiles.map(profile => {
-          // Find role for this profile
-          const userRole = userRoles?.find(role => role.user_id === profile.id);
-          
-          // Calculate active status based on last_active (active if within 7 days)
-          const isActive = profile.last_active && 
-            (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7);
-          
-          return {
-            id: profile.id,
-            name: profile.name || 'Unknown User',
-            email: `${profile.name?.toLowerCase().replace(/\s+/g, '.')}@example.com`, // Placeholder email
-            role: userRole?.role || 'user',
-            status: profile.verified ? (isActive ? 'active' : 'inactive') : 'pending',
-            location: profile.location || 'Unknown',
-            joinDate: profile.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : 'Unknown',
-            lastActive: profile.last_active 
-              ? new Date(profile.last_active).toLocaleString('en-US', {
-                  year: 'numeric',
-                  month: 'numeric',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                }) 
-              : 'Unknown',
-            photoCount: 0, // Will be updated in a real app
-            messageCount: 0 // Will be updated in a real app
-          };
-        });
-        
-        setUsers(userData);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        toast({
-          title: 'Error loading users',
-          description: 'Could not load user data. Please try again.',
-          variant: 'destructive',
-        });
-        // Set empty array to avoid undefined error
+      if (countError) throw countError;
+      setTotalUsers(count || 0);
+      
+      // Fetch profiles with pagination
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*')
+        .range((currentPage - 1) * usersPerPage, currentPage * usersPerPage - 1);
+      
+      if (profilesError) throw profilesError;
+      
+      if (!profiles || profiles.length === 0) {
         setUsers([]);
-      } finally {
         setLoading(false);
+        return;
       }
-    };
-    
+      
+      // Fetch roles for the profiles
+      const profileIds = profiles.map(profile => profile.id);
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('*')
+        .in('user_id', profileIds);
+        
+      if (rolesError) throw rolesError;
+      
+      // Transform profile data to match User interface
+      const userData: User[] = profiles.map(profile => {
+        // Find role for this profile
+        const userRole = userRoles?.find(role => role.user_id === profile.id);
+        
+        // Calculate active status based on last_active (active if within 7 days)
+        const isActive = profile.last_active && 
+          (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7);
+        
+        // Use profile email if available, or construct from name
+        const email = profile.email || 
+          `${profile.name?.toLowerCase().replace(/\s+/g, '.')}@example.com`;
+        
+        return {
+          id: profile.id,
+          name: profile.name || 'Unknown User',
+          email: email,
+          role: userRole?.role || 'user',
+          status: profile.verified ? (isActive ? 'active' : 'inactive') : 'pending',
+          location: profile.location || 'Unknown',
+          joinDate: profile.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : 'Unknown',
+          lastActive: profile.last_active 
+            ? new Date(profile.last_active).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) 
+            : 'Unknown',
+          photoCount: 0, // Will be updated in a real app
+          messageCount: 0 // Will be updated in a real app
+        };
+      });
+      
+      setUsers(userData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast({
+        title: 'Error loading users',
+        description: 'Could not load user data. Please try again.',
+        variant: 'destructive',
+      });
+      // Set empty array to avoid undefined error
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
     fetchUsers();
   }, [toast, currentPage]);
   
@@ -149,9 +154,17 @@ const UsersPage = () => {
     setCurrentPage(page);
   };
 
+  const handleAddUser = () => {
+    setAddUserDialogOpen(true);
+  };
+
+  const handleUserAdded = () => {
+    fetchUsers();
+  };
+
   return (
     <div className="space-y-6">
-      <PageHeader onExport={exportUsers} />
+      <PageHeader onExport={exportUsers} onAddUser={handleAddUser} />
 
       <AIBanner type="user" collapsible={true} />
 
@@ -187,6 +200,12 @@ const UsersPage = () => {
         open={!!selectedUser}
         onClose={closeDialog}
         onModeChange={setUserDetailMode}
+      />
+
+      <AddUserDialog
+        open={addUserDialogOpen}
+        onOpenChange={setAddUserDialogOpen}
+        onUserAdded={handleUserAdded}
       />
     </div>
   );
