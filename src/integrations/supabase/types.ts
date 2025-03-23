@@ -583,7 +583,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_demo_profile: {
+        Args: {
+          user_id: string
+          user_name: string
+          user_age: number
+          user_location: string
+          user_gender: string
+          user_occupation: string
+          user_profile_image: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
