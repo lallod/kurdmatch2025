@@ -5,6 +5,7 @@ import AdminDashboard from './AdminDashboard';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { checkAdminStatus } from '@/integrations/supabase/adminService';
 
 const Admin = () => {
   const { user, loading, session } = useSupabaseAuth();
@@ -25,7 +26,6 @@ const Admin = () => {
       
       try {
         // We've confirmed the user is authenticated, now let's verify they have admin permissions
-        // Use direct supabase client to avoid nesting auth calls
         const { data: roleData, error: roleError } = await supabase
           .from('user_roles')
           .select('role')
