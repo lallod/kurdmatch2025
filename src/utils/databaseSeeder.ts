@@ -27,7 +27,7 @@ export const seedDatabase = async () => {
       
       // Use RLS bypass to create questions as they might be protected
       const { error } = await supabase.rpc('admin_insert_questions', {
-        questions: dbQuestions
+        questions: dbQuestions as any // Type assertion to fix TS error
       });
       
       if (error) {
