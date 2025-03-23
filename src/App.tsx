@@ -22,11 +22,45 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+// Regular user route protection
 const ProtectedRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const location = useLocation();
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
+  const [checkingRole, setCheckingRole] = useState(true);
   
-  if (loading) {
+  useEffect(() => {
+    const checkSuperAdminStatus = async () => {
+      if (!user) {
+        setIsSuperAdmin(false);
+        setCheckingRole(false);
+        return;
+      }
+      
+      try {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'super_admin');
+        
+        if (error) throw error;
+        
+        setIsSuperAdmin(data && data.length > 0);
+      } catch (err) {
+        console.error('Error checking admin status:', err);
+        setIsSuperAdmin(false);
+      } finally {
+        setCheckingRole(false);
+      }
+    };
+    
+    if (!loading) {
+      checkSuperAdminStatus();
+    }
+  }, [user, loading]);
+  
+  if (loading || checkingRole) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
   
@@ -34,9 +68,15 @@ const ProtectedRoute = () => {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
   
+  // Redirect super admins to their dashboard
+  if (isSuperAdmin) {
+    return <Navigate to="/super-admin" replace />;
+  }
+  
   return <Outlet />;
 };
 
+// Super admin route protection
 const SuperAdminRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
@@ -104,7 +144,6 @@ const PublicOnlyRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
   const [checkingRole, setCheckingRole] = useState(true);
-  const location = useLocation();
   
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -153,10 +192,51 @@ const PublicOnlyRoute = () => {
 
 function App() {
   const { user } = useSupabaseAuth();
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
+  const [checkingRole, setCheckingRole] = useState(true);
+  
+  useEffect(() => {
+    const checkSuperAdminStatus = async () => {
+      if (!user) {
+        setIsSuperAdmin(false);
+        setCheckingRole(false);
+        return;
+      }
+      
+      try {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'super_admin');
+        
+        if (error) throw error;
+        
+        setIsSuperAdmin(data && data.length > 0);
+      } catch (err) {
+        console.error('Error checking admin status:', err);
+        setIsSuperAdmin(false);
+      } finally {
+        setCheckingRole(false);
+      }
+    };
+    
+    if (user) {
+      checkSuperAdminStatus();
+    } else {
+      setIsSuperAdmin(false);
+      setCheckingRole(false);
+    }
+  }, [user]);
+  
+  // Don't show bottom navigation for super admins
+  const showBottomNav = user && !isSuperAdmin && !checkingRole;
+  // Only show user menu to regular users, not super admins
+  const showUserMenu = user && !isSuperAdmin && !checkingRole;
   
   return (
     <Router>
-      {user && (
+      {showUserMenu && (
         <div className="fixed top-4 right-4 z-50">
           <UserMenu />
         </div>
@@ -188,7 +268,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       
-      <BottomNavigation />
+      {showBottomNav && <BottomNavigation />}
       <Toaster />
     </Router>
   );
