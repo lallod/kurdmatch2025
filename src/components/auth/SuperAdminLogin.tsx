@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,13 +10,149 @@ import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const SuperAdminLogin = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('lalo.peshawa@gmail.com');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { signIn } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Check if super admin exists on component mount
+  useEffect(() => {
+    const ensureSuperAdmin = async () => {
+      try {
+        // Create super admin if it doesn't exist
+        const superAdminEmail = 'lalo.peshawa@gmail.com';
+        const superAdminPassword = 'Hanasa2011';
+        
+        const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
+        
+        if (listError) {
+          console.error('Error listing users:', listError);
+          return;
+        }
+        
+        // Check if super admin exists
+        const existingSuperAdmin = usersData?.users?.find(user => {
+          if (user && typeof user === 'object' && 'email' in user) {
+            const userObj = user as any;
+            return userObj.email && typeof userObj.email === 'string' && 
+                  userObj.email.toLowerCase() === superAdminEmail.toLowerCase();
+          }
+          return false;
+        });
+        
+        if (!existingSuperAdmin) {
+          console.log('Creating super admin account automatically...');
+          try {
+            // Create the super admin user
+            const { data: newUser, error: signUpError } = await supabase.auth.signUp({
+              email: superAdminEmail,
+              password: superAdminPassword,
+              options: {
+                data: { name: 'Super Admin' }
+              }
+            });
+            
+            if (signUpError) {
+              console.error('Error creating super admin:', signUpError);
+              return;
+            }
+            
+            const userId = newUser?.user?.id;
+            
+            if (!userId) {
+              console.error('Failed to get user ID after signup');
+              return;
+            }
+            
+            // Auto-confirm the email
+            try {
+              const { error: confirmError } = await supabase.auth.admin.updateUserById(userId, {
+                email_confirm: true
+              });
+              
+              if (confirmError) {
+                console.error('Error confirming email:', confirmError);
+              }
+            } catch (err) {
+              console.error('Could not confirm email:', err);
+            }
+            
+            // Add super_admin role
+            const { error: roleError } = await supabase
+              .from('user_roles')
+              .insert({
+                user_id: userId,
+                role: 'super_admin'
+              });
+            
+            if (roleError) {
+              console.error('Error assigning super_admin role:', roleError);
+            }
+            
+            toast({
+              title: "Super Admin Created",
+              description: "The Super Admin account has been created successfully.",
+            });
+          } catch (err) {
+            console.error('Error creating super admin:', err);
+          }
+        } else {
+          console.log('Super admin account exists');
+          
+          // Ensure super admin role exists
+          const userId = existingSuperAdmin.id;
+          
+          const { data: roleData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', userId)
+            .eq('role', 'super_admin');
+          
+          if (!roleData || roleData.length === 0) {
+            // Add super_admin role if missing
+            const { error: roleError } = await supabase
+              .from('user_roles')
+              .insert({
+                user_id: userId,
+                role: 'super_admin'
+              });
+            
+            if (roleError) {
+              console.error('Error assigning super_admin role:', roleError);
+            } else {
+              console.log('Super admin role assigned');
+            }
+          }
+        }
+        
+        // Delete all other users except the super admin
+        if (usersData?.users) {
+          for (const user of usersData.users) {
+            if (user && typeof user === 'object' && 'email' in user && 'id' in user) {
+              const userObj = user as any;
+              if (userObj.email && typeof userObj.email === 'string' && 
+                  userObj.email.toLowerCase() !== superAdminEmail.toLowerCase()) {
+                console.log('Deleting user:', userObj.email);
+                
+                const { error: deleteError } = await supabase.auth.admin.deleteUser(userObj.id);
+                
+                if (deleteError) {
+                  console.error(`Error deleting user ${userObj.email}:`, deleteError);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error during super admin setup:', error);
+      }
+    };
+    
+    ensureSuperAdmin();
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,10 +249,8 @@ const SuperAdminLogin = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@example.com"
-              required
-              disabled={isLoading}
-              className="bg-gray-700 border-gray-600 text-white"
+              readOnly
+              className="bg-gray-700 border-gray-600 text-white opacity-75"
             />
           </div>
           

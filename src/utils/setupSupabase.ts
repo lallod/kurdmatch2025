@@ -2,7 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
 /**
- * Creates a super admin user if one doesn't exist and optionally removes demo profiles
+ * Creates a super admin user if one doesn't exist and removes all other users
  */
 export const setupSupabase = async () => {
   const superAdminEmail = 'lalo.peshawa@gmail.com';
@@ -96,16 +96,35 @@ export const setupSupabase = async () => {
       }
     }
     
-    // 4. Remove demo profiles - exclude our super admin
-    const { error: deleteError } = await supabase
+    // 4. Delete all other users except the super admin
+    if (usersData?.users) {
+      for (const user of usersData.users) {
+        if (user && typeof user === 'object' && 'email' in user && 'id' in user) {
+          const userObj = user as any;
+          if (userObj.email && typeof userObj.email === 'string' && 
+              userObj.email.toLowerCase() !== superAdminEmail.toLowerCase()) {
+            console.log('Deleting user:', userObj.email);
+            
+            const { error: deleteError } = await supabase.auth.admin.deleteUser(userObj.id);
+            
+            if (deleteError) {
+              console.error(`Error deleting user ${userObj.email}:`, deleteError);
+            }
+          }
+        }
+      }
+    }
+    
+    // 5. Remove all profiles except our super admin
+    const { error: deleteProfilesError } = await supabase
       .from('profiles')
       .delete()
       .neq('id', userId || '');
     
-    if (deleteError) {
-      console.error('Error removing demo profiles:', deleteError);
+    if (deleteProfilesError) {
+      console.error('Error removing other profiles:', deleteProfilesError);
     } else {
-      console.log('Demo profiles removed successfully');
+      console.log('Other profiles removed successfully');
     }
     
     return true;
