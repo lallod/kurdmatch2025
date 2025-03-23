@@ -19,6 +19,9 @@ const UsersPage = () => {
   const [userDetailMode, setUserDetailMode] = useState<'view' | 'edit'>('view');
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const usersPerPage = 10;
   const { toast } = useToast();
   
   useEffect(() => {
@@ -26,33 +29,52 @@ const UsersPage = () => {
       try {
         setLoading(true);
         
-        // Fetch profiles
+        // Count total users for pagination
+        const { count, error: countError } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true });
+          
+        if (countError) throw countError;
+        setTotalUsers(count || 0);
+        
+        // Fetch profiles with pagination
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('*');
+          .select('*')
+          .range((currentPage - 1) * usersPerPage, currentPage * usersPerPage - 1);
         
         if (profilesError) throw profilesError;
         
+        if (!profiles || profiles.length === 0) {
+          setUsers([]);
+          setLoading(false);
+          return;
+        }
+        
         // Fetch roles for the profiles
+        const profileIds = profiles.map(profile => profile.id);
         const { data: userRoles, error: rolesError } = await supabase
           .from('user_roles')
-          .select('*');
+          .select('*')
+          .in('user_id', profileIds);
           
         if (rolesError) throw rolesError;
         
         // Transform profile data to match User interface
         const userData: User[] = profiles.map(profile => {
           // Find role for this profile
-          const userRole = userRoles.find(role => role.user_id === profile.id);
+          const userRole = userRoles?.find(role => role.user_id === profile.id);
+          
+          // Calculate active status based on last_active (active if within 7 days)
+          const isActive = profile.last_active && 
+            (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7);
           
           return {
             id: profile.id,
             name: profile.name || 'Unknown User',
-            email: `${profile.name.toLowerCase().replace(/\s+/g, '.')}@example.com`, // Placeholder email
+            email: `${profile.name?.toLowerCase().replace(/\s+/g, '.')}@example.com`, // Placeholder email
             role: userRole?.role || 'user',
-            status: profile.last_active && (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7) 
-              ? 'active' 
-              : 'inactive',
+            status: profile.verified ? (isActive ? 'active' : 'inactive') : 'pending',
             location: profile.location || 'Unknown',
             joinDate: profile.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : 'Unknown',
             lastActive: profile.last_active 
@@ -85,7 +107,7 @@ const UsersPage = () => {
     };
     
     fetchUsers();
-  }, [toast]);
+  }, [toast, currentPage]);
   
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
@@ -123,6 +145,10 @@ const UsersPage = () => {
     // In a real app, this would trigger a download of user data
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader onExport={exportUsers} />
@@ -147,7 +173,11 @@ const UsersPage = () => {
             loading={loading}
           />
 
-          <TablePagination />
+          <TablePagination 
+            currentPage={currentPage}
+            totalPages={Math.ceil(totalUsers / usersPerPage)}
+            onPageChange={handlePageChange}
+          />
         </CardContent>
       </Card>
 

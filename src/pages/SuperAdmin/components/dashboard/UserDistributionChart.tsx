@@ -24,30 +24,32 @@ const UserDistributionChart = () => {
         
         // Count the occurrences of each role
         const roleCounts: Record<string, number> = {};
-        data.forEach(item => {
-          const role = item.role;
-          roleCounts[role] = (roleCounts[role] || 0) + 1;
-        });
         
-        // Transform into the format needed for the chart
-        const chartData = Object.entries(roleCounts).map(([name, value]) => ({
-          name: name === 'user' ? 'Free Users' : 
-                name === 'premium' ? 'Premium' :
-                name === 'moderator' ? 'Moderators' :
-                name === 'admin' || name === 'super_admin' ? 'Admins' : name,
-          value
-        }));
-        
-        // If no data, provide some demo data
-        if (chartData.length === 0) {
+        if (data && data.length > 0) {
+          data.forEach(item => {
+            const role = item.role;
+            roleCounts[role] = (roleCounts[role] || 0) + 1;
+          });
+          
+          // Transform into the format needed for the chart
+          const chartData = Object.entries(roleCounts).map(([name, value]) => ({
+            name: name === 'user' ? 'Free Users' : 
+                  name === 'premium' ? 'Premium' :
+                  name === 'moderator' ? 'Moderators' :
+                  name === 'admin' || name === 'super_admin' ? 'Admins' : 
+                  name.charAt(0).toUpperCase() + name.slice(1), // Capitalize other roles
+            value
+          }));
+          
+          setUserRoleData(chartData);
+        } else {
+          // If no data, provide some default data
           setUserRoleData([
             { name: 'Free Users', value: 0 },
             { name: 'Premium', value: 0 },
             { name: 'Moderators', value: 0 },
             { name: 'Admins', value: 1 },
           ]);
-        } else {
-          setUserRoleData(chartData);
         }
       } catch (error) {
         console.error('Error fetching user distribution data:', error);
@@ -72,7 +74,7 @@ const UserDistributionChart = () => {
     fetchUserRoles();
   }, [toast]);
 
-  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042'];
+  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F'];
 
   if (loading) {
     return (
@@ -95,25 +97,31 @@ const UserDistributionChart = () => {
         <CardDescription>Breakdown of user types</CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={userRoleData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {userRoleData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
+        {userRoleData.length === 0 ? (
+          <div className="h-[300px] flex items-center justify-center text-gray-500">
+            No user data available
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={userRoleData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {userRoleData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [`${value} users`, 'Count']} />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );

@@ -14,20 +14,37 @@ export const seedDatabase = async () => {
     console.log('Seeding registration questions...');
     
     // Check if questions already exist
-    const { data: existingQuestions } = await supabase
+    const { data: existingQuestions, error: questionError } = await supabase
       .from('registration_questions')
       .select('id');
     
-    if (!existingQuestions || existingQuestions.length === 0) {
+    if (questionError) {
+      console.error('Error checking for existing questions:', questionError.message);
+      // Continue with other seeding even if this fails
+    } else if (!existingQuestions || existingQuestions.length === 0) {
       const allQuestions = [...systemQuestions, ...initialQuestions];
       const dbQuestions = allQuestions.map(toDbQuestion);
       
-      const { error } = await supabase
-        .from('registration_questions')
-        .insert(dbQuestions);
+      // Use RLS bypass to create questions as they might be protected
+      const { error } = await supabase.rpc('admin_insert_questions', {
+        questions: dbQuestions
+      });
       
-      if (error) throw error;
-      console.log('Registration questions seeded successfully!');
+      if (error) {
+        console.error('Error seeding registration questions:', error.message);
+        // Try direct insert as fallback
+        const { error: directError } = await supabase
+          .from('registration_questions')
+          .insert(dbQuestions);
+        
+        if (directError) {
+          console.error('Direct insert also failed:', directError.message);
+        } else {
+          console.log('Registration questions seeded successfully via direct insert!');
+        }
+      } else {
+        console.log('Registration questions seeded successfully!');
+      }
     } else {
       console.log('Registration questions already exist, skipping seed.');
     }
@@ -35,22 +52,22 @@ export const seedDatabase = async () => {
     console.error('Error seeding registration questions:', error);
   }
   
-  // Seed demo users (only if running in development)
+  // Seed demo users
   try {
     console.log('Seeding demo users...');
     
-    // Check if demo users already exist
-    const { data: existingUsers } = await supabase
+    // Check if profiles already exist
+    const { data: existingProfiles, error: profilesError } = await supabase
       .from('profiles')
       .select('id')
       .limit(1);
     
-    if (!existingUsers || existingUsers.length === 0) {
+    if (profilesError) {
+      console.error('Error checking for existing profiles:', profilesError.message);
+    } else if (!existingProfiles || existingProfiles.length === 0) {
       console.log('No existing profiles found, creating demo profiles...');
       
-      // In a real app, you would create auth users first and then profiles
-      // For demo purposes, we'll just add fake profiles
-      
+      // For each mock user, create a profile entry
       for (const user of mockUsers) {
         // Create a random UUID for each user
         const userId = crypto.randomUUID();
@@ -62,14 +79,18 @@ export const seedDatabase = async () => {
             id: userId,
             name: user.name,
             age: Math.floor(Math.random() * 20) + 20, // Random age between 20-40
-            location: user.location,
+            location: user.location || 'Unknown Location',
             last_active: new Date().toISOString(),
             verified: Math.random() > 0.5, // Random verified status
-            profile_image: `https://i.pravatar.cc/300?u=${userId}` // Random avatar
+            profile_image: `https://i.pravatar.cc/300?u=${userId}`, // Random avatar
+            occupation: user.role === 'admin' ? 'Administrator' : 
+                      user.role === 'moderator' ? 'Content Moderator' : 
+                      'Member',
+            bio: `This is a demo ${user.role} account.`
           });
         
         if (profileError) {
-          console.error('Error creating profile:', profileError);
+          console.error('Error creating profile:', profileError.message);
           continue;
         }
         
@@ -82,7 +103,7 @@ export const seedDatabase = async () => {
           });
         
         if (roleError) {
-          console.error('Error creating user role:', roleError);
+          console.error('Error creating user role:', roleError.message);
         }
       }
       
@@ -97,12 +118,14 @@ export const seedDatabase = async () => {
   // Seed engagement data
   try {
     // Check if engagement data already exists
-    const { data: existingEngagement } = await supabase
+    const { data: existingEngagement, error: engagementError } = await supabase
       .from('user_engagement')
       .select('id')
       .limit(1);
     
-    if (!existingEngagement || existingEngagement.length === 0) {
+    if (engagementError) {
+      console.error('Error checking for existing engagement data:', engagementError.message);
+    } else if (!existingEngagement || existingEngagement.length === 0) {
       console.log('Creating sample engagement data...');
       
       // Create sample engagement data for the last 30 days
@@ -113,22 +136,25 @@ export const seedDatabase = async () => {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
         
+        const trendOptions = ['positive', 'negative', 'neutral'];
+        
         engagementData.push({
           date: date.toISOString().split('T')[0],
           users: Math.floor(Math.random() * 100) + 50,
           conversations: Math.floor(Math.random() * 80) + 20,
           likes: Math.floor(Math.random() * 200) + 100,
           views: Math.floor(Math.random() * 500) + 200,
-          matches: Math.floor(Math.random() * 40) + 10
+          matches: Math.floor(Math.random() * 40) + 10,
+          trend: trendOptions[Math.floor(Math.random() * trendOptions.length)]
         });
       }
       
-      const { error } = await supabase
+      const { error: insertError } = await supabase
         .from('user_engagement')
         .insert(engagementData);
       
-      if (error) {
-        console.error('Error creating engagement data:', error);
+      if (insertError) {
+        console.error('Error creating engagement data:', insertError.message);
       } else {
         console.log('Engagement data created successfully!');
       }
