@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 import { systemQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/systemQuestions';
@@ -121,7 +120,7 @@ export const seedDatabase = async () => {
       
       // Delete existing profiles if recreating
       if (createKurdishProfiles) {
-        console.log('First removing any existing profiles to start fresh...');
+        console.log('First removing any existing roles to start fresh...');
         try {
           // Remove existing roles
           const { error: roleDeleteError } = await supabase
@@ -142,41 +141,60 @@ export const seedDatabase = async () => {
       for (const user of mockUsers) {
         // Create a random UUID for each user
         const userId = crypto.randomUUID();
+        const email = `${userId.slice(0, 8)}@example.com`;
         
-        // Insert profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: userId,
-            name: user.name,
-            age: Math.floor(Math.random() * 20) + 20, // Random age between 20-40
-            location: user.location || 'Unknown Location',
-            last_active: new Date().toISOString(),
-            verified: Math.random() > 0.5, // Random verified status
-            profile_image: `https://i.pravatar.cc/300?u=${userId}`, // Random avatar
-            occupation: user.role === 'admin' ? 'Administrator' : 
-                      user.role === 'moderator' ? 'Content Moderator' : 
-                      'Member',
-            bio: `This is a demo ${user.role} account.`
-          });
+        try {
+          // First create the auth user - this is necessary for the foreign key constraint
+          const { data: authUserData, error: authUserError } = await supabase.rpc(
+            'create_dummy_auth_user' as any, 
+            { 
+              user_uuid: userId,
+              email: email
+            }
+          );
+          
+          if (authUserError) {
+            console.error(`Failed to create auth user: ${authUserError.message}`);
+            continue; // Skip this profile if auth user creation fails
+          }
         
-        if (profileError) {
-          console.error('Error creating profile:', profileError.message);
-          continue;
-        }
-        
-        // Add role for this user
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: userId,
-            role: user.role
-          });
-        
-        if (roleError) {
-          console.error('Error creating user role:', roleError.message);
-        } else {
-          console.log(`Created profile and role for ${user.name} (${user.role})`);
+          // Insert profile
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: userId,
+              name: user.name,
+              age: Math.floor(Math.random() * 20) + 20, // Random age between 20-40
+              location: user.location || 'Unknown Location',
+              last_active: new Date().toISOString(),
+              verified: Math.random() > 0.5, // Random verified status
+              profile_image: `https://i.pravatar.cc/300?u=${userId}`, // Random avatar
+              occupation: user.role === 'admin' ? 'Administrator' : 
+                        user.role === 'moderator' ? 'Content Moderator' : 
+                        'Member',
+              bio: `This is a demo ${user.role} account.`
+            });
+          
+          if (profileError) {
+            console.error('Error creating profile:', profileError.message);
+            continue;
+          }
+          
+          // Add role for this user
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .insert({
+              user_id: userId,
+              role: user.role
+            });
+          
+          if (roleError) {
+            console.error('Error creating user role:', roleError.message);
+          } else {
+            console.log(`Created profile and role for ${user.name} (${user.role})`);
+          }
+        } catch (error) {
+          console.error(`Exception in profile creation process:`, error);
         }
       }
       
@@ -191,44 +209,63 @@ export const seedDatabase = async () => {
           // Generate a Kurdish profile with random attributes
           const profile = generateKurdishProfile();
           const userId = crypto.randomUUID();
+          const email = `${userId.slice(0, 8)}@example.com`;
           
-          // Insert the profile
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert({
-              id: userId,
-              name: profile.name,
-              age: profile.age,
-              location: profile.location,
-              kurdistan_region: profile.kurdistanRegion,
-              occupation: profile.occupation,
-              verified: profile.verified,
-              last_active: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(), // Random time in last 30 days
-              profile_image: `https://i.pravatar.cc/300?u=${userId}`, // Random avatar
-              bio: profile.bio,
-              // Add languages array with Kurdish
-              languages: ['Kurdish', Math.random() > 0.5 ? 'English' : '', Math.random() > 0.7 ? 'Arabic' : '', Math.random() > 0.8 ? 'Farsi' : ''].filter(Boolean)
-            });
-          
-          if (profileError) {
-            console.error(`Error creating Kurdish profile #${i}:`, profileError.message);
-            continue;
-          }
-          
-          // Add role for this user
-          const { error: roleError } = await supabase
-            .from('user_roles')
-            .insert({
-              user_id: userId,
-              role: profile.role
-            });
-          
-          if (roleError) {
-            console.error(`Error creating role for Kurdish profile #${i}:`, roleError.message);
-          } else {
-            if (i % 10 === 0) { // Log progress every 10 profiles to reduce console spam
-              console.log(`Created ${i+1}/${numProfiles} Kurdish profiles`);
+          try {
+            // First create the auth user - this is necessary for the foreign key constraint
+            const { data: authUserData, error: authUserError } = await supabase.rpc(
+              'create_dummy_auth_user' as any, 
+              { 
+                user_uuid: userId,
+                email: email
+              }
+            );
+            
+            if (authUserError) {
+              console.error(`Failed to create auth user: ${authUserError.message}`);
+              continue; // Skip this profile if auth user creation fails
             }
+          
+            // Insert the profile
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert({
+                id: userId,
+                name: profile.name,
+                age: profile.age,
+                location: profile.location,
+                kurdistan_region: profile.kurdistanRegion,
+                occupation: profile.occupation,
+                verified: profile.verified,
+                last_active: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(), // Random time in last 30 days
+                profile_image: `https://i.pravatar.cc/300?u=${userId}`, // Random avatar
+                bio: profile.bio,
+                // Add languages array with Kurdish
+                languages: ['Kurdish', Math.random() > 0.5 ? 'English' : '', Math.random() > 0.7 ? 'Arabic' : '', Math.random() > 0.8 ? 'Farsi' : ''].filter(Boolean)
+              });
+            
+            if (profileError) {
+              console.error(`Error creating Kurdish profile #${i}:`, profileError.message);
+              continue;
+            }
+            
+            // Add role for this user
+            const { error: roleError } = await supabase
+              .from('user_roles')
+              .insert({
+                user_id: userId,
+                role: profile.role
+              });
+            
+            if (roleError) {
+              console.error(`Error creating role for Kurdish profile #${i}:`, roleError.message);
+            } else {
+              if (i % 10 === 0) { // Log progress every 10 profiles to reduce console spam
+                console.log(`Created ${i+1}/${numProfiles} Kurdish profiles`);
+              }
+            }
+          } catch (error) {
+            console.error(`Exception in profile creation process:`, error);
           }
         }
         

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CreateDemoProfileParams } from './supabaseTypes';
 
@@ -130,6 +131,32 @@ export const generateKurdishProfile = async (
     console.log("Attempting to create profile directly...");
     
     try {
+      // Check if the auth user exists before trying to create a profile
+      const { data: authUserExists, error: authCheckError } = await supabase.auth
+        .admin.getUserById(profileId);
+
+      if (authCheckError || !authUserExists) {
+        console.log("Auth user doesn't exist or couldn't be verified. Creating auth user first...");
+        
+        // Create a dummy auth user for this profile ID
+        const email = `${profileId.slice(0, 8)}@example.com`;
+        const { data: authUser, error: authError } = await supabase.rpc(
+          'create_dummy_auth_user' as any, 
+          { 
+            user_uuid: profileId,
+            email: email
+          }
+        );
+        
+        if (authError) {
+          console.error("Failed to create auth user:", authError);
+          throw new Error(`Auth user creation failed: ${authError.message}`);
+        }
+        
+        console.log("Auth user created successfully");
+      }
+      
+      // Now create the profile
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .insert({

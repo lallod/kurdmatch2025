@@ -51,37 +51,44 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
           const selectedGender = gender === 'random' 
             ? (Math.random() > 0.5 ? 'male' : 'female') 
             : gender;
-            
-          // First, try to create a dummy auth user for each profile
-          const userId = crypto.randomUUID();
-          try {
-            // This step would normally be handled by auth.users, but we'll simulate it
-            // Use any type for the RPC call to avoid TypeScript errors
-            const { error: dummyUserError } = await supabase.rpc('create_dummy_auth_user' as any, { 
-              user_uuid: userId,
-              email: `${userId.slice(0, 8)}@example.com` 
-            });
-            
-            if (dummyUserError) {
-              console.warn(`Failed to create dummy auth user: ${dummyUserError.message}`);
-            }
-          } catch (authErr) {
-            console.warn(`Exception creating dummy auth user: ${authErr}`);
-          }
           
-          // Then try to generate the profile
-          batchPromises.push(
-            generateKurdishProfile(selectedGender, withPhotos, userId)
-              .then(id => {
-                successfulProfiles++;
-                setProgress(Math.floor((successfulProfiles / totalProfiles) * 100));
-                return id;
-              })
-              .catch(err => {
-                console.error(`Error generating profile ${i+1}:`, err);
-                return null; // Return null for failed profiles so Promise.all continues
-              })
-          );
+          // Create a unique ID and email for the auth user
+          const userId = crypto.randomUUID();
+          const email = `${userId.slice(0, 8)}@example.com`;
+          
+          try {
+            // First create the auth user - this is necessary for the foreign key constraint
+            const { data: authUserData, error: authUserError } = await supabase.rpc(
+              'create_dummy_auth_user' as any, 
+              { 
+                user_uuid: userId,
+                email: email
+              }
+            );
+            
+            if (authUserError) {
+              console.error(`Failed to create auth user: ${authUserError.message}`);
+              continue; // Skip this profile if auth user creation fails
+            }
+            
+            console.log(`Successfully created auth user with ID: ${userId} and email: ${email}`);
+            
+            // Then generate the profile
+            batchPromises.push(
+              generateKurdishProfile(selectedGender, withPhotos, userId)
+                .then(id => {
+                  successfulProfiles++;
+                  setProgress(Math.floor((successfulProfiles / totalProfiles) * 100));
+                  return id;
+                })
+                .catch(err => {
+                  console.error(`Error generating profile ${i+1}:`, err);
+                  return null; // Return null for failed profiles so Promise.all continues
+                })
+            );
+          } catch (err) {
+            console.error(`Exception in profile creation process for profile ${i+1}:`, err);
+          }
         }
         
         // Wait for current batch to complete before starting next batch
