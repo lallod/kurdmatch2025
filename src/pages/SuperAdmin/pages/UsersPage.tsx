@@ -1,16 +1,12 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { AIBanner } from '../components/payments/AIBanner';
 import PageHeader from '../components/users/PageHeader';
-import UserFilters from '../components/users/UserFilters';
-import UsersTable from '../components/users/UsersTable';
-import TablePagination from '../components/users/TablePagination';
 import UserDetailDialog from '../components/users/UserDetailDialog';
 import AddUserDialog from '../components/users/AddUserDialog';
-import UserStatsBanner from '../components/users/UserStatsBanner';
 import { User } from '../components/users/types';
 import { useUsers } from '../components/users/hooks/useUsers';
+import UsersBannerArea from '../components/users/UsersBannerArea';
+import UserListingArea from '../components/users/UserListingArea';
 
 const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -66,9 +62,7 @@ const UsersPage = () => {
     <div className="space-y-6">
       <PageHeader onExport={exportUsers} onAddUser={handleAddUser} />
 
-      <AIBanner type="user" collapsible={true} />
-      
-      <UserStatsBanner 
+      <UsersBannerArea 
         totalUsers={userStats.totalUsers}
         databaseVerified={userStats.databaseVerified}
         activeUsers={userStats.activeUsers}
@@ -76,32 +70,23 @@ const UsersPage = () => {
         inactiveUsers={userStats.inactiveUsers}
       />
 
-      <Card>
-        <CardContent className="pt-6">
-          <UserFilters 
-            searchTerm={searchTerm}
-            statusFilter={statusFilter}
-            roleFilter={roleFilter}
-            onSearchChange={setSearchTerm}
-            onStatusChange={setStatusFilter}
-            onRoleChange={setRoleFilter}
-          />
-
-          <UsersTable 
-            users={filteredUsers}
-            onViewUser={viewUser}
-            onEditUser={editUser}
-            onRefresh={handleRefresh}
-            loading={loading}
-          />
-
-          <TablePagination 
-            currentPage={currentPage}
-            totalPages={Math.ceil(totalUsers / usersPerPage)}
-            onPageChange={handlePageChange}
-          />
-        </CardContent>
-      </Card>
+      <UserListingArea 
+        users={filteredUsers}
+        loading={loading}
+        currentPage={currentPage}
+        totalUsers={totalUsers}
+        usersPerPage={usersPerPage}
+        searchTerm={searchTerm}
+        statusFilter={statusFilter}
+        roleFilter={roleFilter}
+        onSearchChange={setSearchTerm}
+        onStatusChange={setStatusFilter}
+        onRoleChange={setRoleFilter}
+        onPageChange={handlePageChange}
+        onRefresh={handleRefresh}
+        onViewUser={viewUser}
+        onEditUser={editUser}
+      />
 
       <UserDetailDialog 
         user={selectedUser}
