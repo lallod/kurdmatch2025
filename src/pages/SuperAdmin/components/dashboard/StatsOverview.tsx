@@ -37,7 +37,13 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
         
         if (error) throw error;
         
-        setStats(data);
+        // Convert the trend string to the expected union type
+        const typedData: DashboardStat[] = data.map(item => ({
+          ...item,
+          trend: (item.trend as 'positive' | 'negative' | 'neutral') || 'neutral'
+        }));
+        
+        setStats(typedData);
       } catch (error) {
         console.error('Failed to load dashboard stats:', error);
         toast({
