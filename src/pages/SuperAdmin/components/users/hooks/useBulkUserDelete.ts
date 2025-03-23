@@ -19,15 +19,22 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
       const { data: { session } } = await supabase.auth.getSession();
       const currentUserId = session?.user?.id;
       
-      // Start a query to delete profiles
-      let query = supabase
-        .from('profiles')
-        .delete()
-        .neq('id', currentUserId || 'no-id-found');
-      
-      // Apply role filter if not "all"
-      if (role !== 'all') {
-        // First get the user IDs with the selected role
+      if (role === 'all') {
+        // Delete all profiles except current user without any query limits
+        const { error } = await supabase
+          .from('profiles')
+          .delete()
+          .neq('id', currentUserId || 'no-id-found');
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Users Deleted",
+          description: "All users have been permanently removed.",
+        });
+      } else {
+        // For specific roles, first get all user IDs with the selected role
+        // without any pagination limits
         const { data: userRoles, error: rolesError } = await supabase
           .from('user_roles')
           .select('user_id')
@@ -36,8 +43,33 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
         if (rolesError) throw rolesError;
         
         if (userRoles && userRoles.length > 0) {
-          const userIds = userRoles.map(ur => ur.user_id);
-          query = query.in('id', userIds);
+          // Filter out current user ID if present
+          const userIds = userRoles
+            .map(ur => ur.user_id)
+            .filter(id => id !== currentUserId);
+          
+          if (userIds.length === 0) {
+            toast({
+              title: "No Users Deleted",
+              description: `No other users with the role "${role}" were found.`,
+            });
+            setIsDeleting(false);
+            setIsDeleteAllDialogOpen(false);
+            return;
+          }
+          
+          // Delete all profiles with the filtered IDs
+          const { error } = await supabase
+            .from('profiles')
+            .delete()
+            .in('id', userIds);
+          
+          if (error) throw error;
+          
+          toast({
+            title: "Users Deleted",
+            description: `All users with role "${role}" have been permanently removed.`,
+          });
         } else {
           // If no users with this role, exit early
           toast({
@@ -49,18 +81,6 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
           return;
         }
       }
-      
-      // Execute the delete operation
-      const { error } = await query;
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Users Deleted",
-        description: role === 'all' ? 
-          "All users have been permanently removed." : 
-          `All users with role "${role}" have been permanently removed.`,
-      });
       
       onRefresh();
     } catch (error) {
