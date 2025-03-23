@@ -10,6 +10,7 @@ import { Loader2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateKurdishProfile } from '@/utils/kurdishProfileGenerator';
 import { Progress } from '@/components/ui/progress';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AddUserDialogProps {
   open: boolean;
@@ -32,7 +33,6 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
 
     try {
       // Generate multiple profiles if count > 1
-      const promises = [];
       const totalProfiles = Math.min(50, Math.max(1, count)); // Allow up to 50 profiles
       
       console.log(`Starting generation of ${totalProfiles} Kurdish profiles...`);
@@ -52,8 +52,25 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
             ? (Math.random() > 0.5 ? 'male' : 'female') 
             : gender;
             
+          // First, try to create a dummy auth user for each profile
+          const userId = crypto.randomUUID();
+          try {
+            // This step would normally be handled by auth.users, but we'll simulate it
+            const { error: dummyUserError } = await supabase.rpc('create_dummy_auth_user', { 
+              user_uuid: userId,
+              email: `${userId.slice(0, 8)}@example.com` 
+            });
+            
+            if (dummyUserError) {
+              console.warn(`Failed to create dummy auth user: ${dummyUserError.message}`);
+            }
+          } catch (authErr) {
+            console.warn(`Exception creating dummy auth user: ${authErr}`);
+          }
+          
+          // Then try to generate the profile
           batchPromises.push(
-            generateKurdishProfile(selectedGender, withPhotos)
+            generateKurdishProfile(selectedGender, withPhotos, userId)
               .then(id => {
                 successfulProfiles++;
                 setProgress(Math.floor((successfulProfiles / totalProfiles) * 100));
@@ -68,23 +85,19 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
         
         // Wait for current batch to complete before starting next batch
         const batchResults = await Promise.allSettled(batchPromises);
-        promises.push(...batchResults);
+        console.log(`Batch ${batch+1}/${batches} completed:`, batchResults);
       }
       
-      // Count successful profiles
-      const results = promises.filter(p => p.status === 'fulfilled' && p.value !== null);
-      console.log(`Generated ${results.length} out of ${totalProfiles} profiles:`, results);
-      
-      if (results.length === 0) {
+      if (successfulProfiles === 0) {
         toast({
           title: "Generation Failed",
-          description: "We couldn't create any profiles. Please try again later or contact the system administrator.",
+          description: "We couldn't create any profiles. Please check the console for error details.",
           variant: "destructive",
         });
-      } else if (results.length < totalProfiles) {
+      } else if (successfulProfiles < totalProfiles) {
         toast({
           title: "Partial Success",
-          description: `${results.length} out of ${totalProfiles} Kurdish profiles were generated successfully.`,
+          description: `${successfulProfiles} out of ${totalProfiles} Kurdish profiles were generated successfully.`,
           variant: "default",
         });
         onUserAdded();
@@ -92,7 +105,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       } else {
         toast({
           title: "Success",
-          description: `${results.length} Kurdish ${results.length === 1 ? 'profile' : 'profiles'} generated successfully.`,
+          description: `${successfulProfiles} Kurdish ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
           variant: "default",
         });
         onUserAdded();
