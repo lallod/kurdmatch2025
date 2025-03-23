@@ -56,7 +56,8 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
           const userId = crypto.randomUUID();
           try {
             // This step would normally be handled by auth.users, but we'll simulate it
-            const { error: dummyUserError } = await supabase.rpc('create_dummy_auth_user', { 
+            // Use any type for the RPC call to avoid TypeScript errors
+            const { error: dummyUserError } = await supabase.rpc('create_dummy_auth_user' as any, { 
               user_uuid: userId,
               email: `${userId.slice(0, 8)}@example.com` 
             });

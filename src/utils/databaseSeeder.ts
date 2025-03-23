@@ -81,7 +81,8 @@ export const seedDatabase = async () => {
       const dbQuestions = allQuestions.map(toDbQuestion);
       
       // Use RLS bypass to create questions as they might be protected
-      const { error } = await supabase.rpc('admin_insert_questions', {
+      // Use "any" type to avoid TypeScript errors
+      const { error } = await supabase.rpc('admin_insert_questions' as any, {
         questions: dbQuestions
       });
       
