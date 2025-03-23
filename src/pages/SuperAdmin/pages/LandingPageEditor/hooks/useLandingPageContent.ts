@@ -77,54 +77,54 @@ export const useLandingPageContent = (retryCount = 0) => {
       }
     };
 
+    // Helper function to initialize default content - moved inside the useEffect to avoid re-renders
+    const initializeDefaultContent = async () => {
+      try {
+        console.log('Initializing with default content...');
+        
+        // Set the default content in state first so UI can render even if DB fails
+        setContent(initialContent);
+        
+        const { error: insertError } = await supabase
+          .from('landing_page_content')
+          .upsert({ 
+            id: 1,
+            content: initialContent as unknown as Json,
+            updated_at: new Date().toISOString()
+          });
+          
+        if (insertError) {
+          console.error('Error initializing landing page content:', insertError);
+          setError(`Failed to initialize content: ${insertError.message}`);
+          toast({
+            title: "Error initializing content",
+            description: "Could not save default content to the database. You can still edit, but changes may not persist.",
+            variant: "destructive"
+          });
+        } else {
+          console.log('Default content initialized successfully');
+        }
+      } catch (error: any) {
+        console.error('Error in initializeDefaultContent:', error);
+        setError(`Failed to initialize with default content: ${error.message}`);
+      }
+    };
+
+    // Helper function to validate content structure
+    const isValidLandingPageContent = (data: any): boolean => {
+      return (
+        typeof data === 'object' && 
+        data !== null && 
+        !Array.isArray(data) &&
+        'hero' in data && 
+        'features' in data && 
+        'kurdistan' in data && 
+        'footer' in data
+      );
+    };
+
     fetchLandingPageContent();
   }, [toast, retryCount]); // Only re-run if toast or retryCount changes
-
-  // Helper function to initialize default content - moved inside the useEffect to avoid re-renders
-  const initializeDefaultContent = async () => {
-    try {
-      console.log('Initializing with default content...');
-      
-      // Set the default content in state first so UI can render even if DB fails
-      setContent(initialContent);
-      
-      const { error: insertError } = await supabase
-        .from('landing_page_content')
-        .upsert({ 
-          id: 1,
-          content: initialContent as unknown as Json,
-          updated_at: new Date().toISOString()
-        });
-        
-      if (insertError) {
-        console.error('Error initializing landing page content:', insertError);
-        setError(`Failed to initialize content: ${insertError.message}`);
-        toast({
-          title: "Error initializing content",
-          description: "Could not save default content to the database. You can still edit, but changes may not persist.",
-          variant: "destructive"
-        });
-      } else {
-        console.log('Default content initialized successfully');
-      }
-    } catch (error: any) {
-      console.error('Error in initializeDefaultContent:', error);
-      setError(`Failed to initialize with default content: ${error.message}`);
-    }
-  };
-
-  // Helper function to validate content structure
-  const isValidLandingPageContent = (data: any): boolean => {
-    return (
-      typeof data === 'object' && 
-      data !== null && 
-      !Array.isArray(data) &&
-      'hero' in data && 
-      'features' in data && 
-      'kurdistan' in data && 
-      'footer' in data
-    );
-  };
 
   // Make sure we always have content to work with
   const safeContent = content || initialContent;
