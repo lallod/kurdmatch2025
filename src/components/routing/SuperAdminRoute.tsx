@@ -1,72 +1,42 @@
 
-import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useRoleCheck } from '@/hooks/useRoleCheck';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const SuperAdminRoute = () => {
-  const { session, loading } = useSupabaseAuth();
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
-  const [checkingRole, setCheckingRole] = useState(true);
+  const { user, loading } = useSupabaseAuth();
+  const { hasRole, isChecking } = useRoleCheck(user?.id, 'super_admin');
   const { toast } = useToast();
   
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (!session?.user) {
-        setIsSuperAdmin(false);
-        setCheckingRole(false);
-        return;
-      }
-      
-      try {
-        console.log("Checking super admin status for user:", session.user.id);
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .eq('role', 'super_admin');
-        
-        if (error) throw error;
-        
-        const isAdmin = data && data.length > 0;
-        console.log("Is admin result:", isAdmin, data);
-        setIsSuperAdmin(isAdmin);
-        
-        if (!isAdmin) {
-          setCheckingRole(false);
-          toast({
-            title: 'Access Denied',
-            description: 'You do not have permission to access this area',
-            variant: 'destructive'
-          });
-        }
-      } catch (err) {
-        console.error('Error checking admin status:', err);
-        setIsSuperAdmin(false);
-        toast({
-          title: 'Error',
-          description: 'Could not verify admin permissions',
-          variant: 'destructive'
-        });
-      } finally {
-        setCheckingRole(false);
-      }
-    };
-    
-    if (!loading) {
-      checkAdminStatus();
+  // Show loading state while checking authentication or roles
+  if (loading || isChecking) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-900">
+        <div className="text-center">
+          <LoadingSpinner className="mx-auto mb-4" size="large" />
+          <p className="text-gray-300">Verifying super admin permissions...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Redirect non-admin users
+  if (!hasRole) {
+    // Show toast only if we have a user but no admin permission
+    if (user && !loading && !isChecking) {
+      toast({
+        title: 'Access Denied',
+        description: 'You do not have super admin permissions',
+        variant: 'destructive'
+      });
     }
-  }, [session, loading, toast]);
-  
-  if (loading || checkingRole) {
-    return <div className="flex h-screen items-center justify-center">Verifying permissions...</div>;
+    
+    return <Navigate to="/auth" replace />;
   }
   
-  if (!isSuperAdmin) {
-    return <Navigate to="/" replace />;
-  }
-  
+  // Allow access if user has super admin role
   return <Outlet />;
 };
 

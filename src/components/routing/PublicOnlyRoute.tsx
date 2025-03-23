@@ -1,51 +1,24 @@
 
-import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { supabase } from '@/integrations/supabase/client';
+import { useRoleCheck } from '@/hooks/useRoleCheck';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const PublicOnlyRoute = () => {
   const { user, loading } = useSupabaseAuth();
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
-  const [checkingRole, setCheckingRole] = useState(true);
+  const { hasRole, isChecking } = useRoleCheck(user?.id, 'super_admin');
   
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (!user) {
-        setIsSuperAdmin(false);
-        setCheckingRole(false);
-        return;
-      }
-      
-      try {
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('role', 'super_admin');
-        
-        if (error) throw error;
-        
-        setIsSuperAdmin(data && data.length > 0);
-      } catch (err) {
-        console.error('Error checking admin status:', err);
-        setIsSuperAdmin(false);
-      } finally {
-        setCheckingRole(false);
-      }
-    };
-    
-    if (!loading) {
-      checkAdminStatus();
-    }
-  }, [user, loading]);
-  
-  if (loading || checkingRole) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (loading || isChecking) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <LoadingSpinner className="mr-2" />
+        <span>Loading...</span>
+      </div>
+    );
   }
   
   if (user) {
-    if (isSuperAdmin) {
+    if (hasRole) {
       return <Navigate to="/super-admin" replace />;
     }
     return <Navigate to="/app" replace />;

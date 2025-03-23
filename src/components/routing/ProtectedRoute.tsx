@@ -1,58 +1,34 @@
 
-import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { supabase } from '@/integrations/supabase/client';
+import { useRoleCheck } from '@/hooks/useRoleCheck';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const ProtectedRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const location = useLocation();
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
-  const [checkingRole, setCheckingRole] = useState(true);
+  const { hasRole, isChecking } = useRoleCheck(user?.id, 'super_admin');
   
-  useEffect(() => {
-    const checkSuperAdminStatus = async () => {
-      if (!user) {
-        setIsSuperAdmin(false);
-        setCheckingRole(false);
-        return;
-      }
-      
-      try {
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('role', 'super_admin');
-        
-        if (error) throw error;
-        
-        setIsSuperAdmin(data && data.length > 0);
-      } catch (err) {
-        console.error('Error checking admin status:', err);
-        setIsSuperAdmin(false);
-      } finally {
-        setCheckingRole(false);
-      }
-    };
-    
-    if (!loading) {
-      checkSuperAdminStatus();
-    }
-  }, [user, loading]);
-  
-  if (loading || checkingRole) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (loading || isChecking) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <LoadingSpinner className="mr-2" />
+        <span>Loading...</span>
+      </div>
+    );
   }
   
+  // Redirect to auth if not logged in
   if (!user) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
   
-  if (isSuperAdmin) {
+  // Redirect super admins to their dedicated area
+  if (hasRole) {
     return <Navigate to="/super-admin" replace />;
   }
   
+  // Allow access to regular protected routes
   return <Outlet />;
 };
 
