@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -53,18 +52,19 @@ const SuperAdminLogin = () => {
 
     try {
       console.log(`Attempting to sign in admin with: ${email}`);
-      const { error } = await signIn(email, password);
+      const { error, data } = await signIn(email, password);
 
       if (error) throw error;
 
       // Check if user has super_admin role
       const { data: userData } = await supabase.auth.getUser();
       
-      if (!userData?.user) {
+      if (!userData?.user?.id) {
         throw new Error('Authentication failed');
       }
       
       // Query the user_roles table to check for super_admin role
+      console.log("Checking role for user ID:", userData.user.id);
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('*')

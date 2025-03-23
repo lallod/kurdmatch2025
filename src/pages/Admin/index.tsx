@@ -15,8 +15,8 @@ const Admin = () => {
   useEffect(() => {
     // Check if user has admin role when session exists
     const checkAdminStatus = async () => {
-      if (!session?.user) {
-        console.log('No session user found, will redirect to auth');
+      if (!session?.user?.id) {
+        console.log('No session user ID found, will redirect to auth');
         setIsAdmin(false);
         setCheckingRole(false);
         return;
@@ -27,7 +27,7 @@ const Admin = () => {
         const { data: userData } = await useSupabaseAuth().supabase.auth.getUser();
         console.log('Current user data:', userData?.user?.email);
         
-        if (!userData?.user) {
+        if (!userData?.user?.id) {
           throw new Error('User data not available');
         }
         
@@ -76,8 +76,8 @@ const Admin = () => {
 
   // Redirect to auth page if not authenticated
   useEffect(() => {
-    if (!loading && !session) {
-      console.log('No session found, redirecting to auth');
+    if (!loading && !session?.user) {
+      console.log('No session user found, redirecting to auth');
       navigate('/auth');
     }
   }, [session, loading, navigate]);

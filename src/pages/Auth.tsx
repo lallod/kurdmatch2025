@@ -20,16 +20,17 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !user.id) return;
     
     const checkUserRole = async () => {
       try {
+        console.log("Checking role for user ID:", user.id);
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id)
           .eq('role', 'super_admin')
-          .single();
+          .maybeSingle();
 
         if (error && error.code !== 'PGRST116') {
           console.error('Error checking user role:', error);
@@ -37,10 +38,12 @@ const Auth = () => {
         }
 
         if (data) {
+          console.log("User has super_admin role, redirecting to super-admin");
           navigate('/super-admin');
           return;
         }
 
+        console.log("Regular user, redirecting to app");
         navigate('/app');
       } catch (error) {
         console.error('Error checking user role:', error);

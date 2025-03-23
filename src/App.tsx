@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -84,7 +85,8 @@ const SuperAdminRoute = () => {
   
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (!user) {
+      if (!user || !user.id) {
+        console.log("No valid user found for admin check");
         setIsSuperAdmin(false);
         setCheckingRole(false);
         return;
@@ -105,7 +107,6 @@ const SuperAdminRoute = () => {
         setIsSuperAdmin(isAdmin);
         
         if (!isAdmin) {
-          setCheckingRole(false);
           toast({
             title: 'Access Denied',
             description: 'You do not have permission to access this area',

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { 
@@ -43,27 +42,34 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
 
   const handleLoginSuccess = async (email: string) => {
     try {
-      // Check if user has super_admin role
+      const { data: userData } = await supabase.auth.getUser();
+      
+      if (!userData?.user?.id) {
+        console.error('No user ID available after login');
+        navigate('/app');
+        return;
+      }
+      
+      console.log("Checking role for user ID:", userData.user.id);
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', user?.id)
+        .eq('user_id', userData.user.id)
         .eq('role', 'super_admin')
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
+        console.error('Error checking user role:', error);
         throw error;
       }
 
       if (data) {
-        // Redirect to super admin dashboard
         navigate('/super-admin');
         toast({
           title: "Welcome Super Admin",
           description: "You've been redirected to the admin dashboard",
         });
       } else {
-        // Redirect to main app
         navigate('/app');
         toast({
           title: "Welcome back!",
@@ -72,14 +78,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
       }
     } catch (error) {
       console.error('Error checking user role:', error);
-      // Default redirection
       navigate('/app');
     }
   };
 
   return (
     <div className="relative py-16 overflow-hidden">
-      {/* Abstract AI background elements */}
       <div className="absolute inset-0 flex items-center justify-center opacity-30">
         <div className="absolute w-full h-full bg-grid-white/5"></div>
         {Array.from({ length: 5 }).map((_, i) => (
@@ -155,7 +159,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
               </CardFooter>
             </Card>
             
-            {/* User statistics - moved after registration form */}
             <div className="flex items-center space-x-4 text-sm text-gray-400 mt-4 justify-center">
               <div className="flex -space-x-2">
                 {[...Array(4)].map((_, i) => (
