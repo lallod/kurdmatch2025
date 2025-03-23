@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateKurdishProfile } from '@/utils/kurdishProfileGenerator';
+import { Progress } from '@/components/ui/progress';
 
 interface AddUserDialogProps {
   open: boolean;
@@ -17,50 +18,73 @@ interface AddUserDialogProps {
 }
 
 const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUserAdded }) => {
-  const [count, setCount] = useState<number>(1);
+  const [count, setCount] = useState<number>(10);
   const [gender, setGender] = useState<string>('random');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [withPhotos, setWithPhotos] = useState<boolean>(true);
+  const [progress, setProgress] = useState<number>(0);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setProgress(0);
 
     try {
       // Generate multiple profiles if count > 1
       const promises = [];
-      const totalProfiles = Math.min(10, Math.max(1, count)); // Limit to maximum 10 profiles at once to avoid overloading
+      const totalProfiles = Math.min(50, Math.max(1, count)); // Allow up to 50 profiles
       
       console.log(`Starting generation of ${totalProfiles} Kurdish profiles...`);
       
-      for (let i = 0; i < totalProfiles; i++) {
-        const selectedGender = gender === 'random' 
-          ? (Math.random() > 0.5 ? 'male' : 'female') 
-          : gender;
-          
-        promises.push(generateKurdishProfile(selectedGender, withPhotos).catch(err => {
-          console.error(`Error generating profile ${i+1}:`, err);
-          return null; // Return null for failed profiles so Promise.all continues
-        }));
+      // Process profiles in batches for better UI feedback
+      let successfulProfiles = 0;
+      const batchSize = 5;
+      const batches = Math.ceil(totalProfiles / batchSize);
+      
+      for (let batch = 0; batch < batches; batch++) {
+        const batchPromises = [];
+        const start = batch * batchSize;
+        const end = Math.min(start + batchSize, totalProfiles);
+        
+        for (let i = start; i < end; i++) {
+          const selectedGender = gender === 'random' 
+            ? (Math.random() > 0.5 ? 'male' : 'female') 
+            : gender;
+            
+          batchPromises.push(
+            generateKurdishProfile(selectedGender, withPhotos)
+              .then(id => {
+                successfulProfiles++;
+                setProgress(Math.floor((successfulProfiles / totalProfiles) * 100));
+                return id;
+              })
+              .catch(err => {
+                console.error(`Error generating profile ${i+1}:`, err);
+                return null; // Return null for failed profiles so Promise.all continues
+              })
+          );
+        }
+        
+        // Wait for current batch to complete before starting next batch
+        const batchResults = await Promise.allSettled(batchPromises);
+        promises.push(...batchResults);
       }
       
-      const results = await Promise.all(promises);
-      
       // Count successful profiles
-      const successfulProfiles = results.filter(r => r !== null).length;
-      console.log(`Generated ${successfulProfiles} out of ${totalProfiles} profiles:`, results);
+      const results = promises.filter(p => p.status === 'fulfilled' && p.value !== null);
+      console.log(`Generated ${results.length} out of ${totalProfiles} profiles:`, results);
       
-      if (successfulProfiles === 0) {
+      if (results.length === 0) {
         toast({
           title: "Generation Failed",
           description: "We couldn't create any profiles. Please try again later or contact the system administrator.",
           variant: "destructive",
         });
-      } else if (successfulProfiles < totalProfiles) {
+      } else if (results.length < totalProfiles) {
         toast({
           title: "Partial Success",
-          description: `${successfulProfiles} out of ${totalProfiles} Kurdish profiles were generated successfully.`,
+          description: `${results.length} out of ${totalProfiles} Kurdish profiles were generated successfully.`,
           variant: "default",
         });
         onUserAdded();
@@ -68,7 +92,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       } else {
         toast({
           title: "Success",
-          description: `${successfulProfiles} Kurdish ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
+          description: `${results.length} Kurdish ${results.length === 1 ? 'profile' : 'profiles'} generated successfully.`,
           variant: "default",
         });
         onUserAdded();
@@ -85,6 +109,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       });
     } finally {
       setIsLoading(false);
+      setProgress(0);
     }
   };
 
@@ -105,12 +130,12 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
               id="count"
               type="number"
               min={1}
-              max={10}
+              max={50}
               value={count}
-              onChange={(e) => setCount(Math.min(10, Math.max(1, parseInt(e.target.value) || 1)))}
+              onChange={(e) => setCount(Math.min(50, Math.max(1, parseInt(e.target.value) || 1)))}
               className="w-full"
             />
-            <p className="text-xs text-muted-foreground">Maximum 10 profiles per batch</p>
+            <p className="text-xs text-muted-foreground">Maximum 50 profiles per batch</p>
           </div>
           
           <div className="grid gap-2">
@@ -135,6 +160,13 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
             />
             <Label htmlFor="withPhotos" className="cursor-pointer">Generate with profile photos</Label>
           </div>
+          
+          {isLoading && progress > 0 && (
+            <div className="w-full space-y-2">
+              <Progress value={progress} className="w-full" />
+              <p className="text-xs text-center text-muted-foreground">{progress}% complete</p>
+            </div>
+          )}
           
           <DialogFooter>
             <Button type="submit" disabled={isLoading} className="gap-2">
