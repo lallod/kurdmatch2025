@@ -4,7 +4,8 @@ import { initialQuestions } from '@/pages/SuperAdmin/components/registration-que
 import { systemQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/systemQuestions';
 import { mockUsers } from '@/pages/SuperAdmin/components/users/UserData';
 import { mockRoles } from '@/pages/SuperAdmin/components/roles/RoleData';
-import { toDbQuestion } from '@/pages/SuperAdmin/components/registration-questions/types';
+import { toDbQuestion, QuestionItemDB } from '@/pages/SuperAdmin/components/registration-questions/types';
+import './supabaseTypes'; // Import the type definitions
 
 export const seedDatabase = async () => {
   console.log('Starting database seeding...');
@@ -27,7 +28,7 @@ export const seedDatabase = async () => {
       
       // Use RLS bypass to create questions as they might be protected
       const { error } = await supabase.rpc('admin_insert_questions', {
-        questions: dbQuestions as any // Type assertion to fix TS error
+        questions: dbQuestions
       });
       
       if (error) {
