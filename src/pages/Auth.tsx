@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
@@ -24,7 +24,6 @@ const Auth = () => {
     
     const checkUserRole = async () => {
       try {
-        // Check if user has super_admin role
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
@@ -38,16 +37,14 @@ const Auth = () => {
         }
 
         if (data) {
-          // If user is super_admin, redirect to the super admin dashboard
           navigate('/super-admin');
           return;
         }
 
-        // If not super_admin, redirect to main page
         navigate('/app');
       } catch (error) {
         console.error('Error checking user role:', error);
-        navigate('/app'); // Default fallback
+        navigate('/app');
       }
     };
 
@@ -62,7 +59,6 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        // Handle sign up
         const { error } = await signUp(email, password, {
           email,
         });
@@ -75,12 +71,10 @@ const Auth = () => {
           description: "Please check your email to confirm your account.",
         });
         
-        // Switch to login form after successful signup
         setTimeout(() => {
           setIsSignUp(false);
         }, 3000);
       } else {
-        // Handle login
         console.log(`Attempting to sign in with: ${email}`);
         const { error } = await signIn(email, password);
 
@@ -90,13 +84,10 @@ const Auth = () => {
           title: "Welcome back!",
           description: "You've successfully logged in.",
         });
-        
-        // Redirect will be handled by the useEffect
       }
     } catch (error: any) {
       console.error('Authentication error:', error);
       
-      // Set a user-friendly error message
       if (error.message === 'Email not confirmed') {
         setErrorMessage("Please check your email to confirm your account before logging in.");
       } else {
@@ -125,6 +116,18 @@ const Auth = () => {
               ? 'Sign up to start meeting new people' 
               : 'Log in to continue your journey'}
           </p>
+        </div>
+        
+        <div className="flex justify-start">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center text-gray-600 hover:text-gray-900"
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Landing Page
+          </Button>
         </div>
         
         {errorMessage && (
