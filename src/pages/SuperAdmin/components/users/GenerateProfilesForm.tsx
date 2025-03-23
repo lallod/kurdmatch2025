@@ -40,7 +40,10 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
         console.log(`Starting generation of ${totalProfiles} diverse Kurdish profiles...`);
         setProgress(10);
         
-        const result = await generateDiverseKurdishProfiles(totalProfiles);
+        const result = await generateDiverseKurdishProfiles(totalProfiles, {
+          gender: gender === 'random' ? 'random' : gender === 'male' ? 'male' : 'female',
+          generateActivity
+        });
         
         setProgress(100);
         
@@ -182,31 +185,29 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
         </Label>
       </div>
       
+      <div className="grid gap-2">
+        <Label htmlFor="gender">Gender preference</Label>
+        <Select value={gender} onValueChange={setGender}>
+          <SelectTrigger id="gender" className="w-full">
+            <SelectValue placeholder="Select gender" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="random">Random</SelectItem>
+            <SelectItem value="male">Male</SelectItem>
+            <SelectItem value="female">Female</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
       {!generateDiverse && (
-        <>
-          <div className="grid gap-2">
-            <Label htmlFor="gender">Gender preference</Label>
-            <Select value={gender} onValueChange={setGender}>
-              <SelectTrigger id="gender" className="w-full">
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="random">Random</SelectItem>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="withPhotos" 
-              checked={withPhotos} 
-              onCheckedChange={(checked) => setWithPhotos(checked as boolean)}
-            />
-            <Label htmlFor="withPhotos" className="cursor-pointer">Generate with profile photos</Label>
-          </div>
-        </>
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="withPhotos" 
+            checked={withPhotos} 
+            onCheckedChange={(checked) => setWithPhotos(checked as boolean)}
+          />
+          <Label htmlFor="withPhotos" className="cursor-pointer">Generate with profile photos</Label>
+        </div>
       )}
       
       {isLoading && progress > 0 && (

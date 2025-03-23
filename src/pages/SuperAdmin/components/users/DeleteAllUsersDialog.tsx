@@ -37,6 +37,9 @@ const DeleteAllUsersDialog: React.FC<DeleteAllUsersDialogProps> = ({
           <AlertDialogTitle>Delete Users by Role</AlertDialogTitle>
           <AlertDialogDescription>
             Choose which users to delete based on their role. This action cannot be undone.
+            <strong className="block mt-2 text-destructive">
+              This will delete ALL users with the selected role from the database, not just the current page.
+            </strong>
           </AlertDialogDescription>
         </AlertDialogHeader>
         
