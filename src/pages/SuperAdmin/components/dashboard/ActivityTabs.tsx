@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserActivityChart from './UserActivityChart';
 import EngagementChart from './EngagementChart';
 import UserDistributionChart from './UserDistributionChart';
-import { fetchEngagementData, EngagementData } from '@/api/dashboard';
+import { EngagementData } from '@/api/dashboard';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 

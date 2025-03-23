@@ -23,11 +23,42 @@ import { getStatusBadge, getRoleBadge } from './UserUtils';
 
 interface UsersTableProps {
   users: User[];
+  loading?: boolean;
   onViewUser: (user: User) => void;
   onEditUser: (user: User) => void;
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ users, onViewUser, onEditUser }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ users, loading = false, onViewUser, onEditUser }) => {
+  if (loading) {
+    return (
+      <div className="rounded-md border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[80px]">ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Join Date</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {[1, 2, 3, 4, 5].map((index) => (
+              <TableRow key={index}>
+                <TableCell colSpan={8}>
+                  <div className="h-10 bg-gray-100 animate-pulse rounded-md w-full"></div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
@@ -47,7 +78,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, onViewUser, onEditUser }
           {users.length > 0 ? (
             users.map((user) => (
               <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.id}</TableCell>
+                <TableCell className="font-medium">{user.id.substring(0, 6)}...</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{getRoleBadge(user.role)}</TableCell>

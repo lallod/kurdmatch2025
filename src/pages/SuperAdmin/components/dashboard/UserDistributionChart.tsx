@@ -18,7 +18,6 @@ const UserDistributionChart = () => {
         // Get user roles from the database
         const { data, error } = await supabase
           .from('user_roles')
-          .select('role, count')
           .select('role');
         
         if (error) throw error;
