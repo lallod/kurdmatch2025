@@ -526,6 +526,7 @@ export type Database = {
           id: number
           likes: number
           matches: number
+          trend: string | null
           users: number
           views: number
         }
@@ -536,6 +537,7 @@ export type Database = {
           id?: number
           likes?: number
           matches?: number
+          trend?: string | null
           users?: number
           views?: number
         }
@@ -546,6 +548,7 @@ export type Database = {
           id?: number
           likes?: number
           matches?: number
+          trend?: string | null
           users?: number
           views?: number
         }
