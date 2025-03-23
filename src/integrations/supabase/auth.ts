@@ -55,9 +55,11 @@ export const useSupabaseAuth = () => {
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     try {
+      console.log(`Attempting to sign in with email: ${email}`);
       const response = await supabase.auth.signInWithPassword({ email, password });
       
       if (response.error) {
+        console.error('Sign in error response:', response.error);
         // Format the error message for better display
         if (response.error.message === 'Invalid login credentials') {
           const formattedError = new AuthError('Invalid email or password. Please try again.');
@@ -68,6 +70,7 @@ export const useSupabaseAuth = () => {
         throw response.error;
       }
       
+      console.log('Sign in successful:', response.data.user?.email);
       return response;
     } catch (error) {
       console.error('Sign in error:', error);
@@ -91,6 +94,58 @@ export const useSupabaseAuth = () => {
     }
   };
 
+  // Function to check if admin exists and create it if not
+  const ensureAdminExists = async (email: string, password: string) => {
+    console.log(`Checking if admin exists: ${email}`);
+    try {
+      // First check if the user exists
+      const { data: existingUsers, error: userError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+      
+      if (userError) throw userError;
+      
+      if (!existingUsers) {
+        console.log(`Admin user doesn't exist, creating: ${email}`);
+        // User doesn't exist, create it
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name: 'Super Admin',
+              email,
+            }
+          }
+        });
+        
+        if (signUpError) throw signUpError;
+        
+        if (signUpData.user) {
+          // Assign super_admin role
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .insert({
+              user_id: signUpData.user.id,
+              role: 'super_admin'
+            });
+          
+          if (roleError) throw roleError;
+          console.log(`Admin role assigned to: ${email}`);
+        }
+      } else {
+        console.log(`Admin user exists: ${email}`);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error ensuring admin exists:', error);
+      return false;
+    }
+  };
+
   return {
     user,
     session,
@@ -98,6 +153,7 @@ export const useSupabaseAuth = () => {
     signUp,
     signIn,
     signOut,
+    ensureAdminExists,
     supabase
   };
 };

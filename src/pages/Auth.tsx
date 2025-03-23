@@ -15,8 +15,9 @@ const Auth = () => {
   const [name, setName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdminSetup, setIsAdminSetup] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { signIn, signUp, user } = useSupabaseAuth();
+  const { signIn, signUp, user, ensureAdminExists } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -25,6 +26,21 @@ const Auth = () => {
     if (user) {
       navigate('/');
     }
+
+    // Check if we're setting up admin account
+    const adminSetup = async () => {
+      // This is the admin email we want to ensure exists
+      const adminEmail = 'lalo.peshawa@gmail.com';
+      const adminPassword = 'Hanasa2011';
+      
+      if (email === adminEmail || !email) {
+        setEmail(adminEmail);
+        setPassword(adminPassword);
+        setIsAdminSetup(true);
+      }
+    };
+    
+    adminSetup();
   }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,7 +72,14 @@ const Auth = () => {
           setIsSignUp(false);
         }, 2000);
       } else {
+        // For admin setup, ensure admin exists first
+        if (isAdminSetup) {
+          const adminCreated = await ensureAdminExists(email, password);
+          console.log('Admin account setup status:', adminCreated);
+        }
+
         // Handle login
+        console.log(`Attempting to sign in with: ${email} / ${password.replace(/./g, '*')}`);
         const { error } = await signIn(email, password);
 
         if (error) throw error;
@@ -133,7 +156,7 @@ const Auth = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.email@example.com"
               required
-              disabled={isLoading}
+              disabled={isLoading || isAdminSetup}
             />
           </div>
           
@@ -146,7 +169,7 @@ const Auth = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              disabled={isLoading}
+              disabled={isLoading || isAdminSetup}
             />
           </div>
           
@@ -168,20 +191,30 @@ const Auth = () => {
 
         <SocialLogin isLoading={isLoading} />
         
-        <div className="text-center mt-4">
-          <button
-            type="button"
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setErrorMessage(null);
-            }}
-            className="text-sm text-gray-600 hover:text-gray-900"
-          >
-            {isSignUp 
-              ? 'Already have an account? Log in' 
-              : "Don't have an account? Sign up"}
-          </button>
-        </div>
+        {!isAdminSetup && (
+          <div className="text-center mt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                setErrorMessage(null);
+              }}
+              className="text-sm text-gray-600 hover:text-gray-900"
+            >
+              {isSignUp 
+                ? 'Already have an account? Log in' 
+                : "Don't have an account? Sign up"}
+            </button>
+          </div>
+        )}
+
+        {isAdminSetup && (
+          <div className="text-center mt-4">
+            <p className="text-sm text-gray-600">
+              Attempting to log in with super admin credentials
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
