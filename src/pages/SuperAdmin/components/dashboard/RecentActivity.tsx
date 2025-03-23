@@ -35,6 +35,11 @@ const RecentActivity = () => {
         
         if (error) throw error;
         
+        if (!data || data.length === 0) {
+          setActivities([]);
+          return;
+        }
+        
         // Transform the data to match the expected structure
         const formattedActivities = data.map(item => ({
           id: item.id,
@@ -54,6 +59,7 @@ const RecentActivity = () => {
           description: 'Could not load recent activities. Please try again.',
           variant: 'destructive',
         });
+        setActivities([]);
       } finally {
         setLoading(false);
       }
@@ -116,24 +122,30 @@ const RecentActivity = () => {
         <CardDescription>Latest actions across the platform</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {activities.map((activity, index) => (
-            <div key={index} className="flex items-center gap-4 py-2 border-b last:border-0">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                {activityIcons[activity.activity_type as keyof typeof activityIcons] || 
-                 <Users size={16} className="text-gray-500" />}
+        {activities.length === 0 ? (
+          <div className="p-4 text-center">
+            <p className="text-gray-500">No recent activities found.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {activities.map((activity, index) => (
+              <div key={index} className="flex items-center gap-4 py-2 border-b last:border-0">
+                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                  {activityIcons[activity.activity_type as keyof typeof activityIcons] || 
+                   <Users size={16} className="text-gray-500" />}
+                </div>
+                <div>
+                  <p className="text-sm font-medium">
+                    {getActivityTitle(activity.activity_type)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {activity.description || `${activity.user} • ${activity.time}`}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium">
-                  {getActivityTitle(activity.activity_type)}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {activity.description || `${activity.user} • ${activity.time}`}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
       <CardFooter>
         <Button variant="outline" size="sm" className="w-full">View All Activity</Button>

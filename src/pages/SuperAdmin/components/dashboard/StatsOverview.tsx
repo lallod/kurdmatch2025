@@ -37,6 +37,16 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
         
         if (error) throw error;
         
+        if (!data || data.length === 0) {
+          setStats([]);
+          toast({
+            title: 'No stats available',
+            description: 'There are no dashboard statistics available in the database.',
+            variant: 'default',
+          });
+          return;
+        }
+        
         // Convert the trend string to the expected union type
         const typedData: DashboardStat[] = data.map(item => ({
           ...item,
@@ -51,6 +61,7 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
           description: 'Could not load dashboard statistics. Please try again.',
           variant: 'destructive',
         });
+        setStats([]);
       } finally {
         setLoading(false);
       }
@@ -80,6 +91,16 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
         {[1, 2, 3, 4].map((_, index) => (
           <div key={index} className="h-36 bg-gray-100 animate-pulse rounded-lg"></div>
         ))}
+      </div>
+    );
+  }
+
+  if (stats.length === 0) {
+    return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="col-span-full p-8 text-center bg-gray-50 rounded-lg">
+          <p className="text-gray-500">No statistics available. Please add them to the dashboard_stats table.</p>
+        </div>
       </div>
     );
   }
