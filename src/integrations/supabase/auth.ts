@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from './client';
@@ -9,7 +8,6 @@ export const useSupabaseAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // First set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
@@ -19,7 +17,6 @@ export const useSupabaseAuth = () => {
       }
     );
 
-    // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Got existing session:', session?.user?.email);
       setSession(session);
@@ -60,7 +57,6 @@ export const useSupabaseAuth = () => {
       
       if (response.error) {
         console.error('Sign in error response:', response.error);
-        // Format the error message for better display
         if (response.error.message === 'Invalid login credentials') {
           const formattedError = new AuthError('Invalid email or password. Please try again.');
           formattedError.status = response.error.status;
@@ -94,33 +90,29 @@ export const useSupabaseAuth = () => {
     }
   };
 
-  // Function to check if admin exists and create it if not
   const ensureAdminExists = async (email: string, password: string): Promise<boolean> => {
     console.log(`Checking if admin exists: ${email}`);
     
     try {
-      // Check if the user exists in profiles using simple query structure
-      const { data: profileData, error: profileError } = await supabase
+      const profileResult = await supabase
         .from('profiles')
         .select('id')
         .eq('email', email)
         .limit(1);
         
-      if (profileError) {
-        console.error('Error checking for existing user:', profileError);
+      if (profileResult.error) {
+        console.error('Error checking for existing user:', profileResult.error);
         return false;
       }
       
-      // If user exists, we're done
-      if (profileData && profileData.length > 0) {
+      if (profileResult.data && profileResult.data.length > 0) {
         console.log(`Admin user exists: ${email}`);
         return true;
       }
       
       console.log(`Admin user doesn't exist, creating: ${email}`);
       
-      // Create the admin user with simplified response handling
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      const signUpResult = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -131,27 +123,26 @@ export const useSupabaseAuth = () => {
         }
       });
       
-      if (signUpError) {
-        console.error('Admin signup error:', signUpError);
+      if (signUpResult.error) {
+        console.error('Admin signup error:', signUpResult.error);
         return false;
       }
       
-      const userId = signUpData.user?.id;
-      if (!userId) {
+      const user = signUpResult.data.user;
+      if (!user || !user.id) {
         console.error('User created but ID is missing');
         return false;
       }
       
-      // Assign admin role
-      const { error: roleError } = await supabase
+      const roleResult = await supabase
         .from('user_roles')
         .insert({
-          user_id: userId,
+          user_id: user.id,
           role: 'super_admin'
         });
       
-      if (roleError) {
-        console.error('Error assigning admin role:', roleError);
+      if (roleResult.error) {
+        console.error('Error assigning admin role:', roleResult.error);
         return false;
       }
       
