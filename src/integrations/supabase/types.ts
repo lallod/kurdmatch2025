@@ -266,6 +266,7 @@ export type Database = {
           favorite_season: string | null
           financial_habits: string | null
           friendship_style: string | null
+          gender: string | null
           growth_goals: string[] | null
           have_pets: string | null
           height: string | null
@@ -336,6 +337,7 @@ export type Database = {
           favorite_season?: string | null
           financial_habits?: string | null
           friendship_style?: string | null
+          gender?: string | null
           growth_goals?: string[] | null
           have_pets?: string | null
           height?: string | null
@@ -406,6 +408,7 @@ export type Database = {
           favorite_season?: string | null
           financial_habits?: string | null
           friendship_style?: string | null
+          gender?: string | null
           growth_goals?: string[] | null
           have_pets?: string | null
           height?: string | null

@@ -30,8 +30,11 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
     try {
       // Generate multiple profiles if count > 1
       const promises = [];
+      const totalProfiles = Math.min(50, Math.max(1, count)); // Ensure between 1-50
       
-      for (let i = 0; i < count; i++) {
+      console.log(`Starting generation of ${totalProfiles} Kurdish profiles...`);
+      
+      for (let i = 0; i < totalProfiles; i++) {
         const selectedGender = gender === 'random' 
           ? (Math.random() > 0.5 ? 'male' : 'female') 
           : gender;
@@ -44,7 +47,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       
       toast({
         title: "Success",
-        description: `${count} Kurdish ${count === 1 ? 'profile' : 'profiles'} generated successfully.`,
+        description: `${totalProfiles} Kurdish ${totalProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
         variant: "default",
       });
       
@@ -52,9 +55,11 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       onOpenChange(false);
     } catch (error) {
       console.error('Error generating profiles:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
       toast({
         title: "Error",
-        description: "Failed to generate profiles. Please try again.",
+        description: `Failed to generate profiles: ${errorMessage}. Please check the console for details.`,
         variant: "destructive",
       });
     } finally {
