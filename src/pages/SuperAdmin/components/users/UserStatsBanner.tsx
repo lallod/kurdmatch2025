@@ -28,7 +28,7 @@ const UserStatsBanner: React.FC<UserStatsBannerProps> = ({
           <div className="flex items-center gap-2">
             <p className="text-sm text-gray-600">
               {databaseVerified ? 
-                `Verified ${totalUsers} total registered users in database` : 
+                `Verified ${totalUsers.toLocaleString()} total registered users in database` : 
                 'Verifying users in database...'}
             </p>
             {!databaseVerified && (
@@ -40,19 +40,19 @@ const UserStatsBanner: React.FC<UserStatsBannerProps> = ({
           <div className="text-center px-4 py-2 bg-white/50 rounded-md border border-gray-200">
             <p className="text-xs text-gray-500">Active Users</p>
             <p className="text-lg font-semibold text-tinder-rose">
-              {activeUsers}
+              {activeUsers.toLocaleString()}
             </p>
           </div>
           <div className="text-center px-4 py-2 bg-white/50 rounded-md border border-gray-200">
             <p className="text-xs text-gray-500">Pending</p>
             <p className="text-lg font-semibold text-amber-500">
-              {pendingUsers}
+              {pendingUsers.toLocaleString()}
             </p>
           </div>
           <div className="text-center px-4 py-2 bg-white/50 rounded-md border border-gray-200">
             <p className="text-xs text-gray-500">Inactive</p>
             <p className="text-lg font-semibold text-gray-500">
-              {inactiveUsers}
+              {inactiveUsers.toLocaleString()}
             </p>
           </div>
         </div>

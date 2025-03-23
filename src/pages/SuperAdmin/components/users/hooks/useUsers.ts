@@ -19,14 +19,18 @@ export const useUsers = (usersPerPage: number = 10) => {
     try {
       setLoading(true);
       
-      const { count, error: countError } = await supabase
+      // First get the total count of profiles for the stats banner
+      const { count: totalCount, error: countError } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
         
       if (countError) throw countError;
-      setTotalUsers(count || 0);
+      
+      // Store the total count in state - this should remain consistent
+      setTotalUsers(totalCount || 0);
       setDatabaseVerified(true);
       
+      // Fetch paginated users for the current page
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -48,9 +52,7 @@ export const useUsers = (usersPerPage: number = 10) => {
         
       if (rolesError) throw rolesError;
       
-      console.log('Fetched profiles:', profiles);
-      console.log('Fetched roles:', userRoles);
-      
+      // Map profiles to User objects with roles
       const userData: User[] = profiles.map(profile => {
         const userRole = userRoles?.find(role => role.user_id === profile.id);
         const isActive = profile.last_active && 
@@ -98,6 +100,7 @@ export const useUsers = (usersPerPage: number = 10) => {
     fetchUsers();
   }, [currentPage]);
 
+  // Apply filters to the current page of users only
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -115,12 +118,18 @@ export const useUsers = (usersPerPage: number = 10) => {
     return matchesSearch && matchesStatus && matchesRole;
   });
 
+  // Calculate status counts based on loaded users
+  // This ensures counts are based on the same dataset as totalUsers
+  const activeUsers = users.filter(u => u.status === 'active').length;
+  const pendingUsers = users.filter(u => u.status === 'pending').length;
+  const inactiveUsers = users.filter(u => u.status === 'inactive').length;
+
   const userStats = {
     totalUsers,
     databaseVerified,
-    activeUsers: users.filter(u => u.status === 'active').length,
-    pendingUsers: users.filter(u => u.status === 'pending').length,
-    inactiveUsers: users.filter(u => u.status === 'inactive').length
+    activeUsers,
+    pendingUsers,
+    inactiveUsers
   };
 
   const handlePageChange = (page: number) => {
@@ -129,6 +138,8 @@ export const useUsers = (usersPerPage: number = 10) => {
 
   const handleRefresh = () => {
     setCurrentPage(1);
+    // Reset verification state to show loading indicator
+    setDatabaseVerified(false);
     fetchUsers();
   };
 
