@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
 import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
 import Logo from './Logo';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -99,8 +99,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="mb-8">
+        <div className="mb-8 flex justify-between items-center">
           <Logo size="large" />
+          <Link 
+            to="/admin-login" 
+            className="text-xs text-gray-400 hover:text-white transition-colors duration-200"
+          >
+            Super Admin
+          </Link>
         </div>
         
         <div className="flex flex-col md:flex-row items-center gap-8">

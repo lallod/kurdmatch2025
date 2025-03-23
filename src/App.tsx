@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -22,8 +21,8 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { setupSupabase } from '@/utils/setupSupabase';
+import SuperAdminLogin from './components/auth/SuperAdminLogin';
 
-// Regular user route protection
 const ProtectedRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const location = useLocation();
@@ -76,7 +75,6 @@ const ProtectedRoute = () => {
   return <Outlet />;
 };
 
-// Super admin route protection
 const SuperAdminRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
@@ -266,6 +264,9 @@ function App() {
         {/* Make Landing route accessible to anyone without protection */}
         <Route path="/" element={<Landing />} />
         <Route path="/landing" element={<Landing />} />
+        
+        {/* Add the super admin login route */}
+        <Route path="/admin-login" element={<SuperAdminLogin />} />
         
         <Route element={<PublicOnlyRoute />}>
           <Route path="/auth" element={<Auth />} />
