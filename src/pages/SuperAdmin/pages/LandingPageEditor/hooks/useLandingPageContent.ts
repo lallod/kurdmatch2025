@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
@@ -77,60 +77,60 @@ export const useLandingPageContent = (retryCount = 0) => {
       }
     };
 
-    // Helper function to initialize default content
-    const initializeDefaultContent = async () => {
-      try {
-        console.log('Initializing with default content...');
-        
-        // Set the default content in state first so UI can render even if DB fails
-        setContent(initialContent);
-        
-        const { error: insertError } = await supabase
-          .from('landing_page_content')
-          .upsert({ 
-            id: 1,
-            content: initialContent as unknown as Json,
-            updated_at: new Date().toISOString()
-          });
-          
-        if (insertError) {
-          console.error('Error initializing landing page content:', insertError);
-          setError(`Failed to initialize content: ${insertError.message}`);
-          toast({
-            title: "Error initializing content",
-            description: "Could not save default content to the database. You can still edit, but changes may not persist.",
-            variant: "destructive"
-          });
-        } else {
-          console.log('Default content initialized successfully');
-        }
-      } catch (error: any) {
-        console.error('Error in initializeDefaultContent:', error);
-        setError(`Failed to initialize with default content: ${error.message}`);
-      }
-    };
-
-    // Helper function to validate content structure
-    const isValidLandingPageContent = (data: any): boolean => {
-      return (
-        typeof data === 'object' && 
-        data !== null && 
-        !Array.isArray(data) &&
-        'hero' in data && 
-        'features' in data && 
-        'kurdistan' in data && 
-        'footer' in data
-      );
-    };
-
     fetchLandingPageContent();
-  }, [toast, retryCount]);
+  }, [toast, retryCount]); // Only re-run if toast or retryCount changes
+
+  // Helper function to initialize default content - moved inside the useEffect to avoid re-renders
+  const initializeDefaultContent = async () => {
+    try {
+      console.log('Initializing with default content...');
+      
+      // Set the default content in state first so UI can render even if DB fails
+      setContent(initialContent);
+      
+      const { error: insertError } = await supabase
+        .from('landing_page_content')
+        .upsert({ 
+          id: 1,
+          content: initialContent as unknown as Json,
+          updated_at: new Date().toISOString()
+        });
+        
+      if (insertError) {
+        console.error('Error initializing landing page content:', insertError);
+        setError(`Failed to initialize content: ${insertError.message}`);
+        toast({
+          title: "Error initializing content",
+          description: "Could not save default content to the database. You can still edit, but changes may not persist.",
+          variant: "destructive"
+        });
+      } else {
+        console.log('Default content initialized successfully');
+      }
+    } catch (error: any) {
+      console.error('Error in initializeDefaultContent:', error);
+      setError(`Failed to initialize with default content: ${error.message}`);
+    }
+  };
+
+  // Helper function to validate content structure
+  const isValidLandingPageContent = (data: any): boolean => {
+    return (
+      typeof data === 'object' && 
+      data !== null && 
+      !Array.isArray(data) &&
+      'hero' in data && 
+      'features' in data && 
+      'kurdistan' in data && 
+      'footer' in data
+    );
+  };
 
   // Make sure we always have content to work with
   const safeContent = content || initialContent;
 
-  // Update hero section content
-  const updateHero = (field: keyof LandingPageContent['hero'], value: string) => {
+  // Update hero section content - memoized to prevent unnecessary re-renders
+  const updateHero = useCallback((field: keyof LandingPageContent['hero'], value: string) => {
     setContent(prev => {
       if (!prev) return { ...initialContent, hero: { ...initialContent.hero, [field]: value } };
       return {
@@ -138,10 +138,10 @@ export const useLandingPageContent = (retryCount = 0) => {
         hero: { ...prev.hero, [field]: value }
       };
     });
-  };
+  }, []);
 
-  // Update feature section content
-  const updateFeatureTitle = (value: string) => {
+  // Update feature section content - memoized to prevent unnecessary re-renders
+  const updateFeatureTitle = useCallback((value: string) => {
     setContent(prev => {
       if (!prev) return { ...initialContent, features: { ...initialContent.features, title: value } };
       return {
@@ -149,10 +149,10 @@ export const useLandingPageContent = (retryCount = 0) => {
         features: { ...prev.features, title: value }
       };
     });
-  };
+  }, []);
 
-  // Update feature card
-  const updateFeatureCard = (id: string, field: keyof Omit<LandingPageContent['features']['cards'][0], 'id'>, value: string) => {
+  // Update feature card - memoized to prevent unnecessary re-renders
+  const updateFeatureCard = useCallback((id: string, field: keyof Omit<LandingPageContent['features']['cards'][0], 'id'>, value: string) => {
     setContent(prev => {
       if (!prev) {
         const newContent = { ...initialContent };
@@ -172,10 +172,10 @@ export const useLandingPageContent = (retryCount = 0) => {
         }
       };
     });
-  };
+  }, []);
 
-  // Update Kurdistan section
-  const updateKurdistanSection = (field: keyof LandingPageContent['kurdistan'], value: string | string[]) => {
+  // Update Kurdistan section - memoized to prevent unnecessary re-renders
+  const updateKurdistanSection = useCallback((field: keyof LandingPageContent['kurdistan'], value: string | string[]) => {
     setContent(prev => {
       if (!prev) return { ...initialContent, kurdistan: { ...initialContent.kurdistan, [field]: value } };
       return {
@@ -183,10 +183,10 @@ export const useLandingPageContent = (retryCount = 0) => {
         kurdistan: { ...prev.kurdistan, [field]: value }
       };
     });
-  };
+  }, []);
 
-  // Update bullet point in Kurdistan section
-  const updateKurdistanPoint = (section: 'leftPoints' | 'rightPoints', index: number, value: string) => {
+  // Update bullet point in Kurdistan section - memoized to prevent unnecessary re-renders
+  const updateKurdistanPoint = useCallback((section: 'leftPoints' | 'rightPoints', index: number, value: string) => {
     setContent(prev => {
       if (!prev) {
         const newContent = { ...initialContent };
@@ -207,10 +207,10 @@ export const useLandingPageContent = (retryCount = 0) => {
         }
       };
     });
-  };
+  }, []);
 
-  // Update footer content
-  const updateFooter = (field: keyof LandingPageContent['footer'], value: string) => {
+  // Update footer content - memoized to prevent unnecessary re-renders
+  const updateFooter = useCallback((field: keyof LandingPageContent['footer'], value: string) => {
     setContent(prev => {
       if (!prev) return { ...initialContent, footer: { ...initialContent.footer, [field]: value } };
       return {
@@ -218,10 +218,10 @@ export const useLandingPageContent = (retryCount = 0) => {
         footer: { ...prev.footer, [field]: value }
       };
     });
-  };
+  }, []);
 
-  // Save all changes to the database
-  const saveChanges = async () => {
+  // Save all changes to the database - memoized to prevent unnecessary re-renders
+  const saveChanges = useCallback(async () => {
     if (!content) {
       toast({
         title: "Cannot save",
@@ -273,7 +273,7 @@ export const useLandingPageContent = (retryCount = 0) => {
     } finally {
       setSaving(false);
     }
-  };
+  }, [content, toast]);
 
   return {
     content: safeContent,

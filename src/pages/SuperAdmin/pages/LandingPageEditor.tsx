@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useLandingPageContent } from './LandingPageEditor/hooks/useLandingPageContent';
 import EditorHeader from './LandingPageEditor/components/EditorHeader';
 import EditorTabs from './LandingPageEditor/components/EditorTabs';
@@ -10,6 +10,11 @@ import { Button } from '@/components/ui/button';
 
 const LandingPageEditor = () => {
   const [retryCount, setRetryCount] = useState(0);
+  
+  // Memoize the retry function to prevent it from changing on each render
+  const handleRetry = useCallback(() => {
+    setRetryCount(prev => prev + 1);
+  }, []);
   
   const {
     content,
@@ -46,7 +51,7 @@ const LandingPageEditor = () => {
         <AlertDescription className="mt-2">
           {error}
           <div className="mt-4">
-            <Button onClick={() => setRetryCount(prev => prev + 1)}>
+            <Button onClick={handleRetry}>
               Retry
             </Button>
           </div>
@@ -64,7 +69,7 @@ const LandingPageEditor = () => {
         <AlertDescription className="mt-2">
           The landing page content could not be loaded properly.
           <div className="mt-4">
-            <Button onClick={() => setRetryCount(prev => prev + 1)}>
+            <Button onClick={handleRetry}>
               Retry
             </Button>
           </div>
