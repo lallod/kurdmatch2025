@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { setupSupabase } from '@/utils/setupSupabase';
 
 const SuperAdminLogin = () => {
   const [email, setEmail] = useState('lalo.peshawa@gmail.com');
@@ -22,132 +23,16 @@ const SuperAdminLogin = () => {
   useEffect(() => {
     const ensureSuperAdmin = async () => {
       try {
-        // Create super admin if it doesn't exist
-        const superAdminEmail = 'lalo.peshawa@gmail.com';
-        const superAdminPassword = 'Hanasa2011';
-        
-        const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
-        
-        if (listError) {
-          console.error('Error listing users:', listError);
-          return;
-        }
-        
-        // Check if super admin exists
-        const existingSuperAdmin = usersData?.users?.find(user => {
-          if (user && typeof user === 'object' && 'email' in user) {
-            const userObj = user as any;
-            return userObj.email && typeof userObj.email === 'string' && 
-                  userObj.email.toLowerCase() === superAdminEmail.toLowerCase();
-          }
-          return false;
-        });
-        
-        if (!existingSuperAdmin) {
-          console.log('Creating super admin account automatically...');
-          try {
-            // Create the super admin user
-            const { data: newUser, error: signUpError } = await supabase.auth.signUp({
-              email: superAdminEmail,
-              password: superAdminPassword,
-              options: {
-                data: { name: 'Super Admin' }
-              }
-            });
-            
-            if (signUpError) {
-              console.error('Error creating super admin:', signUpError);
-              return;
-            }
-            
-            const userId = newUser?.user?.id;
-            
-            if (!userId) {
-              console.error('Failed to get user ID after signup');
-              return;
-            }
-            
-            // Auto-confirm the email
-            try {
-              const { error: confirmError } = await supabase.auth.admin.updateUserById(userId, {
-                email_confirm: true
-              });
-              
-              if (confirmError) {
-                console.error('Error confirming email:', confirmError);
-              }
-            } catch (err) {
-              console.error('Could not confirm email:', err);
-            }
-            
-            // Add super_admin role
-            const { error: roleError } = await supabase
-              .from('user_roles')
-              .insert({
-                user_id: userId,
-                role: 'super_admin'
-              });
-            
-            if (roleError) {
-              console.error('Error assigning super_admin role:', roleError);
-            }
-            
-            toast({
-              title: "Super Admin Created",
-              description: "The Super Admin account has been created successfully.",
-            });
-          } catch (err) {
-            console.error('Error creating super admin:', err);
-          }
+        const setupSuccessful = await setupSupabase();
+        if (setupSuccessful) {
+          console.log('Super admin account verified or created successfully');
         } else {
-          console.log('Super admin account exists');
-          
-          // Ensure super admin role exists
-          const userId = existingSuperAdmin.id;
-          
-          const { data: roleData } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', userId)
-            .eq('role', 'super_admin');
-          
-          if (!roleData || roleData.length === 0) {
-            // Add super_admin role if missing
-            const { error: roleError } = await supabase
-              .from('user_roles')
-              .insert({
-                user_id: userId,
-                role: 'super_admin'
-              });
-            
-            if (roleError) {
-              console.error('Error assigning super_admin role:', roleError);
-            } else {
-              console.log('Super admin role assigned');
-            }
-          }
-        }
-        
-        // Delete all other users except the super admin
-        if (usersData?.users) {
-          for (const user of usersData.users) {
-            if (user && typeof user === 'object' && 'email' in user && 'id' in user) {
-              const userObj = user as any;
-              if (userObj.email && typeof userObj.email === 'string' && 
-                  userObj.email.toLowerCase() !== superAdminEmail.toLowerCase()) {
-                console.log('Deleting user:', userObj.email);
-                
-                const { error: deleteError } = await supabase.auth.admin.deleteUser(userObj.id);
-                
-                if (deleteError) {
-                  console.error(`Error deleting user ${userObj.email}:`, deleteError);
-                }
-              }
-            }
-          }
+          console.error('Failed to verify or create super admin account');
+          setErrorMessage('There was an error setting up the super admin account. Please try again later.');
         }
       } catch (error) {
         console.error('Error during super admin setup:', error);
+        setErrorMessage('There was an error setting up the super admin account. Please try again later.');
       }
     };
     
@@ -179,14 +64,14 @@ const SuperAdminLogin = () => {
         .eq('role', 'super_admin')
         .single();
 
-      if (roleError && roleError.code !== 'PGRST116') {
+      if (roleError) {
+        // Use maybeSingle instead of single to handle no rows returned
+        if (roleError.code === 'PGRST116') {
+          // No super admin role found for this user
+          await supabase.auth.signOut();
+          throw new Error('Access denied: Super admin privileges required');
+        }
         throw roleError;
-      }
-
-      if (!roleData) {
-        // No super admin role found for this user
-        await supabase.auth.signOut();
-        throw new Error('Access denied: Super admin privileges required');
       }
 
       toast({
