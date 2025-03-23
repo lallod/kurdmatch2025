@@ -17,6 +17,7 @@ import Auth from '@/pages/Auth';
 import SuperAdmin from '@/pages/SuperAdmin';
 import './App.css';
 import BottomNavigation from './components/BottomNavigation';
+import UserMenu from './components/UserMenu';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -151,8 +152,16 @@ const PublicOnlyRoute = () => {
 };
 
 function App() {
+  const { user } = useSupabaseAuth();
+  
   return (
     <Router>
+      {user && (
+        <div className="fixed top-4 right-4 z-50">
+          <UserMenu />
+        </div>
+      )}
+      
       <Routes>
         <Route path="/landing" element={<Landing />} />
         
