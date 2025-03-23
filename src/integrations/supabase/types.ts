@@ -595,6 +595,13 @@ export type Database = {
         }
         Returns: string
       }
+      create_dummy_auth_user: {
+        Args: {
+          email: string
+          user_uuid: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

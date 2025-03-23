@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -58,11 +57,12 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
           
           try {
             // First create the auth user - this is necessary for the foreign key constraint
+            // Note: Parameter order matches the SQL function we created (email first, then user_uuid)
             const { data: authUserData, error: authUserError } = await supabase.rpc(
-              'create_dummy_auth_user' as any, 
+              'create_dummy_auth_user',
               { 
-                user_uuid: userId,
-                email: email
+                email: email,
+                user_uuid: userId
               }
             );
             

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { CreateDemoProfileParams } from './supabaseTypes';
 
@@ -141,10 +140,10 @@ export const generateKurdishProfile = async (
         // Create a dummy auth user for this profile ID
         const email = `${profileId.slice(0, 8)}@example.com`;
         const { data: authUser, error: authError } = await supabase.rpc(
-          'create_dummy_auth_user' as any, 
+          'create_dummy_auth_user',
           { 
-            user_uuid: profileId,
-            email: email
+            email: email,
+            user_uuid: profileId
           }
         );
         
