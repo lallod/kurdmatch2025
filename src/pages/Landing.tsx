@@ -36,6 +36,7 @@ const Landing = () => {
         
         if (error) {
           console.error('Error fetching landing page content:', error);
+          // Fallback to initial content - already set by default
         } else if (data && data.content) {
           // Safely parse the content
           const contentData = data.content as Json;
@@ -45,12 +46,12 @@ const Landing = () => {
             setContent(contentData);
           } else {
             console.error('Invalid landing page content format:', contentData);
-            // Fallback to initial content
-            setContent(initialContent);
+            // Fallback to initial content - already set by default
           }
         }
       } catch (error) {
         console.error('Unexpected error fetching landing page content:', error);
+        // Fallback to initial content - already set by default
       } finally {
         setLoading(false);
       }

@@ -39,12 +39,17 @@ const ProtectedRoute = () => {
 const SuperAdminRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   const location = useLocation();
   const { toast } = useToast();
   
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (!user) return;
+      if (!user) {
+        setIsSuperAdmin(false);
+        setShouldRedirect(true);
+        return;
+      }
       
       try {
         const { data, error } = await supabase
@@ -54,10 +59,22 @@ const SuperAdminRoute = () => {
           .eq('role', 'super_admin');
         
         if (error) throw error;
-        setIsSuperAdmin(data && data.length > 0);
+        
+        const isAdmin = data && data.length > 0;
+        setIsSuperAdmin(isAdmin);
+        
+        if (!isAdmin) {
+          setShouldRedirect(true);
+          toast({
+            title: 'Access Denied',
+            description: 'You do not have permission to access this area',
+            variant: 'destructive'
+          });
+        }
       } catch (err) {
         console.error('Error checking admin status:', err);
         setIsSuperAdmin(false);
+        setShouldRedirect(true);
         toast({
           title: 'Error',
           description: 'Could not verify admin permissions',
@@ -66,23 +83,16 @@ const SuperAdminRoute = () => {
       }
     };
     
-    if (user) {
+    if (!loading) {
       checkAdminStatus();
-    } else {
-      setIsSuperAdmin(false);
     }
-  }, [user]);
+  }, [user, loading, toast]);
   
   if (loading || isSuperAdmin === null) {
     return <div className="flex h-screen items-center justify-center">Verifying permissions...</div>;
   }
   
-  if (!user || !isSuperAdmin) {
-    toast({
-      title: 'Access Denied',
-      description: 'You do not have permission to access this area',
-      variant: 'destructive'
-    });
+  if (shouldRedirect) {
     return <Navigate to="/" replace />;
   }
   
