@@ -25,6 +25,7 @@ const RecentActivity = () => {
     const loadActivities = async () => {
       try {
         setLoading(true);
+        console.log('Fetching recent activities...');
         
         // Fetch admin activities from the database
         const { data, error } = await supabase
@@ -35,7 +36,10 @@ const RecentActivity = () => {
         
         if (error) throw error;
         
+        console.log('Fetched activities data:', data);
+        
         if (!data || data.length === 0) {
+          console.log('No activities found');
           setActivities([]);
           return;
         }
@@ -45,7 +49,7 @@ const RecentActivity = () => {
           id: item.id,
           activity_type: item.activity_type,
           description: item.description,
-          user: 'Administrator', // Assuming these are admin activities
+          user: item.user_id ? `User ${item.user_id.slice(0, 8)}...` : 'Administrator',
           time: new Date(item.created_at).toLocaleString(),
           created_at: item.created_at,
           user_id: item.user_id
@@ -124,7 +128,7 @@ const RecentActivity = () => {
       <CardContent>
         {activities.length === 0 ? (
           <div className="p-4 text-center">
-            <p className="text-gray-500">No recent activities found.</p>
+            <p className="text-gray-500">No recent activities found. Add some data to the admin_activities table.</p>
           </div>
         ) : (
           <div className="space-y-4">

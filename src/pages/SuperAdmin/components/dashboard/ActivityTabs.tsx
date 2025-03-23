@@ -17,6 +17,7 @@ const ActivityTabs = () => {
     const loadEngagementData = async () => {
       try {
         setLoading(true);
+        console.log('Fetching engagement data...');
         
         // Fetch engagement data from the database
         const { data, error } = await supabase
@@ -25,6 +26,8 @@ const ActivityTabs = () => {
           .order('date', { ascending: true });
         
         if (error) throw error;
+        
+        console.log('Fetched engagement data:', data);
         
         if (!data || data.length === 0) {
           setEngagementData([]);

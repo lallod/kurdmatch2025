@@ -29,6 +29,7 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
     const loadStats = async () => {
       try {
         setLoading(true);
+        console.log('Fetching stats with timeRange:', timeRange);
         
         // Fetch dashboard stats directly from the database
         const { data, error } = await supabase
@@ -36,6 +37,8 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
           .select('*');
         
         if (error) throw error;
+        
+        console.log('Fetched stats data:', data);
         
         if (!data || data.length === 0) {
           setStats([]);
@@ -112,7 +115,7 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
           key={index}
           title={stat.stat_name}
           value={stat.stat_value.toLocaleString()}
-          change={`${stat.change_percentage >= 0 ? '+' : ''}${stat.change_percentage}% from last month`}
+          change={`${stat.change_percentage >= 0 ? '+' : ''}${stat.change_percentage}% from last ${timeRange}`}
           icon={getIconComponent(stat.icon)}
           trend={stat.trend}
         />
