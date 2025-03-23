@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import AdminDashboard from './AdminDashboard';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { checkAdminStatus } from '@/integrations/supabase/adminService';
 
 const Admin = () => {
   const { user, loading, session } = useSupabaseAuth();
@@ -26,10 +24,19 @@ const Admin = () => {
       
       try {
         // We've confirmed the user is authenticated, now let's verify they have admin permissions
-        const { data: roleData, error: roleError } = await supabase
+        const { data: userData } = await useSupabaseAuth().supabase.auth.getUser();
+        console.log('Current user data:', userData?.user?.email);
+        
+        if (!userData?.user) {
+          throw new Error('User data not available');
+        }
+        
+        // Fetch user roles to check if they have admin access
+        console.log('Checking admin access for:', userData.user.id);
+        const { data: roleData, error: roleError } = await useSupabaseAuth().supabase
           .from('user_roles')
           .select('role')
-          .eq('user_id', session.user.id)
+          .eq('user_id', userData.user.id)
           .eq('role', 'super_admin')
           .maybeSingle();
         
@@ -39,7 +46,7 @@ const Admin = () => {
         }
         
         setIsAdmin(!!roleData);
-        console.log('Admin status:', !!roleData, 'for user:', session.user.email);
+        console.log('Admin status:', !!roleData);
         
         if (!roleData) {
           // User doesn't have admin role, redirect them
@@ -62,13 +69,10 @@ const Admin = () => {
       }
     };
     
-    if (!loading && session) {
+    if (!loading) {
       checkAdminStatus();
-    } else if (!loading && !session) {
-      setIsAdmin(false);
-      setCheckingRole(false);
     }
-  }, [session, loading, toast]);
+  }, [session, loading, navigate, toast]);
 
   // Redirect to auth page if not authenticated
   useEffect(() => {
