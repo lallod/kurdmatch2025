@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from './client';
@@ -100,30 +99,30 @@ export const useSupabaseAuth = () => {
     
     try {
       // First check if the user exists in profiles
-      const { data: existingUser, error: queryError } = await supabase
+      const profileQuery = await supabase
         .from('profiles')
         .select('id')
         .eq('email', email)
         .maybeSingle();
       
-      if (queryError) {
-        console.error('Error checking for existing user:', queryError);
+      if (profileQuery.error) {
+        console.error('Error checking for existing user:', profileQuery.error);
         return false;
       }
       
       // If user exists, we're done
-      if (existingUser) {
+      if (profileQuery.data) {
         console.log(`Admin user exists: ${email}`);
         return true;
       }
       
       console.log(`Admin user doesn't exist, creating: ${email}`);
       
-      // Create the admin user
-      let signUpResult;
+      // Create the admin user - using explicit typing to avoid deep nesting
+      let signUpResponse;
       
       try {
-        signUpResult = await supabase.auth.signUp({
+        signUpResponse = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -138,39 +137,34 @@ export const useSupabaseAuth = () => {
         return false;
       }
       
-      // Check for errors in signup
-      if (signUpResult.error) {
-        console.error('Admin signup error:', signUpResult.error);
+      // Early return if signup failed
+      if (signUpResponse.error) {
+        console.error('Admin signup error:', signUpResponse.error);
         return false;
       }
       
-      // Make sure we have a user ID
-      const userId = signUpResult.data.user?.id;
-      if (!userId) {
+      // Type-safe extraction of user ID
+      const user = signUpResponse.data.user;
+      if (!user || !user.id) {
         console.error('User created but ID is missing');
         return false;
       }
       
-      // Assign admin role
-      try {
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: userId,
-            role: 'super_admin'
-          });
-        
-        if (roleError) {
-          console.error('Error assigning admin role:', roleError);
-          return false;
-        }
-        
-        console.log(`Admin role assigned to: ${email}`);
-        return true;
-      } catch (roleError) {
-        console.error('Exception assigning admin role:', roleError);
+      // Assign admin role with the extracted ID
+      const roleResponse = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: user.id,
+          role: 'super_admin'
+        });
+      
+      if (roleResponse.error) {
+        console.error('Error assigning admin role:', roleResponse.error);
         return false;
       }
+      
+      console.log(`Admin role assigned to: ${email}`);
+      return true;
     } catch (error) {
       console.error('General error ensuring admin exists:', error);
       return false;
