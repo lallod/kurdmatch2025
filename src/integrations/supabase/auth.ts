@@ -94,7 +94,7 @@ export const useSupabaseAuth = () => {
     }
   };
 
-  // Function to check if admin exists and create it if not
+  // Function to check if admin exists and create it if not - refactored to fix TypeScript error
   const ensureAdminExists = async (email: string, password: string) => {
     console.log(`Checking if admin exists: ${email}`);
     try {
@@ -110,34 +110,49 @@ export const useSupabaseAuth = () => {
       if (!existingUsers) {
         console.log(`Admin user doesn't exist, creating: ${email}`);
         
-        // Create the user with simplified error handling
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              name: 'Super Admin',
-              email,
+        // Fix: Break up the complex type chain by using explicit types and intermediate steps
+        let userId: string | undefined;
+        
+        try {
+          // Step 1: Create user with auth - store result in simple variable
+          const authResponse = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                name: 'Super Admin',
+                email,
+              }
             }
+          });
+          
+          // Step 2: Handle error separately
+          if (authResponse.error) {
+            throw authResponse.error;
           }
-        });
-        
-        if (error) throw error;
-        
-        // Check if user was created and has an ID
-        if (data?.user?.id) {
-          // Assign super_admin role
+          
+          // Step 3: Safely extract user ID
+          userId = authResponse.data.user?.id;
+          
+          // Step 4: Verify we have a user ID before proceeding
+          if (!userId) {
+            throw new Error('User created but ID is missing');
+          }
+          
+          // Step 5: Assign role with the extracted ID
           const { error: roleError } = await supabase
             .from('user_roles')
             .insert({
-              user_id: data.user.id,
+              user_id: userId,
               role: 'super_admin'
             });
           
           if (roleError) throw roleError;
           console.log(`Admin role assigned to: ${email}`);
-        } else {
-          console.error('User created but ID is missing');
+          
+        } catch (innerError) {
+          console.error('Error during admin creation:', innerError);
+          return false;
         }
       } else {
         console.log(`Admin user exists: ${email}`);
