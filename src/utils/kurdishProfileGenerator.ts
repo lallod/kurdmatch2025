@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { CreateDemoProfileParams } from './supabaseTypes';
 
@@ -10,29 +11,48 @@ const kurdishFemaleNames = ['Rojin', 'Berfin', 'Zilan', 'Shilan', 'Avesta', 'Ber
   'Jinda', 'Soma', 'Havin', 'Dilan', 'Viyan', 'Tara', 'Ruken', 'Sherin', 'Narin', 'Rojda', 
   'Zerin', 'Perwin', 'Rojbin', 'Nesrin', 'Hevi'];
 
+// Adding more diverse name options
+const globalMaleNames = ['James', 'Ali', 'Mohammed', 'Juan', 'Chen', 'Raj', 'Ahmed', 'Mikhail', 'Kenji', 'Diego', 
+  'Sven', 'Omar', 'David', 'Liam', 'Carlos', 'Ibrahim', 'Hans', 'Mateo', 'Dmitri', 'Hiroshi'];
+
+const globalFemaleNames = ['Maria', 'Fatima', 'Aisha', 'Sofia', 'Li', 'Priya', 'Olga', 'Yuki', 'Isabella', 'Amara',
+  'Emma', 'Ingrid', 'Zara', 'Sarah', 'Valentina', 'Yasmin', 'Mei', 'Anika', 'Layla', 'Jade'];
+
 const kurdishSurnames = ['Ahmadi', 'Barzani', 'Talabani', 'Kurdi', 'Shekaki', 'Zaza', 'Hawrami', 'Dizayi', 'Bajalan', 'Zangana',
   'Jaf', 'Zerdeşt', 'Qazi', 'Korani', 'Hewrami', 'Baban', 'Sorani', 'Badini', 'Botani', 'Peshmerga'];
 
-const kurdishLocations = [
+// Adding more diverse surnames
+const globalSurnames = ['Smith', 'Khan', 'Wang', 'Singh', 'García', 'Kim', 'Müller', 'Ivanov', 'Sato', 'Nguyen', 
+  'Kowalski', 'Silva', 'Rossi', 'Lee', 'Ali', 'Martinez', 'Andersen', 'Hassan', 'Dimitrov', 'Yamamoto'];
+
+// Expanded location list with global cities
+const locations = [
+  // Kurdish locations
   'Erbil, Kurdistan', 'Sulaymaniyah, Kurdistan', 'Duhok, Kurdistan', 'Halabja, Kurdistan',
   'Qamishli, Kurdistan', 'Kobani, Kurdistan', 'Afrin, Kurdistan', 'Diyarbakir, Kurdistan',
-  'Sanandaj, Kurdistan', 'Mahabad, Kurdistan', 'Kirmanshah, Kurdistan', 'Mardin, Kurdistan',
-  'Van, Kurdistan', 'Urmia, Kurdistan', 'Zakho, Kurdistan', 'Slemani, Kurdistan',
-  'Hewlêr, Kurdistan', 'Kirkuk, Kurdistan', 'Amedi, Kurdistan', 'Akre, Kurdistan'
+  // Global cities
+  'New York, USA', 'London, UK', 'Tokyo, Japan', 'Paris, France', 'Dubai, UAE', 'Sydney, Australia',
+  'Toronto, Canada', 'Berlin, Germany', 'Mumbai, India', 'Istanbul, Turkey', 'Cairo, Egypt',
+  'Rio de Janeiro, Brazil', 'Cape Town, South Africa', 'Stockholm, Sweden', 'Seoul, South Korea'
 ];
 
 const kurdishRegions = ['South-Kurdistan', 'West-Kurdistan', 'East-Kurdistan', 'North-Kurdistan'];
 
+// Global regions
+const globalRegions = ['North America', 'South America', 'Europe', 'Africa', 'Asia', 'Middle East', 'Oceania'];
+
 const occupations = ['Student', 'Teacher', 'Engineer', 'Doctor', 'Business Owner', 'Artist', 'Musician', 'Writer', 'Journalist', 'Developer',
-  'Farmer', 'Shopkeeper', 'Craftsman', 'Photographer', 'Chef', 'Driver', 'Translator', 'Activist', 'Social Worker', 'Nurse'];
+  'Farmer', 'Shopkeeper', 'Craftsman', 'Photographer', 'Chef', 'Driver', 'Translator', 'Activist', 'Social Worker', 'Nurse',
+  'Designer', 'Software Engineer', 'Data Scientist', 'Accountant', 'Lawyer', 'Marketing Specialist', 'UX Designer', 'Professor'];
 
 const heights = ['5\'2"', '5\'3"', '5\'4"', '5\'5"', '5\'6"', '5\'7"', '5\'8"', '5\'9"', '5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"'];
 const bodyTypes = ['Athletic', 'Average', 'Slim', 'Muscular', 'Curvy', 'Full figured'];
-const ethnicities = ['Kurdish', 'Kurdish-Persian', 'Kurdish-Turkish', 'Kurdish-Arab', 'Kurdish-Armenian'];
-const religions = ['Islam', 'Yarsanism', 'Yazidism', 'Zoroastrianism', 'Christianity', 'Spiritual', 'Non-religious'];
+const ethnicities = ['Kurdish', 'Kurdish-Persian', 'Kurdish-Turkish', 'Kurdish-Arab', 'Kurdish-Armenian', 'Asian', 'African', 'European', 'Hispanic', 'Middle Eastern', 'Mixed'];
+const religions = ['Islam', 'Yarsanism', 'Yazidism', 'Zoroastrianism', 'Christianity', 'Spiritual', 'Non-religious', 'Buddhism', 'Hinduism', 'Judaism', 'Sikhism'];
 const politicalViews = ['Progressive', 'Liberal', 'Moderate', 'Conservative', 'Political activist', 'Apolitical'];
 const educationLevels = ['High School', 'Bachelors Degree', 'Masters Degree', 'PhD', 'Trade School', 'Self-educated'];
-const companies = ['Kurdistan University', 'Korek Telecom', 'Asiacell', 'Newroz Telecom', 'Kurdsat', 'Rudaw Media', 'Kurdistan 24', 'Local Business Owner', 'Freelancer'];
+const companies = ['Kurdistan University', 'Korek Telecom', 'Asiacell', 'Newroz Telecom', 'Kurdsat', 'Rudaw Media', 'Kurdistan 24', 'Local Business Owner', 'Freelancer',
+  'Google', 'Microsoft', 'Amazon', 'Facebook', 'Apple', 'Twitter', 'Spotify', 'Netflix', 'Dropbox', 'Airbnb', 'Uber', 'Global Corp', 'Start-up Founder'];
 const relationshipGoals = ['Long-term relationship', 'Marriage', 'Friendship first', 'Taking things slow', 'Seeking connection'];
 const childrenStatuses = ['Want children someday', 'Don\'t want children', 'Open to children', 'Open to children', 'Have children already'];
 const petStatuses = ['Have pets', 'Love pets but don\'t have any', 'Allergic to pets', 'No pets'];
@@ -66,6 +86,26 @@ const growthGoals = ['Language learning', 'Professional development', 'Cultural 
 const hiddenTalents = ['Musical ability', 'Artistic talent', 'Storytelling', 'Language learning', 'Cooking', 'Problem-solving', 'Athletic skills'];
 const stressRelievers = ['Nature walks', 'Meditation', 'Music', 'Art', 'Exercise', 'Reading', 'Cooking', 'Spending time with loved ones'];
 
+// Fake profile photo URLs from various services
+const profilePhotoUrls = [
+  'https://randomuser.me/api/portraits/men/1.jpg',
+  'https://randomuser.me/api/portraits/women/2.jpg',
+  'https://randomuser.me/api/portraits/men/3.jpg',
+  'https://randomuser.me/api/portraits/women/4.jpg',
+  'https://randomuser.me/api/portraits/men/5.jpg',
+  'https://randomuser.me/api/portraits/women/6.jpg',
+  'https://randomuser.me/api/portraits/men/7.jpg',
+  'https://randomuser.me/api/portraits/women/8.jpg',
+  'https://i.pravatar.cc/300?img=1',
+  'https://i.pravatar.cc/300?img=2',
+  'https://i.pravatar.cc/300?img=3',
+  'https://i.pravatar.cc/300?img=4',
+  'https://i.pravatar.cc/300?img=5',
+  'https://i.pravatar.cc/300?img=6',
+  'https://i.pravatar.cc/300?img=7',
+  'https://i.pravatar.cc/300?img=8'
+];
+
 const getRandomElement = <T>(array: T[]): T => {
   return array[Math.floor(Math.random() * array.length)];
 };
@@ -76,20 +116,24 @@ const getRandomSubset = <T>(array: T[], min: number = 1, max: number = 3): T[] =
   return shuffled.slice(0, count);
 };
 
+const generateRandomDate = (start: Date, end: Date) => {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+};
+
 const generateBio = (firstName: string, gender: string, region: string, occupation: string, ageNum: number): string => {
   const bioTemplates = [
-    `${firstName} is a ${ageNum}-year-old Kurdish ${gender} from ${region}. Currently working as a ${occupation} with a passion for Kurdish culture and heritage.`,
-    `A proud Kurdish ${gender} from ${region}, ${firstName} works as a ${occupation} and loves to connect with people who share an interest in Kurdish traditions.`,
-    `${ageNum}-year-old ${firstName} is from ${region} and has spent the last few years working as a ${occupation}. Passionate about Kurdish identity and building meaningful connections.`,
-    `Born and raised in ${region}, ${firstName} is a ${occupation} who values ${gender === 'male' ? 'his' : 'her'} Kurdish heritage and enjoys sharing cultural experiences with others.`,
-    `${firstName} is a ${ageNum}-year-old ${occupation} from ${region} who believes in preserving Kurdish culture while embracing modern life and forming genuine connections.`
+    `${firstName} is a ${ageNum}-year-old ${gender === 'male' ? 'man' : 'woman'} from ${region}. Currently working as a ${occupation} with a passion for connecting with new people.`,
+    `A friendly ${gender === 'male' ? 'guy' : 'girl'} from ${region}, ${firstName} works as a ${occupation} and loves to meet people who share similar interests.`,
+    `${ageNum}-year-old ${firstName} is from ${region} and has spent the last few years working as a ${occupation}. Looking forward to making meaningful connections.`,
+    `Born and raised in ${region}, ${firstName} is a ${occupation} who values ${gender === 'male' ? 'his' : 'her'} heritage and enjoys sharing cultural experiences with others.`,
+    `${firstName} is a ${ageNum}-year-old ${occupation} from ${region} who believes in preserving cultural traditions while embracing modern life and forming genuine connections.`
   ];
   
   return getRandomElement(bioTemplates);
 };
 
 /**
- * Generate a Kurdish profile and save it to the database
+ * Generate a diverse profile and save it to the database
  * @param gender Optional gender preference ('male', 'female', or undefined for random)
  * @param withPhoto Whether to generate a random profile photo
  * @param userId Optional user ID to use (if not provided, a new UUID will be generated)
@@ -101,34 +145,62 @@ export const generateKurdishProfile = async (
   userId?: string
 ): Promise<string> => {
   try {
-    console.log(`Generating Kurdish profile - Gender: ${gender || 'random'}, With photo: ${withPhoto}, User ID: ${userId || 'new'}`);
+    console.log(`Generating profile - Gender: ${gender || 'random'}, With photo: ${withPhoto}, User ID: ${userId || 'new'}`);
     
-    // Determine gender and generate name
+    // Determine gender and ethnicity
     const isMale = gender ? gender === 'male' : Math.random() > 0.5;
-    const firstName = isMale 
-      ? getRandomElement(kurdishMaleNames)
-      : getRandomElement(kurdishFemaleNames);
+    const isKurdish = Math.random() > 0.5; // 50% chance of Kurdish, 50% global
     
-    const lastName = getRandomElement(kurdishSurnames);
+    // Select appropriate name lists based on ethnicity
+    const firstNameList = isKurdish 
+      ? (isMale ? kurdishMaleNames : kurdishFemaleNames)
+      : (isMale ? globalMaleNames : globalFemaleNames);
+    
+    const surnameList = isKurdish ? kurdishSurnames : globalSurnames;
+    
+    const firstName = getRandomElement(firstNameList);
+    const lastName = getRandomElement(surnameList);
     const fullName = `${firstName} ${lastName}`;
-    const location = getRandomElement(kurdishLocations);
-    const kurdistanRegion = getRandomElement(kurdishRegions);
+    
+    // Generate location and region
+    const isKurdishLocation = isKurdish || Math.random() > 0.7; // Kurdish profiles or 30% chance for others
+    const location = isKurdishLocation 
+      ? getRandomElement(locations.filter(loc => loc.includes('Kurdistan')))
+      : getRandomElement(locations.filter(loc => !loc.includes('Kurdistan')));
+    
+    const region = isKurdish 
+      ? getRandomElement(kurdishRegions)
+      : getRandomElement(globalRegions);
+    
     const occupation = getRandomElement(occupations);
     const age = Math.floor(Math.random() * 42) + 18; // Age between 18-60
     
-    // Generate a random profile image using a placeholder service based on gender
-    const avatarSeed = Math.random().toString(36).substring(2, 8);
-    const profileImage = withPhoto 
-      ? `https://i.pravatar.cc/300?u=${avatarSeed}` 
-      : undefined;
+    // Generate random profile photos
+    const profilePhotos = [];
+    if (withPhoto) {
+      // Main profile photo
+      profilePhotos.push(getRandomElement(profilePhotoUrls));
+      
+      // Add a second photo with a different URL
+      let secondPhoto;
+      do {
+        secondPhoto = getRandomElement(profilePhotoUrls);
+      } while (secondPhoto === profilePhotos[0]); // Ensure it's different
+      
+      profilePhotos.push(secondPhoto);
+    }
     
     // Use the provided user ID or generate a new one
     const profileId = userId || crypto.randomUUID();
     console.log(`Using profile ID: ${profileId} for ${fullName}`);
 
-    // Create the profile record directly in the profiles table with admin rights
-    console.log("Attempting to create profile directly...");
+    // Create random dates
+    const pastDate = new Date();
+    pastDate.setFullYear(pastDate.getFullYear() - 2); // Up to 2 years ago
     
+    const joinDate = generateRandomDate(pastDate, new Date());
+    const lastActiveDate = generateRandomDate(joinDate, new Date());
+
     try {
       // Check if the auth user exists before trying to create a profile
       const { data: authUserExists, error: authCheckError } = await supabase.auth
@@ -155,7 +227,7 @@ export const generateKurdishProfile = async (
         console.log("Auth user created successfully");
       }
       
-      // Now create the profile
+      // Now create the profile with all the random data
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -164,19 +236,20 @@ export const generateKurdishProfile = async (
           age,
           gender: isMale ? 'male' : 'female',
           location,
-          kurdistan_region: kurdistanRegion,
+          kurdistan_region: isKurdish ? region : null,
           occupation,
           verified: Math.random() > 0.3, // 70% verified
-          last_active: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(), // Random time in last 30 days
-          profile_image: profileImage,
-          bio: generateBio(firstName, isMale ? 'male' : 'female', kurdistanRegion, occupation, age),
+          last_active: lastActiveDate.toISOString(),
+          created_at: joinDate.toISOString(),
+          profile_image: profilePhotos[0], // Primary profile image
+          bio: generateBio(firstName, isMale ? 'male' : 'female', location, occupation, age),
           height: getRandomElement(heights),
           body_type: getRandomElement(bodyTypes),
-          ethnicity: getRandomElement(ethnicities),
+          ethnicity: isKurdish ? getRandomElement(ethnicities.filter(e => e.includes('Kurdish'))) : getRandomElement(ethnicities.filter(e => !e.includes('Kurdish'))),
           religion: getRandomElement(religions),
           political_views: getRandomElement(politicalViews),
           education: getRandomElement(educationLevels),
-          company: getRandomElement(companies),
+          company: isKurdish ? getRandomElement(companies.filter(c => c.includes('Kurdistan'))) : getRandomElement(companies.filter(c => !c.includes('Kurdistan'))),
           relationship_goals: getRandomElement(relationshipGoals),
           want_children: getRandomElement(childrenStatuses),
           have_pets: getRandomElement(petStatuses),
@@ -194,9 +267,9 @@ export const generateKurdishProfile = async (
           values: getRandomSubset(values, 3, 6),
           interests: getRandomSubset(interests, 3, 8),
           hobbies: getRandomSubset(hobbies, 2, 5),
-          languages: ['Kurdish'], // Always include Kurdish
-          tech_skills: Math.random() > 0.7 ? getRandomSubset(techSkills, 1, 4) : [],
-          music_instruments: Math.random() > 0.7 ? getRandomSubset(musicInstruments, 1, 3) : [],
+          languages: isKurdish ? ['Kurdish', ...getRandomSubset(['English', 'Arabic', 'Persian', 'Turkish'], 0, 2)] : getRandomSubset(['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Hindi'], 1, 3),
+          tech_skills: Math.random() > 0.5 ? getRandomSubset(techSkills, 1, 4) : [],
+          music_instruments: Math.random() > 0.6 ? getRandomSubset(musicInstruments, 1, 3) : [],
           favorite_games: Math.random() > 0.6 ? getRandomSubset(favoriteGames, 1, 3) : [],
           favorite_podcasts: Math.random() > 0.5 ? getRandomSubset(favoritePodcasts, 1, 3) : [],
           favorite_books: getRandomSubset(favoriteBooks, 1, 4),
@@ -208,10 +281,10 @@ export const generateKurdishProfile = async (
           growth_goals: Math.random() > 0.6 ? getRandomSubset(growthGoals, 1, 3) : [],
           hidden_talents: Math.random() > 0.7 ? getRandomSubset(hiddenTalents, 1, 2) : [],
           stress_relievers: Math.random() > 0.6 ? getRandomSubset(stressRelievers, 1, 3) : [],
-          favorite_memory: Math.random() > 0.6 ? `A memorable experience in ${getRandomElement(kurdishLocations)}` : null,
-          dream_vacation: Math.random() > 0.7 ? `Exploring ${getRandomElement(['more of Kurdistan', 'Europe', 'Americas', 'Asia', 'historical sites'])}` : null,
+          favorite_memory: Math.random() > 0.6 ? `A memorable experience in ${getRandomElement(locations)}` : null,
+          dream_vacation: Math.random() > 0.7 ? `Exploring ${getRandomElement(['more of Kurdistan', 'Europe', 'Americas', 'Asia', 'historical sites', 'tropical islands', 'mountain regions'])}` : null,
           favorite_quote: Math.random() > 0.7 ? `"${getRandomElement(['Life is what happens when you\'re busy making other plans', 'Be the change you wish to see in the world', 'The journey of a thousand miles begins with a single step', 'Nothing is permanent except change'])}"` : null,
-          dream_home: Math.random() > 0.7 ? `A ${getRandomElement(['traditional', 'modern', 'cozy', 'spacious'])} home in ${getRandomElement(kurdishLocations)}` : null,
+          dream_home: Math.random() > 0.7 ? `A ${getRandomElement(['traditional', 'modern', 'cozy', 'spacious'])} home in ${getRandomElement(locations)}` : null,
           transportation_preference: Math.random() > 0.6 ? getRandomElement(['Car', 'Public transport', 'Walking when possible', 'Bicycle', 'Combination of methods']) : null,
           charity_involvement: Math.random() > 0.7 ? `Supporting ${getRandomElement(['cultural preservation', 'education initiatives', 'humanitarian efforts', 'environmental causes', 'community development'])}` : null,
           financial_habits: Math.random() > 0.7 ? getRandomElement(['Careful planner', 'Balanced spender/saver', 'Generous with resources', 'Investment-focused', 'Living in the moment']) : null,
@@ -232,6 +305,25 @@ export const generateKurdishProfile = async (
 
       console.log('Profile created via direct insert:', profileData);
       
+      // Add the profile photos to the photos table
+      if (withPhoto && profilePhotos.length > 0) {
+        for (let i = 0; i < profilePhotos.length; i++) {
+          const { error: photoError } = await supabase
+            .from('photos')
+            .insert({
+              profile_id: profileId,
+              url: profilePhotos[i],
+              is_primary: i === 0 // First photo is primary
+            });
+            
+          if (photoError) {
+            console.error(`Error adding photo ${i+1}:`, photoError);
+          } else {
+            console.log(`Added photo ${i+1} for profile ${profileId}`);
+          }
+        }
+      }
+      
       // Assign a random role
       await assignRole(profileId);
       
@@ -249,7 +341,7 @@ export const generateKurdishProfile = async (
         user_location: location,
         user_gender: isMale ? 'male' : 'female',
         user_occupation: occupation,
-        user_profile_image: profileImage
+        user_profile_image: profilePhotos[0] || undefined
       };
       
       const { data: rpcData, error: rpcError } = await supabase.rpc(
@@ -263,6 +355,25 @@ export const generateKurdishProfile = async (
       }
       
       console.log('Profile created via RPC:', rpcData);
+      
+      // Still try to add photos
+      if (withPhoto && profilePhotos.length > 0) {
+        for (let i = 0; i < profilePhotos.length; i++) {
+          const { error: photoError } = await supabase
+            .from('photos')
+            .insert({
+              profile_id: profileId,
+              url: profilePhotos[i],
+              is_primary: i === 0 // First photo is primary
+            });
+            
+          if (photoError) {
+            console.error(`Error adding photo ${i+1}:`, photoError);
+          } else {
+            console.log(`Added photo ${i+1} for profile ${profileId}`);
+          }
+        }
+      }
       
       // Assign a random role
       await assignRole(profileId);
@@ -293,11 +404,116 @@ const assignRole = async (userId: string): Promise<void> => {
       });
     
     if (roleError) {
-      console.error('Error creating role for Kurdish profile:', roleError);
+      console.error('Error creating role for profile:', roleError);
     } else {
       console.log(`Role '${role}' assigned to user ${userId}`);
     }
   } catch (roleErr) {
     console.error('Exception adding role:', roleErr);
+  }
+};
+
+/**
+ * Update existing profiles with more diverse information and photos
+ * @param count Number of profiles to update
+ */
+export const updateExistingProfiles = async (count: number = 100): Promise<number> => {
+  let updatedCount = 0;
+  
+  try {
+    // Get profiles that need updating (those without photos)
+    const { data: profiles, error: fetchError } = await supabase
+      .from('profiles')
+      .select('id')
+      .limit(count);
+      
+    if (fetchError) {
+      console.error('Error fetching profiles to update:', fetchError);
+      return 0;
+    }
+    
+    if (!profiles || profiles.length === 0) {
+      console.log('No profiles found to update');
+      return 0;
+    }
+    
+    console.log(`Found ${profiles.length} profiles to update with more information`);
+    
+    // Update each profile with more diverse information
+    for (const profile of profiles) {
+      try {
+        // Get two random photos
+        const photoUrls = [];
+        photoUrls.push(getRandomElement(profilePhotoUrls));
+        
+        let secondPhoto;
+        do {
+          secondPhoto = getRandomElement(profilePhotoUrls);
+        } while (secondPhoto === photoUrls[0]);
+        photoUrls.push(secondPhoto);
+        
+        // Update the profile with the primary photo
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            profile_image: photoUrls[0],
+            verified: Math.random() > 0.3,
+            height: getRandomElement(heights),
+            body_type: getRandomElement(bodyTypes),
+            ethnicity: getRandomElement(ethnicities),
+            religion: getRandomElement(religions),
+            political_views: getRandomElement(politicalViews),
+            education: getRandomElement(educationLevels),
+            company: getRandomElement(companies),
+            bio: `A unique individual with a passion for life and connecting with others.`
+          })
+          .eq('id', profile.id);
+          
+        if (updateError) {
+          console.error(`Error updating profile ${profile.id}:`, updateError);
+          continue;
+        }
+        
+        // Check if photos already exist
+        const { data: existingPhotos, error: photosCheckError } = await supabase
+          .from('photos')
+          .select('id')
+          .eq('profile_id', profile.id);
+          
+        if (photosCheckError) {
+          console.error(`Error checking photos for profile ${profile.id}:`, photosCheckError);
+        }
+        
+        // If photos don't exist, add them
+        if (!existingPhotos || existingPhotos.length === 0) {
+          for (let i = 0; i < photoUrls.length; i++) {
+            const { error: photoError } = await supabase
+              .from('photos')
+              .insert({
+                profile_id: profile.id,
+                url: photoUrls[i],
+                is_primary: i === 0
+              });
+              
+            if (photoError) {
+              console.error(`Error adding photo ${i+1} for profile ${profile.id}:`, photoError);
+            }
+          }
+        }
+        
+        updatedCount++;
+        if (updatedCount % 10 === 0) {
+          console.log(`Updated ${updatedCount} profiles so far...`);
+        }
+      } catch (profileError) {
+        console.error(`Error updating profile ${profile.id}:`, profileError);
+      }
+    }
+    
+    console.log(`Successfully updated ${updatedCount} profiles with more information and photos`);
+    return updatedCount;
+  } catch (error) {
+    console.error('Error in bulk profile update:', error);
+    return updatedCount;
   }
 };

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -5,11 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw, ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateKurdishProfile } from '@/utils/kurdishProfileGenerator';
+import { generateKurdishProfile, updateExistingProfiles } from '@/utils/kurdishProfileGenerator';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface AddUserDialogProps {
   open: boolean;
@@ -23,18 +25,20 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [withPhotos, setWithPhotos] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<string>('generate');
+  const [updateCount, setUpdateCount] = useState<number>(50);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleGenerateProfiles = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setProgress(0);
 
     try {
       // Generate multiple profiles if count > 1
-      const totalProfiles = Math.min(50, Math.max(1, count)); // Allow up to 50 profiles
+      const totalProfiles = Math.min(100, Math.max(1, count)); // Allow up to 100 profiles
       
-      console.log(`Starting generation of ${totalProfiles} Kurdish profiles...`);
+      console.log(`Starting generation of ${totalProfiles} diverse profiles...`);
       
       // Process profiles in batches for better UI feedback
       let successfulProfiles = 0;
@@ -53,27 +57,9 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
           
           // Create a unique ID and email for the auth user
           const userId = crypto.randomUUID();
-          const email = `${userId.slice(0, 8)}@example.com`;
           
           try {
-            // First create the auth user - this is necessary for the foreign key constraint
-            // Note: Parameter order matches the SQL function we created (email first, then user_uuid)
-            const { data: authUserData, error: authUserError } = await supabase.rpc(
-              'create_dummy_auth_user',
-              { 
-                email: email,
-                user_uuid: userId
-              }
-            );
-            
-            if (authUserError) {
-              console.error(`Failed to create auth user: ${authUserError.message}`);
-              continue; // Skip this profile if auth user creation fails
-            }
-            
-            console.log(`Successfully created auth user with ID: ${userId} and email: ${email}`);
-            
-            // Then generate the profile
+            // Generate the profile with the user ID and photos
             batchPromises.push(
               generateKurdishProfile(selectedGender, withPhotos, userId)
                 .then(id => {
@@ -105,7 +91,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       } else if (successfulProfiles < totalProfiles) {
         toast({
           title: "Partial Success",
-          description: `${successfulProfiles} out of ${totalProfiles} Kurdish profiles were generated successfully.`,
+          description: `${successfulProfiles} out of ${totalProfiles} profiles were generated successfully.`,
           variant: "default",
         });
         onUserAdded();
@@ -113,7 +99,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       } else {
         toast({
           title: "Success",
-          description: `${successfulProfiles} Kurdish ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
+          description: `${successfulProfiles} ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully with rich personal information and photos.`,
           variant: "default",
         });
         onUserAdded();
@@ -134,68 +120,173 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
     }
   };
 
+  const handleUpdateExistingProfiles = async () => {
+    setIsLoading(true);
+    setProgress(0);
+
+    try {
+      console.log(`Starting update of ${updateCount} existing profiles...`);
+      
+      // Update the profiles
+      const updatedCount = await updateExistingProfiles(updateCount);
+      
+      // Calculate progress percentage (approximate since we don't know exact count in advance)
+      setProgress(100);
+      
+      if (updatedCount === 0) {
+        toast({
+          title: "No Updates Made",
+          description: "No profiles were found that needed updating.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `Successfully updated ${updatedCount} profiles with rich personal information and photos.`,
+          variant: "default",
+        });
+        onUserAdded();
+        onOpenChange(false);
+      }
+    } catch (error) {
+      console.error('Error updating profiles:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      toast({
+        title: "Error",
+        description: `Failed to update profiles: ${errorMessage}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+      setProgress(0);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Generate Kurdish Profiles</DialogTitle>
+          <DialogTitle>Generate Rich User Profiles</DialogTitle>
           <DialogDescription>
-            Automatically generate realistic Kurdish user profiles with comprehensive information.
+            Automatically generate realistic user profiles with comprehensive information and photos.
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="grid gap-2">
-            <Label htmlFor="count">Number of profiles to generate</Label>
-            <Input
-              id="count"
-              type="number"
-              min={1}
-              max={50}
-              value={count}
-              onChange={(e) => setCount(Math.min(50, Math.max(1, parseInt(e.target.value) || 1)))}
-              className="w-full"
-            />
-            <p className="text-xs text-muted-foreground">Maximum 50 profiles per batch</p>
-          </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="generate">Generate New</TabsTrigger>
+            <TabsTrigger value="update">Update Existing</TabsTrigger>
+          </TabsList>
           
-          <div className="grid gap-2">
-            <Label htmlFor="gender">Gender preference</Label>
-            <Select value={gender} onValueChange={setGender}>
-              <SelectTrigger id="gender">
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="random">Random</SelectItem>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <TabsContent value="generate">
+            <form onSubmit={handleGenerateProfiles} className="space-y-4 pt-4">
+              <div className="grid gap-2">
+                <Label htmlFor="count">Number of profiles to generate</Label>
+                <Input
+                  id="count"
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={count}
+                  onChange={(e) => setCount(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">Maximum 100 profiles per batch</p>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="gender">Gender preference</Label>
+                <Select value={gender} onValueChange={setGender}>
+                  <SelectTrigger id="gender">
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="random">Random</SelectItem>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="withPhotos" 
+                  checked={withPhotos} 
+                  onCheckedChange={(checked) => setWithPhotos(checked as boolean)}
+                />
+                <Label htmlFor="withPhotos" className="cursor-pointer">Generate with profile photos</Label>
+              </div>
+              
+              {isLoading && progress > 0 && (
+                <div className="w-full space-y-2">
+                  <Progress value={progress} className="w-full" />
+                  <p className="text-xs text-center text-muted-foreground">{progress}% complete</p>
+                </div>
+              )}
+              
+              <DialogFooter>
+                <Button type="submit" disabled={isLoading} className="gap-2">
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw size={16} />}
+                  Generate Rich Profiles
+                </Button>
+              </DialogFooter>
+            </form>
+          </TabsContent>
           
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="withPhotos" 
-              checked={withPhotos} 
-              onCheckedChange={(checked) => setWithPhotos(checked as boolean)}
-            />
-            <Label htmlFor="withPhotos" className="cursor-pointer">Generate with profile photos</Label>
-          </div>
-          
-          {isLoading && progress > 0 && (
-            <div className="w-full space-y-2">
-              <Progress value={progress} className="w-full" />
-              <p className="text-xs text-center text-muted-foreground">{progress}% complete</p>
+          <TabsContent value="update">
+            <div className="space-y-4 pt-4">
+              <div className="grid gap-2">
+                <Label htmlFor="updateCount">Number of profiles to update</Label>
+                <Input
+                  id="updateCount"
+                  type="number"
+                  min={1}
+                  max={200}
+                  value={updateCount}
+                  onChange={(e) => setUpdateCount(Math.min(200, Math.max(1, parseInt(e.target.value) || 1)))}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">Maximum 200 profiles per batch</p>
+              </div>
+              
+              <div className="rounded-md bg-amber-50 p-4 border border-amber-200">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <ImageIcon className="h-5 w-5 text-amber-400" aria-hidden="true" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-amber-800">Update existing profiles</h3>
+                    <div className="mt-2 text-sm text-amber-700">
+                      <p>
+                        This will add rich information and photos to existing profiles. 
+                        Use this to enhance profiles that were previously created.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {isLoading && progress > 0 && (
+                <div className="w-full space-y-2">
+                  <Progress value={progress} className="w-full" />
+                  <p className="text-xs text-center text-muted-foreground">{progress}% complete</p>
+                </div>
+              )}
+              
+              <DialogFooter>
+                <Button 
+                  onClick={handleUpdateExistingProfiles} 
+                  disabled={isLoading} 
+                  className="gap-2"
+                >
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ImageIcon size={16} />}
+                  Update Existing Profiles
+                </Button>
+              </DialogFooter>
             </div>
-          )}
-          
-          <DialogFooter>
-            <Button type="submit" disabled={isLoading} className="gap-2">
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw size={16} />}
-              Generate Profiles
-            </Button>
-          </DialogFooter>
-        </form>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
