@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { 
@@ -13,7 +14,25 @@ import LoginForm from '@/components/auth/LoginForm';
 import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
 import Logo from './Logo';
 
-const HeroSection: React.FC = () => {
+interface HeroContent {
+  title: string;
+  tagline: string;
+  subtitle: string;
+  userCount: string;
+}
+
+interface HeroSectionProps {
+  content?: HeroContent;
+}
+
+const defaultContent: HeroContent = {
+  title: "Find Your Kurdish Match",
+  tagline: "Connecting Kurds Worldwide",
+  subtitle: "The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values.",
+  userCount: "10,000+"
+};
+
+const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) => {
   return (
     <div className="relative py-16 overflow-hidden">
       {/* Abstract AI background elements */}
@@ -44,17 +63,18 @@ const HeroSection: React.FC = () => {
           <div className="flex-1 space-y-8">
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-900/30 border border-purple-700/30 text-sm text-purple-300 backdrop-blur-sm">
               <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
-              <span>Connecting Kurds Worldwide</span>
+              <span>{content.tagline}</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-              Find Your
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 ml-2">Kurdish Match</span>
+              {content.title.split(" ").slice(0, -1).join(" ")}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 ml-2">
+                {content.title.split(" ").slice(-1)[0]}
+              </span>
             </h1>
             
             <p className="text-xl text-gray-300">
-              The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan 
-              and the diaspora, bringing together singles who share our rich heritage and values.
+              {content.subtitle}
             </p>
           </div>
           
@@ -93,7 +113,7 @@ const HeroSection: React.FC = () => {
                 ))}
               </div>
               <div>
-                <span className="text-white font-semibold">10,000+</span> Kurdish singles have already joined
+                <span className="text-white font-semibold">{content.userCount}</span> Kurdish singles have already joined
               </div>
             </div>
           </div>

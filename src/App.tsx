@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -259,6 +260,8 @@ function App() {
       )}
       
       <Routes>
+        {/* Make Landing route accessible to anyone without protection */}
+        <Route path="/" element={<Landing />} />
         <Route path="/landing" element={<Landing />} />
         
         <Route element={<PublicOnlyRoute />}>
@@ -266,7 +269,7 @@ function App() {
         </Route>
         
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Index />} />
+          <Route path="/app" element={<Index />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/discovery" element={<Discovery />} />
           <Route path="/user-profile" element={<UserProfile />} />

@@ -7,6 +7,7 @@ import Footer from '@/components/landing/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import { LandingPageContent, initialContent } from '@/pages/SuperAdmin/pages/LandingPageEditor/types';
 import { Json } from '@/integrations/supabase/types';
+import { Loader2 } from 'lucide-react';
 
 // Helper function to safely validate and parse the content
 const isValidLandingPageContent = (data: any): data is LandingPageContent => {
@@ -28,6 +29,7 @@ const Landing = () => {
   useEffect(() => {
     const fetchLandingPageContent = async () => {
       try {
+        console.log('Fetching landing page content...');
         const { data, error } = await supabase
           .from('landing_page_content')
           .select('content')
@@ -38,6 +40,7 @@ const Landing = () => {
           console.error('Error fetching landing page content:', error);
           // Fallback to initial content - already set by default
         } else if (data && data.content) {
+          console.log('Landing page content received:', data.content);
           // Safely parse the content
           const contentData = data.content as Json;
           
@@ -60,19 +63,28 @@ const Landing = () => {
     fetchLandingPageContent();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black">
+        <Loader2 className="h-10 w-10 text-purple-500 animate-spin mb-4" />
+        <p className="text-white">Loading beautiful Kurdish experiences...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-black to-indigo-950">
       {/* Hero Section */}
-      <HeroSection />
+      <HeroSection content={content.hero} />
 
       {/* Features Section */}
-      <FeaturesSection />
+      <FeaturesSection content={content.features} />
 
       {/* Kurdistan Heritage Section */}
-      <KurdistanSection />
+      <KurdistanSection content={content.kurdistan} />
 
       {/* Footer */}
-      <Footer />
+      <Footer content={content.footer} />
     </div>
   );
 };
