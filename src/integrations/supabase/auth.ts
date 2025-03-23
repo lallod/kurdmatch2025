@@ -109,8 +109,9 @@ export const useSupabaseAuth = () => {
       
       if (!existingUsers) {
         console.log(`Admin user doesn't exist, creating: ${email}`);
-        // User doesn't exist, create it
-        const signUpResult = await supabase.auth.signUp({
+        
+        // User doesn't exist, create it - using explicit typing to avoid deep nesting
+        const signUpResponse = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -121,14 +122,16 @@ export const useSupabaseAuth = () => {
           }
         });
         
-        if (signUpResult.error) throw signUpResult.error;
+        if (signUpResponse.error) throw signUpResponse.error;
         
-        if (signUpResult.data.user) {
+        // Safely access user after checking for errors
+        const userId = signUpResponse.data.user?.id;
+        if (userId) {
           // Assign super_admin role
           const { error: roleError } = await supabase
             .from('user_roles')
             .insert({
-              user_id: signUpResult.data.user.id,
+              user_id: userId,
               role: 'super_admin'
             });
           
