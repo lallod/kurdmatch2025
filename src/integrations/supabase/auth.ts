@@ -110,7 +110,7 @@ export const useSupabaseAuth = () => {
       if (!existingUsers) {
         console.log(`Admin user doesn't exist, creating: ${email}`);
         // User doesn't exist, create it
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        const signUpResult = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -121,14 +121,14 @@ export const useSupabaseAuth = () => {
           }
         });
         
-        if (signUpError) throw signUpError;
+        if (signUpResult.error) throw signUpResult.error;
         
-        if (signUpData.user) {
+        if (signUpResult.data.user) {
           // Assign super_admin role
           const { error: roleError } = await supabase
             .from('user_roles')
             .insert({
-              user_id: signUpData.user.id,
+              user_id: signUpResult.data.user.id,
               role: 'super_admin'
             });
           
