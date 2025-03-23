@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +14,7 @@ const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { signIn, signUp, user } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     try {
       if (isSignUp) {
@@ -39,6 +41,7 @@ const Auth = () => {
 
         if (error) throw error;
 
+        setSuccessMessage("Account created! Please check your email to confirm your account.");
         toast({
           title: "Account created!",
           description: "Please check your email to confirm your account.",
@@ -47,7 +50,7 @@ const Auth = () => {
         // Switch to login form after successful signup
         setTimeout(() => {
           setIsSignUp(false);
-        }, 2000);
+        }, 3000);
       } else {
         // Handle login
         console.log(`Attempting to sign in with: ${email}`);
@@ -66,7 +69,11 @@ const Auth = () => {
       console.error('Authentication error:', error);
       
       // Set a user-friendly error message
-      setErrorMessage(error.message || "Something went wrong. Please try again.");
+      if (error.message === 'Email not confirmed') {
+        setErrorMessage("Please check your email to confirm your account before logging in.");
+      } else {
+        setErrorMessage(error.message || "Something went wrong. Please try again.");
+      }
       
       toast({
         title: "Authentication failed",
@@ -96,6 +103,13 @@ const Auth = () => {
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative flex items-start" role="alert">
             <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
             <span className="block">{errorMessage}</span>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative flex items-start" role="alert">
+            <CheckCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <span className="block">{successMessage}</span>
           </div>
         )}
 
@@ -148,6 +162,7 @@ const Auth = () => {
             onClick={() => {
               setIsSignUp(!isSignUp);
               setErrorMessage(null);
+              setSuccessMessage(null);
             }}
             className="text-sm text-gray-600 hover:text-gray-900"
           >

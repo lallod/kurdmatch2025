@@ -91,80 +91,74 @@ export const useSupabaseAuth = () => {
     }
   };
 
-  // Completely rewritten function using a more direct approach
+  // Completely rewritten to fix TypeScript error
   const ensureAdminExists = async (email: string, password: string): Promise<boolean> => {
     try {
       console.log(`Checking if admin exists: ${email}`);
       
-      // First check if user with this email exists in profiles table
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .maybeSingle();
+      // First check if user exists in auth system
+      const { data: existingUser, error: userError } = await supabase.auth.admin.getUserByEmail(email)
+        .catch(() => ({ data: null, error: null }));
       
-      if (profileError && profileError.code !== 'PGRST116') {
-        console.error('Error checking for existing profile:', profileError);
-        return false;
-      }
+      // Check if user has admin role
+      let isAdmin = false;
+      let userId = existingUser?.id;
       
-      // If profile exists, check if it has admin role
-      if (profileData?.id) {
-        const { data: roleData, error: roleError } = await supabase
+      if (userId) {
+        // User exists, check for admin role
+        const { data: roles } = await supabase
           .from('user_roles')
           .select('role')
-          .eq('user_id', profileData.id)
-          .eq('role', 'super_admin')
-          .maybeSingle();
+          .eq('user_id', userId)
+          .eq('role', 'super_admin');
           
-        if (roleError) {
-          console.error('Error checking admin role:', roleError);
-          return false;
-        }
+        isAdmin = roles && roles.length > 0;
         
-        // If user has admin role, return true
-        if (roleData) {
+        if (isAdmin) {
           console.log(`Admin user confirmed: ${email}`);
           return true;
         }
       }
       
-      // At this point, we need to create the admin user
+      // At this point, either user doesn't exist or doesn't have admin role
       console.log(`Admin user doesn't exist, creating: ${email}`);
       
-      // Create the user in auth system
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: 'Super Admin',
-            email
-          }
-        }
-      });
-      
-      if (authError) {
-        console.error('Admin signup error:', authError);
-        return false;
-      }
-      
-      const userId = authData.user?.id;
       if (!userId) {
-        console.error('User created but ID is missing');
-        return false;
+        // Create the user
+        const { data: newUser, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { name: 'Super Admin', email }
+          }
+        });
+        
+        if (signUpError || !newUser?.user?.id) {
+          console.error('Admin signup error:', signUpError);
+          return false;
+        }
+        
+        userId = newUser.user.id;
+        
+        // Directly confirm the email for this admin user
+        // Note: In production, you may want to use a different approach
+        try {
+          await supabase.auth.admin.updateUserById(userId, { email_confirm: true });
+        } catch (err) {
+          console.error('Could not confirm email automatically:', err);
+        }
       }
       
-      // Assign admin role
-      const { error: roleAssignError } = await supabase
+      // Assign admin role to user
+      const { error: roleError } = await supabase
         .from('user_roles')
         .insert({
           user_id: userId,
           role: 'super_admin'
         });
       
-      if (roleAssignError) {
-        console.error('Error assigning admin role:', roleAssignError);
+      if (roleError) {
+        console.error('Error assigning admin role:', roleError);
         return false;
       }
       
