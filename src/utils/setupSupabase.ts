@@ -41,7 +41,6 @@ export const setupSupabase = async () => {
       
       // We need to manually confirm the email for the new user since we're in development
       try {
-        // This will only work with service role, but we'll try anyway
         const userId = signUpData?.user?.id;
         if (userId) {
           const { error: confirmError } = await supabase.auth.admin.updateUserById(userId, {
@@ -61,8 +60,7 @@ export const setupSupabase = async () => {
       console.log('Successfully signed in as super admin');
     }
     
-    // At this point, either the sign in or sign up was successful
-    // Let's ensure the user has the super_admin role
+    // After successful sign in or sign up, get the current user
     const { data: userData } = await supabase.auth.getUser();
     if (!userData?.user?.id) {
       console.error('Could not get current user');
@@ -94,10 +92,8 @@ export const setupSupabase = async () => {
       
       if (insertRoleError) {
         console.error('Error adding super_admin role:', insertRoleError);
-        
-        if (insertRoleError.code === '42501') {
-          console.log('Row-level security prevented role creation. This likely means you need to disable RLS for the user_roles table or create appropriate policies.');
-        }
+      } else {
+        console.log('Super admin role created successfully');
       }
     } else {
       console.log('User already has super_admin role');

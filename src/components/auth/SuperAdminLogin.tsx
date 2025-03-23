@@ -1,22 +1,50 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Loader2, AlertCircle, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { setupSupabase } from '@/utils/setupSupabase';
 
 const SuperAdminLogin = () => {
   const [email, setEmail] = useState('lalo.peshawa@gmail.com');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSettingUp, setIsSettingUp] = useState(false);
+  const [setupComplete, setSetupComplete] = useState(false);
   const { signIn } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Run setup on component mount
+  useEffect(() => {
+    const runSetup = async () => {
+      setIsSettingUp(true);
+      const success = await setupSupabase();
+      setIsSettingUp(false);
+      setSetupComplete(success);
+      
+      if (success) {
+        toast({
+          title: "Admin Account Ready",
+          description: "Super admin account has been set up successfully.",
+        });
+      } else {
+        toast({
+          title: "Setup Issue",
+          description: "There was a problem setting up the admin account.",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    runSetup();
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,8 +78,9 @@ const SuperAdminLogin = () => {
       }
 
       if (!roleData) {
+        // No super admin role found, try to create it
         console.log('No super admin role found, creating one');
-        // No super admin role found, create it
+        
         const { error: insertError } = await supabase
           .from('user_roles')
           .insert({
@@ -61,11 +90,7 @@ const SuperAdminLogin = () => {
         
         if (insertError) {
           console.error('Error creating super admin role:', insertError);
-          if (insertError.code === '42501') {
-            // RLS error - user doesn't have permission to insert
-            throw new Error('You do not have permission to become a super admin');
-          }
-          throw new Error('Could not create super admin role');
+          throw new Error('You do not have permission to become a super admin');
         }
       }
 
@@ -113,6 +138,20 @@ const SuperAdminLogin = () => {
             Back to Landing Page
           </Button>
         </div>
+
+        {isSettingUp && (
+          <div className="bg-blue-900/50 border border-blue-700 text-blue-200 px-4 py-3 rounded relative flex items-center" role="alert">
+            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+            <span>Setting up admin account...</span>
+          </div>
+        )}
+
+        {setupComplete && (
+          <div className="bg-green-900/50 border border-green-700 text-green-200 px-4 py-3 rounded relative flex items-center" role="alert">
+            <CheckCircle className="h-5 w-5 mr-2" />
+            <span>Admin account ready! You can now log in.</span>
+          </div>
+        )}
         
         {errorMessage && (
           <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded relative flex items-start" role="alert">
@@ -143,7 +182,7 @@ const SuperAdminLogin = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              disabled={isLoading}
+              disabled={isLoading || isSettingUp}
               className="bg-gray-700 border-gray-600 text-white"
             />
           </div>
@@ -151,7 +190,7 @@ const SuperAdminLogin = () => {
           <Button
             type="submit"
             className="w-full bg-purple-800 hover:bg-purple-700 text-white"
-            disabled={isLoading}
+            disabled={isLoading || isSettingUp}
           >
             {isLoading ? (
               <>
@@ -159,7 +198,10 @@ const SuperAdminLogin = () => {
                 Verifying Credentials...
               </>
             ) : (
-              "Access Dashboard"
+              <>
+                <Shield className="mr-2 h-4 w-4" />
+                Access Dashboard
+              </>
             )}
           </Button>
         </form>
