@@ -1,12 +1,14 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, ImageIcon } from 'lucide-react';
+import { Loader2, ImageIcon, Activity } from 'lucide-react';
 import { DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { updateExistingProfiles } from '@/utils/profileGenerator';
+import { updateExistingProfiles, generateRandomUserActivity } from '@/utils/profileGenerator';
 import ProgressIndicator from './ProgressIndicator';
+import { Switch } from '@/components/ui/switch';
 
 interface UpdateProfilesFormProps {
   onSuccess: () => void;
@@ -17,6 +19,7 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
   const [updateCount, setUpdateCount] = useState<number>(50);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const [generateActivity, setGenerateActivity] = useState<boolean>(true);
   const { toast } = useToast();
 
   const handleUpdateExistingProfiles = async () => {
@@ -29,8 +32,27 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
       // Update the profiles
       const updatedCount = await updateExistingProfiles(updateCount);
       
-      // Calculate progress percentage (approximate since we don't know exact count in advance)
-      setProgress(100);
+      // Set progress to 50% after profile updates
+      setProgress(generateActivity ? 50 : 100);
+      
+      // Generate activity if enabled
+      if (generateActivity) {
+        console.log("Generating random user activity...");
+        const { likesGenerated, matchesGenerated, messagesGenerated } = 
+          await generateRandomUserActivity(updateCount);
+        
+        setProgress(100);
+        
+        if (likesGenerated === 0 && matchesGenerated === 0 && messagesGenerated === 0) {
+          toast({
+            title: "Activity Generation Failed",
+            description: "Could not generate user activity. See console for details.",
+            variant: "destructive",
+          });
+        } else {
+          console.log(`Generated ${likesGenerated} likes, ${matchesGenerated} matches, and ${messagesGenerated} messages`);
+        }
+      }
       
       if (updatedCount === 0) {
         toast({
@@ -39,9 +61,12 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
           variant: "default",
         });
       } else {
+        const activityMsg = generateActivity ? 
+          ` and generated user activity (${updatedCount > 10 ? 'hundreds of' : 'several'} interactions)` : '';
+        
         toast({
           title: "Success",
-          description: `Successfully updated ${updatedCount} profiles with rich personal information and photos.`,
+          description: `Successfully updated ${updatedCount} profiles with rich personal information${activityMsg}.`,
           variant: "default",
         });
         onSuccess();
@@ -78,6 +103,17 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
         <p className="text-xs text-muted-foreground">Maximum 200 profiles per batch</p>
       </div>
       
+      <div className="flex items-center space-x-2">
+        <Switch 
+          id="generateActivity" 
+          checked={generateActivity} 
+          onCheckedChange={setGenerateActivity}
+        />
+        <Label htmlFor="generateActivity" className="cursor-pointer">
+          Generate random user activity (likes, matches, messages)
+        </Label>
+      </div>
+      
       <div className="rounded-md bg-amber-50 p-4 border border-amber-200">
         <div className="flex">
           <div className="flex-shrink-0">
@@ -87,8 +123,8 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
             <h3 className="text-sm font-medium text-amber-800">Update existing profiles</h3>
             <div className="mt-2 text-sm text-amber-700">
               <p>
-                This will add rich information and photos to existing profiles. 
-                Use this to enhance profiles that were previously created.
+                This will add rich information and photos to existing profiles and optionally
+                generate user activity data for a more realistic admin dashboard.
               </p>
             </div>
           </div>
@@ -105,8 +141,8 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
           disabled={isLoading} 
           className="gap-2"
         >
-          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ImageIcon size={16} />}
-          Update Existing Profiles
+          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (generateActivity ? <Activity size={16} /> : <ImageIcon size={16} />)}
+          {generateActivity ? "Update Profiles & Generate Activity" : "Update Existing Profiles"}
         </Button>
       </DialogFooter>
     </div>
