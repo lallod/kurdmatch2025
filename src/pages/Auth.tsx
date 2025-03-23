@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -20,9 +21,34 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect if already logged in
+    const checkUserRole = async () => {
+      if (!user) return;
+
+      try {
+        // Check if user has super_admin role
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'super_admin')
+          .single();
+
+        if (data) {
+          // If user is super_admin, redirect to the super admin dashboard
+          navigate('/super-admin');
+          return;
+        }
+
+        // If not super_admin, redirect to main page
+        navigate('/');
+      } catch (error) {
+        console.error('Error checking user role:', error);
+        navigate('/');
+      }
+    };
+
     if (user) {
-      navigate('/');
+      checkUserRole();
     }
   }, [user, navigate]);
 
@@ -63,7 +89,7 @@ const Auth = () => {
           description: "You've successfully logged in.",
         });
         
-        navigate('/');
+        // Redirect will be handled by the useEffect
       }
     } catch (error: any) {
       console.error('Authentication error:', error);
