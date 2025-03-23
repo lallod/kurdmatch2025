@@ -6,9 +6,16 @@ import { updateExistingProfiles, generateRandomUserActivity } from './profileUpd
 /**
  * Generate a batch of diverse Kurdish profiles
  * @param count Number of profiles to generate
+ * @param options Optional configuration options
  * @returns An object with the count of successfully generated profiles
  */
-export const generateDiverseKurdishProfiles = async (count: number = 50): Promise<{
+export const generateDiverseKurdishProfiles = async (
+  count: number = 50, 
+  options: {
+    gender?: 'male' | 'female' | 'random',
+    generateActivity?: boolean
+  } = {}
+): Promise<{
   generatedCount: number,
   updatedCount: number,
   likesGenerated: number,
@@ -20,6 +27,8 @@ export const generateDiverseKurdishProfiles = async (count: number = 50): Promis
   let likesGenerated = 0;
   let matchesGenerated = 0;
   let messagesGenerated = 0;
+  
+  const { gender = 'random', generateActivity = true } = options;
   
   try {
     console.log(`Starting generation of ${count} diverse Kurdish profiles...`);
@@ -34,12 +43,14 @@ export const generateDiverseKurdishProfiles = async (count: number = 50): Promis
       const end = Math.min(start + batchSize, count);
       
       for (let i = start; i < end; i++) {
-        // Alternate gender for diversity
-        const gender = i % 2 === 0 ? 'male' : 'female';
+        // Determine gender based on options
+        const selectedGender = gender === 'random' 
+          ? (i % 2 === 0 ? 'male' : 'female') 
+          : gender;
         
         // Generate the profile
         batchPromises.push(
-          generateKurdishProfile(gender, true)
+          generateKurdishProfile(selectedGender, true)
             .then(id => {
               generatedCount++;
               return id;
@@ -61,12 +72,14 @@ export const generateDiverseKurdishProfiles = async (count: number = 50): Promis
       console.log(`Updating profiles with richer Kurdish information...`);
       updatedCount = await updateExistingProfiles(generatedCount);
       
-      // Generate activity
-      console.log(`Generating realistic user activity among Kurdish profiles...`);
-      const activity = await generateRandomUserActivity(generatedCount);
-      likesGenerated = activity.likesGenerated;
-      matchesGenerated = activity.matchesGenerated;
-      messagesGenerated = activity.messagesGenerated;
+      // Generate activity if enabled
+      if (generateActivity) {
+        console.log(`Generating realistic user activity among Kurdish profiles...`);
+        const activity = await generateRandomUserActivity(generatedCount);
+        likesGenerated = activity.likesGenerated;
+        matchesGenerated = activity.matchesGenerated;
+        messagesGenerated = activity.messagesGenerated;
+      }
     }
     
     return {

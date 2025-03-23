@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw, UserPlus, Users } from 'lucide-react';
 import { DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { generateKurdishProfile, generateDiverseKurdishProfiles } from '@/utils/profileGenerator';
@@ -23,6 +23,7 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
   const [withPhotos, setWithPhotos] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
   const [generateDiverse, setGenerateDiverse] = useState<boolean>(true);
+  const [generateActivity, setGenerateActivity] = useState<boolean>(true);
   const { toast } = useToast();
 
   const handleGenerateProfiles = async (e: React.FormEvent) => {
@@ -32,7 +33,7 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
 
     try {
       // Generate multiple profiles if count > 1
-      const totalProfiles = Math.min(100, Math.max(1, count)); // Allow up to 100 profiles
+      const totalProfiles = Math.min(200, Math.max(1, count)); // Allow up to 200 profiles
       
       if (generateDiverse) {
         // Use the new diverse generation function
@@ -60,7 +61,7 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
         }
       } else {
         // Original approach - generate profiles one by one
-        console.log(`Starting generation of ${totalProfiles} profiles...`);
+        console.log(`Starting generation of ${totalProfiles} profiles with gender: ${gender}...`);
         
         // Process profiles in batches for better UI feedback
         let successfulProfiles = 0;
@@ -77,7 +78,7 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
               ? (Math.random() > 0.5 ? 'male' : 'female') 
               : gender;
             
-            // Create a unique ID and email for the auth user
+            // Create a unique ID for the profile
             const userId = crypto.randomUUID();
             
             try {
@@ -151,12 +152,12 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
           id="count"
           type="number"
           min={1}
-          max={100}
+          max={200}
           value={count}
-          onChange={(e) => setCount(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
+          onChange={(e) => setCount(Math.min(200, Math.max(1, parseInt(e.target.value) || 1)))}
           className="w-full"
         />
-        <p className="text-xs text-muted-foreground">Maximum 100 profiles per batch</p>
+        <p className="text-xs text-muted-foreground">Maximum 200 profiles per batch</p>
       </div>
       
       <div className="flex items-center space-x-2">
@@ -170,12 +171,23 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
         </Label>
       </div>
       
+      <div className="flex items-center space-x-2">
+        <Checkbox 
+          id="generateActivity" 
+          checked={generateActivity} 
+          onCheckedChange={(checked) => setGenerateActivity(checked as boolean)}
+        />
+        <Label htmlFor="generateActivity" className="cursor-pointer">
+          Generate random user activity (likes, matches, messages)
+        </Label>
+      </div>
+      
       {!generateDiverse && (
         <>
           <div className="grid gap-2">
             <Label htmlFor="gender">Gender preference</Label>
             <Select value={gender} onValueChange={setGender}>
-              <SelectTrigger id="gender">
+              <SelectTrigger id="gender" className="w-full">
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
               <SelectContent>
@@ -203,8 +215,17 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
       
       <DialogFooter>
         <Button type="submit" disabled={isLoading} className="gap-2">
-          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw size={16} />}
-          {generateDiverse ? "Generate Diverse Kurdish Profiles" : "Generate Rich Profiles"}
+          {isLoading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Generating Profiles...
+            </>
+          ) : (
+            <>
+              <UserPlus size={16} />
+              {generateDiverse ? "Generate Diverse Kurdish Profiles" : "Generate Rich Profiles"}
+            </>
+          )}
         </Button>
       </DialogFooter>
     </form>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AIBanner } from '../components/payments/AIBanner';
@@ -32,7 +31,6 @@ const UsersPage = () => {
     try {
       setLoading(true);
       
-      // Count total users for pagination
       const { count, error: countError } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
@@ -41,7 +39,6 @@ const UsersPage = () => {
       setTotalUsers(count || 0);
       setDatabaseVerified(true);
       
-      // Fetch profiles with pagination
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -55,7 +52,6 @@ const UsersPage = () => {
         return;
       }
       
-      // Fetch roles for the profiles
       const profileIds = profiles.map(profile => profile.id);
       const { data: userRoles, error: rolesError } = await supabase
         .from('user_roles')
@@ -67,24 +63,17 @@ const UsersPage = () => {
       console.log('Fetched profiles:', profiles);
       console.log('Fetched roles:', userRoles);
       
-      // Transform profile data to match User interface
       const userData: User[] = profiles.map(profile => {
-        // Find role for this profile
         const userRole = userRoles?.find(role => role.user_id === profile.id);
-        
-        // Calculate active status based on last_active (active if within 7 days)
         const isActive = profile.last_active && 
           (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7);
-        
-        // Generate an email based on the user's name since email isn't stored in the profiles table
         const emailAddress = profile.name ? 
           `${profile.name.toLowerCase().replace(/\s+/g, '.')}@example.com` : 
           `user.${profile.id.substring(0, 8)}@example.com`;
-        
         return {
           id: profile.id,
           name: profile.name || 'Unknown User',
-          email: emailAddress, // Using generated email based on the name
+          email: emailAddress,
           role: userRole?.role || 'user',
           status: profile.verified ? (isActive ? 'active' : 'inactive') : 'pending',
           location: profile.location || 'Unknown',
@@ -98,8 +87,8 @@ const UsersPage = () => {
                 minute: '2-digit'
               }) 
             : 'Unknown',
-          photoCount: 0, // Will be updated in a real app
-          messageCount: 0 // Will be updated in a real app
+          photoCount: 0,
+          messageCount: 0
         };
       });
       
@@ -111,7 +100,6 @@ const UsersPage = () => {
         description: 'Could not load user data. Please try again.',
         variant: 'destructive',
       });
-      // Set empty array to avoid undefined error
       setUsers([]);
     } finally {
       setLoading(false);
@@ -120,7 +108,7 @@ const UsersPage = () => {
   
   useEffect(() => {
     fetchUsers();
-  }, [currentPage]); // Ensure we refetch when page changes
+  }, [currentPage]);
   
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
@@ -155,7 +143,6 @@ const UsersPage = () => {
 
   const exportUsers = () => {
     console.log('Exporting users...');
-    // In a real app, this would trigger a download of user data
   };
 
   const handlePageChange = (page: number) => {
@@ -171,13 +158,17 @@ const UsersPage = () => {
     fetchUsers();
   };
 
+  const handleRefresh = () => {
+    setCurrentPage(1);
+    fetchUsers();
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader onExport={exportUsers} onAddUser={handleAddUser} />
 
       <AIBanner type="user" collapsible={true} />
       
-      {/* AI-powered User Statistics Banner */}
       <div className="p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-full flex items-center justify-center bg-tinder-rose/10">
@@ -234,6 +225,7 @@ const UsersPage = () => {
             users={filteredUsers}
             onViewUser={viewUser}
             onEditUser={editUser}
+            onRefresh={handleRefresh}
             loading={loading}
           />
 
