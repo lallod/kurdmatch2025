@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,6 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { setupSupabase } from '@/utils/setupSupabase';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const SuperAdminLogin = () => {
   const [email, setEmail] = useState('lalo.peshawa@gmail.com');
@@ -21,6 +21,7 @@ const SuperAdminLogin = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Run setup on component mount
   useEffect(() => {
     const runSetup = async () => {
       setIsSettingUp(true);
@@ -56,12 +57,14 @@ const SuperAdminLogin = () => {
 
       if (error) throw error;
 
+      // Check if user has super_admin role
       const { data: userData } = await supabase.auth.getUser();
       
       if (!userData?.user) {
         throw new Error('Authentication failed');
       }
       
+      // Query the user_roles table to check for super_admin role
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('*')
@@ -75,6 +78,7 @@ const SuperAdminLogin = () => {
       }
 
       if (!roleData) {
+        // No super admin role found, try to create it
         console.log('No super admin role found, creating one');
         
         const { error: insertError } = await supabase
@@ -137,7 +141,7 @@ const SuperAdminLogin = () => {
 
         {isSettingUp && (
           <div className="bg-blue-900/50 border border-blue-700 text-blue-200 px-4 py-3 rounded relative flex items-center" role="alert">
-            <LoadingSpinner className="h-5 w-5 mr-2" size="small" />
+            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
             <span>Setting up admin account...</span>
           </div>
         )}
@@ -190,7 +194,7 @@ const SuperAdminLogin = () => {
           >
             {isLoading ? (
               <>
-                <LoadingSpinner className="mr-2 h-4 w-4" size="small" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Verifying Credentials...
               </>
             ) : (
