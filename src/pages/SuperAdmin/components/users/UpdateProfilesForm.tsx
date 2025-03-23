@@ -1,13 +1,12 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, ImageIcon } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 import { DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { updateExistingProfiles } from '@/utils/profileGenerator';
+import ProgressIndicator from './ProgressIndicator';
 
 interface UpdateProfilesFormProps {
   onSuccess: () => void;
