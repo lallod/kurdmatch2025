@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from './client';
 
 export const useSupabaseAuth = () => {
@@ -31,8 +31,9 @@ export const useSupabaseAuth = () => {
   }, []);
 
   const signUp = async (email: string, password: string, metadata?: object) => {
+    setLoading(true);
     try {
-      return await supabase.auth.signUp({
+      const response = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -40,27 +41,53 @@ export const useSupabaseAuth = () => {
           emailRedirectTo: window.location.origin
         }
       });
+      
+      if (response.error) throw response.error;
+      return response;
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      return await supabase.auth.signInWithPassword({ email, password });
+      const response = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (response.error) {
+        // Format the error message for better display
+        if (response.error.message === 'Invalid login credentials') {
+          const formattedError = new AuthError('Invalid email or password. Please try again.');
+          formattedError.status = response.error.status;
+          formattedError.code = response.error.code;
+          throw formattedError;
+        }
+        throw response.error;
+      }
+      
+      return response;
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
+    setLoading(true);
     try {
-      return await supabase.auth.signOut();
+      const response = await supabase.auth.signOut();
+      if (response.error) throw response.error;
+      return response;
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 

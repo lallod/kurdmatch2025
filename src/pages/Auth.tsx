@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import SocialLogin from '@/components/auth/components/SocialLogin';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -72,17 +72,16 @@ const Auth = () => {
       console.error('Authentication error:', error);
       
       // Set a user-friendly error message
-      if (error.code === 'invalid_credentials') {
-        setErrorMessage('Invalid email or password. Please try again.');
-      } else {
-        setErrorMessage(error.message || "Something went wrong. Please try again.");
-      }
+      setErrorMessage(error.message || "Something went wrong. Please try again.");
       
-      toast({
-        title: "Authentication failed",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+      // Only show toast for non-credential errors to avoid duplicate messages
+      if (error.code !== 'invalid_credentials') {
+        toast({
+          title: "Authentication failed",
+          description: error.message || "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -103,8 +102,9 @@ const Auth = () => {
         </div>
         
         {errorMessage && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{errorMessage}</span>
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative flex items-start" role="alert">
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <span className="block">{errorMessage}</span>
           </div>
         )}
 
