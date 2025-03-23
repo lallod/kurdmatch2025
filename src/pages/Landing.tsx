@@ -5,10 +5,24 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import KurdistanSection from '@/components/landing/KurdistanSection';
 import Footer from '@/components/landing/Footer';
 import { supabase } from '@/integrations/supabase/client';
-import { LandingPageContent } from '@/pages/SuperAdmin/pages/LandingPageEditor/types';
+import { LandingPageContent, initialContent } from '@/pages/SuperAdmin/pages/LandingPageEditor/types';
+import { Json } from '@/integrations/supabase/types';
+
+// Helper function to safely validate and parse the content
+const isValidLandingPageContent = (data: any): data is LandingPageContent => {
+  return (
+    typeof data === 'object' && 
+    data !== null && 
+    !Array.isArray(data) &&
+    'hero' in data && 
+    'features' in data && 
+    'kurdistan' in data && 
+    'footer' in data
+  );
+};
 
 const Landing = () => {
-  const [content, setContent] = useState<LandingPageContent | null>(null);
+  const [content, setContent] = useState<LandingPageContent>(initialContent);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +37,17 @@ const Landing = () => {
         if (error) {
           console.error('Error fetching landing page content:', error);
         } else if (data && data.content) {
-          setContent(data.content as LandingPageContent);
+          // Safely parse the content
+          const contentData = data.content as Json;
+          
+          // Check if it has the expected shape before using it
+          if (isValidLandingPageContent(contentData)) {
+            setContent(contentData);
+          } else {
+            console.error('Invalid landing page content format:', contentData);
+            // Fallback to initial content
+            setContent(initialContent);
+          }
         }
       } catch (error) {
         console.error('Unexpected error fetching landing page content:', error);
