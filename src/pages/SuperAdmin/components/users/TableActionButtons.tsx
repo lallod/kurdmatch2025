@@ -34,7 +34,7 @@ const TableActionButtons: React.FC<TableActionButtonsProps> = ({
       >
         <Users size={16} />
         <Trash2 size={16} />
-        Remove All Users
+        Remove Users by Role
       </Button>
     </div>
   );

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,13 +10,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 interface DeleteAllUsersDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userCount: number;
   isDeleting: boolean;
-  onConfirmDelete: () => Promise<void>;
+  onConfirmDelete: (role: string) => Promise<void>;
 }
 
 const DeleteAllUsersDialog: React.FC<DeleteAllUsersDialogProps> = ({
@@ -26,26 +28,50 @@ const DeleteAllUsersDialog: React.FC<DeleteAllUsersDialogProps> = ({
   isDeleting,
   onConfirmDelete
 }) => {
+  const [selectedRole, setSelectedRole] = useState<string>("all");
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete All Users</AlertDialogTitle>
+          <AlertDialogTitle>Delete Users by Role</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete all users? This action cannot be undone and will remove {userCount} users.
+            Choose which users to delete based on their role. This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
+        
+        <div className="py-4">
+          <Label htmlFor="role-select" className="mb-2 block">Select Role</Label>
+          <Select
+            value={selectedRole}
+            onValueChange={setSelectedRole}
+            disabled={isDeleting}
+          >
+            <SelectTrigger className="w-full" id="role-select">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">All Users ({userCount})</SelectItem>
+                <SelectItem value="user">Regular Users</SelectItem>
+                <SelectItem value="moderator">Moderators</SelectItem>
+                <SelectItem value="admin">Admins</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction 
             onClick={(e) => {
               e.preventDefault();
-              onConfirmDelete();
+              onConfirmDelete(selectedRole);
             }} 
             className="bg-red-600 hover:bg-red-700 text-white"
             disabled={isDeleting}
           >
-            {isDeleting ? "Deleting..." : "Delete All Users"}
+            {isDeleting ? "Deleting..." : `Delete ${selectedRole === 'all' ? 'All' : selectedRole} Users`}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
