@@ -34,12 +34,15 @@ const RecentActivity = () => {
           .order('created_at', { ascending: false })
           .limit(10);
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching activities:', error.message);
+          throw error;
+        }
         
         console.log('Fetched activities data:', data);
         
         if (!data || data.length === 0) {
-          console.log('No activities found');
+          console.log('No activities found in the database');
           setActivities([]);
           return;
         }

@@ -11,13 +11,16 @@ import { useToast } from '@/hooks/use-toast';
 const Dashboard = () => {
   const [timeRange, setTimeRange] = useState('month');
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(Date.now()); // Key to force re-render components
   const { toast } = useToast();
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      // Force re-render of all components by changing a key
-      // In a real app, we would re-fetch all data here
+      // Force re-render of all components by changing refreshKey
+      setRefreshKey(Date.now());
+      
+      // Wait a moment to simulate a refresh
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
@@ -59,14 +62,14 @@ const Dashboard = () => {
       />
 
       {/* Stats Overview */}
-      <StatsOverview timeRange={timeRange} />
+      <StatsOverview key={`stats-${refreshKey}`} timeRange={timeRange} />
 
       {/* Activity Tabs */}
-      <ActivityTabs />
+      <ActivityTabs key={`activity-${refreshKey}`} />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Recent Activity */}
-        <RecentActivity />
+        <RecentActivity key={`recent-${refreshKey}`} />
 
         {/* Quick Actions */}
         <QuickActions />

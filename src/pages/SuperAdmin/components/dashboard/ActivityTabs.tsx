@@ -25,11 +25,15 @@ const ActivityTabs = () => {
           .select('*')
           .order('date', { ascending: true });
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching engagement data:', error.message);
+          throw error;
+        }
         
         console.log('Fetched engagement data:', data);
         
         if (!data || data.length === 0) {
+          console.log('No engagement data found in the database');
           setEngagementData([]);
           toast({
             title: 'No engagement data',

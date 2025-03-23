@@ -36,11 +36,15 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
           .from('dashboard_stats')
           .select('*');
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching stats:', error.message);
+          throw error;
+        }
         
         console.log('Fetched stats data:', data);
         
         if (!data || data.length === 0) {
+          console.log('No stats data found in the database');
           setStats([]);
           toast({
             title: 'No stats available',
@@ -102,7 +106,7 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
     return (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="col-span-full p-8 text-center bg-gray-50 rounded-lg">
-          <p className="text-gray-500">No statistics available. Please add them to the dashboard_stats table.</p>
+          <p className="text-gray-500">No statistics available. Please add data to the dashboard_stats table.</p>
         </div>
       </div>
     );
