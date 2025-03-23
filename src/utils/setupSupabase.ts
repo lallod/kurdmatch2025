@@ -19,7 +19,10 @@ export const setupSupabase = async () => {
     
     // Fix type issue by properly checking the email property
     const existingUser = usersData?.users?.find(user => {
-      return user.email && user.email.toLowerCase() === superAdminEmail.toLowerCase();
+      if (user && typeof user === 'object' && 'email' in user && user.email) {
+        return user.email.toLowerCase() === superAdminEmail.toLowerCase();
+      }
+      return false;
     });
     
     let userId: string | undefined;

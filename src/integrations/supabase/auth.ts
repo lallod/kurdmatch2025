@@ -104,7 +104,10 @@ export const useSupabaseAuth = () => {
       
       // Fix type issue by properly checking if users and users.users exist
       const existingUser = users?.users?.find(u => {
-        return u.email && u.email.toLowerCase() === email.toLowerCase();
+        if (u && typeof u === 'object' && 'email' in u && u.email) {
+          return u.email.toLowerCase() === email.toLowerCase();
+        }
+        return false;
       });
       
       let userId = existingUser?.id;
