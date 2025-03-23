@@ -2,11 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import { Users, MessageSquare, ImageIcon, Activity } from 'lucide-react';
 import StatCard from './StatCard';
-import { fetchDashboardStats, DashboardStat } from '@/api/dashboard';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface StatsOverviewProps {
   timeRange: string;
+}
+
+interface DashboardStat {
+  id: number;
+  stat_name: string;
+  stat_value: number;
+  change_percentage: number;
+  icon: string;
+  trend: 'positive' | 'negative' | 'neutral';
+  created_at?: string;
+  updated_at?: string;
 }
 
 const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
@@ -18,7 +29,14 @@ const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
     const loadStats = async () => {
       try {
         setLoading(true);
-        const data = await fetchDashboardStats();
+        
+        // Fetch dashboard stats directly from the database
+        const { data, error } = await supabase
+          .from('dashboard_stats')
+          .select('*');
+        
+        if (error) throw error;
+        
         setStats(data);
       } catch (error) {
         console.error('Failed to load dashboard stats:', error);

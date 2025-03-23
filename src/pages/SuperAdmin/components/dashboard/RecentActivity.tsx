@@ -3,8 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { UserPlus, TrendingUp, ImageIcon, Mail, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { fetchRecentActivities, ActivityItem } from '@/api/dashboard';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+
+interface ActivityItem {
+  id: string;
+  activity_type: string;
+  user: string;
+  time: string;
+  description?: string;
+  created_at?: string;
+  user_id?: string;
+}
 
 const RecentActivity = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -15,8 +25,28 @@ const RecentActivity = () => {
     const loadActivities = async () => {
       try {
         setLoading(true);
-        const data = await fetchRecentActivities();
-        setActivities(data);
+        
+        // Fetch admin activities from the database
+        const { data, error } = await supabase
+          .from('admin_activities')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10);
+        
+        if (error) throw error;
+        
+        // Transform the data to match the expected structure
+        const formattedActivities = data.map(item => ({
+          id: item.id,
+          activity_type: item.activity_type,
+          description: item.description,
+          user: 'Administrator', // Assuming these are admin activities
+          time: new Date(item.created_at).toLocaleString(),
+          created_at: item.created_at,
+          user_id: item.user_id
+        }));
+        
+        setActivities(formattedActivities);
       } catch (error) {
         console.error('Failed to load recent activities:', error);
         toast({
@@ -38,6 +68,11 @@ const RecentActivity = () => {
     photo_upload: <ImageIcon size={16} className="text-blue-500" />,
     message_sent: <Mail size={16} className="text-orange-500" />,
     profile_update: <Users size={16} className="text-gray-500" />,
+    user_moderation: <UserPlus size={16} className="text-green-500" />,
+    system_update: <TrendingUp size={16} className="text-purple-500" />,
+    content_moderation: <ImageIcon size={16} className="text-blue-500" />,
+    user_support: <Mail size={16} className="text-orange-500" />,
+    system_maintenance: <Users size={16} className="text-gray-500" />,
   };
 
   const getActivityTitle = (type: string) => {
@@ -47,6 +82,11 @@ const RecentActivity = () => {
       case 'photo_upload': return 'New photos uploaded';
       case 'message_sent': return 'New message sent';
       case 'profile_update': return 'Profile updated';
+      case 'user_moderation': return 'User moderation';
+      case 'system_update': return 'System update';
+      case 'content_moderation': return 'Content moderation';
+      case 'user_support': return 'User support';
+      case 'system_maintenance': return 'System maintenance';
       default: return type.replace(/_/g, ' ');
     }
   };
@@ -87,7 +127,9 @@ const RecentActivity = () => {
                 <p className="text-sm font-medium">
                   {getActivityTitle(activity.activity_type)}
                 </p>
-                <p className="text-xs text-gray-500">{activity.user} • {activity.time}</p>
+                <p className="text-xs text-gray-500">
+                  {activity.description || `${activity.user} • ${activity.time}`}
+                </p>
               </div>
             </div>
           ))}

@@ -5,6 +5,7 @@ import UserActivityChart from './UserActivityChart';
 import EngagementChart from './EngagementChart';
 import UserDistributionChart from './UserDistributionChart';
 import { fetchEngagementData, EngagementData } from '@/api/dashboard';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 const ActivityTabs = () => {
@@ -16,8 +17,26 @@ const ActivityTabs = () => {
     const loadEngagementData = async () => {
       try {
         setLoading(true);
-        const data = await fetchEngagementData();
-        setEngagementData(data);
+        
+        // Fetch engagement data directly from the database
+        const { data, error } = await supabase
+          .from('user_engagement')
+          .select('*')
+          .order('date', { ascending: true });
+        
+        if (error) throw error;
+        
+        // Map the data to the expected format
+        const formattedData = data.map(item => ({
+          date: item.date,
+          users: item.users,
+          conversations: item.conversations,
+          likes: item.likes,
+          views: item.views,
+          matches: item.matches
+        }));
+        
+        setEngagementData(formattedData);
       } catch (error) {
         console.error('Failed to load engagement data:', error);
         toast({
