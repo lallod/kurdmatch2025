@@ -39,27 +39,35 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
           ? (Math.random() > 0.5 ? 'male' : 'female') 
           : gender;
           
-        promises.push(generateKurdishProfile(selectedGender, withPhotos));
+        promises.push(generateKurdishProfile(selectedGender, withPhotos).catch(err => {
+          console.error(`Error generating profile ${i+1}:`, err);
+          return null; // Return null for failed profiles so Promise.all continues
+        }));
       }
       
-      const results = await Promise.all(promises.map(p => p.catch(err => {
-        console.error('Error in profile generation:', err);
-        return null; // Return null for failed profiles
-      })));
+      const results = await Promise.all(promises);
       
       // Count successful profiles
       const successfulProfiles = results.filter(r => r !== null).length;
       console.log(`Generated ${successfulProfiles} out of ${totalProfiles} profiles:`, results);
       
       if (successfulProfiles === 0) {
-        throw new Error("All profile generation attempts failed");
+        throw new Error("All profile generation attempts failed. Please check the console for details.");
       }
       
-      toast({
-        title: "Success",
-        description: `${successfulProfiles} Kurdish ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
-        variant: "default",
-      });
+      if (successfulProfiles < totalProfiles) {
+        toast({
+          title: "Partial Success",
+          description: `${successfulProfiles} out of ${totalProfiles} Kurdish profiles were generated successfully. Some profiles failed to generate.`,
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `${successfulProfiles} Kurdish ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
+          variant: "default",
+        });
+      }
       
       onUserAdded();
       onOpenChange(false);
@@ -69,7 +77,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       
       toast({
         title: "Error",
-        description: `Failed to generate profiles: ${errorMessage}. Please check the console for details.`,
+        description: `Failed to generate profiles: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
