@@ -76,7 +76,7 @@ const ProtectedRoute = () => {
 };
 
 const SuperAdminRoute = () => {
-  const { user, loading } = useSupabaseAuth();
+  const { user, loading, session } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
   const [checkingRole, setCheckingRole] = useState(true);
   const location = useLocation();
@@ -84,18 +84,18 @@ const SuperAdminRoute = () => {
   
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (!user) {
+      if (!session?.user) {
         setIsSuperAdmin(false);
         setCheckingRole(false);
         return;
       }
       
       try {
-        console.log("Checking super admin status for user:", user.id);
+        console.log("Checking super admin status for user:", session.user.id);
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
-          .eq('user_id', user.id)
+          .eq('user_id', session.user.id)
           .eq('role', 'super_admin');
         
         if (error) throw error;
@@ -128,7 +128,7 @@ const SuperAdminRoute = () => {
     if (!loading) {
       checkAdminStatus();
     }
-  }, [user, loading, toast]);
+  }, [session, loading, toast]);
   
   if (loading || checkingRole) {
     return <div className="flex h-screen items-center justify-center">Verifying permissions...</div>;
@@ -261,11 +261,9 @@ function App() {
       )}
       
       <Routes>
-        {/* Make Landing route accessible to anyone without protection */}
         <Route path="/" element={<Landing />} />
         <Route path="/landing" element={<Landing />} />
         
-        {/* Add the super admin login route */}
         <Route path="/admin-login" element={<SuperAdminLogin />} />
         
         <Route element={<PublicOnlyRoute />}>

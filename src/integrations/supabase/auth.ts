@@ -11,8 +11,24 @@ export const useSupabaseAuth = () => {
   useEffect(() => {
     // First set up the auth state listener to catch any changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      async (event, newSession) => {
         console.log('Auth state changed:', event, newSession?.user?.email);
+        
+        // If we receive a session update, check if the user has admin role
+        if (newSession?.user) {
+          try {
+            const { data: roleData } = await supabase
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', newSession.user.id)
+              .eq('role', 'super_admin');
+              
+            console.log('User roles check:', roleData);
+          } catch (error) {
+            console.error('Error checking roles:', error);
+          }
+        }
+        
         setSession(newSession);
         setUser(newSession?.user ?? null);
         setLoading(false);
@@ -29,12 +45,25 @@ export const useSupabaseAuth = () => {
           setSession(currentSession);
           setUser(currentSession.user);
           
-          // Refresh the session to ensure tokens are valid
+          // Always refresh the session to ensure tokens are valid
           const { data } = await supabase.auth.refreshSession();
           if (data.session) {
             console.log('Session refreshed:', data.session.user?.email);
             setSession(data.session);
             setUser(data.session.user);
+            
+            // Log current admin status
+            try {
+              const { data: roleData } = await supabase
+                .from('user_roles')
+                .select('role')
+                .eq('user_id', data.session.user.id)
+                .eq('role', 'super_admin');
+                
+              console.log('Admin status check:', roleData && roleData.length > 0);
+            } catch (error) {
+              console.error('Error checking admin status:', error);
+            }
           }
         }
       } catch (error) {
