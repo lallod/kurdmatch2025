@@ -43,6 +43,7 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
     : getRandomElement(kurdishFemaleNames);
   
   const lastName = getRandomElement(kurdishSurnames);
+  const fullName = `${firstName} ${lastName}`;
   const location = getRandomElement(kurdishLocations);
   const kurdistanRegion = getRandomElement(kurdishRegions);
   const occupation = getRandomElement(occupations);
@@ -83,7 +84,7 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
       .from('profiles')
       .insert({
         id: userId,
-        name: `${firstName} ${lastName}`,
+        name: fullName,
         age,
         location,
         kurdistan_region: kurdistanRegion,

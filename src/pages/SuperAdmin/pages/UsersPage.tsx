@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AIBanner } from '../components/payments/AIBanner';
@@ -69,14 +70,13 @@ const UsersPage = () => {
         const isActive = profile.last_active && 
           (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7);
         
-        // Use profile email if available, or construct from name
-        const email = profile.email || 
-          `${profile.name?.toLowerCase().replace(/\s+/g, '.')}@example.com`;
+        // Generate an email based on the user's name since email isn't stored in the profiles table
+        const emailAddress = `${profile.name?.toLowerCase().replace(/\s+/g, '.')}@example.com`;
         
         return {
           id: profile.id,
           name: profile.name || 'Unknown User',
-          email: email,
+          email: emailAddress, // Using generated email based on the name
           role: userRole?.role || 'user',
           status: profile.verified ? (isActive ? 'active' : 'inactive') : 'pending',
           location: profile.location || 'Unknown',
