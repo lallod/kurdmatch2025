@@ -34,11 +34,11 @@ const DeleteAllUsersDialog: React.FC<DeleteAllUsersDialogProps> = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete Users by Role</AlertDialogTitle>
+          <AlertDialogTitle>Deactivate Users by Role</AlertDialogTitle>
           <AlertDialogDescription>
-            Choose which users to delete based on their role. This action cannot be undone.
-            <strong className="block mt-2 text-destructive">
-              This will delete ALL users with the selected role from the database, not just the current page.
+            Choose which users to deactivate based on their role. Their profiles will be hidden but their data will be preserved.
+            <strong className="block mt-2 text-amber-600">
+              This will deactivate ALL users with the selected role, not just the current page.
             </strong>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -74,7 +74,7 @@ const DeleteAllUsersDialog: React.FC<DeleteAllUsersDialogProps> = ({
             className="bg-red-600 hover:bg-red-700 text-white"
             disabled={isDeleting}
           >
-            {isDeleting ? "Deleting..." : `Delete ${selectedRole === 'all' ? 'All' : selectedRole} Users`}
+            {isDeleting ? "Deactivating..." : `Deactivate ${selectedRole === 'all' ? 'All' : selectedRole} Users`}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

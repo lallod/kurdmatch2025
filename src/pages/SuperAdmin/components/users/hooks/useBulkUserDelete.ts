@@ -15,22 +15,26 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
   const confirmDeleteAllUsers = async (role: string) => {
     setIsDeleting(true);
     try {
-      // Get current user's session to avoid deleting themselves
+      // Get current user's session to avoid deactivating themselves
       const { data: { session } } = await supabase.auth.getSession();
       const currentUserId = session?.user?.id;
       
       if (role === 'all') {
-        // Delete all profiles except current user without any query limits
+        // Deactivate all profiles except current user without any query limits
         const { error } = await supabase
           .from('profiles')
-          .delete()
+          .update({ 
+            status: 'deactivated',
+            last_active: null,
+            verified: false
+          })
           .neq('id', currentUserId || 'no-id-found');
         
         if (error) throw error;
         
         toast({
-          title: "Users Deleted",
-          description: "All users have been permanently removed.",
+          title: "Users Deactivated",
+          description: "All users have been deactivated.",
         });
       } else {
         // For specific roles, first get all user IDs with the selected role
@@ -50,7 +54,7 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
           
           if (userIds.length === 0) {
             toast({
-              title: "No Users Deleted",
+              title: "No Users Deactivated",
               description: `No other users with the role "${role}" were found.`,
             });
             setIsDeleting(false);
@@ -58,22 +62,26 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
             return;
           }
           
-          // Delete all profiles with the filtered IDs
+          // Update all profiles with the filtered IDs
           const { error } = await supabase
             .from('profiles')
-            .delete()
+            .update({ 
+              status: 'deactivated',
+              last_active: null,
+              verified: false
+            })
             .in('id', userIds);
           
           if (error) throw error;
           
           toast({
-            title: "Users Deleted",
-            description: `All users with role "${role}" have been permanently removed.`,
+            title: "Users Deactivated",
+            description: `All users with role "${role}" have been deactivated.`,
           });
         } else {
           // If no users with this role, exit early
           toast({
-            title: "No Users Deleted",
+            title: "No Users Deactivated",
             description: `No users with the role "${role}" were found.`,
           });
           setIsDeleting(false);
@@ -84,10 +92,10 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
       
       onRefresh();
     } catch (error) {
-      console.error("Error deleting users:", error);
+      console.error("Error deactivating users:", error);
       toast({
-        title: "Delete Failed",
-        description: "There was an error removing users.",
+        title: "Deactivation Failed",
+        description: "There was an error deactivating users.",
         variant: "destructive",
       });
     } finally {

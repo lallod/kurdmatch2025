@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Users, Trash2 } from 'lucide-react';
+import { RefreshCw, Users, UserX } from 'lucide-react';
 
 interface TableActionButtonsProps {
   onRefresh: () => void;
@@ -33,8 +33,8 @@ const TableActionButtons: React.FC<TableActionButtonsProps> = ({
         disabled={userCount === 0}
       >
         <Users size={16} />
-        <Trash2 size={16} />
-        Remove Users by Role
+        <UserX size={16} />
+        Deactivate Users by Role
       </Button>
     </div>
   );

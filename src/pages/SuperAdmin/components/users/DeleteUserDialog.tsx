@@ -31,9 +31,9 @@ const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete User</AlertDialogTitle>
+          <AlertDialogTitle>Deactivate User</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete {userToDelete?.name}? This action cannot be undone.
+            Are you sure you want to deactivate {userToDelete?.name}? This will hide their profile from the platform, but their data will be preserved.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -46,7 +46,7 @@ const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
             className="bg-red-600 hover:bg-red-700 text-white"
             disabled={isDeleting}
           >
-            {isDeleting ? "Deleting..." : "Delete User"}
+            {isDeleting ? "Deactivating..." : "Deactivate User"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
