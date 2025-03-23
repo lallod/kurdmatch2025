@@ -26,7 +26,7 @@ const UsersPage = () => {
       try {
         setLoading(true);
         
-        // Fetch profiles and join with user_roles
+        // Fetch profiles
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
           .select('*');
@@ -34,69 +34,40 @@ const UsersPage = () => {
         if (profilesError) throw profilesError;
         
         // Fetch roles for the profiles
-        const { data: roles, error: rolesError } = await supabase
+        const { data: userRoles, error: rolesError } = await supabase
           .from('user_roles')
           .select('*');
           
         if (rolesError) throw rolesError;
         
-        // Fetch photos count for each profile
-        const { data: photos, error: photosError } = await supabase
-          .from('photos')
-          .select('profile_id, count')
-          .select('profile_id');
-          
-        if (photosError) throw photosError;
-        
-        // Fetch messages count for each profile
-        const { data: messages, error: messagesError } = await supabase
-          .from('messages')
-          .select('sender_id, count')
-          .select('sender_id');
-          
-        if (messagesError) throw messagesError;
-        
-        // Create a map of profile_id to photo count
-        const photoCountMap = {};
-        photos.forEach(photo => {
-          photoCountMap[photo.profile_id] = (photoCountMap[photo.profile_id] || 0) + 1;
-        });
-        
-        // Create a map of profile_id to message count
-        const messageCountMap = {};
-        messages.forEach(message => {
-          messageCountMap[message.sender_id] = (messageCountMap[message.sender_id] || 0) + 1;
-        });
-        
-        // Create a map of profile_id to role
-        const roleMap = {};
-        roles.forEach(role => {
-          roleMap[role.user_id] = role.role;
-        });
-        
         // Transform profile data to match User interface
-        const userData: User[] = profiles.map(profile => ({
-          id: profile.id,
-          name: profile.name || 'Unknown User',
-          email: `${profile.name.toLowerCase().replace(/\s+/g, '.')}@example.com`, // Placeholder email
-          role: roleMap[profile.id] || 'user',
-          status: profile.last_active && (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7) 
-            ? 'active' 
-            : 'inactive',
-          location: profile.location || 'Unknown',
-          joinDate: profile.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : 'Unknown',
-          lastActive: profile.last_active 
-            ? new Date(profile.last_active).toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              }) 
-            : 'Unknown',
-          photoCount: photoCountMap[profile.id] || 0,
-          messageCount: messageCountMap[profile.id] || 0
-        }));
+        const userData: User[] = profiles.map(profile => {
+          // Find role for this profile
+          const userRole = userRoles.find(role => role.user_id === profile.id);
+          
+          return {
+            id: profile.id,
+            name: profile.name || 'Unknown User',
+            email: `${profile.name.toLowerCase().replace(/\s+/g, '.')}@example.com`, // Placeholder email
+            role: userRole?.role || 'user',
+            status: profile.last_active && (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7) 
+              ? 'active' 
+              : 'inactive',
+            location: profile.location || 'Unknown',
+            joinDate: profile.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : 'Unknown',
+            lastActive: profile.last_active 
+              ? new Date(profile.last_active).toLocaleString('en-US', {
+                  year: 'numeric',
+                  month: 'numeric',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }) 
+              : 'Unknown',
+            photoCount: 0, // Will be updated in a real app
+            messageCount: 0 // Will be updated in a real app
+          };
+        });
         
         setUsers(userData);
       } catch (error) {

@@ -36,55 +36,107 @@ export const seedDatabase = async () => {
   }
   
   // Seed demo users (only if running in development)
-  if (process.env.NODE_ENV === 'development') {
-    try {
-      console.log('Seeding demo users...');
+  try {
+    console.log('Seeding demo users...');
+    
+    // Check if demo users already exist
+    const { data: existingUsers } = await supabase
+      .from('profiles')
+      .select('id')
+      .limit(1);
+    
+    if (!existingUsers || existingUsers.length === 0) {
+      console.log('No existing profiles found, creating demo profiles...');
       
-      // Check if demo users already exist
-      const { data: existingUsers } = await supabase
-        .from('profiles')
-        .select('id')
-        .limit(1);
+      // In a real app, you would create auth users first and then profiles
+      // For demo purposes, we'll just add fake profiles
       
-      if (!existingUsers || existingUsers.length === 0) {
-        // In a real app, you would create auth users first and then profiles
-        // For demo purposes, we'll just add fake profiles
+      for (const user of mockUsers) {
+        // Create a random UUID for each user
+        const userId = crypto.randomUUID();
         
-        for (const user of mockUsers) {
-          // Create a random UUID for each user
-          const userId = crypto.randomUUID();
-          
-          const { error } = await supabase
-            .from('profiles')
-            .insert({
-              id: userId,
-              name: user.name,
-              age: Math.floor(Math.random() * 20) + 20, // Random age between 20-40
-              location: user.location,
-              last_active: user.lastActive,
-              verified: Math.random() > 0.5, // Random verified status
-              email: user.email,
-              profile_image: `https://i.pravatar.cc/300?u=${userId}` // Random avatar
-            });
-          
-          if (error) throw error;
-          
-          // Add role for this user
-          await supabase
-            .from('user_roles')
-            .insert({
-              user_id: userId,
-              role: user.role
-            });
+        // Insert profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userId,
+            name: user.name,
+            age: Math.floor(Math.random() * 20) + 20, // Random age between 20-40
+            location: user.location,
+            last_active: new Date().toISOString(),
+            verified: Math.random() > 0.5, // Random verified status
+            profile_image: `https://i.pravatar.cc/300?u=${userId}` // Random avatar
+          });
+        
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+          continue;
         }
         
-        console.log('Demo users seeded successfully!');
-      } else {
-        console.log('Users already exist, skipping seed.');
+        // Add role for this user
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role: user.role
+          });
+        
+        if (roleError) {
+          console.error('Error creating user role:', roleError);
+        }
       }
-    } catch (error) {
-      console.error('Error seeding demo users:', error);
+      
+      console.log('Demo users seeded successfully!');
+    } else {
+      console.log('Users already exist, skipping seed.');
     }
+  } catch (error) {
+    console.error('Error seeding demo users:', error);
+  }
+  
+  // Seed engagement data
+  try {
+    // Check if engagement data already exists
+    const { data: existingEngagement } = await supabase
+      .from('user_engagement')
+      .select('id')
+      .limit(1);
+    
+    if (!existingEngagement || existingEngagement.length === 0) {
+      console.log('Creating sample engagement data...');
+      
+      // Create sample engagement data for the last 30 days
+      const engagementData = [];
+      const today = new Date();
+      
+      for (let i = 30; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        
+        engagementData.push({
+          date: date.toISOString().split('T')[0],
+          users: Math.floor(Math.random() * 100) + 50,
+          conversations: Math.floor(Math.random() * 80) + 20,
+          likes: Math.floor(Math.random() * 200) + 100,
+          views: Math.floor(Math.random() * 500) + 200,
+          matches: Math.floor(Math.random() * 40) + 10
+        });
+      }
+      
+      const { error } = await supabase
+        .from('user_engagement')
+        .insert(engagementData);
+      
+      if (error) {
+        console.error('Error creating engagement data:', error);
+      } else {
+        console.log('Engagement data created successfully!');
+      }
+    } else {
+      console.log('Engagement data already exists, skipping seed.');
+    }
+  } catch (error) {
+    console.error('Error seeding engagement data:', error);
   }
   
   console.log('Database seeding completed!');

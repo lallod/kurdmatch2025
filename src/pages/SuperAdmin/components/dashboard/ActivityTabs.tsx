@@ -36,7 +36,12 @@ const ActivityTabs = () => {
           matches: item.matches
         }));
         
-        setEngagementData(formattedData);
+        // If no data, provide empty array
+        if (formattedData.length === 0) {
+          setEngagementData([]);
+        } else {
+          setEngagementData(formattedData);
+        }
       } catch (error) {
         console.error('Failed to load engagement data:', error);
         toast({
@@ -44,6 +49,7 @@ const ActivityTabs = () => {
           description: 'Could not load user engagement data. Please try again.',
           variant: 'destructive',
         });
+        setEngagementData([]);
       } finally {
         setLoading(false);
       }

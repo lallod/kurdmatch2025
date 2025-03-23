@@ -38,7 +38,17 @@ const UserDistributionChart = () => {
           value
         }));
         
-        setUserRoleData(chartData);
+        // If no data, provide some demo data
+        if (chartData.length === 0) {
+          setUserRoleData([
+            { name: 'Free Users', value: 0 },
+            { name: 'Premium', value: 0 },
+            { name: 'Moderators', value: 0 },
+            { name: 'Admins', value: 1 },
+          ]);
+        } else {
+          setUserRoleData(chartData);
+        }
       } catch (error) {
         console.error('Error fetching user distribution data:', error);
         toast({
@@ -49,10 +59,10 @@ const UserDistributionChart = () => {
         
         // Fallback to sample data
         setUserRoleData([
-          { name: 'Free Users', value: 8543 },
-          { name: 'Premium', value: 2789 },
-          { name: 'Moderators', value: 113 },
-          { name: 'Admins', value: 12 },
+          { name: 'Free Users', value: 0 },
+          { name: 'Premium', value: 0 },
+          { name: 'Moderators', value: 0 },
+          { name: 'Admins', value: 1 },
         ]);
       } finally {
         setLoading(false);
