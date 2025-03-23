@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AIBanner } from '../components/payments/AIBanner';
@@ -10,6 +11,7 @@ import AddUserDialog from '../components/users/AddUserDialog';
 import { User } from '../components/users/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Brain, Users } from 'lucide-react';
 
 const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,6 +24,7 @@ const UsersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
   const [addUserDialogOpen, setAddUserDialogOpen] = useState(false);
+  const [databaseVerified, setDatabaseVerified] = useState(false);
   const usersPerPage = 10;
   const { toast } = useToast();
   
@@ -36,6 +39,7 @@ const UsersPage = () => {
         
       if (countError) throw countError;
       setTotalUsers(count || 0);
+      setDatabaseVerified(true);
       
       // Fetch profiles with pagination
       const { data: profiles, error: profilesError } = await supabase
@@ -172,6 +176,48 @@ const UsersPage = () => {
       <PageHeader onExport={exportUsers} onAddUser={handleAddUser} />
 
       <AIBanner type="user" collapsible={true} />
+      
+      {/* AI-powered User Statistics Banner */}
+      <div className="p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-full flex items-center justify-center bg-tinder-rose/10">
+            <Users size={24} className="text-tinder-rose" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800">Database User Verification</h3>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-gray-600">
+                {databaseVerified ? 
+                  `Verified ${totalUsers} total registered users in database` : 
+                  'Verifying users in database...'}
+              </p>
+              {!databaseVerified && (
+                <div className="h-4 w-4 rounded-full border-2 border-t-transparent border-tinder-rose animate-spin"></div>
+              )}
+            </div>
+          </div>
+          <div className="ml-auto flex gap-4">
+            <div className="text-center px-4 py-2 bg-white/50 rounded-md border border-gray-200">
+              <p className="text-xs text-gray-500">Active Users</p>
+              <p className="text-lg font-semibold text-tinder-rose">
+                {users.filter(u => u.status === 'active').length}
+              </p>
+            </div>
+            <div className="text-center px-4 py-2 bg-white/50 rounded-md border border-gray-200">
+              <p className="text-xs text-gray-500">Pending</p>
+              <p className="text-lg font-semibold text-amber-500">
+                {users.filter(u => u.status === 'pending').length}
+              </p>
+            </div>
+            <div className="text-center px-4 py-2 bg-white/50 rounded-md border border-gray-200">
+              <p className="text-xs text-gray-500">Inactive</p>
+              <p className="text-lg font-semibold text-gray-500">
+                {users.filter(u => u.status === 'inactive').length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Card>
         <CardContent className="pt-6">
