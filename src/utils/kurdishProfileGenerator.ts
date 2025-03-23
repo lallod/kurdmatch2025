@@ -98,6 +98,7 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
   try {
     console.log(`Generating Kurdish profile - Gender: ${gender || 'random'}, With photo: ${withPhoto}`);
     
+    // Determine gender and generate name
     const isMale = gender ? gender === 'male' : Math.random() > 0.5;
     const firstName = isMale 
       ? getRandomElement(kurdishMaleNames)
@@ -109,10 +110,6 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
     const kurdistanRegion = getRandomElement(kurdishRegions);
     const occupation = getRandomElement(occupations);
     const age = Math.floor(Math.random() * 42) + 18; // Age between 18-60
-    const verified = Math.random() > 0.3; // 70% verified
-    const role = Math.random() > 0.8 ? 'admin' : 
-                Math.random() > 0.7 ? 'moderator' : 
-                Math.random() > 0.6 ? 'premium' : 'user';
     
     // Generate a random profile image using a placeholder service based on gender
     const avatarSeed = Math.random().toString(36).substring(2, 8);
@@ -227,7 +224,7 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
       return userId;
     }
     
-    // After creating the profile, add a role for this user
+    // Try adding a role after creating the profile
     try {
       const role = Math.random() > 0.8 ? 'admin' : 
                   Math.random() > 0.7 ? 'moderator' : 
