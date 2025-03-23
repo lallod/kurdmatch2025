@@ -1,13 +1,15 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, ImageIcon, Activity } from 'lucide-react';
+import { Loader2, ImageIcon, Activity, AlertTriangle } from 'lucide-react';
 import { DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { updateExistingProfiles, generateRandomUserActivity } from '@/utils/profileGenerator';
 import ProgressIndicator from './ProgressIndicator';
 import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface UpdateProfilesFormProps {
   onSuccess: () => void;
@@ -19,11 +21,13 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [generateActivity, setGenerateActivity] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleUpdateExistingProfiles = async () => {
     setIsLoading(true);
     setProgress(0);
+    setError(null);
 
     try {
       console.log(`Starting update of ${updateCount} existing profiles...`);
@@ -43,9 +47,10 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
         setProgress(100);
         
         if (likesGenerated === 0 && matchesGenerated === 0 && messagesGenerated === 0) {
+          setError("Failed to generate user activity. This may be due to database permission issues.");
           toast({
             title: "Activity Generation Failed",
-            description: "Could not generate user activity. See console for details.",
+            description: "Could not generate user activity. This may be due to security permissions.",
             variant: "destructive",
           });
         } else {
@@ -54,9 +59,10 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
       }
       
       if (updatedCount === 0) {
+        setError("No profiles were found that needed updating, or database permissions prevented updates.");
         toast({
           title: "No Updates Made",
-          description: "No profiles were found that needed updating.",
+          description: "No profiles were found that needed updating, or database permissions prevented updates.",
           variant: "default",
         });
       } else {
@@ -74,6 +80,7 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
     } catch (error) {
       console.error('Error updating profiles:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError(`Failed to update profiles: ${errorMessage}. This may be due to database permission issues.`);
       
       toast({
         title: "Error",
@@ -88,6 +95,14 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
 
   return (
     <div className="space-y-4 pt-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
       <div className="grid gap-2">
         <Label htmlFor="updateCount">Number of profiles to update</Label>
         <Input
@@ -124,6 +139,9 @@ const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onCl
               <p>
                 This will add rich information and photos to existing profiles and optionally
                 generate user activity data for a more realistic admin dashboard.
+              </p>
+              <p className="mt-1 font-semibold">
+                Note: This operation requires proper database permissions to succeed.
               </p>
             </div>
           </div>

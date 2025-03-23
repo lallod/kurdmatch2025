@@ -26,6 +26,21 @@ export const useUserDelete = (onRefresh: () => void) => {
         throw new Error("You cannot deactivate your own account");
       }
       
+      // Check if we have the proper permissions first
+      const { error: checkError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userToDelete.id)
+        .limit(1);
+        
+      if (checkError) {
+        if (checkError.message.includes('row-level security policy')) {
+          throw new Error("You don't have permission to deactivate users. Contact your database administrator.");
+        } else {
+          throw checkError;
+        }
+      }
+      
       // Instead of deleting, update status to "inactive"
       const { error } = await supabase
         .from('profiles')
@@ -36,7 +51,13 @@ export const useUserDelete = (onRefresh: () => void) => {
         })
         .eq('id', userToDelete.id);
       
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('row-level security policy')) {
+          throw new Error("You don't have permission to deactivate users. Contact your database administrator.");
+        } else {
+          throw error;
+        }
+      }
       
       toast({
         title: "User Deactivated",

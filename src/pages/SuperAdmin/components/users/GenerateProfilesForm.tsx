@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, RefreshCw, UserPlus, Users } from 'lucide-react';
+import { Loader2, UserPlus, AlertTriangle } from 'lucide-react';
 import { DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { generateKurdishProfile, generateDiverseKurdishProfiles } from '@/utils/profileGenerator';
 import ProgressIndicator from './ProgressIndicator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface GenerateProfilesFormProps {
   onSuccess: () => void;
@@ -24,12 +25,14 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
   const [progress, setProgress] = useState<number>(0);
   const [generateDiverse, setGenerateDiverse] = useState<boolean>(true);
   const [generateActivity, setGenerateActivity] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleGenerateProfiles = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setProgress(0);
+    setError(null);
 
     try {
       // Generate multiple profiles if count > 1
@@ -48,9 +51,10 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
         setProgress(100);
         
         if (result.generatedCount === 0) {
+          setError("Profile generation failed. This may be due to row-level security policy restrictions or database constraints.");
           toast({
             title: "Generation Failed",
-            description: "We couldn't create any profiles. Please check the console for error details.",
+            description: "We couldn't create any profiles. This may be due to security permissions.",
             variant: "destructive",
           });
         } else {
@@ -68,6 +72,7 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
         
         // Process profiles in batches for better UI feedback
         let successfulProfiles = 0;
+        let failedProfiles = 0;
         const batchSize = 5;
         const batches = Math.ceil(totalProfiles / batchSize);
         
@@ -94,11 +99,13 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
                     return id;
                   })
                   .catch(err => {
+                    failedProfiles++;
                     console.error(`Error generating profile ${i+1}:`, err);
                     return null; // Return null for failed profiles so Promise.all continues
                   })
               );
             } catch (err) {
+              failedProfiles++;
               console.error(`Exception in profile creation process for profile ${i+1}:`, err);
             }
           }
@@ -109,15 +116,16 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
         }
         
         if (successfulProfiles === 0) {
+          setError("Profile generation failed. This may be due to row-level security policy restrictions or database constraints.");
           toast({
             title: "Generation Failed",
-            description: "We couldn't create any profiles. Please check the console for error details.",
+            description: "We couldn't create any profiles. This may be due to security permissions.",
             variant: "destructive",
           });
         } else if (successfulProfiles < totalProfiles) {
           toast({
             title: "Partial Success",
-            description: `${successfulProfiles} out of ${totalProfiles} profiles were generated successfully.`,
+            description: `${successfulProfiles} out of ${totalProfiles} profiles were generated successfully. ${failedProfiles} profiles failed due to database restrictions.`,
             variant: "default",
           });
           onSuccess();
@@ -135,6 +143,7 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
     } catch (error) {
       console.error('Error generating profiles:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError(`Failed to generate profiles: ${errorMessage}. This may be due to database permission issues.`);
       
       toast({
         title: "Error",
@@ -143,12 +152,19 @@ const GenerateProfilesForm: React.FC<GenerateProfilesFormProps> = ({ onSuccess, 
       });
     } finally {
       setIsLoading(false);
-      setProgress(0);
     }
   };
 
   return (
     <form onSubmit={handleGenerateProfiles} className="space-y-4 pt-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
       <div className="grid gap-2">
         <Label htmlFor="count">Number of profiles to generate</Label>
         <Input
