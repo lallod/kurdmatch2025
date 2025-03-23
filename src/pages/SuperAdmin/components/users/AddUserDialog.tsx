@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, RefreshCw, ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateKurdishProfile, updateExistingProfiles } from '@/utils/kurdishProfileGenerator';
+import { generateKurdishProfile, updateExistingProfiles } from '@/utils/profileGenerator';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
