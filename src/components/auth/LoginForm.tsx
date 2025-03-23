@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,6 +16,8 @@ import {
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import SocialLogin from './components/SocialLogin';
+import { useNavigate } from 'react-router-dom';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -23,8 +26,14 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-const LoginForm = () => {
+interface LoginFormProps {
+  onLoginSuccess?: (email: string) => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const { toast } = useToast();
+  const { signIn } = useSupabaseAuth();
+  const navigate = useNavigate();
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -39,23 +48,26 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      // Handle login logic here (in a real app this would connect to an auth service)
       console.log('Login form submitted:', data);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await signIn(data.email, data.password);
       
-      toast({
-        title: "Success!",
-        description: "You have been logged in successfully.",
-      });
+      if (error) throw error;
 
-      // In a real app, redirect to dashboard or home page after successful login
-    } catch (error) {
+      if (onLoginSuccess) {
+        onLoginSuccess(data.email);
+      } else {
+        // Default behavior if no callback provided
+        toast({
+          title: "Success!",
+          description: "You have been logged in successfully.",
+        });
+      }
+    } catch (error: any) {
       console.error('Login error:', error);
       toast({
         title: "Error",
-        description: "Failed to log in. Please try again.",
+        description: error.message || "Failed to log in. Please try again.",
         variant: "destructive",
       });
     }

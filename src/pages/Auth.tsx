@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,9 +20,9 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!user) return;
+    
     const checkUserRole = async () => {
-      if (!user) return;
-
       try {
         // Check if user has super_admin role
         const { data, error } = await supabase
@@ -45,16 +44,14 @@ const Auth = () => {
         }
 
         // If not super_admin, redirect to main page
-        navigate('/');
+        navigate('/app');
       } catch (error) {
         console.error('Error checking user role:', error);
-        navigate('/');
+        navigate('/app'); // Default fallback
       }
     };
 
-    if (user) {
-      checkUserRole();
-    }
+    checkUserRole();
   }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {

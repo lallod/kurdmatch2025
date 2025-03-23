@@ -13,6 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
 import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
 import Logo from './Logo';
+import { useNavigate } from 'react-router-dom';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface HeroContent {
   title: string;
@@ -33,6 +37,46 @@ const defaultContent: HeroContent = {
 };
 
 const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) => {
+  const navigate = useNavigate();
+  const { user } = useSupabaseAuth();
+  const { toast } = useToast();
+
+  const handleLoginSuccess = async (email: string) => {
+    try {
+      // Check if user has super_admin role
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user?.id)
+        .eq('role', 'super_admin')
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      if (data) {
+        // Redirect to super admin dashboard
+        navigate('/super-admin');
+        toast({
+          title: "Welcome Super Admin",
+          description: "You've been redirected to the admin dashboard",
+        });
+      } else {
+        // Redirect to main app
+        navigate('/app');
+        toast({
+          title: "Welcome back!",
+          description: "You've successfully logged in.",
+        });
+      }
+    } catch (error) {
+      console.error('Error checking user role:', error);
+      // Default redirection
+      navigate('/app');
+    }
+  };
+
   return (
     <div className="relative py-16 overflow-hidden">
       {/* Abstract AI background elements */}
@@ -93,7 +137,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
                     <TabsTrigger value="register" className="data-[state=active]:bg-purple-800/30">Register</TabsTrigger>
                   </TabsList>
                   <TabsContent value="login">
-                    <LoginForm />
+                    <LoginForm onLoginSuccess={handleLoginSuccess} />
                   </TabsContent>
                   <TabsContent value="register">
                     <DynamicRegistrationForm />

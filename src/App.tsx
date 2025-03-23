@@ -80,7 +80,7 @@ const ProtectedRoute = () => {
 const SuperAdminRoute = () => {
   const { user, loading } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [checkingRole, setCheckingRole] = useState(true);
   const location = useLocation();
   const { toast } = useToast();
   
@@ -88,11 +88,12 @@ const SuperAdminRoute = () => {
     const checkAdminStatus = async () => {
       if (!user) {
         setIsSuperAdmin(false);
-        setShouldRedirect(true);
+        setCheckingRole(false);
         return;
       }
       
       try {
+        console.log("Checking super admin status for user:", user.id);
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
@@ -102,10 +103,11 @@ const SuperAdminRoute = () => {
         if (error) throw error;
         
         const isAdmin = data && data.length > 0;
+        console.log("Is admin result:", isAdmin, data);
         setIsSuperAdmin(isAdmin);
         
         if (!isAdmin) {
-          setShouldRedirect(true);
+          setCheckingRole(false);
           toast({
             title: 'Access Denied',
             description: 'You do not have permission to access this area',
@@ -115,12 +117,13 @@ const SuperAdminRoute = () => {
       } catch (err) {
         console.error('Error checking admin status:', err);
         setIsSuperAdmin(false);
-        setShouldRedirect(true);
         toast({
           title: 'Error',
           description: 'Could not verify admin permissions',
           variant: 'destructive'
         });
+      } finally {
+        setCheckingRole(false);
       }
     };
     
@@ -129,11 +132,11 @@ const SuperAdminRoute = () => {
     }
   }, [user, loading, toast]);
   
-  if (loading || isSuperAdmin === null) {
+  if (loading || checkingRole) {
     return <div className="flex h-screen items-center justify-center">Verifying permissions...</div>;
   }
   
-  if (shouldRedirect) {
+  if (!isSuperAdmin) {
     return <Navigate to="/" replace />;
   }
   
@@ -184,7 +187,7 @@ const PublicOnlyRoute = () => {
     if (isSuperAdmin) {
       return <Navigate to="/super-admin" replace />;
     }
-    return <Navigate to="/" replace />;
+    return <Navigate to="/app" replace />;
   }
   
   return <Outlet />;
