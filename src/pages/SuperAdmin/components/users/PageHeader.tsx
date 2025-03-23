@@ -19,7 +19,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ onExport, onAddUser }) => {
         </Button>
         <Button className="gap-2" onClick={onAddUser}>
           <UserPlus size={16} />
-          Add User
+          Add Kurdish Profile
         </Button>
       </div>
     </div>
