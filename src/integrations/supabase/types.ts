@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_activities: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      dashboard_stats: {
+        Row: {
+          change_percentage: number | null
+          created_at: string | null
+          icon: string | null
+          id: number
+          stat_name: string
+          stat_value: number
+          trend: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          change_percentage?: number | null
+          created_at?: string | null
+          icon?: string | null
+          id?: number
+          stat_name: string
+          stat_value: number
+          trend?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          change_percentage?: number | null
+          created_at?: string | null
+          icon?: string | null
+          id?: number
+          stat_name?: string
+          stat_value?: number
+          trend?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       landing_page_content: {
         Row: {
           content: Json
@@ -458,6 +515,39 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_engagement: {
+        Row: {
+          conversations: number
+          created_at: string | null
+          date: string
+          id: number
+          likes: number
+          matches: number
+          users: number
+          views: number
+        }
+        Insert: {
+          conversations?: number
+          created_at?: string | null
+          date: string
+          id?: number
+          likes?: number
+          matches?: number
+          users?: number
+          views?: number
+        }
+        Update: {
+          conversations?: number
+          created_at?: string | null
+          date?: string
+          id?: number
+          likes?: number
+          matches?: number
+          users?: number
+          views?: number
         }
         Relationships: []
       }

@@ -2,17 +2,37 @@
 import React from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { EngagementData } from '@/api/dashboard';
 
-const EngagementChart = () => {
-  const engagementData = [
-    { name: 'Mon', likes: 120, views: 240, matches: 20 },
-    { name: 'Tue', likes: 150, views: 290, matches: 30 },
-    { name: 'Wed', likes: 180, views: 320, matches: 25 },
-    { name: 'Thu', likes: 130, views: 270, matches: 22 },
-    { name: 'Fri', likes: 190, views: 350, matches: 35 },
-    { name: 'Sat', likes: 210, views: 380, matches: 40 },
-    { name: 'Sun', likes: 170, views: 320, matches: 32 },
-  ];
+interface EngagementChartProps {
+  data: EngagementData[];
+  loading?: boolean;
+}
+
+const EngagementChart = ({ data, loading = false }: EngagementChartProps) => {
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+  };
+
+  const processedData = data.map(item => ({
+    ...item,
+    name: formatDate(item.date)
+  }));
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>User Engagement Metrics</CardTitle>
+          <CardDescription>Likes, views, and matches over time</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] w-full bg-gray-100 animate-pulse rounded-md"></div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -23,7 +43,7 @@ const EngagementChart = () => {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={engagementData}
+            data={processedData}
             margin={{
               top: 5,
               right: 30,

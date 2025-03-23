@@ -1,17 +1,36 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserPlus, TrendingUp, ImageIcon, Mail, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { fetchRecentActivities, ActivityItem } from '@/api/dashboard';
+import { useToast } from '@/hooks/use-toast';
 
 const RecentActivity = () => {
-  const recentActivityData = [
-    { type: 'user_register', user: 'Alice Johnson', time: '2 minutes ago' },
-    { type: 'user_upgrade', user: 'Bob Smith', time: '15 minutes ago' },
-    { type: 'photo_upload', user: 'Carol Williams', time: '30 minutes ago' },
-    { type: 'message_sent', user: 'Dave Miller', time: '45 minutes ago' },
-    { type: 'profile_update', user: 'Emma Davis', time: '1 hour ago' },
-  ];
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const loadActivities = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchRecentActivities();
+        setActivities(data);
+      } catch (error) {
+        console.error('Failed to load recent activities:', error);
+        toast({
+          title: 'Error loading activities',
+          description: 'Could not load recent activities. Please try again.',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadActivities();
+  }, [toast]);
 
   const activityIcons = {
     user_register: <UserPlus size={16} className="text-green-500" />,
@@ -21,6 +40,35 @@ const RecentActivity = () => {
     profile_update: <Users size={16} className="text-gray-500" />,
   };
 
+  const getActivityTitle = (type: string) => {
+    switch (type) {
+      case 'user_register': return 'New user registration';
+      case 'user_upgrade': return 'User upgraded to premium';
+      case 'photo_upload': return 'New photos uploaded';
+      case 'message_sent': return 'New message sent';
+      case 'profile_update': return 'Profile updated';
+      default: return type.replace(/_/g, ' ');
+    }
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+          <CardDescription>Latest actions across the platform</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((_, index) => (
+              <div key={index} className="h-16 bg-gray-100 animate-pulse rounded-md"></div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -29,18 +77,15 @@ const RecentActivity = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {recentActivityData.map((activity, index) => (
+          {activities.map((activity, index) => (
             <div key={index} className="flex items-center gap-4 py-2 border-b last:border-0">
               <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                {activityIcons[activity.type as keyof typeof activityIcons]}
+                {activityIcons[activity.activity_type as keyof typeof activityIcons] || 
+                 <Users size={16} className="text-gray-500" />}
               </div>
               <div>
                 <p className="text-sm font-medium">
-                  {activity.type === 'user_register' && 'New user registration'}
-                  {activity.type === 'user_upgrade' && 'User upgraded to premium'}
-                  {activity.type === 'photo_upload' && 'New photos uploaded'}
-                  {activity.type === 'message_sent' && 'New message sent'}
-                  {activity.type === 'profile_update' && 'Profile updated'}
+                  {getActivityTitle(activity.activity_type)}
                 </p>
                 <p className="text-xs text-gray-500">{activity.user} • {activity.time}</p>
               </div>

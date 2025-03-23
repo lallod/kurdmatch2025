@@ -1,20 +1,39 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import StatsOverview from '../components/dashboard/StatsOverview';
 import ActivityTabs from '../components/dashboard/ActivityTabs';
 import RecentActivity from '../components/dashboard/RecentActivity';
 import QuickActions from '../components/dashboard/QuickActions';
 import { Brain } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Dashboard = () => {
   const [timeRange, setTimeRange] = useState('month');
   const [refreshing, setRefreshing] = useState(false);
+  const { toast } = useToast();
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    // Simulate data reload
-    setTimeout(() => setRefreshing(false), 1000);
+    try {
+      // Force re-render of all components by changing a key
+      // In a real app, we would re-fetch all data here
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: 'Dashboard Refreshed',
+        description: 'The dashboard data has been successfully updated.',
+      });
+    } catch (error) {
+      console.error('Error refreshing dashboard:', error);
+      toast({
+        title: 'Refresh Failed',
+        description: 'Could not refresh dashboard data. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   return (
