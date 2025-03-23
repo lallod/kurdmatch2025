@@ -52,25 +52,28 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       console.log(`Generated ${successfulProfiles} out of ${totalProfiles} profiles:`, results);
       
       if (successfulProfiles === 0) {
-        throw new Error("All profile generation attempts failed. Please check the console for details.");
-      }
-      
-      if (successfulProfiles < totalProfiles) {
+        toast({
+          title: "Generation Failed",
+          description: "We couldn't create any profiles. Please try again later or contact the system administrator.",
+          variant: "destructive",
+        });
+      } else if (successfulProfiles < totalProfiles) {
         toast({
           title: "Partial Success",
-          description: `${successfulProfiles} out of ${totalProfiles} Kurdish profiles were generated successfully. Some profiles failed to generate.`,
+          description: `${successfulProfiles} out of ${totalProfiles} Kurdish profiles were generated successfully.`,
           variant: "default",
         });
+        onUserAdded();
+        onOpenChange(false);
       } else {
         toast({
           title: "Success",
           description: `${successfulProfiles} Kurdish ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
           variant: "default",
         });
+        onUserAdded();
+        onOpenChange(false);
       }
-      
-      onUserAdded();
-      onOpenChange(false);
     } catch (error) {
       console.error('Error generating profiles:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

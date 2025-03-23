@@ -121,28 +121,8 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
     const userId = crypto.randomUUID();
     console.log(`Generated UUID: ${userId} for profile: ${fullName}`);
     
-    // Try executing the stored procedure to create a demo profile
-    const createDemoProfileParams: CreateDemoProfileParams = {
-      user_id: userId,
-      user_name: fullName,
-      user_age: age,
-      user_location: location,
-      user_gender: isMale ? 'male' : 'female',
-      user_occupation: occupation,
-      user_profile_image: profileImage
-    };
-    
-    console.log('Calling create_demo_profile with params:', createDemoProfileParams);
-    
-    const { data: insertData, error: insertError } = await supabase.rpc(
-      'create_demo_profile',
-      createDemoProfileParams
-    );
-    
-    if (insertError) {
-      console.error('Error with RPC method, falling back to regular insert:', insertError);
-      
-      // Fallback to regular insert which may fail due to foreign key constraint
+    // First, try inserting directly into the profiles table with admin rights
+    try {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -213,23 +193,73 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
         .select('id');
       
       if (profileError) {
-        console.error('Error creating Kurdish profile:', profileError);
+        console.error('Error creating Kurdish profile with direct insert:', profileError);
         throw new Error(`Profile creation failed: ${profileError.message}`);
       }
 
       console.log('Profile created via direct insert:', profileData);
+      
+      // If successful, add the user role
+      try {
+        const role = Math.random() > 0.8 ? 'admin' : 
+                Math.random() > 0.7 ? 'moderator' : 
+                Math.random() > 0.6 ? 'premium' : 'user';
+                
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role
+          });
+        
+        if (roleError) {
+          console.error('Error creating role for Kurdish profile:', roleError);
+          // Continue despite role error
+        } else {
+          console.log(`Role '${role}' assigned to user ${userId}`);
+        }
+      } catch (roleErr) {
+        console.error('Exception adding role:', roleErr);
+        // Continue despite role error
+      }
+      
       return userId;
-    } else {
-      console.log('Profile created via RPC:', insertData);
-      return userId;
+    } catch (directInsertError) {
+      console.error('Direct insert failed, trying RPC method:', directInsertError);
     }
+    
+    // Try the RPC method as a fallback
+    console.log("Trying with RPC create_demo_profile method...");
+    const createDemoProfileParams: CreateDemoProfileParams = {
+      user_id: userId,
+      user_name: fullName,
+      user_age: age,
+      user_location: location,
+      user_gender: isMale ? 'male' : 'female',
+      user_occupation: occupation,
+      user_profile_image: profileImage
+    };
+    
+    console.log('Calling create_demo_profile with params:', createDemoProfileParams);
+    
+    const { data: insertData, error: insertError } = await supabase.rpc(
+      'create_demo_profile',
+      createDemoProfileParams
+    );
+    
+    if (insertError) {
+      console.error('Error with RPC method:', insertError);
+      throw new Error(`Both direct insert and RPC methods failed: ${insertError.message}`);
+    }
+    
+    console.log('Profile created via RPC:', insertData);
     
     // Try adding a role after creating the profile
     try {
       const role = Math.random() > 0.8 ? 'admin' : 
-                  Math.random() > 0.7 ? 'moderator' : 
-                  Math.random() > 0.6 ? 'premium' : 'user';
-                  
+                Math.random() > 0.7 ? 'moderator' : 
+                Math.random() > 0.6 ? 'premium' : 'user';
+                
       const { error: roleError } = await supabase
         .from('user_roles')
         .insert({
