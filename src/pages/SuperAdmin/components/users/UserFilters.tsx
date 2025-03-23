@@ -8,18 +8,22 @@ interface UserFiltersProps {
   searchTerm: string;
   statusFilter: string;
   roleFilter: string;
+  usersPerPage: number;
   onSearchChange: (value: string) => void;
   onStatusChange: (value: string) => void;
   onRoleChange: (value: string) => void;
+  onUsersPerPageChange: (value: number) => void;
 }
 
 const UserFilters: React.FC<UserFiltersProps> = ({
   searchTerm,
   statusFilter,
   roleFilter,
+  usersPerPage,
   onSearchChange,
   onStatusChange,
-  onRoleChange
+  onRoleChange,
+  onUsersPerPageChange
 }) => {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -32,7 +36,7 @@ const UserFilters: React.FC<UserFiltersProps> = ({
           className="pl-10"
         />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <Select value={statusFilter} onValueChange={onStatusChange}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Status" />
@@ -44,6 +48,7 @@ const UserFilters: React.FC<UserFiltersProps> = ({
             <SelectItem value="suspended">Suspended</SelectItem>
           </SelectContent>
         </Select>
+        
         <Select value={roleFilter} onValueChange={onRoleChange}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Role" />
@@ -54,6 +59,21 @@ const UserFilters: React.FC<UserFiltersProps> = ({
             <SelectItem value="premium">Premium</SelectItem>
             <SelectItem value="moderator">Moderator</SelectItem>
             <SelectItem value="admin">Admin</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        <Select 
+          value={usersPerPage.toString()} 
+          onValueChange={(value) => onUsersPerPageChange(parseInt(value))}
+        >
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Users per page" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10 per page</SelectItem>
+            <SelectItem value="25">25 per page</SelectItem>
+            <SelectItem value="50">50 per page</SelectItem>
+            <SelectItem value="100">100 per page</SelectItem>
           </SelectContent>
         </Select>
       </div>

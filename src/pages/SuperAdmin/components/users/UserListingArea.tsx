@@ -18,6 +18,7 @@ interface UserListingAreaProps {
   onSearchChange: (value: string) => void;
   onStatusChange: (value: string) => void;
   onRoleChange: (value: string) => void;
+  onUsersPerPageChange: (value: number) => void;
   onPageChange: (page: number) => void;
   onRefresh: () => void;
   onViewUser: (user: User) => void;
@@ -36,6 +37,7 @@ const UserListingArea: React.FC<UserListingAreaProps> = ({
   onSearchChange,
   onStatusChange,
   onRoleChange,
+  onUsersPerPageChange,
   onPageChange,
   onRefresh,
   onViewUser,
@@ -48,9 +50,11 @@ const UserListingArea: React.FC<UserListingAreaProps> = ({
           searchTerm={searchTerm}
           statusFilter={statusFilter}
           roleFilter={roleFilter}
+          usersPerPage={usersPerPage}
           onSearchChange={onSearchChange}
           onStatusChange={onStatusChange}
           onRoleChange={onRoleChange}
+          onUsersPerPageChange={onUsersPerPageChange}
         />
 
         <UsersTable 

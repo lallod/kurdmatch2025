@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { User } from '../types';
 import { useToast } from '@/hooks/use-toast';
 
-export const useUsers = (usersPerPage: number = 10) => {
+export const useUsers = (initialUsersPerPage: number = 10) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,6 +13,7 @@ export const useUsers = (usersPerPage: number = 10) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [usersPerPage, setUsersPerPage] = useState(initialUsersPerPage);
   const { toast } = useToast();
 
   const fetchUsers = async () => {
@@ -98,7 +99,7 @@ export const useUsers = (usersPerPage: number = 10) => {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage]);
+  }, [currentPage, usersPerPage]);
 
   // Apply filters to the current page of users only
   const filteredUsers = users.filter(user => {
@@ -143,6 +144,11 @@ export const useUsers = (usersPerPage: number = 10) => {
     fetchUsers();
   };
 
+  const handleUsersPerPageChange = (count: number) => {
+    setUsersPerPage(count);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
   return {
     users,
     filteredUsers,
@@ -153,9 +159,11 @@ export const useUsers = (usersPerPage: number = 10) => {
     searchTerm,
     statusFilter,
     roleFilter,
+    usersPerPage,
     setSearchTerm,
     setStatusFilter,
     setRoleFilter,
+    setUsersPerPage: handleUsersPerPageChange,
     handlePageChange,
     handleRefresh,
     fetchUsers

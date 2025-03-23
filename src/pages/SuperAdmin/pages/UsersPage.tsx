@@ -12,7 +12,7 @@ const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userDetailMode, setUserDetailMode] = useState<'view' | 'edit'>('view');
   const [addUserDialogOpen, setAddUserDialogOpen] = useState(false);
-  const usersPerPage = 10;
+  const initialUsersPerPage = 10;
   
   const {
     filteredUsers,
@@ -23,13 +23,15 @@ const UsersPage = () => {
     searchTerm,
     statusFilter,
     roleFilter,
+    usersPerPage,
     setSearchTerm,
     setStatusFilter,
     setRoleFilter,
+    setUsersPerPage,
     handlePageChange,
     handleRefresh,
     fetchUsers
-  } = useUsers(usersPerPage);
+  } = useUsers(initialUsersPerPage);
 
   const viewUser = (user: User) => {
     setSelectedUser(user);
@@ -82,6 +84,7 @@ const UsersPage = () => {
         onSearchChange={setSearchTerm}
         onStatusChange={setStatusFilter}
         onRoleChange={setRoleFilter}
+        onUsersPerPageChange={setUsersPerPage}
         onPageChange={handlePageChange}
         onRefresh={handleRefresh}
         onViewUser={viewUser}
