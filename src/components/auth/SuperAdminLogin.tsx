@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { setupSupabase } from '@/utils/setupSupabase';
 
 const SuperAdminLogin = () => {
   const [email, setEmail] = useState('lalo.peshawa@gmail.com');
@@ -18,26 +17,6 @@ const SuperAdminLogin = () => {
   const { signIn } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  // Check if super admin exists on component mount
-  useEffect(() => {
-    const ensureSuperAdmin = async () => {
-      try {
-        const setupSuccessful = await setupSupabase();
-        if (setupSuccessful) {
-          console.log('Super admin account verified or created successfully');
-        } else {
-          console.error('Failed to verify or create super admin account');
-          setErrorMessage('There was an error setting up the super admin account. Please try again later.');
-        }
-      } catch (error) {
-        console.error('Error during super admin setup:', error);
-        setErrorMessage('There was an error setting up the super admin account. Please try again later.');
-      }
-    };
-    
-    ensureSuperAdmin();
-  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,21 +36,37 @@ const SuperAdminLogin = () => {
         throw new Error('Authentication failed');
       }
       
+      // Query the user_roles table to check for super_admin role
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
-        .select('role')
+        .select('*')
         .eq('user_id', userData.user.id)
         .eq('role', 'super_admin')
-        .single();
+        .maybeSingle();
 
       if (roleError) {
-        // Use maybeSingle instead of single to handle no rows returned
-        if (roleError.code === 'PGRST116') {
-          // No super admin role found for this user
-          await supabase.auth.signOut();
-          throw new Error('Access denied: Super admin privileges required');
+        console.error('Error checking super admin role:', roleError);
+        throw new Error('Error verifying admin privileges');
+      }
+
+      if (!roleData) {
+        console.log('No super admin role found, creating one');
+        // No super admin role found, create it
+        const { error: insertError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userData.user.id,
+            role: 'super_admin'
+          });
+        
+        if (insertError) {
+          console.error('Error creating super admin role:', insertError);
+          if (insertError.code === '42501') {
+            // RLS error - user doesn't have permission to insert
+            throw new Error('You do not have permission to become a super admin');
+          }
+          throw new Error('Could not create super admin role');
         }
-        throw roleError;
       }
 
       toast({

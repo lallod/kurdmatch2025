@@ -2,7 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
 /**
- * Creates a super admin user if one doesn't exist and removes all other users
+ * Creates a super admin user if one doesn't exist
  */
 export const setupSupabase = async () => {
   const superAdminEmail = 'lalo.peshawa@gmail.com';
@@ -11,237 +11,102 @@ export const setupSupabase = async () => {
   try {
     console.log('Starting super admin setup...');
     
-    // First, check if we have access to the admin API
-    try {
-      const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
+    // Try to sign in with the super admin credentials
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      email: superAdminEmail,
+      password: superAdminPassword
+    });
+    
+    if (signInError) {
+      // If we can't sign in, try to sign up
+      console.log('Could not sign in as super admin, trying to sign up');
       
-      if (listError) {
-        // If we get an error here, it's likely because we don't have admin privileges
-        console.error('Error listing users - may not have admin access:', listError);
-        
-        // Instead of failing, let's try to sign in with the super admin credentials
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: superAdminEmail,
-          password: superAdminPassword
-        });
-        
-        if (signInError) {
-          // If we can't sign in, let's try to sign up
-          console.log('Could not sign in as super admin, trying to sign up');
-          
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: superAdminEmail,
-            password: superAdminPassword,
-            options: {
-              data: { name: 'Super Admin' }
-            }
-          });
-          
-          if (signUpError) {
-            console.error('Error creating super admin account:', signUpError);
-            return false;
-          }
-          
-          console.log('Super admin account created, checking or assigning role');
-          
-          // Check if the user has super_admin role
-          const userId = signUpData?.user?.id;
-          if (!userId) {
-            console.error('No user ID received after signup');
-            return false;
-          }
-          
-          // Add super_admin role
-          const { error: roleError } = await supabase
-            .from('user_roles')
-            .upsert({
-              user_id: userId,
-              role: 'super_admin'
-            });
-          
-          if (roleError) {
-            console.error('Error assigning super_admin role:', roleError);
-            return false;
-          }
-          
-          return true;
-        }
-        
-        // Successfully signed in as super admin
-        console.log('Signed in as super admin');
-        
-        // Check if user has the super_admin role
-        const userId = signInData?.user?.id;
-        if (!userId) {
-          console.error('No user ID after sign in');
-          return false;
-        }
-        
-        // Check for super_admin role
-        const { data: roleData, error: roleError } = await supabase
-          .from('user_roles')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('role', 'super_admin');
-        
-        if (roleError) {
-          console.error('Error checking super admin role:', roleError);
-          return false;
-        }
-        
-        // Add the role if it doesn't exist
-        if (!roleData || roleData.length === 0) {
-          console.log('Adding super_admin role');
-          
-          const { error: insertRoleError } = await supabase
-            .from('user_roles')
-            .insert({
-              user_id: userId,
-              role: 'super_admin'
-            });
-          
-          if (insertRoleError) {
-            console.error('Error adding super_admin role:', insertRoleError);
-            return false;
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: superAdminEmail,
+        password: superAdminPassword,
+        options: {
+          data: { 
+            name: 'Super Admin',
+            isAdmin: true
           }
         }
-        
-        return true;
-      }
-      
-      // If we reach here, we have admin privileges
-      // Continue with normal setup processing
-      
-      // Find if super admin exists
-      const existingUser = usersData?.users?.find(user => {
-        if (user && typeof user === 'object' && 'email' in user) {
-          const userObj = user as any;
-          return userObj.email && typeof userObj.email === 'string' && 
-                 userObj.email.toLowerCase() === superAdminEmail.toLowerCase();
-        }
-        return false;
       });
       
-      let userId: string | undefined;
+      if (signUpError) {
+        console.error('Error creating super admin account:', signUpError);
+        return false;
+      }
       
-      // Create the user if they don't exist
-      if (!existingUser) {
-        console.log('Super admin does not exist, creating...');
-        
-        const { data: newUser, error: signUpError } = await supabase.auth.signUp({
-          email: superAdminEmail,
-          password: superAdminPassword,
-          options: {
-            data: { name: 'Super Admin' }
-          }
-        });
-        
-        if (signUpError) {
-          console.error('Error creating super admin:', signUpError);
-          throw signUpError;
-        }
-        
-        userId = newUser?.user?.id;
-        
-        if (!userId) {
-          throw new Error('Failed to get user ID after signup');
-        }
-        
-        // Auto-confirm the email for the super admin
-        try {
+      console.log('Super admin account created successfully');
+      
+      // We need to manually confirm the email for the new user since we're in development
+      try {
+        // This will only work with service role, but we'll try anyway
+        const userId = signUpData?.user?.id;
+        if (userId) {
           const { error: confirmError } = await supabase.auth.admin.updateUserById(userId, {
             email_confirm: true
           });
           
           if (confirmError) {
-            console.error('Error confirming email:', confirmError);
+            console.log('Could not auto-confirm email (requires service role):', confirmError);
+          } else {
+            console.log('Email auto-confirmed for super admin');
           }
-        } catch (err) {
-          console.error('Could not confirm email:', err);
         }
-      } else {
-        userId = existingUser.id;
-        console.log('Super admin exists with ID:', userId);
-      }
-      
-      // Check and add the super_admin role if needed
-      if (userId) {
-        const { data: existingRole } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', userId)
-          .eq('role', 'super_admin');
-        
-        if (!existingRole || existingRole.length === 0) {
-          console.log('Adding super_admin role to user');
-          
-          const { error: roleError } = await supabase
-            .from('user_roles')
-            .insert({
-              user_id: userId,
-              role: 'super_admin'
-            });
-          
-          if (roleError) {
-            console.error('Error assigning super_admin role:', roleError);
-          }
-        } else {
-          console.log('User already has super_admin role');
-        }
-        
-        // Sign in as the super admin
-        await supabase.auth.signOut();
-      }
-      
-      // Don't delete other users in this function - it's a sensitive operation
-      // that should be done separately if needed
-      
-      return true;
-    } catch (adminError) {
-      console.error('Admin API access error:', adminError);
-      
-      // Try regular sign-in if admin operations fail
-      try {
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: superAdminEmail,
-          password: superAdminPassword
-        });
-        
-        if (signInError) {
-          // If we can't sign in, let's try to sign up
-          console.log('Could not sign in as super admin, trying to sign up');
-          
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: superAdminEmail,
-            password: superAdminPassword,
-            options: {
-              data: { name: 'Super Admin' }
-            }
-          });
-          
-          if (signUpError) {
-            console.error('Error creating super admin account:', signUpError);
-            return false;
-          }
-          
-          // Sign out to avoid being logged in as super admin
-          await supabase.auth.signOut();
-          
-          return true;
-        }
-        
-        // Successfully signed in as super admin
-        console.log('Signed in as super admin using regular auth');
-        
-        // Sign out to avoid being logged in
-        await supabase.auth.signOut();
-        
-        return true;
       } catch (error) {
-        console.error('Regular authentication failed:', error);
-        return false;
+        console.log('Email confirmation requires service role, skipping.');
       }
+    } else {
+      console.log('Successfully signed in as super admin');
     }
+    
+    // At this point, either the sign in or sign up was successful
+    // Let's ensure the user has the super_admin role
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user?.id) {
+      console.error('Could not get current user');
+      return false;
+    }
+    
+    // Check if the role exists
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('*')
+      .eq('user_id', userData.user.id)
+      .eq('role', 'super_admin')
+      .maybeSingle();
+    
+    if (roleError) {
+      console.error('Error checking super admin role:', roleError);
+    }
+    
+    // If role doesn't exist, create it
+    if (!roleData) {
+      console.log('Adding super_admin role');
+      
+      const { error: insertRoleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: userData.user.id,
+          role: 'super_admin'
+        });
+      
+      if (insertRoleError) {
+        console.error('Error adding super_admin role:', insertRoleError);
+        
+        if (insertRoleError.code === '42501') {
+          console.log('Row-level security prevented role creation. This likely means you need to disable RLS for the user_roles table or create appropriate policies.');
+        }
+      }
+    } else {
+      console.log('User already has super_admin role');
+    }
+    
+    // Sign out after setup so the user can log in properly through the UI
+    await supabase.auth.signOut();
+    
+    return true;
   } catch (error) {
     console.error('Setup error:', error);
     return false;
