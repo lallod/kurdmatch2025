@@ -591,7 +591,7 @@ export type Database = {
           user_location: string
           user_gender: string
           user_occupation: string
-          user_profile_image: string
+          user_profile_image?: string
         }
         Returns: string
       }
