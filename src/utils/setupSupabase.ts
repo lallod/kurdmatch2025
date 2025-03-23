@@ -9,13 +9,22 @@ export const setupSupabase = async () => {
   const superAdminPassword = 'Hanasa2011';
   
   try {
-    // 1. First check if the user already exists
-    const { data: existingUser, error: userError } = await supabase.auth.admin.getUserByEmail(superAdminEmail);
+    // 1. First check if the user already exists by listing users
+    const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
+    
+    if (listError) {
+      console.error('Error listing users:', listError);
+      return false;
+    }
+    
+    const existingUser = usersData?.users?.find(user => 
+      user.email?.toLowerCase() === superAdminEmail.toLowerCase()
+    );
     
     let userId: string | undefined;
     
     // 2. Create the user if they don't exist
-    if (userError || !existingUser?.user) {
+    if (!existingUser) {
       console.log('Super admin does not exist, creating...');
       
       const { data: newUser, error: signUpError } = await supabase.auth.signUp({
@@ -50,7 +59,7 @@ export const setupSupabase = async () => {
         console.error('Could not confirm email:', err);
       }
     } else {
-      userId = existingUser.user.id;
+      userId = existingUser.id;
       console.log('Super admin exists with ID:', userId);
     }
     

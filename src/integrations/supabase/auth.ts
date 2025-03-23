@@ -102,7 +102,7 @@ export const useSupabaseAuth = () => {
         return false;
       }
       
-      const existingUser = users && users.users ? users.users.find(u => u.email?.toLowerCase() === email.toLowerCase()) : null;
+      const existingUser = users?.users?.find(u => u.email?.toLowerCase() === email.toLowerCase());
       let userId = existingUser?.id;
       
       let isAdmin = false;
