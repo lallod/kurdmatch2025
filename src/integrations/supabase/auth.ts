@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from './client';
@@ -94,15 +95,14 @@ export const useSupabaseAuth = () => {
     try {
       console.log(`Checking if admin exists: ${email}`);
       
-      const { data, error: listError } = await supabase.auth.admin.listUsers();
+      const { data: users, error: listError } = await supabase.auth.admin.listUsers();
       
       if (listError) {
         console.error('Error listing users:', listError);
         return false;
       }
       
-      const users = data?.users || [];
-      const existingUser = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
+      const existingUser = users && users.users ? users.users.find(u => u.email?.toLowerCase() === email.toLowerCase()) : null;
       let userId = existingUser?.id;
       
       let isAdmin = false;
@@ -142,6 +142,7 @@ export const useSupabaseAuth = () => {
         
         try {
           await supabase.auth.admin.updateUserById(userId, { 
+            user_metadata: { name: 'Super Admin' },
             email_confirm: true 
           });
         } catch (err) {

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -21,6 +20,7 @@ import UserMenu from './components/UserMenu';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { setupSupabase } from '@/utils/setupSupabase';
 
 // Regular user route protection
 const ProtectedRoute = () => {
@@ -68,7 +68,6 @@ const ProtectedRoute = () => {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
   
-  // Redirect super admins to their dashboard
   if (isSuperAdmin) {
     return <Navigate to="/super-admin" replace />;
   }
@@ -194,6 +193,25 @@ function App() {
   const { user } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
   const [checkingRole, setCheckingRole] = useState(true);
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        await setupSupabase();
+        console.log('Supabase setup completed');
+      } catch (error) {
+        console.error('Error during Supabase setup:', error);
+        toast({
+          title: 'Setup Error',
+          description: 'There was an error setting up the application',
+          variant: 'destructive'
+        });
+      }
+    };
+    
+    initializeApp();
+  }, [toast]);
   
   useEffect(() => {
     const checkSuperAdminStatus = async () => {
@@ -229,9 +247,7 @@ function App() {
     }
   }, [user]);
   
-  // Don't show bottom navigation for super admins
   const showBottomNav = user && !isSuperAdmin && !checkingRole;
-  // Only show user menu to regular users, not super admins
   const showUserMenu = user && !isSuperAdmin && !checkingRole;
   
   return (

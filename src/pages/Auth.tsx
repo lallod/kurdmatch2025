@@ -33,6 +33,11 @@ const Auth = () => {
           .eq('role', 'super_admin')
           .single();
 
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error checking user role:', error);
+          throw error;
+        }
+
         if (data) {
           // If user is super_admin, redirect to the super admin dashboard
           navigate('/super-admin');

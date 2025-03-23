@@ -1,0 +1,100 @@
+
+import { supabase } from '@/integrations/supabase/client';
+
+/**
+ * Creates a super admin user if one doesn't exist and optionally removes demo profiles
+ */
+export const setupSupabase = async () => {
+  const superAdminEmail = 'lalo.peshawa@gmail.com';
+  const superAdminPassword = 'Hanasa2011';
+  
+  try {
+    // 1. First check if the user already exists
+    const { data: existingUser, error: userError } = await supabase.auth.admin.getUserByEmail(superAdminEmail);
+    
+    let userId: string | undefined;
+    
+    // 2. Create the user if they don't exist
+    if (userError || !existingUser?.user) {
+      console.log('Super admin does not exist, creating...');
+      
+      const { data: newUser, error: signUpError } = await supabase.auth.signUp({
+        email: superAdminEmail,
+        password: superAdminPassword,
+        options: {
+          data: { name: 'Super Admin' }
+        }
+      });
+      
+      if (signUpError) {
+        console.error('Error creating super admin:', signUpError);
+        throw signUpError;
+      }
+      
+      userId = newUser?.user?.id;
+      
+      if (!userId) {
+        throw new Error('Failed to get user ID after signup');
+      }
+      
+      // Auto-confirm the email for the super admin
+      try {
+        const { error: confirmError } = await supabase.auth.admin.updateUserById(userId, {
+          email_confirm: true
+        });
+        
+        if (confirmError) {
+          console.error('Error confirming email:', confirmError);
+        }
+      } catch (err) {
+        console.error('Could not confirm email:', err);
+      }
+    } else {
+      userId = existingUser.user.id;
+      console.log('Super admin exists with ID:', userId);
+    }
+    
+    // 3. Check and add the super_admin role if needed
+    if (userId) {
+      const { data: existingRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'super_admin');
+      
+      if (!existingRole || existingRole.length === 0) {
+        console.log('Adding super_admin role to user');
+        
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role: 'super_admin'
+          });
+        
+        if (roleError) {
+          console.error('Error assigning super_admin role:', roleError);
+        }
+      } else {
+        console.log('User already has super_admin role');
+      }
+    }
+    
+    // 4. Remove demo profiles - exclude our super admin
+    const { error: deleteError } = await supabase
+      .from('profiles')
+      .delete()
+      .neq('id', userId || '');
+    
+    if (deleteError) {
+      console.error('Error removing demo profiles:', deleteError);
+    } else {
+      console.log('Demo profiles removed successfully');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Setup error:', error);
+    return false;
+  }
+};
