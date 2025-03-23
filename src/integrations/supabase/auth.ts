@@ -110,8 +110,8 @@ export const useSupabaseAuth = () => {
       if (!existingUsers) {
         console.log(`Admin user doesn't exist, creating: ${email}`);
         
-        // User doesn't exist, create it - using explicit typing to avoid deep nesting
-        const signUpResponse = await supabase.auth.signUp({
+        // Create the user with simplified error handling
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -122,21 +122,22 @@ export const useSupabaseAuth = () => {
           }
         });
         
-        if (signUpResponse.error) throw signUpResponse.error;
+        if (error) throw error;
         
-        // Safely access user after checking for errors
-        const userId = signUpResponse.data.user?.id;
-        if (userId) {
+        // Check if user was created and has an ID
+        if (data?.user?.id) {
           // Assign super_admin role
           const { error: roleError } = await supabase
             .from('user_roles')
             .insert({
-              user_id: userId,
+              user_id: data.user.id,
               role: 'super_admin'
             });
           
           if (roleError) throw roleError;
           console.log(`Admin role assigned to: ${email}`);
+        } else {
+          console.error('User created but ID is missing');
         }
       } else {
         console.log(`Admin user exists: ${email}`);
