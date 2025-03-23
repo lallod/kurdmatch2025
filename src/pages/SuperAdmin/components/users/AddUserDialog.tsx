@@ -30,7 +30,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
     try {
       // Generate multiple profiles if count > 1
       const promises = [];
-      const totalProfiles = Math.min(50, Math.max(1, count)); // Ensure between 1-50
+      const totalProfiles = Math.min(10, Math.max(1, count)); // Limit to maximum 10 profiles at once to avoid overloading
       
       console.log(`Starting generation of ${totalProfiles} Kurdish profiles...`);
       
@@ -42,12 +42,22 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
         promises.push(generateKurdishProfile(selectedGender, withPhotos));
       }
       
-      const results = await Promise.all(promises);
-      console.log('Generated profiles:', results);
+      const results = await Promise.all(promises.map(p => p.catch(err => {
+        console.error('Error in profile generation:', err);
+        return null; // Return null for failed profiles
+      })));
+      
+      // Count successful profiles
+      const successfulProfiles = results.filter(r => r !== null).length;
+      console.log(`Generated ${successfulProfiles} out of ${totalProfiles} profiles:`, results);
+      
+      if (successfulProfiles === 0) {
+        throw new Error("All profile generation attempts failed");
+      }
       
       toast({
         title: "Success",
-        description: `${totalProfiles} Kurdish ${totalProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
+        description: `${successfulProfiles} Kurdish ${successfulProfiles === 1 ? 'profile' : 'profiles'} generated successfully.`,
         variant: "default",
       });
       
@@ -84,10 +94,12 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
               id="count"
               type="number"
               min={1}
-              max={50}
+              max={10}
               value={count}
-              onChange={(e) => setCount(Math.min(50, Math.max(1, parseInt(e.target.value) || 1)))}
+              onChange={(e) => setCount(Math.min(10, Math.max(1, parseInt(e.target.value) || 1)))}
+              className="w-full"
             />
+            <p className="text-xs text-muted-foreground">Maximum 10 profiles per batch</p>
           </div>
           
           <div className="grid gap-2">
