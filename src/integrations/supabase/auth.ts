@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from './client';
@@ -91,21 +90,23 @@ export const useSupabaseAuth = () => {
     }
   };
 
-  // Completely rewritten to fix TypeScript error
   const ensureAdminExists = async (email: string, password: string): Promise<boolean> => {
     try {
       console.log(`Checking if admin exists: ${email}`);
       
-      // First check if user exists in auth system
-      const { data: existingUser, error: userError } = await supabase.auth.admin.getUserByEmail(email)
-        .catch(() => ({ data: null, error: null }));
+      const { data: users, error: listError } = await supabase.auth.admin.listUsers();
       
-      // Check if user has admin role
-      let isAdmin = false;
+      if (listError) {
+        console.error('Error listing users:', listError);
+        return false;
+      }
+      
+      const existingUser = users?.users?.find(u => u.email === email);
       let userId = existingUser?.id;
       
+      let isAdmin = false;
+      
       if (userId) {
-        // User exists, check for admin role
         const { data: roles } = await supabase
           .from('user_roles')
           .select('role')
@@ -120,11 +121,9 @@ export const useSupabaseAuth = () => {
         }
       }
       
-      // At this point, either user doesn't exist or doesn't have admin role
-      console.log(`Admin user doesn't exist, creating: ${email}`);
+      console.log(`Admin user doesn't exist or doesn't have admin role, creating: ${email}`);
       
       if (!userId) {
-        // Create the user
         const { data: newUser, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
@@ -140,16 +139,15 @@ export const useSupabaseAuth = () => {
         
         userId = newUser.user.id;
         
-        // Directly confirm the email for this admin user
-        // Note: In production, you may want to use a different approach
         try {
-          await supabase.auth.admin.updateUserById(userId, { email_confirm: true });
+          await supabase.auth.admin.updateUserById(userId, { 
+            email_confirm: true 
+          });
         } catch (err) {
           console.error('Could not confirm email automatically:', err);
         }
       }
       
-      // Assign admin role to user
       const { error: roleError } = await supabase
         .from('user_roles')
         .insert({
