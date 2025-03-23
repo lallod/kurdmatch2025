@@ -94,14 +94,15 @@ export const useSupabaseAuth = () => {
     try {
       console.log(`Checking if admin exists: ${email}`);
       
-      const { data: users, error: listError } = await supabase.auth.admin.listUsers();
+      const { data, error: listError } = await supabase.auth.admin.listUsers();
       
       if (listError) {
         console.error('Error listing users:', listError);
         return false;
       }
       
-      const existingUser = users?.users?.find(u => u.email === email);
+      const users = data?.users || [];
+      const existingUser = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
       let userId = existingUser?.id;
       
       let isAdmin = false;
