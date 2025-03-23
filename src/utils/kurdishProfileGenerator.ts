@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { CreateDemoProfileParams } from './supabaseTypes';
 
 // Kurdish names and data for generating realistic profiles
 const kurdishMaleNames = ['Azad', 'Dilshad', 'Rojhat', 'Heval', 'Kawa', 'Rizgar', 'Sherko', 'Baran', 'Soran', 'Hawar', 
@@ -33,7 +34,7 @@ const politicalViews = ['Progressive', 'Liberal', 'Moderate', 'Conservative', 'P
 const educationLevels = ['High School', 'Bachelors Degree', 'Masters Degree', 'PhD', 'Trade School', 'Self-educated'];
 const companies = ['Kurdistan University', 'Korek Telecom', 'Asiacell', 'Newroz Telecom', 'Kurdsat', 'Rudaw Media', 'Kurdistan 24', 'Local Business Owner', 'Freelancer'];
 const relationshipGoals = ['Long-term relationship', 'Marriage', 'Friendship first', 'Taking things slow', 'Seeking connection'];
-const childrenStatuses = ['Want children someday', 'Don\'t want children', 'Open to children', 'Have children already'];
+const childrenStatuses = ['Want children someday', 'Don\'t want children', 'Open to children', 'Open to children', 'Have children already'];
 const petStatuses = ['Have pets', 'Love pets but don\'t have any', 'Allergic to pets', 'No pets'];
 const exerciseHabits = ['Regular exercise', 'Occasional exercise', 'Daily fitness routine', 'Sports enthusiast', 'Yoga practitioner'];
 const zodiacSigns = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
@@ -119,94 +120,12 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
       ? `https://i.pravatar.cc/300?u=${avatarSeed}` 
       : undefined;
     
-    // First create a user in the auth.users table (or bypass the foreign key constraint)
-    // Since we don't have direct access to create auth users, we'll use RPC to create a new user or
-    // update the profiles table directly without going through the triggers
+    // Generate a UUID for the user
+    const userId = crypto.randomUUID();
+    console.log(`Generated UUID: ${userId} for profile: ${fullName}`);
     
-    console.log(`Creating demo user with name: ${fullName}`);
-    
-    // Instead of using a UUID that would require a matching auth.users entry,
-    // We'll insert directly bypassing the trigger that would normally create a profile
-    // This is for demo purposes only and bypasses the foreign key constraint
-    
-    // First try to find an existing user without a profile to reuse
-    const { data: existingUser, error: findError } = await supabase
-      .from('auth.users')
-      .select('id')
-      .limit(1)
-      .single();
-      
-    let userId: string;
-    
-    if (!findError && existingUser) {
-      // Use existing user ID
-      userId = existingUser.id;
-      console.log(`Using existing user ID: ${userId}`);
-    } else {
-      // Generate a temporary UUID
-      userId = crypto.randomUUID();
-      console.log(`Generated temporary UUID: ${userId}`);
-      
-      // For demo purposes, create a direct entry without enforcing the foreign key
-      console.log('Attempting direct profile creation (bypassing foreign key constraint)...');
-      
-      // In a production app, you would need to create a proper auth user first
-    }
-    
-    // Generate comprehensive profile details
-    const height = getRandomElement(heights);
-    const bodyType = getRandomElement(bodyTypes);
-    const ethnicity = getRandomElement(ethnicities);
-    const religion = getRandomElement(religions);
-    const politicalView = getRandomElement(politicalViews);
-    const education = getRandomElement(educationLevels);
-    const company = getRandomElement(companies);
-    const relationshipGoal = getRandomElement(relationshipGoals);
-    const wantChildren = getRandomElement(childrenStatuses);
-    const havePets = getRandomElement(petStatuses);
-    const exerciseHabit = getRandomElement(exerciseHabits);
-    const zodiacSign = getRandomElement(zodiacSigns);
-    const personalityType = getRandomElement(personalityTypes);
-    const sleepSchedule = getRandomElement(sleepSchedules);
-    const travelFrequency = getRandomElement(travelFrequencies);
-    const communicationStyle = getRandomElement(communicationStyles);
-    const loveLanguage = getRandomElement(loveLanguages);
-    const workEnvironment = getRandomElement(workEnvironments);
-    const decisionMakingStyle = getRandomElement(decisionStyles);
-    const smoking = getRandomElement(smokingStatuses);
-    const drinking = getRandomElement(drinkingStatuses);
-    
-    // Generate arrays for multi-select fields
-    const selectedValues = getRandomSubset(values, 3, 6);
-    const selectedInterests = getRandomSubset(interests, 3, 8);
-    const selectedHobbies = getRandomSubset(hobbies, 2, 5);
-    const selectedLanguages = ['Kurdish']; // Always include Kurdish
-    if (Math.random() > 0.5) selectedLanguages.push('English');
-    if (Math.random() > 0.7) selectedLanguages.push('Arabic');
-    if (Math.random() > 0.8) selectedLanguages.push('Farsi');
-    if (Math.random() > 0.9) selectedLanguages.push('Turkish');
-    
-    const selectedTechSkills = Math.random() > 0.7 ? getRandomSubset(techSkills, 1, 4) : [];
-    const selectedMusicInstruments = Math.random() > 0.7 ? getRandomSubset(musicInstruments, 1, 3) : [];
-    const selectedFavoriteGames = Math.random() > 0.6 ? getRandomSubset(favoriteGames, 1, 3) : [];
-    const selectedFavoritePodcasts = Math.random() > 0.5 ? getRandomSubset(favoritePodcasts, 1, 3) : [];
-    const selectedFavoriteBooks = getRandomSubset(favoriteBooks, 1, 4);
-    const selectedFavoriteMovies = getRandomSubset(favoriteMovies, 1, 4);
-    const selectedFavoriteMusic = getRandomSubset(favoriteMusic, 2, 5);
-    const selectedFavoriteFoods = getRandomSubset(favoriteFoods, 2, 5);
-    const selectedPetPeeves = Math.random() > 0.6 ? getRandomSubset(petPeeves, 1, 3) : [];
-    const selectedWeekendActivities = Math.random() > 0.7 ? getRandomSubset(weekendActivities, 1, 3) : [];
-    const selectedGrowthGoals = Math.random() > 0.6 ? getRandomSubset(growthGoals, 1, 3) : [];
-    const selectedHiddenTalents = Math.random() > 0.7 ? getRandomSubset(hiddenTalents, 1, 2) : [];
-    const selectedStressRelievers = Math.random() > 0.6 ? getRandomSubset(stressRelievers, 1, 3) : [];
-
-    // Generate a more detailed bio
-    const bio = generateBio(firstName, isMale ? 'male' : 'female', kurdistanRegion, occupation, age);
-    
-    console.log(`Creating profile for ${fullName}, ID: ${userId}`);
-    
-    // Try executing custom SQL to bypass foreign key constraint for demo purposes
-    const { data: insertData, error: insertError } = await supabase.rpc('create_demo_profile', {
+    // Try executing the stored procedure to create a demo profile
+    const createDemoProfileParams: CreateDemoProfileParams = {
       user_id: userId,
       user_name: fullName,
       user_age: age,
@@ -214,7 +133,14 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
       user_gender: isMale ? 'male' : 'female',
       user_occupation: occupation,
       user_profile_image: profileImage
-    });
+    };
+    
+    console.log('Calling create_demo_profile with params:', createDemoProfileParams);
+    
+    const { data: insertData, error: insertError } = await supabase.rpc(
+      'create_demo_profile',
+      createDemoProfileParams
+    );
     
     if (insertError) {
       console.error('Error with RPC method, falling back to regular insert:', insertError);
@@ -230,48 +156,48 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
           location,
           kurdistan_region: kurdistanRegion,
           occupation,
-          verified,
+          verified: Math.random() > 0.3, // 70% verified
           last_active: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(), // Random time in last 30 days
           profile_image: profileImage,
-          bio,
-          height,
-          body_type: bodyType,
-          ethnicity,
-          religion,
-          political_views: politicalView,
-          education,
-          company,
-          relationship_goals: relationshipGoal,
-          want_children: wantChildren,
-          have_pets: havePets,
-          exercise_habits: exerciseHabit,
-          zodiac_sign: zodiacSign,
-          personality_type: personalityType,
-          sleep_schedule: sleepSchedule,
-          travel_frequency: travelFrequency,
-          communication_style: communicationStyle,
-          love_language: loveLanguage,
-          work_environment: workEnvironment,
-          decision_making_style: decisionMakingStyle,
-          smoking,
-          drinking,
-          values: selectedValues,
-          interests: selectedInterests,
-          hobbies: selectedHobbies,
-          languages: selectedLanguages,
-          tech_skills: selectedTechSkills,
-          music_instruments: selectedMusicInstruments,
-          favorite_games: selectedFavoriteGames,
-          favorite_podcasts: selectedFavoritePodcasts,
-          favorite_books: selectedFavoriteBooks,
-          favorite_movies: selectedFavoriteMovies,
-          favorite_music: selectedFavoriteMusic,
-          favorite_foods: selectedFavoriteFoods,
-          pet_peeves: selectedPetPeeves,
-          weekend_activities: selectedWeekendActivities,
-          growth_goals: selectedGrowthGoals,
-          hidden_talents: selectedHiddenTalents,
-          stress_relievers: selectedStressRelievers,
+          bio: generateBio(firstName, isMale ? 'male' : 'female', kurdistanRegion, occupation, age),
+          height: getRandomElement(heights),
+          body_type: getRandomElement(bodyTypes),
+          ethnicity: getRandomElement(ethnicities),
+          religion: getRandomElement(religions),
+          political_views: getRandomElement(politicalViews),
+          education: getRandomElement(educationLevels),
+          company: getRandomElement(companies),
+          relationship_goals: getRandomElement(relationshipGoals),
+          want_children: getRandomElement(childrenStatuses),
+          have_pets: getRandomElement(petStatuses),
+          exercise_habits: getRandomElement(exerciseHabits),
+          zodiac_sign: getRandomElement(zodiacSigns),
+          personality_type: getRandomElement(personalityTypes),
+          sleep_schedule: getRandomElement(sleepSchedules),
+          travel_frequency: getRandomElement(travelFrequencies),
+          communication_style: getRandomElement(communicationStyles),
+          love_language: getRandomElement(loveLanguages),
+          work_environment: getRandomElement(workEnvironments),
+          decision_making_style: getRandomElement(decisionStyles),
+          smoking: getRandomElement(smokingStatuses),
+          drinking: getRandomElement(drinkingStatuses),
+          values: getRandomSubset(values, 3, 6),
+          interests: getRandomSubset(interests, 3, 8),
+          hobbies: getRandomSubset(hobbies, 2, 5),
+          languages: ['Kurdish'], // Always include Kurdish
+          tech_skills: Math.random() > 0.7 ? getRandomSubset(techSkills, 1, 4) : [],
+          music_instruments: Math.random() > 0.7 ? getRandomSubset(musicInstruments, 1, 3) : [],
+          favorite_games: Math.random() > 0.6 ? getRandomSubset(favoriteGames, 1, 3) : [],
+          favorite_podcasts: Math.random() > 0.5 ? getRandomSubset(favoritePodcasts, 1, 3) : [],
+          favorite_books: getRandomSubset(favoriteBooks, 1, 4),
+          favorite_movies: getRandomSubset(favoriteMovies, 1, 4),
+          favorite_music: getRandomSubset(favoriteMusic, 2, 5),
+          favorite_foods: getRandomSubset(favoriteFoods, 2, 5),
+          pet_peeves: Math.random() > 0.6 ? getRandomSubset(petPeeves, 1, 3) : [],
+          weekend_activities: Math.random() > 0.7 ? getRandomSubset(weekendActivities, 1, 3) : [],
+          growth_goals: Math.random() > 0.6 ? getRandomSubset(growthGoals, 1, 3) : [],
+          hidden_talents: Math.random() > 0.7 ? getRandomSubset(hiddenTalents, 1, 2) : [],
+          stress_relievers: Math.random() > 0.6 ? getRandomSubset(stressRelievers, 1, 3) : [],
           favorite_memory: Math.random() > 0.6 ? `A memorable experience in ${getRandomElement(kurdishLocations)}` : null,
           dream_vacation: Math.random() > 0.7 ? `Exploring ${getRandomElement(['more of Kurdistan', 'Europe', 'Americas', 'Asia', 'historical sites'])}` : null,
           favorite_quote: Math.random() > 0.7 ? `"${getRandomElement(['Life is what happens when you\'re busy making other plans', 'Be the change you wish to see in the world', 'The journey of a thousand miles begins with a single step', 'Nothing is permanent except change'])}"` : null,
@@ -294,13 +220,19 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
         throw new Error(`Profile creation failed: ${profileError.message}`);
       }
 
-      console.log('Profile created:', profileData);
+      console.log('Profile created via direct insert:', profileData);
+      return userId;
     } else {
       console.log('Profile created via RPC:', insertData);
+      return userId;
     }
     
+    // After creating the profile, add a role for this user
     try {
-      // Add role for this user
+      const role = Math.random() > 0.8 ? 'admin' : 
+                  Math.random() > 0.7 ? 'moderator' : 
+                  Math.random() > 0.6 ? 'premium' : 'user';
+                  
       const { error: roleError } = await supabase
         .from('user_roles')
         .insert({
