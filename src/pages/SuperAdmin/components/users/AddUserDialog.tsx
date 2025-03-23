@@ -9,7 +9,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateKurdishProfile } from '@/utils/kurdishProfileGenerator';
-import { supabase } from '@/integrations/supabase/client';
 
 interface AddUserDialogProps {
   open: boolean;
@@ -30,17 +29,18 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
 
     try {
       // Generate multiple profiles if count > 1
-      const generationPromises = [];
+      const promises = [];
       
       for (let i = 0; i < count; i++) {
         const selectedGender = gender === 'random' 
           ? (Math.random() > 0.5 ? 'male' : 'female') 
           : gender;
           
-        generationPromises.push(generateKurdishProfile(selectedGender, withPhotos));
+        promises.push(generateKurdishProfile(selectedGender, withPhotos));
       }
       
-      await Promise.all(generationPromises);
+      const results = await Promise.all(promises);
+      console.log('Generated profiles:', results);
       
       toast({
         title: "Success",

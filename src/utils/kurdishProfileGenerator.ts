@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // Kurdish names and data for generating realistic profiles
@@ -95,83 +94,87 @@ const generateBio = (firstName: string, gender: string, region: string, occupati
  * @returns The generated profile ID
  */
 export const generateKurdishProfile = async (gender?: string, withPhoto: boolean = true): Promise<string> => {
-  const isMale = gender ? gender === 'male' : Math.random() > 0.5;
-  const firstName = isMale 
-    ? getRandomElement(kurdishMaleNames)
-    : getRandomElement(kurdishFemaleNames);
-  
-  const lastName = getRandomElement(kurdishSurnames);
-  const fullName = `${firstName} ${lastName}`;
-  const location = getRandomElement(kurdishLocations);
-  const kurdistanRegion = getRandomElement(kurdishRegions);
-  const occupation = getRandomElement(occupations);
-  const age = Math.floor(Math.random() * 42) + 18; // Age between 18-60
-  const verified = Math.random() > 0.3; // 70% verified
-  const role = Math.random() > 0.8 ? 'admin' : 
-              Math.random() > 0.7 ? 'moderator' : 
-              Math.random() > 0.6 ? 'premium' : 'user';
-  
-  // Generate a random profile image using a placeholder service based on gender
-  const avatarSeed = Math.random().toString(36).substring(2, 8);
-  const profileImage = withPhoto 
-    ? `https://i.pravatar.cc/300?u=${avatarSeed}` 
-    : undefined;
-  
-  const userId = crypto.randomUUID();
-  
-  // Generate comprehensive profile details
-  const height = getRandomElement(heights);
-  const bodyType = getRandomElement(bodyTypes);
-  const ethnicity = getRandomElement(ethnicities);
-  const religion = getRandomElement(religions);
-  const politicalView = getRandomElement(politicalViews);
-  const education = getRandomElement(educationLevels);
-  const company = getRandomElement(companies);
-  const relationshipGoal = getRandomElement(relationshipGoals);
-  const wantChildren = getRandomElement(childrenStatuses);
-  const havePets = getRandomElement(petStatuses);
-  const exerciseHabit = getRandomElement(exerciseHabits);
-  const zodiacSign = getRandomElement(zodiacSigns);
-  const personalityType = getRandomElement(personalityTypes);
-  const sleepSchedule = getRandomElement(sleepSchedules);
-  const travelFrequency = getRandomElement(travelFrequencies);
-  const communicationStyle = getRandomElement(communicationStyles);
-  const loveLanguage = getRandomElement(loveLanguages);
-  const workEnvironment = getRandomElement(workEnvironments);
-  const decisionMakingStyle = getRandomElement(decisionStyles);
-  const smoking = getRandomElement(smokingStatuses);
-  const drinking = getRandomElement(drinkingStatuses);
-  
-  // Generate arrays for multi-select fields
-  const selectedValues = getRandomSubset(values, 3, 6);
-  const selectedInterests = getRandomSubset(interests, 3, 8);
-  const selectedHobbies = getRandomSubset(hobbies, 2, 5);
-  const selectedLanguages = ['Kurdish']; // Always include Kurdish
-  if (Math.random() > 0.5) selectedLanguages.push('English');
-  if (Math.random() > 0.7) selectedLanguages.push('Arabic');
-  if (Math.random() > 0.8) selectedLanguages.push('Farsi');
-  if (Math.random() > 0.9) selectedLanguages.push('Turkish');
-  
-  const selectedTechSkills = Math.random() > 0.7 ? getRandomSubset(techSkills, 1, 4) : [];
-  const selectedMusicInstruments = Math.random() > 0.7 ? getRandomSubset(musicInstruments, 1, 3) : [];
-  const selectedFavoriteGames = Math.random() > 0.6 ? getRandomSubset(favoriteGames, 1, 3) : [];
-  const selectedFavoritePodcasts = Math.random() > 0.5 ? getRandomSubset(favoritePodcasts, 1, 3) : [];
-  const selectedFavoriteBooks = getRandomSubset(favoriteBooks, 1, 4);
-  const selectedFavoriteMovies = getRandomSubset(favoriteMovies, 1, 4);
-  const selectedFavoriteMusic = getRandomSubset(favoriteMusic, 2, 5);
-  const selectedFavoriteFoods = getRandomSubset(favoriteFoods, 2, 5);
-  const selectedPetPeeves = Math.random() > 0.6 ? getRandomSubset(petPeeves, 1, 3) : [];
-  const selectedWeekendActivities = Math.random() > 0.7 ? getRandomSubset(weekendActivities, 1, 3) : [];
-  const selectedGrowthGoals = Math.random() > 0.6 ? getRandomSubset(growthGoals, 1, 3) : [];
-  const selectedHiddenTalents = Math.random() > 0.7 ? getRandomSubset(hiddenTalents, 1, 2) : [];
-  const selectedStressRelievers = Math.random() > 0.6 ? getRandomSubset(stressRelievers, 1, 3) : [];
-
-  // Generate a more detailed bio
-  const bio = generateBio(firstName, isMale ? 'male' : 'female', kurdistanRegion, occupation, age);
-  
   try {
+    console.log(`Generating Kurdish profile - Gender: ${gender || 'random'}, With photo: ${withPhoto}`);
+    
+    const isMale = gender ? gender === 'male' : Math.random() > 0.5;
+    const firstName = isMale 
+      ? getRandomElement(kurdishMaleNames)
+      : getRandomElement(kurdishFemaleNames);
+    
+    const lastName = getRandomElement(kurdishSurnames);
+    const fullName = `${firstName} ${lastName}`;
+    const location = getRandomElement(kurdishLocations);
+    const kurdistanRegion = getRandomElement(kurdishRegions);
+    const occupation = getRandomElement(occupations);
+    const age = Math.floor(Math.random() * 42) + 18; // Age between 18-60
+    const verified = Math.random() > 0.3; // 70% verified
+    const role = Math.random() > 0.8 ? 'admin' : 
+                Math.random() > 0.7 ? 'moderator' : 
+                Math.random() > 0.6 ? 'premium' : 'user';
+    
+    // Generate a random profile image using a placeholder service based on gender
+    const avatarSeed = Math.random().toString(36).substring(2, 8);
+    const profileImage = withPhoto 
+      ? `https://i.pravatar.cc/300?u=${avatarSeed}` 
+      : undefined;
+    
+    const userId = crypto.randomUUID();
+    
+    // Generate comprehensive profile details
+    const height = getRandomElement(heights);
+    const bodyType = getRandomElement(bodyTypes);
+    const ethnicity = getRandomElement(ethnicities);
+    const religion = getRandomElement(religions);
+    const politicalView = getRandomElement(politicalViews);
+    const education = getRandomElement(educationLevels);
+    const company = getRandomElement(companies);
+    const relationshipGoal = getRandomElement(relationshipGoals);
+    const wantChildren = getRandomElement(childrenStatuses);
+    const havePets = getRandomElement(petStatuses);
+    const exerciseHabit = getRandomElement(exerciseHabits);
+    const zodiacSign = getRandomElement(zodiacSigns);
+    const personalityType = getRandomElement(personalityTypes);
+    const sleepSchedule = getRandomElement(sleepSchedules);
+    const travelFrequency = getRandomElement(travelFrequencies);
+    const communicationStyle = getRandomElement(communicationStyles);
+    const loveLanguage = getRandomElement(loveLanguages);
+    const workEnvironment = getRandomElement(workEnvironments);
+    const decisionMakingStyle = getRandomElement(decisionStyles);
+    const smoking = getRandomElement(smokingStatuses);
+    const drinking = getRandomElement(drinkingStatuses);
+    
+    // Generate arrays for multi-select fields
+    const selectedValues = getRandomSubset(values, 3, 6);
+    const selectedInterests = getRandomSubset(interests, 3, 8);
+    const selectedHobbies = getRandomSubset(hobbies, 2, 5);
+    const selectedLanguages = ['Kurdish']; // Always include Kurdish
+    if (Math.random() > 0.5) selectedLanguages.push('English');
+    if (Math.random() > 0.7) selectedLanguages.push('Arabic');
+    if (Math.random() > 0.8) selectedLanguages.push('Farsi');
+    if (Math.random() > 0.9) selectedLanguages.push('Turkish');
+    
+    const selectedTechSkills = Math.random() > 0.7 ? getRandomSubset(techSkills, 1, 4) : [];
+    const selectedMusicInstruments = Math.random() > 0.7 ? getRandomSubset(musicInstruments, 1, 3) : [];
+    const selectedFavoriteGames = Math.random() > 0.6 ? getRandomSubset(favoriteGames, 1, 3) : [];
+    const selectedFavoritePodcasts = Math.random() > 0.5 ? getRandomSubset(favoritePodcasts, 1, 3) : [];
+    const selectedFavoriteBooks = getRandomSubset(favoriteBooks, 1, 4);
+    const selectedFavoriteMovies = getRandomSubset(favoriteMovies, 1, 4);
+    const selectedFavoriteMusic = getRandomSubset(favoriteMusic, 2, 5);
+    const selectedFavoriteFoods = getRandomSubset(favoriteFoods, 2, 5);
+    const selectedPetPeeves = Math.random() > 0.6 ? getRandomSubset(petPeeves, 1, 3) : [];
+    const selectedWeekendActivities = Math.random() > 0.7 ? getRandomSubset(weekendActivities, 1, 3) : [];
+    const selectedGrowthGoals = Math.random() > 0.6 ? getRandomSubset(growthGoals, 1, 3) : [];
+    const selectedHiddenTalents = Math.random() > 0.7 ? getRandomSubset(hiddenTalents, 1, 2) : [];
+    const selectedStressRelievers = Math.random() > 0.6 ? getRandomSubset(stressRelievers, 1, 3) : [];
+
+    // Generate a more detailed bio
+    const bio = generateBio(firstName, isMale ? 'male' : 'female', kurdistanRegion, occupation, age);
+    
+    console.log(`Creating profile for ${fullName}, ID: ${userId}`);
+    
     // Insert profile with all the comprehensive details
-    const { error: profileError } = await supabase
+    const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .insert({
         id: userId,
@@ -237,12 +240,15 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
         ideal_weather: Math.random() > 0.7 ? getRandomElement(['Warm and sunny', 'Cool and breezy', 'Mild with occasional rain', 'Crisp mountain air']) : null,
         family_closeness: Math.random() > 0.6 ? getRandomElement(['Very close to family', 'Balanced family relationship', 'Independent but connected', 'Building chosen family']) : null,
         friendship_style: Math.random() > 0.6 ? getRandomElement(['Few close friends', 'Wide social circle', 'Mix of close and casual friendships', 'Values deep connections']) : null,
-      });
+      })
+      .select('id');
     
     if (profileError) {
-      console.error('Error creating Kurdish profile:', profileError.message);
+      console.error('Error creating Kurdish profile:', profileError);
       throw profileError;
     }
+
+    console.log('Profile created:', profileData);
     
     // Add role for this user
     const { error: roleError } = await supabase
@@ -253,9 +259,11 @@ export const generateKurdishProfile = async (gender?: string, withPhoto: boolean
       });
     
     if (roleError) {
-      console.error('Error creating role for Kurdish profile:', roleError.message);
+      console.error('Error creating role for Kurdish profile:', roleError);
       throw roleError;
     }
+    
+    console.log(`Role '${role}' assigned to user ${userId}`);
     
     return userId;
   } catch (error) {

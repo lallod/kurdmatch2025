@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AIBanner } from '../components/payments/AIBanner';
@@ -61,6 +60,9 @@ const UsersPage = () => {
         
       if (rolesError) throw rolesError;
       
+      console.log('Fetched profiles:', profiles);
+      console.log('Fetched roles:', userRoles);
+      
       // Transform profile data to match User interface
       const userData: User[] = profiles.map(profile => {
         // Find role for this profile
@@ -71,7 +73,9 @@ const UsersPage = () => {
           (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7);
         
         // Generate an email based on the user's name since email isn't stored in the profiles table
-        const emailAddress = `${profile.name?.toLowerCase().replace(/\s+/g, '.')}@example.com`;
+        const emailAddress = profile.name ? 
+          `${profile.name.toLowerCase().replace(/\s+/g, '.')}@example.com` : 
+          `user.${profile.id.substring(0, 8)}@example.com`;
         
         return {
           id: profile.id,
@@ -112,7 +116,7 @@ const UsersPage = () => {
   
   useEffect(() => {
     fetchUsers();
-  }, [toast, currentPage]);
+  }, [currentPage]); // Ensure we refetch when page changes
   
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
@@ -159,6 +163,7 @@ const UsersPage = () => {
   };
 
   const handleUserAdded = () => {
+    console.log('User added, refreshing...');
     fetchUsers();
   };
 
