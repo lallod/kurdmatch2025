@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChoiceChips } from '../fields/ChoiceChips';
 import { TagSelector } from '../fields/TagSelector';
@@ -79,7 +78,7 @@ export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) 
             id="height"
             value={data.height || ''}
             onChange={(e) => onChange({ ...data, height: e.target.value })}
-            placeholder="e.g., 175 cm or 5'8&quot;"
+            placeholder="e.g., 175 cm or 5 feet 8 inches"
             className="text-lg p-4 rounded-xl"
           />
         </div>
