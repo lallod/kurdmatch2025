@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSocialLoginProviders, updateSocialLoginProvider } from '@/api/admin';
@@ -15,8 +14,8 @@ interface Provider {
   enabled: boolean;
   client_id: string | null;
   client_secret: string | null;
-  created_at: string;
   updated_at: string;
+  name: string;
 }
 
 const ProviderCard = ({ provider }: { provider: Provider }) => {
