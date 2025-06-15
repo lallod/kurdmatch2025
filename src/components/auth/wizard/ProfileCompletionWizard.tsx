@@ -172,13 +172,17 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
     
     setIsLoading(true);
     try {
+      // Convert love_language array to string if it exists
+      const updateData = {
+        ...wizardData,
+        love_language: wizardData.love_language ? wizardData.love_language.join(', ') : undefined,
+        updated_at: new Date().toISOString(),
+        bio: wizardData.bio || 'Profile completed through wizard'
+      };
+
       const { error } = await supabase
         .from('profiles')
-        .update({
-          ...wizardData,
-          profile_completed: true,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', user.id);
 
       if (error) throw error;

@@ -27,7 +27,7 @@ export const PostLoginWizard: React.FC<PostLoginWizardProps> = ({ onComplete }) 
       try {
         const { data: profile, error } = await supabase
           .from('profiles')
-          .select('profile_completed, name')
+          .select('name, bio, interests, hobbies, values')
           .eq('id', user.id)
           .single();
 
@@ -37,10 +37,13 @@ export const PostLoginWizard: React.FC<PostLoginWizardProps> = ({ onComplete }) 
         }
 
         setUserName(profile?.name || '');
-        setProfileCompleted(profile?.profile_completed || false);
+        
+        // Check if profile has key fields filled (indicates completion)
+        const hasBasicInfo = !!(profile?.bio && profile?.interests?.length > 0);
+        setProfileCompleted(hasBasicInfo);
 
         // Show welcome modal only if profile is not completed
-        if (!profile?.profile_completed) {
+        if (!hasBasicInfo) {
           setShowWelcome(true);
         } else {
           onComplete();
