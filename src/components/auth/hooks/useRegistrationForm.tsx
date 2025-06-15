@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -108,13 +107,35 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
           const formValue = processedData[q.id];
           if (formValue !== undefined) {
              if (q.profileField === 'photos') {
-              profileData[q.profileField] = photoUrls;
+              profileData.photos = photoUrls;
+            } else if (q.profileField === 'full_name') {
+              profileData.name = formValue; // Map form field to 'name' column in DB
+            } else if (q.profileField === 'date_of_birth' && typeof formValue === 'string' && formValue) {
+              const birthDate = new Date(formValue);
+              if (!isNaN(birthDate.getTime())) {
+                const ageDifMs = Date.now() - birthDate.getTime();
+                const ageDate = new Date(ageDifMs);
+                profileData.age = Math.abs(ageDate.getUTCFullYear() - 1970);
+              }
+              // Also store the original date of birth string
+              profileData.date_of_birth = formValue;
             } else {
               profileData[q.profileField] = formValue;
             }
           }
         }
       });
+      
+      // Ensure required fields have defaults to prevent DB errors if not in form
+      if (!profileData.name) {
+        profileData.name = "New User";
+      }
+      if (profileData.age === undefined) {
+        profileData.age = 18; // Default age if not calculable
+      }
+      if (!profileData.location) {
+        profileData.location = "Not specified";
+      }
       
       const { error: profileError } = await supabase.from('profiles').upsert(profileData);
       if (profileError) throw profileError;
