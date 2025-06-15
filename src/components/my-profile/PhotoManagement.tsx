@@ -1,8 +1,8 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Camera, Image, Pencil, User, ShieldCheck } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import AIPhotoStudioDialog from '@/components/shared/AIPhotoStudioDialog';
 
 interface PhotoManagementProps {
   galleryImages: string[];
@@ -17,6 +17,17 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
   removeImage,
   setAsProfilePic
 }) => {
+  const [photoToEdit, setPhotoToEdit] = useState<{ url: string; index: number } | null>(null);
+
+  const handleSavePhoto = (editedPhotoUrl: string) => {
+    if (photoToEdit) {
+      // In a real app, you would call a prop function like:
+      // onImageUpdate(photoToEdit.index, editedPhotoUrl)
+      console.log(`Photo at index ${photoToEdit.index} would be updated.`);
+      setPhotoToEdit(null);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-4">
@@ -85,6 +96,15 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
             </div>
             
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 rounded-lg">
+              <Button 
+                size="sm" 
+                variant="secondary"
+                onClick={() => setPhotoToEdit({ url: image, index })}
+                className="w-full max-w-[120px]"
+              >
+                <Pencil size={14} className="mr-1" />
+                Edit with AI
+              </Button>
               {index !== 0 && (
                 <Button 
                   size="sm" 
@@ -125,6 +145,13 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
           <li>Avoid overly filtered or group photos</li>
         </ul>
       </div>
+      
+      <AIPhotoStudioDialog
+        open={!!photoToEdit}
+        onOpenChange={(open) => !open && setPhotoToEdit(null)}
+        photoUrl={photoToEdit?.url ?? null}
+        onSave={handleSavePhoto}
+      />
     </div>
   );
 };

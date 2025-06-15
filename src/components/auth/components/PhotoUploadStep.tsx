@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import AIPhotoStudioDialog from '@/components/shared/AIPhotoStudioDialog';
 
 interface PhotoUploadStepProps {
   form: UseFormReturn<any>;
@@ -14,6 +15,9 @@ interface PhotoUploadStepProps {
 const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
   const [photos, setPhotos] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
+  const [photoToEdit, setPhotoToEdit] = useState<string | null>(null);
+  const [isStudioOpen, setIsStudioOpen] = useState(false);
+  const [pendingPhotos, setPendingPhotos] = useState<string[]>([]);
 
   // Initialize photos from form values when component mounts
   useEffect(() => {
@@ -53,24 +57,52 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
     if (photos.length >= 5) {
       return; // Limit to 5 photos
     }
-    
-    const newPhotos = [...photos];
-    
-    // Convert each file to a data URL
-    Array.from(files).slice(0, 5 - photos.length).forEach(file => {
+
+    const filesToProcess = Array.from(files).slice(0, 5 - photos.length);
+    const dataUrls: string[] = [];
+    let processedCount = 0;
+
+    filesToProcess.forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
-          newPhotos.push(e.target.result as string);
-          setPhotos([...newPhotos]);
-          
-          // Store photo data in the form
-          form.setValue('photos', newPhotos);
-          form.clearErrors('photos');
+          dataUrls.push(e.target.result as string);
+        }
+        processedCount++;
+        if (processedCount === filesToProcess.length) {
+          // Once all files are read, process them
+          if (dataUrls.length > 0) {
+            setPhotoToEdit(dataUrls[0]);
+            setPendingPhotos(dataUrls.slice(1));
+            setIsStudioOpen(true);
+          }
         }
       };
       reader.readAsDataURL(file);
     });
+  };
+
+  const handleSavePhoto = (editedPhotoUrl: string) => {
+    const newPhotos = [...photos, editedPhotoUrl];
+    setPhotos(newPhotos);
+    form.setValue('photos', newPhotos);
+    form.clearErrors('photos');
+
+    // If there are more photos to edit, open the studio for the next one
+    if (pendingPhotos.length > 0) {
+      setPhotoToEdit(pendingPhotos[0]);
+      setPendingPhotos(pendingPhotos.slice(1));
+      setIsStudioOpen(true);
+    } else {
+      setPhotoToEdit(null);
+      setIsStudioOpen(false);
+    }
+  };
+
+  const handleCloseStudio = () => {
+    setPhotoToEdit(null);
+    setPendingPhotos([]);
+    setIsStudioOpen(false);
   };
 
   const removePhoto = (index: number) => {
@@ -194,6 +226,18 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
             </div>
           </FormControl>
           <FormMessage />
+           <AIPhotoStudioDialog
+            open={isStudioOpen}
+            onOpenChange={(open) => {
+              if (!open) {
+                handleCloseStudio();
+              } else {
+                setIsStudioOpen(true);
+              }
+            }}
+            photoUrl={photoToEdit}
+            onSave={handleSavePhoto}
+          />
         </FormItem>
       )}
     />
