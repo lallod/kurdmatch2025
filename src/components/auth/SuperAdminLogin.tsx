@@ -99,7 +99,8 @@ const SuperAdminLogin = () => {
       
       let description = error.message || "Something went wrong. Please try again.";
       if (error.message.toLowerCase().includes('failed to fetch')) {
-        description = "Could not connect to the server. Please check your internet connection and ensure the Supabase project is running and CORS is configured correctly for this domain.";
+        const origin = window.location.origin;
+        description = `Authentication failed due to a CORS error. Please go to your Supabase Dashboard -> API Settings -> CORS Configuration and add this URL to the list: ${origin}`;
       }
       setErrorMessage(description);
       

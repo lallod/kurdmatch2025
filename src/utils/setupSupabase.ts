@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 
@@ -60,7 +59,8 @@ export const setupSupabase = async (): Promise<{ success: boolean; message?: str
         console.error('An unexpected error occurred during super admin sign-in:', signInError);
         let message = `Super admin sign-in failed: ${signInError.message}`;
         if (signInError.message.toLowerCase().includes('failed to fetch')) {
-            message = 'Super admin sign-in failed. This may be a network or CORS issue. Please check your internet connection and ensure your Supabase project has this domain added to the CORS origins list in your API settings.';
+            const origin = window.location.origin;
+            message = `CORS Error: Your Supabase project is not configured to accept requests from this domain. Please add the following URL to your Supabase project's "CORS origins" list in the API settings: ${origin}`;
         }
         return { success: false, message: message };
       }
@@ -120,7 +120,8 @@ export const setupSupabase = async (): Promise<{ success: boolean; message?: str
     console.error('A critical error occurred during Supabase setup:', error);
     let message = `A critical error occurred: ${error.message}.`;
     if (error.message.toLowerCase().includes('failed to fetch')) {
-        message += ' Please check your internet connection and Supabase project status. Also, verify that this domain is included in your Supabase project\'s CORS settings under API -> General Settings.'
+        const origin = window.location.origin;
+        message = `Critical CORS Error: Supabase setup failed. Please go to your Supabase Dashboard -> API Settings -> CORS Configuration and add this URL to the list: ${origin}`
     }
     await supabase.auth.signOut().catch(e => console.error("Error signing out in catch block:", e));
     return { success: false, message };
