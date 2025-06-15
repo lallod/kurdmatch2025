@@ -19,6 +19,7 @@ import UserProfile from "./pages/UserProfile";
 import ProfilePage from "./pages/ProfilePage";
 import Admin from "./pages/Admin";
 import SuperAdmin from "./pages/SuperAdmin";
+import SuperAdminLogin from "./components/auth/SuperAdminLogin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -70,6 +71,12 @@ function App() {
               <Route 
                 path="/register" 
                 element={user ? <Navigate to="/discovery" replace /> : <Register />} 
+              />
+              
+              {/* Super Admin Login Route */}
+              <Route 
+                path="/admin-login" 
+                element={<SuperAdminLogin />} 
               />
               
               {/* Protected routes */}
