@@ -21,6 +21,7 @@ import ProfilePage from "./pages/ProfilePage";
 import Admin from "./pages/Admin";
 import SuperAdmin from "./pages/SuperAdmin";
 import SuperAdminLogin from "./components/auth/SuperAdminLogin";
+import AuthCallback from "./components/auth/AuthCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -93,6 +94,12 @@ function App() {
               <Route 
                 path="/register" 
                 element={user ? <Navigate to="/discovery" replace /> : <Register />} 
+              />
+              
+              {/* OAuth Callback Route */}
+              <Route 
+                path="/auth/callback" 
+                element={<AuthCallback />} 
               />
               
               {/* Super Admin Login Route */}
