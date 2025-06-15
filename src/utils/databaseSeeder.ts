@@ -1,8 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 import { systemQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/systemQuestions';
-import { mockUsers } from '@/pages/SuperAdmin/components/users/UserData';
-import { mockRoles } from '@/pages/SuperAdmin/components/roles/RoleData';
 import { toDbQuestion, QuestionItemDB } from '@/pages/SuperAdmin/components/registration-questions/types';
 import './supabaseTypes'; // Import the type definitions
 
@@ -347,7 +345,6 @@ export const seedDatabase = async () => {
     } else if (!existingEngagement || existingEngagement.length === 0) {
       console.log('Creating sample engagement data...');
       
-      // Create sample engagement data for the last 30 days
       const engagementData = [];
       const today = new Date();
       
