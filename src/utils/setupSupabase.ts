@@ -58,7 +58,11 @@ export const setupSupabase = async (): Promise<{ success: boolean; message?: str
 
       } else {
         console.error('An unexpected error occurred during super admin sign-in:', signInError);
-        return { success: false, message: `Super admin sign-in failed: ${signInError.message}` };
+        let message = `Super admin sign-in failed: ${signInError.message}`;
+        if (signInError.message.toLowerCase().includes('failed to fetch')) {
+            message = 'Super admin sign-in failed. This may be a network or CORS issue. Please check your internet connection and ensure your Supabase project has this domain added to the CORS origins list in your API settings.';
+        }
+        return { success: false, message: message };
       }
     } else {
       console.log('Successfully signed in as super admin.');
@@ -116,7 +120,7 @@ export const setupSupabase = async (): Promise<{ success: boolean; message?: str
     console.error('A critical error occurred during Supabase setup:', error);
     let message = `A critical error occurred: ${error.message}.`;
     if (error.message.toLowerCase().includes('failed to fetch')) {
-        message += ' Please check your internet connection and Supabase project status/CORS settings.'
+        message += ' Please check your internet connection and Supabase project status. Also, verify that this domain is included in your Supabase project\'s CORS settings under API -> General Settings.'
     }
     await supabase.auth.signOut().catch(e => console.error("Error signing out in catch block:", e));
     return { success: false, message };
