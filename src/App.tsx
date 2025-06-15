@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSupabaseAuth } from "@/integrations/supabase/auth";
 import { PostLoginWizard } from "@/components/auth/PostLoginWizard";
 import { useState, useEffect } from "react";
+import { isUserSuperAdmin } from "@/utils/auth/roleUtils";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
@@ -27,19 +28,40 @@ const queryClient = new QueryClient();
 function App() {
   const { user, loading } = useSupabaseAuth();
   const [showWizard, setShowWizard] = useState(false);
+  const [checkingRole, setCheckingRole] = useState(false);
 
   useEffect(() => {
-    // Show wizard for authenticated users
-    if (user && !loading) {
-      setShowWizard(true);
-    }
+    const checkUserRoleAndShowWizard = async () => {
+      if (user && !loading) {
+        setCheckingRole(true);
+        try {
+          // Check if user is super-admin
+          const isSuperAdmin = await isUserSuperAdmin(user.id);
+          
+          // Only show wizard for non-super-admin users
+          if (!isSuperAdmin) {
+            setShowWizard(true);
+          } else {
+            setShowWizard(false);
+          }
+        } catch (error) {
+          console.error('Error checking user role:', error);
+          // Default to showing wizard if role check fails
+          setShowWizard(true);
+        } finally {
+          setCheckingRole(false);
+        }
+      }
+    };
+
+    checkUserRoleAndShowWizard();
   }, [user, loading]);
 
   const handleWizardComplete = () => {
     setShowWizard(false);
   };
 
-  if (loading) {
+  if (loading || checkingRole) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
