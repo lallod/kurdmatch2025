@@ -7,6 +7,7 @@ import { createDynamicSchema } from '../utils/formSchema';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { TablesInsert } from '@/integrations/supabase/types';
 
 export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any[]) => {
   const { toast } = useToast();
@@ -96,49 +97,56 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
         processedData[bioQuestion.id] = generatedBio;
       }
       
-      const profileData: Record<string, any> = {
+      const profileInsertData: Partial<TablesInsert<'profiles'>> = {
         id: userId,
-        email: email,
-        updated_at: new Date().toISOString(),
       };
 
       enabledQuestions.forEach(q => {
         if (q.profileField && q.profileField !== 'email' && q.profileField !== 'password') {
           const formValue = processedData[q.id];
           if (formValue !== undefined) {
-             if (q.profileField === 'photos') {
-              profileData.photos = photoUrls;
-            } else if (q.profileField === 'full_name') {
-              profileData.name = formValue; // Map form field to 'name' column in DB
+             if (q.profileField === 'full_name') {
+              profileInsertData.name = String(formValue);
             } else if (q.profileField === 'date_of_birth' && typeof formValue === 'string' && formValue) {
               const birthDate = new Date(formValue);
               if (!isNaN(birthDate.getTime())) {
                 const ageDifMs = Date.now() - birthDate.getTime();
                 const ageDate = new Date(ageDifMs);
-                profileData.age = Math.abs(ageDate.getUTCFullYear() - 1970);
+                profileInsertData.age = Math.abs(ageDate.getUTCFullYear() - 1970);
               }
-              // Also store the original date of birth string
-              profileData.date_of_birth = formValue;
-            } else {
-              profileData[q.profileField] = formValue;
+            } else if (q.profileField !== 'photos') { // Exclude photos from profile data
+              (profileInsertData as Record<string, any>)[q.profileField] = formValue;
             }
           }
         }
       });
       
       // Ensure required fields have defaults to prevent DB errors if not in form
-      if (!profileData.name) {
-        profileData.name = "New User";
+      if (!profileInsertData.name) {
+        profileInsertData.name = "New User";
       }
-      if (profileData.age === undefined) {
-        profileData.age = 18; // Default age if not calculable
+      if (profileInsertData.age === undefined) {
+        profileInsertData.age = 18; // Default age if not calculable
       }
-      if (!profileData.location) {
-        profileData.location = "Not specified";
+      if (!profileInsertData.location) {
+        profileInsertData.location = "Not specified";
       }
       
-      const { error: profileError } = await supabase.from('profiles').upsert(profileData);
+      const { error: profileError } = await supabase.from('profiles').upsert(profileInsertData as TablesInsert<'profiles'>);
       if (profileError) throw profileError;
+
+      if (photoUrls.length > 0) {
+        const photoRecords: TablesInsert<'photos'>[] = photoUrls.map((url, index) => ({
+          profile_id: userId,
+          url: url,
+          is_primary: index === 0,
+        }));
+        const { error: photoInsertError } = await supabase.from('photos').insert(photoRecords);
+        if (photoInsertError) {
+          console.error("Failed to save photos:", photoInsertError);
+          // We can let registration succeed even if photos fail to save.
+        }
+      }
 
       toast({
         title: "Success!",
