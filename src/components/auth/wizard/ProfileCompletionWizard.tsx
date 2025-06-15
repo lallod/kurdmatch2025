@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { WizardLayout } from './WizardLayout';
 import { Step1AboutYou } from './steps/Step1AboutYou';
@@ -176,8 +175,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       const updateData = {
         ...wizardData,
         love_language: wizardData.love_language ? wizardData.love_language.join(', ') : undefined,
-        updated_at: new Date().toISOString(),
-        bio: wizardData.bio || 'Profile completed through wizard'
+        updated_at: new Date().toISOString()
       };
 
       const { error } = await supabase
