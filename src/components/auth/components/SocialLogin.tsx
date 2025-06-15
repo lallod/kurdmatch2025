@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Facebook, Mail, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Provider } from '@supabase/supabase-js';
 
 interface SocialLoginProps {
   isLoading?: boolean;
@@ -17,10 +18,11 @@ interface SocialProvider {
   client_secret?: string;
 }
 
-const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
+const SocialLogin = ({ isLoading: isFormLoading = false }: SocialLoginProps) => {
   const { toast } = useToast();
   const [providers, setProviders] = useState<Record<string, boolean>>({});
   const [loadingProviders, setLoadingProviders] = useState(true);
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadSocialProviders() {
@@ -52,22 +54,27 @@ const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
     loadSocialProviders();
   }, []);
 
-  const handleSocialLogin = async (provider: string) => {
-    // In a real app, this would integrate with an auth provider
-    console.log(`Logging in with ${provider}`);
-    
-    // For now, just show toast
-    toast({
-      title: "Coming Soon",
-      description: `${provider} login will be available soon.`,
-    });
-    
-    // Example of how to implement once ready:
-    // if (provider === 'google') {
-    //   await supabase.auth.signInWithOAuth({
-    //     provider: 'google',
-    //   });
-    // }
+  const handleSocialLogin = async (providerName: 'Facebook' | 'Gmail') => {
+    setLoadingProvider(providerName);
+    const provider = (providerName === 'Gmail' ? 'google' : 'facebook') as Provider;
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+      });
+
+      if (error) {
+        throw error;
+      }
+      // On success, Supabase handles the redirect. No need to clear loading state.
+    } catch (error: any) {
+      toast({
+        title: `Login with ${providerName} failed`,
+        description: error.message || 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
+      setLoadingProvider(null);
+    }
   };
 
   if (loadingProviders) {
@@ -102,9 +109,9 @@ const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
             variant="outline" 
             className="bg-white/5 hover:bg-white/10 border-gray-600/50"
             onClick={() => handleSocialLogin('Facebook')}
-            disabled={isLoading}
+            disabled={isFormLoading || !!loadingProvider}
           >
-            {isLoading ? (
+            {loadingProvider === 'Facebook' ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Facebook className="mr-2 h-4 w-4 text-blue-500" />
@@ -118,9 +125,9 @@ const SocialLogin = ({ isLoading = false }: SocialLoginProps) => {
             variant="outline" 
             className="bg-white/5 hover:bg-white/10 border-gray-600/50"
             onClick={() => handleSocialLogin('Gmail')}
-            disabled={isLoading}
+            disabled={isFormLoading || !!loadingProvider}
           >
-            {isLoading ? (
+            {loadingProvider === 'Gmail' ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Mail className="mr-2 h-4 w-4 text-red-500" />
