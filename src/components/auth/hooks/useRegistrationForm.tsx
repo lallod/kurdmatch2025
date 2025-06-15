@@ -21,7 +21,11 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
     
     enabledQuestions.forEach(q => {
       if (q.profileField !== 'bio') {
-        defaults[q.id] = '';
+        if (q.fieldType === 'multi-select') {
+          defaults[q.id] = [];
+        } else {
+          defaults[q.id] = '';
+        }
       }
     });
     
@@ -112,17 +116,17 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
   };
 };
 
-const generateAIBio = (formData: Record<string, string>, questions: QuestionItem[]) => {
+const generateAIBio = (formData: Record<string, any>, questions: QuestionItem[]) => {
   const firstNameQ = questions.find(q => q.profileField === 'firstName');
   const occupationQ = questions.find(q => q.profileField === 'occupation');
   const locationQ = questions.find(q => q.profileField === 'location');
-  const hobbiesQ = questions.find(q => q.profileField === 'exerciseHabits');
+  const interestsQ = questions.find(q => q.profileField === 'interests');
   const relationshipGoalsQ = questions.find(q => q.profileField === 'relationshipGoals');
   
   const firstName = firstNameQ ? formData[firstNameQ.id] || 'there' : 'there';
   const occupation = occupationQ ? formData[occupationQ.id] : '';
   const location = locationQ ? formData[locationQ.id] : '';
-  const hobbies = hobbiesQ ? formData[hobbiesQ.id] : '';
+  const interests = interestsQ ? (Array.isArray(formData[interestsQ.id]) ? formData[interestsQ.id].join(', ') : formData[interestsQ.id]) : '';
   const relationshipGoals = relationshipGoalsQ ? formData[relationshipGoalsQ.id] : '';
   
   let bio = `Hi, I'm ${firstName}`;
@@ -137,8 +141,8 @@ const generateAIBio = (formData: Record<string, string>, questions: QuestionItem
   
   bio += `. `;
   
-  if (hobbies) {
-    bio += `I enjoy ${hobbies}. `;
+  if (interests) {
+    bio += `I enjoy ${interests}. `;
   }
   
   if (relationshipGoals) {

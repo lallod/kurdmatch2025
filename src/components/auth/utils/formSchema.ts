@@ -16,7 +16,7 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
       
       // Skip validation for AI-generated fields (like bio)
       if (question.profileField === 'bio') {
-        // No validation required for AI-generated bio
+        schemaObject[question.id] = z.string().optional();
         return;
       }
       
@@ -28,14 +28,12 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
           schemaObject[question.id] = z.string().optional();
         }
       } else if (question.profileField === 'email') {
-        // Check profileField instead of fieldType for email fields
         if (question.required) {
           schemaObject[question.id] = z.string().email({ message: `Please enter a valid email address` });
         } else {
           schemaObject[question.id] = z.string().email({ message: `Please enter a valid email address` }).optional();
         }
       } else if (question.profileField === 'password') {
-        // Add password validation
         if (question.required) {
           schemaObject[question.id] = z.string().min(8, { message: `Password must be at least 8 characters` })
             .refine(val => /[A-Z]/.test(val), { message: 'Password must contain at least one uppercase letter' })
@@ -45,14 +43,12 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
           schemaObject[question.id] = z.string().min(8).optional();
         }
       } else if (question.fieldType === 'multi-select') {
-        // Handle multi-select fields (they will be comma-separated strings in this implementation)
         if (question.required) {
-          schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
+          schemaObject[question.id] = z.array(z.string()).min(1, { message: `Please select at least one ${question.text.toLowerCase()}` });
         } else {
-          schemaObject[question.id] = z.string().optional();
+          schemaObject[question.id] = z.array(z.string()).optional();
         }
       } else if (question.profileField === 'height') {
-        // Special validation for height field
         if (question.required) {
           schemaObject[question.id] = z.string().min(1, { message: `${question.text} is required` });
         } else {

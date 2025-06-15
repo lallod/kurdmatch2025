@@ -6,6 +6,7 @@ import {
   TextField, 
   TextAreaField, 
   SelectField, 
+  MultiSelectField,
   RadioField, 
   CheckboxField,
   DateField
@@ -92,8 +93,7 @@ const renderField = (question: QuestionItem, form: UseFormReturn<any>) => {
     case 'select':
       return <SelectField question={question} form={form} />;
     case 'multi-select':
-      // For multi-select, we use the Select component but it would need to be enhanced
-      return <SelectField question={question} form={form} />;
+      return <MultiSelectField question={question} form={form} />;
     case 'radio':
       return <RadioField question={question} form={form} />;
     case 'checkbox':

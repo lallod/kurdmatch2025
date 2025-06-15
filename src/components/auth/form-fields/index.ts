@@ -1,9 +1,8 @@
 
-import TextField from './TextField';
-import TextAreaField from './TextAreaField';
-import SelectField from './SelectField';
-import RadioField from './RadioField';
-import CheckboxField from './CheckboxField';
-import DateField from './DateField';
-
-export { TextField, TextAreaField, SelectField, RadioField, CheckboxField, DateField };
+export { default as TextField } from './TextField';
+export { default as TextAreaField } from './TextAreaField';
+export { default as SelectField } from './SelectField';
+export { default as MultiSelectField } from './MultiSelectField';
+export { default as RadioField } from './RadioField';
+export { default as CheckboxField } from './CheckboxField';
+export { default as DateField } from './DateField';
