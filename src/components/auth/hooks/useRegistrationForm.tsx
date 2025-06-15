@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -69,6 +70,7 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       if (!signUpData.user) throw new Error("User not created.");
       const userId = signUpData.user.id;
 
+      // Handle photo uploads
       const photoQuestion = enabledQuestions.find(q => q.profileField === 'photos');
       const photoUrls: string[] = [];
       if (photoQuestion && data[photoQuestion.id] && Array.isArray(data[photoQuestion.id])) {
@@ -90,6 +92,7 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
         }
       }
 
+      // Generate AI bio if bio question exists
       const bioQuestion = enabledQuestions.find(q => q.profileField === 'bio');
       let processedData = { ...data };
       if (bioQuestion) {
@@ -97,54 +100,75 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
         processedData[bioQuestion.id] = generatedBio;
       }
       
+      // Prepare profile data with proper typing
       const profileInsertData: Partial<TablesInsert<'profiles'>> = {
         id: userId,
       };
 
+      // Map form data to profile fields
       enabledQuestions.forEach(q => {
-        if (q.profileField && q.profileField !== 'email' && q.profileField !== 'password') {
+        if (q.profileField && q.profileField !== 'email' && q.profileField !== 'password' && q.profileField !== 'photos') {
           const formValue = processedData[q.id];
-          if (formValue !== undefined) {
-             if (q.profileField === 'full_name') {
+          if (formValue !== undefined && formValue !== null && formValue !== '') {
+            if (q.profileField === 'full_name') {
               profileInsertData.name = String(formValue);
             } else if (q.profileField === 'date_of_birth' && typeof formValue === 'string' && formValue) {
+              // Calculate age from date of birth
               const birthDate = new Date(formValue);
               if (!isNaN(birthDate.getTime())) {
                 const ageDifMs = Date.now() - birthDate.getTime();
                 const ageDate = new Date(ageDifMs);
                 profileInsertData.age = Math.abs(ageDate.getUTCFullYear() - 1970);
               }
-            } else if (q.profileField !== 'photos') { // Exclude photos from profile data
-              (profileInsertData as Record<string, any>)[q.profileField] = formValue;
+            } else if (q.fieldType === 'multi-select' && Array.isArray(formValue)) {
+              // Handle array fields
+              (profileInsertData as any)[q.profileField] = formValue.length > 0 ? formValue : null;
+            } else if (typeof formValue === 'string' || typeof formValue === 'number' || typeof formValue === 'boolean') {
+              // Handle single value fields
+              (profileInsertData as any)[q.profileField] = formValue;
             }
           }
         }
       });
       
-      // Ensure required fields have defaults to prevent DB errors if not in form
+      // Ensure required fields have values
       if (!profileInsertData.name) {
         profileInsertData.name = "New User";
       }
-      if (profileInsertData.age === undefined) {
-        profileInsertData.age = 18; // Default age if not calculable
+      if (profileInsertData.age === undefined || profileInsertData.age === null) {
+        profileInsertData.age = 18;
       }
       if (!profileInsertData.location) {
         profileInsertData.location = "Not specified";
       }
       
-      const { error: profileError } = await supabase.from('profiles').upsert(profileInsertData as TablesInsert<'profiles'>);
-      if (profileError) throw profileError;
+      console.log('Profile data to insert:', profileInsertData);
+      
+      // Insert profile data
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert(profileInsertData as TablesInsert<'profiles'>);
+      
+      if (profileError) {
+        console.error('Profile insert error:', profileError);
+        throw profileError;
+      }
 
+      // Insert photos into separate photos table
       if (photoUrls.length > 0) {
         const photoRecords: TablesInsert<'photos'>[] = photoUrls.map((url, index) => ({
           profile_id: userId,
           url: url,
           is_primary: index === 0,
         }));
-        const { error: photoInsertError } = await supabase.from('photos').insert(photoRecords);
+        
+        const { error: photoInsertError } = await supabase
+          .from('photos')
+          .insert(photoRecords);
+          
         if (photoInsertError) {
           console.error("Failed to save photos:", photoInsertError);
-          // We can let registration succeed even if photos fail to save.
+          // Let registration succeed even if photos fail
         }
       }
 
@@ -230,7 +254,7 @@ const generateAIBio = (formData: Record<string, any>, questions: QuestionItem[])
   const occupationQ = questions.find(q => q.profileField === 'occupation');
   const locationQ = questions.find(q => q.profileField === 'location');
   const interestsQ = questions.find(q => q.profileField === 'interests');
-  const relationshipGoalsQ = questions.find(q => q.profileField === 'relationshipGoals');
+  const relationshipGoalsQ = questions.find(q => q.profileField === 'relationship_goals');
   
   const fullName = fullNameQ ? formData[fullNameQ.id] || '' : '';
   const firstName = fullName.split(' ')[0] || 'there';

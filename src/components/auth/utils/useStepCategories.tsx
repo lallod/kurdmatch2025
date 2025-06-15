@@ -5,16 +5,15 @@ export const useStepCategories = (enabledQuestions: QuestionItem[]) => {
   const stepCategories = [
     { name: 'Account', category: 'Account' },
     { name: 'Personal', category: 'Basics' },
+    { name: 'Physical', category: 'Physical' },
     { name: 'Lifestyle', category: 'Lifestyle' },
     { name: 'Beliefs', category: 'Beliefs' },
-    { name: 'Physical', category: 'Physical' },
     { name: 'Preferences', category: 'Preferences' },
     { name: 'Photos', category: 'Photos' }
   ];
   
   const steps = stepCategories.map(step => {
     // The photo step is special, it doesn't contain questions but a special component.
-    // It should contain the photo question for validation purposes.
     if (step.name === 'Photos') {
       const photoQuestion = enabledQuestions.find(q => q.profileField === 'photos');
       return {
@@ -37,8 +36,20 @@ export const useStepCategories = (enabledQuestions: QuestionItem[]) => {
         if (step.name === 'Personal') {
           return q.registrationStep === 'Personal';
         }
-        // For other steps, match registrationStep with step name
-        return q.registrationStep === step.name;
+        if (step.name === 'Physical') {
+          return q.registrationStep === 'Physical';
+        }
+        if (step.name === 'Lifestyle') {
+          return q.registrationStep === 'Lifestyle';
+        }
+        if (step.name === 'Beliefs') {
+          return q.registrationStep === 'Beliefs';
+        }
+        if (step.name === 'Preferences') {
+          return q.registrationStep === 'Preferences';
+        }
+        
+        return false;
       })
     };
   }).filter(step => step.questions.length > 0 || step.name === 'Photos');
