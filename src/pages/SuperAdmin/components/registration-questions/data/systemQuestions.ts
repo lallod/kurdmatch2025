@@ -104,6 +104,39 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
+    id: "sys_17",
+    text: "Education Level",
+    category: "Basics",
+    fieldType: "select",
+    required: false,
+    enabled: true,
+    registrationStep: "Personal",
+    displayOrder: 8,
+    placeholder: "Your highest education level",
+    fieldOptions: ["High School", "Some College", "Bachelor's Degree", "Master's Degree", "PhD", "Trade School", "Other"],
+    profileField: "education",
+    isSystemField: true
+  },
+  {
+    id: "sys_21",
+    text: "Languages",
+    category: "Basics",
+    fieldType: "multi-select",
+    required: false,
+    enabled: true,
+    registrationStep: "Personal",
+    displayOrder: 9,
+    placeholder: "Languages you speak",
+    fieldOptions: [
+      "Kurdish (Sorani)", "Kurdish (Kurmanji)", "Arabic", "Turkish", "Persian", "English", 
+      "German", "French", "Spanish", "Italian", "Dutch", "Swedish", "Norwegian"
+    ],
+    profileField: "languages",
+    isSystemField: true
+  },
+  
+  // Physical Information
+  {
     id: "sys_11",
     text: "Height",
     category: "Physical",
@@ -111,7 +144,7 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Physical",
-    displayOrder: 8,
+    displayOrder: 10,
     placeholder: "e.g., 175 cm",
     fieldOptions: [],
     profileField: "height",
@@ -127,7 +160,7 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Lifestyle",
-    displayOrder: 9,
+    displayOrder: 11,
     placeholder: "Select your drinking habits",
     fieldOptions: ["Never", "Rarely", "Socially", "Regularly", "Prefer not to say"],
     profileField: "drinking",
@@ -141,7 +174,7 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Lifestyle",
-    displayOrder: 10,
+    displayOrder: 12,
     placeholder: "Select your smoking habits",
     fieldOptions: ["Never", "Occasionally", "Socially", "Regularly", "Trying to quit"],
     profileField: "smoking",
@@ -155,7 +188,7 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Lifestyle",
-    displayOrder: 11,
+    displayOrder: 13,
     placeholder: "How often do you exercise?",
     fieldOptions: ["Never", "Rarely", "Few times a week", "Daily", "I'm a fitness enthusiast"],
     profileField: "exercise_habits",
@@ -169,10 +202,28 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Lifestyle",
-    displayOrder: 12,
+    displayOrder: 14,
     placeholder: "Do you have any pets?",
     fieldOptions: ["No pets", "Dog", "Cat", "Multiple pets", "Want pets", "Allergic to pets"],
     profileField: "have_pets",
+    isSystemField: true
+  },
+  {
+    id: "sys_20",
+    text: "Interests & Hobbies",
+    category: "Lifestyle",
+    fieldType: "multi-select",
+    required: false,
+    enabled: true,
+    registrationStep: "Lifestyle",
+    displayOrder: 15,
+    placeholder: "Select your interests",
+    fieldOptions: [
+      "Travel", "Cooking", "Reading", "Music", "Movies", "Sports", "Fitness", "Art", "Photography", 
+      "Gaming", "Dancing", "Hiking", "Swimming", "Yoga", "Technology", "Fashion", "Food", "Nature",
+      "Adventure", "Culture", "Learning", "Meditation", "Writing", "Science", "History"
+    ],
+    profileField: "interests",
     isSystemField: true
   },
   
@@ -185,24 +236,10 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Beliefs",
-    displayOrder: 13,
+    displayOrder: 16,
     placeholder: "Your religious beliefs",
     fieldOptions: ["Islam", "Christianity", "Judaism", "Buddhism", "Hinduism", "Atheist", "Agnostic", "Spiritual", "Other", "Prefer not to say"],
     profileField: "religion",
-    isSystemField: true
-  },
-  {
-    id: "sys_17",
-    text: "Education Level",
-    category: "Basics",
-    fieldType: "select",
-    required: false,
-    enabled: true,
-    registrationStep: "Personal",
-    displayOrder: 14,
-    placeholder: "Your highest education level",
-    fieldOptions: ["High School", "Some College", "Bachelor's Degree", "Master's Degree", "PhD", "Trade School", "Other"],
-    profileField: "education",
     isSystemField: true
   },
   
@@ -215,7 +252,7 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Preferences",
-    displayOrder: 15,
+    displayOrder: 17,
     placeholder: "Your relationship goals",
     fieldOptions: ["Serious relationship", "Something casual", "Marriage", "Friendship", "Not sure yet"],
     profileField: "relationship_goals",
@@ -229,47 +266,10 @@ export const systemQuestions: QuestionItem[] = [
     required: false,
     enabled: true,
     registrationStep: "Preferences",
-    displayOrder: 16,
+    displayOrder: 18,
     placeholder: "Your thoughts on having children",
     fieldOptions: ["Want children", "Don't want children", "Have children", "Open to children", "Not sure"],
     profileField: "want_children",
-    isSystemField: true
-  },
-  
-  // Interests
-  {
-    id: "sys_20",
-    text: "Interests & Hobbies",
-    category: "Lifestyle",
-    fieldType: "multi-select",
-    required: false,
-    enabled: true,
-    registrationStep: "Lifestyle",
-    displayOrder: 17,
-    placeholder: "Select your interests",
-    fieldOptions: [
-      "Travel", "Cooking", "Reading", "Music", "Movies", "Sports", "Fitness", "Art", "Photography", 
-      "Gaming", "Dancing", "Hiking", "Swimming", "Yoga", "Technology", "Fashion", "Food", "Nature",
-      "Adventure", "Culture", "Learning", "Meditation", "Writing", "Science", "History"
-    ],
-    profileField: "interests",
-    isSystemField: true
-  },
-  {
-    id: "sys_21",
-    text: "Languages",
-    category: "Basics",
-    fieldType: "multi-select",
-    required: false,
-    enabled: true,
-    registrationStep: "Personal",
-    displayOrder: 18,
-    placeholder: "Languages you speak",
-    fieldOptions: [
-      "Kurdish (Sorani)", "Kurdish (Kurmanji)", "Arabic", "Turkish", "Persian", "English", 
-      "German", "French", "Spanish", "Italian", "Dutch", "Swedish", "Norwegian"
-    ],
-    profileField: "languages",
     isSystemField: true
   },
   
