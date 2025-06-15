@@ -10,6 +10,7 @@ interface InterestsSectionProps {
   profileData: {
     interests: string[];
     hobbies: string[] | string;
+    values: string[];
   };
 }
 
@@ -18,16 +19,17 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({ profileData }) => {
     <ProfileSectionButton
       icon={<Heart />}
       title="Interests"
-      description="Hobbies, activities, passions"
+      description="Values, hobbies, activities, passions"
     >
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <ScrollArea className="h-[calc(100vh-5rem)]">
           <div className="py-6 pr-6">
-            <h3 className="text-lg font-semibold mb-6">Interests & Hobbies</h3>
+            <h3 className="text-lg font-semibold mb-6">Interests, Hobbies & Values</h3>
             <DetailEditor
               icon={<Heart size={18} />}
               title="Your Interests"
               fields={[
+                { name: 'values', label: 'Values', value: profileData.values.join(', ') },
                 { name: 'interests', label: 'Interests', value: profileData.interests.join(', ') },
                 { name: 'hobbies', label: 'Hobbies', value: Array.isArray(profileData.hobbies) ? profileData.hobbies.join(', ') : profileData.hobbies }
               ]}

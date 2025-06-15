@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -137,7 +136,7 @@ const MyProfile = () => {
                   </div>
                 </div>
                 
-                <InterestsSection interests={profileData.interests} values={profileData.values} hobbies={profileData.hobbies} />
+                <InterestsSection profileData={profileData} />
 
                 <Button onClick={handleEditSections} variant="outline" className="w-full">
                   <Settings size={16} className="mr-2" />
