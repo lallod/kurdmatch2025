@@ -21,15 +21,19 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if this is an OAuth callback - if so, don't process here
+    const urlParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const isOAuthCallback = urlParams.has('code') || hashParams.has('access_token') || urlParams.has('access_token');
+    
+    if (isOAuthCallback) {
+      console.log('OAuth callback detected, redirecting to callback handler');
+      navigate('/auth/callback');
+      return;
+    }
+
     // Only redirect if user is authenticated and this is not an OAuth callback
     if (!user || !user.id) return;
-    
-    // Check if this is coming from OAuth callback by checking URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const isOAuthCallback = urlParams.has('code') || urlParams.has('access_token');
-    
-    // If this is an OAuth callback, let the AuthCallback component handle it
-    if (isOAuthCallback) return;
     
     const checkUserRole = async () => {
       try {

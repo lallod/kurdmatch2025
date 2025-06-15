@@ -11,92 +11,81 @@ const AuthCallback = () => {
   const { user, loading } = useSupabaseAuth();
   const { toast } = useToast();
   const [hasProcessed, setHasProcessed] = useState(false);
+  const [processingAttempts, setProcessingAttempts] = useState(0);
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      if (loading || hasProcessed) return;
+      if (loading || hasProcessed || processingAttempts >= 3) return;
+
+      setProcessingAttempts(prev => prev + 1);
 
       try {
-        console.log('OAuth callback - processing authentication...');
+        console.log('OAuth callback - processing authentication...', { attempt: processingAttempts + 1 });
         
-        // First, try to get the session from the URL fragments
-        const { data, error } = await supabase.auth.getSession();
+        // Handle the auth callback from URL
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
-        if (error) {
-          console.error('Error getting session:', error);
-          throw error;
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          throw sessionError;
         }
 
-        if (data.session && data.session.user) {
-          console.log('OAuth callback - user authenticated:', data.session.user.email);
+        const currentUser = sessionData?.session?.user || user;
+
+        if (currentUser) {
+          console.log('OAuth callback - user authenticated:', currentUser.email);
           setHasProcessed(true);
           
+          // Small delay to ensure user state is fully updated
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
           // Check if user is super admin
-          const isSuperAdmin = await isUserSuperAdmin(data.session.user.id);
+          const isSuperAdmin = await isUserSuperAdmin(currentUser.id);
           
           if (isSuperAdmin) {
             toast({
               title: "Welcome back!",
               description: "Redirecting to super admin dashboard...",
             });
-            navigate('/super-admin');
+            navigate('/super-admin', { replace: true });
           } else {
             toast({
               title: "Welcome!",
               description: "Login successful. Redirecting...",
             });
-            navigate('/discovery');
+            navigate('/discovery', { replace: true });
           }
-        } else if (user) {
-          console.log('OAuth callback - user from context:', user.email);
-          setHasProcessed(true);
-          
-          // Check if user is super admin
-          const isSuperAdmin = await isUserSuperAdmin(user.id);
-          
-          if (isSuperAdmin) {
-            toast({
-              title: "Welcome back!",
-              description: "Redirecting to super admin dashboard...",
-            });
-            navigate('/super-admin');
-          } else {
-            toast({
-              title: "Welcome!",
-              description: "Login successful. Redirecting...",
-            });
-            navigate('/discovery');
-          }
-        } else {
-          // No user found after sufficient time, redirect to auth page
-          console.log('OAuth callback - no user found after processing');
+        } else if (processingAttempts >= 2) {
+          // After multiple attempts, show error
+          console.log('OAuth callback - no user found after multiple attempts');
           setHasProcessed(true);
           toast({
-            title: "Authentication failed",
+            title: "Authentication incomplete",
             description: "Please try logging in again.",
             variant: "destructive",
           });
-          navigate('/auth');
+          navigate('/auth', { replace: true });
         }
       } catch (error) {
         console.error('Error in OAuth callback:', error);
         setHasProcessed(true);
         toast({
           title: "Authentication error",
-          description: "Something went wrong. Please try again.",
+          description: "Something went wrong during login. Please try again.",
           variant: "destructive",
         });
-        navigate('/auth');
+        navigate('/auth', { replace: true });
       }
     };
 
-    // Add a small delay to ensure auth state is properly updated
+    // Add progressive delays for retries
+    const delay = processingAttempts === 0 ? 500 : processingAttempts * 1000;
     const timeoutId = setTimeout(() => {
       handleAuthCallback();
-    }, 1000);
+    }, delay);
 
     return () => clearTimeout(timeoutId);
-  }, [user, loading, navigate, toast, hasProcessed]);
+  }, [user, loading, navigate, toast, hasProcessed, processingAttempts]);
 
   // Show loading spinner while processing
   return (
@@ -104,7 +93,9 @@ const AuthCallback = () => {
       <div className="text-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
         <p className="mt-4 text-white">Processing login...</p>
-        <p className="mt-2 text-gray-300 text-sm">Please wait while we complete your authentication...</p>
+        <p className="mt-2 text-gray-300 text-sm">
+          {processingAttempts > 0 ? `Attempt ${processingAttempts + 1}...` : 'Please wait while we complete your authentication...'}
+        </p>
       </div>
     </div>
   );
