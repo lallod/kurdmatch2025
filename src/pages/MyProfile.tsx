@@ -4,18 +4,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Pencil, Settings } from 'lucide-react';
 import ProfileHeader from '@/components/ProfileHeader';
-import ProfileSections from '@/components/my-profile/ProfileSections';
 import PhotoManagement from '@/components/my-profile/PhotoManagement';
 import AccountSettings from '@/components/my-profile/AccountSettings';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
+import BasicInfoSection from '@/components/my-profile/sections/BasicInfoSection';
+import LocationSection from '@/components/my-profile/sections/LocationSection';
+import LanguagesSection from '@/components/my-profile/sections/LanguagesSection';
+import InterestsSection from '@/components/my-profile/sections/InterestsSection';
 
 const MyProfile = () => {
-  const [activeTab, setActiveTab] = useState('general');
   const [isEditingSections, setIsEditingSections] = useState(false);
   const [profileBgColor, setProfileBgColor] = useState("#F1F0FB");
   
-  const profileData: ProfileData = {
+  const initialProfileData: ProfileData = {
     name: "Sarah",
     age: 28,
     location: "San Francisco, CA",
@@ -37,6 +40,8 @@ const MyProfile = () => {
     languages: ["English", "Kurdish", "Farsi"]
   };
   
+  const [profileData, setProfileData] = useState<ProfileData>(initialProfileData);
+
   const [galleryImages, setGalleryImages] = useState([
     profileData.profileImage,
     "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80",
@@ -71,6 +76,10 @@ const MyProfile = () => {
 
   const handleBackgroundColorChange = (color: string) => {
     setProfileBgColor(color);
+  };
+  
+  const handleBioSave = (newBio: string) => {
+    setProfileData(prev => ({ ...prev, bio: newBio }));
   };
 
   return (
@@ -113,10 +122,28 @@ const MyProfile = () => {
             </div>
             
             <div className="relative">
-              <ProfileSections 
-                profileData={profileData} 
-                onEditSections={handleEditSections}
-              />
+              <div className="space-y-6">
+                <EditableAboutMeSection
+                  bio={profileData.bio}
+                  onSave={handleBioSave}
+                />
+                
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <h3 className="text-lg font-semibold mb-4">Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <BasicInfoSection profileData={profileData} />
+                    <LocationSection profileData={profileData} />
+                    <LanguagesSection profileData={profileData} />
+                  </div>
+                </div>
+                
+                <InterestsSection interests={profileData.interests} values={profileData.values} hobbies={profileData.hobbies} />
+
+                <Button onClick={handleEditSections} variant="outline" className="w-full">
+                  <Settings size={16} className="mr-2" />
+                  Edit displayed sections
+                </Button>
+              </div>
             </div>
           </TabsContent>
           
