@@ -76,7 +76,7 @@ export const systemQuestions: QuestionItem[] = [
     id: "sys_6",
     text: "Profile Photos",
     category: "Photos",
-    fieldType: "file",
+    fieldType: "text",
     required: true,
     enabled: true,
     registrationStep: "Profile",
