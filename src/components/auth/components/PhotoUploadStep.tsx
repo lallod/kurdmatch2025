@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Image, Upload, X, Camera, ShieldCheck } from 'lucide-react';
@@ -21,7 +20,10 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
 
   // Initialize photos from form values when component mounts
   useEffect(() => {
-    const formPhotos = form.getValues('photos');
+    // Try both possible field names for photos
+    const formPhotos = form.getValues('sys_6') || form.getValues('photos') || [];
+    console.log('PhotoUploadStep: Initial photos from form:', formPhotos);
+    
     if (Array.isArray(formPhotos) && formPhotos.length > 0) {
       setPhotos(formPhotos);
     }
@@ -85,8 +87,16 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
   const handleSavePhoto = (editedPhotoUrl: string) => {
     const newPhotos = [...photos, editedPhotoUrl];
     setPhotos(newPhotos);
+    
+    // Update both possible field names
+    form.setValue('sys_6', newPhotos);
     form.setValue('photos', newPhotos);
+    
+    // Clear any errors
+    form.clearErrors('sys_6');
     form.clearErrors('photos');
+    
+    console.log('PhotoUploadStep: Saved photo, new photos array:', newPhotos);
 
     // If there are more photos to edit, open the studio for the next one
     if (pendingPhotos.length > 0) {
@@ -110,14 +120,17 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
     newPhotos.splice(index, 1);
     setPhotos(newPhotos);
     
-    // Update form value
+    // Update both possible field names
+    form.setValue('sys_6', newPhotos);
     form.setValue('photos', newPhotos);
+    
+    console.log('PhotoUploadStep: Removed photo, new photos array:', newPhotos);
   };
 
   return (
     <FormField
       control={form.control}
-      name="photos"
+      name="sys_6"
       render={({ field, fieldState }) => (
         <FormItem className="space-y-6">
           <div className="flex justify-between items-center">
@@ -226,7 +239,7 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
             </div>
           </FormControl>
           <FormMessage />
-           <AIPhotoStudioDialog
+          <AIPhotoStudioDialog
             open={isStudioOpen}
             onOpenChange={(open) => {
               if (!open) {

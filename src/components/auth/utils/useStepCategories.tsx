@@ -26,13 +26,17 @@ export const useStepCategories = (enabledQuestions: QuestionItem[]) => {
         if (step.category === 'Account') {
           return q.registrationStep === 'Account' || 
                  q.profileField === 'email' || 
-                 q.profileField === 'password';
+                 q.profileField === 'password' ||
+                 q.id === 'sys_1' || 
+                 q.id === 'sys_2';
         }
         // Personal/Basics step - name, age, location, occupation
         else if (step.category === 'Basics') {
           return q.registrationStep === 'Personal' || 
                  q.category === 'Basics' ||
-                 ['firstName', 'lastName', 'dateOfBirth', 'location', 'occupation'].includes(q.profileField);
+                 ['firstName', 'lastName', 'dateOfBirth', 'location', 'occupation'].includes(q.profileField) ||
+                 q.id === 'sys_3' || 
+                 q.id === 'sys_4';
         }
         // Other steps match by category
         else {
@@ -42,5 +46,6 @@ export const useStepCategories = (enabledQuestions: QuestionItem[]) => {
     };
   }).filter(step => step.questions.length > 0 || step.name === 'Photos');
 
+  console.log('Generated steps:', steps);
   return steps;
 };

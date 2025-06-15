@@ -8,6 +8,8 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
   
   questions.forEach(question => {
     if (question.enabled) {
+      console.log(`Creating schema for question: ${question.id}, fieldType: ${question.fieldType}, profileField: ${question.profileField}`);
+      
       // Special handling for photos - always expect array
       if (question.profileField === 'photos') {
         schemaObject[question.id] = z.array(z.string()).min(1, { message: 'Please upload at least one photo' });
@@ -73,5 +75,6 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
     }
   });
   
+  console.log('Final schema object:', schemaObject);
   return z.object(schemaObject);
 };

@@ -15,22 +15,29 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
   type FormValues = typeof dynamicSchema._type;
   
   const getDefaultValues = () => {
-    const defaults: Record<string, any> = {
-      photos: []
-    };
+    const defaults: Record<string, any> = {};
+    
+    // Always set photos as an empty array
+    defaults['sys_6'] = [];
+    defaults['photos'] = [];
     
     enabledQuestions.forEach(q => {
+      console.log(`Setting default for question ${q.id}: fieldType=${q.fieldType}, profileField=${q.profileField}`);
+      
       if (q.profileField !== 'bio') {
         if (q.fieldType === 'multi-select') {
           defaults[q.id] = [];
         } else if (q.fieldType === 'checkbox') {
           defaults[q.id] = 'false';
+        } else if (q.profileField === 'photos') {
+          defaults[q.id] = [];
         } else {
           defaults[q.id] = '';
         }
       }
     });
     
+    console.log('Form default values:', defaults);
     return defaults;
   };
   
@@ -77,33 +84,49 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
   };
 
   const nextStep = async () => {
+    console.log(`Attempting to go from step ${currentStep} to ${currentStep + 1}`);
+    console.log('Current form values:', form.getValues());
+    
     if (currentStep === steps.length - 1) {
-      const photos = form.getValues('photos') || [];
+      // On the photos step - check photos validation
+      const photos = form.getValues('sys_6') || form.getValues('photos') || [];
+      console.log('Photos validation:', photos);
+      
       if (!Array.isArray(photos) || photos.length === 0) {
-        form.setError('photos', { 
+        form.setError('sys_6', { 
           type: 'manual', 
           message: 'Please upload at least one photo' 
         });
+        console.log('Photos validation failed');
         return;
       }
     } else {
+      // Validate current step fields
       const currentFields = steps[currentStep].questions
         .filter(q => q.profileField !== 'bio')
         .map(q => q.id);
       
-      const isValid = await form.trigger(currentFields as any);
+      console.log('Validating fields for current step:', currentFields);
       
-      if (!isValid) return;
+      const isValid = await form.trigger(currentFields as any);
+      console.log('Step validation result:', isValid);
+      
+      if (!isValid) {
+        console.log('Form errors:', form.formState.errors);
+        return;
+      }
     }
     
     if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
+      console.log(`Successfully moved to step ${currentStep + 1}`);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
+      console.log(`Moved back to step ${currentStep - 1}`);
     }
   };
 

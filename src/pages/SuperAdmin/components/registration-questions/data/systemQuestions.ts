@@ -3,7 +3,7 @@ import { QuestionItem } from '../types';
 
 export const systemQuestions: QuestionItem[] = [
   {
-    id: "1",
+    id: "sys_1",
     text: "Email Address",
     category: "Basics",
     fieldType: "text",
@@ -17,7 +17,7 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: "2",
+    id: "sys_2",
     text: "Password",
     category: "Basics",
     fieldType: "text",
@@ -31,7 +31,7 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: "3",
+    id: "sys_3",
     text: "First Name",
     category: "Basics",
     fieldType: "text",
@@ -45,7 +45,7 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: "4",
+    id: "sys_4",
     text: "Last Name",
     category: "Basics",
     fieldType: "text",
@@ -59,7 +59,7 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: "5",
+    id: "sys_5",
     text: "Bio",
     category: "Basics",
     fieldType: "textarea",
@@ -73,10 +73,10 @@ export const systemQuestions: QuestionItem[] = [
     isSystemField: true
   },
   {
-    id: "6",
+    id: "sys_6",
     text: "Profile Photos",
     category: "Photos",
-    fieldType: "multi-select",
+    fieldType: "file",
     required: true,
     enabled: true,
     registrationStep: "Profile",
