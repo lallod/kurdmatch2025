@@ -23,6 +23,8 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       if (q.profileField !== 'bio') {
         if (q.fieldType === 'multi-select') {
           defaults[q.id] = [];
+        } else if (q.fieldType === 'checkbox') {
+          defaults[q.id] = 'false';
         } else {
           defaults[q.id] = '';
         }

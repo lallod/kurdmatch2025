@@ -8,7 +8,7 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
   
   questions.forEach(question => {
     if (question.enabled) {
-      // Special handling for photos
+      // Special handling for photos - always expect array
       if (question.profileField === 'photos') {
         schemaObject[question.id] = z.array(z.string()).min(1, { message: 'Please upload at least one photo' });
         return;
@@ -17,6 +17,16 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
       // Skip validation for AI-generated fields (like bio)
       if (question.profileField === 'bio') {
         schemaObject[question.id] = z.string().optional();
+        return;
+      }
+      
+      // Multi-select fields should always be arrays
+      if (question.fieldType === 'multi-select') {
+        if (question.required) {
+          schemaObject[question.id] = z.array(z.string()).min(1, { message: `Please select at least one ${question.text.toLowerCase()}` });
+        } else {
+          schemaObject[question.id] = z.array(z.string()).optional();
+        }
         return;
       }
       
@@ -42,11 +52,12 @@ export const createDynamicSchema = (questions: QuestionItem[]) => {
         } else {
           schemaObject[question.id] = z.string().min(8).optional();
         }
-      } else if (question.fieldType === 'multi-select') {
+      } else if (question.fieldType === 'checkbox') {
+        // Checkbox fields should be strings ('true' or 'false')
         if (question.required) {
-          schemaObject[question.id] = z.array(z.string()).min(1, { message: `Please select at least one ${question.text.toLowerCase()}` });
+          schemaObject[question.id] = z.string().refine(val => val === 'true', { message: `${question.text} is required` });
         } else {
-          schemaObject[question.id] = z.array(z.string()).optional();
+          schemaObject[question.id] = z.string().optional();
         }
       } else if (question.profileField === 'height') {
         if (question.required) {
