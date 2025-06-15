@@ -1,3 +1,4 @@
+
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 
 export const useStepCategories = (enabledQuestions: QuestionItem[]) => {
@@ -12,36 +13,32 @@ export const useStepCategories = (enabledQuestions: QuestionItem[]) => {
   ];
   
   const steps = stepCategories.map(step => {
-    if (step.category === 'Photos') {
+    // The photo step is special, it doesn't contain questions but a special component.
+    // It should contain the photo question for validation purposes.
+    if (step.name === 'Photos') {
+      const photoQuestion = enabledQuestions.find(q => q.profileField === 'photos');
       return {
         name: step.name,
-        questions: []
+        questions: photoQuestion ? [photoQuestion] : []
       };
     }
     
     return {
       name: step.name,
       questions: enabledQuestions.filter(q => {
-        // Account step - email, password fields
-        if (step.category === 'Account') {
-          return q.registrationStep === 'Account' || 
-                 q.profileField === 'email' || 
-                 q.profileField === 'password' ||
-                 q.id === 'sys_1' || 
-                 q.id === 'sys_2';
+        // Bio is auto-generated and should not appear in any step
+        if (q.profileField === 'bio') {
+          return false;
         }
-        // Personal/Basics step - name, age, location, occupation
-        else if (step.category === 'Basics') {
-          return q.registrationStep === 'Personal' || 
-                 q.category === 'Basics' ||
-                 ['firstName', 'lastName', 'dateOfBirth', 'location', 'occupation'].includes(q.profileField) ||
-                 q.id === 'sys_3' || 
-                 q.id === 'sys_4';
+
+        if (step.name === 'Account') {
+          return q.registrationStep === 'Account';
         }
-        // Other steps match by category
-        else {
-          return q.category === step.name || q.registrationStep === step.name;
+        if (step.name === 'Personal') {
+          return q.registrationStep === 'Personal';
         }
+        // For other steps, match registrationStep with step name
+        return q.registrationStep === step.name;
       })
     };
   }).filter(step => step.questions.length > 0 || step.name === 'Photos');

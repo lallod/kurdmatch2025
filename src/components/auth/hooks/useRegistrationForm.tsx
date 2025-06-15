@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -142,13 +141,15 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
 };
 
 const generateAIBio = (formData: Record<string, any>, questions: QuestionItem[]) => {
-  const firstNameQ = questions.find(q => q.profileField === 'firstName');
+  const fullNameQ = questions.find(q => q.profileField === 'full_name');
   const occupationQ = questions.find(q => q.profileField === 'occupation');
   const locationQ = questions.find(q => q.profileField === 'location');
   const interestsQ = questions.find(q => q.profileField === 'interests');
   const relationshipGoalsQ = questions.find(q => q.profileField === 'relationshipGoals');
   
-  const firstName = firstNameQ ? formData[firstNameQ.id] || 'there' : 'there';
+  const fullName = fullNameQ ? formData[fullNameQ.id] || '' : '';
+  const firstName = fullName.split(' ')[0] || 'there';
+
   const occupation = occupationQ ? formData[occupationQ.id] : '';
   const location = locationQ ? formData[locationQ.id] : '';
   const interests = interestsQ ? (Array.isArray(formData[interestsQ.id]) ? formData[interestsQ.id].join(', ') : formData[interestsQ.id]) : '';
