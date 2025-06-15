@@ -114,7 +114,7 @@ function App() {
               />
               <Route 
                 path="/super-admin/*" 
-                element={user ? <SuperAdmin /> : <Navigate to="/auth" replace />} 
+                element={user ? <SuperAdmin /> : <Navigate to="/admin-login" replace />} 
               />
               
               <Route path="*" element={<NotFound />} />
