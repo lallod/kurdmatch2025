@@ -6,28 +6,29 @@ import { Badge } from '@/components/ui/badge';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import AIPhotoStudioDialog from '@/components/shared/AIPhotoStudioDialog';
+import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 
 interface PhotoUploadStepProps {
   form: UseFormReturn<any>;
+  question: QuestionItem;
 }
 
-const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
+const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
+  const photoFieldId = question.id;
   const [photos, setPhotos] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [photoToEdit, setPhotoToEdit] = useState<string | null>(null);
   const [isStudioOpen, setIsStudioOpen] = useState(false);
   const [pendingPhotos, setPendingPhotos] = useState<string[]>([]);
 
-  // Initialize photos from form values when component mounts
   useEffect(() => {
-    // Try both possible field names for photos
-    const formPhotos = form.getValues('sys_6') || form.getValues('photos') || [];
+    const formPhotos = form.getValues(photoFieldId) || [];
     console.log('PhotoUploadStep: Initial photos from form:', formPhotos);
     
     if (Array.isArray(formPhotos) && formPhotos.length > 0) {
       setPhotos(formPhotos);
     }
-  }, [form]);
+  }, [form, photoFieldId]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -88,17 +89,11 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
     const newPhotos = [...photos, editedPhotoUrl];
     setPhotos(newPhotos);
     
-    // Update both possible field names
-    form.setValue('sys_6', newPhotos);
-    form.setValue('photos', newPhotos);
-    
-    // Clear any errors
-    form.clearErrors('sys_6');
-    form.clearErrors('photos');
+    form.setValue(photoFieldId, newPhotos, { shouldValidate: true });
+    form.clearErrors(photoFieldId);
     
     console.log('PhotoUploadStep: Saved photo, new photos array:', newPhotos);
 
-    // If there are more photos to edit, open the studio for the next one
     if (pendingPhotos.length > 0) {
       setPhotoToEdit(pendingPhotos[0]);
       setPendingPhotos(pendingPhotos.slice(1));
@@ -120,9 +115,7 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
     newPhotos.splice(index, 1);
     setPhotos(newPhotos);
     
-    // Update both possible field names
-    form.setValue('sys_6', newPhotos);
-    form.setValue('photos', newPhotos);
+    form.setValue(photoFieldId, newPhotos, { shouldValidate: true });
     
     console.log('PhotoUploadStep: Removed photo, new photos array:', newPhotos);
   };
@@ -130,7 +123,7 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
   return (
     <FormField
       control={form.control}
-      name="sys_6"
+      name={photoFieldId}
       render={({ field, fieldState }) => (
         <FormItem className="space-y-6">
           <div className="flex justify-between items-center">

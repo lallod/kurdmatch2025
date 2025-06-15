@@ -12,15 +12,22 @@ interface FormContentProps {
 }
 
 const FormContent = ({ currentStep, steps, form }: FormContentProps) => {
-  // Display photo upload step for the last step, otherwise display question fields
+  const currentStepInfo = steps[currentStep];
+
+  // The last step is always photos, based on useStepCategories
   if (currentStep === steps.length - 1) {
-    return <PhotoUploadStep form={form} />;
+    const photoQuestion = currentStepInfo?.questions.find(q => q.profileField === 'photos');
+    // If for some reason there's no photo question, show nothing or an error.
+    if (photoQuestion) {
+      return <PhotoUploadStep form={form} question={photoQuestion} />;
+    }
+    return <div>Photo question not configured.</div>;
   }
 
-  // Display the questions for the current step
+  // Display the questions for other steps
   return (
     <div className="space-y-6">
-      {steps[currentStep]?.questions.map((question) => (
+      {currentStepInfo?.questions.map((question) => (
         <FieldRenderer 
           key={question.id} 
           question={question} 

@@ -12,11 +12,9 @@ import SocialLogin from '@/components/auth/components/SocialLogin';
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const { signIn, signUp, user } = useSupabaseAuth();
+  const { signIn, user } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -59,36 +57,17 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage(null);
-    setSuccessMessage(null);
 
     try {
-      if (isSignUp) {
-        const { error } = await signUp(email, password, {
-          email,
-        });
+      console.log(`Attempting to sign in with: ${email}`);
+      const { error } = await signIn(email, password);
 
-        if (error) throw error;
+      if (error) throw error;
 
-        setSuccessMessage("Account created! Please check your email to confirm your account.");
-        toast({
-          title: "Account created!",
-          description: "Please check your email to confirm your account.",
-        });
-        
-        setTimeout(() => {
-          setIsSignUp(false);
-        }, 3000);
-      } else {
-        console.log(`Attempting to sign in with: ${email}`);
-        const { error } = await signIn(email, password);
-
-        if (error) throw error;
-
-        toast({
-          title: "Welcome back!",
-          description: "You've successfully logged in.",
-        });
-      }
+      toast({
+        title: "Welcome back!",
+        description: "You've successfully logged in.",
+      });
     } catch (error: any) {
       console.error('Authentication error:', error);
       
@@ -113,12 +92,10 @@ const Auth = () => {
       <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div className="text-center">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent">
-            {isSignUp ? 'Create Account' : 'Welcome Back'}
+            Welcome Back
           </h1>
           <p className="mt-2 text-sm text-gray-600">
-            {isSignUp 
-              ? 'Sign up to start meeting new people' 
-              : 'Log in to continue your journey'}
+            Log in to continue your journey
           </p>
         </div>
         
@@ -138,13 +115,6 @@ const Auth = () => {
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative flex items-start" role="alert">
             <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
             <span className="block">{errorMessage}</span>
-          </div>
-        )}
-
-        {successMessage && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative flex items-start" role="alert">
-            <CheckCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
-            <span className="block">{successMessage}</span>
           </div>
         )}
 
@@ -183,35 +153,26 @@ const Auth = () => {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isSignUp ? 'Creating Account...' : 'Logging In...'}
+                Logging In...
               </>
             ) : (
-              isSignUp ? 'Create Account' : 'Log In'
+              'Log In'
             )}
           </Button>
         </form>
         
         <div className="text-center mt-4">
-          <button
-            type="button"
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setErrorMessage(null);
-              setSuccessMessage(null);
-            }}
+          <Link
+            to="/register"
             className="text-sm text-gray-600 hover:text-gray-900"
           >
-            {isSignUp 
-              ? 'Already have an account? Log in' 
-              : "Don't have an account? Sign up"}
-          </button>
+            Don't have an account? Sign up
+          </Link>
         </div>
 
-        {!isSignUp && (
-          <div className="pt-4">
-            <SocialLogin isLoading={isLoading} />
-          </div>
-        )}
+        <div className="pt-4">
+          <SocialLogin isLoading={isLoading} />
+        </div>
       </div>
     </div>
   );

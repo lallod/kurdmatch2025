@@ -1,12 +1,18 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { createDynamicSchema } from '../utils/formSchema';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any[]) => {
   const { toast } = useToast();
+  const { signUp } = useSupabaseAuth();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   
@@ -50,31 +56,81 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
     setIsSubmitting(true);
     
     try {
+      const emailQuestion = enabledQuestions.find(q => q.profileField === 'email');
+      const passwordQuestion = enabledQuestions.find(q => q.profileField === 'password');
+      if (!emailQuestion || !passwordQuestion) {
+        throw new Error("Email or password field is missing in registration form configuration.");
+      }
+      const email = data[emailQuestion.id];
+      const password = data[passwordQuestion.id];
+
+      const { data: signUpData, error: signUpError } = await signUp(email, password);
+      if (signUpError) throw signUpError;
+      if (!signUpData.user) throw new Error("User not created.");
+      const userId = signUpData.user.id;
+
+      const photoQuestion = enabledQuestions.find(q => q.profileField === 'photos');
+      const photoUrls: string[] = [];
+      if (photoQuestion && data[photoQuestion.id] && Array.isArray(data[photoQuestion.id])) {
+        const photoFiles = data[photoQuestion.id] as string[]; // These are data URLs
+
+        for (const [index, fileDataUrl] of photoFiles.entries()) {
+          const response = await fetch(fileDataUrl);
+          const blob = await response.blob();
+          const fileExt = blob.type.split('/')[1];
+          const fileName = `${userId}/profile_${index + 1}_${Date.now()}.${fileExt}`;
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('profile-photos')
+            .upload(fileName, blob, { cacheControl: '3600', upsert: false, contentType: blob.type });
+
+          if (uploadError) throw uploadError;
+
+          const { data: urlData } = supabase.storage.from('profile-photos').getPublicUrl(uploadData.path);
+          photoUrls.push(urlData.publicUrl);
+        }
+      }
+
       const bioQuestion = enabledQuestions.find(q => q.profileField === 'bio');
       let processedData = { ...data };
-      
       if (bioQuestion) {
         const generatedBio = generateAIBio(data, enabledQuestions);
         processedData[bioQuestion.id] = generatedBio;
       }
       
-      const dataForLogging = { ...processedData };
-      if ('password' in dataForLogging) {
-        dataForLogging.password = '********';
-      }
-      console.log('Registration form submitted with data:', dataForLogging);
+      const profileData: Record<string, any> = {
+        id: userId,
+        email: email,
+        updated_at: new Date().toISOString(),
+      };
+
+      enabledQuestions.forEach(q => {
+        if (q.profileField && q.profileField !== 'email' && q.profileField !== 'password') {
+          const formValue = processedData[q.id];
+          if (formValue !== undefined) {
+             if (q.profileField === 'photos') {
+              profileData[q.profileField] = photoUrls;
+            } else {
+              profileData[q.profileField] = formValue;
+            }
+          }
+        }
+      });
       
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      const { error: profileError } = await supabase.from('profiles').upsert(profileData);
+      if (profileError) throw profileError;
+
       toast({
         title: "Success!",
-        description: "Your account has been created successfully.",
+        description: "Your account has been created. Please check your email to verify your account before logging in.",
       });
-    } catch (error) {
+
+      navigate('/auth');
+
+    } catch (error: any) {
       console.error('Registration error:', error);
       toast({
         title: "Error",
-        description: "Failed to create account. Please try again.",
+        description: error.message || "Failed to create account. Please try again.",
         variant: "destructive",
       });
     } finally {

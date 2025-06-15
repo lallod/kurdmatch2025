@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -15,6 +14,7 @@ import ProfilePage from '@/pages/ProfilePage';
 import Admin from '@/pages/Admin';
 import Auth from '@/pages/Auth';
 import SuperAdmin from '@/pages/SuperAdmin';
+import Register from './pages/Register';
 import './App.css';
 import BottomNavigation from './components/BottomNavigation';
 import UserMenu from './components/UserMenu';
@@ -271,6 +271,7 @@ function App() {
         
         <Route element={<PublicOnlyRoute />}>
           <Route path="/auth" element={<Auth />} />
+          <Route path="/register" element={<Register />} />
         </Route>
         
         <Route element={<ProtectedRoute />}>
