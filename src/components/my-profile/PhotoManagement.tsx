@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Camera, Image, Pencil, User } from 'lucide-react';
+import { Camera, Image, Pencil, User, ShieldCheck } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface PhotoManagementProps {
   galleryImages: string[];
@@ -28,6 +29,14 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
       <p className="text-muted-foreground mb-6">
         Upload and manage your profile photos. The first photo will be your main profile picture.
       </p>
+
+      <Alert variant="default" className="mb-6 bg-blue-50 border-blue-200 text-blue-800">
+        <ShieldCheck className="h-4 w-4 !text-blue-600" />
+        <AlertTitle className="font-semibold">Din sikkerhet er vår prioritet</AlertTitle>
+        <AlertDescription className="text-blue-700">
+          Aldri del bilder som avslører personlig informasjon som hjemmeadressen eller arbeidsplassen din. Vær bevisst på hva som er i bakgrunnen på bildene dine.
+        </AlertDescription>
+      </Alert>
       
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium">Gallery ({galleryImages.length}/9)</h3>

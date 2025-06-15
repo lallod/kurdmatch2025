@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Image, Upload, X, Camera } from 'lucide-react';
+import { Image, Upload, X, Camera, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface PhotoUploadStepProps {
   form: UseFormReturn<any>;
@@ -171,6 +172,14 @@ const PhotoUploadStep = ({ form }: PhotoUploadStepProps) => {
                   />
                 </div>
               </div>
+
+              <Alert variant="default" className="mt-4 bg-blue-50 border-blue-200 text-blue-800">
+                <ShieldCheck className="h-4 w-4 !text-blue-600" />
+                <AlertTitle className="font-semibold">Din sikkerhet er vår prioritet</AlertTitle>
+                <AlertDescription className="text-blue-700">
+                  Aldri del bilder som avslører personlig informasjon som hjemmeadressen eller arbeidsplassen din. Vær bevisst på hva som er i bakgrunnen på bildene dine.
+                </AlertDescription>
+              </Alert>
               
               {/* Photo tips */}
               <div className="mt-4">

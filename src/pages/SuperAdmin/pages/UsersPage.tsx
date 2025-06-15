@@ -7,6 +7,8 @@ import { User } from '../components/users/types';
 import { useUsers } from '../components/users/hooks/useUsers';
 import UsersBannerArea from '../components/users/UsersBannerArea';
 import UserListingArea from '../components/users/UserListingArea';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ShieldAlert } from 'lucide-react';
 
 const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -62,6 +64,14 @@ const UsersPage = () => {
 
   return (
     <div className="space-y-6">
+      <Alert variant="destructive" className="bg-yellow-50 border-yellow-200 text-yellow-800">
+        <ShieldAlert className="h-4 w-4 !text-yellow-600" />
+        <AlertTitle className="font-semibold">Administratoransvar</AlertTitle>
+        <AlertDescription className="text-yellow-700">
+          Du ser på sensitive brukerdata. Håndter denne informasjonen med den største forsiktighet og respekt for brukernes personvern. Alle handlinger logges.
+        </AlertDescription>
+      </Alert>
+
       <PageHeader onExport={exportUsers} onAddUser={handleAddUser} />
 
       <UsersBannerArea 
