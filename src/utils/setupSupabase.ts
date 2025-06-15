@@ -1,8 +1,10 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 /**
- * Creates a super admin user if one doesn't exist
+ * Creates a super admin user if one doesn't exist.
+ * This function should be idempotent.
  */
 export const setupSupabase = async () => {
   const superAdminEmail = 'lalo.peshawa@gmail.com';
@@ -11,100 +13,106 @@ export const setupSupabase = async () => {
   try {
     console.log('Starting super admin setup...');
     
+    let user: User | null = null;
+
     // Try to sign in with the super admin credentials
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email: superAdminEmail,
       password: superAdminPassword
     });
-    
+
     if (signInError) {
-      // If we can't sign in, try to sign up
-      console.log('Could not sign in as super admin, trying to sign up');
-      
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: superAdminEmail,
-        password: superAdminPassword,
-        options: {
-          data: { 
-            name: 'Super Admin',
-            isAdmin: true
+      // If user doesn't exist, sign them up.
+      if (signInError.message.includes('Invalid login credentials')) {
+        console.log('Super admin does not exist, attempting to sign up.');
+        
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: superAdminEmail,
+          password: superAdminPassword,
+          options: {
+            data: { 
+              name: 'Super Admin',
+              isAdmin: true
+            }
           }
+        });
+
+        if (signUpError) {
+          // This can happen if user exists but is unconfirmed, or other issues.
+          console.error('Error creating super admin account during setup:', signUpError);
+          return false;
         }
-      });
-      
-      if (signUpError) {
-        console.error('Error creating super admin account:', signUpError);
+
+        if (!signUpData.user) {
+          console.error('Signup successful but no user object returned.');
+          return false;
+        }
+        
+        console.log('Super admin account created successfully.');
+        user = signUpData.user;
+
+        // Note: For this to work without email verification, "Confirm email" must be disabled in Supabase Auth settings.
+        // We cannot confirm the email from client-side code without a service_role key.
+      } else {
+        // Any other sign-in error is a problem.
+        console.error('An unexpected error occurred during super admin sign-in:', signInError);
         return false;
       }
-      
-      console.log('Super admin account created successfully');
-      
-      // We need to manually confirm the email for the new user since we're in development
-      try {
-        const userId = signUpData?.user?.id;
-        if (userId) {
-          const { error: confirmError } = await supabase.auth.admin.updateUserById(userId, {
-            email_confirm: true
-          });
-          
-          if (confirmError) {
-            console.log('Could not auto-confirm email (requires service role):', confirmError);
-          } else {
-            console.log('Email auto-confirmed for super admin');
-          }
-        }
-      } catch (error) {
-        console.log('Email confirmation requires service role, skipping.');
-      }
     } else {
-      console.log('Successfully signed in as super admin');
+      console.log('Successfully signed in as super admin.');
+      user = signInData.user;
     }
     
-    // After successful sign in or sign up, get the current user
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData?.user?.id) {
-      console.error('Could not get current user');
+    if (!user || !user.id) {
+      console.error('Could not get super admin user details after sign in/up.');
+      await supabase.auth.signOut().catch(() => {});
       return false;
     }
     
-    // Check if the role exists
+    // With a valid user, check if their role is set.
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
-      .select('*')
-      .eq('user_id', userData.user.id)
+      .select('role')
+      .eq('user_id', user.id)
       .eq('role', 'super_admin')
       .maybeSingle();
     
     if (roleError) {
-      console.error('Error checking super admin role:', roleError);
+      console.error('Error checking for super admin role:', roleError);
+      await supabase.auth.signOut().catch(() => {});
+      return false;
     }
     
-    // If role doesn't exist, create it
     if (!roleData) {
-      console.log('Adding super_admin role');
+      console.log(`User ${user.email} does not have super_admin role, adding it.`);
       
       const { error: insertRoleError } = await supabase
         .from('user_roles')
         .insert({
-          user_id: userData.user.id,
+          user_id: user.id,
           role: 'super_admin'
         });
       
       if (insertRoleError) {
         console.error('Error adding super_admin role:', insertRoleError);
-      } else {
-        console.log('Super admin role created successfully');
+        await supabase.auth.signOut().catch(() => {});
+        return false;
       }
+      
+      console.log('Super admin role created successfully.');
     } else {
-      console.log('User already has super_admin role');
+      console.log('User already has super_admin role.');
     }
     
-    // Sign out after setup so the user can log in properly through the UI
+    // Sign out to clean up the session. The user will log in through the form.
     await supabase.auth.signOut();
+    console.log('Super admin setup check complete. Signed out.');
     
     return true;
   } catch (error) {
-    console.error('Setup error:', error);
+    console.error('A critical error occurred during Supabase setup:', error);
+    // Try to sign out to prevent being stuck in a bad state
+    await supabase.auth.signOut().catch(e => console.error("Error signing out in catch block:", e));
     return false;
   }
 };

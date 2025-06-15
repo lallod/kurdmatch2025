@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import SocialLogin from '@/components/auth/components/SocialLogin';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -205,6 +206,12 @@ const Auth = () => {
               : "Don't have an account? Sign up"}
           </button>
         </div>
+
+        {!isSignUp && (
+          <div className="pt-4">
+            <SocialLogin isLoading={isLoading} />
+          </div>
+        )}
       </div>
     </div>
   );
