@@ -6,49 +6,121 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Loader2, AlertCircle, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
+import { Loader2, AlertCircle, ArrowLeft, Shield, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { setupSupabase } from '@/utils/setupSupabase';
+import { setupSupabase, clearSetupCache } from '@/utils/setupSupabase';
 
 const SuperAdminLogin = () => {
   const [email, setEmail] = useState('lalo.peshawa@gmail.com');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isSettingUp, setIsSettingUp] = useState(true);
+  const [isSettingUp, setIsSettingUp] = useState(false);
   const [setupComplete, setSetupComplete] = useState(false);
   const [setupMessage, setSetupMessage] = useState<string | null>(null);
+  const [retryAfter, setRetryAfter] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState<number>(0);
   const { signIn } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Countdown timer for retry
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [countdown]);
 
   // Run setup on component mount
   useEffect(() => {
     const runSetup = async () => {
       setIsSettingUp(true);
       setSetupMessage(null);
-      const { success, message } = await setupSupabase();
-      setIsSettingUp(false);
-      setSetupComplete(success);
+      setErrorMessage(null);
       
-      if (success) {
+      const result = await setupSupabase();
+      setIsSettingUp(false);
+      setSetupComplete(result.success);
+      
+      if (result.success) {
         toast({
           title: "Admin Account Ready",
           description: "Super admin account has been verified successfully.",
         });
       } else {
-        const description = message || "There was a problem setting up the admin account.";
+        const description = result.message || "There was a problem setting up the admin account.";
         setSetupMessage(description);
+        
+        if (result.shouldRetry && result.retryAfter) {
+          setRetryAfter(result.retryAfter);
+          setCountdown(Math.ceil(result.retryAfter / 1000));
+        }
+        
         toast({
-          title: "Setup Issue",
+          title: result.shouldRetry ? "Setup Delayed" : "Setup Issue",
           description: description,
-          variant: "destructive",
+          variant: result.shouldRetry ? "default" : "destructive",
         });
       }
     };
     
     runSetup();
   }, [toast]);
+
+  const handleRetrySetup = async () => {
+    if (countdown > 0) return;
+    
+    setIsSettingUp(true);
+    setSetupMessage(null);
+    setErrorMessage(null);
+    setRetryAfter(null);
+    setCountdown(0);
+    
+    const result = await setupSupabase();
+    setIsSettingUp(false);
+    setSetupComplete(result.success);
+    
+    if (result.success) {
+      toast({
+        title: "Admin Account Ready",
+        description: "Super admin account has been verified successfully.",
+      });
+    } else {
+      const description = result.message || "There was a problem setting up the admin account.";
+      setSetupMessage(description);
+      
+      if (result.shouldRetry && result.retryAfter) {
+        setRetryAfter(result.retryAfter);
+        setCountdown(Math.ceil(result.retryAfter / 1000));
+      }
+      
+      toast({
+        title: result.shouldRetry ? "Setup Delayed" : "Setup Issue",
+        description: description,
+        variant: result.shouldRetry ? "default" : "destructive",
+      });
+    }
+  };
+
+  const handleForceClearCache = () => {
+    clearSetupCache();
+    setSetupComplete(false);
+    setSetupMessage(null);
+    setErrorMessage(null);
+    setRetryAfter(null);
+    setCountdown(0);
+    
+    toast({
+      title: "Cache Cleared",
+      description: "Setup cache has been cleared. You can now retry the setup.",
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +155,7 @@ const SuperAdminLogin = () => {
       }
 
       if (!roleData) {
-        // No super admin role found, this should not happen if setup was successful, but as a fallback
+        // No super admin role found
         await supabase.auth.signOut();
         throw new Error('You do not have permission to access the admin dashboard.');
       }
@@ -146,10 +218,47 @@ const SuperAdminLogin = () => {
         )}
 
         {!isSettingUp && setupMessage && !setupComplete && (
-            <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded relative flex items-start" role="alert">
+          <div className="space-y-3">
+            <div className={`border px-4 py-3 rounded relative flex items-start ${
+              retryAfter ? 'bg-yellow-900/50 border-yellow-700 text-yellow-200' : 'bg-red-900/50 border-red-700 text-red-200'
+            }`} role="alert">
+              {retryAfter ? (
+                <Clock className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+              ) : (
                 <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
-                <span className="block">{setupMessage}</span>
+              )}
+              <span className="block">{setupMessage}</span>
             </div>
+            
+            {retryAfter && (
+              <div className="flex items-center justify-between bg-gray-700 p-3 rounded">
+                <span className="text-gray-300 text-sm">
+                  {countdown > 0 ? `Retry available in ${countdown}s` : 'Ready to retry'}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRetrySetup}
+                  disabled={countdown > 0}
+                  className="text-gray-300 border-gray-600 hover:bg-gray-600"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Retry Setup
+                </Button>
+              </div>
+            )}
+            
+            {!retryAfter && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleForceClearCache}
+                className="w-full text-gray-300 border-gray-600 hover:bg-gray-600"
+              >
+                Clear Cache & Retry
+              </Button>
+            )}
+          </div>
         )}
         
         {setupComplete && !isSettingUp && (
