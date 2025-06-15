@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,8 +15,9 @@ const SuperAdminLogin = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isSettingUp, setIsSettingUp] = useState(false);
+  const [isSettingUp, setIsSettingUp] = useState(true);
   const [setupComplete, setSetupComplete] = useState(false);
+  const [setupMessage, setSetupMessage] = useState<string | null>(null);
   const { signIn } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -24,19 +26,22 @@ const SuperAdminLogin = () => {
   useEffect(() => {
     const runSetup = async () => {
       setIsSettingUp(true);
-      const success = await setupSupabase();
+      setSetupMessage(null);
+      const { success, message } = await setupSupabase();
       setIsSettingUp(false);
       setSetupComplete(success);
       
       if (success) {
         toast({
           title: "Admin Account Ready",
-          description: "Super admin account has been set up successfully.",
+          description: "Super admin account has been verified successfully.",
         });
       } else {
+        const description = message || "There was a problem setting up the admin account.";
+        setSetupMessage(description);
         toast({
           title: "Setup Issue",
-          description: "There was a problem setting up the admin account.",
+          description: description,
           variant: "destructive",
         });
       }
@@ -78,20 +83,9 @@ const SuperAdminLogin = () => {
       }
 
       if (!roleData) {
-        // No super admin role found, try to create it
-        console.log('No super admin role found, creating one');
-        
-        const { error: insertError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: userData.user.id,
-            role: 'super_admin'
-          });
-        
-        if (insertError) {
-          console.error('Error creating super admin role:', insertError);
-          throw new Error('You do not have permission to become a super admin');
-        }
+        // No super admin role found, this should not happen if setup was successful, but as a fallback
+        await supabase.auth.signOut();
+        throw new Error('You do not have permission to access the admin dashboard.');
       }
 
       toast({
@@ -103,11 +97,15 @@ const SuperAdminLogin = () => {
     } catch (error: any) {
       console.error('Authentication error:', error);
       
-      setErrorMessage(error.message || "Something went wrong. Please try again.");
+      let description = error.message || "Something went wrong. Please try again.";
+      if (error.message.toLowerCase().includes('failed to fetch')) {
+        description = "Could not connect to the server. Please check your internet connection and ensure the Supabase project is running and CORS is configured correctly for this domain.";
+      }
+      setErrorMessage(description);
       
       toast({
         title: "Authentication failed",
-        description: error.message || "Something went wrong. Please try again.",
+        description: description,
         variant: "destructive",
       });
     } finally {
@@ -142,14 +140,21 @@ const SuperAdminLogin = () => {
         {isSettingUp && (
           <div className="bg-blue-900/50 border border-blue-700 text-blue-200 px-4 py-3 rounded relative flex items-center" role="alert">
             <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-            <span>Setting up admin account...</span>
+            <span>Verifying admin account setup...</span>
           </div>
         )}
 
-        {setupComplete && (
+        {!isSettingUp && setupMessage && !setupComplete && (
+            <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded relative flex items-start" role="alert">
+                <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="block">{setupMessage}</span>
+            </div>
+        )}
+        
+        {setupComplete && !isSettingUp && (
           <div className="bg-green-900/50 border border-green-700 text-green-200 px-4 py-3 rounded relative flex items-center" role="alert">
             <CheckCircle className="h-5 w-5 mr-2" />
-            <span>Admin account ready! You can now log in.</span>
+            <span>Admin account is ready! You can now log in.</span>
           </div>
         )}
         
@@ -182,7 +187,7 @@ const SuperAdminLogin = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              disabled={isLoading || isSettingUp}
+              disabled={isLoading || isSettingUp || !setupComplete}
               className="bg-gray-700 border-gray-600 text-white"
             />
           </div>
@@ -190,7 +195,7 @@ const SuperAdminLogin = () => {
           <Button
             type="submit"
             className="w-full bg-purple-800 hover:bg-purple-700 text-white"
-            disabled={isLoading || isSettingUp}
+            disabled={isLoading || isSettingUp || !setupComplete}
           >
             {isLoading ? (
               <>

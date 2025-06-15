@@ -3,26 +3,25 @@ import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 
 /**
- * Creates a super admin user if one doesn't exist.
+ * Checks and sets up the super admin user and role.
  * This function should be idempotent.
+ * @returns An object with success status and an optional message.
  */
-export const setupSupabase = async () => {
+export const setupSupabase = async (): Promise<{ success: boolean; message?: string }> => {
   const superAdminEmail = 'lalo.peshawa@gmail.com';
   const superAdminPassword = 'Hanasa2011';
-  
+
   try {
-    console.log('Starting super admin setup...');
+    console.log('Starting super admin setup verification...');
     
     let user: User | null = null;
 
-    // Try to sign in with the super admin credentials
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email: superAdminEmail,
       password: superAdminPassword
     });
 
     if (signInError) {
-      // If user doesn't exist, sign them up.
       if (signInError.message.includes('Invalid login credentials')) {
         console.log('Super admin does not exist, attempting to sign up.');
         
@@ -38,25 +37,28 @@ export const setupSupabase = async () => {
         });
 
         if (signUpError) {
-          // This can happen if user exists but is unconfirmed, or other issues.
           console.error('Error creating super admin account during setup:', signUpError);
-          return false;
+          let message = `Error creating super admin: ${signUpError.message}.`;
+          if (signUpError.message.includes('rate limit')) {
+            message += ' Please wait a moment before trying again.';
+          } else {
+             message += ' This might be due to email confirmation being enabled in your Supabase project. Please disable it for the setup to complete automatically.';
+          }
+          return { success: false, message };
         }
 
         if (!signUpData.user) {
-          console.error('Signup successful but no user object returned.');
-          return false;
+          const message = 'Signup successful but no user object returned. This may be because email confirmation is required in your Supabase project. Please disable it to proceed.';
+          console.error(message);
+          return { success: false, message };
         }
         
         console.log('Super admin account created successfully.');
         user = signUpData.user;
 
-        // Note: For this to work without email verification, "Confirm email" must be disabled in Supabase Auth settings.
-        // We cannot confirm the email from client-side code without a service_role key.
       } else {
-        // Any other sign-in error is a problem.
         console.error('An unexpected error occurred during super admin sign-in:', signInError);
-        return false;
+        return { success: false, message: `Super admin sign-in failed: ${signInError.message}` };
       }
     } else {
       console.log('Successfully signed in as super admin.');
@@ -64,12 +66,12 @@ export const setupSupabase = async () => {
     }
     
     if (!user || !user.id) {
-      console.error('Could not get super admin user details after sign in/up.');
+      const message = 'Could not get super admin user details after sign in/up.';
+      console.error(message);
       await supabase.auth.signOut().catch(() => {});
-      return false;
+      return { success: false, message };
     }
     
-    // With a valid user, check if their role is set.
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select('role')
@@ -79,8 +81,9 @@ export const setupSupabase = async () => {
     
     if (roleError) {
       console.error('Error checking for super admin role:', roleError);
+      const message = `Error checking admin role: ${roleError.message}. Make sure the 'user_roles' table exists and RLS is configured to allow access.`;
       await supabase.auth.signOut().catch(() => {});
-      return false;
+      return { success: false, message };
     }
     
     if (!roleData) {
@@ -95,8 +98,9 @@ export const setupSupabase = async () => {
       
       if (insertRoleError) {
         console.error('Error adding super_admin role:', insertRoleError);
+        const message = `Error adding admin role: ${insertRoleError.message}. Make sure the 'user_roles' table exists and has the correct columns (user_id, role).`;
         await supabase.auth.signOut().catch(() => {});
-        return false;
+        return { success: false, message };
       }
       
       console.log('Super admin role created successfully.');
@@ -104,15 +108,17 @@ export const setupSupabase = async () => {
       console.log('User already has super_admin role.');
     }
     
-    // Sign out to clean up the session. The user will log in through the form.
     await supabase.auth.signOut();
     console.log('Super admin setup check complete. Signed out.');
     
-    return true;
-  } catch (error) {
+    return { success: true, message: 'Super admin account is ready.' };
+  } catch (error: any) {
     console.error('A critical error occurred during Supabase setup:', error);
-    // Try to sign out to prevent being stuck in a bad state
+    let message = `A critical error occurred: ${error.message}.`;
+    if (error.message.toLowerCase().includes('failed to fetch')) {
+        message += ' Please check your internet connection and Supabase project status/CORS settings.'
+    }
     await supabase.auth.signOut().catch(e => console.error("Error signing out in catch block:", e));
-    return false;
+    return { success: false, message };
   }
 };
