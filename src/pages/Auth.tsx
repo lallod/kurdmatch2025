@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import SocialLogin from '@/components/auth/components/SocialLogin';
+import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -19,34 +21,32 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Only redirect if user is authenticated and this is not an OAuth callback
     if (!user || !user.id) return;
+    
+    // Check if this is coming from OAuth callback by checking URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const isOAuthCallback = urlParams.has('code') || urlParams.has('access_token');
+    
+    // If this is an OAuth callback, let the AuthCallback component handle it
+    if (isOAuthCallback) return;
     
     const checkUserRole = async () => {
       try {
         console.log("Checking role for user ID:", user.id);
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('role', 'super_admin')
-          .maybeSingle();
+        const isSuperAdmin = await isUserSuperAdmin(user.id);
 
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error checking user role:', error);
-          throw error;
-        }
-
-        if (data) {
+        if (isSuperAdmin) {
           console.log("User has super_admin role, redirecting to super-admin");
           navigate('/super-admin');
           return;
         }
 
-        console.log("Regular user, redirecting to app");
-        navigate('/app');
+        console.log("Regular user, redirecting to discovery");
+        navigate('/discovery');
       } catch (error) {
         console.error('Error checking user role:', error);
-        navigate('/app');
+        navigate('/discovery');
       }
     };
 
