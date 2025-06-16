@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -33,9 +32,13 @@ const registrationSchema = z.object({
     const age = today.getFullYear() - date.getFullYear();
     return age >= 18;
   }, { message: 'You must be at least 18 years old' }),
-  gender: z.string().min(1, { message: 'Please select your gender' }),
+  gender: z.enum(['male', 'female'], { message: 'Please select your gender' }),
+  height: z.string().min(1, { message: 'Height is required' }),
+  bornIn: z.string().min(2, { message: 'Born in country is required' }),
+  languages: z.array(z.string()).min(1, { message: 'Please select at least one language' }),
+  occupation: z.string().min(1, { message: 'Occupation is required' }),
   location: z.string().min(2, { message: 'Location is required' }),
-  bio: z.string().max(500, { message: 'Bio must be less than 500 characters' }).optional(),
+  dreamVacation: z.string().optional(),
   photos: z.array(z.string()).min(1, { message: 'At least one photo is required' }),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -67,9 +70,13 @@ const SimpleRegistrationForm = () => {
       firstName: '',
       lastName: '',
       dateOfBirth: '',
-      gender: '',
+      gender: 'male',
+      height: '',
+      bornIn: '',
+      languages: [],
+      occupation: '',
       location: '',
-      bio: '',
+      dreamVacation: '',
       photos: [],
     },
     mode: 'onChange',
@@ -104,15 +111,15 @@ const SimpleRegistrationForm = () => {
     },
     { 
       title: "Basic Info", 
-      fields: ["firstName", "lastName", "dateOfBirth", "gender"],
+      fields: ["firstName", "lastName", "dateOfBirth", "gender", "height", "bornIn", "languages", "occupation"],
       icon: User,
       description: "Tell us about yourself"
     },
     { 
-      title: "Location & Bio", 
-      fields: ["location", "bio"],
+      title: "Location & Travel", 
+      fields: ["location", "dreamVacation"],
       icon: MapPin,
-      description: "Where are you from?"
+      description: "Where are you from and where do you dream to go?"
     },
     { 
       title: "Photos", 

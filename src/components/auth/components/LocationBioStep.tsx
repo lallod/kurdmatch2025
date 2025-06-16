@@ -3,7 +3,6 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { MapPin, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
   FormField,
   FormItem,
@@ -12,6 +11,7 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form';
+import EnhancedLocationSearch from './enhanced-fields/EnhancedLocationSearch';
 
 interface LocationBioStepProps {
   form: UseFormReturn<any>;
@@ -23,8 +23,8 @@ const LocationBioStep = ({ form, location, locationLoading }: LocationBioStepPro
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Location & Bio</h2>
-        <p className="text-gray-300 mt-1">Where are you from?</p>
+        <h2 className="text-2xl font-bold text-white">Location & Travel</h2>
+        <p className="text-gray-300 mt-1">Where are you from and where do you dream to go?</p>
       </div>
       
       <FormField
@@ -58,22 +58,21 @@ const LocationBioStep = ({ form, location, locationLoading }: LocationBioStepPro
           </FormItem>
         )}
       />
-      
+
       <FormField
         control={form.control}
-        name="bio"
+        name="dreamVacation"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">About Me (Optional)</FormLabel>
             <FormControl>
-              <Textarea 
-                placeholder="Tell us a bit about yourself..." 
-                className="resize-none min-h-[100px] bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
-                {...field}
+              <EnhancedLocationSearch 
+                value={field.value}
+                onChange={field.onChange}
+                label="Dream Vacation Destination"
               />
             </FormControl>
             <FormDescription className="text-xs text-gray-400">
-              {field.value?.length || 0}/500 characters
+              Where would you love to travel? Includes all parts of Kurdistan and top global destinations.
             </FormDescription>
             <FormMessage />
           </FormItem>

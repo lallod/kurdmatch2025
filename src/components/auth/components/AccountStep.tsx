@@ -37,6 +37,8 @@ const AccountStep = ({ form }: AccountStepProps) => {
                   placeholder="your@email.com" 
                   className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
                   type="email"
+                  autoComplete="email"
+                  autoFocus
                   {...field} 
                 />
               </div>
@@ -59,6 +61,7 @@ const AccountStep = ({ form }: AccountStepProps) => {
                   placeholder="Create a strong password" 
                   className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
                   type="password"
+                  autoComplete="new-password"
                   {...field} 
                 />
               </div>
@@ -84,6 +87,7 @@ const AccountStep = ({ form }: AccountStepProps) => {
                   placeholder="Confirm your password" 
                   className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
                   type="password"
+                  autoComplete="new-password"
                   {...field} 
                 />
               </div>

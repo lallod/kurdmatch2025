@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Calendar } from 'lucide-react';
+import { User, Calendar } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   FormField,
   FormItem,
@@ -12,6 +12,10 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form';
+import HeightSelector from './enhanced-fields/HeightSelector';
+import CountrySearchField from './enhanced-fields/CountrySearchField';
+import LanguageMultiSelect from './enhanced-fields/LanguageMultiSelect';
+import OccupationSelector from './enhanced-fields/OccupationSelector';
 
 interface BasicInfoStepProps {
   form: UseFormReturn<any>;
@@ -33,7 +37,15 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
             <FormItem>
               <FormLabel className="text-white">First Name</FormLabel>
               <FormControl>
-                <Input placeholder="John" className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" {...field} />
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
+                  <Input 
+                    placeholder="John" 
+                    className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
+                    autoComplete="given-name"
+                    {...field} 
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -47,7 +59,12 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
             <FormItem>
               <FormLabel className="text-white">Last Name</FormLabel>
               <FormControl>
-                <Input placeholder="Doe" className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" {...field} />
+                <Input 
+                  placeholder="Doe" 
+                  className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
+                  autoComplete="family-name"
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -67,12 +84,13 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
                 <Input 
                   type="date" 
                   className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white focus:border-purple-500 focus:ring-purple-500/20" 
+                  autoComplete="bday"
                   {...field} 
                 />
               </div>
             </FormControl>
             <FormDescription className="text-xs text-gray-400">
-              You must be at least 18 years old
+              You must be at least 18 years old to register
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -85,19 +103,94 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-white">Gender</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white focus:border-purple-500 focus:ring-purple-500/20">
-                  <SelectValue placeholder="Select your gender" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent className="bg-gray-900/95 backdrop-blur border-white/20">
-                <SelectItem value="man" className="text-white hover:bg-white/10">Man</SelectItem>
-                <SelectItem value="woman" className="text-white hover:bg-white/10">Woman</SelectItem>
-                <SelectItem value="non-binary" className="text-white hover:bg-white/10">Non-binary</SelectItem>
-                <SelectItem value="prefer-not-to-say" className="text-white hover:bg-white/10">Prefer not to say</SelectItem>
-              </SelectContent>
-            </Select>
+            <FormControl>
+              <RadioGroup
+                onValueChange={field.onChange}
+                value={field.value}
+                className="flex gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem 
+                    value="male" 
+                    id="male" 
+                    className="border-white/20 text-purple-500"
+                  />
+                  <label htmlFor="male" className="text-white">Male</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem 
+                    value="female" 
+                    id="female" 
+                    className="border-white/20 text-purple-500"
+                  />
+                  <label htmlFor="female" className="text-white">Female</label>
+                </div>
+              </RadioGroup>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="height"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <HeightSelector 
+                value={field.value}
+                onChange={field.onChange}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="bornIn"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <CountrySearchField 
+                value={field.value}
+                onChange={field.onChange}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="languages"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <LanguageMultiSelect 
+                value={field.value}
+                onChange={field.onChange}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="occupation"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <OccupationSelector 
+                value={field.value}
+                onChange={field.onChange}
+              />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
