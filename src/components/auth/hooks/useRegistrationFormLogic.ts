@@ -65,14 +65,18 @@ export const useRegistrationFormLogic = () => {
   useEffect(() => {
     if (!hasLoadedSavedData) {
       try {
+        console.log('Loading saved data...');
         const savedData = loadSavedData();
         if (savedData) {
+          console.log('Saved data found:', savedData);
           // Ensure languages field is always an array
           const processedData = {
             ...savedData.formData,
             languages: Array.isArray(savedData.formData.languages) ? savedData.formData.languages : [],
             photos: Array.isArray(savedData.formData.photos) ? savedData.formData.photos : []
           };
+          
+          console.log('Processed data:', processedData);
           
           // Reset form with processed data
           form.reset(processedData);
@@ -87,6 +91,9 @@ export const useRegistrationFormLogic = () => {
               description: `Resuming your registration from ${timeAgo} minute${timeAgo !== 1 ? 's' : ''} ago.`,
             });
           }
+        } else {
+          console.log('No saved data found, using defaults');
+          form.reset(defaultValues);
         }
       } catch (error) {
         console.error('Error loading saved data:', error);
@@ -125,22 +132,34 @@ export const useRegistrationFormLogic = () => {
   }, [step, isSubmitting]);
 
   const validateStep = async (stepIndex: number) => {
-    const currentStepFields = registrationSteps[stepIndex - 1].fields;
-    
-    const result = await form.trigger(currentStepFields);
-    if (result) {
-      if (!completedSteps.includes(stepIndex)) {
-        setCompletedSteps([...completedSteps, stepIndex]);
+    try {
+      const currentStepFields = registrationSteps[stepIndex - 1].fields;
+      console.log('Validating step', stepIndex, 'with fields:', currentStepFields);
+      
+      const result = await form.trigger(currentStepFields);
+      console.log('Validation result:', result);
+      
+      if (result) {
+        if (!completedSteps.includes(stepIndex)) {
+          setCompletedSteps([...completedSteps, stepIndex]);
+        }
+        return true;
       }
-      return true;
+      return false;
+    } catch (error) {
+      console.error('Error during validation:', error);
+      return false;
     }
-    return false;
   };
 
   const nextStep = async () => {
-    const isValid = await validateStep(step);
-    if (isValid && step < registrationSteps.length) {
-      setStep(step + 1);
+    try {
+      const isValid = await validateStep(step);
+      if (isValid && step < registrationSteps.length) {
+        setStep(step + 1);
+      }
+    } catch (error) {
+      console.error('Error in nextStep:', error);
     }
   };
 

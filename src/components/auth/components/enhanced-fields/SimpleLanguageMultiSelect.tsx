@@ -36,6 +36,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Ensure value is always an array
   const currentValue = Array.isArray(value) ? value : [];
 
   const filteredLanguages = kurdishLanguages.filter(lang =>

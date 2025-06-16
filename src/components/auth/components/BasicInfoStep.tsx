@@ -22,6 +22,8 @@ interface BasicInfoStepProps {
 }
 
 const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
+  console.log('BasicInfoStep rendering with form values:', form.getValues());
+
   return (
     <div className="space-y-6">
       <BasicInfoHeader />
@@ -46,7 +48,7 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
             <FormItem>
               <FormControl>
                 <HeightSelector 
-                  value={field.value}
+                  value={field.value || ''}
                   onChange={field.onChange}
                 />
               </FormControl>
@@ -64,7 +66,7 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
             <FormItem>
               <FormControl>
                 <CountrySearchField 
-                  value={field.value}
+                  value={field.value || ''}
                   onChange={field.onChange}
                 />
               </FormControl>
@@ -82,7 +84,7 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
             <FormItem>
               <FormControl>
                 <SimpleLanguageMultiSelect 
-                  value={field.value || []}
+                  value={Array.isArray(field.value) ? field.value : []}
                   onChange={field.onChange}
                 />
               </FormControl>
@@ -100,7 +102,7 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
             <FormItem>
               <FormControl>
                 <OccupationSelector 
-                  value={field.value}
+                  value={field.value || ''}
                   onChange={field.onChange}
                 />
               </FormControl>
