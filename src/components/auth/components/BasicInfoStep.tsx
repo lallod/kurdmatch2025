@@ -1,17 +1,16 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { User, Calendar } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
-  FormDescription,
   FormMessage,
 } from '@/components/ui/form';
+import BasicInfoHeader from './basic-info/BasicInfoHeader';
+import NameFields from './basic-info/NameFields';
+import DateOfBirthField from './basic-info/DateOfBirthField';
+import GenderField from './basic-info/GenderField';
 import HeightSelector from './enhanced-fields/HeightSelector';
 import CountrySearchField from './enhanced-fields/CountrySearchField';
 import LanguageMultiSelect from './enhanced-fields/LanguageMultiSelect';
@@ -24,113 +23,13 @@ interface BasicInfoStepProps {
 const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
   return (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Basic Info</h2>
-        <p className="text-gray-300 mt-1">Tell us about yourself</p>
-      </div>
+      <BasicInfoHeader />
       
-      <div className="grid grid-cols-2 gap-4">
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">First Name</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
-                  <Input 
-                    placeholder="John" 
-                    className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
-                    autoComplete="given-name"
-                    {...field} 
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Last Name</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Doe" 
-                  className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
-                  autoComplete="family-name"
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+      <NameFields form={form} />
       
-      <FormField
-        control={form.control}
-        name="dateOfBirth"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-white">Date of Birth</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
-                <Input 
-                  type="date" 
-                  className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white focus:border-purple-500 focus:ring-purple-500/20" 
-                  autoComplete="bday"
-                  {...field} 
-                />
-              </div>
-            </FormControl>
-            <FormDescription className="text-xs text-gray-400">
-              You must be at least 18 years old to register
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <DateOfBirthField form={form} />
       
-      <FormField
-        control={form.control}
-        name="gender"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-white">Gender</FormLabel>
-            <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
-                value={field.value}
-                className="flex gap-6"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem 
-                    value="male" 
-                    id="male" 
-                    className="border-white/20 text-purple-500"
-                  />
-                  <label htmlFor="male" className="text-white">Male</label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem 
-                    value="female" 
-                    id="female" 
-                    className="border-white/20 text-purple-500"
-                  />
-                  <label htmlFor="female" className="text-white">Female</label>
-                </div>
-              </RadioGroup>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <GenderField form={form} />
 
       <FormField
         control={form.control}
