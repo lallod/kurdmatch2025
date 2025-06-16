@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { QuestionItem, toDbQuestion, fromDbQuestion, QuestionItemDB } from '@/pages/SuperAdmin/components/registration-questions/types';
+import { QuestionItem, toDbQuestion, fromDbQuestion } from '@/pages/SuperAdmin/components/registration-questions/types';
 
 export const getUserRoles = async () => {
   const { data: { session } } = await supabase.auth.getSession();
@@ -75,7 +75,7 @@ export const getAllUsers = async () => {
   
   // Merge profile data with real email addresses
   const usersWithEmails = profiles?.map(profile => {
-    const authUser = authUsers?.users?.find(user => user.id === profile.id);
+    const authUser = authUsers?.users?.find((user: any) => user.id === profile.id);
     return {
       ...profile,
       email: authUser?.email || `user-${profile.id.substring(0, 8)}@unknown.com`
