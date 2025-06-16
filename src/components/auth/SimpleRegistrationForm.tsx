@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useLocationManager } from '@/components/my-profile/sections/location/useLocationManager';
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 // Import the new components
 import StepIndicator from '@/components/auth/components/StepIndicator';
@@ -16,6 +18,7 @@ import BasicInfoStep from '@/components/auth/components/BasicInfoStep';
 import LocationBioStep from '@/components/auth/components/LocationBioStep';
 import PhotoUploadStep from '@/components/auth/components/PhotoUploadStep';
 import FormNavigation from '@/components/auth/components/FormNavigation';
+import AutoSaveIndicator from '@/components/auth/components/AutoSaveIndicator';
 
 const registrationSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -60,6 +63,7 @@ const SimpleRegistrationForm = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
@@ -85,8 +89,37 @@ const SimpleRegistrationForm = () => {
   const { formState } = form;
   const isSubmitting = formState.isSubmitting;
 
+  // Auto-save integration
+  const { loadSavedData, clearSavedData, getLastSavedTime } = useAutoSave({
+    form,
+    currentStep: step,
+    completedSteps,
+    isSubmitting,
+  });
+
   // Location management for step 3
   const { location, handleLocationDetection, isLoading: locationLoading } = useLocationManager('');
+
+  // Load saved data on component mount
+  useEffect(() => {
+    if (!hasLoadedSavedData) {
+      const savedData = loadSavedData();
+      if (savedData) {
+        setStep(savedData.currentStep);
+        setCompletedSteps(savedData.completedSteps);
+        
+        const lastSavedTime = getLastSavedTime();
+        if (lastSavedTime) {
+          const timeAgo = Math.round((Date.now() - lastSavedTime) / (1000 * 60));
+          toast({
+            title: "Welcome back!",
+            description: `Resuming your registration from ${timeAgo} minute${timeAgo !== 1 ? 's' : ''} ago.`,
+          });
+        }
+      }
+      setHasLoadedSavedData(true);
+    }
+  }, [hasLoadedSavedData, loadSavedData, getLastSavedTime, toast]);
 
   // Auto-detect location when reaching step 3
   useEffect(() => {
@@ -101,6 +134,19 @@ const SimpleRegistrationForm = () => {
       form.setValue('location', location, { shouldValidate: true });
     }
   }, [location, step, form]);
+
+  // Prevent accidental navigation away
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (step > 1 && !isSubmitting) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [step, isSubmitting]);
 
   const steps: Step[] = [
     { 
@@ -162,6 +208,9 @@ const SimpleRegistrationForm = () => {
       const { data: signUpData, error: signUpError } = await signUp(data.email, data.password);
       if (signUpError) throw signUpError;
       
+      // Clear saved data on successful submission
+      clearSavedData();
+      
       // TODO: Create profile with additional data including photos
       
       toast({
@@ -215,6 +264,8 @@ const SimpleRegistrationForm = () => {
           completedSteps={completedSteps}
           steps={steps}
         />
+        
+        <AutoSaveIndicator />
         
         {renderFormByStep()}
         
