@@ -17,6 +17,7 @@ import ProfilePage from '@/pages/ProfilePage';
 import Admin from '@/pages/Admin';
 import SuperAdmin from '@/pages/SuperAdmin';
 import SuperAdminLogin from '@/components/auth/SuperAdminLogin';
+import SuperAdminSetup from '@/components/auth/SuperAdminSetup';
 import AuthCallback from '@/components/auth/AuthCallback';
 import NotFound from '@/pages/NotFound';
 
@@ -62,6 +63,12 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       <Route 
         path="/admin-login" 
         element={<SuperAdminLogin />} 
+      />
+      
+      {/* Super Admin Setup Route */}
+      <Route 
+        path="/admin-setup" 
+        element={<SuperAdminSetup />} 
       />
       
       {/* Protected routes */}
