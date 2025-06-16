@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -13,25 +12,81 @@ const AuthCallback = () => {
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const checkProfileCompleteness = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('bio, interests, hobbies, occupation, location, age')
+        .eq('id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+        console.error('Error checking profile:', error);
+        return false;
+      }
+
+      // If no profile exists or key fields are missing/empty, consider it incomplete
+      if (!profile || 
+          !profile.bio || 
+          !profile.occupation || 
+          !profile.location || 
+          !profile.age ||
+          !profile.interests?.length ||
+          !profile.hobbies?.length) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error checking profile completeness:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     const handleOAuthCallback = async () => {
       try {
         console.log('Processing OAuth callback...');
         
-        // Handle the OAuth callback by exchanging the code for a session
-        const { data, error: authError } = await supabase.auth.exchangeCodeForSession(window.location.search);
+        // Check if this is an OAuth callback
+        const urlParams = new URLSearchParams(window.location.search);
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
         
-        if (authError) {
-          console.error('OAuth callback error:', authError);
-          throw authError;
-        }
+        // Handle authorization code flow (most common)
+        if (urlParams.has('code')) {
+          console.log('Processing authorization code...');
+          const { data, error: authError } = await supabase.auth.exchangeCodeForSession(window.location.search);
+          
+          if (authError) {
+            console.error('OAuth code exchange error:', authError);
+            throw authError;
+          }
 
-        console.log('OAuth callback successful:', data);
+          console.log('OAuth code exchange successful:', data);
+        }
+        // Handle implicit flow (fallback)
+        else if (hashParams.has('access_token')) {
+          console.log('Processing access token from URL fragment...');
+          const { data, error: authError } = await supabase.auth.getSession();
+          
+          if (authError) {
+            console.error('Session retrieval error:', authError);
+            throw authError;
+          }
+        }
+        // Handle error cases
+        else if (urlParams.has('error')) {
+          const errorDescription = urlParams.get('error_description') || urlParams.get('error');
+          throw new Error(errorDescription || 'OAuth authentication failed');
+        }
+        else {
+          throw new Error('Invalid OAuth callback - missing required parameters');
+        }
         
-        // Wait a moment for the session to be fully established
+        // Wait for session to be established
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Get the current session to ensure we have the user
+        // Get the current session
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -47,7 +102,7 @@ const AuthCallback = () => {
 
         console.log('User authenticated successfully:', currentUser.email);
         
-        // Check if user is super admin
+        // Check if user is super admin first
         const isSuperAdmin = await isUserSuperAdmin(currentUser.id);
         
         if (isSuperAdmin) {
@@ -56,12 +111,26 @@ const AuthCallback = () => {
             description: "Redirecting to super admin dashboard...",
           });
           navigate('/super-admin', { replace: true });
-        } else {
+          return;
+        }
+
+        // Check if user has complete profile
+        const hasCompleteProfile = await checkProfileCompleteness(currentUser.id);
+        
+        if (hasCompleteProfile) {
+          // Returning user with complete profile
           toast({
-            title: "Welcome!",
-            description: "Login successful. Redirecting...",
+            title: "Welcome back!",
+            description: "Redirecting to discovery...",
           });
           navigate('/discovery', { replace: true });
+        } else {
+          // New user or incomplete profile - redirect to registration wizard
+          toast({
+            title: "Welcome!",
+            description: "Let's complete your profile to get started...",
+          });
+          navigate('/register', { replace: true });
         }
         
       } catch (error: any) {
@@ -85,7 +154,8 @@ const AuthCallback = () => {
 
     // Only process if we have URL parameters indicating an OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
-    const hasOAuthParams = urlParams.has('code') || urlParams.has('error');
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hasOAuthParams = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token');
     
     if (hasOAuthParams) {
       handleOAuthCallback();
