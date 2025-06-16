@@ -59,7 +59,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         element={<AuthCallback />} 
       />
       
-      {/* Super Admin Login Route */}
+      {/* Super Admin Login Route - accessible without authentication */}
       <Route 
         path="/admin-login" 
         element={<SuperAdminLogin />} 
@@ -104,6 +104,8 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         path="/admin" 
         element={user ? <Admin /> : <Navigate to="/auth" replace />} 
       />
+      
+      {/* Super Admin routes - role verification handled within SuperAdmin component */}
       <Route 
         path="/super-admin/*" 
         element={user ? <SuperAdmin /> : <Navigate to="/admin-login" replace />} 

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -27,9 +28,11 @@ import {
   Wallet,
   Facebook,
   Home,
-  Edit
+  Edit,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAdminRoleCheck } from '@/hooks/useAdminRoleCheck';
 
 interface SuperAdminLayoutProps {
   children: React.ReactNode;
@@ -37,10 +40,28 @@ interface SuperAdminLayoutProps {
 
 const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const [collapsed, setCollapsed] = React.useState(false);
+  const { isCheckingRole, hasAdminRole } = useAdminRoleCheck();
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
+
+  // Show loading spinner while checking role
+  if (isCheckingRole) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="flex flex-col items-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-tinder-rose" />
+          <p className="text-gray-600">Verifying admin access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if user doesn't have admin role (redirect handled by hook)
+  if (!hasAdminRole) {
+    return null;
+  }
 
   const menuItems = [
     { path: '/super-admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
