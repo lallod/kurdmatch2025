@@ -10,6 +10,14 @@ import { systemQuestions } from '@/pages/SuperAdmin/components/registration-ques
 import { initialQuestions } from '@/pages/SuperAdmin/components/registration-questions/data/sampleQuestions';
 import { useRegistrationForm } from './hooks/useRegistrationForm';
 import { useStepCategories } from './utils/useStepCategories';
+import { Mail, User, MapPin, Camera, LucideIcon } from 'lucide-react';
+
+// Define the Step interface to match what StepIndicator expects
+interface Step {
+  title: string;
+  icon: LucideIcon;
+  description: string;
+}
 
 const DynamicRegistrationForm = () => {
   // Get questions
@@ -25,7 +33,40 @@ const DynamicRegistrationForm = () => {
   }, []);
   
   // Get step categories
-  const steps = useStepCategories(enabledQuestions);
+  const stepCategories = useStepCategories(enabledQuestions);
+  
+  // Convert step categories to Step format for StepIndicator
+  const steps: Step[] = stepCategories.map(category => {
+    // Map category names to appropriate icons and descriptions
+    let icon: LucideIcon = Mail;
+    let description = '';
+    
+    switch (category.name) {
+      case 'Account':
+        icon = Mail;
+        description = 'Create your secure account';
+        break;
+      case 'Personal':
+      case 'Basics':
+        icon = User;
+        description = 'Tell us about yourself';
+        break;
+      case 'Location':
+        icon = MapPin;
+        description = 'Where are you from?';
+        break;
+      case 'Photos':
+        icon = Camera;
+        description = 'Add your best photos';
+        break;
+    }
+    
+    return {
+      title: category.name,
+      icon,
+      description
+    };
+  });
   
   // Form handling
   const { 
@@ -36,7 +77,7 @@ const DynamicRegistrationForm = () => {
     handleSubmit, 
     nextStep, 
     prevStep 
-  } = useRegistrationForm(enabledQuestions, steps);
+  } = useRegistrationForm(enabledQuestions, stepCategories);
 
   return (
     <Form {...form}>
@@ -44,7 +85,7 @@ const DynamicRegistrationForm = () => {
         <StepIndicator 
           steps={steps} 
           currentStep={currentStep} 
-          setCurrentStep={setCurrentStep} 
+          completedSteps={[]} 
         />
         
         {/* Only show social login for non-OAuth users on first step */}
@@ -61,7 +102,7 @@ const DynamicRegistrationForm = () => {
         
         <FormContent 
           currentStep={currentStep}
-          steps={steps}
+          steps={stepCategories}
           form={form}
         />
         
@@ -69,8 +110,8 @@ const DynamicRegistrationForm = () => {
           currentStep={currentStep}
           totalSteps={steps.length}
           isSubmitting={isSubmitting}
-          onPrevious={prevStep}
-          onNext={nextStep}
+          onPrevStep={prevStep}
+          onNextStep={nextStep}
         />
       </form>
     </Form>

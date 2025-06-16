@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { CheckCircle, Mail, User, MapPin, Camera } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 interface Step {
   title: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: LucideIcon;
   description: string;
 }
 

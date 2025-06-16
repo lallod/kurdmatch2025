@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
-import { Mail, User, MapPin, Camera } from 'lucide-react';
+import { Mail, User, MapPin, Camera, LucideIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -43,6 +43,13 @@ const registrationSchema = z.object({
 });
 
 type RegistrationFormValues = z.infer<typeof registrationSchema>;
+
+interface Step {
+  title: string;
+  fields: Array<keyof RegistrationFormValues>;
+  icon: LucideIcon;
+  description: string;
+}
 
 const SimpleRegistrationForm = () => {
   const { toast } = useToast();
@@ -88,7 +95,7 @@ const SimpleRegistrationForm = () => {
     }
   }, [location, step, form]);
 
-  const steps = [
+  const steps: Step[] = [
     { 
       title: "Email & Password", 
       fields: ["email", "password", "confirmPassword"],
@@ -116,7 +123,7 @@ const SimpleRegistrationForm = () => {
   ];
 
   const validateStep = async (stepIndex: number) => {
-    const currentStepFields = steps[stepIndex - 1].fields as Array<keyof RegistrationFormValues>;
+    const currentStepFields = steps[stepIndex - 1].fields;
     
     const result = await form.trigger(currentStepFields);
     if (result) {
