@@ -64,16 +64,16 @@ const kurdishLanguages = [
   { code: 'th', name: 'Thai', native: 'ไทย', category: 'International' },
   { code: 'vi', name: 'Vietnamese', native: 'Tiếng Việt', category: 'International' },
   { code: 'tl', name: 'Filipino', native: 'Filipino', category: 'International' }
-];
+].filter(Boolean); // Remove any falsy values
 
 const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps) => {
   const [open, setOpen] = useState(false);
 
-  // Ensure value is always an array
-  const currentValue = Array.isArray(value) ? value : [];
+  // Ensure value is always an array and filter out any invalid values
+  const currentValue = Array.isArray(value) ? value.filter(Boolean) : [];
 
   const handleSelect = (languageName: string) => {
-    if (!onChange) return;
+    if (!onChange || !languageName) return;
     
     const newValue = currentValue.includes(languageName)
       ? currentValue.filter(item => item !== languageName)
@@ -82,19 +82,19 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
   };
 
   const removeLanguage = (languageName: string) => {
-    if (!onChange) return;
+    if (!onChange || !languageName) return;
     onChange(currentValue.filter(item => item !== languageName));
   };
 
-  // Safely group languages with defensive checks
+  // Safely group languages with comprehensive defensive checks
   const groupedLanguages = kurdishLanguages && kurdishLanguages.length > 0 
-    ? kurdishLanguages.reduce((acc, lang) => {
-        if (lang && lang.category && lang.name) {
+    ? kurdishLanguages
+        .filter(lang => lang && lang.category && lang.name && lang.code) // Filter out invalid objects
+        .reduce((acc, lang) => {
           if (!acc[lang.category]) acc[lang.category] = [];
           acc[lang.category].push(lang);
-        }
-        return acc;
-      }, {} as Record<string, typeof kurdishLanguages>)
+          return acc;
+        }, {} as Record<string, typeof kurdishLanguages>)
     : {};
 
   return (
@@ -151,23 +151,32 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
             />
             <CommandEmpty>No language found.</CommandEmpty>
             <div className="max-h-60 overflow-auto">
-              {Object.entries(groupedLanguages).map(([category, languages]) => (
-                <CommandGroup key={category} heading={category} className="text-white">
-                  {languages && languages.length > 0 && languages.map((language) => (
-                    <CommandItem
-                      key={language.code}
-                      value={language.name}
-                      onSelect={() => handleSelect(language.name)}
-                      className="text-white hover:bg-gray-800"
-                    >
-                      <span className="flex items-center justify-between w-full">
-                        <span>{language.name}</span>
-                        <span className="text-sm text-gray-400">{language.native}</span>
-                      </span>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              ))}
+              {Object.entries(groupedLanguages).length > 0 && Object.entries(groupedLanguages).map(([category, languages]) => {
+                // Additional safety check for each category
+                if (!category || !Array.isArray(languages) || languages.length === 0) {
+                  return null;
+                }
+                
+                return (
+                  <CommandGroup key={category} heading={category} className="text-white">
+                    {languages
+                      .filter(language => language && language.name && language.code) // Filter out invalid language objects
+                      .map((language) => (
+                        <CommandItem
+                          key={`${category}-${language.code}`}
+                          value={language.name}
+                          onSelect={() => handleSelect(language.name)}
+                          className="text-white hover:bg-gray-800"
+                        >
+                          <span className="flex items-center justify-between w-full">
+                            <span>{language.name}</span>
+                            <span className="text-sm text-gray-400">{language.native}</span>
+                          </span>
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
+                );
+              })}
             </div>
           </Command>
         </PopoverContent>
