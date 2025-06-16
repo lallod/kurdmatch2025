@@ -3,7 +3,7 @@ import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Sparkles, Heart } from 'lucide-react';
-import { LocationSearch } from '../fields/LocationSearch';
+import SimpleLocationSearch from '@/components/auth/components/enhanced-fields/SimpleLocationSearch';
 
 interface Step8Data {
   dream_vacation?: string;
@@ -28,7 +28,7 @@ export const Step8FinalTouches: React.FC<Step8FinalTouchesProps> = ({ data, onCh
 
       <div className="space-y-6">
         {/* Dream Vacation Destination */}
-        <LocationSearch
+        <SimpleLocationSearch
           value={data.dream_vacation || ''}
           onChange={(value) => onChange({ ...data, dream_vacation: value })}
           placeholder="Where would you love to travel?"
