@@ -1,57 +1,56 @@
 
 import React from 'react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
 
 interface FormNavigationProps {
   currentStep: number;
   totalSteps: number;
+  onPrevStep: () => void;
+  onNextStep: () => void;
   isSubmitting: boolean;
-  onPrevious: () => void;
-  onNext: () => void;
 }
 
-const FormNavigation = ({
-  currentStep,
-  totalSteps,
-  isSubmitting,
-  onPrevious,
-  onNext
-}: FormNavigationProps) => {
-  const isFirstStep = currentStep === 0;
-  const isLastStep = currentStep === totalSteps - 1;
-
+const FormNavigation = ({ currentStep, totalSteps, onPrevStep, onNextStep, isSubmitting }: FormNavigationProps) => {
   return (
-    <div className="flex justify-between pt-4">
-      <Button
-        type="button"
-        variant="outline"
-        onClick={onPrevious}
-        disabled={isFirstStep || isSubmitting}
-        className="flex items-center gap-2"
-      >
-        <ArrowLeft size={16} />
-        Previous
-      </Button>
-
-      {isLastStep ? (
+    <div className="flex justify-between mt-8 pt-6 border-t border-white/20">
+      {currentStep > 1 ? (
         <Button 
-          type="submit" 
-          disabled={isSubmitting}
-          className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+          type="button" 
+          variant="outline" 
+          onClick={onPrevStep}
+          className="gap-2 bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
         >
-          {isSubmitting ? 'Creating Account...' : 'Complete Registration'}
-          <Send size={16} />
+          <ChevronLeft size={16} />
+          Back
+        </Button>
+      ) : (
+        <div></div>
+      )}
+      
+      {currentStep < totalSteps ? (
+        <Button 
+          type="button" 
+          onClick={onNextStep}
+          className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
+        >
+          Continue
+          <ChevronRight size={16} />
         </Button>
       ) : (
         <Button 
-          type="button" 
-          onClick={onNext}
+          type="submit" 
           disabled={isSubmitting}
-          className="flex items-center gap-2"
+          className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
         >
-          Next
-          <ArrowRight size={16} />
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Creating Account...
+            </>
+          ) : (
+            "Complete Registration"
+          )}
         </Button>
       )}
     </div>

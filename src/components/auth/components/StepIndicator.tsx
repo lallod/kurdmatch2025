@@ -1,71 +1,47 @@
 
 import React from 'react';
-import { Check, Sparkles } from 'lucide-react';
+import { CheckCircle, Mail, User, MapPin, Camera } from 'lucide-react';
 
 interface Step {
-  name: string;
-  questions: any[];
+  title: string;
+  icon: React.ComponentType<{ size?: number }>;
+  description: string;
 }
 
 interface StepIndicatorProps {
-  steps: Step[];
   currentStep: number;
-  setCurrentStep: (step: number) => void;
+  completedSteps: number[];
+  steps: Step[];
 }
 
-const StepIndicator = ({ steps, currentStep, setCurrentStep }: StepIndicatorProps) => {
+const StepIndicator = ({ currentStep, completedSteps, steps }: StepIndicatorProps) => {
   return (
-    <div className="flex flex-col">
-      <div className="relative mb-4">
-        <div className="hidden md:block absolute top-5 left-0 w-full h-1 bg-gray-700 -z-10" />
-        <div
-          className="hidden md:block absolute top-5 left-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
-          style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
-        />
-        <div className="flex justify-between items-start flex-wrap -mx-2">
-          {steps.map((step, idx) => (
-            <div
-              key={idx}
-              className="flex-1 min-w-[90px] px-2 flex flex-col items-center text-center cursor-pointer group"
-              onClick={() => idx <= currentStep && setCurrentStep(idx)}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 mb-2 transition-all duration-300 ${
-                  idx < currentStep
-                    ? 'bg-indigo-600 border-indigo-400'
-                    : idx === currentStep
-                    ? 'bg-purple-600 border-purple-400 scale-110'
-                    : 'bg-gray-800 border-gray-600'
-                }`}
-              >
-                {idx < currentStep ? (
-                  <Check className="h-5 w-5 text-white" />
-                ) : (
-                  <span className={`font-bold text-sm ${idx === currentStep ? 'text-white' : 'text-gray-400'}`}>
-                    {idx + 1}
-                  </span>
-                )}
+    <div className="flex justify-between items-center mb-8">
+      {steps.map((s, idx) => {
+        const StepIcon = s.icon;
+        return (
+          <React.Fragment key={idx}>
+            <div className="flex flex-col items-center">
+              <div className={`
+                w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-300
+                ${currentStep === idx + 1 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg scale-110' : 
+                  completedSteps.includes(idx + 1) ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' : 'bg-white/20 backdrop-blur text-gray-400 border border-white/30'}
+              `}>
+                {completedSteps.includes(idx + 1) ? <CheckCircle size={20} /> : <StepIcon size={20} />}
               </div>
-              <p
-                className={`text-xs font-medium transition-colors ${
-                  idx === currentStep ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'
-                }`}
-              >
-                {step.name}
-              </p>
+              <span className={`text-xs text-center max-w-20 transition-colors ${currentStep === idx + 1 ? 'font-medium text-white' : 'text-gray-300'}`}>
+                {s.title}
+              </span>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="text-center my-4 animate-fade-in">
-        <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-          {steps[currentStep]?.name}
-        </h2>
-        <p className="text-sm text-gray-400 mt-1">
-          Steg {currentStep + 1} av {steps.length}
-        </p>
-      </div>
+            {idx < steps.length - 1 && (
+              <div className={`flex-1 h-1 mx-2 rounded transition-all duration-500 ${
+                completedSteps.includes(idx + 2) ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 
+                currentStep > idx + 1 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-white/20'
+              }`} />
+            )}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };
