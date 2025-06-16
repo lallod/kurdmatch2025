@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ChoiceChips } from '../fields/ChoiceChips';
 import { TagSelector } from '../fields/TagSelector';
@@ -7,7 +8,6 @@ import { User, Globe } from 'lucide-react';
 
 interface Step1Data {
   height?: string;
-  body_type?: string;
   ethnicity?: string;
   kurdistan_region?: string;
   languages?: string[];
@@ -19,21 +19,19 @@ interface Step1AboutYouProps {
 }
 
 export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) => {
-  const bodyTypeOptions = [
-    { value: 'slim', label: 'Slim', icon: <User className="w-4 h-4" /> },
-    { value: 'athletic', label: 'Athletic', icon: <User className="w-4 h-4" /> },
-    { value: 'average', label: 'Average', icon: <User className="w-4 h-4" /> },
-    { value: 'curvy', label: 'Curvy', icon: <User className="w-4 h-4" /> },
-    { value: 'heavyset', label: 'Heavyset', icon: <User className="w-4 h-4" /> },
-    { value: 'prefer_not_to_say', label: 'Prefer not to say', icon: <User className="w-4 h-4" /> }
-  ];
-
   const ethnicityOptions = [
     { value: 'kurdish', label: 'Kurdish', icon: <Globe className="w-4 h-4" /> },
     { value: 'arab', label: 'Arab', icon: <Globe className="w-4 h-4" /> },
     { value: 'turkish', label: 'Turkish', icon: <Globe className="w-4 h-4" /> },
     { value: 'persian', label: 'Persian', icon: <Globe className="w-4 h-4" /> },
-    { value: 'mixed', label: 'Mixed', icon: <Globe className="w-4 h-4" /> },
+    { value: 'assyrian', label: 'Assyrian', icon: <Globe className="w-4 h-4" /> },
+    { value: 'armenian', label: 'Armenian', icon: <Globe className="w-4 h-4" /> },
+    { value: 'circassian', label: 'Circassian', icon: <Globe className="w-4 h-4" /> },
+    { value: 'mixed_heritage', label: 'Mixed Heritage', icon: <Globe className="w-4 h-4" /> },
+    { value: 'european', label: 'European', icon: <Globe className="w-4 h-4" /> },
+    { value: 'african', label: 'African', icon: <Globe className="w-4 h-4" /> },
+    { value: 'asian', label: 'Asian', icon: <Globe className="w-4 h-4" /> },
+    { value: 'latino_hispanic', label: 'Latino/Hispanic', icon: <Globe className="w-4 h-4" /> },
     { value: 'other', label: 'Other', icon: <Globe className="w-4 h-4" /> }
   ];
 
@@ -57,7 +55,16 @@ export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) 
     { value: 'Italian', label: 'Italian', emoji: '🗣️' },
     { value: 'Dutch', label: 'Dutch', emoji: '🗣️' },
     { value: 'Swedish', label: 'Swedish', emoji: '🗣️' },
-    { value: 'Norwegian', label: 'Norwegian', emoji: '🗣️' }
+    { value: 'Norwegian', label: 'Norwegian', emoji: '🗣️' },
+    { value: 'Russian', label: 'Russian', emoji: '🗣️' },
+    { value: 'Chinese', label: 'Chinese', emoji: '🗣️' },
+    { value: 'Japanese', label: 'Japanese', emoji: '🗣️' },
+    { value: 'Portuguese', label: 'Portuguese', emoji: '🗣️' },
+    { value: 'Hindi', label: 'Hindi', emoji: '🗣️' },
+    { value: 'Urdu', label: 'Urdu', emoji: '🗣️' },
+    { value: 'Hebrew', label: 'Hebrew', emoji: '🗣️' },
+    { value: 'Armenian', label: 'Armenian', emoji: '🗣️' },
+    { value: 'Azerbaijani', label: 'Azerbaijani', emoji: '🗣️' }
   ];
 
   return (
@@ -80,17 +87,6 @@ export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) 
             onChange={(e) => onChange({ ...data, height: e.target.value })}
             placeholder="e.g., 175 cm or 5 feet 8 inches"
             className="text-lg p-4 rounded-xl"
-          />
-        </div>
-
-        {/* Body Type */}
-        <div className="space-y-3">
-          <Label className="text-lg font-medium">Body Type</Label>
-          <ChoiceChips
-            options={bodyTypeOptions}
-            value={data.body_type}
-            onChange={(value) => onChange({ ...data, body_type: value })}
-            columns={2}
           />
         </div>
 
@@ -124,7 +120,7 @@ export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) 
             value={data.languages || []}
             onChange={(value) => onChange({ ...data, languages: value })}
             placeholder="Select the languages you speak..."
-            maxSelections={6}
+            maxSelections={8}
           />
         </div>
       </div>

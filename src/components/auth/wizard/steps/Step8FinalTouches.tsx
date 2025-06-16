@@ -1,14 +1,13 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Sparkles, MapPin, Quote } from 'lucide-react';
+import { Sparkles, Heart } from 'lucide-react';
+import { LocationSearch } from '../fields/LocationSearch';
 
 interface Step8Data {
   dream_vacation?: string;
   ideal_date?: string;
-  favorite_quote?: string;
 }
 
 interface Step8FinalTouchesProps {
@@ -28,26 +27,17 @@ export const Step8FinalTouches: React.FC<Step8FinalTouchesProps> = ({ data, onCh
       </div>
 
       <div className="space-y-6">
-        {/* Dream Vacation */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-purple-600" />
-            <Label htmlFor="dream_vacation" className="text-lg font-medium">Dream Vacation Destination</Label>
-          </div>
-          <Input
-            id="dream_vacation"
-            value={data.dream_vacation || ''}
-            onChange={(e) => onChange({ ...data, dream_vacation: e.target.value })}
-            placeholder="Where would you love to travel? e.g., Kurdistan, Paris, Tokyo..."
-            className="text-lg p-4 rounded-xl"
-          />
-          <p className="text-sm text-gray-500">Share a place you've always wanted to visit</p>
-        </div>
+        {/* Dream Vacation Destination */}
+        <LocationSearch
+          value={data.dream_vacation || ''}
+          onChange={(value) => onChange({ ...data, dream_vacation: value })}
+          placeholder="Where would you love to travel?"
+        />
 
         {/* Ideal Date */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-600" />
+            <Heart className="w-5 h-5 text-purple-600" />
             <Label htmlFor="ideal_date" className="text-lg font-medium">Describe Your Ideal Date</Label>
           </div>
           <Textarea
@@ -59,23 +49,6 @@ export const Step8FinalTouches: React.FC<Step8FinalTouchesProps> = ({ data, onCh
             rows={4}
           />
           <p className="text-sm text-gray-500">Help others imagine spending time with you</p>
-        </div>
-
-        {/* Favorite Quote */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Quote className="w-5 h-5 text-purple-600" />
-            <Label htmlFor="favorite_quote" className="text-lg font-medium">Favorite Quote or Motto</Label>
-          </div>
-          <Textarea
-            id="favorite_quote"
-            value={data.favorite_quote || ''}
-            onChange={(e) => onChange({ ...data, favorite_quote: e.target.value })}
-            placeholder="Share a quote that inspires you or represents your philosophy..."
-            className="text-lg p-4 rounded-xl min-h-[80px] resize-none"
-            rows={3}
-          />
-          <p className="text-sm text-gray-500">Words that inspire or motivate you</p>
         </div>
       </div>
 

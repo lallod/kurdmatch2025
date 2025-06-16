@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { WizardLayout } from './WizardLayout';
 import { Step1AboutYou } from './steps/Step1AboutYou';
@@ -13,9 +14,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 
 interface WizardData {
-  // Step 1
+  // Step 1 - Updated structure
   height?: string;
-  body_type?: string;
   ethnicity?: string;
   kurdistan_region?: string;
   languages?: string[];
@@ -26,9 +26,8 @@ interface WizardData {
   smoking?: string;
   dietary_preferences?: string;
   sleep_schedule?: string;
-  // Step 3
+  // Step 3 - Removed political_views
   religion?: string;
-  political_views?: string;
   values?: string[];
   zodiac_sign?: string;
   personality_type?: string;
@@ -38,12 +37,10 @@ interface WizardData {
   children_status?: string;
   family_closeness?: string;
   love_language?: string[];
-  // Step 5
+  // Step 5 - Removed career_ambitions and work_life_balance
   education?: string;
   occupation?: string;
   company?: string;
-  career_ambitions?: string;
-  work_life_balance?: string;
   // Step 6
   interests?: string[];
   hobbies?: string[];
@@ -58,10 +55,9 @@ interface WizardData {
   favorite_foods?: string[];
   favorite_games?: string[];
   favorite_podcasts?: string[];
-  // Step 8
+  // Step 8 - Removed favorite_quote
   dream_vacation?: string;
   ideal_date?: string;
-  favorite_quote?: string;
 }
 
 interface ProfileCompletionWizardProps {
@@ -84,7 +80,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       title: "About You",
       component: Step1AboutYou,
       validate: (data: WizardData) => {
-        return !!(data.height || data.body_type || data.ethnicity || data.kurdistan_region || (data.languages && data.languages.length > 0));
+        return !!(data.height || data.ethnicity || data.kurdistan_region || (data.languages && data.languages.length > 0));
       }
     },
     {
@@ -98,7 +94,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       title: "Values & Beliefs",
       component: Step3Values,
       validate: (data: WizardData) => {
-        return !!(data.religion || data.political_views || (data.values && data.values.length > 0) || data.zodiac_sign || data.personality_type);
+        return !!(data.religion || (data.values && data.values.length > 0) || data.zodiac_sign || data.personality_type);
       }
     },
     {
@@ -112,7 +108,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       title: "Career & Education",
       component: Step5Career,
       validate: (data: WizardData) => {
-        return !!(data.education || data.occupation || data.company || data.career_ambitions || data.work_life_balance);
+        return !!(data.education || data.occupation || data.company);
       }
     },
     {
@@ -147,7 +143,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       title: "Final Touches",
       component: Step8FinalTouches,
       validate: (data: WizardData) => {
-        return !!(data.dream_vacation || data.ideal_date || data.favorite_quote);
+        return !!(data.dream_vacation || data.ideal_date);
       }
     }
   ];

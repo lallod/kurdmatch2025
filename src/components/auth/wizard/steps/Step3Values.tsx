@@ -2,11 +2,10 @@
 import React from 'react';
 import { ChoiceChips } from '../fields/ChoiceChips';
 import { TagSelector } from '../fields/TagSelector';
-import { Heart, Star, Globe2 } from 'lucide-react';
+import { Heart, Star } from 'lucide-react';
 
 interface Step3Data {
   religion?: string;
-  political_views?: string;
   values?: string[];
   zodiac_sign?: string;
   personality_type?: string;
@@ -27,16 +26,6 @@ export const Step3Values: React.FC<Step3ValuesProps> = ({ data, onChange }) => {
     { value: 'atheist', label: 'Atheist', icon: <Star className="w-4 h-4" /> },
     { value: 'other', label: 'Other', icon: <Star className="w-4 h-4" /> },
     { value: 'prefer_not_to_say', label: 'Prefer not to say', icon: <Star className="w-4 h-4" /> }
-  ];
-
-  const politicalViewsOptions = [
-    { value: 'liberal', label: 'Liberal', icon: <Globe2 className="w-4 h-4" /> },
-    { value: 'moderate', label: 'Moderate', icon: <Globe2 className="w-4 h-4" /> },
-    { value: 'conservative', label: 'Conservative', icon: <Globe2 className="w-4 h-4" /> },
-    { value: 'progressive', label: 'Progressive', icon: <Globe2 className="w-4 h-4" /> },
-    { value: 'independent', label: 'Independent', icon: <Globe2 className="w-4 h-4" /> },
-    { value: 'not_political', label: 'Not political', icon: <Globe2 className="w-4 h-4" /> },
-    { value: 'prefer_not_to_say', label: 'Prefer not to say', icon: <Globe2 className="w-4 h-4" /> }
   ];
 
   const valuesOptions = [
@@ -96,17 +85,6 @@ export const Step3Values: React.FC<Step3ValuesProps> = ({ data, onChange }) => {
             options={religionOptions}
             value={data.religion}
             onChange={(value) => onChange({ ...data, religion: value })}
-            columns={2}
-          />
-        </div>
-
-        {/* Political Views */}
-        <div className="space-y-3">
-          <h3 className="text-lg font-medium">Political Views</h3>
-          <ChoiceChips
-            options={politicalViewsOptions}
-            value={data.political_views}
-            onChange={(value) => onChange({ ...data, political_views: value })}
             columns={2}
           />
         </div>

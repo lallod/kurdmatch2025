@@ -3,14 +3,12 @@ import React from 'react';
 import { ChoiceChips } from '../fields/ChoiceChips';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Briefcase, GraduationCap, Target } from 'lucide-react';
+import { Briefcase, GraduationCap } from 'lucide-react';
 
 interface Step5Data {
   education?: string;
   occupation?: string;
   company?: string;
-  career_ambitions?: string;
-  work_life_balance?: string;
 }
 
 interface Step5CareerProps {
@@ -27,21 +25,6 @@ export const Step5Career: React.FC<Step5CareerProps> = ({ data, onChange }) => {
     { value: 'doctorate', label: 'Doctorate', icon: <GraduationCap className="w-4 h-4" /> },
     { value: 'trade_school', label: 'Trade School', icon: <GraduationCap className="w-4 h-4" /> },
     { value: 'other', label: 'Other', icon: <GraduationCap className="w-4 h-4" /> }
-  ];
-
-  const careerAmbitionsOptions = [
-    { value: 'very_ambitious', label: 'Very Ambitious', icon: <Target className="w-4 h-4" />, description: 'Career is a top priority' },
-    { value: 'ambitious', label: 'Ambitious', icon: <Target className="w-4 h-4" />, description: 'I want to grow professionally' },
-    { value: 'balanced', label: 'Balanced', icon: <Target className="w-4 h-4" />, description: 'Work-life balance matters' },
-    { value: 'stable', label: 'Stable', icon: <Target className="w-4 h-4" />, description: 'Happy with current path' },
-    { value: 'exploring', label: 'Exploring', icon: <Target className="w-4 h-4" />, description: 'Still figuring it out' }
-  ];
-
-  const workLifeBalanceOptions = [
-    { value: 'work_focused', label: 'Work-focused', icon: <Briefcase className="w-4 h-4" />, description: 'Career comes first' },
-    { value: 'balanced', label: 'Balanced', icon: <Briefcase className="w-4 h-4" />, description: 'Equal priority' },
-    { value: 'life_focused', label: 'Life-focused', icon: <Briefcase className="w-4 h-4" />, description: 'Personal life comes first' },
-    { value: 'flexible', label: 'Flexible', icon: <Briefcase className="w-4 h-4" />, description: 'Depends on the situation' }
   ];
 
   return (
@@ -87,28 +70,6 @@ export const Step5Career: React.FC<Step5CareerProps> = ({ data, onChange }) => {
             onChange={(e) => onChange({ ...data, company: e.target.value })}
             placeholder="Where do you work?"
             className="text-lg p-4 rounded-xl"
-          />
-        </div>
-
-        {/* Career Ambitions */}
-        <div className="space-y-3">
-          <h3 className="text-lg font-medium">How would you describe your career ambitions?</h3>
-          <ChoiceChips
-            options={careerAmbitionsOptions}
-            value={data.career_ambitions}
-            onChange={(value) => onChange({ ...data, career_ambitions: value })}
-            columns={1}
-          />
-        </div>
-
-        {/* Work-Life Balance */}
-        <div className="space-y-3">
-          <h3 className="text-lg font-medium">How do you approach work-life balance?</h3>
-          <ChoiceChips
-            options={workLifeBalanceOptions}
-            value={data.work_life_balance}
-            onChange={(value) => onChange({ ...data, work_life_balance: value })}
-            columns={1}
           />
         </div>
       </div>
