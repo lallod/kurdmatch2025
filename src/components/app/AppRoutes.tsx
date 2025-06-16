@@ -27,7 +27,7 @@ interface AppRoutesProps {
 }
 
 export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow }) => {
-  const { user } = useSupabaseAuth();
+  const { user, loading } = useSupabaseAuth();
 
   // Main app routes - only show if wizard is not active or during OAuth flow
   if (user && showWizard && !isOAuthFlow) {
@@ -108,7 +108,17 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       {/* Super Admin routes - role verification handled within SuperAdmin component */}
       <Route 
         path="/super-admin/*" 
-        element={user ? <SuperAdmin /> : <Navigate to="/admin-login" replace />} 
+        element={
+          loading ? (
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-center">Loading...</div>
+            </div>
+          ) : user ? (
+            <SuperAdmin />
+          ) : (
+            <Navigate to="/admin-login" replace />
+          )
+        } 
       />
       
       <Route path="*" element={<NotFound />} />

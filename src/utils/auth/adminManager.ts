@@ -52,7 +52,7 @@ export const setupSuperAdmin = async (): Promise<AdminSetupResult> => {
  */
 export const validateAdminCredentials = async (email: string, password: string) => {
   try {
-    console.log('Attempting admin login with:', email);
+    console.log('validateAdminCredentials: Attempting admin login with:', email);
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -60,7 +60,7 @@ export const validateAdminCredentials = async (email: string, password: string) 
     });
 
     if (error) {
-      console.error('Sign-in error:', error);
+      console.error('validateAdminCredentials: Sign-in error:', error);
       throw error;
     }
 
@@ -68,7 +68,7 @@ export const validateAdminCredentials = async (email: string, password: string) 
       throw new Error('Authentication failed - no user data received');
     }
 
-    console.log('User signed in successfully:', data.user.id);
+    console.log('validateAdminCredentials: User signed in successfully:', data.user.id);
 
     // Check admin role
     const { data: roleData, error: roleError } = await supabase
@@ -79,21 +79,21 @@ export const validateAdminCredentials = async (email: string, password: string) 
       .maybeSingle();
 
     if (roleError) {
-      console.error('Error checking admin role:', roleError);
+      console.error('validateAdminCredentials: Error checking admin role:', roleError);
       await supabase.auth.signOut();
       throw new Error('Error verifying admin privileges');
     }
 
     if (!roleData) {
-      console.log('User does not have super_admin role');
+      console.log('validateAdminCredentials: User does not have super_admin role');
       await supabase.auth.signOut();
       throw new Error('You do not have permission to access the admin dashboard.');
     }
 
-    console.log('Admin role verified successfully');
+    console.log('validateAdminCredentials: Admin role verified successfully');
     return { success: true, user: data.user };
   } catch (error: any) {
-    console.error('Admin validation error:', error);
+    console.error('validateAdminCredentials: Admin validation error:', error);
     return { success: false, error: error.message };
   }
 };
