@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Image, Upload, X, Camera, ShieldCheck } from 'lucide-react';
@@ -127,8 +128,8 @@ const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
       render={({ field, fieldState }) => (
         <FormItem className="space-y-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">Add Your Photos</h3>
-            <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-700/30 text-[10px] px-1.5 py-0">
+            <h3 className="text-lg font-medium text-white">Add Your Photos</h3>
+            <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-500/30 text-[10px] px-1.5 py-0">
               <Camera size={10} className="mr-0.5" />
               Required
             </Badge>
@@ -136,7 +137,7 @@ const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
           
           <FormControl>
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-300">
                 Upload a clear photo of yourself to complete your profile. This will be your main profile picture.
               </p>
               
@@ -144,7 +145,7 @@ const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
               {photos.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 my-4">
                   {photos.map((photo, index) => (
-                    <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border-2 border-gray-800">
+                    <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border-2 border-purple-500/30 backdrop-blur">
                       <img 
                         src={photo} 
                         alt={`Photo ${index + 1}`} 
@@ -161,7 +162,7 @@ const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
                         </Button>
                       </div>
                       {index === 0 && (
-                        <div className="absolute top-2 left-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
+                        <div className="absolute top-2 left-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-2 py-0.5 rounded-full">
                           Main
                         </div>
                       )}
@@ -172,10 +173,11 @@ const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
               
               {/* Upload area */}
               <div 
-                className={`border-2 border-dashed rounded-lg p-6 transition-all
-                  ${dragActive ? 'border-purple-500 bg-purple-500/10' : 'border-gray-700 bg-gray-900/30'} 
-                  ${photos.length >= 5 ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}
+                className={`border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer
+                  ${dragActive ? 'border-purple-500 bg-purple-500/10' : 'border-white/30 bg-white/5'} 
+                  ${photos.length >= 5 ? 'opacity-50 pointer-events-none' : ''}
                   ${fieldState.error ? 'border-red-500' : ''}
+                  hover:border-purple-400 hover:bg-purple-500/5
                 `}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -184,19 +186,19 @@ const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
                 onClick={() => document.getElementById('photo-upload')?.click()}
               >
                 <div className="flex flex-col items-center justify-center space-y-3 text-center">
-                  <div className={`p-3 rounded-full ${fieldState.error ? 'bg-red-500/20' : 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20'}`}>
+                  <div className={`p-3 rounded-full ${fieldState.error ? 'bg-red-500/20' : 'bg-gradient-to-br from-purple-500/20 to-pink-500/20'}`}>
                     <Image size={24} className={fieldState.error ? 'text-red-400' : 'text-purple-400'} />
                   </div>
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium">
+                    <h4 className="text-sm font-medium text-white">
                       {photos.length === 0 
                         ? 'Upload your photo' 
                         : `Add ${5 - photos.length} more photo${5 - photos.length !== 1 ? 's' : ''}`}
                     </h4>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-400">
                       Drag & drop or click to browse
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-400">
                       JPG, PNG or GIF (Max. 5MB)
                     </p>
                   </div>
@@ -211,18 +213,18 @@ const PhotoUploadStep = ({ form, question }: PhotoUploadStepProps) => {
                 </div>
               </div>
 
-              <Alert variant="default" className="mt-4 bg-blue-50 border-blue-200 text-blue-800">
-                <ShieldCheck className="h-4 w-4 !text-blue-600" />
-                <AlertTitle className="font-semibold">Din sikkerhet er vår prioritet</AlertTitle>
-                <AlertDescription className="text-blue-700">
-                  Aldri del bilder som avslører personlig informasjon som hjemmeadressen eller arbeidsplassen din. Vær bevisst på hva som er i bakgrunnen på bildene dine.
+              <Alert variant="default" className="mt-4 bg-blue-500/10 border-blue-400/30 backdrop-blur">
+                <ShieldCheck className="h-4 w-4 !text-blue-400" />
+                <AlertTitle className="font-semibold text-blue-300">Your safety is our priority</AlertTitle>
+                <AlertDescription className="text-blue-200">
+                  Never share photos that reveal personal information like your home address or workplace. Be mindful of what's in the background of your photos.
                 </AlertDescription>
               </Alert>
               
               {/* Photo tips */}
               <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">Photo tips:</h4>
-                <ul className="text-xs text-gray-500 space-y-1 list-disc pl-5">
+                <h4 className="text-sm font-medium mb-2 text-white">Photo tips:</h4>
+                <ul className="text-xs text-gray-400 space-y-1 list-disc pl-5">
                   <li>Your first photo should clearly show your face</li>
                   <li>Add up to 5 photos to showcase your personality</li>
                   <li>Avoid group photos in your main picture</li>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,6 +31,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useNavigate } from 'react-router-dom';
+import PhotoUploadStep from '@/components/auth/components/PhotoUploadStep';
+import { useLocationManager } from '@/components/my-profile/sections/location/useLocationManager';
 
 const registrationSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -50,6 +52,7 @@ const registrationSchema = z.object({
   gender: z.string().min(1, { message: 'Please select your gender' }),
   location: z.string().min(2, { message: 'Location is required' }),
   bio: z.string().max(500, { message: 'Bio must be less than 500 characters' }).optional(),
+  photos: z.array(z.string()).min(1, { message: 'At least one photo is required' }),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -76,12 +79,30 @@ const SimpleRegistrationForm = () => {
       gender: '',
       location: '',
       bio: '',
+      photos: [],
     },
     mode: 'onChange',
   });
 
   const { formState } = form;
   const isSubmitting = formState.isSubmitting;
+
+  // Location management for step 3
+  const { location, handleLocationDetection, isLoading: locationLoading } = useLocationManager('');
+
+  // Auto-detect location when reaching step 3
+  useEffect(() => {
+    if (step === 3 && !form.getValues('location')) {
+      handleLocationDetection();
+    }
+  }, [step]);
+
+  // Update form when location is detected
+  useEffect(() => {
+    if (location && step === 3) {
+      form.setValue('location', location, { shouldValidate: true });
+    }
+  }, [location, step, form]);
 
   const steps = [
     { 
@@ -104,7 +125,7 @@ const SimpleRegistrationForm = () => {
     },
     { 
       title: "Photos", 
-      fields: [],
+      fields: ["photos"],
       icon: Camera,
       description: "Add your best photos"
     },
@@ -124,12 +145,6 @@ const SimpleRegistrationForm = () => {
   };
 
   const nextStep = async () => {
-    if (step === 4) {
-      // Skip photo validation for now - will be handled in final implementation
-      setStep(step + 1);
-      return;
-    }
-    
     const isValid = await validateStep(step);
     if (isValid && step < steps.length) {
       setStep(step + 1);
@@ -149,7 +164,7 @@ const SimpleRegistrationForm = () => {
       const { data: signUpData, error: signUpError } = await signUp(data.email, data.password);
       if (signUpError) throw signUpError;
       
-      // TODO: Create profile with additional data
+      // TODO: Create profile with additional data including photos
       
       toast({
         title: "Success!",
@@ -176,18 +191,21 @@ const SimpleRegistrationForm = () => {
             <React.Fragment key={idx}>
               <div className="flex flex-col items-center">
                 <div className={`
-                  w-12 h-12 rounded-full flex items-center justify-center mb-2
-                  ${step === idx + 1 ? 'bg-purple-500 text-white' : 
-                    completedSteps.includes(idx + 1) ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-400'}
+                  w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-300
+                  ${step === idx + 1 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg scale-110' : 
+                    completedSteps.includes(idx + 1) ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' : 'bg-white/20 backdrop-blur text-gray-400 border border-white/30'}
                 `}>
                   {completedSteps.includes(idx + 1) ? <CheckCircle size={20} /> : <StepIcon size={20} />}
                 </div>
-                <span className={`text-xs text-center max-w-20 ${step === idx + 1 ? 'font-medium text-purple-600' : 'text-gray-500'}`}>
+                <span className={`text-xs text-center max-w-20 transition-colors ${step === idx + 1 ? 'font-medium text-white' : 'text-gray-300'}`}>
                   {s.title}
                 </span>
               </div>
               {idx < steps.length - 1 && (
-                <div className={`flex-1 h-1 mx-2 ${completedSteps.includes(idx + 2) ? 'bg-green-500' : step > idx + 1 ? 'bg-purple-500' : 'bg-gray-200'}`} />
+                <div className={`flex-1 h-1 mx-2 rounded transition-all duration-500 ${
+                  completedSteps.includes(idx + 2) ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 
+                  step > idx + 1 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-white/20'
+                }`} />
               )}
             </React.Fragment>
           );
@@ -202,8 +220,8 @@ const SimpleRegistrationForm = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">{steps[0].title}</h2>
-              <p className="text-gray-600 mt-1">{steps[0].description}</p>
+              <h2 className="text-2xl font-bold text-white">{steps[0].title}</h2>
+              <p className="text-gray-300 mt-1">{steps[0].description}</p>
             </div>
             
             <FormField
@@ -211,13 +229,13 @@ const SimpleRegistrationForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel className="text-white">Email Address</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
                       <Input 
                         placeholder="your@email.com" 
-                        className="pl-10" 
+                        className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
                         type="email"
                         {...field} 
                       />
@@ -233,19 +251,19 @@ const SimpleRegistrationForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-white">Password</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
                       <Input 
                         placeholder="Create a strong password" 
-                        className="pl-10" 
+                        className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
                         type="password"
                         {...field} 
                       />
                     </div>
                   </FormControl>
-                  <FormDescription className="text-xs">
+                  <FormDescription className="text-xs text-gray-400">
                     Must be 8+ characters with uppercase, lowercase, and number
                   </FormDescription>
                   <FormMessage />
@@ -258,13 +276,13 @@ const SimpleRegistrationForm = () => {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel className="text-white">Confirm Password</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
                       <Input 
                         placeholder="Confirm your password" 
-                        className="pl-10" 
+                        className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
                         type="password"
                         {...field} 
                       />
@@ -280,8 +298,8 @@ const SimpleRegistrationForm = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">{steps[1].title}</h2>
-              <p className="text-gray-600 mt-1">{steps[1].description}</p>
+              <h2 className="text-2xl font-bold text-white">{steps[1].title}</h2>
+              <p className="text-gray-300 mt-1">{steps[1].description}</p>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
@@ -290,9 +308,9 @@ const SimpleRegistrationForm = () => {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel className="text-white">First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John" {...field} />
+                      <Input placeholder="John" className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -304,9 +322,9 @@ const SimpleRegistrationForm = () => {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel className="text-white">Last Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Doe" {...field} />
+                      <Input placeholder="Doe" className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -319,18 +337,18 @@ const SimpleRegistrationForm = () => {
               name="dateOfBirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
+                  <FormLabel className="text-white">Date of Birth</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
                       <Input 
                         type="date" 
-                        className="pl-10" 
+                        className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white focus:border-purple-500 focus:ring-purple-500/20" 
                         {...field} 
                       />
                     </div>
                   </FormControl>
-                  <FormDescription className="text-xs">
+                  <FormDescription className="text-xs text-gray-400">
                     You must be at least 18 years old
                   </FormDescription>
                   <FormMessage />
@@ -343,18 +361,18 @@ const SimpleRegistrationForm = () => {
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Gender</FormLabel>
+                  <FormLabel className="text-white">Gender</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white focus:border-purple-500 focus:ring-purple-500/20">
                         <SelectValue placeholder="Select your gender" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="man">Man</SelectItem>
-                      <SelectItem value="woman">Woman</SelectItem>
-                      <SelectItem value="non-binary">Non-binary</SelectItem>
-                      <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                    <SelectContent className="bg-gray-900/95 backdrop-blur border-white/20">
+                      <SelectItem value="man" className="text-white hover:bg-white/10">Man</SelectItem>
+                      <SelectItem value="woman" className="text-white hover:bg-white/10">Woman</SelectItem>
+                      <SelectItem value="non-binary" className="text-white hover:bg-white/10">Non-binary</SelectItem>
+                      <SelectItem value="prefer-not-to-say" className="text-white hover:bg-white/10">Prefer not to say</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -367,8 +385,8 @@ const SimpleRegistrationForm = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">{steps[2].title}</h2>
-              <p className="text-gray-600 mt-1">{steps[2].description}</p>
+              <h2 className="text-2xl font-bold text-white">{steps[2].title}</h2>
+              <p className="text-gray-300 mt-1">{steps[2].description}</p>
             </div>
             
             <FormField
@@ -376,17 +394,28 @@ const SimpleRegistrationForm = () => {
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current Location</FormLabel>
+                  <FormLabel className="text-white">Current Location</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input 
-                        placeholder="City, Country" 
-                        className="pl-10" 
-                        {...field} 
-                      />
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
+                      {locationLoading ? (
+                        <div className="flex items-center gap-2 p-3 bg-white/10 backdrop-blur border border-white/20 rounded-lg text-white">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Detecting your location...</span>
+                        </div>
+                      ) : (
+                        <Input 
+                          placeholder="Detecting location..." 
+                          className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 cursor-not-allowed opacity-75" 
+                          value={field.value}
+                          readOnly
+                        />
+                      )}
                     </div>
                   </FormControl>
+                  <FormDescription className="text-xs text-gray-400">
+                    Your location is automatically detected. You can change this later in settings.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -397,15 +426,15 @@ const SimpleRegistrationForm = () => {
               name="bio"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>About Me (Optional)</FormLabel>
+                  <FormLabel className="text-white">About Me (Optional)</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Tell us a bit about yourself..." 
-                      className="resize-none min-h-[100px]" 
+                      className="resize-none min-h-[100px] bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription className="text-xs">
+                  <FormDescription className="text-xs text-gray-400">
                     {field.value?.length || 0}/500 characters
                   </FormDescription>
                   <FormMessage />
@@ -418,21 +447,14 @@ const SimpleRegistrationForm = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">{steps[3].title}</h2>
-              <p className="text-gray-600 mt-1">{steps[3].description}</p>
+              <h2 className="text-2xl font-bold text-white">{steps[3].title}</h2>
+              <p className="text-gray-300 mt-1">{steps[3].description}</p>
             </div>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-              <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Upload Your Photos</h3>
-              <p className="text-gray-600 mb-4">Add at least one photo to complete your profile</p>
-              <Button type="button" variant="outline">
-                Choose Photos
-              </Button>
-              <p className="text-xs text-gray-500 mt-2">
-                JPG, PNG up to 10MB each. Minimum 1 photo required.
-              </p>
-            </div>
+            <PhotoUploadStep 
+              form={form}
+              question={{ id: 'photos', profileField: 'photos' } as any}
+            />
           </div>
         );
       default:
@@ -447,13 +469,13 @@ const SimpleRegistrationForm = () => {
         
         {renderFormByStep()}
         
-        <div className="flex justify-between mt-8 pt-6 border-t">
+        <div className="flex justify-between mt-8 pt-6 border-t border-white/20">
           {step > 1 ? (
             <Button 
               type="button" 
               variant="outline" 
               onClick={prevStep}
-              className="gap-2"
+              className="gap-2 bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
             >
               <ChevronLeft size={16} />
               Back
@@ -466,7 +488,7 @@ const SimpleRegistrationForm = () => {
             <Button 
               type="button" 
               onClick={nextStep}
-              className="gap-2 bg-purple-500 hover:bg-purple-600"
+              className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
             >
               Continue
               <ChevronRight size={16} />
@@ -475,7 +497,7 @@ const SimpleRegistrationForm = () => {
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="gap-2 bg-purple-500 hover:bg-purple-600"
+              className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
             >
               {isSubmitting ? (
                 <>
