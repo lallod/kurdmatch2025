@@ -71,18 +71,16 @@ const SimpleLocationSearch = ({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <MapPin className="w-5 h-5 text-purple-600" />
-        <Label className="text-lg font-medium">{label}</Label>
-      </div>
+      <Label className="text-white">{label}</Label>
       
       <div className="relative">
+        <MapPin className="absolute left-3 top-3 h-4 w-4 text-pink-400 z-10" />
         <Button
           variant="outline"
-          className="w-full justify-between text-lg p-4 rounded-xl h-auto"
+          className="w-full justify-between pl-10 bg-white/10 backdrop-blur border-purple-300/30 text-white placeholder:text-purple-300 hover:bg-white/20 focus:border-pink-400 focus:ring-pink-400/20"
           onClick={() => setOpen(!open)}
         >
-          <span className={selectedLocation ? "text-gray-900" : "text-gray-500"}>
+          <span className={selectedLocation ? "text-white" : "text-purple-300"}>
             {selectedLocation ? selectedLocation.display : placeholder}
           </span>
           <ChevronDown className={`ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -123,7 +121,6 @@ const SimpleLocationSearch = ({
           </div>
         )}
       </div>
-      <p className="text-sm text-gray-500">Choose a destination you've always wanted to visit</p>
     </div>
   );
 };
