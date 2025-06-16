@@ -3,18 +3,53 @@ import { useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from './client';
 
+// Global state to prevent multiple initializations
+let globalAuthState: {
+  initialized: boolean;
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  subscription: any;
+} = {
+  initialized: false,
+  user: null,
+  session: null,
+  loading: true,
+  subscription: null,
+};
+
+// Set to track all active hook instances
+const activeHooks = new Set<Function>();
+
 export const useSupabaseAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
+  const [user, setUser] = useState<User | null>(globalAuthState.user);
+  const [session, setSession] = useState<Session | null>(globalAuthState.session);
+  const [loading, setLoading] = useState(globalAuthState.loading);
+
+  // Create a unique update function for this hook instance
+  const updateState = (newUser: User | null, newSession: Session | null, isLoading: boolean) => {
+    setUser(newUser);
+    setSession(newSession);
+    setLoading(isLoading);
+  };
 
   useEffect(() => {
-    let isMounted = true;
-    let authSubscription: any = null;
+    // Register this hook instance
+    activeHooks.add(updateState);
 
+    // If already initialized, sync with global state
+    if (globalAuthState.initialized) {
+      setUser(globalAuthState.user);
+      setSession(globalAuthState.session);
+      setLoading(globalAuthState.loading);
+      return () => {
+        activeHooks.delete(updateState);
+      };
+    }
+
+    // Only initialize if not already initialized
     const initializeAuth = async () => {
-      if (initialized || !isMounted) return;
+      if (globalAuthState.initialized) return;
       
       try {
         console.log('Initializing auth state...');
@@ -23,19 +58,21 @@ export const useSupabaseAuth = () => {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log('Got existing session:', currentSession?.user?.email);
         
-        if (isMounted) {
-          setSession(currentSession);
-          setUser(currentSession?.user ?? null);
-          setLoading(false);
-          setInitialized(true);
-        }
+        // Update global state
+        globalAuthState.user = currentSession?.user ?? null;
+        globalAuthState.session = currentSession;
+        globalAuthState.loading = false;
+        globalAuthState.initialized = true;
 
-        // Set up auth listener after initial state is set
-        if (isMounted) {
-          authSubscription = supabase.auth.onAuthStateChange(
+        // Update all active hook instances
+        activeHooks.forEach(updateFn => {
+          updateFn(globalAuthState.user, globalAuthState.session, false);
+        });
+
+        // Set up auth listener only once
+        if (!globalAuthState.subscription) {
+          globalAuthState.subscription = supabase.auth.onAuthStateChange(
             async (event, newSession) => {
-              if (!isMounted) return;
-              
               console.log('Auth state changed:', event, newSession?.user?.email);
               
               // Skip token refresh events to prevent loops
@@ -44,34 +81,48 @@ export const useSupabaseAuth = () => {
                 return;
               }
               
-              setSession(newSession);
-              setUser(newSession?.user ?? null);
+              // Update global state
+              globalAuthState.session = newSession;
+              globalAuthState.user = newSession?.user ?? null;
               
               if (event === 'SIGNED_OUT') {
-                setLoading(false);
+                globalAuthState.loading = false;
               }
+
+              // Update all active hook instances
+              activeHooks.forEach(updateFn => {
+                updateFn(globalAuthState.user, globalAuthState.session, globalAuthState.loading);
+              });
             }
           );
         }
         
       } catch (error) {
         console.error('Auth initialization error:', error);
-        if (isMounted) {
-          setLoading(false);
-          setInitialized(true);
-        }
+        globalAuthState.loading = false;
+        globalAuthState.initialized = true;
+        
+        // Update all active hook instances
+        activeHooks.forEach(updateFn => {
+          updateFn(null, null, false);
+        });
       }
     };
 
     initializeAuth();
 
     return () => {
-      isMounted = false;
-      if (authSubscription) {
-        authSubscription.data?.subscription?.unsubscribe();
+      // Unregister this hook instance
+      activeHooks.delete(updateState);
+      
+      // Clean up subscription only when no more active hooks
+      if (activeHooks.size === 0 && globalAuthState.subscription) {
+        globalAuthState.subscription.data?.subscription?.unsubscribe();
+        globalAuthState.subscription = null;
+        globalAuthState.initialized = false;
       }
     };
-  }, []); // Remove initialized from dependency array
+  }, []);
 
   const signUp = async (email: string, password: string, metadata?: Record<string, any>) => {
     setLoading(true);
