@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
@@ -69,8 +69,29 @@ const kurdishLanguages = [
 const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps) => {
   const [open, setOpen] = useState(false);
 
-  // Ensure value is always an array and filter out any invalid values
-  const currentValue = Array.isArray(value) ? value.filter(v => v && typeof v === 'string') : [];
+  // Ensure value is always an array
+  const currentValue = Array.isArray(value) ? value : [];
+
+  // Group languages safely with validation
+  const groupedLanguages = useMemo(() => {
+    try {
+      const groups: Record<string, typeof kurdishLanguages> = {};
+      
+      kurdishLanguages.forEach(lang => {
+        if (lang && lang.category && lang.name && lang.code) {
+          if (!groups[lang.category]) {
+            groups[lang.category] = [];
+          }
+          groups[lang.category].push(lang);
+        }
+      });
+      
+      return groups;
+    } catch (error) {
+      console.error('Error grouping languages:', error);
+      return {};
+    }
+  }, []);
 
   const handleSelect = (languageName: string) => {
     if (!onChange || !languageName) return;
@@ -86,47 +107,57 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
     onChange(currentValue.filter(item => item !== languageName));
   };
 
-  // Safely group languages with comprehensive defensive checks
-  const groupedLanguages = React.useMemo(() => {
+  // Render command groups safely
+  const renderCommandGroups = () => {
     try {
-      if (!Array.isArray(kurdishLanguages) || kurdishLanguages.length === 0) {
-        console.log('LanguageMultiSelect: kurdishLanguages is not a valid array');
-        return {};
+      const groupEntries = Object.entries(groupedLanguages);
+      
+      if (groupEntries.length === 0) {
+        return (
+          <div className="p-4 text-center text-gray-400">
+            No languages available
+          </div>
+        );
       }
 
-      const validLanguages = kurdishLanguages.filter(lang => {
-        const isValid = lang && 
-          typeof lang === 'object' && 
-          typeof lang.category === 'string' && 
-          typeof lang.name === 'string' && 
-          typeof lang.code === 'string' &&
-          lang.category.trim() !== '' &&
-          lang.name.trim() !== '' &&
-          lang.code.trim() !== '';
-        
-        if (!isValid) {
-          console.log('LanguageMultiSelect: Invalid language object:', lang);
+      return groupEntries.map(([category, languages]) => {
+        if (!category || !Array.isArray(languages) || languages.length === 0) {
+          return null;
         }
-        
-        return isValid;
-      });
 
-      const grouped = validLanguages.reduce((acc, lang) => {
-        const category = lang.category.trim();
-        if (!acc[category]) {
-          acc[category] = [];
-        }
-        acc[category].push(lang);
-        return acc;
-      }, {} as Record<string, typeof kurdishLanguages>);
+        return (
+          <CommandGroup key={category} heading={category} className="text-white">
+            {languages.map((language) => {
+              if (!language || !language.name || !language.code) {
+                return null;
+              }
 
-      console.log('LanguageMultiSelect: Grouped languages:', grouped);
-      return grouped;
+              return (
+                <CommandItem
+                  key={`${category}-${language.code}`}
+                  value={language.name}
+                  onSelect={() => handleSelect(language.name)}
+                  className="text-white hover:bg-gray-800"
+                >
+                  <span className="flex items-center justify-between w-full">
+                    <span>{language.name}</span>
+                    <span className="text-sm text-gray-400">{language.native || language.name}</span>
+                  </span>
+                </CommandItem>
+              );
+            })}
+          </CommandGroup>
+        );
+      }).filter(Boolean); // Remove any null entries
     } catch (error) {
-      console.error('LanguageMultiSelect: Error grouping languages:', error);
-      return {};
+      console.error('Error rendering command groups:', error);
+      return (
+        <div className="p-4 text-center text-gray-400">
+          Error loading languages
+        </div>
+      );
     }
-  }, []);
+  };
 
   return (
     <div className="space-y-3">
@@ -174,7 +205,7 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
             </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 bg-gray-900 border-gray-700">
+        <PopoverContent className="w-full p-0 bg-gray-900 border-gray-700" style={{ zIndex: 9999 }}>
           <Command>
             <CommandInput 
               placeholder="Search languages..." 
@@ -182,49 +213,7 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
             />
             <CommandEmpty>No language found.</CommandEmpty>
             <div className="max-h-60 overflow-auto">
-              {Object.entries(groupedLanguages).length > 0 ? (
-                Object.entries(groupedLanguages).map(([category, languages]) => {
-                  // Skip invalid categories
-                  if (!category || !Array.isArray(languages) || languages.length === 0) {
-                    return null;
-                  }
-                  
-                  const validLanguagesInCategory = languages.filter(language => 
-                    language && 
-                    typeof language === 'object' && 
-                    language.name && 
-                    language.code &&
-                    typeof language.name === 'string' &&
-                    typeof language.code === 'string'
-                  );
-
-                  if (validLanguagesInCategory.length === 0) {
-                    return null;
-                  }
-                  
-                  return (
-                    <CommandGroup key={category} heading={category} className="text-white">
-                      {validLanguagesInCategory.map((language) => (
-                        <CommandItem
-                          key={`${category}-${language.code}`}
-                          value={language.name}
-                          onSelect={() => handleSelect(language.name)}
-                          className="text-white hover:bg-gray-800"
-                        >
-                          <span className="flex items-center justify-between w-full">
-                            <span>{language.name}</span>
-                            <span className="text-sm text-gray-400">{language.native || language.name}</span>
-                          </span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  );
-                })
-              ) : (
-                <div className="p-4 text-center text-gray-400">
-                  No languages available
-                </div>
-              )}
+              {renderCommandGroups()}
             </div>
           </Command>
         </PopoverContent>
