@@ -2,15 +2,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { supabase } from '@/integrations/supabase/client';
+import { validateAdminCredentials } from '@/utils/auth/adminManager';
+import { validateEmail, validatePassword, globalRateLimiter } from '@/utils/security/inputValidation';
 
 export const useAdminAuth = () => {
-  const [email, setEmail] = useState('lalo.peshawa@gmail.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { signIn } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -19,37 +18,39 @@ export const useAdminAuth = () => {
     setIsLoading(true);
     setErrorMessage(null);
 
+    // Rate limiting check
+    const clientId = `admin_login_${email}`;
+    if (globalRateLimiter.isRateLimited(clientId)) {
+      setErrorMessage('Too many login attempts. Please wait 5 minutes before trying again.');
+      toast({
+        title: "Rate Limited",
+        description: "Too many login attempts. Please wait before trying again.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Input validation
+    if (!validateEmail(email)) {
+      setErrorMessage('Please enter a valid email address.');
+      setIsLoading(false);
+      return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setErrorMessage(passwordValidation.message || 'Invalid password format.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       console.log(`Attempting to sign in admin with: ${email}`);
-      const { error, data } = await signIn(email, password);
+      const result = await validateAdminCredentials(email, password);
 
-      if (error) throw error;
-
-      // Check if user has super_admin role
-      const { data: userData } = await supabase.auth.getUser();
-      
-      if (!userData?.user?.id) {
-        throw new Error('Authentication failed');
-      }
-      
-      // Query the user_roles table to check for super_admin role
-      console.log("Checking role for user ID:", userData.user.id);
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('*')
-        .eq('user_id', userData.user.id)
-        .eq('role', 'super_admin')
-        .maybeSingle();
-
-      if (roleError) {
-        console.error('Error checking super admin role:', roleError);
-        throw new Error('Error verifying admin privileges');
-      }
-
-      if (!roleData) {
-        // No super admin role found
-        await supabase.auth.signOut();
-        throw new Error('You do not have permission to access the admin dashboard.');
+      if (!result.success) {
+        throw new Error(result.error);
       }
 
       toast({

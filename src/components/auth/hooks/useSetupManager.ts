@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { setupSupabase, clearSetupCache } from '@/utils/setupSupabase';
+import { setupSuperAdmin } from '@/utils/auth/adminManager';
 
 export const useSetupManager = () => {
   const [isSettingUp, setIsSettingUp] = useState(false);
@@ -30,7 +30,7 @@ export const useSetupManager = () => {
       setIsSettingUp(true);
       setSetupMessage(null);
       
-      const result = await setupSupabase();
+      const result = await setupSuperAdmin();
       setIsSettingUp(false);
       setSetupComplete(result.success);
       
@@ -67,7 +67,7 @@ export const useSetupManager = () => {
     setRetryAfter(null);
     setCountdown(0);
     
-    const result = await setupSupabase();
+    const result = await setupSuperAdmin();
     setIsSettingUp(false);
     setSetupComplete(result.success);
     
@@ -94,7 +94,6 @@ export const useSetupManager = () => {
   };
 
   const handleForceClearCache = () => {
-    clearSetupCache();
     setSetupComplete(false);
     setSetupMessage(null);
     setRetryAfter(null);
