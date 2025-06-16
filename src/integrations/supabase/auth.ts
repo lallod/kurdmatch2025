@@ -11,36 +11,15 @@ export const useSupabaseAuth = () => {
 
   useEffect(() => {
     let isMounted = true;
+    let authSubscription: any = null;
 
-    // Set up the auth state listener first
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
-        if (!isMounted) return;
-        
-        console.log('Auth state changed:', event, newSession?.user?.email);
-        
-        // Prevent rapid state changes that cause loops
-        if (event === 'TOKEN_REFRESHED' && initialized) {
-          console.log('Token refreshed, skipping state update to prevent loop');
-          return;
-        }
-        
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-        
-        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-          setLoading(false);
-          setInitialized(true);
-        }
-      }
-    );
-
-    // Initialize auth state only once
     const initializeAuth = async () => {
-      if (initialized) return;
+      if (initialized || !isMounted) return;
       
       try {
         console.log('Initializing auth state...');
+        
+        // Get current session first
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log('Got existing session:', currentSession?.user?.email);
         
@@ -50,6 +29,31 @@ export const useSupabaseAuth = () => {
           setLoading(false);
           setInitialized(true);
         }
+
+        // Set up auth listener after initial state is set
+        if (isMounted) {
+          authSubscription = supabase.auth.onAuthStateChange(
+            async (event, newSession) => {
+              if (!isMounted) return;
+              
+              console.log('Auth state changed:', event, newSession?.user?.email);
+              
+              // Skip token refresh events to prevent loops
+              if (event === 'TOKEN_REFRESHED') {
+                console.log('Token refreshed, skipping state update to prevent loop');
+                return;
+              }
+              
+              setSession(newSession);
+              setUser(newSession?.user ?? null);
+              
+              if (event === 'SIGNED_OUT') {
+                setLoading(false);
+              }
+            }
+          );
+        }
+        
       } catch (error) {
         console.error('Auth initialization error:', error);
         if (isMounted) {
@@ -63,9 +67,11 @@ export const useSupabaseAuth = () => {
 
     return () => {
       isMounted = false;
-      subscription.unsubscribe();
+      if (authSubscription) {
+        authSubscription.data?.subscription?.unsubscribe();
+      }
     };
-  }, [initialized]);
+  }, []); // Remove initialized from dependency array
 
   const signUp = async (email: string, password: string, metadata?: Record<string, any>) => {
     setLoading(true);
