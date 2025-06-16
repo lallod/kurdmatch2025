@@ -18,24 +18,27 @@ export const useRegistrationFormLogic = () => {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   
+  // Ensure proper default values for all fields
+  const defaultValues: RegistrationFormValues = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    gender: 'male',
+    height: '',
+    bornIn: '',
+    languages: [], // Ensure this is always an array
+    occupation: '',
+    location: '',
+    dreamVacation: '',
+    photos: [], // Ensure this is always an array
+  };
+
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-      firstName: '',
-      lastName: '',
-      dateOfBirth: '',
-      gender: 'male',
-      height: '',
-      bornIn: '',
-      languages: [],
-      occupation: '',
-      location: '',
-      dreamVacation: '',
-      photos: [],
-    },
+    defaultValues,
     mode: 'onChange',
   });
 
@@ -61,23 +64,38 @@ export const useRegistrationFormLogic = () => {
   // Load saved data on component mount
   useEffect(() => {
     if (!hasLoadedSavedData) {
-      const savedData = loadSavedData();
-      if (savedData) {
-        setStep(savedData.currentStep);
-        setCompletedSteps(savedData.completedSteps);
-        
-        const lastSavedTime = getLastSavedTime();
-        if (lastSavedTime) {
-          const timeAgo = Math.round((Date.now() - lastSavedTime) / (1000 * 60));
-          toast({
-            title: "Welcome back!",
-            description: `Resuming your registration from ${timeAgo} minute${timeAgo !== 1 ? 's' : ''} ago.`,
-          });
+      try {
+        const savedData = loadSavedData();
+        if (savedData) {
+          // Ensure languages field is always an array
+          const processedData = {
+            ...savedData.formData,
+            languages: Array.isArray(savedData.formData.languages) ? savedData.formData.languages : [],
+            photos: Array.isArray(savedData.formData.photos) ? savedData.formData.photos : []
+          };
+          
+          // Reset form with processed data
+          form.reset(processedData);
+          setStep(savedData.currentStep);
+          setCompletedSteps(savedData.completedSteps);
+          
+          const lastSavedTime = getLastSavedTime();
+          if (lastSavedTime) {
+            const timeAgo = Math.round((Date.now() - lastSavedTime) / (1000 * 60));
+            toast({
+              title: "Welcome back!",
+              description: `Resuming your registration from ${timeAgo} minute${timeAgo !== 1 ? 's' : ''} ago.`,
+            });
+          }
         }
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+        // Ensure form has proper defaults even if loading fails
+        form.reset(defaultValues);
       }
       setHasLoadedSavedData(true);
     }
-  }, [hasLoadedSavedData, loadSavedData, getLastSavedTime, toast]);
+  }, [hasLoadedSavedData, loadSavedData, getLastSavedTime, toast, form]);
 
   // Auto-detect location when reaching step 3
   useEffect(() => {
