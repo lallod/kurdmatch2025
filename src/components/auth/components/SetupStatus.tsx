@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle, Clock, RefreshCw, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface SetupStatusProps {
   isSettingUp: boolean;
@@ -22,6 +23,8 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
   onRetrySetup,
   onForceClearCache
 }) => {
+  const navigate = useNavigate();
+
   if (isSettingUp) {
     return (
       <div className="bg-blue-900/50 border border-blue-700 text-blue-200 px-4 py-3 rounded relative flex items-center" role="alert">
@@ -42,7 +45,22 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
           ) : (
             <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
           )}
-          <span className="block">{setupMessage}</span>
+          <div className="flex-1">
+            <span className="block">{setupMessage}</span>
+            {setupMessage.includes("Supabase configuration") && (
+              <div className="mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/admin-setup')}
+                  className="text-gray-300 border-gray-600 hover:bg-gray-600"
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Configure Supabase Setup
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
         
         {retryAfter && (
