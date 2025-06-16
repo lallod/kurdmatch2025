@@ -94,11 +94,11 @@ export const getUserStatistics = async () => {
   if (error) throw error;
   
   const totalUsers = profiles?.length || 0;
-  const activeUsers = profiles?.filter(p => 
+  const activeUsers = (profiles || []).filter((p: any) => 
     p.verified && p.last_active && 
     (new Date(p.last_active).getTime() > Date.now() - 86400000 * 7)
-  ).length || 0;
-  const pendingUsers = profiles?.filter(p => !p.verified).length || 0;
+  ).length;
+  const pendingUsers = (profiles || []).filter((p: any) => !p.verified).length;
   const inactiveUsers = totalUsers - activeUsers - pendingUsers;
   
   return {

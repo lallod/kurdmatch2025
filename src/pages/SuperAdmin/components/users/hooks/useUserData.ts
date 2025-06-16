@@ -62,10 +62,10 @@ export const useUserData = () => {
       if (photoError) console.warn('Could not fetch photo counts:', photoError);
       
       // Count photos per user
-      const photoCountMap = photoCounts?.reduce((acc, photo) => {
+      const photoCountMap = (photoCounts || []).reduce((acc: Record<string, number>, photo: any) => {
         acc[photo.profile_id] = (acc[photo.profile_id] || 0) + 1;
         return acc;
-      }, {} as Record<string, number>) || {};
+      }, {});
       
       // Fetch message counts from messages table
       const { data: messageCounts, error: messageError } = await supabase
@@ -76,15 +76,15 @@ export const useUserData = () => {
       if (messageError) console.warn('Could not fetch message counts:', messageError);
       
       // Count messages per user
-      const messageCountMap = messageCounts?.reduce((acc, message) => {
+      const messageCountMap = (messageCounts || []).reduce((acc: Record<string, number>, message: any) => {
         acc[message.sender_id] = (acc[message.sender_id] || 0) + 1;
         return acc;
-      }, {} as Record<string, number>) || {};
+      }, {});
       
       // Map profiles to User objects with real data
       const userData: User[] = profiles.map(profile => {
-        const userRole = userRoles?.find(role => role.user_id === profile.id);
-        const authUser = authUsers?.users?.find(user => user.id === profile.id);
+        const userRole = userRoles?.find((role: any) => role.user_id === profile.id);
+        const authUser = authUsers?.users?.find((user: any) => user.id === profile.id);
         const realEmail = authUser?.email || `user-${profile.id.substring(0, 8)}@unknown.com`;
         
         const isActive = profile.last_active && 
