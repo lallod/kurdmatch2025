@@ -9,6 +9,10 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { TablesInsert } from '@/integrations/supabase/types';
+import { generateAIBio } from '../utils/aiBioGenerator';
+import { handlePhotoUploads } from '../utils/photoUploadHandler';
+import { mapFormDataToProfile } from '../utils/profileDataMapper';
+import { getFormDefaultValues } from '../utils/formDefaultValues';
 
 export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any[]) => {
   const { toast } = useToast();
@@ -20,36 +24,9 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
   const dynamicSchema = createDynamicSchema(enabledQuestions);
   type FormValues = typeof dynamicSchema._type;
   
-  const getDefaultValues = () => {
-    const defaults: Record<string, any> = {};
-    
-    // Always set photos as an empty array
-    defaults['sys_6'] = [];
-    defaults['photos'] = [];
-    
-    enabledQuestions.forEach(q => {
-      console.log(`Setting default for question ${q.id}: fieldType=${q.fieldType}, profileField=${q.profileField}`);
-      
-      if (q.profileField !== 'bio') {
-        if (q.fieldType === 'multi-select') {
-          defaults[q.id] = [];
-        } else if (q.fieldType === 'checkbox') {
-          defaults[q.id] = 'false';
-        } else if (q.profileField === 'photos') {
-          defaults[q.id] = [];
-        } else {
-          defaults[q.id] = '';
-        }
-      }
-    });
-    
-    console.log('Form default values:', defaults);
-    return defaults;
-  };
-  
   const form = useForm<FormValues>({
     resolver: zodResolver(dynamicSchema),
-    defaultValues: getDefaultValues(),
+    defaultValues: getFormDefaultValues(enabledQuestions),
     mode: 'onChange',
   });
 
@@ -71,26 +48,7 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       const userId = signUpData.user.id;
 
       // Handle photo uploads
-      const photoQuestion = enabledQuestions.find(q => q.profileField === 'photos');
-      const photoUrls: string[] = [];
-      if (photoQuestion && data[photoQuestion.id] && Array.isArray(data[photoQuestion.id])) {
-        const photoFiles = data[photoQuestion.id] as string[]; // These are data URLs
-
-        for (const [index, fileDataUrl] of photoFiles.entries()) {
-          const response = await fetch(fileDataUrl);
-          const blob = await response.blob();
-          const fileExt = blob.type.split('/')[1];
-          const fileName = `${userId}/profile_${index + 1}_${Date.now()}.${fileExt}`;
-          const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('profile-photos')
-            .upload(fileName, blob, { cacheControl: '3600', upsert: false, contentType: blob.type });
-
-          if (uploadError) throw uploadError;
-
-          const { data: urlData } = supabase.storage.from('profile-photos').getPublicUrl(uploadData.path);
-          photoUrls.push(urlData.publicUrl);
-        }
-      }
+      const photoUrls = await handlePhotoUploads(data, userId, enabledQuestions);
 
       // Generate AI bio if bio question exists
       const bioQuestion = enabledQuestions.find(q => q.profileField === 'bio');
@@ -101,46 +59,7 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       }
       
       // Prepare profile data with proper typing
-      const profileInsertData: Partial<TablesInsert<'profiles'>> = {
-        id: userId,
-      };
-
-      // Map form data to profile fields
-      enabledQuestions.forEach(q => {
-        if (q.profileField && q.profileField !== 'email' && q.profileField !== 'password' && q.profileField !== 'photos') {
-          const formValue = processedData[q.id];
-          if (formValue !== undefined && formValue !== null && formValue !== '') {
-            if (q.profileField === 'full_name') {
-              profileInsertData.name = String(formValue);
-            } else if (q.profileField === 'date_of_birth' && typeof formValue === 'string' && formValue) {
-              // Calculate age from date of birth
-              const birthDate = new Date(formValue);
-              if (!isNaN(birthDate.getTime())) {
-                const ageDifMs = Date.now() - birthDate.getTime();
-                const ageDate = new Date(ageDifMs);
-                profileInsertData.age = Math.abs(ageDate.getUTCFullYear() - 1970);
-              }
-            } else if (q.fieldType === 'multi-select' && Array.isArray(formValue)) {
-              // Handle array fields
-              (profileInsertData as any)[q.profileField] = formValue.length > 0 ? formValue : null;
-            } else if (typeof formValue === 'string' || typeof formValue === 'number' || typeof formValue === 'boolean') {
-              // Handle single value fields
-              (profileInsertData as any)[q.profileField] = formValue;
-            }
-          }
-        }
-      });
-      
-      // Ensure required fields have values
-      if (!profileInsertData.name) {
-        profileInsertData.name = "New User";
-      }
-      if (profileInsertData.age === undefined || profileInsertData.age === null) {
-        profileInsertData.age = 18;
-      }
-      if (!profileInsertData.location) {
-        profileInsertData.location = "Not specified";
-      }
+      const profileInsertData = mapFormDataToProfile(processedData, userId, enabledQuestions);
       
       console.log('Profile data to insert:', profileInsertData);
       
@@ -247,44 +166,4 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
     nextStep,
     prevStep
   };
-};
-
-const generateAIBio = (formData: Record<string, any>, questions: QuestionItem[]) => {
-  const fullNameQ = questions.find(q => q.profileField === 'full_name');
-  const occupationQ = questions.find(q => q.profileField === 'occupation');
-  const locationQ = questions.find(q => q.profileField === 'location');
-  const interestsQ = questions.find(q => q.profileField === 'interests');
-  const relationshipGoalsQ = questions.find(q => q.profileField === 'relationship_goals');
-  
-  const fullName = fullNameQ ? formData[fullNameQ.id] || '' : '';
-  const firstName = fullName.split(' ')[0] || 'there';
-
-  const occupation = occupationQ ? formData[occupationQ.id] : '';
-  const location = locationQ ? formData[locationQ.id] : '';
-  const interests = interestsQ ? (Array.isArray(formData[interestsQ.id]) ? formData[interestsQ.id].join(', ') : formData[interestsQ.id]) : '';
-  const relationshipGoals = relationshipGoalsQ ? formData[relationshipGoalsQ.id] : '';
-  
-  let bio = `Hi, I'm ${firstName}`;
-  
-  if (occupation) {
-    bio += `, working as a ${occupation}`;
-  }
-  
-  if (location) {
-    bio += ` based in ${location}`;
-  }
-  
-  bio += `. `;
-  
-  if (interests) {
-    bio += `I enjoy ${interests}. `;
-  }
-  
-  if (relationshipGoals) {
-    bio += `I'm looking for ${relationshipGoals}. `;
-  }
-  
-  bio += `I'm excited to connect with like-minded people!`;
-  
-  return bio;
 };
