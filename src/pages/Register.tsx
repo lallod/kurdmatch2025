@@ -1,20 +1,25 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import SimpleRegistrationForm from '@/components/auth/SimpleRegistrationForm';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Register = () => {
+  // Scroll to top on component mount and step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-purple-950 to-indigo-950 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 p-4">
       <div className="w-full max-w-2xl mx-auto space-y-8">
         <div className="absolute top-4 left-4">
           <Button
             asChild
             variant="ghost"
             size="sm"
-            className="flex items-center text-gray-300 hover:text-white hover:bg-white/10 backdrop-blur"
+            className="flex items-center text-white/80 hover:text-white hover:bg-white/10 backdrop-blur border border-white/20"
           >
             <Link to="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -23,11 +28,22 @@ const Register = () => {
           </Button>
         </div>
         
+        {/* Logo and Header */}
         <div className="text-center pt-16">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
+          <div className="flex items-center justify-center mb-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                <Heart className="w-6 h-6 text-white fill-white" />
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">
+                KurdMatch
+              </h1>
+            </div>
+          </div>
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-2">
             Join Our Community
-          </h1>
-          <p className="text-gray-300 text-lg">
+          </h2>
+          <p className="text-purple-200 text-lg">
             Create your account in just a few simple steps
           </p>
         </div>
@@ -41,9 +57,9 @@ const Register = () => {
           </div>
         </div>
         
-        <div className="text-center text-sm text-gray-400 border-t border-white/20 pt-6">
+        <div className="text-center text-sm text-purple-200 border-t border-white/20 pt-6">
           Already have an account?{' '}
-          <Link to="/auth" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
+          <Link to="/auth" className="text-pink-400 hover:text-pink-300 font-medium transition-colors">
             Sign in here
           </Link>
         </div>

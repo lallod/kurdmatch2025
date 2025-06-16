@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -11,14 +10,15 @@ import { useNavigate } from 'react-router-dom';
 import { useLocationManager } from '@/components/my-profile/sections/location/useLocationManager';
 import { useAutoSave } from '@/hooks/useAutoSave';
 
-// Import the new components
+// Import the components
 import StepIndicator from '@/components/auth/components/StepIndicator';
 import AccountStep from '@/components/auth/components/AccountStep';
 import BasicInfoStep from '@/components/auth/components/BasicInfoStep';
-import LocationBioStep from '@/components/auth/components/LocationBioStep';
+import LocationStep from '@/components/auth/components/LocationStep';
 import PhotoUploadStep from '@/components/auth/components/PhotoUploadStep';
 import FormNavigation from '@/components/auth/components/FormNavigation';
 import AutoSaveIndicator from '@/components/auth/components/AutoSaveIndicator';
+import SocialLogin from '@/components/auth/components/SocialLogin';
 
 const registrationSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -99,6 +99,11 @@ const SimpleRegistrationForm = () => {
 
   // Location management for step 3
   const { location, handleLocationDetection, isLoading: locationLoading } = useLocationManager('');
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
 
   // Load saved data on component mount
   useEffect(() => {
@@ -208,10 +213,7 @@ const SimpleRegistrationForm = () => {
       const { data: signUpData, error: signUpError } = await signUp(data.email, data.password);
       if (signUpError) throw signUpError;
       
-      // Clear saved data on successful submission
       clearSavedData();
-      
-      // TODO: Create profile with additional data including photos
       
       toast({
         title: "Success!",
@@ -232,17 +234,28 @@ const SimpleRegistrationForm = () => {
   const renderFormByStep = () => {
     switch (step) {
       case 1:
-        return <AccountStep form={form} />;
+        return (
+          <div className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-white">{steps[0].title}</h2>
+              <p className="text-purple-200 mt-1">{steps[0].description}</p>
+            </div>
+            
+            <SocialLogin />
+            
+            <AccountStep form={form} />
+          </div>
+        );
       case 2:
         return <BasicInfoStep form={form} />;
       case 3:
-        return <LocationBioStep form={form} location={location} locationLoading={locationLoading} />;
+        return <LocationStep form={form} location={location} locationLoading={locationLoading} />;
       case 4:
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-white">{steps[3].title}</h2>
-              <p className="text-gray-300 mt-1">{steps[3].description}</p>
+              <p className="text-purple-200 mt-1">{steps[3].description}</p>
             </div>
             
             <PhotoUploadStep 
