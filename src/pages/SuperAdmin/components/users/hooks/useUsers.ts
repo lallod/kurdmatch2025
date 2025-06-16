@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '../types';
@@ -58,21 +57,21 @@ export const useUsers = (initialUsersPerPage: number = 10) => {
       const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
       if (authError) console.warn('Could not fetch auth users:', authError);
       
-      // Fetch photo counts from profile_photos or photos table
+      // Fetch photo counts from photos table using profile_id
       const { data: photoCounts, error: photoError } = await supabase
-        .from('profile_photos')
-        .select('user_id')
-        .in('user_id', profileIds);
+        .from('photos')
+        .select('profile_id')
+        .in('profile_id', profileIds);
       
       if (photoError) console.warn('Could not fetch photo counts:', photoError);
       
       // Count photos per user
       const photoCountMap = photoCounts?.reduce((acc, photo) => {
-        acc[photo.user_id] = (acc[photo.user_id] || 0) + 1;
+        acc[photo.profile_id] = (acc[photo.profile_id] || 0) + 1;
         return acc;
       }, {} as Record<string, number>) || {};
       
-      // Fetch message counts (assuming there's a messages table)
+      // Fetch message counts from messages table
       const { data: messageCounts, error: messageError } = await supabase
         .from('messages')
         .select('sender_id')

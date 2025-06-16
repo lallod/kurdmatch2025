@@ -12,11 +12,11 @@ export const useRealUserData = (userId: string) => {
       try {
         setLoading(true);
         
-        // Fetch real photo count
+        // Fetch real photo count from photos table
         const { count: photos, error: photoError } = await supabase
-          .from('profile_photos')
+          .from('photos')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId);
+          .eq('profile_id', userId);
         
         if (photoError) {
           console.warn('Error fetching photo count:', photoError);

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { QuestionItem, toDbQuestion, fromDbQuestion, QuestionItemDB } from '@/pages/SuperAdmin/components/registration-questions/types';
 
