@@ -42,13 +42,17 @@ export const RegisterProtection: React.FC<RegisterProtectionProps> = ({ children
     );
   }
 
-  // If user is authenticated and has complete profile, redirect to discovery
-  if (user && hasCompleteProfile) {
+  // Check if this is an OAuth registration flow
+  const isOAuthRegistration = sessionStorage.getItem('oauth_registration_flow') === 'true';
+
+  // If user is authenticated and has complete profile, and not in OAuth registration flow, redirect to discovery
+  if (user && hasCompleteProfile && !isOAuthRegistration) {
     return <Navigate to="/discovery" replace />;
   }
 
   // Allow access to registration for:
   // 1. Unauthenticated users (manual registration)
   // 2. Authenticated users with incomplete profiles (OAuth users)
+  // 3. OAuth users in registration flow
   return <>{children}</>;
 };

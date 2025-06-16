@@ -10,15 +10,16 @@ export const useWizardManager = () => {
   const [isOAuthFlow, setIsOAuthFlow] = useState(false);
 
   useEffect(() => {
-    // Check if this is an OAuth flow by looking at the current URL
+    // Check if this is an OAuth flow by looking at the current URL or sessionStorage
     const urlParams = new URLSearchParams(window.location.search);
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const isOAuth = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token') || 
-                    window.location.pathname === '/auth/callback';
+    const hasOAuthParams = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token');
+    const isOAuthRegistration = sessionStorage.getItem('oauth_registration_flow') === 'true';
+    const isOAuth = hasOAuthParams || window.location.pathname === '/auth/callback' || isOAuthRegistration;
     
     setIsOAuthFlow(isOAuth);
     
-    // Only check for wizard if not in OAuth flow
+    // Only check for wizard if not in OAuth flow and user exists
     if (!isOAuth && user && !loading) {
       checkUserRoleAndShowWizard();
     }
@@ -49,6 +50,8 @@ export const useWizardManager = () => {
 
   const handleWizardComplete = () => {
     setShowWizard(false);
+    // Clear OAuth registration flag when wizard is completed
+    sessionStorage.removeItem('oauth_registration_flow');
   };
 
   return {

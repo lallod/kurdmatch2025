@@ -34,18 +34,31 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
     setIsSubmitting(true);
     
     try {
-      const emailQuestion = enabledQuestions.find(q => q.profileField === 'email');
-      const passwordQuestion = enabledQuestions.find(q => q.profileField === 'password');
-      if (!emailQuestion || !passwordQuestion) {
-        throw new Error("Email or password field is missing in registration form configuration.");
-      }
-      const email = data[emailQuestion.id];
-      const password = data[passwordQuestion.id];
+      // Check if this is an OAuth user (already authenticated)
+      const { data: sessionData } = await supabase.auth.getSession();
+      const isOAuthUser = sessionData?.session?.user && sessionStorage.getItem('oauth_registration_flow') === 'true';
+      
+      let userId: string;
+      
+      if (isOAuthUser) {
+        // OAuth user - already authenticated, just complete profile
+        userId = sessionData.session.user.id;
+        console.log('Completing profile for OAuth user:', userId);
+      } else {
+        // Manual registration - create new account
+        const emailQuestion = enabledQuestions.find(q => q.profileField === 'email');
+        const passwordQuestion = enabledQuestions.find(q => q.profileField === 'password');
+        if (!emailQuestion || !passwordQuestion) {
+          throw new Error("Email or password field is missing in registration form configuration.");
+        }
+        const email = data[emailQuestion.id];
+        const password = data[passwordQuestion.id];
 
-      const { data: signUpData, error: signUpError } = await signUp(email, password);
-      if (signUpError) throw signUpError;
-      if (!signUpData.user) throw new Error("User not created.");
-      const userId = signUpData.user.id;
+        const { data: signUpData, error: signUpError } = await signUp(email, password);
+        if (signUpError) throw signUpError;
+        if (!signUpData.user) throw new Error("User not created.");
+        userId = signUpData.user.id;
+      }
 
       // Handle photo uploads
       const photoUrls = await handlePhotoUploads(data, userId, enabledQuestions);
@@ -91,12 +104,22 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
         }
       }
 
-      toast({
-        title: "Success!",
-        description: "Your account has been created. Please check your email to verify your account before logging in.",
-      });
+      // Clear OAuth registration flag
+      sessionStorage.removeItem('oauth_registration_flow');
 
-      navigate('/auth');
+      if (isOAuthUser) {
+        toast({
+          title: "Profile Complete!",
+          description: "Your profile has been completed successfully.",
+        });
+        navigate('/discovery');
+      } else {
+        toast({
+          title: "Success!",
+          description: "Your account has been created. Please check your email to verify your account before logging in.",
+        });
+        navigate('/auth');
+      }
 
     } catch (error: any) {
       console.error('Registration error:', error);

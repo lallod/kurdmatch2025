@@ -87,7 +87,8 @@ export const useOAuthCallback = () => {
           });
           navigate('/discovery', { replace: true });
         } else {
-          // New user or incomplete profile - redirect to registration wizard
+          // New user or incomplete profile - set OAuth flag and redirect to registration wizard
+          sessionStorage.setItem('oauth_registration_flow', 'true');
           toast({
             title: "Welcome!",
             description: "Let's complete your profile to get started...",
