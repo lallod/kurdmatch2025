@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -7,6 +6,7 @@ import { useSupabaseAuth } from "@/integrations/supabase/auth";
 import { PostLoginWizard } from "@/components/auth/PostLoginWizard";
 import { useState, useEffect } from "react";
 import { isUserSuperAdmin } from "@/utils/auth/roleUtils";
+import { checkProfileCompleteness } from "@/utils/auth/profileUtils";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
@@ -25,6 +25,52 @@ import AuthCallback from "./components/auth/AuthCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+// Component to handle register route protection
+const RegisterProtection = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useSupabaseAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasCompleteProfile, setHasCompleteProfile] = useState(false);
+
+  useEffect(() => {
+    const checkProfile = async () => {
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const isComplete = await checkProfileCompleteness(user.id);
+        setHasCompleteProfile(isComplete);
+      } catch (error) {
+        console.error('Error checking profile completeness:', error);
+        setHasCompleteProfile(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkProfile();
+  }, [user]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // If user is authenticated and has complete profile, redirect to discovery
+  if (user && hasCompleteProfile) {
+    return <Navigate to="/discovery" replace />;
+  }
+
+  // Allow access to registration for:
+  // 1. Unauthenticated users (manual registration)
+  // 2. Authenticated users with incomplete profiles (OAuth users)
+  return <>{children}</>;
+};
 
 function App() {
   const { user, loading } = useSupabaseAuth();
@@ -105,7 +151,11 @@ function App() {
               />
               <Route 
                 path="/register" 
-                element={user ? <Navigate to="/discovery" replace /> : <Register />} 
+                element={
+                  <RegisterProtection>
+                    <Register />
+                  </RegisterProtection>
+                } 
               />
               
               {/* OAuth Callback Route */}
