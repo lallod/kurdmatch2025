@@ -20,13 +20,20 @@ export const useAdminRoleCheck = () => {
         roleCheckComplete 
       });
       
-      // Wait for auth loading to complete
+      // Wait for auth to fully initialize
       if (loading) {
         console.log('useAdminRoleCheck: Auth still loading, waiting...');
         return;
       }
 
-      // If no user after loading is complete, redirect to login after delay
+      // If already checked and we have both user and session, don't re-check
+      if (roleCheckComplete && user && session) {
+        console.log('useAdminRoleCheck: Role check already complete and user is authenticated');
+        setIsCheckingRole(false);
+        return;
+      }
+
+      // If no user after loading is complete, redirect to login
       if (!user || !session) {
         console.log('useAdminRoleCheck: No user/session found after auth loading complete');
         setHasAdminRole(false);
@@ -38,23 +45,22 @@ export const useAdminRoleCheck = () => {
           setTimeout(() => {
             console.log('useAdminRoleCheck: Redirecting to admin login');
             navigate('/admin-login');
-          }, 500);
+          }, 1000);
         }
         return;
       }
 
-      // If role check is already complete and we have a valid session, don't re-check
-      if (roleCheckComplete && session) {
-        console.log('useAdminRoleCheck: Role check already complete, using cached result');
-        setIsCheckingRole(false);
+      // Wait for session to be stable (prevent checking during rapid state changes)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Double-check that user and session are still available after delay
+      if (!user || !session) {
+        console.log('useAdminRoleCheck: User or session lost during stability check');
         return;
       }
 
       try {
         console.log('useAdminRoleCheck: Checking admin role for user:', user.id);
-        
-        // Add a small delay to ensure session is fully established
-        await new Promise(resolve => setTimeout(resolve, 300));
         
         const isAdmin = await isUserSuperAdmin(user.id);
         console.log('useAdminRoleCheck: Admin role check result:', isAdmin);
@@ -94,11 +100,11 @@ export const useAdminRoleCheck = () => {
       }
     };
 
-    // Only run the check if we haven't completed it yet or if the user changed
-    if (!roleCheckComplete || (user && !loading)) {
+    // Only check role when we have stable auth state
+    if (!loading && (!roleCheckComplete || (user && session && !hasAdminRole))) {
       checkAdminRole();
     }
-  }, [user, loading, session, navigate, roleCheckComplete]);
+  }, [user, loading, session, navigate, roleCheckComplete, hasAdminRole]);
 
   // Reset role check when user changes
   useEffect(() => {

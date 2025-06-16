@@ -54,13 +54,13 @@ export const validateAdminCredentials = async (email: string, password: string) 
   try {
     console.log('validateAdminCredentials: Attempting admin login with:', email);
     
-    // First check if there's an existing session and sign out to prevent conflicts
+    // Clear any existing session to prevent conflicts
     const { data: currentSession } = await supabase.auth.getSession();
     if (currentSession?.session) {
-      console.log('validateAdminCredentials: Existing session found, signing out first');
+      console.log('validateAdminCredentials: Clearing existing session to prevent conflicts');
       await supabase.auth.signOut();
-      // Wait a moment for the sign out to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Wait for sign out to complete
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -79,8 +79,14 @@ export const validateAdminCredentials = async (email: string, password: string) 
 
     console.log('validateAdminCredentials: User signed in successfully:', data.user.id);
 
-    // Wait for session to be fully established
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Wait for session to stabilize
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Verify the session is still active
+    const { data: sessionCheck } = await supabase.auth.getSession();
+    if (!sessionCheck?.session) {
+      throw new Error('Session lost after authentication');
+    }
 
     // Check admin role
     console.log('validateAdminCredentials: Checking admin role for user:', data.user.id);
@@ -104,12 +110,6 @@ export const validateAdminCredentials = async (email: string, password: string) 
     }
 
     console.log('validateAdminCredentials: Admin role verified successfully');
-    
-    // Ensure session is refreshed and stable
-    const { data: refreshData } = await supabase.auth.refreshSession();
-    if (refreshData?.session) {
-      console.log('validateAdminCredentials: Session refreshed successfully');
-    }
     
     return { success: true, user: data.user };
   } catch (error: any) {

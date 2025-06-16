@@ -7,47 +7,65 @@ export const useSupabaseAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    // First set up the auth state listener to catch any changes
+    let isMounted = true;
+
+    // Set up the auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      async (event, newSession) => {
+        if (!isMounted) return;
+        
         console.log('Auth state changed:', event, newSession?.user?.email);
+        
+        // Prevent rapid state changes that cause loops
+        if (event === 'TOKEN_REFRESHED' && initialized) {
+          console.log('Token refreshed, skipping state update to prevent loop');
+          return;
+        }
+        
         setSession(newSession);
         setUser(newSession?.user ?? null);
-        setLoading(false);
+        
+        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+          setLoading(false);
+          setInitialized(true);
+        }
       }
     );
 
-    // Then check for existing session
+    // Initialize auth state only once
     const initializeAuth = async () => {
+      if (initialized) return;
+      
       try {
+        console.log('Initializing auth state...');
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log('Got existing session:', currentSession?.user?.email);
         
-        if (currentSession) {
+        if (isMounted) {
           setSession(currentSession);
-          setUser(currentSession.user);
-          
-          // Refresh the session to ensure tokens are valid
-          const { data } = await supabase.auth.refreshSession();
-          if (data.session) {
-            console.log('Session refreshed:', data.session.user?.email);
-            setSession(data.session);
-            setUser(data.session.user);
-          }
+          setUser(currentSession?.user ?? null);
+          setLoading(false);
+          setInitialized(true);
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-      } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          setInitialized(true);
+        }
       }
     };
 
     initializeAuth();
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [initialized]);
 
   const signUp = async (email: string, password: string, metadata?: Record<string, any>) => {
     setLoading(true);
