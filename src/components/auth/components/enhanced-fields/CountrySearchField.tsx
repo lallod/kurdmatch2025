@@ -73,7 +73,16 @@ const countries = [
 const CountrySearchField = ({ value = '', onChange }: CountrySearchFieldProps) => {
   const [open, setOpen] = useState(false);
   
-  const selectedCountry = countries.find(country => country.name === value);
+  // Ensure value is always a string
+  const currentValue = value || '';
+  const selectedCountry = countries.find(country => country.name === currentValue);
+
+  const handleSelect = (selectedValue: string) => {
+    if (onChange) {
+      onChange(selectedValue === currentValue ? "" : selectedValue);
+    }
+    setOpen(false);
+  };
 
   return (
     <div className="space-y-3">
@@ -103,19 +112,16 @@ const CountrySearchField = ({ value = '', onChange }: CountrySearchFieldProps) =
             <CommandList>
               <CommandEmpty>No country found.</CommandEmpty>
               <CommandGroup>
-                {countries.map((country) => (
+                {countries && countries.length > 0 && countries.map((country) => (
                   <CommandItem
                     key={country.code}
                     value={country.name}
-                    onSelect={() => {
-                      onChange(country.name === value ? "" : country.name);
-                      setOpen(false);
-                    }}
+                    onSelect={() => handleSelect(country.name)}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === country.name ? "opacity-100" : "opacity-0"
+                        currentValue === country.name ? "opacity-100" : "opacity-0"
                       )}
                     />
                     {country.name}
