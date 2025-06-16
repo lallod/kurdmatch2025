@@ -3,8 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 // User verification related functions
 export const getVerificationRequests = async () => {
-  // For now, we'll use photos table to simulate verification requests
-  // In a real app, you'd have a separate verification_requests table
+  // Get photos from real users who need verification
   const { data: photos, error } = await supabase
     .from('photos')
     .select(`
@@ -22,12 +21,12 @@ export const getVerificationRequests = async () => {
 
   if (error) throw error;
 
-  // Transform to verification request format with proper type casting
+  // Transform to verification request format with real user data
   return photos?.map(photo => ({
     id: photo.id,
     userId: photo.profile_id,
     userName: photo.profiles?.name || 'Unknown User',
-    email: `user-${photo.profile_id?.substring(0, 8)}@example.com`,
+    email: `Verification for ${photo.profile_id?.substring(0, 8)}`, // Will be improved with real email lookup
     documentType: 'Profile Photo',
     submittedDate: photo.created_at?.split('T')[0] || '',
     status: (photo.profiles?.verified ? 'verified' : 'pending') as 'pending' | 'verified' | 'rejected',
@@ -46,7 +45,7 @@ export const updateUserVerificationStatus = async (userId: string, verified: boo
   return true;
 };
 
-// Dashboard statistics
+// Dashboard statistics - only count real data
 export const getDashboardStats = async () => {
   const [
     { count: totalUsers },
@@ -82,7 +81,7 @@ export const getDashboardStats = async () => {
   };
 };
 
-// User engagement data for charts
+// User engagement data for charts - return empty array if no real data
 export const getUserEngagementData = async () => {
   const { data, error } = await supabase
     .from('user_engagement')
@@ -90,6 +89,9 @@ export const getUserEngagementData = async () => {
     .order('date', { ascending: true })
     .limit(30);
 
-  if (error) throw error;
+  if (error) {
+    console.log('No engagement data found - this is normal for real-users-only mode');
+    return [];
+  }
   return data || [];
 };

@@ -1,9 +1,13 @@
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import GenerateProfilesForm from './GenerateProfilesForm';
-import UpdateProfilesForm from './UpdateProfilesForm';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { cleanupTestData } from '@/utils/databaseCleanup';
+import { Loader2, Trash2, Users, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface AddUserDialogProps {
   open: boolean;
@@ -12,32 +16,99 @@ interface AddUserDialogProps {
 }
 
 const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUserAdded }) => {
-  const [activeTab, setActiveTab] = useState<string>('generate');
+  const [isCleaningUp, setIsCleaningUp] = useState(false);
+  const { toast } = useToast();
+
+  const handleCleanupTestData = async () => {
+    setIsCleaningUp(true);
+    try {
+      const result = await cleanupTestData();
+      if (result.success) {
+        toast({
+          title: "Cleanup Complete",
+          description: "All test data has been removed. Only real users from normal registration will be shown.",
+          variant: "default",
+        });
+        onUserAdded(); // Refresh the user list
+        onOpenChange(false);
+      } else {
+        toast({
+          title: "Cleanup Failed", 
+          description: result.error || "Failed to clean up test data",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred during cleanup",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCleaningUp(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Generate Rich User Profiles</DialogTitle>
+          <DialogTitle>User Management</DialogTitle>
           <DialogDescription>
-            Automatically generate realistic user profiles with comprehensive information and photos.
+            Manage real user data and clean up any test/generated content.
           </DialogDescription>
         </DialogHeader>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="generate">Generate New</TabsTrigger>
-            <TabsTrigger value="update">Update Existing</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="generate">
-            <GenerateProfilesForm onSuccess={onUserAdded} onClose={() => onOpenChange(false)} />
-          </TabsContent>
-          
-          <TabsContent value="update">
-            <UpdateProfilesForm onSuccess={onUserAdded} onClose={() => onOpenChange(false)} />
-          </TabsContent>
-        </Tabs>
+        <div className="space-y-6">
+          <Alert>
+            <Users className="h-4 w-4" />
+            <AlertTitle>Real Users Only</AlertTitle>
+            <AlertDescription>
+              This system now only shows real users who registered through the normal app registration process. 
+              All profile generation features have been disabled to ensure data authenticity.
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-4">
+            <div className="border rounded-lg p-4">
+              <h3 className="font-medium mb-2 flex items-center gap-2">
+                <Trash2 className="h-4 w-4" />
+                Clean Up Test Data
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Remove all automatically generated profiles, mock engagement data, and test content from the database.
+                This will only keep real users who registered through your app.
+              </p>
+              <Button 
+                onClick={handleCleanupTestData}
+                disabled={isCleaningUp}
+                variant="destructive"
+                className="w-full"
+              >
+                {isCleaningUp ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Cleaning Up Test Data...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Clean Up All Test Data
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>How to Add Real Users</AlertTitle>
+              <AlertDescription>
+                To see users in this admin panel, they need to register through your app's normal registration flow at /register. 
+                Test this by creating accounts through the regular user registration process.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
