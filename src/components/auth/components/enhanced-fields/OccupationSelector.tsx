@@ -57,11 +57,25 @@ const occupations = [
 const OccupationSelector = ({ value, onChange }: OccupationSelectorProps) => {
   const [open, setOpen] = useState(false);
 
-  const allOccupations = occupations.flatMap(category => 
-    category.jobs.map(job => ({ name: job, category: category.category }))
-  );
+  // Ensure value is always a string
+  const currentValue = value || '';
 
-  const selectedOccupation = allOccupations.find(occ => occ.name === value);
+  // Safely flatten occupations array with defensive checks
+  const allOccupations = occupations && occupations.length > 0 
+    ? occupations.flatMap(category => 
+        category && category.jobs && Array.isArray(category.jobs)
+          ? category.jobs.map(job => ({ name: job, category: category.category }))
+          : []
+      )
+    : [];
+
+  const selectedOccupation = allOccupations.find(occ => occ && occ.name === currentValue);
+
+  const handleSelect = (selectedValue: string) => {
+    if (!onChange) return;
+    onChange(selectedValue === currentValue ? "" : selectedValue);
+    setOpen(false);
+  };
 
   return (
     <div className="space-y-3">
@@ -89,28 +103,27 @@ const OccupationSelector = ({ value, onChange }: OccupationSelectorProps) => {
             />
             <CommandEmpty>No occupation found.</CommandEmpty>
             <div className="max-h-60 overflow-auto">
-              {occupations.map((category) => (
-                <CommandGroup key={category.category} heading={category.category} className="text-white">
-                  {category.jobs.map((job) => (
-                    <CommandItem
-                      key={job}
-                      value={job}
-                      onSelect={(currentValue) => {
-                        onChange(currentValue === value ? "" : currentValue);
-                        setOpen(false);
-                      }}
-                      className="text-white hover:bg-gray-800"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === job ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {job}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
+              {occupations && occupations.length > 0 && occupations.map((category) => (
+                category && category.category && category.jobs && Array.isArray(category.jobs) ? (
+                  <CommandGroup key={category.category} heading={category.category} className="text-white">
+                    {category.jobs.map((job) => (
+                      <CommandItem
+                        key={job}
+                        value={job}
+                        onSelect={() => handleSelect(job)}
+                        className="text-white hover:bg-gray-800"
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            currentValue === job ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {job}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                ) : null
               ))}
             </div>
           </Command>

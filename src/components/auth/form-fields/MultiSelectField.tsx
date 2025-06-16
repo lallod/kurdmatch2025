@@ -43,7 +43,7 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
                   className="w-full justify-between bg-indigo-900/20 border-indigo-800 hover:bg-indigo-900/30 text-white"
                 >
                   <div className="flex flex-wrap gap-1 max-w-full">
-                    {field.value && field.value.length > 0 ? (
+                    {field.value && Array.isArray(field.value) && field.value.length > 0 ? (
                       field.value.slice(0, 2).map((item: string) => (
                         <Badge key={item} variant="secondary" className="text-xs">
                           {item}
@@ -51,7 +51,8 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
                             className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
-                                const newValue = field.value.filter((v: string) => v !== item);
+                                const currentValue = Array.isArray(field.value) ? field.value : [];
+                                const newValue = currentValue.filter((v: string) => v !== item);
                                 field.onChange(newValue);
                               }
                             }}
@@ -61,7 +62,8 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
                             }}
                             onClick={(e) => {
                               e.preventDefault();
-                              const newValue = field.value.filter((v: string) => v !== item);
+                              const currentValue = Array.isArray(field.value) ? field.value : [];
+                              const newValue = currentValue.filter((v: string) => v !== item);
                               field.onChange(newValue);
                             }}
                           >
@@ -72,7 +74,7 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
                     ) : (
                       <span className="text-muted-foreground">{question.placeholder || "Select options..."}</span>
                     )}
-                    {field.value && field.value.length > 2 && (
+                    {field.value && Array.isArray(field.value) && field.value.length > 2 && (
                       <Badge variant="secondary" className="text-xs">
                         +{field.value.length - 2} more
                       </Badge>
@@ -87,12 +89,12 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
                   <CommandList>
                     <CommandEmpty>No options found.</CommandEmpty>
                     <CommandGroup>
-                      {question.fieldOptions.map((option) => (
+                      {question.fieldOptions && Array.isArray(question.fieldOptions) && question.fieldOptions.length > 0 && question.fieldOptions.map((option) => (
                         <CommandItem
                           key={option}
                           value={option}
                           onSelect={() => {
-                            const currentValue = field.value || [];
+                            const currentValue = Array.isArray(field.value) ? field.value : [];
                             const isSelected = currentValue.includes(option);
                             
                             if (isSelected) {
@@ -106,7 +108,7 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              field.value && field.value.includes(option) ? "opacity-100" : "opacity-0"
+                              field.value && Array.isArray(field.value) && field.value.includes(option) ? "opacity-100" : "opacity-0"
                             )}
                           />
                           {option}

@@ -74,11 +74,25 @@ const EnhancedLocationSearch = ({
 }: EnhancedLocationSearchProps) => {
   const [open, setOpen] = useState(false);
 
-  const allLocations = destinations.flatMap(category => 
-    category.locations.map(location => ({ name: location, category: category.category }))
-  );
+  // Ensure value is always a string
+  const currentValue = value || '';
 
-  const selectedLocation = allLocations.find(loc => loc.name === value);
+  // Safely flatten destinations array with defensive checks
+  const allLocations = destinations && destinations.length > 0 
+    ? destinations.flatMap(category => 
+        category && category.locations && Array.isArray(category.locations)
+          ? category.locations.map(location => ({ name: location, category: category.category }))
+          : []
+      )
+    : [];
+
+  const selectedLocation = allLocations.find(loc => loc && loc.name === currentValue);
+
+  const handleSelect = (selectedValue: string) => {
+    if (!onChange) return;
+    onChange(selectedValue === currentValue ? "" : selectedValue);
+    setOpen(false);
+  };
 
   return (
     <div className="space-y-3">
@@ -106,28 +120,27 @@ const EnhancedLocationSearch = ({
             />
             <CommandEmpty>No destination found.</CommandEmpty>
             <div className="max-h-60 overflow-auto">
-              {destinations.map((category) => (
-                <CommandGroup key={category.category} heading={category.category} className="text-white">
-                  {category.locations.map((location) => (
-                    <CommandItem
-                      key={location}
-                      value={location}
-                      onSelect={(currentValue) => {
-                        onChange(currentValue === value ? "" : currentValue);
-                        setOpen(false);
-                      }}
-                      className="text-white hover:bg-gray-800"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === location ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {location}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
+              {destinations && destinations.length > 0 && destinations.map((category) => (
+                category && category.category && category.locations && Array.isArray(category.locations) ? (
+                  <CommandGroup key={category.category} heading={category.category} className="text-white">
+                    {category.locations.map((location) => (
+                      <CommandItem
+                        key={location}
+                        value={location}
+                        onSelect={() => handleSelect(location)}
+                        className="text-white hover:bg-gray-800"
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            currentValue === location ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {location}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                ) : null
               ))}
             </div>
           </Command>

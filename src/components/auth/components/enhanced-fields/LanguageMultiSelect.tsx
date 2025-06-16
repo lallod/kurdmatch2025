@@ -69,22 +69,33 @@ const kurdishLanguages = [
 const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps) => {
   const [open, setOpen] = useState(false);
 
+  // Ensure value is always an array
+  const currentValue = Array.isArray(value) ? value : [];
+
   const handleSelect = (languageName: string) => {
-    const newValue = value.includes(languageName)
-      ? value.filter(item => item !== languageName)
-      : [...value, languageName];
+    if (!onChange) return;
+    
+    const newValue = currentValue.includes(languageName)
+      ? currentValue.filter(item => item !== languageName)
+      : [...currentValue, languageName];
     onChange(newValue);
   };
 
   const removeLanguage = (languageName: string) => {
-    onChange(value.filter(item => item !== languageName));
+    if (!onChange) return;
+    onChange(currentValue.filter(item => item !== languageName));
   };
 
-  const groupedLanguages = kurdishLanguages.reduce((acc, lang) => {
-    if (!acc[lang.category]) acc[lang.category] = [];
-    acc[lang.category].push(lang);
-    return acc;
-  }, {} as Record<string, typeof kurdishLanguages>);
+  // Safely group languages with defensive checks
+  const groupedLanguages = kurdishLanguages && kurdishLanguages.length > 0 
+    ? kurdishLanguages.reduce((acc, lang) => {
+        if (lang && lang.category && lang.name) {
+          if (!acc[lang.category]) acc[lang.category] = [];
+          acc[lang.category].push(lang);
+        }
+        return acc;
+      }, {} as Record<string, typeof kurdishLanguages>)
+    : {};
 
   return (
     <div className="space-y-3">
@@ -94,10 +105,10 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
       </div>
       
       {/* Selected languages */}
-      {value.length > 0 && (
+      {currentValue.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {value.map(languageName => {
-            const language = kurdishLanguages.find(l => l.name === languageName);
+          {currentValue.map(languageName => {
+            const language = kurdishLanguages.find(l => l && l.name === languageName);
             return (
               <Badge 
                 key={languageName} 
@@ -142,7 +153,7 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
             <div className="max-h-60 overflow-auto">
               {Object.entries(groupedLanguages).map(([category, languages]) => (
                 <CommandGroup key={category} heading={category} className="text-white">
-                  {languages.map((language) => (
+                  {languages && languages.length > 0 && languages.map((language) => (
                     <CommandItem
                       key={language.code}
                       value={language.name}
