@@ -20,18 +20,17 @@ export const useUsers = (initialUsersPerPage: number = 10) => {
     try {
       setLoading(true);
       
-      // First get the total count of profiles for the stats banner
+      // Get total count of profiles
       const { count: totalCount, error: countError } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
         
       if (countError) throw countError;
       
-      // Store the total count in state - this should remain consistent
       setTotalUsers(totalCount || 0);
       setDatabaseVerified(true);
       
-      // Fetch paginated users for the current page
+      // Fetch paginated profiles
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -46,6 +45,8 @@ export const useUsers = (initialUsersPerPage: number = 10) => {
       }
       
       const profileIds = profiles.map(profile => profile.id);
+      
+      // Fetch user roles
       const { data: userRoles, error: rolesError } = await supabase
         .from('user_roles')
         .select('*')
@@ -53,20 +54,59 @@ export const useUsers = (initialUsersPerPage: number = 10) => {
         
       if (rolesError) throw rolesError;
       
-      // Map profiles to User objects with roles
+      // Fetch real email addresses from auth.users
+      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      if (authError) console.warn('Could not fetch auth users:', authError);
+      
+      // Fetch photo counts from profile_photos or photos table
+      const { data: photoCounts, error: photoError } = await supabase
+        .from('profile_photos')
+        .select('user_id')
+        .in('user_id', profileIds);
+      
+      if (photoError) console.warn('Could not fetch photo counts:', photoError);
+      
+      // Count photos per user
+      const photoCountMap = photoCounts?.reduce((acc, photo) => {
+        acc[photo.user_id] = (acc[photo.user_id] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
+      
+      // Fetch message counts (assuming there's a messages table)
+      const { data: messageCounts, error: messageError } = await supabase
+        .from('messages')
+        .select('sender_id')
+        .in('sender_id', profileIds);
+      
+      if (messageError) console.warn('Could not fetch message counts:', messageError);
+      
+      // Count messages per user
+      const messageCountMap = messageCounts?.reduce((acc, message) => {
+        acc[message.sender_id] = (acc[message.sender_id] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
+      
+      // Map profiles to User objects with real data
       const userData: User[] = profiles.map(profile => {
         const userRole = userRoles?.find(role => role.user_id === profile.id);
+        const authUser = authUsers?.users?.find(user => user.id === profile.id);
+        const realEmail = authUser?.email || `user-${profile.id.substring(0, 8)}@unknown.com`;
+        
         const isActive = profile.last_active && 
           (new Date(profile.last_active).getTime() > Date.now() - 86400000 * 7);
-        const emailAddress = profile.name ? 
-          `${profile.name.toLowerCase().replace(/\s+/g, '.')}@example.com` : 
-          `user.${profile.id.substring(0, 8)}@example.com`;
+        
+        // Determine status based on profile verification and activity
+        let status = 'pending';
+        if (profile.verified) {
+          status = isActive ? 'active' : 'inactive';
+        }
+        
         return {
           id: profile.id,
           name: profile.name || 'Unknown User',
-          email: emailAddress,
+          email: realEmail,
           role: userRole?.role || 'user',
-          status: profile.verified ? (isActive ? 'active' : 'inactive') : 'pending',
+          status,
           location: profile.location || 'Unknown',
           joinDate: profile.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : 'Unknown',
           lastActive: profile.last_active 
@@ -77,9 +117,9 @@ export const useUsers = (initialUsersPerPage: number = 10) => {
                 hour: '2-digit',
                 minute: '2-digit'
               }) 
-            : 'Unknown',
-          photoCount: 0,
-          messageCount: 0
+            : 'Never',
+          photoCount: photoCountMap[profile.id] || 0,
+          messageCount: messageCountMap[profile.id] || 0
         };
       });
       
@@ -119,19 +159,52 @@ export const useUsers = (initialUsersPerPage: number = 10) => {
     return matchesSearch && matchesStatus && matchesRole;
   });
 
-  // Calculate status counts based on loaded users
-  // This ensures counts are based on the same dataset as totalUsers
-  const activeUsers = users.filter(u => u.status === 'active').length;
-  const pendingUsers = users.filter(u => u.status === 'pending').length;
-  const inactiveUsers = users.filter(u => u.status === 'inactive').length;
-
-  const userStats = {
+  // Calculate status counts based on all users, not just current page
+  const [userStats, setUserStats] = useState({
     totalUsers,
     databaseVerified,
-    activeUsers,
-    pendingUsers,
-    inactiveUsers
-  };
+    activeUsers: 0,
+    pendingUsers: 0,
+    inactiveUsers: 0
+  });
+
+  // Fetch stats separately for accurate counts
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const { data: allProfiles, error } = await supabase
+          .from('profiles')
+          .select('verified, last_active');
+        
+        if (error) throw error;
+        
+        const activeCount = allProfiles?.filter(p => 
+          p.verified && p.last_active && 
+          (new Date(p.last_active).getTime() > Date.now() - 86400000 * 7)
+        ).length || 0;
+        
+        const pendingCount = allProfiles?.filter(p => !p.verified).length || 0;
+        const inactiveCount = allProfiles?.filter(p => 
+          p.verified && (!p.last_active || 
+          (new Date(p.last_active).getTime() <= Date.now() - 86400000 * 7))
+        ).length || 0;
+        
+        setUserStats({
+          totalUsers,
+          databaseVerified,
+          activeUsers: activeCount,
+          pendingUsers: pendingCount,
+          inactiveUsers: inactiveCount
+        });
+      } catch (error) {
+        console.error('Error fetching user stats:', error);
+      }
+    };
+    
+    if (databaseVerified) {
+      fetchStats();
+    }
+  }, [totalUsers, databaseVerified]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -139,14 +212,13 @@ export const useUsers = (initialUsersPerPage: number = 10) => {
 
   const handleRefresh = () => {
     setCurrentPage(1);
-    // Reset verification state to show loading indicator
     setDatabaseVerified(false);
     fetchUsers();
   };
 
   const handleUsersPerPageChange = (count: number) => {
     setUsersPerPage(count);
-    setCurrentPage(1); // Reset to first page when changing items per page
+    setCurrentPage(1);
   };
 
   return {

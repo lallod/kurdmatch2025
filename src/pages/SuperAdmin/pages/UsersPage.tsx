@@ -49,8 +49,25 @@ const UsersPage = () => {
     setSelectedUser(null);
   };
 
-  const exportUsers = () => {
-    console.log('Exporting users...');
+  const exportUsers = async () => {
+    try {
+      const csvContent = [
+        'Name,Email,Role,Status,Location,Join Date,Last Active,Photos,Messages',
+        ...filteredUsers.map(user => 
+          `"${user.name}","${user.email}","${user.role}","${user.status}","${user.location}","${user.joinDate}","${user.lastActive}",${user.photoCount},${user.messageCount}`
+        )
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting users:', error);
+    }
   };
 
   const handleAddUser = () => {

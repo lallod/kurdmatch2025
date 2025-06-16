@@ -59,14 +59,55 @@ export const deleteRegistrationQuestion = async (id: string) => {
   return true;
 };
 
-// User Management for Admin
+// Real User Management for Admin
 export const getAllUsers = async () => {
-  const { data, error } = await supabase
+  const { data: profiles, error: profilesError } = await supabase
     .from('profiles')
-    .select();
+    .select('*');
+  
+  if (profilesError) throw profilesError;
+  
+  // Get real email addresses from auth.users
+  const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+  if (authError) {
+    console.warn('Could not fetch auth users:', authError);
+    return profiles;
+  }
+  
+  // Merge profile data with real email addresses
+  const usersWithEmails = profiles?.map(profile => {
+    const authUser = authUsers?.users?.find(user => user.id === profile.id);
+    return {
+      ...profile,
+      email: authUser?.email || `user-${profile.id.substring(0, 8)}@unknown.com`
+    };
+  });
+  
+  return usersWithEmails;
+};
+
+// Get real user counts and statistics
+export const getUserStatistics = async () => {
+  const { data: profiles, error } = await supabase
+    .from('profiles')
+    .select('verified, last_active, created_at');
   
   if (error) throw error;
-  return data;
+  
+  const totalUsers = profiles?.length || 0;
+  const activeUsers = profiles?.filter(p => 
+    p.verified && p.last_active && 
+    (new Date(p.last_active).getTime() > Date.now() - 86400000 * 7)
+  ).length || 0;
+  const pendingUsers = profiles?.filter(p => !p.verified).length || 0;
+  const inactiveUsers = totalUsers - activeUsers - pendingUsers;
+  
+  return {
+    totalUsers,
+    activeUsers,
+    pendingUsers,
+    inactiveUsers
+  };
 };
 
 // Social Login Provider Management
