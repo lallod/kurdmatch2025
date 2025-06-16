@@ -64,13 +64,13 @@ const kurdishLanguages = [
   { code: 'th', name: 'Thai', native: 'ไทย', category: 'International' },
   { code: 'vi', name: 'Vietnamese', native: 'Tiếng Việt', category: 'International' },
   { code: 'tl', name: 'Filipino', native: 'Filipino', category: 'International' }
-].filter(Boolean); // Remove any falsy values
+];
 
 const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps) => {
   const [open, setOpen] = useState(false);
 
   // Ensure value is always an array and filter out any invalid values
-  const currentValue = Array.isArray(value) ? value.filter(Boolean) : [];
+  const currentValue = Array.isArray(value) ? value.filter(v => v && typeof v === 'string') : [];
 
   const handleSelect = (languageName: string) => {
     if (!onChange || !languageName) return;
@@ -87,15 +87,46 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
   };
 
   // Safely group languages with comprehensive defensive checks
-  const groupedLanguages = kurdishLanguages && kurdishLanguages.length > 0 
-    ? kurdishLanguages
-        .filter(lang => lang && lang.category && lang.name && lang.code) // Filter out invalid objects
-        .reduce((acc, lang) => {
-          if (!acc[lang.category]) acc[lang.category] = [];
-          acc[lang.category].push(lang);
-          return acc;
-        }, {} as Record<string, typeof kurdishLanguages>)
-    : {};
+  const groupedLanguages = React.useMemo(() => {
+    try {
+      if (!Array.isArray(kurdishLanguages) || kurdishLanguages.length === 0) {
+        console.log('LanguageMultiSelect: kurdishLanguages is not a valid array');
+        return {};
+      }
+
+      const validLanguages = kurdishLanguages.filter(lang => {
+        const isValid = lang && 
+          typeof lang === 'object' && 
+          typeof lang.category === 'string' && 
+          typeof lang.name === 'string' && 
+          typeof lang.code === 'string' &&
+          lang.category.trim() !== '' &&
+          lang.name.trim() !== '' &&
+          lang.code.trim() !== '';
+        
+        if (!isValid) {
+          console.log('LanguageMultiSelect: Invalid language object:', lang);
+        }
+        
+        return isValid;
+      });
+
+      const grouped = validLanguages.reduce((acc, lang) => {
+        const category = lang.category.trim();
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(lang);
+        return acc;
+      }, {} as Record<string, typeof kurdishLanguages>);
+
+      console.log('LanguageMultiSelect: Grouped languages:', grouped);
+      return grouped;
+    } catch (error) {
+      console.error('LanguageMultiSelect: Error grouping languages:', error);
+      return {};
+    }
+  }, []);
 
   return (
     <div className="space-y-3">
@@ -151,17 +182,29 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
             />
             <CommandEmpty>No language found.</CommandEmpty>
             <div className="max-h-60 overflow-auto">
-              {Object.entries(groupedLanguages).length > 0 && Object.entries(groupedLanguages).map(([category, languages]) => {
-                // Additional safety check for each category
-                if (!category || !Array.isArray(languages) || languages.length === 0) {
-                  return null;
-                }
-                
-                return (
-                  <CommandGroup key={category} heading={category} className="text-white">
-                    {languages
-                      .filter(language => language && language.name && language.code) // Filter out invalid language objects
-                      .map((language) => (
+              {Object.entries(groupedLanguages).length > 0 ? (
+                Object.entries(groupedLanguages).map(([category, languages]) => {
+                  // Skip invalid categories
+                  if (!category || !Array.isArray(languages) || languages.length === 0) {
+                    return null;
+                  }
+                  
+                  const validLanguagesInCategory = languages.filter(language => 
+                    language && 
+                    typeof language === 'object' && 
+                    language.name && 
+                    language.code &&
+                    typeof language.name === 'string' &&
+                    typeof language.code === 'string'
+                  );
+
+                  if (validLanguagesInCategory.length === 0) {
+                    return null;
+                  }
+                  
+                  return (
+                    <CommandGroup key={category} heading={category} className="text-white">
+                      {validLanguagesInCategory.map((language) => (
                         <CommandItem
                           key={`${category}-${language.code}`}
                           value={language.name}
@@ -170,13 +213,18 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
                         >
                           <span className="flex items-center justify-between w-full">
                             <span>{language.name}</span>
-                            <span className="text-sm text-gray-400">{language.native}</span>
+                            <span className="text-sm text-gray-400">{language.native || language.name}</span>
                           </span>
                         </CommandItem>
                       ))}
-                  </CommandGroup>
-                );
-              })}
+                    </CommandGroup>
+                  );
+                })
+              ) : (
+                <div className="p-4 text-center text-gray-400">
+                  No languages available
+                </div>
+              )}
             </div>
           </Command>
         </PopoverContent>
