@@ -8,9 +8,9 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoginForm from '@/components/auth/LoginForm';
-import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
 import Logo from './Logo';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -130,32 +130,50 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
             <p className="text-xl text-gray-300">
               {content.subtitle}
             </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-8 py-3 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                onClick={() => navigate('/register')}
+              >
+                Get Started - It's Free
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-8 py-3 rounded-lg text-lg transition-all duration-200"
+                onClick={() => navigate('/auth')}
+              >
+                Sign In
+              </Button>
+            </div>
           </div>
           
           <div className="flex-1 mt-8 md:mt-0">
             <Card className="w-full max-w-md mx-auto backdrop-blur-md bg-white/10 border-gray-800/50 shadow-xl neo-card">
               <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl text-white">Join Our Community</CardTitle>
+                <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Connect with Kurdish singles from around the world
+                  Sign in to continue your journey
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 bg-gray-900/50">
-                    <TabsTrigger value="login" className="data-[state=active]:bg-purple-800/30">Login</TabsTrigger>
-                    <TabsTrigger value="register" className="data-[state=active]:bg-purple-800/30">Register</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="login">
-                    <LoginForm onLoginSuccess={handleLoginSuccess} />
-                  </TabsContent>
-                  <TabsContent value="register">
-                    <DynamicRegistrationForm />
-                  </TabsContent>
-                </Tabs>
+                <LoginForm onLoginSuccess={handleLoginSuccess} />
               </CardContent>
-              <CardFooter className="flex justify-center text-sm text-gray-500">
-                By continuing, you agree to our Terms of Service and Privacy Policy
+              <CardFooter className="flex flex-col space-y-4">
+                <div className="text-center">
+                  <Button 
+                    variant="link" 
+                    className="text-purple-400 hover:text-purple-300"
+                    onClick={() => navigate('/register')}
+                  >
+                    Don't have an account? Create one now →
+                  </Button>
+                </div>
+                <div className="text-center text-sm text-gray-500">
+                  By continuing, you agree to our Terms of Service and Privacy Policy
+                </div>
               </CardFooter>
             </Card>
             
