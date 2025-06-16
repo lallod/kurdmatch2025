@@ -12,9 +12,9 @@ import NameFields from './basic-info/NameFields';
 import DateOfBirthField from './basic-info/DateOfBirthField';
 import GenderField from './basic-info/GenderField';
 import HeightSelector from './enhanced-fields/HeightSelector';
-import CountrySearchField from './enhanced-fields/CountrySearchField';
+import SimpleCountrySearchField from './enhanced-fields/SimpleCountrySearchField';
 import SimpleLanguageMultiSelect from './enhanced-fields/SimpleLanguageMultiSelect';
-import OccupationSelector from './enhanced-fields/OccupationSelector';
+import SimpleOccupationSelector from './enhanced-fields/SimpleOccupationSelector';
 import ErrorBoundary from './ErrorBoundary';
 
 interface BasicInfoStepProps {
@@ -65,7 +65,7 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <CountrySearchField 
+                <SimpleCountrySearchField 
                   value={field.value || ''}
                   onChange={field.onChange}
                 />
@@ -101,7 +101,7 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <OccupationSelector 
+                <SimpleOccupationSelector 
                   value={field.value || ''}
                   onChange={field.onChange}
                 />
