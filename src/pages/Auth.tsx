@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import SocialLogin from '@/components/auth/components/SocialLogin';
 import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 
@@ -21,18 +20,18 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if this is an OAuth callback - if so, don't process here
+    // Check if this is an OAuth callback - if so, redirect to callback handler immediately
     const urlParams = new URLSearchParams(window.location.search);
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const isOAuthCallback = urlParams.has('code') || hashParams.has('access_token') || urlParams.has('access_token');
+    const isOAuthCallback = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token');
     
     if (isOAuthCallback) {
       console.log('OAuth callback detected, redirecting to callback handler');
-      navigate('/auth/callback');
+      navigate('/auth/callback', { replace: true });
       return;
     }
 
-    // Only redirect if user is authenticated and this is not an OAuth callback
+    // Only redirect authenticated users if this is NOT an OAuth callback
     if (!user || !user.id) return;
     
     const checkUserRole = async () => {
@@ -42,15 +41,15 @@ const Auth = () => {
 
         if (isSuperAdmin) {
           console.log("User has super_admin role, redirecting to super-admin");
-          navigate('/super-admin');
+          navigate('/super-admin', { replace: true });
           return;
         }
 
         console.log("Regular user, redirecting to discovery");
-        navigate('/discovery');
+        navigate('/discovery', { replace: true });
       } catch (error) {
         console.error('Error checking user role:', error);
-        navigate('/discovery');
+        navigate('/discovery', { replace: true });
       }
     };
 

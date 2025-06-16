@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -52,7 +53,13 @@ const AuthCallback = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         
-        // Handle authorization code flow (most common)
+        // Handle error cases first
+        if (urlParams.has('error')) {
+          const errorDescription = urlParams.get('error_description') || urlParams.get('error');
+          throw new Error(errorDescription || 'OAuth authentication failed');
+        }
+        
+        // Handle authorization code flow
         if (urlParams.has('code')) {
           console.log('Processing authorization code...');
           const { data, error: authError } = await supabase.auth.exchangeCodeForSession(window.location.search);
@@ -67,26 +74,13 @@ const AuthCallback = () => {
         // Handle implicit flow (fallback)
         else if (hashParams.has('access_token')) {
           console.log('Processing access token from URL fragment...');
-          const { data, error: authError } = await supabase.auth.getSession();
-          
-          if (authError) {
-            console.error('Session retrieval error:', authError);
-            throw authError;
-          }
-        }
-        // Handle error cases
-        else if (urlParams.has('error')) {
-          const errorDescription = urlParams.get('error_description') || urlParams.get('error');
-          throw new Error(errorDescription || 'OAuth authentication failed');
+          // For implicit flow, Supabase should automatically handle the session
         }
         else {
           throw new Error('Invalid OAuth callback - missing required parameters');
         }
         
-        // Wait for session to be established
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Get the current session
+        // Get the current session immediately after OAuth processing
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -163,6 +157,7 @@ const AuthCallback = () => {
       // No OAuth params, redirect to auth
       console.log('No OAuth parameters found, redirecting to auth');
       navigate('/auth', { replace: true });
+      setIsProcessing(false);
     }
   }, [navigate, toast]);
 
