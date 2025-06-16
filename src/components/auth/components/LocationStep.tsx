@@ -65,13 +65,11 @@ const LocationStep = ({ form, location, locationLoading }: LocationStepProps) =>
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <div className="bg-white/10 backdrop-blur border border-purple-300/30 rounded-lg p-4">
-                <SimpleLocationSearch 
-                  value={field.value}
-                  onChange={field.onChange}
-                  label="Dream Vacation Destination"
-                />
-              </div>
+              <SimpleLocationSearch 
+                value={field.value}
+                onChange={field.onChange}
+                label="Dream Vacation Destination"
+              />
             </FormControl>
             <FormDescription className="text-xs text-purple-300">
               Where would you love to travel? Includes all parts of Kurdistan and top global destinations.
