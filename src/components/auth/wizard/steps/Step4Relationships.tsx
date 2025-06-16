@@ -57,17 +57,17 @@ export const Step4Relationships: React.FC<Step4RelationshipsProps> = ({ data, on
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Heart className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">What are you looking for?</h2>
-        <p className="text-gray-600">Tell us about your relationship goals and family values</p>
+        <h2 className="text-2xl font-bold text-white">What are you looking for?</h2>
+        <p className="text-purple-200">Tell us about your relationship goals and family values</p>
       </div>
 
       <div className="space-y-6">
         {/* Relationship Goals */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">What are you looking for?</h3>
+          <h3 className="text-lg font-medium text-white">What are you looking for?</h3>
           <ChoiceChips
             options={relationshipGoalsOptions}
             value={data.relationship_goals}
@@ -78,7 +78,7 @@ export const Step4Relationships: React.FC<Step4RelationshipsProps> = ({ data, on
 
         {/* Want Children */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Do you want children?</h3>
+          <h3 className="text-lg font-medium text-white">Do you want children?</h3>
           <ChoiceChips
             options={wantChildrenOptions}
             value={data.want_children}
@@ -89,7 +89,7 @@ export const Step4Relationships: React.FC<Step4RelationshipsProps> = ({ data, on
 
         {/* Children Status */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Do you have children?</h3>
+          <h3 className="text-lg font-medium text-white">Do you have children?</h3>
           <ChoiceChips
             options={childrenStatusOptions}
             value={data.children_status}
@@ -100,7 +100,7 @@ export const Step4Relationships: React.FC<Step4RelationshipsProps> = ({ data, on
 
         {/* Family Closeness */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">How close are you with your family?</h3>
+          <h3 className="text-lg font-medium text-white">How close are you with your family?</h3>
           <ChoiceChips
             options={familyClosenessOptions}
             value={data.family_closeness}
@@ -111,7 +111,7 @@ export const Step4Relationships: React.FC<Step4RelationshipsProps> = ({ data, on
 
         {/* Love Language */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Your love languages</h3>
+          <h3 className="text-lg font-medium text-white">Your love languages</h3>
           <TagSelector
             options={loveLanguageOptions}
             value={data.love_language || []}

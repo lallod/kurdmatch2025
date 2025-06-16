@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TagSelector } from '../fields/TagSelector';
 import { Star, Book, Film } from 'lucide-react';
@@ -99,17 +98,17 @@ export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Star className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Let's talk favorites!</h2>
-        <p className="text-gray-600">Share what you love most</p>
+        <h2 className="text-2xl font-bold text-white">Let's talk favorites!</h2>
+        <p className="text-purple-200">Share what you love most</p>
       </div>
 
       <div className="space-y-6">
         {/* Favorite Books */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Favorite Books</h3>
+          <h3 className="text-lg font-medium text-white">Favorite Books</h3>
           <TagSelector
             options={favoriteBooksOptions}
             value={data.favorite_books || []}
@@ -121,7 +120,7 @@ export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }
 
         {/* Favorite Movies */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Favorite Movies</h3>
+          <h3 className="text-lg font-medium text-white">Favorite Movies</h3>
           <TagSelector
             options={favoriteMoviesOptions}
             value={data.favorite_movies || []}
@@ -133,7 +132,7 @@ export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }
 
         {/* Favorite Music */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Favorite Music</h3>
+          <h3 className="text-lg font-medium text-white">Favorite Music</h3>
           <TagSelector
             options={favoriteMusicOptions}
             value={data.favorite_music || []}
@@ -145,7 +144,7 @@ export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }
 
         {/* Favorite Foods */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Favorite Foods</h3>
+          <h3 className="text-lg font-medium text-white">Favorite Foods</h3>
           <TagSelector
             options={favoriteFoodsOptions}
             value={data.favorite_foods || []}
@@ -157,7 +156,7 @@ export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }
 
         {/* Favorite Games */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Favorite Games</h3>
+          <h3 className="text-lg font-medium text-white">Favorite Games</h3>
           <TagSelector
             options={favoriteGamesOptions}
             value={data.favorite_games || []}
@@ -169,7 +168,7 @@ export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }
 
         {/* Favorite Podcasts */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Favorite Podcasts</h3>
+          <h3 className="text-lg font-medium text-white">Favorite Podcasts</h3>
           <TagSelector
             options={favoritePodcastsOptions}
             value={data.favorite_podcasts || []}

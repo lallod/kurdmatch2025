@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TagSelector } from '../fields/TagSelector';
 import { Palette, Music, Gamepad2 } from 'lucide-react';
@@ -113,17 +112,17 @@ export const Step6Interests: React.FC<Step6InterestsProps> = ({ data, onChange }
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Palette className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">What do you love to do?</h2>
-        <p className="text-gray-600">Share your interests and hobbies</p>
+        <h2 className="text-2xl font-bold text-white">What do you love to do?</h2>
+        <p className="text-purple-200">Share your interests and hobbies</p>
       </div>
 
       <div className="space-y-6">
         {/* Interests */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Your Interests</h3>
+          <h3 className="text-lg font-medium text-white">Your Interests</h3>
           <TagSelector
             options={interestsOptions}
             value={data.interests || []}
@@ -135,7 +134,7 @@ export const Step6Interests: React.FC<Step6InterestsProps> = ({ data, onChange }
 
         {/* Hobbies */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Your Hobbies</h3>
+          <h3 className="text-lg font-medium text-white">Your Hobbies</h3>
           <TagSelector
             options={hobbiesOptions}
             value={data.hobbies || []}
@@ -147,7 +146,7 @@ export const Step6Interests: React.FC<Step6InterestsProps> = ({ data, onChange }
 
         {/* Creative Pursuits */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Creative Pursuits</h3>
+          <h3 className="text-lg font-medium text-white">Creative Pursuits</h3>
           <TagSelector
             options={creativePursuitsOptions}
             value={data.creative_pursuits || []}
@@ -159,7 +158,7 @@ export const Step6Interests: React.FC<Step6InterestsProps> = ({ data, onChange }
 
         {/* Weekend Activities */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Weekend Activities</h3>
+          <h3 className="text-lg font-medium text-white">Weekend Activities</h3>
           <TagSelector
             options={weekendActivitiesOptions}
             value={data.weekend_activities || []}
@@ -171,7 +170,7 @@ export const Step6Interests: React.FC<Step6InterestsProps> = ({ data, onChange }
 
         {/* Music Instruments */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Musical Instruments</h3>
+          <h3 className="text-lg font-medium text-white">Musical Instruments</h3>
           <TagSelector
             options={musicInstrumentsOptions}
             value={data.music_instruments || []}
@@ -183,7 +182,7 @@ export const Step6Interests: React.FC<Step6InterestsProps> = ({ data, onChange }
 
         {/* Tech Skills */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Tech Skills</h3>
+          <h3 className="text-lg font-medium text-white">Tech Skills</h3>
           <TagSelector
             options={techSkillsOptions}
             value={data.tech_skills || []}

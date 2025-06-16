@@ -22,8 +22,8 @@ export const Step8FinalTouches: React.FC<Step8FinalTouchesProps> = ({ data, onCh
         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Sparkles className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">A little bit more about you</h2>
-        <p className="text-gray-600">These final touches will make your profile shine</p>
+        <h2 className="text-2xl font-bold text-white">A little bit more about you</h2>
+        <p className="text-purple-200">These final touches will make your profile shine</p>
       </div>
 
       <div className="space-y-6">
@@ -37,25 +37,25 @@ export const Step8FinalTouches: React.FC<Step8FinalTouchesProps> = ({ data, onCh
         {/* Ideal Date */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <Heart className="w-5 h-5 text-purple-600" />
-            <Label htmlFor="ideal_date" className="text-lg font-medium">Describe Your Ideal Date</Label>
+            <Heart className="w-5 h-5 text-purple-400" />
+            <Label htmlFor="ideal_date" className="text-lg font-medium text-white">Describe Your Ideal Date</Label>
           </div>
           <Textarea
             id="ideal_date"
             value={data.ideal_date || ''}
             onChange={(e) => onChange({ ...data, ideal_date: e.target.value })}
             placeholder="What would be your perfect date? Be creative and specific..."
-            className="text-lg p-4 rounded-xl min-h-[100px] resize-none"
+            className="text-lg p-4 rounded-xl min-h-[100px] resize-none bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-300"
             rows={4}
           />
-          <p className="text-sm text-gray-500">Help others imagine spending time with you</p>
+          <p className="text-sm text-purple-200">Help others imagine spending time with you</p>
         </div>
       </div>
 
-      <div className="bg-purple-50 rounded-2xl p-6 text-center">
-        <Sparkles className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-        <h3 className="text-lg font-semibold text-purple-900 mb-2">Almost there!</h3>
-        <p className="text-purple-700">You're about to complete your profile and unlock amazing connections!</p>
+      <div className="bg-purple-500/20 backdrop-blur rounded-2xl p-6 text-center border border-purple-400/30">
+        <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-3" />
+        <h3 className="text-lg font-semibold text-white mb-2">Almost there!</h3>
+        <p className="text-purple-200">You're about to complete your profile and unlock amazing connections!</p>
       </div>
     </div>
   );

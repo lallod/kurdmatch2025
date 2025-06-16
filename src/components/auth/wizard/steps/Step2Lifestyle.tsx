@@ -69,17 +69,17 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Activity className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Tell us about your lifestyle</h2>
-        <p className="text-gray-600">Help us find people who match your way of life</p>
+        <h2 className="text-2xl font-bold text-white">Tell us about your lifestyle</h2>
+        <p className="text-purple-200">Help us find people who match your way of life</p>
       </div>
 
       <div className="space-y-6">
         {/* Exercise Habits */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">How often do you exercise?</h3>
+          <h3 className="text-lg font-medium text-white">How often do you exercise?</h3>
           <ChoiceChips
             options={exerciseOptions}
             value={data.exercise_habits}
@@ -90,7 +90,7 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
 
         {/* Pets */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Do you have pets?</h3>
+          <h3 className="text-lg font-medium text-white">Do you have pets?</h3>
           <ChoiceChips
             options={petOptions}
             value={data.have_pets}
@@ -101,7 +101,7 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
 
         {/* Drinking */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Do you drink alcohol?</h3>
+          <h3 className="text-lg font-medium text-white">Do you drink alcohol?</h3>
           <ChoiceChips
             options={drinkingOptions}
             value={data.drinking}
@@ -112,7 +112,7 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
 
         {/* Smoking */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Do you smoke?</h3>
+          <h3 className="text-lg font-medium text-white">Do you smoke?</h3>
           <ChoiceChips
             options={smokingOptions}
             value={data.smoking}
@@ -123,7 +123,7 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
 
         {/* Diet */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Dietary preferences</h3>
+          <h3 className="text-lg font-medium text-white">Dietary preferences</h3>
           <ChoiceChips
             options={dietOptions}
             value={data.dietary_preferences}
@@ -134,7 +134,7 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
 
         {/* Sleep Schedule */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Are you a morning person or night owl?</h3>
+          <h3 className="text-lg font-medium text-white">Are you a morning person or night owl?</h3>
           <ChoiceChips
             options={sleepOptions}
             value={data.sleep_schedule}

@@ -73,14 +73,14 @@ export const Step3Values: React.FC<Step3ValuesProps> = ({ data, onChange }) => {
         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Heart className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">What's important to you?</h2>
-        <p className="text-gray-600">Share your values and beliefs</p>
+        <h2 className="text-2xl font-bold text-white">What's important to you?</h2>
+        <p className="text-purple-200">Share your values and beliefs</p>
       </div>
 
       <div className="space-y-6">
         {/* Religion */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Religion</h3>
+          <h3 className="text-lg font-medium text-white">Religion</h3>
           <ChoiceChips
             options={religionOptions}
             value={data.religion}
@@ -91,7 +91,7 @@ export const Step3Values: React.FC<Step3ValuesProps> = ({ data, onChange }) => {
 
         {/* Values */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">What do you value most?</h3>
+          <h3 className="text-lg font-medium text-white">What do you value most?</h3>
           <TagSelector
             options={valuesOptions}
             value={data.values || []}
@@ -103,7 +103,7 @@ export const Step3Values: React.FC<Step3ValuesProps> = ({ data, onChange }) => {
 
         {/* Zodiac Sign */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Zodiac Sign</h3>
+          <h3 className="text-lg font-medium text-white">Zodiac Sign</h3>
           <ChoiceChips
             options={zodiacOptions}
             value={data.zodiac_sign}
@@ -114,7 +114,7 @@ export const Step3Values: React.FC<Step3ValuesProps> = ({ data, onChange }) => {
 
         {/* Personality Type */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Personality Type</h3>
+          <h3 className="text-lg font-medium text-white">Personality Type</h3>
           <ChoiceChips
             options={personalityOptions}
             value={data.personality_type}

@@ -70,29 +70,29 @@ export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) 
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <User className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Let's start with the basics</h2>
-        <p className="text-gray-600">Help others get to know the real you</p>
+        <h2 className="text-2xl font-bold text-white">Let's start with the basics</h2>
+        <p className="text-purple-200">Help others get to know the real you</p>
       </div>
 
       <div className="space-y-6">
         {/* Height */}
         <div className="space-y-3">
-          <Label htmlFor="height" className="text-lg font-medium">Height</Label>
+          <Label htmlFor="height" className="text-lg font-medium text-white">Height</Label>
           <Input
             id="height"
             value={data.height || ''}
             onChange={(e) => onChange({ ...data, height: e.target.value })}
             placeholder="e.g., 175 cm or 5 feet 8 inches"
-            className="text-lg p-4 rounded-xl"
+            className="text-lg p-4 rounded-xl bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-300"
           />
         </div>
 
         {/* Ethnicity */}
         <div className="space-y-3">
-          <Label className="text-lg font-medium">Ethnicity</Label>
+          <Label className="text-lg font-medium text-white">Ethnicity</Label>
           <ChoiceChips
             options={ethnicityOptions}
             value={data.ethnicity}
@@ -103,7 +103,7 @@ export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) 
 
         {/* Kurdistan Region */}
         <div className="space-y-3">
-          <Label className="text-lg font-medium">Kurdistan Region Connection</Label>
+          <Label className="text-lg font-medium text-white">Kurdistan Region Connection</Label>
           <ChoiceChips
             options={kurdistanRegionOptions}
             value={data.kurdistan_region}
@@ -114,7 +114,7 @@ export const Step1AboutYou: React.FC<Step1AboutYouProps> = ({ data, onChange }) 
 
         {/* Languages */}
         <div className="space-y-3">
-          <Label className="text-lg font-medium">Languages You Speak</Label>
+          <Label className="text-lg font-medium text-white">Languages You Speak</Label>
           <TagSelector
             options={languageOptions}
             value={data.languages || []}

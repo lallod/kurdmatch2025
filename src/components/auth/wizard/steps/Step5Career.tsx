@@ -30,17 +30,17 @@ export const Step5Career: React.FC<Step5CareerProps> = ({ data, onChange }) => {
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Briefcase className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Your professional life</h2>
-        <p className="text-gray-600">Tell us about your education and career</p>
+        <h2 className="text-2xl font-bold text-white">Your professional life</h2>
+        <p className="text-purple-200">Tell us about your education and career</p>
       </div>
 
       <div className="space-y-6">
         {/* Education */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Education Level</h3>
+          <h3 className="text-lg font-medium text-white">Education Level</h3>
           <ChoiceChips
             options={educationOptions}
             value={data.education}
@@ -51,25 +51,25 @@ export const Step5Career: React.FC<Step5CareerProps> = ({ data, onChange }) => {
 
         {/* Occupation */}
         <div className="space-y-3">
-          <Label htmlFor="occupation" className="text-lg font-medium">Occupation</Label>
+          <Label htmlFor="occupation" className="text-lg font-medium text-white">Occupation</Label>
           <Input
             id="occupation"
             value={data.occupation || ''}
             onChange={(e) => onChange({ ...data, occupation: e.target.value })}
             placeholder="e.g., Software Engineer, Teacher, Doctor"
-            className="text-lg p-4 rounded-xl"
+            className="text-lg p-4 rounded-xl bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-300"
           />
         </div>
 
         {/* Company */}
         <div className="space-y-3">
-          <Label htmlFor="company" className="text-lg font-medium">Company/Organization</Label>
+          <Label htmlFor="company" className="text-lg font-medium text-white">Company/Organization</Label>
           <Input
             id="company"
             value={data.company || ''}
             onChange={(e) => onChange({ ...data, company: e.target.value })}
             placeholder="Where do you work?"
-            className="text-lg p-4 rounded-xl"
+            className="text-lg p-4 rounded-xl bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-300"
           />
         </div>
       </div>
