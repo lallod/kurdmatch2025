@@ -14,7 +14,7 @@ export const cleanupTestData = async () => {
     const { error: engagementError } = await supabase
       .from('user_engagement')
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+      .gt('id', 0); // Delete all rows
     
     if (engagementError) {
       console.error('Error cleaning engagement data:', engagementError);
@@ -26,7 +26,7 @@ export const cleanupTestData = async () => {
     const { error: statsError } = await supabase
       .from('dashboard_stats')
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+      .gt('id', 0); // Delete all rows
     
     if (statsError) {
       console.error('Error cleaning dashboard stats:', statsError);
@@ -38,7 +38,7 @@ export const cleanupTestData = async () => {
     const { error: activitiesError } = await supabase
       .from('admin_activities')
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+      .gt('id', 0); // Delete all rows
     
     if (activitiesError) {
       console.error('Error cleaning admin activities:', activitiesError);
