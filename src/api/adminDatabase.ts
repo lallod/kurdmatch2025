@@ -22,7 +22,7 @@ export const getVerificationRequests = async () => {
 
   if (error) throw error;
 
-  // Transform to verification request format
+  // Transform to verification request format with proper type casting
   return photos?.map(photo => ({
     id: photo.id,
     userId: photo.profile_id,
@@ -30,8 +30,8 @@ export const getVerificationRequests = async () => {
     email: `user-${photo.profile_id?.substring(0, 8)}@example.com`,
     documentType: 'Profile Photo',
     submittedDate: photo.created_at?.split('T')[0] || '',
-    status: photo.profiles?.verified ? 'verified' : 'pending',
-    priority: 'normal',
+    status: (photo.profiles?.verified ? 'verified' : 'pending') as 'pending' | 'verified' | 'rejected',
+    priority: 'normal' as 'high' | 'medium' | 'normal',
     photoUrl: photo.url
   })) || [];
 };
