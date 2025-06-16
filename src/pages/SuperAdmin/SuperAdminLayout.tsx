@@ -33,6 +33,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminRoleCheck } from '@/hooks/useAdminRoleCheck';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface SuperAdminLayoutProps {
   children: React.ReactNode;
@@ -41,9 +43,21 @@ interface SuperAdminLayoutProps {
 const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const [collapsed, setCollapsed] = React.useState(false);
   const { isCheckingRole, hasAdminRole } = useAdminRoleCheck();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
+  };
+
+  const handleSignOut = async () => {
+    console.log('SuperAdminLayout: Signing out admin user');
+    try {
+      await supabase.auth.signOut();
+      navigate('/admin-login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      navigate('/admin-login');
+    }
   };
 
   // Show loading spinner while checking role
@@ -143,13 +157,14 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
           </nav>
           
           <div className="p-4 border-t border-tinder-rose/10">
-            <NavLink
-              to="/"
-              className="flex items-center p-2 text-red-600 rounded-lg hover:bg-red-50"
+            <Button
+              onClick={handleSignOut}
+              variant="ghost"
+              className="flex items-center p-2 text-red-600 rounded-lg hover:bg-red-50 w-full justify-start"
             >
               <LogOut size={20} />
-              {!collapsed && <span className="ml-3">Exit Admin</span>}
-            </NavLink>
+              {!collapsed && <span className="ml-3">Sign Out</span>}
+            </Button>
           </div>
         </div>
       </aside>

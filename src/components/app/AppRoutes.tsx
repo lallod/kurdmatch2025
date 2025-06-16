@@ -105,18 +105,19 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         element={user ? <Admin /> : <Navigate to="/auth" replace />} 
       />
       
-      {/* Super Admin routes - role verification handled within SuperAdmin component */}
+      {/* Super Admin routes - simplified protection */}
       <Route 
         path="/super-admin/*" 
         element={
           loading ? (
             <div className="min-h-screen flex items-center justify-center">
-              <div className="text-center">Loading...</div>
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
+                <p>Loading...</p>
+              </div>
             </div>
-          ) : user ? (
-            <SuperAdmin />
           ) : (
-            <Navigate to="/admin-login" replace />
+            <SuperAdmin />
           )
         } 
       />

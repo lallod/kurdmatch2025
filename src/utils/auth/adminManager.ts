@@ -48,11 +48,20 @@ export const setupSuperAdmin = async (): Promise<AdminSetupResult> => {
 };
 
 /**
- * Validates admin credentials securely
+ * Validates admin credentials securely with improved session management
  */
 export const validateAdminCredentials = async (email: string, password: string) => {
   try {
     console.log('validateAdminCredentials: Attempting admin login with:', email);
+    
+    // First check if there's an existing session and sign out to prevent conflicts
+    const { data: currentSession } = await supabase.auth.getSession();
+    if (currentSession?.session) {
+      console.log('validateAdminCredentials: Existing session found, signing out first');
+      await supabase.auth.signOut();
+      // Wait a moment for the sign out to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -70,7 +79,11 @@ export const validateAdminCredentials = async (email: string, password: string) 
 
     console.log('validateAdminCredentials: User signed in successfully:', data.user.id);
 
+    // Wait for session to be fully established
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // Check admin role
+    console.log('validateAdminCredentials: Checking admin role for user:', data.user.id);
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select('role')
@@ -91,6 +104,13 @@ export const validateAdminCredentials = async (email: string, password: string) 
     }
 
     console.log('validateAdminCredentials: Admin role verified successfully');
+    
+    // Ensure session is refreshed and stable
+    const { data: refreshData } = await supabase.auth.refreshSession();
+    if (refreshData?.session) {
+      console.log('validateAdminCredentials: Session refreshed successfully');
+    }
+    
     return { success: true, user: data.user };
   } catch (error: any) {
     console.error('validateAdminCredentials: Admin validation error:', error);
