@@ -45,8 +45,10 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({
             type="email"
             value={email}
             onChange={(e) => onEmailChange(e.target.value)}
-            readOnly
-            className="bg-gray-700 border-gray-600 text-white opacity-75"
+            placeholder="admin@example.com"
+            required
+            disabled={isLoading || isSettingUp}
+            className="bg-gray-700 border-gray-600 text-white"
           />
         </div>
         
