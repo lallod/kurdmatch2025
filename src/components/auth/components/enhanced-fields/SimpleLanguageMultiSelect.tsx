@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -98,7 +97,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
           className="w-full justify-between bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 text-purple-300">
             <Plus className="h-4 w-4" />
             Add Language
           </span>
@@ -130,7 +129,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
                       setSearchTerm('');
                     }}
                   >
-                    <span>{language.name}</span>
+                    <span className="text-white">{language.name}</span>
                     <span className="text-sm text-gray-400">{language.native}</span>
                   </button>
                 ))

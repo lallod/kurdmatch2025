@@ -77,7 +77,7 @@ const SimpleLocationSearch = ({
         <MapPin className="absolute left-3 top-3 h-4 w-4 text-pink-400 z-10" />
         <Button
           variant="outline"
-          className="w-full justify-between pl-10 bg-white/10 backdrop-blur border-purple-300/30 text-white placeholder:text-purple-300 hover:bg-white/20 focus:border-pink-400 focus:ring-pink-400/20"
+          className="w-full justify-between pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-300 hover:bg-white/20 focus:border-pink-400 focus:ring-pink-400/20"
           onClick={() => setOpen(!open)}
         >
           <span className={selectedLocation ? "text-white" : "text-purple-300"}>
@@ -87,32 +87,32 @@ const SimpleLocationSearch = ({
         </Button>
         
         {open && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-50 max-h-60 overflow-hidden">
-            <div className="p-2 border-b border-gray-200">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-md shadow-lg z-50 max-h-60 overflow-hidden">
+            <div className="p-2 border-b border-gray-700">
               <input
                 type="text"
                 placeholder="Search destinations..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
               />
             </div>
             <div className="max-h-48 overflow-y-auto">
               {filteredLocations.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">No destinations found.</div>
+                <div className="p-4 text-center text-gray-400">No destinations found.</div>
               ) : (
                 filteredLocations.map((location) => (
                   <button
                     key={location.id}
-                    className="w-full px-4 py-2 text-left text-gray-900 hover:bg-gray-100 flex items-center justify-between"
+                    className="w-full px-4 py-2 text-left text-white hover:bg-gray-800 flex items-center justify-between"
                     onClick={() => handleSelect(location.display)}
                   >
                     <div>
-                      <span className="font-medium">{location.name}</span>
-                      <span className="text-sm text-gray-500 ml-2">{location.country}</span>
+                      <span className="font-medium text-white">{location.name}</span>
+                      <span className="text-sm text-gray-400 ml-2">{location.country}</span>
                     </div>
                     {currentValue === location.display && (
-                      <Check className="h-4 w-4 text-purple-600" />
+                      <Check className="h-4 w-4 text-purple-400" />
                     )}
                   </button>
                 ))

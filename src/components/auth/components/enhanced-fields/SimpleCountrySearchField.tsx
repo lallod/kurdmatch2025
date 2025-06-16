@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Globe, ChevronDown, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface SimpleCountrySearchFieldProps {
   value?: string;
@@ -60,7 +59,6 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Ensure value is always a string
   const currentValue = value || '';
   const selectedCountry = countries.find(country => country.name === currentValue);
 
@@ -86,10 +84,12 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
       <div className="relative">
         <Button
           variant="outline"
-          className="w-full justify-between bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20 hover:text-white"
+          className="w-full justify-between bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
           onClick={() => setOpen(!open)}
         >
-          {selectedCountry ? selectedCountry.name : "Select country..."}
+          <span className={selectedCountry ? "text-white" : "text-purple-300"}>
+            {selectedCountry ? selectedCountry.name : "Select country..."}
+          </span>
           <ChevronDown className={`ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform ${open ? 'rotate-180' : ''}`} />
         </Button>
         
@@ -114,7 +114,7 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
                     className="w-full px-4 py-2 text-left text-white hover:bg-gray-800 flex items-center justify-between"
                     onClick={() => handleSelect(country.name)}
                   >
-                    <span>{country.name}</span>
+                    <span className="text-white">{country.name}</span>
                     {currentValue === country.name && (
                       <Check className="h-4 w-4 text-purple-400" />
                     )}

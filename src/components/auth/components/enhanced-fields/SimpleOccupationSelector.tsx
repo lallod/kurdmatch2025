@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Briefcase, ChevronDown, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface SimpleOccupationSelectorProps {
   value?: string;
@@ -95,7 +93,9 @@ const SimpleOccupationSelector = ({ value, onChange }: SimpleOccupationSelectorP
           className="w-full justify-between bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
           onClick={() => setOpen(!open)}
         >
-          {selectedOccupation ? selectedOccupation.name : "Select occupation..."}
+          <span className={selectedOccupation ? "text-white" : "text-purple-300"}>
+            {selectedOccupation ? selectedOccupation.name : "Select occupation..."}
+          </span>
           <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
         </Button>
         
@@ -130,7 +130,7 @@ const SimpleOccupationSelector = ({ value, onChange }: SimpleOccupationSelectorP
                             className="w-full px-4 py-2 text-left text-white hover:bg-gray-800 flex items-center justify-between"
                             onClick={() => handleSelect(occupation.name)}
                           >
-                            <span>{occupation.name}</span>
+                            <span className="text-white">{occupation.name}</span>
                             {currentValue === occupation.name && (
                               <Check className="h-4 w-4 text-purple-400" />
                             )}
