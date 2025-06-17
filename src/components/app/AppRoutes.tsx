@@ -39,11 +39,11 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
     <Routes>
       <Route 
         path="/" 
-        element={user ? <Navigate to="/discovery" replace /> : <Landing />} 
+        element={user ? <Navigate to="/swipe" replace /> : <Landing />} 
       />
       <Route 
         path="/auth" 
-        element={user ? <Navigate to="/discovery" replace /> : <Auth />} 
+        element={user ? <Navigate to="/swipe" replace /> : <Auth />} 
       />
       <Route 
         path="/register" 
@@ -73,6 +73,10 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       />
       
       {/* Protected routes */}
+      <Route 
+        path="/swipe" 
+        element={user ? <Swipe /> : <Navigate to="/auth" replace />} 
+      />
       <Route 
         path="/discovery" 
         element={user ? <Discovery /> : <Navigate to="/auth" replace />} 
