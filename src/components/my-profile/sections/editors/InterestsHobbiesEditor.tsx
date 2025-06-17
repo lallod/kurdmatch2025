@@ -109,9 +109,7 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
       <Card className="bg-gray-800/50 border-gray-700">
         <CardHeader>
           <CardTitle className="text-white">Interests & Hobbies</CardTitle>
-          {!isSuperAdmin && (
-            <p className="text-sm text-gray-400">Select from the available options below</p>
-          )}
+          <p className="text-sm text-gray-400">Select from the available options below</p>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Interests */}
