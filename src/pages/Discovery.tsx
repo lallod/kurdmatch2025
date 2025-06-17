@@ -34,6 +34,7 @@ import { useForm } from "react-hook-form";
 import { Switch } from "@/components/ui/switch";
 import { KurdistanRegion } from '@/types/profile';
 import { Input } from '@/components/ui/input';
+import BottomNavigation from '@/components/BottomNavigation';
 
 const areas = [
   { value: "all", name: "All Regions" },
@@ -377,7 +378,7 @@ const Discovery = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
       {/* Header */}
       <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-6">
@@ -712,6 +713,9 @@ const Discovery = () => {
           </div>
         </div>
       </div>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </div>
   );
 };
