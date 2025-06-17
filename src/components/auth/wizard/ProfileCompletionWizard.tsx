@@ -167,11 +167,10 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
     
     setIsLoading(true);
     try {
-      // Convert love_language array to string if it exists
+      // Convert love_language array to string if it exists and remove updated_at
       const updateData = {
         ...wizardData,
-        love_language: wizardData.love_language ? wizardData.love_language.join(', ') : undefined,
-        updated_at: new Date().toISOString()
+        love_language: wizardData.love_language ? wizardData.love_language.join(', ') : undefined
       };
 
       const { error } = await supabase
