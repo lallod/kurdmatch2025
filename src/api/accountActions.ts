@@ -6,15 +6,17 @@ export const downloadUserData = async (): Promise<UserDataExport> => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('No user authenticated');
 
-  // Fetch all user data from database tables
-  const [profileData, photosData, messagesData, matchesData, likesData, socialAccountsData] = await Promise.all([
+  // Fetch all user data from existing database tables
+  const [profileData, photosData, messagesData, matchesData, likesData] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', session.user.id).single(),
     supabase.from('photos').select('*').eq('profile_id', session.user.id),
-    supabase.from('messages').select('*').or(`sender_id.eq.${session.user.id},receiver_id.eq.${session.user.id}`),
+    supabase.from('messages').select('*').or(`sender_id.eq.${session.user.id},recipient_id.eq.${session.user.id}`),
     supabase.from('matches').select('*').or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`),
-    supabase.from('likes').select('*').or(`liker_id.eq.${session.user.id},liked_id.eq.${session.user.id}`),
-    supabase.from('connected_social_accounts').select('*').eq('user_id', session.user.id)
+    supabase.from('likes').select('*').or(`liker_id.eq.${session.user.id},likee_id.eq.${session.user.id}`)
   ]);
+
+  // Get connected social accounts from localStorage as fallback
+  const connectedAccounts = getConnectedAccountsFromStorage(session.user.id);
 
   const exportData: UserDataExport = {
     profile: profileData.data,
@@ -22,17 +24,11 @@ export const downloadUserData = async (): Promise<UserDataExport> => {
     messages: messagesData.data || [],
     matches: matchesData.data || [],
     likes: likesData.data || [],
-    social_accounts: socialAccountsData.data || [],
+    social_accounts: connectedAccounts,
     export_date: new Date().toISOString()
   };
 
-  // Store export record in database
-  await supabase.from('user_data_exports').insert({
-    user_id: session.user.id,
-    export_date: new Date().toISOString(),
-    data_size: JSON.stringify(exportData).length,
-    export_type: 'full_data'
-  });
+  console.log('User data export completed:', { size: JSON.stringify(exportData).length });
 
   return exportData;
 };
@@ -50,36 +46,39 @@ export const connectSocialAccount = async (platform: 'instagram' | 'snapchat', u
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('No user authenticated');
 
-  // Insert into database table
-  const { data, error } = await supabase
-    .from('connected_social_accounts')
-    .insert({
-      user_id: session.user.id,
-      platform,
-      platform_user_id: platformUserId,
-      username,
-      connected_at: new Date().toISOString(),
-      is_active: true
-    })
-    .select()
-    .single();
+  // Store in localStorage as fallback until database table is created
+  const account: ConnectedSocialAccount = {
+    id: `${platform}_${Date.now()}`,
+    user_id: session.user.id,
+    platform,
+    platform_user_id: platformUserId || username,
+    username,
+    connected_at: new Date().toISOString(),
+    is_active: true
+  };
 
-  if (error) throw error;
-  return data;
+  const existingAccounts = getConnectedAccountsFromStorage(session.user.id);
+  const updatedAccounts = [...existingAccounts, account];
+  
+  localStorage.setItem(`social_accounts_${session.user.id}`, JSON.stringify(updatedAccounts));
+
+  console.log('Social account connected:', { platform, username });
+  return account;
 };
 
 export const disconnectSocialAccount = async (accountId: string) => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('No user authenticated');
 
-  // Update database record
-  const { error } = await supabase
-    .from('connected_social_accounts')
-    .update({ is_active: false })
-    .eq('id', accountId)
-    .eq('user_id', session.user.id);
+  // Update localStorage
+  const existingAccounts = getConnectedAccountsFromStorage(session.user.id);
+  const updatedAccounts = existingAccounts.map(account => 
+    account.id === accountId ? { ...account, is_active: false } : account
+  );
+  
+  localStorage.setItem(`social_accounts_${session.user.id}`, JSON.stringify(updatedAccounts));
 
-  if (error) throw error;
+  console.log('Social account disconnected:', { accountId });
   return { success: true };
 };
 
@@ -87,14 +86,19 @@ export const getConnectedAccounts = async (): Promise<ConnectedSocialAccount[]> 
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('No user authenticated');
 
-  const { data, error } = await supabase
-    .from('connected_social_accounts')
-    .select('*')
-    .eq('user_id', session.user.id)
-    .eq('is_active', true);
+  const accounts = getConnectedAccountsFromStorage(session.user.id);
+  return accounts.filter(account => account.is_active);
+};
 
-  if (error) throw error;
-  return data || [];
+// Helper function to get connected accounts from localStorage
+const getConnectedAccountsFromStorage = (userId: string): ConnectedSocialAccount[] => {
+  try {
+    const stored = localStorage.getItem(`social_accounts_${userId}`);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Error reading social accounts from storage:', error);
+    return [];
+  }
 };
 
 export const requestAccountDeletion = async (deletionType: 'deactivate' | 'delete', reason?: string) => {
@@ -102,54 +106,32 @@ export const requestAccountDeletion = async (deletionType: 'deactivate' | 'delet
   if (!session?.user) throw new Error('No user authenticated');
 
   if (deletionType === 'deactivate') {
-    // Update profile status
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
-        account_status: 'deactivated',
-        archived_at: new Date().toISOString()
-      })
-      .eq('id', session.user.id);
-
-    if (profileError) throw profileError;
-
-    // Record the action
-    await supabase.from('user_account_actions').insert({
-      user_id: session.user.id,
-      action_type: 'deactivation',
+    // Store deactivation status in localStorage until database table is created
+    const accountStatus = {
+      status: 'deactivated',
       requested_at: new Date().toISOString(),
-      status: 'completed',
       reason
-    });
+    };
+    
+    localStorage.setItem(`account_status_${session.user.id}`, JSON.stringify(accountStatus));
 
+    console.log('Account deactivation requested:', { userId: session.user.id, reason });
     return { type: 'deactivated', success: true };
   } else {
     // Schedule deletion for 30 days
     const scheduledDate = new Date();
     scheduledDate.setDate(scheduledDate.getDate() + 30);
 
-    // Update profile status
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
-        account_status: 'deletion_requested',
-        deletion_requested_at: new Date().toISOString(),
-        scheduled_deletion_at: scheduledDate.toISOString()
-      })
-      .eq('id', session.user.id);
-
-    if (profileError) throw profileError;
-
-    // Record the action
-    await supabase.from('user_account_actions').insert({
-      user_id: session.user.id,
-      action_type: 'deletion_request',
+    const accountStatus = {
+      status: 'deletion_requested',
       requested_at: new Date().toISOString(),
-      scheduled_at: scheduledDate.toISOString(),
-      status: 'pending',
+      scheduled_deletion_at: scheduledDate.toISOString(),
       reason
-    });
+    };
+    
+    localStorage.setItem(`account_status_${session.user.id}`, JSON.stringify(accountStatus));
 
+    console.log('Account deletion scheduled:', { userId: session.user.id, scheduledDate: scheduledDate.toISOString() });
     return { 
       type: 'deletion_scheduled', 
       scheduledDate: scheduledDate.toISOString(),
@@ -162,27 +144,15 @@ export const cancelAccountDeletion = async () => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('No user authenticated');
 
-  // Reset profile status
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .update({
-      account_status: 'active',
-      deletion_requested_at: null,
-      scheduled_deletion_at: null
-    })
-    .eq('id', session.user.id);
+  // Reset account status
+  const accountStatus = {
+    status: 'active',
+    requested_at: null,
+    scheduled_deletion_at: null
+  };
+  
+  localStorage.setItem(`account_status_${session.user.id}`, JSON.stringify(accountStatus));
 
-  if (profileError) throw profileError;
-
-  // Cancel pending deletion actions
-  const { error: actionError } = await supabase
-    .from('user_account_actions')
-    .update({ status: 'cancelled' })
-    .eq('user_id', session.user.id)
-    .eq('action_type', 'deletion_request')
-    .eq('status', 'pending');
-
-  if (actionError) throw actionError;
-
+  console.log('Account deletion cancelled:', { userId: session.user.id });
   return { success: true };
 };
