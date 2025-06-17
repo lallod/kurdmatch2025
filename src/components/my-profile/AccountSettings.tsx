@@ -1,453 +1,305 @@
 
 import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Settings, Pencil, Bell, Lock, Eye, ShieldAlert, KeyRound, Trash2 } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { 
+  Shield, 
+  Bell, 
+  Eye, 
+  Heart, 
+  MessageCircle, 
+  Users, 
+  Lock, 
+  Smartphone,
+  Mail,
+  Globe,
+  Download,
+  Trash2,
+  Settings,
+  CheckCircle2,
+  AlertTriangle
+} from 'lucide-react';
 import { toast } from 'sonner';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
-const AccountSettings: React.FC = () => {
-  const [visibilityEnabled, setVisibilityEnabled] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [locationSharing, setLocationSharing] = useState(true);
-  
-  const handleManageSettings = () => {
-    toast.info("Opening settings management panel");
+const AccountSettings = () => {
+  const [notifications, setNotifications] = useState({
+    matches: true,
+    messages: true,
+    likes: false,
+    profileViews: true,
+    marketing: false,
+    push: true,
+    email: true,
+    sms: false
+  });
+
+  const [privacy, setPrivacy] = useState({
+    showAge: true,
+    showDistance: true,
+    showOnline: true,
+    discoverable: true,
+    readReceipts: false
+  });
+
+  const handleNotificationChange = (key: string, value: boolean) => {
+    setNotifications(prev => ({ ...prev, [key]: value }));
+    toast.success('Notification settings updated');
   };
-  
-  const handleSaveVisibility = () => {
-    toast.success("Profile visibility settings saved");
+
+  const handlePrivacyChange = (key: string, value: boolean) => {
+    setPrivacy(prev => ({ ...prev, [key]: value }));
+    toast.success('Privacy settings updated');
   };
-  
-  const handleSaveNotifications = () => {
-    toast.success("Notification settings saved");
-  };
-  
-  const handleSavePrivacy = () => {
-    toast.success("Privacy settings saved");
-  };
-  
-  const handleChangePassword = () => {
-    toast.info("Password change initiated");
-  };
-  
-  const handleDeleteAccount = () => {
-    toast.error("Account deletion requested", {
-      description: "This action would require additional confirmation in a real app",
-      duration: 5000,
-    });
-  };
-  
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Account Settings</h2>
-        <Button variant="outline" size="sm" className="gap-2" onClick={handleManageSettings}>
-          <Settings size={16} />
-          Manage Settings
-        </Button>
-      </div>
-      <p className="text-muted-foreground mb-6">
-        Manage your account settings and preferences.
-      </p>
-      
-      <div className="space-y-6">
-        <div className="border rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Eye size={18} className="text-tinder-rose" />
-              <h3 className="font-medium">Profile Visibility</h3>
+    <div className="space-y-6">
+      {/* Account Status */}
+      <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+        <CardContent className="p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Account Status</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-white font-medium">Verified Account</p>
+                <p className="text-purple-200 text-sm">Email verified</p>
+              </div>
             </div>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="edit">
-                  <Pencil size={16} />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Profile Visibility</SheetTitle>
-                  <SheetDescription>
-                    Control who can see your profile and discover you
-                  </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-[85vh] pr-4 mt-6">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="show-discovery" className="flex flex-col space-y-1">
-                        <span>Show me in discovery</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          When enabled, people can see your profile
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="show-discovery" 
-                        checked={visibilityEnabled} 
-                        onCheckedChange={setVisibilityEnabled} 
-                      />
-                    </div>
-                    <Button onClick={handleSaveVisibility}>Save Changes</Button>
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">Control who can see your profile</p>
-          <div className="flex items-center justify-between">
-            <span>Show me in discovery</span>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Settings size={14} />
-                  Edit
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Profile Visibility</SheetTitle>
-                  <SheetDescription>
-                    Control who can see your profile and discover you
-                  </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-[85vh] pr-4 mt-6">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="show-discovery-2" className="flex flex-col space-y-1">
-                        <span>Show me in discovery</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          When enabled, people can see your profile
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="show-discovery-2" 
-                        checked={visibilityEnabled} 
-                        onCheckedChange={setVisibilityEnabled} 
-                      />
-                    </div>
-                    <Button onClick={handleSaveVisibility}>Save Changes</Button>
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-        
-        <div className="border rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Bell size={18} className="text-tinder-rose" />
-              <h3 className="font-medium">Notification Settings</h3>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <Shield className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-white font-medium">Premium Member</p>
+                <p className="text-purple-200 text-sm">Active subscription</p>
+              </div>
             </div>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="edit">
-                  <Pencil size={16} />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Notification Settings</SheetTitle>
-                  <SheetDescription>
-                    Manage your notification preferences
-                  </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-[85vh] pr-4 mt-6">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="email-notifications" className="flex flex-col space-y-1">
-                        <span>Email Notifications</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          Receive match and message notifications via email
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="email-notifications" 
-                        checked={emailNotifications} 
-                        onCheckedChange={setEmailNotifications} 
-                      />
-                    </div>
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="push-notifications" className="flex flex-col space-y-1">
-                        <span>Push Notifications</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          Receive push notifications on your device
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="push-notifications" 
-                        checked={pushNotifications} 
-                        onCheckedChange={setPushNotifications} 
-                      />
-                    </div>
-                    <Button onClick={handleSaveNotifications}>Save Changes</Button>
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">Manage your notification preferences</p>
-          <div className="flex items-center justify-between">
-            <span>Email and push notifications</span>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Settings size={14} />
-                  Edit
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Notification Settings</SheetTitle>
-                  <SheetDescription>
-                    Manage your notification preferences
-                  </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-[85vh] pr-4 mt-6">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="email-notifications-2" className="flex flex-col space-y-1">
-                        <span>Email Notifications</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          Receive match and message notifications via email
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="email-notifications-2" 
-                        checked={emailNotifications} 
-                        onCheckedChange={setEmailNotifications} 
-                      />
-                    </div>
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="push-notifications-2" className="flex flex-col space-y-1">
-                        <span>Push Notifications</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          Receive push notifications on your device
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="push-notifications-2" 
-                        checked={pushNotifications} 
-                        onCheckedChange={setPushNotifications} 
-                      />
-                    </div>
-                    <Button onClick={handleSaveNotifications}>Save Changes</Button>
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-        
-        <div className="border rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <ShieldAlert size={18} className="text-tinder-rose" />
-              <h3 className="font-medium">Privacy</h3>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-white font-medium">Photo Verification</p>
+                <p className="text-purple-200 text-sm">Pending review</p>
+              </div>
             </div>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="edit">
-                  <Pencil size={16} />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Privacy Settings</SheetTitle>
-                  <SheetDescription>
-                    Control your privacy and data sharing preferences
-                  </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-[85vh] pr-4 mt-6">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="location-sharing" className="flex flex-col space-y-1">
-                        <span>Location Sharing</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          Allow sharing your approximate location
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="location-sharing" 
-                        checked={locationSharing} 
-                        onCheckedChange={setLocationSharing} 
-                      />
-                    </div>
-                    <Button onClick={handleSavePrivacy}>Save Changes</Button>
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">Control your privacy settings</p>
-          <div className="flex items-center justify-between">
-            <span>Location sharing and data usage</span>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Settings size={14} />
-                  Edit
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Privacy Settings</SheetTitle>
-                  <SheetDescription>
-                    Control your privacy and data sharing preferences
-                  </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="h-[85vh] pr-4 mt-6">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between space-x-2">
-                      <Label htmlFor="location-sharing-2" className="flex flex-col space-y-1">
-                        <span>Location Sharing</span>
-                        <span className="font-normal text-sm text-muted-foreground">
-                          Allow sharing your approximate location
-                        </span>
-                      </Label>
-                      <Switch 
-                        id="location-sharing-2" 
-                        checked={locationSharing} 
-                        onCheckedChange={setLocationSharing} 
-                      />
-                    </div>
-                    <Button onClick={handleSavePrivacy}>Save Changes</Button>
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-        
-        <div className="border rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <KeyRound size={18} className="text-tinder-rose" />
-              <h3 className="font-medium">Change Password</h3>
-            </div>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="edit">
-                  <Pencil size={16} />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Change Password</SheetTitle>
-                  <SheetDescription>
-                    Update your account password
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="space-y-6 mt-6">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="current-password">Current Password</Label>
-                      <input 
-                        id="current-password" 
-                        type="password" 
-                        className="w-full p-2 border rounded-md"
-                        placeholder="Enter current password" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="new-password">New Password</Label>
-                      <input 
-                        id="new-password" 
-                        type="password" 
-                        className="w-full p-2 border rounded-md"
-                        placeholder="Enter new password" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirm-password">Confirm New Password</Label>
-                      <input 
-                        id="confirm-password" 
-                        type="password" 
-                        className="w-full p-2 border rounded-md"
-                        placeholder="Confirm new password" 
-                      />
-                    </div>
-                  </div>
-                  <Button onClick={handleChangePassword} className="w-full">Change Password</Button>
+        </CardContent>
+      </Card>
+
+      {/* Notification Settings */}
+      <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <Bell className="w-5 h-5 mr-2 text-purple-400" />
+            Notification Settings
+          </h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Heart className="w-5 h-5 text-pink-400" />
+                <div>
+                  <p className="text-white">New Matches</p>
+                  <p className="text-purple-200 text-sm">Get notified when someone likes you back</p>
                 </div>
-              </SheetContent>
-            </Sheet>
+              </div>
+              <Switch 
+                checked={notifications.matches}
+                onCheckedChange={(value) => handleNotificationChange('matches', value)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <MessageCircle className="w-5 h-5 text-blue-400" />
+                <div>
+                  <p className="text-white">New Messages</p>
+                  <p className="text-purple-200 text-sm">Get notified about new messages</p>
+                </div>
+              </div>
+              <Switch 
+                checked={notifications.messages}
+                onCheckedChange={(value) => handleNotificationChange('messages', value)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Heart className="w-5 h-5 text-red-400" />
+                <div>
+                  <p className="text-white">Likes Received</p>
+                  <p className="text-purple-200 text-sm">Get notified when someone likes your profile</p>
+                </div>
+              </div>
+              <Switch 
+                checked={notifications.likes}
+                onCheckedChange={(value) => handleNotificationChange('likes', value)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Eye className="w-5 h-5 text-green-400" />
+                <div>
+                  <p className="text-white">Profile Views</p>
+                  <p className="text-purple-200 text-sm">Get notified when someone views your profile</p>
+                </div>
+              </div>
+              <Switch 
+                checked={notifications.profileViews}
+                onCheckedChange={(value) => handleNotificationChange('profileViews', value)}
+              />
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">Update your account password</p>
-          <div className="flex items-center justify-between">
-            <span>Password and security</span>
-            <Button variant="outline" size="sm" className="gap-2" onClick={handleChangePassword}>
-              <Settings size={14} />
-              Edit
+        </CardContent>
+      </Card>
+
+      {/* Privacy Settings */}
+      <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <Lock className="w-5 h-5 mr-2 text-purple-400" />
+            Privacy Settings
+          </h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white">Show My Age</p>
+                <p className="text-purple-200 text-sm">Display your age on your profile</p>
+              </div>
+              <Switch 
+                checked={privacy.showAge}
+                onCheckedChange={(value) => handlePrivacyChange('showAge', value)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white">Show Distance</p>
+                <p className="text-purple-200 text-sm">Show your distance to other users</p>
+              </div>
+              <Switch 
+                checked={privacy.showDistance}
+                onCheckedChange={(value) => handlePrivacyChange('showDistance', value)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white">Show Online Status</p>
+                <p className="text-purple-200 text-sm">Let others see when you're online</p>
+              </div>
+              <Switch 
+                checked={privacy.showOnline}
+                onCheckedChange={(value) => handlePrivacyChange('showOnline', value)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white">Discoverable</p>
+                <p className="text-purple-200 text-sm">Allow others to find your profile</p>
+              </div>
+              <Switch 
+                checked={privacy.discoverable}
+                onCheckedChange={(value) => handlePrivacyChange('discoverable', value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Communication Preferences */}
+      <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <Smartphone className="w-5 h-5 mr-2 text-purple-400" />
+            Communication Preferences
+          </h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Smartphone className="w-5 h-5 text-blue-400" />
+                <div>
+                  <p className="text-white">Push Notifications</p>
+                  <p className="text-purple-200 text-sm">Receive notifications on your device</p>
+                </div>
+              </div>
+              <Switch 
+                checked={notifications.push}
+                onCheckedChange={(value) => handleNotificationChange('push', value)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-green-400" />
+                <div>
+                  <p className="text-white">Email Notifications</p>
+                  <p className="text-purple-200 text-sm">Receive updates via email</p>
+                </div>
+              </div>
+              <Switch 
+                checked={notifications.email}
+                onCheckedChange={(value) => handleNotificationChange('email', value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Account Actions */}
+      <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <Settings className="w-5 h-5 mr-2 text-purple-400" />
+            Account Actions
+          </h3>
+          
+          <div className="space-y-3">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download My Data
             </Button>
-          </div>
-        </div>
-        
-        <div className="border rounded-lg p-4 border-destructive/20 bg-destructive/5">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Trash2 size={18} className="text-destructive" />
-              <h3 className="font-medium text-destructive">Danger Zone</h3>
-            </div>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="edit" className="text-destructive">
-                  <Pencil size={16} />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle className="text-destructive">Danger Zone</SheetTitle>
-                  <SheetDescription>
-                    Permanent actions that cannot be undone
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="space-y-6 mt-6">
-                  <div className="p-4 border border-destructive/30 rounded-md bg-destructive/10">
-                    <h4 className="font-medium mb-2">Delete Account</h4>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      This action cannot be undone. All of your data will be permanently removed.
-                    </p>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="delete-confirm">Type "DELETE" to confirm</Label>
-                        <input 
-                          id="delete-confirm" 
-                          type="text" 
-                          className="w-full p-2 border rounded-md"
-                          placeholder="Type DELETE to confirm" 
-                        />
-                      </div>
-                      <Button 
-                        variant="destructive" 
-                        className="w-full"
-                        onClick={handleDeleteAccount}
-                      >
-                        Permanently Delete Account
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">Permanent actions for your account</p>
-          <div className="flex items-center justify-between">
-            <span>Delete account</span>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+            >
+              <Lock className="w-4 h-4 mr-2" />
+              Change Password
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+            >
+              <Globe className="w-4 h-4 mr-2" />
+              Connected Accounts
+            </Button>
+            
             <Button 
               variant="destructive" 
-              size="sm" 
-              className="gap-2"
-              onClick={handleDeleteAccount}
+              className="w-full justify-start"
             >
-              <Trash2 size={14} />
-              Delete
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Account
             </Button>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
