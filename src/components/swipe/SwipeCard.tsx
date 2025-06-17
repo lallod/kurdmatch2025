@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
 import ProfileDetails from './ProfileDetails';
-import { Profile } from '@/types/swipe';
+import { Profile, SwipeAction } from '@/types/swipe';
 
 interface SwipeCardProps {
   profile: Profile;
@@ -14,6 +14,8 @@ interface SwipeCardProps {
   onPrevPhoto: () => void;
   onToggleExpanded: () => void;
   onReport: (profileId: number) => void;
+  onSwipeAction: (action: SwipeAction, profileId: number) => void;
+  onMessage: (profileId: number) => void;
 }
 
 const SwipeCard = ({
@@ -23,7 +25,9 @@ const SwipeCard = ({
   onNextPhoto,
   onPrevPhoto,
   onToggleExpanded,
-  onReport
+  onReport,
+  onSwipeAction,
+  onMessage
 }: SwipeCardProps) => {
   return (
     <Card className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl">
@@ -34,7 +38,12 @@ const SwipeCard = ({
           onNextPhoto={onNextPhoto}
           onPrevPhoto={onPrevPhoto}
         />
-        <ProfileInfo profile={profile} onReport={onReport} />
+        <ProfileInfo 
+          profile={profile} 
+          onReport={onReport}
+          onSwipeAction={onSwipeAction}
+          onMessage={onMessage}
+        />
       </div>
       <ProfileDetails
         profile={profile}

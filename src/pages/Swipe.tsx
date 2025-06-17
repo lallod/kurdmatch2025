@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import BottomNavigation from '@/components/BottomNavigation';
 import SwipeHeader from '@/components/swipe/SwipeHeader';
 import SwipeCard from '@/components/swipe/SwipeCard';
-import SwipeActions from '@/components/swipe/SwipeActions';
 import NoMoreProfiles from '@/components/swipe/NoMoreProfiles';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 
@@ -168,10 +166,6 @@ const Swipe = () => {
             onPrevPhoto={prevPhoto}
             onToggleExpanded={() => setIsExpanded(!isExpanded)}
             onReport={handleReport}
-          />
-
-          <SwipeActions
-            profileId={currentProfile.id}
             onSwipeAction={handleSwipeAction}
             onMessage={handleMessage}
           />
