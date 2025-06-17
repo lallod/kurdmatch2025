@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -108,35 +107,112 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 lg:grid-cols-7 mb-6 bg-white/10 backdrop-blur border-white/20">
-            {profileSections.map((section) => {
-              const completion = calculateSectionCompletion(section.fields);
-              const IconComponent = section.icon;
-              
-              return (
-                <TabsTrigger 
-                  key={section.id}
-                  value={section.id} 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white text-purple-200 flex flex-col items-center gap-1 p-3"
-                >
-                  <IconComponent className="h-4 w-4" />
-                  <span className="text-xs">{section.label}</span>
-                  <Badge 
-                    className={`text-xs ${
-                      completion === 100 
-                        ? 'bg-green-500 text-white' 
-                        : completion > 50 
-                        ? 'bg-yellow-500 text-black' 
-                        : 'bg-red-500 text-white'
-                    }`}
+          {/* Enhanced TabsList with mobile-first responsive design */}
+          <div className="relative mb-6">
+            <TabsList className="
+              w-full h-auto p-2 
+              bg-white/15 backdrop-blur-lg border border-white/30 
+              rounded-2xl shadow-xl
+              flex overflow-x-auto scrollbar-hide
+              md:grid md:grid-cols-4 lg:grid-cols-7
+              gap-1 md:gap-2
+            ">
+              {profileSections.map((section) => {
+                const completion = calculateSectionCompletion(section.fields);
+                const IconComponent = section.icon;
+                
+                return (
+                  <TabsTrigger 
+                    key={section.id}
+                    value={section.id} 
+                    className="
+                      relative flex-shrink-0 min-w-[100px] h-auto
+                      data-[state=active]:bg-gradient-to-r 
+                      data-[state=active]:from-purple-500 
+                      data-[state=active]:to-pink-500 
+                      data-[state=active]:text-white 
+                      data-[state=active]:shadow-lg
+                      data-[state=active]:border-white/20
+                      text-white/80 hover:text-white
+                      flex flex-col items-center justify-center 
+                      gap-1.5 p-3 md:p-4
+                      rounded-xl transition-all duration-300
+                      hover:bg-white/10
+                      border border-transparent
+                      data-[state=active]:scale-105
+                      group
+                    "
                   >
-                    {completion}%
-                  </Badge>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+                    {/* Icon with enhanced visibility */}
+                    <div className="
+                      relative p-1.5 rounded-lg
+                      bg-white/10 group-data-[state=active]:bg-white/20
+                      transition-all duration-300
+                    ">
+                      <IconComponent className="
+                        h-5 w-5 md:h-6 md:w-6
+                        transition-all duration-300
+                        group-data-[state=active]:scale-110
+                      " />
+                    </div>
+                    
+                    {/* Label with better typography */}
+                    <span className="
+                      text-xs md:text-sm font-medium
+                      text-center leading-tight
+                      group-data-[state=active]:font-semibold
+                      transition-all duration-300
+                    ">
+                      {section.label}
+                    </span>
+                    
+                    {/* Enhanced completion badge */}
+                    <Badge 
+                      className={`
+                        text-xs px-2 py-0.5 font-bold
+                        border transition-all duration-300
+                        shadow-sm
+                        ${completion === 100 
+                          ? 'bg-emerald-500 text-white border-emerald-400 shadow-emerald-500/20' 
+                          : completion > 50 
+                          ? 'bg-amber-500 text-white border-amber-400 shadow-amber-500/20' 
+                          : 'bg-red-500 text-white border-red-400 shadow-red-500/20'
+                        }
+                      `}
+                    >
+                      {completion}%
+                    </Badge>
 
+                    {/* Active state glow effect */}
+                    <div className="
+                      absolute inset-0 rounded-xl
+                      bg-gradient-to-r from-purple-500/20 to-pink-500/20
+                      opacity-0 group-data-[state=active]:opacity-100
+                      transition-opacity duration-300
+                      pointer-events-none
+                      blur-sm -z-10
+                    " />
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+
+            {/* Mobile scroll indicators */}
+            <div className="
+              absolute left-0 top-0 bottom-0 w-8
+              bg-gradient-to-r from-purple-900/50 to-transparent
+              pointer-events-none rounded-l-2xl
+              md:hidden
+            " />
+            <div className="
+              absolute right-0 top-0 bottom-0 w-8
+              bg-gradient-to-l from-purple-900/50 to-transparent
+              pointer-events-none rounded-r-2xl
+              md:hidden
+            " />
+          </div>
+
+          {/* Tab content remains the same */}
           {profileSections.map((section) => {
             const EditorComponent = section.component;
             return (
