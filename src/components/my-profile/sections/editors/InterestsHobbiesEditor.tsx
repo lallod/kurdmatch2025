@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
-import { Save, X, Plus } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 
@@ -26,8 +25,6 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
     weekendActivities: Array.isArray(profileData.weekendActivities) ? profileData.weekendActivities : []
   });
   
-  const [newInterest, setNewInterest] = useState('');
-  const [newHobby, setNewHobby] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
 
   // Check if user is super admin
@@ -49,21 +46,6 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
     
     setFormData(prev => ({ ...prev, [field]: updatedArray }));
     setHasChanges(true);
-  };
-
-  const handleAddCustomItem = (field: string, newItem: string, setNewItem: (value: string) => void) => {
-    if (!isSuperAdmin) {
-      toast.error('Only super admins can add custom items');
-      return;
-    }
-    
-    if (newItem.trim()) {
-      const currentArray = formData[field as keyof typeof formData] as string[];
-      const updatedArray = [...currentArray, newItem.trim()];
-      setFormData(prev => ({ ...prev, [field]: updatedArray }));
-      setNewItem('');
-      setHasChanges(true);
-    }
   };
 
   const handleSave = () => {
@@ -131,24 +113,6 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
                 </Badge>
               ))}
             </div>
-            {isSuperAdmin && (
-              <div className="flex gap-2 mt-3">
-                <Input
-                  value={newInterest}
-                  onChange={(e) => setNewInterest(e.target.value)}
-                  placeholder="Add custom interest (Admin only)"
-                  className="bg-gray-700 border-gray-600 text-white"
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddCustomItem('interests', newInterest, setNewInterest)}
-                />
-                <Button
-                  onClick={() => handleAddCustomItem('interests', newInterest, setNewInterest)}
-                  size="icon"
-                  className="bg-purple-500 hover:bg-purple-600"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
           </div>
 
           {/* Hobbies */}
@@ -170,24 +134,6 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
                 </Badge>
               ))}
             </div>
-            {isSuperAdmin && (
-              <div className="flex gap-2 mt-3">
-                <Input
-                  value={newHobby}
-                  onChange={(e) => setNewHobby(e.target.value)}
-                  placeholder="Add custom hobby (Admin only)"
-                  className="bg-gray-700 border-gray-600 text-white"
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddCustomItem('hobbies', newHobby, setNewHobby)}
-                />
-                <Button
-                  onClick={() => handleAddCustomItem('hobbies', newHobby, setNewHobby)}
-                  size="icon"
-                  className="bg-purple-500 hover:bg-purple-600"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
           </div>
 
           {/* Creative Pursuits */}
