@@ -35,7 +35,51 @@ import { Switch } from "@/components/ui/switch";
 import { KurdistanRegion } from '@/types/profile';
 import { Input } from '@/components/ui/input';
 
-// ... keep existing code (areas, religions, bodyTypes, languageOptions arrays)
+const areas = [
+  { value: "all", name: "All Regions" },
+  { value: "us", name: "United States" },
+  { value: "eu", name: "Europe" },
+  { value: "South-Kurdistan", name: "South Kurdistan" },
+  { value: "North-Kurdistan", name: "North Kurdistan" },
+  { value: "East-Kurdistan", name: "East Kurdistan" },
+  { value: "West-Kurdistan", name: "West Kurdistan" }
+];
+
+const religions = [
+  { value: "all", name: "All Religions" },
+  { value: "muslim", name: "Muslim" },
+  { value: "christian", name: "Christian" },
+  { value: "jewish", name: "Jewish" },
+  { value: "hindu", name: "Hindu" },
+  { value: "buddhist", name: "Buddhist" },
+  { value: "sikh", name: "Sikh" },
+  { value: "spiritual", name: "Spiritual" },
+  { value: "agnostic", name: "Agnostic" },
+  { value: "atheist", name: "Atheist" },
+  { value: "other", name: "Other" }
+];
+
+const bodyTypes = [
+  { value: "all", name: "All Body Types" },
+  { value: "slim", name: "Slim" },
+  { value: "average", name: "Average" },
+  { value: "athletic", name: "Athletic" },
+  { value: "muscular", name: "Muscular" },
+  { value: "curvy", name: "Curvy" },
+  { value: "full", name: "Full Figured" }
+];
+
+const languageOptions = [
+  { value: "all", name: "All Languages" },
+  { value: "english", name: "English" },
+  { value: "kurdish", name: "Kurdish" },
+  { value: "arabic", name: "Arabic" },
+  { value: "turkish", name: "Turkish" },
+  { value: "persian", name: "Persian" },
+  { value: "spanish", name: "Spanish" },
+  { value: "french", name: "French" },
+  { value: "german", name: "German" }
+];
 
 interface Profile {
   id: number;
