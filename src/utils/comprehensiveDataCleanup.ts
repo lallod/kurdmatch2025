@@ -18,10 +18,7 @@ export const comprehensiveTestDataCleanup = async () => {
     // Phase 3: Clean up all mock dashboard and admin data
     await cleanupMockDashboardData();
     
-    // Phase 4: Clean up test social accounts and account actions
-    await cleanupTestAccountData();
-    
-    // Phase 5: Reset to real data state
+    // Phase 4: Reset to real data state
     await initializeRealDataState();
     
     console.log('Comprehensive test data cleanup completed successfully');
@@ -57,21 +54,17 @@ const cleanupTestEngagementData = async () => {
 const cleanupTestUserProfiles = async () => {
   console.log('Identifying and cleaning up test user profiles...');
   
-  // Identify test profiles by multiple criteria
+  // Identify test profiles by multiple criteria - only use existing columns
   const { data: testProfiles, error: profilesError } = await supabase
     .from('profiles')
-    .select('id, name, email, created_at')
+    .select('id, name, created_at')
     .or(`
       name.eq.New User,
       name.eq.Unknown User,
       name.ilike.%Generated%,
       name.ilike.%Test%,
       name.ilike.%Demo%,
-      name.ilike.%Sample%,
-      email.ilike.%unknown.com,
-      email.ilike.%test%,
-      email.ilike.%demo%,
-      email.ilike.%generated%
+      name.ilike.%Sample%
     `);
   
   if (profilesError) {
@@ -115,7 +108,7 @@ const cleanupRelatedUserData = async (profileIds: string[]) => {
   const { error: messagesError } = await supabase
     .from('messages')
     .delete()
-    .or(`sender_id.in.(${profileIds.join(',')}),receiver_id.in.(${profileIds.join(',')})`);
+    .or(`sender_id.in.(${profileIds.join(',')}),recipient_id.in.(${profileIds.join(',')})`);
   
   if (messagesError) console.error('Error deleting test messages:', messagesError);
   
@@ -123,7 +116,7 @@ const cleanupRelatedUserData = async (profileIds: string[]) => {
   const { error: likesError } = await supabase
     .from('likes')
     .delete()
-    .or(`liker_id.in.(${profileIds.join(',')}),liked_id.in.(${profileIds.join(',')})`);
+    .or(`liker_id.in.(${profileIds.join(',')}),likee_id.in.(${profileIds.join(',')})`);
   
   if (likesError) console.error('Error deleting test likes:', likesError);
   
@@ -169,42 +162,6 @@ const cleanupMockDashboardData = async () => {
     console.error('Error cleaning admin activities:', activitiesError);
   } else {
     console.log('✓ Cleaned up all mock admin activities');
-  }
-};
-
-const cleanupTestAccountData = async () => {
-  console.log('Cleaning up test account data...');
-  
-  // Clean up any test connected social accounts (if table exists)
-  try {
-    const { error: socialError } = await supabase
-      .from('connected_social_accounts')
-      .delete()
-      .gt('id', 0);
-    
-    if (socialError && !socialError.message.includes('does not exist')) {
-      console.error('Error cleaning social accounts:', socialError);
-    } else {
-      console.log('✓ Cleaned up test social accounts');
-    }
-  } catch (error) {
-    console.log('Social accounts table not yet created');
-  }
-  
-  // Clean up any test account actions (if table exists)
-  try {
-    const { error: actionsError } = await supabase
-      .from('user_account_actions')
-      .delete()
-      .gt('id', 0);
-    
-    if (actionsError && !actionsError.message.includes('does not exist')) {
-      console.error('Error cleaning account actions:', actionsError);
-    } else {
-      console.log('✓ Cleaned up test account actions');
-    }
-  } catch (error) {
-    console.log('Account actions table not yet created');
   }
 };
 
@@ -316,7 +273,7 @@ export const getRealRecentActivities = async (limit: number = 10) => {
         id, 
         created_at,
         sender:profiles!messages_sender_id_fkey(name),
-        receiver:profiles!messages_receiver_id_fkey(name)
+        recipient:profiles!messages_recipient_id_fkey(name)
       `)
       .order('created_at', { ascending: false })
       .limit(limit / 2);
@@ -330,7 +287,7 @@ export const getRealRecentActivities = async (limit: number = 10) => {
           id: `reg_${user.id}`,
           type: 'user_registration',
           description: `${user.name || 'New user'} joined the platform`,
-          timestamp: user.created_at,
+          timestamp: user.created_at || new Date().toISOString(),
           user: user.name || 'Anonymous'
         });
       });
@@ -343,7 +300,7 @@ export const getRealRecentActivities = async (limit: number = 10) => {
           id: `msg_${message.id}`,
           type: 'message_sent',
           description: `${message.sender?.name || 'User'} sent a message`,
-          timestamp: message.created_at,
+          timestamp: message.created_at || new Date().toISOString(),
           user: message.sender?.name || 'Anonymous'
         });
       });

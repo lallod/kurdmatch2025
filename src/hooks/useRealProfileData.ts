@@ -2,11 +2,46 @@
 import { useState, useEffect } from 'react';
 import { getCurrentUserProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement } from '@/utils/realUserEnhancement';
-import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 
+// Define a database-compatible profile interface
+interface DatabaseProfile {
+  id: string;
+  name: string;
+  age: number;
+  location: string;
+  occupation: string | null;
+  bio: string | null;
+  verified: boolean | null;
+  profile_image: string | null;
+  last_active: string | null;
+  kurdistan_region: string | null;
+  height: string | null;
+  body_type: string | null;
+  ethnicity: string | null;
+  religion: string | null;
+  political_views: string | null;
+  values: string[] | null;
+  interests: string[] | null;
+  hobbies: string[] | null;
+  languages: string[] | null;
+  education: string | null;
+  company: string | null;
+  relationship_goals: string | null;
+  want_children: string | null;
+  have_pets: string | null;
+  exercise_habits: string | null;
+  zodiac_sign: string | null;
+  personality_type: string | null;
+  sleep_schedule: string | null;
+  travel_frequency: string | null;
+  communication_style: string | null;
+  love_language: string | null;
+  created_at: string | null;
+}
+
 export const useRealProfileData = () => {
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [profileData, setProfileData] = useState<DatabaseProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [onboardingProgress, setOnboardingProgress] = useState<any>(null);
   const [engagement, setEngagement] = useState<any>(null);
@@ -41,7 +76,7 @@ export const useRealProfileData = () => {
     }
   };
 
-  const updateProfileData = async (updates: Partial<ProfileData>) => {
+  const updateProfileData = async (updates: Partial<DatabaseProfile>) => {
     try {
       // Update in database would happen here via API
       if (profileData) {

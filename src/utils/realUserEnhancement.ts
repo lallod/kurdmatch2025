@@ -1,6 +1,5 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { ProfileData } from '@/types/profile';
 
 /**
  * Real User Enhancement System
@@ -179,14 +178,7 @@ export const enhanceProfileWithCulturalData = async (userId: string, culturalPre
 
     if (error) throw error;
 
-    // Log the enhancement activity
-    await supabase.from('user_activities').insert({
-      user_id: userId,
-      activity_type: 'profile_enhancement',
-      description: 'Profile enhanced with cultural preferences',
-      created_at: new Date().toISOString()
-    });
-
+    console.log('Profile enhanced with cultural preferences for user:', userId);
     return { success: true };
   } catch (error) {
     console.error('Error enhancing profile:', error);
@@ -207,7 +199,7 @@ export const getRealUserEngagement = async (userId: string) => {
       supabase
         .from('likes')
         .select('*', { count: 'exact', head: true })
-        .eq('liked_id', userId),
+        .eq('likee_id', userId),
       
       // Matches
       supabase

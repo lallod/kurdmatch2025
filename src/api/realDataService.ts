@@ -111,7 +111,7 @@ export const getRealRecentActivities = async (limit: number = 20): Promise<RealA
           id: `reg_${user.id}`,
           type: 'user_registration',
           description: `${user.name || 'New user'} joined the platform`,
-          timestamp: user.created_at,
+          timestamp: user.created_at || new Date().toISOString(),
           user: user.name || 'Anonymous'
         });
       });
@@ -134,7 +134,7 @@ export const getRealRecentActivities = async (limit: number = 20): Promise<RealA
           id: `msg_${message.id}`,
           type: 'message_sent',
           description: `${message.sender?.name || 'User'} sent a message`,
-          timestamp: message.created_at,
+          timestamp: message.created_at || new Date().toISOString(),
           user: message.sender?.name || 'Anonymous'
         });
       });
@@ -157,22 +157,22 @@ export const getRealRecentActivities = async (limit: number = 20): Promise<RealA
           id: `photo_${photo.id}`,
           type: 'photo_upload',
           description: `${photo.profile?.name || 'User'} uploaded a new photo`,
-          timestamp: photo.created_at,
+          timestamp: photo.created_at || new Date().toISOString(),
           user: photo.profile?.name || 'Anonymous'
         });
       });
     }
 
-    // Get recent matches
+    // Get recent matches - using matched_at instead of created_at
     const { data: matches } = await supabase
       .from('matches')
       .select(`
         id,
-        created_at,
+        matched_at,
         user1:profiles!matches_user1_id_fkey(name),
         user2:profiles!matches_user2_id_fkey(name)
       `)
-      .order('created_at', { ascending: false })
+      .order('matched_at', { ascending: false })
       .limit(limit);
 
     if (matches) {
@@ -181,7 +181,7 @@ export const getRealRecentActivities = async (limit: number = 20): Promise<RealA
           id: `match_${match.id}`,
           type: 'match_created',
           description: `${match.user1?.name || 'User'} and ${match.user2?.name || 'User'} matched`,
-          timestamp: match.created_at,
+          timestamp: match.matched_at || new Date().toISOString(),
           user: match.user1?.name || 'Anonymous'
         });
       });
@@ -236,12 +236,12 @@ export const getRealEngagementData = async (days: number = 30): Promise<RealEnga
         .gte('created_at', date.toISOString())
         .lt('created_at', nextDay.toISOString());
 
-      // Get daily matches
+      // Get daily matches - using matched_at
       const { count: dailyMatches } = await supabase
         .from('matches')
         .select('*', { count: 'exact', head: true })
-        .gte('created_at', date.toISOString())
-        .lt('created_at', nextDay.toISOString());
+        .gte('matched_at', date.toISOString())
+        .lt('matched_at', nextDay.toISOString());
 
       engagementData.push({
         date: dateStr,

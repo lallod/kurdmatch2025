@@ -2,10 +2,8 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { cleanupTestData } from '@/utils/databaseCleanup';
+import { comprehensiveTestDataCleanup } from '@/utils/comprehensiveDataCleanup';
 import { Loader2, Trash2, Users, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -22,7 +20,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
   const handleCleanupTestData = async () => {
     setIsCleaningUp(true);
     try {
-      const result = await cleanupTestData();
+      const result = await comprehensiveTestDataCleanup();
       if (result.success) {
         toast({
           title: "Cleanup Complete",
