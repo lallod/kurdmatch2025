@@ -12,7 +12,7 @@ const BottomNavigation = () => {
     {
       name: 'Home',
       icon: Home,
-      path: '/discovery',
+      path: '/',
     },
     {
       name: 'Discovery',
