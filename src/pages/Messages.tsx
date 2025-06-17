@@ -1,14 +1,16 @@
+
 import React, { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic, Sparkles } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import BottomNavigation from '@/components/BottomNavigation';
 
 const Messages = () => {
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
@@ -141,40 +143,43 @@ const Messages = () => {
     if (!conversation) return null;
 
     return (
-      <div className="flex flex-col h-screen pb-24">
-        <div className="flex items-center p-4 border-b">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setSelectedConversation(null)} 
-            className="mr-2"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <Avatar className="h-10 w-10 mr-3">
-            <AvatarImage src={conversation.avatar} alt={conversation.name} />
-            <AvatarFallback>{conversation.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <h2 className="font-semibold">{conversation.name}</h2>
-            <p className="text-xs text-muted-foreground">
-              {conversation.online ? 'Online' : 'Offline'}
-            </p>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
+        {/* Header */}
+        <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+          <div className="flex items-center p-4">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setSelectedConversation(null)} 
+              className="mr-2 text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <Avatar className="h-10 w-10 mr-3 ring-2 ring-purple-400/30">
+              <AvatarImage src={conversation.avatar} alt={conversation.name} />
+              <AvatarFallback className="bg-purple-500 text-white">{conversation.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h2 className="font-semibold text-white">{conversation.name}</h2>
+              <p className="text-xs text-purple-200">
+                {conversation.online ? 'Online' : 'Offline'}
+              </p>
+            </div>
           </div>
         </div>
 
         <ScrollArea className="flex-1 p-4">
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-4xl mx-auto">
             {conversation.messages.map((message) => (
               <div 
                 key={message.id} 
                 className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`
-                  max-w-[80%] rounded-xl p-3 
+                  max-w-[80%] rounded-xl p-3 backdrop-blur-md border
                   ${message.sender === 'me' 
-                    ? 'bg-gradient-tinder text-white' 
-                    : 'bg-muted'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-purple-400/30' 
+                    : 'bg-white/10 text-white border-white/20'
                   }
                 `}>
                   <p>{message.text}</p>
@@ -187,16 +192,16 @@ const Messages = () => {
           </div>
         </ScrollArea>
 
-        <div className="border-t p-3 flex items-end gap-2">
+        <div className="backdrop-blur-md bg-white/10 border-t border-white/20 p-3 flex items-end gap-2 max-w-4xl mx-auto">
           <Textarea 
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Type a message..." 
-            className="min-h-[80px] resize-none flex-1"
+            className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200"
           />
           <div className="flex flex-col gap-2">
-            <Button variant="ghost" size="icon" className="flex-shrink-0">
+            <Button variant="ghost" size="icon" className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10">
               <Mic className="h-5 w-5" />
             </Button>
             <Button 
@@ -204,101 +209,139 @@ const Messages = () => {
               size="icon" 
               onClick={handleSendMessage}
               disabled={!newMessage.trim()}
-              className="bg-gradient-tinder hover:bg-gradient-tinder flex-shrink-0"
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0"
             >
               <Send className="h-5 w-5" />
             </Button>
           </div>
         </div>
+
+        {/* Bottom Navigation */}
+        <BottomNavigation />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-4 px-4 pb-24">
-      <div className="mb-6">
-        <h2 className="text-sm font-medium text-muted-foreground mb-3">New Matches</h2>
-        
-        <Carousel className="w-full">
-          <CarouselContent className="-ml-2">
-            {newMatches.map((match) => (
-              <CarouselItem key={match.id} className="pl-2 basis-20">
-                <div 
-                  className="relative flex flex-col items-center cursor-pointer"
-                  onClick={() => {
-                    console.log("Starting chat with", match.name);
-                    // Here you would typically create a new conversation and select it
-                  }}
-                >
-                  <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-tinder-rose to-tinder-orange p-0.5">
-                      <div className="absolute inset-0.5 rounded-full bg-background"></div>
-                    </div>
-                    <Avatar className="h-16 w-16 border-2 border-background">
-                      <AvatarImage src={match.avatar} alt={match.name} />
-                      <AvatarFallback>{match.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <span className="text-xs mt-1 text-center w-full truncate">{match.name}</span>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
-      </div>
-
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Messages</h1>
-        <Badge variant="outline" className="bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20">
-          {conversations.filter(c => c.unread).length} new
-        </Badge>
-      </div>
-
-      <div className="space-y-3">
-        {conversations.map((conversation) => (
-          <Card 
-            key={conversation.id} 
-            className="hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => setSelectedConversation(conversation.id)}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Avatar className="h-12 w-12 border border-muted">
-                    <AvatarImage src={conversation.avatar} alt={conversation.name} />
-                    <AvatarFallback>{conversation.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  {conversation.online && (
-                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold truncate">{conversation.name}</h3>
-                    <span className="text-xs text-muted-foreground">{conversation.time}</span>
-                  </div>
-                  <p className={`text-sm truncate ${conversation.unread ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
-                    {conversation.lastMessage}
-                  </p>
-                </div>
-                {conversation.unread && (
-                  <div className="ml-2 h-2.5 w-2.5 rounded-full bg-tinder-rose"></div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {conversations.length === 0 && (
-        <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-          <div className="bg-muted/30 p-4 rounded-full mb-4">
-            <MessageCircle className="h-8 w-8 text-muted-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
+      {/* Header */}
+      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className="text-center space-y-2">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+              Messages
+            </h1>
+            <p className="text-purple-200">Connect with your matches</p>
           </div>
-          <p className="text-muted-foreground">No messages yet</p>
-          <p className="text-sm text-muted-foreground mt-1">When you match with someone, your conversations will appear here</p>
         </div>
-      )}
+      </div>
+
+      {/* Content */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
+          {/* Animated background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 animate-pulse"></div>
+          
+          <div className="relative z-10">
+            {/* New Matches Section */}
+            <div className="mb-6">
+              <h2 className="text-sm font-medium text-purple-200 mb-3">New Matches</h2>
+              
+              <Carousel className="w-full">
+                <CarouselContent className="-ml-2">
+                  {newMatches.map((match) => (
+                    <CarouselItem key={match.id} className="pl-2 basis-20">
+                      <div 
+                        className="relative flex flex-col items-center cursor-pointer"
+                        onClick={() => {
+                          console.log("Starting chat with", match.name);
+                        }}
+                      >
+                        <div className="relative">
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 p-0.5">
+                            <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900"></div>
+                          </div>
+                          <Avatar className="h-16 w-16 border-2 border-transparent relative z-10">
+                            <AvatarImage src={match.avatar} alt={match.name} />
+                            <AvatarFallback className="bg-purple-500 text-white">{match.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <span className="text-xs mt-1 text-center w-full truncate text-purple-200">{match.name}</span>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+
+            {/* Active Conversations Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">Conversations</h2>
+              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                {conversations.filter(c => c.unread).length} new
+              </Badge>
+            </div>
+
+            {/* Conversations List */}
+            <div className="space-y-3">
+              {conversations.map((conversation) => (
+                <Card 
+                  key={conversation.id} 
+                  className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
+                  onClick={() => setSelectedConversation(conversation.id)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <Avatar className="h-12 w-12 ring-2 ring-purple-400/30">
+                          <AvatarImage src={conversation.avatar} alt={conversation.name} />
+                          <AvatarFallback className="bg-purple-500 text-white">{conversation.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        {conversation.online && (
+                          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-semibold truncate text-white">{conversation.name}</h3>
+                          <span className="text-xs text-purple-200">{conversation.time}</span>
+                        </div>
+                        <p className={`text-sm truncate ${conversation.unread ? 'font-medium text-white' : 'text-purple-200'}`}>
+                          {conversation.lastMessage}
+                        </p>
+                      </div>
+                      {conversation.unread && (
+                        <div className="ml-2 h-2.5 w-2.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Empty State */}
+            {conversations.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-[40vh] text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageCircle className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No messages yet</h3>
+                <p className="text-purple-200 mb-4">When you match with someone, your conversations will appear here</p>
+                <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Start discovering people
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </div>
   );
 };
