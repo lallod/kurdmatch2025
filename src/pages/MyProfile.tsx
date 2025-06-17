@@ -25,10 +25,7 @@ import AccountSettings from '@/components/my-profile/AccountSettings';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
-import BasicInfoSection from '@/components/my-profile/sections/BasicInfoSection';
-import LocationSection from '@/components/my-profile/sections/LocationSection';
-import LanguagesSection from '@/components/my-profile/sections/LanguagesSection';
-import InterestsSection from '@/components/my-profile/sections/InterestsSection';
+import ComprehensiveProfileEditor from '@/components/my-profile/sections/ComprehensiveProfileEditor';
 import BottomNavigation from '@/components/BottomNavigation';
 
 const MyProfile = () => {
@@ -69,7 +66,7 @@ const MyProfile = () => {
   // Profile completion calculation
   const calculateProfileCompletion = () => {
     let completed = 0;
-    const total = 10;
+    const total = 15;
     
     if (profileData.name) completed++;
     if (profileData.bio && profileData.bio.length > 50) completed++;
@@ -81,6 +78,11 @@ const MyProfile = () => {
     if (profileData.values.length >= 3) completed++;
     if (profileData.hobbies.length >= 2) completed++;
     if (profileData.verified) completed++;
+    if (profileData.religion) completed++;
+    if (profileData.ethnicity) completed++;
+    if (profileData.exerciseHabits) completed++;
+    if (profileData.relationshipGoals) completed++;
+    if (profileData.education) completed++;
     
     return Math.round((completed / total) * 100);
   };
@@ -116,6 +118,12 @@ const MyProfile = () => {
 
   const handleBioSave = (newBio: string) => {
     setProfileData(prev => ({ ...prev, bio: newBio }));
+  };
+
+  const handleProfileUpdate = (updates: Partial<ProfileData>) => {
+    setProfileData(prev => ({ ...prev, ...updates }));
+    // Here you would typically save to database
+    console.log('Profile updated:', updates);
   };
 
   return (
@@ -291,35 +299,18 @@ const MyProfile = () => {
                   </Card>
                 </div>
 
-                {/* Profile Sections */}
-                <div className="space-y-6">
-                  <EditableAboutMeSection
-                    bio={profileData.bio}
-                    onSave={handleBioSave}
-                  />
-                  
-                  <Card className="backdrop-blur-md bg-white/10 border border-white/20">
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold mb-4 text-white">Details</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <BasicInfoSection profileData={profileData} />
-                        <LocationSection profileData={profileData} />
-                        <LanguagesSection profileData={profileData} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <InterestsSection profileData={profileData} />
+                {/* AI Bio Section */}
+                <EditableAboutMeSection
+                  bio={profileData.bio}
+                  onSave={handleBioSave}
+                  profileData={profileData}
+                />
 
-                  <Button 
-                    onClick={() => setIsEditingSections(true)} 
-                    variant="outline" 
-                    className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    Edit displayed sections
-                  </Button>
-                </div>
+                {/* Comprehensive Profile Editor */}
+                <ComprehensiveProfileEditor
+                  profileData={profileData}
+                  onUpdateProfile={handleProfileUpdate}
+                />
               </TabsContent>
               
               <TabsContent value="photos" className="space-y-6">

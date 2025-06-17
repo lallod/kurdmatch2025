@@ -15,15 +15,18 @@ import { Pencil, Sparkles, Save, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import AIBioGeneratorDialog from '../AIBioGeneratorDialog';
 import { toast } from 'sonner';
+import { ProfileData } from '@/types/profile';
 
 interface EditableAboutMeSectionProps {
   bio: string;
   onSave: (newBio: string) => void;
+  profileData: ProfileData;
 }
 
 const EditableAboutMeSection: React.FC<EditableAboutMeSectionProps> = ({
   bio,
   onSave,
+  profileData,
 }) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [editedBio, setEditedBio] = useState(bio);
@@ -83,7 +86,7 @@ const EditableAboutMeSection: React.FC<EditableAboutMeSectionProps> = ({
         <SheetHeader>
           <SheetTitle className="text-white">Edit About Me</SheetTitle>
           <SheetDescription className="text-gray-300">
-            Update your bio here. Use the AI generator for some inspiration!
+            Update your bio here. Use the AI generator for personalized options!
           </SheetDescription>
         </SheetHeader>
         
@@ -107,7 +110,7 @@ const EditableAboutMeSection: React.FC<EditableAboutMeSectionProps> = ({
             onClick={() => setIsGeneratorOpen(true)}
           >
             <Sparkles className="mr-2 h-4 w-4" />
-            Generate with AI
+            Generate 5 AI Bio Options
           </Button>
           
           {hasChanges && (
@@ -138,6 +141,7 @@ const EditableAboutMeSection: React.FC<EditableAboutMeSectionProps> = ({
             setEditedBio(newBio);
             setIsGeneratorOpen(false);
           }}
+          profileData={profileData}
         />
       </SheetContent>
     </Sheet>
