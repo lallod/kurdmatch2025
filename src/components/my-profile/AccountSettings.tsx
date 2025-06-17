@@ -22,6 +22,10 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import DownloadDataDialog from './dialogs/DownloadDataDialog';
+import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
+import ConnectedAccountsDialog from './dialogs/ConnectedAccountsDialog';
+import DeleteAccountDialog from './dialogs/DeleteAccountDialog';
 
 const AccountSettings = () => {
   const [notifications, setNotifications] = useState({
@@ -43,6 +47,14 @@ const AccountSettings = () => {
     readReceipts: false
   });
 
+  // Dialog states
+  const [dialogStates, setDialogStates] = useState({
+    downloadData: false,
+    changePassword: false,
+    connectedAccounts: false,
+    deleteAccount: false
+  });
+
   const handleNotificationChange = (key: string, value: boolean) => {
     setNotifications(prev => ({ ...prev, [key]: value }));
     toast.success('Notification settings updated');
@@ -51,6 +63,14 @@ const AccountSettings = () => {
   const handlePrivacyChange = (key: string, value: boolean) => {
     setPrivacy(prev => ({ ...prev, [key]: value }));
     toast.success('Privacy settings updated');
+  };
+
+  const openDialog = (dialogName: keyof typeof dialogStates) => {
+    setDialogStates(prev => ({ ...prev, [dialogName]: true }));
+  };
+
+  const closeDialog = (dialogName: keyof typeof dialogStates) => {
+    setDialogStates(prev => ({ ...prev, [dialogName]: false }));
   };
 
   return (
@@ -269,6 +289,7 @@ const AccountSettings = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+              onClick={() => openDialog('downloadData')}
             >
               <Download className="w-4 h-4 mr-2" />
               Download My Data
@@ -277,6 +298,7 @@ const AccountSettings = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+              onClick={() => openDialog('changePassword')}
             >
               <Lock className="w-4 h-4 mr-2" />
               Change Password
@@ -285,6 +307,7 @@ const AccountSettings = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+              onClick={() => openDialog('connectedAccounts')}
             >
               <Globe className="w-4 h-4 mr-2" />
               Connected Accounts
@@ -293,6 +316,7 @@ const AccountSettings = () => {
             <Button 
               variant="destructive" 
               className="w-full justify-start"
+              onClick={() => openDialog('deleteAccount')}
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Account
@@ -300,6 +324,27 @@ const AccountSettings = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialogs */}
+      <DownloadDataDialog 
+        open={dialogStates.downloadData}
+        onOpenChange={() => closeDialog('downloadData')}
+      />
+      
+      <ChangePasswordDialog 
+        open={dialogStates.changePassword}
+        onOpenChange={() => closeDialog('changePassword')}
+      />
+      
+      <ConnectedAccountsDialog 
+        open={dialogStates.connectedAccounts}
+        onOpenChange={() => closeDialog('connectedAccounts')}
+      />
+      
+      <DeleteAccountDialog 
+        open={dialogStates.deleteAccount}
+        onOpenChange={() => closeDialog('deleteAccount')}
+      />
     </div>
   );
 };
