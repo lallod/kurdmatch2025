@@ -6,6 +6,7 @@ import SwipeHeader from '@/components/swipe/SwipeHeader';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import NoMoreProfiles from '@/components/swipe/NoMoreProfiles';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
+
 const mockProfiles: Profile[] = [{
   id: 1,
   name: "Emma Johnson",
@@ -146,8 +147,8 @@ const Swipe = () => {
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
       {/* Main Card */}
-      <div className="w-full px-3 sm:px-4 py-4 sm:py-6">
-        <div className="max-w-sm sm:max-w-md lg:max-w-lg mx-auto">
+      <div className="w-full h-full px-3 sm:px-4 py-4 sm:py-6">
+        <div className="max-w-sm sm:max-w-md lg:max-w-lg mx-auto h-full">
           <SwipeCard profile={currentProfile} currentPhotoIndex={currentPhotoIndex} isExpanded={isExpanded} onNextPhoto={nextPhoto} onPrevPhoto={prevPhoto} onToggleExpanded={() => setIsExpanded(!isExpanded)} onReport={handleReport} onSwipeAction={handleSwipeAction} onMessage={handleMessage} />
 
           {/* Profile Counter */}
