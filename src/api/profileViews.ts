@@ -14,7 +14,7 @@ export const trackProfileView = async (viewedProfileId: string) => {
   try {
     // First check if view exists today
     const { data: existingView } = await supabase
-      .rpc('check_profile_view_exists', {
+      .rpc('check_profile_view_exists' as any, {
         p_viewer_id: session.user.id,
         p_viewed_id: viewedProfileId,
         p_date: today
@@ -23,7 +23,7 @@ export const trackProfileView = async (viewedProfileId: string) => {
     if (!existingView) {
       // Insert new view using raw SQL
       const { data, error } = await supabase
-        .rpc('insert_profile_view', {
+        .rpc('insert_profile_view' as any, {
           p_viewer_id: session.user.id,
           p_viewed_id: viewedProfileId
         });
@@ -43,7 +43,7 @@ export const trackProfileView = async (viewedProfileId: string) => {
 export const getProfileViews = async (profileId: string) => {
   try {
     const { data, error } = await supabase
-      .rpc('get_profile_views', {
+      .rpc('get_profile_views' as any, {
         p_profile_id: profileId
       });
     
