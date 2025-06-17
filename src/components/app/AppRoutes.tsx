@@ -7,6 +7,7 @@ import Index from '@/pages/Index';
 import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
+import Swipe from '@/pages/Swipe';
 import Discovery from '@/pages/Discovery';
 import LikedMe from '@/pages/LikedMe';
 import ViewedMe from '@/pages/ViewedMe';
