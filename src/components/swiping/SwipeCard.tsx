@@ -15,7 +15,7 @@ import {
   ChevronDown,
   Verified
 } from 'lucide-react';
-import { ProfileDetails } from '@/components/ProfileDetails';
+import ProfileDetails from '@/components/ProfileDetails';
 import { trackProfileView } from '@/api/profileViews';
 import { likeProfile } from '@/api/likes';
 import { toast } from 'sonner';
