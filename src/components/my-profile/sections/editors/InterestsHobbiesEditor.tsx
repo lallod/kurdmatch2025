@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X, Plus } from 'lucide-react';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 
 interface InterestsHobbiesEditorProps {
   profileData: ProfileData;
@@ -15,6 +17,8 @@ interface InterestsHobbiesEditorProps {
 }
 
 const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profileData, onUpdate }) => {
+  const { user } = useSupabaseAuth();
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [formData, setFormData] = useState({
     interests: profileData.interests || [],
     hobbies: Array.isArray(profileData.hobbies) ? profileData.hobbies : [],
@@ -25,6 +29,17 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
   const [newInterest, setNewInterest] = useState('');
   const [newHobby, setNewHobby] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
+
+  // Check if user is super admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user) {
+        const adminStatus = await isUserSuperAdmin(user.id);
+        setIsSuperAdmin(adminStatus);
+      }
+    };
+    checkAdminStatus();
+  }, [user]);
 
   const handleArrayToggle = (field: string, item: string) => {
     const currentArray = formData[field as keyof typeof formData] as string[];
@@ -37,6 +52,11 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
   };
 
   const handleAddCustomItem = (field: string, newItem: string, setNewItem: (value: string) => void) => {
+    if (!isSuperAdmin) {
+      toast.error('Only super admins can add custom items');
+      return;
+    }
+    
     if (newItem.trim()) {
       const currentArray = formData[field as keyof typeof formData] as string[];
       const updatedArray = [...currentArray, newItem.trim()];
@@ -89,6 +109,9 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
       <Card className="bg-gray-800/50 border-gray-700">
         <CardHeader>
           <CardTitle className="text-white">Interests & Hobbies</CardTitle>
+          {!isSuperAdmin && (
+            <p className="text-sm text-gray-400">Select from the available options below</p>
+          )}
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Interests */}
@@ -110,22 +133,24 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
                 </Badge>
               ))}
             </div>
-            <div className="flex gap-2 mt-3">
-              <Input
-                value={newInterest}
-                onChange={(e) => setNewInterest(e.target.value)}
-                placeholder="Add custom interest"
-                className="bg-gray-700 border-gray-600 text-white"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddCustomItem('interests', newInterest, setNewInterest)}
-              />
-              <Button
-                onClick={() => handleAddCustomItem('interests', newInterest, setNewInterest)}
-                size="icon"
-                className="bg-purple-500 hover:bg-purple-600"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+            {isSuperAdmin && (
+              <div className="flex gap-2 mt-3">
+                <Input
+                  value={newInterest}
+                  onChange={(e) => setNewInterest(e.target.value)}
+                  placeholder="Add custom interest (Admin only)"
+                  className="bg-gray-700 border-gray-600 text-white"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddCustomItem('interests', newInterest, setNewInterest)}
+                />
+                <Button
+                  onClick={() => handleAddCustomItem('interests', newInterest, setNewInterest)}
+                  size="icon"
+                  className="bg-purple-500 hover:bg-purple-600"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Hobbies */}
@@ -147,22 +172,24 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
                 </Badge>
               ))}
             </div>
-            <div className="flex gap-2 mt-3">
-              <Input
-                value={newHobby}
-                onChange={(e) => setNewHobby(e.target.value)}
-                placeholder="Add custom hobby"
-                className="bg-gray-700 border-gray-600 text-white"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddCustomItem('hobbies', newHobby, setNewHobby)}
-              />
-              <Button
-                onClick={() => handleAddCustomItem('hobbies', newHobby, setNewHobby)}
-                size="icon"
-                className="bg-purple-500 hover:bg-purple-600"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+            {isSuperAdmin && (
+              <div className="flex gap-2 mt-3">
+                <Input
+                  value={newHobby}
+                  onChange={(e) => setNewHobby(e.target.value)}
+                  placeholder="Add custom hobby (Admin only)"
+                  className="bg-gray-700 border-gray-600 text-white"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddCustomItem('hobbies', newHobby, setNewHobby)}
+                />
+                <Button
+                  onClick={() => handleAddCustomItem('hobbies', newHobby, setNewHobby)}
+                  size="icon"
+                  className="bg-purple-500 hover:bg-purple-600"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Creative Pursuits */}
