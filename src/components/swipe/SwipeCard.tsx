@@ -31,7 +31,7 @@ const SwipeCard = ({
 }: SwipeCardProps) => {
   return (
     <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl flex flex-col">
-      <div className="relative flex-1">
+      <div className="relative flex-1 min-h-0">
         <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
