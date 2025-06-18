@@ -4,7 +4,7 @@ import { getCurrentUserProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement } from '@/utils/realUserEnhancement';
 import { toast } from 'sonner';
 
-// Define a database-compatible profile interface
+// Define a comprehensive database-compatible profile interface
 interface DatabaseProfile {
   id: string;
   name: string;
@@ -15,28 +15,61 @@ interface DatabaseProfile {
   verified: boolean | null;
   profile_image: string | null;
   last_active: string | null;
-  kurdistan_region: string | null;
+  
+  // Basic Info
   height: string | null;
-  body_type: string | null;
   ethnicity: string | null;
-  religion: string | null;
-  political_views: string | null;
-  values: string[] | null;
-  interests: string[] | null;
-  hobbies: string[] | null;
+  kurdistan_region: string | null;
   languages: string[] | null;
-  education: string | null;
-  company: string | null;
-  relationship_goals: string | null;
-  want_children: string | null;
-  have_pets: string | null;
+  
+  // Lifestyle
   exercise_habits: string | null;
+  have_pets: string | null;
+  drinking: string | null;
+  smoking: string | null;
+  dietary_preferences: string | null;
+  sleep_schedule: string | null;
+  
+  // Values & Beliefs
+  religion: string | null;
+  values: string[] | null;
   zodiac_sign: string | null;
   personality_type: string | null;
-  sleep_schedule: string | null;
-  travel_frequency: string | null;
+  political_views: string | null;
+  
+  // Relationships
+  relationship_goals: string | null;
+  want_children: string | null;
+  children_status: string | null;
+  family_closeness: string | null;
+  love_language: string[] | null;
+  
+  // Career
+  education: string | null;
+  company: string | null;
+  
+  // Interests & Hobbies
+  interests: string[] | null;
+  hobbies: string[] | null;
+  creative_pursuits: string[] | null;
+  weekend_activities: string[] | null;
+  music_instruments: string[] | null;
+  tech_skills: string[] | null;
+  
+  // Favorites
+  favorite_books: string[] | null;
+  favorite_movies: string[] | null;
+  favorite_music: string[] | null;
+  favorite_foods: string[] | null;
+  favorite_games: string[] | null;
+  favorite_podcasts: string[] | null;
+  
+  // Personal Details
+  dream_vacation: string | null;
+  ideal_date: string | null;
   communication_style: string | null;
-  love_language: string | null;
+  travel_frequency: string | null;
+  
   created_at: string | null;
 }
 
@@ -58,6 +91,7 @@ export const useRealProfileData = () => {
       const profile = await getCurrentUserProfile();
       
       if (profile) {
+        console.log('Loaded profile data:', profile);
         setProfileData(profile);
 
         // Get onboarding progress
