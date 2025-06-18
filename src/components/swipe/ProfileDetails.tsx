@@ -1,9 +1,12 @@
 
 import React from 'react';
-import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { Profile } from '@/types/swipe';
 import { User, Briefcase, Heart, Star, Globe, Palette, Trophy, Home } from 'lucide-react';
+import AccordionSectionItem from './profile/AccordionSectionItem';
+import ProfileDetailItem from './profile/ProfileDetailItem';
+import ProfileQuickBadges from './profile/ProfileQuickBadges';
+import ProfileInterestsBadges from './profile/ProfileInterestsBadges';
 
 interface ProfileDetailsProps {
   profile: Profile;
@@ -12,45 +15,9 @@ interface ProfileDetailsProps {
 }
 
 const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetailsProps) => {
-  const formatList = (items: string[] | undefined) => {
-    if (!items || items.length === 0) return null;
-    return items.join(", ");
-  };
-
-  const renderDetailItem = (label: string, value: string | string[] | undefined) => {
-    if (!value || (Array.isArray(value) && value.length === 0)) return null;
-    
-    const displayValue = Array.isArray(value) ? formatList(value) : value;
-    if (!displayValue) return null;
-
-    return (
-      <div className="flex justify-between items-start py-1">
-        <span className="text-white/70 text-xs font-medium">{label}:</span>
-        <span className="text-white text-xs text-right flex-1 ml-2">{displayValue}</span>
-      </div>
-    );
-  };
-
   return (
     <div className="p-1 sm:p-2 max-h-96 overflow-y-auto">
-      {/* Quick Info - Desktop Only */}
-      <div className="hidden md:flex flex-wrap gap-1 mb-1 sm:mb-2">
-        {profile.occupation && (
-          <Badge variant="secondary" className="text-xs bg-white/10 text-purple-200 px-1.5 py-0.5">
-            {profile.occupation}
-          </Badge>
-        )}
-        {profile.height && (
-          <Badge variant="secondary" className="text-xs bg-white/10 text-purple-200 px-1.5 py-0.5">
-            {profile.height}cm
-          </Badge>
-        )}
-        {profile.languages && (
-          <Badge variant="secondary" className="text-xs bg-white/10 text-purple-200 px-1.5 py-0.5">
-            {profile.languages[0]}{profile.languages.length > 1 ? ` +${profile.languages.length - 1}` : ''}
-          </Badge>
-        )}
-      </div>
+      <ProfileQuickBadges profile={profile} />
 
       {/* Bio - Maximum Width Usage - Show Complete Bio */}
       {profile.bio && (
@@ -65,165 +32,133 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
       <div className="space-y-2">
         <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "career"]} className="w-full">
           {/* Basic Information */}
-          <AccordionItem value="basics" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Basic Info</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {renderDetailItem("Gender", profile.gender)}
-              {renderDetailItem("Body Type", profile.bodyType)}
-              {renderDetailItem("Ethnicity", profile.ethnicity)}
-              {renderDetailItem("Kurdistan Region", profile.kurdistanRegion)}
-              {renderDetailItem("Languages", profile.languages)}
-              {renderDetailItem("Zodiac Sign", profile.zodiacSign)}
-              {renderDetailItem("Personality Type", profile.personalityType)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="basics"
+            title="Basic Info"
+            icon={<User />}
+            color="text-purple-300"
+          >
+            <ProfileDetailItem label="Gender" value={profile.gender} />
+            <ProfileDetailItem label="Body Type" value={profile.bodyType} />
+            <ProfileDetailItem label="Ethnicity" value={profile.ethnicity} />
+            <ProfileDetailItem label="Kurdistan Region" value={profile.kurdistanRegion} />
+            <ProfileDetailItem label="Languages" value={profile.languages} />
+            <ProfileDetailItem label="Zodiac Sign" value={profile.zodiacSign} />
+            <ProfileDetailItem label="Personality Type" value={profile.personalityType} />
+          </AccordionSectionItem>
 
           {/* Career & Education */}
-          <AccordionItem value="career" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Career & Education</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {renderDetailItem("Education", profile.education)}
-              {renderDetailItem("Company", profile.company)}
-              {renderDetailItem("Career Ambitions", profile.careerAmbitions)}
-              {renderDetailItem("Work Environment", profile.workEnvironment)}
-              {renderDetailItem("Work-Life Balance", profile.workLifeBalance)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="career"
+            title="Career & Education"
+            icon={<Briefcase />}
+            color="text-purple-300"
+          >
+            <ProfileDetailItem label="Education" value={profile.education} />
+            <ProfileDetailItem label="Company" value={profile.company} />
+            <ProfileDetailItem label="Career Ambitions" value={profile.careerAmbitions} />
+            <ProfileDetailItem label="Work Environment" value={profile.workEnvironment} />
+            <ProfileDetailItem label="Work-Life Balance" value={profile.workLifeBalance} />
+          </AccordionSectionItem>
 
           {/* Lifestyle */}
-          <AccordionItem value="lifestyle" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <Home className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Lifestyle</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {renderDetailItem("Exercise Habits", profile.exerciseHabits)}
-              {renderDetailItem("Dietary Preferences", profile.dietaryPreferences)}
-              {renderDetailItem("Drinking", profile.drinking)}
-              {renderDetailItem("Smoking", profile.smoking)}
-              {renderDetailItem("Have Pets", profile.havePets)}
-              {renderDetailItem("Sleep Schedule", profile.sleepSchedule)}
-              {renderDetailItem("Travel Frequency", profile.travelFrequency)}
-              {renderDetailItem("Transportation", profile.transportationPreference)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="lifestyle"
+            title="Lifestyle"
+            icon={<Home />}
+            color="text-purple-300"
+          >
+            <ProfileDetailItem label="Exercise Habits" value={profile.exerciseHabits} />
+            <ProfileDetailItem label="Dietary Preferences" value={profile.dietaryPreferences} />
+            <ProfileDetailItem label="Drinking" value={profile.drinking} />
+            <ProfileDetailItem label="Smoking" value={profile.smoking} />
+            <ProfileDetailItem label="Have Pets" value={profile.havePets} />
+            <ProfileDetailItem label="Sleep Schedule" value={profile.sleepSchedule} />
+            <ProfileDetailItem label="Travel Frequency" value={profile.travelFrequency} />
+            <ProfileDetailItem label="Transportation" value={profile.transportationPreference} />
+          </AccordionSectionItem>
 
           {/* Beliefs & Values */}
-          <AccordionItem value="beliefs" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Beliefs & Values</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {renderDetailItem("Religion", profile.religion)}
-              {renderDetailItem("Political Views", profile.politicalViews)}
-              {renderDetailItem("Values", profile.values)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="beliefs"
+            title="Beliefs & Values"
+            icon={<Star />}
+            color="text-purple-300"
+          >
+            <ProfileDetailItem label="Religion" value={profile.religion} />
+            <ProfileDetailItem label="Political Views" value={profile.politicalViews} />
+            <ProfileDetailItem label="Values" value={profile.values} />
+          </AccordionSectionItem>
 
           {/* Relationships */}
-          <AccordionItem value="relationships" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <Heart className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Relationships</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {renderDetailItem("Want Children", profile.wantChildren)}
-              {renderDetailItem("Children Status", profile.childrenStatus)}
-              {renderDetailItem("Family Closeness", profile.familyCloseness)}
-              {renderDetailItem("Love Language", profile.loveLanguage)}
-              {renderDetailItem("Communication Style", profile.communicationStyle)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="relationships"
+            title="Relationships"
+            icon={<Heart />}
+            color="text-purple-300"
+          >
+            <ProfileDetailItem label="Want Children" value={profile.wantChildren} />
+            <ProfileDetailItem label="Children Status" value={profile.childrenStatus} />
+            <ProfileDetailItem label="Family Closeness" value={profile.familyCloseness} />
+            <ProfileDetailItem label="Love Language" value={profile.loveLanguage} />
+            <ProfileDetailItem label="Communication Style" value={profile.communicationStyle} />
+          </AccordionSectionItem>
 
           {/* Interests & Hobbies */}
-          <AccordionItem value="interests" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <Palette className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Interests & Hobbies</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {profile.interests && profile.interests.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {profile.interests.map((interest, index) => (
-                    <Badge key={index} variant="outline" className="text-xs border-pink-400/30 text-pink-300 px-1 py-0.5">
-                      {interest}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              {renderDetailItem("Hobbies", profile.hobbies)}
-              {renderDetailItem("Creative Pursuits", profile.creativePursuits)}
-              {renderDetailItem("Weekend Activities", profile.weekendActivities)}
-              {renderDetailItem("Music Instruments", profile.musicInstruments)}
-              {renderDetailItem("Tech Skills", profile.techSkills)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="interests"
+            title="Interests & Hobbies"
+            icon={<Palette />}
+            color="text-purple-300"
+          >
+            <ProfileInterestsBadges interests={profile.interests || []} />
+            <ProfileDetailItem label="Hobbies" value={profile.hobbies} />
+            <ProfileDetailItem label="Creative Pursuits" value={profile.creativePursuits} />
+            <ProfileDetailItem label="Weekend Activities" value={profile.weekendActivities} />
+            <ProfileDetailItem label="Music Instruments" value={profile.musicInstruments} />
+            <ProfileDetailItem label="Tech Skills" value={profile.techSkills} />
+          </AccordionSectionItem>
 
           {/* Favorites */}
-          <AccordionItem value="favorites" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Favorites</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {renderDetailItem("Books", profile.favoriteBooks)}
-              {renderDetailItem("Movies", profile.favoriteMovies)}
-              {renderDetailItem("Music", profile.favoriteMusic)}
-              {renderDetailItem("Foods", profile.favoriteFoods)}
-              {renderDetailItem("Games", profile.favoriteGames)}
-              {renderDetailItem("Podcasts", profile.favoritePodcasts)}
-              {renderDetailItem("Quote", profile.favoriteQuote)}
-              {renderDetailItem("Memory", profile.favoriteMemory)}
-              {renderDetailItem("Season", profile.favoriteSeason)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="favorites"
+            title="Favorites"
+            icon={<Trophy />}
+            color="text-purple-300"
+          >
+            <ProfileDetailItem label="Books" value={profile.favoriteBooks} />
+            <ProfileDetailItem label="Movies" value={profile.favoriteMovies} />
+            <ProfileDetailItem label="Music" value={profile.favoriteMusic} />
+            <ProfileDetailItem label="Foods" value={profile.favoriteFoods} />
+            <ProfileDetailItem label="Games" value={profile.favoriteGames} />
+            <ProfileDetailItem label="Podcasts" value={profile.favoritePodcasts} />
+            <ProfileDetailItem label="Quote" value={profile.favoriteQuote} />
+            <ProfileDetailItem label="Memory" value={profile.favoriteMemory} />
+            <ProfileDetailItem label="Season" value={profile.favoriteSeason} />
+          </AccordionSectionItem>
 
           {/* Personal Growth */}
-          <AccordionItem value="growth" className="border-purple-400/20">
-            <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4 text-purple-300" />
-                <span className="text-sm font-medium">Personal Growth</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-1 pt-2">
-              {renderDetailItem("Growth Goals", profile.growthGoals)}
-              {renderDetailItem("Morning Routine", profile.morningRoutine)}
-              {renderDetailItem("Evening Routine", profile.eveningRoutine)}
-              {renderDetailItem("Stress Relievers", profile.stressRelievers)}
-              {renderDetailItem("Financial Habits", profile.financialHabits)}
-              {renderDetailItem("Friendship Style", profile.friendshipStyle)}
-              {renderDetailItem("Decision Making", profile.decisionMakingStyle)}
-              {renderDetailItem("Charity Involvement", profile.charityInvolvement)}
-              {renderDetailItem("Hidden Talents", profile.hiddenTalents)}
-              {renderDetailItem("Pet Peeves", profile.petPeeves)}
-              {renderDetailItem("Dream Vacation", profile.dreamVacation)}
-              {renderDetailItem("Ideal Date", profile.idealDate)}
-              {renderDetailItem("Dream Home", profile.dreamHome)}
-              {renderDetailItem("Ideal Weather", profile.idealWeather)}
-            </AccordionContent>
-          </AccordionItem>
+          <AccordionSectionItem
+            value="growth"
+            title="Personal Growth"
+            icon={<Globe />}
+            color="text-purple-300"
+          >
+            <ProfileDetailItem label="Growth Goals" value={profile.growthGoals} />
+            <ProfileDetailItem label="Morning Routine" value={profile.morningRoutine} />
+            <ProfileDetailItem label="Evening Routine" value={profile.eveningRoutine} />
+            <ProfileDetailItem label="Stress Relievers" value={profile.stressRelievers} />
+            <ProfileDetailItem label="Financial Habits" value={profile.financialHabits} />
+            <ProfileDetailItem label="Friendship Style" value={profile.friendshipStyle} />
+            <ProfileDetailItem label="Decision Making" value={profile.decisionMakingStyle} />
+            <ProfileDetailItem label="Charity Involvement" value={profile.charityInvolvement} />
+            <ProfileDetailItem label="Hidden Talents" value={profile.hiddenTalents} />
+            <ProfileDetailItem label="Pet Peeves" value={profile.petPeeves} />
+            <ProfileDetailItem label="Dream Vacation" value={profile.dreamVacation} />
+            <ProfileDetailItem label="Ideal Date" value={profile.idealDate} />
+            <ProfileDetailItem label="Dream Home" value={profile.dreamHome} />
+            <ProfileDetailItem label="Ideal Weather" value={profile.idealWeather} />
+          </AccordionSectionItem>
         </Accordion>
       </div>
     </div>
