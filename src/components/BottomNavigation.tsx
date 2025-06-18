@@ -37,7 +37,7 @@ const BottomNavigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md bg-white/10 border-t border-white/20 py-2 sm:py-3">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md bg-white/10 border-t border-white/20 py-3">
       <div className="flex items-center justify-around max-w-md mx-auto">
         {navItems.map((item) => {
           const isActive = currentPath === item.path;
@@ -47,7 +47,7 @@ const BottomNavigation = () => {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center p-2 sm:p-3 rounded-xl transition-all duration-300",
+                "flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-300",
                 isActive 
                   ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transform scale-105" 
                   : "text-purple-200 hover:text-white hover:bg-white/10"
@@ -55,14 +55,14 @@ const BottomNavigation = () => {
               aria-label={item.name}
             >
               <item.icon 
-                size={18} 
+                size={22} 
                 className={cn(
-                  "sm:size-[22px] transition-all mb-0 sm:mb-1",
+                  "transition-all mb-1",
                   isActive ? "stroke-white" : "stroke-purple-200"
                 )} 
               />
               <span className={cn(
-                "hidden sm:block text-xs font-medium transition-all",
+                "text-xs font-medium transition-all",
                 isActive ? "text-white" : "text-purple-200"
               )}>
                 {item.name}
