@@ -151,9 +151,9 @@ const Swipe = () => {
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
-      {/* Main Card - Full screen scroll container */}
-      <div className="pt-12 sm:pt-16 pb-14 sm:pb-20 h-full">
-        <div className="h-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto">
+      {/* Main Card - Optimized spacing for mobile */}
+      <div className="pt-10 sm:pt-16 pb-12 sm:pb-20 h-full">
+        <div className="h-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto px-1 sm:px-0">
           <SwipeCard 
             profile={currentProfile} 
             currentPhotoIndex={currentPhotoIndex} 

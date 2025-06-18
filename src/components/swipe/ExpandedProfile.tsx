@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Briefcase, GraduationCap, Heart, Globe, MessageSquare } from 'lucide-react';
+import { MapPin, Briefcase, Heart, Globe, Languages, Sparkles, User, Coffee } from 'lucide-react';
 import { Profile } from '@/types/swipe';
 
 interface ExpandedProfileProps {
@@ -10,111 +10,152 @@ interface ExpandedProfileProps {
 
 const ExpandedProfile = ({ profile }: ExpandedProfileProps) => {
   return (
-    <div className="bg-gradient-to-b from-black/40 to-black/60 backdrop-blur-lg text-white p-4 sm:p-6 space-y-6">
-      {/* About Section */}
-      <div className="space-y-3">
-        <h3 className="text-xl font-bold flex items-center gap-2">
-          <Heart className="h-5 w-5 text-pink-400" />
-          About {profile.name}
-        </h3>
+    <div className="bg-gradient-to-b from-black/60 via-black/70 to-black/80 backdrop-blur-lg text-white min-h-screen">
+      {/* Header with name and compatibility */}
+      <div className="px-4 sm:px-6 pt-8 pb-6 text-center border-b border-white/10">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-2">{profile.name}, {profile.age}</h2>
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <Badge className="bg-gradient-to-r from-green-500/90 to-emerald-500/90 text-white">
+            <Sparkles className="h-3 w-3 mr-1" />
+            {profile.compatibilityScore}% Match
+          </Badge>
+          {profile.verified && (
+            <Badge className="bg-blue-500/90 text-white">Verified ✓</Badge>
+          )}
+        </div>
+        <div className="flex items-center justify-center gap-1 text-white/80 text-sm">
+          <MapPin className="h-4 w-4" />
+          <span>{profile.location} • {profile.distance}km away</span>
+        </div>
+      </div>
+
+      <div className="px-4 sm:px-6 py-6 space-y-8">
+        {/* About Section */}
         {profile.bio && (
-          <p className="text-white/90 leading-relaxed">{profile.bio}</p>
+          <section className="space-y-4">
+            <h3 className="text-xl font-bold flex items-center gap-2 text-purple-300">
+              <Heart className="h-5 w-5 text-pink-400" />
+              About {profile.name}
+            </h3>
+            <p className="text-white/90 leading-relaxed text-sm sm:text-base">{profile.bio}</p>
+          </section>
         )}
-      </div>
 
-      {/* Basic Info */}
-      <div className="space-y-3">
-        <h4 className="text-lg font-semibold text-purple-300">Basic Info</h4>
-        <div className="grid grid-cols-2 gap-3">
-          {profile.occupation && (
-            <div className="flex items-center gap-2 text-sm">
-              <Briefcase className="h-4 w-4 text-purple-400" />
-              <span>{profile.occupation}</span>
-            </div>
-          )}
-          {profile.height && (
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-purple-400">📏</span>
-              <span>{profile.height}cm</span>
-            </div>
-          )}
-          <div className="flex items-center gap-2 text-sm">
-            <MapPin className="h-4 w-4 text-purple-400" />
-            <span>{profile.location}</span>
+        {/* Basic Info Grid */}
+        <section className="space-y-4">
+          <h3 className="text-xl font-bold flex items-center gap-2 text-purple-300">
+            <User className="h-5 w-5 text-purple-400" />
+            Basic Info
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {profile.occupation && (
+              <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg">
+                <Briefcase className="h-4 w-4 text-purple-400 flex-shrink-0" />
+                <div>
+                  <span className="text-white/60 text-xs">Work</span>
+                  <p className="text-white text-sm">{profile.occupation}</p>
+                </div>
+              </div>
+            )}
+            {profile.height && (
+              <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg">
+                <span className="text-purple-400 text-lg flex-shrink-0">📏</span>
+                <div>
+                  <span className="text-white/60 text-xs">Height</span>
+                  <p className="text-white text-sm">{profile.height}cm</p>
+                </div>
+              </div>
+            )}
+            {profile.kurdistanRegion && (
+              <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg">
+                <Globe className="h-4 w-4 text-purple-400 flex-shrink-0" />
+                <div>
+                  <span className="text-white/60 text-xs">Region</span>
+                  <p className="text-white text-sm">{profile.kurdistanRegion}</p>
+                </div>
+              </div>
+            )}
+            {profile.relationshipGoals && (
+              <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg">
+                <Heart className="h-4 w-4 text-pink-400 flex-shrink-0" />
+                <div>
+                  <span className="text-white/60 text-xs">Looking for</span>
+                  <p className="text-white text-sm">{profile.relationshipGoals}</p>
+                </div>
+              </div>
+            )}
           </div>
-          {profile.kurdistanRegion && (
-            <div className="flex items-center gap-2 text-sm">
-              <Globe className="h-4 w-4 text-purple-400" />
-              <span>{profile.kurdistanRegion}</span>
-            </div>
-          )}
-        </div>
-      </div>
+        </section>
 
-      {/* Languages */}
-      {profile.languages && profile.languages.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-lg font-semibold text-purple-300">Languages</h4>
-          <div className="flex flex-wrap gap-2">
-            {profile.languages.map((language, index) => (
-              <Badge key={index} variant="outline" className="border-purple-400/30 text-purple-200 bg-purple-500/20">
-                {language}
-              </Badge>
-            ))}
+        {/* Languages */}
+        {profile.languages && profile.languages.length > 0 && (
+          <section className="space-y-4">
+            <h3 className="text-xl font-bold flex items-center gap-2 text-purple-300">
+              <Languages className="h-5 w-5 text-blue-400" />
+              Languages
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {profile.languages.map((language, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="border-blue-400/30 text-blue-200 bg-blue-500/20 capitalize"
+                >
+                  {language}
+                </Badge>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Interests */}
+        {profile.interests && profile.interests.length > 0 && (
+          <section className="space-y-4">
+            <h3 className="text-xl font-bold flex items-center gap-2 text-purple-300">
+              <Coffee className="h-5 w-5 text-orange-400" />
+              Interests
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {profile.interests.map((interest, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="border-orange-400/30 text-orange-200 bg-orange-500/20"
+                >
+                  {interest}
+                </Badge>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Lifestyle Details */}
+        <section className="space-y-4">
+          <h3 className="text-xl font-bold text-purple-300">Lifestyle</h3>
+          <div className="space-y-3">
+            {profile.religion && (
+              <div className="flex justify-between items-center py-2 border-b border-white/10">
+                <span className="text-white/70">Religion</span>
+                <span className="text-white capitalize">{profile.religion}</span>
+              </div>
+            )}
+            {profile.bodyType && (
+              <div className="flex justify-between items-center py-2 border-b border-white/10">
+                <span className="text-white/70">Body Type</span>
+                <span className="text-white capitalize">{profile.bodyType}</span>
+              </div>
+            )}
+            {profile.dietaryPreferences && (
+              <div className="flex justify-between items-center py-2 border-b border-white/10">
+                <span className="text-white/70">Diet</span>
+                <span className="text-white">{profile.dietaryPreferences}</span>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        </section>
 
-      {/* Interests */}
-      {profile.interests && profile.interests.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-lg font-semibold text-purple-300">Interests</h4>
-          <div className="flex flex-wrap gap-2">
-            {profile.interests.map((interest, index) => (
-              <Badge key={index} variant="outline" className="border-pink-400/30 text-pink-200 bg-pink-500/20">
-                {interest}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Lifestyle */}
-      <div className="space-y-3">
-        <h4 className="text-lg font-semibold text-purple-300">Lifestyle</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          {profile.religion && (
-            <div>
-              <span className="text-white/60">Religion:</span>
-              <span className="ml-2 capitalize">{profile.religion}</span>
-            </div>
-          )}
-          {profile.bodyType && (
-            <div>
-              <span className="text-white/60">Body Type:</span>
-              <span className="ml-2 capitalize">{profile.bodyType}</span>
-            </div>
-          )}
-          {profile.dietaryPreferences && (
-            <div>
-              <span className="text-white/60">Diet:</span>
-              <span className="ml-2">{profile.dietaryPreferences}</span>
-            </div>
-          )}
-          {profile.relationshipGoals && (
-            <div>
-              <span className="text-white/60">Looking for:</span>
-              <span className="ml-2">{profile.relationshipGoals}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Compatibility */}
-      <div className="text-center py-4">
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-4 py-2">
-          <span className="text-green-300 font-semibold">{profile.compatibilityScore}% Match</span>
-        </div>
+        {/* Bottom spacing for mobile navigation */}
+        <div className="h-20 sm:h-8"></div>
       </div>
     </div>
   );
