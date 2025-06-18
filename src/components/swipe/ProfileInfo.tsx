@@ -15,8 +15,8 @@ interface ProfileInfoProps {
 const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInfoProps) => {
   return (
     <>
-      {/* Profile Info Overlay with Enhanced Blur */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-lg p-3 sm:p-4">
+      {/* Profile Info Overlay - Minimal Padding */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-lg p-2 sm:p-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
@@ -48,8 +48,8 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
           </Badge>
         </div>
 
-        {/* Action Buttons with Better Blur Effects */}
-        <div className="flex justify-center items-center gap-3 sm:gap-4 mt-4 sm:mt-6 px-2">
+        {/* Action Buttons - Minimal Spacing */}
+        <div className="flex justify-center items-center gap-3 sm:gap-4 mt-3 sm:mt-4">
           <Button
             onClick={() => onSwipeAction('pass', profile.id)}
             variant="outline"
@@ -84,8 +84,8 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
         </div>
       </div>
 
-      {/* Safety Actions with Enhanced Blur */}
-      <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-2">
+      {/* Safety Actions - Edge Positioning */}
+      <div className="absolute top-1 right-1 flex gap-2">
         <Button
           onClick={() => onReport(profile.id)}
           variant="outline"

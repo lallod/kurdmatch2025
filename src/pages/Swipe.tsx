@@ -151,10 +151,10 @@ const Swipe = () => {
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
-      {/* Main Card - optimized spacing for better viewport utilization */}
+      {/* Main Card - zero padding for full screen usage */}
       <div className="pt-12 pb-16 h-full flex flex-col">
-        <div className="flex-1 px-2 sm:px-3 py-1 flex items-center justify-center min-h-0">
-          <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg h-full flex">
+        <div className="flex-1 h-full w-full flex items-center justify-center min-h-0">
+          <div className="w-full h-full flex">
             <SwipeCard 
               profile={currentProfile} 
               currentPhotoIndex={currentPhotoIndex} 
