@@ -18,7 +18,6 @@ const SwipeHeader = ({ lastAction, onUndo }: SwipeHeaderProps) => {
             <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
               <Heart className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
             </div>
-            <h1 className="text-base sm:text-lg font-bold text-white">Find Your Match</h1>
           </div>
           {lastAction && (
             <Button
