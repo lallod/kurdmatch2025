@@ -16,7 +16,7 @@ export const mapWizardDataToProfile = (
   if (wizardData.ethnicity) profileData.ethnicity = sanitizeText(wizardData.ethnicity);
   if (wizardData.kurdistan_region) profileData.kurdistan_region = sanitizeText(wizardData.kurdistan_region);
   if (wizardData.languages && Array.isArray(wizardData.languages)) {
-    profileData.languages = wizardData.languages.map(lang => sanitizeText(lang));
+    (profileData as any).languages = wizardData.languages.map(lang => sanitizeText(lang));
   }
 
   // Lifestyle
@@ -30,7 +30,7 @@ export const mapWizardDataToProfile = (
   // Values & Beliefs
   if (wizardData.religion) profileData.religion = sanitizeText(wizardData.religion);
   if (wizardData.values && Array.isArray(wizardData.values)) {
-    profileData.values = wizardData.values.map(value => sanitizeText(value));
+    (profileData as any).values = wizardData.values.map(value => sanitizeText(value));
   }
   if (wizardData.zodiac_sign) profileData.zodiac_sign = sanitizeText(wizardData.zodiac_sign);
   if (wizardData.personality_type) profileData.personality_type = sanitizeText(wizardData.personality_type);
@@ -41,7 +41,7 @@ export const mapWizardDataToProfile = (
   if (wizardData.children_status) profileData.children_status = sanitizeText(wizardData.children_status);
   if (wizardData.family_closeness) profileData.family_closeness = sanitizeText(wizardData.family_closeness);
   if (wizardData.love_language && Array.isArray(wizardData.love_language)) {
-    profileData.love_language = wizardData.love_language.map(lang => sanitizeText(lang));
+    (profileData as any).love_language = wizardData.love_language.map(lang => sanitizeText(lang));
   }
 
   // Career
@@ -51,42 +51,42 @@ export const mapWizardDataToProfile = (
 
   // Interests
   if (wizardData.interests && Array.isArray(wizardData.interests)) {
-    profileData.interests = wizardData.interests.map(interest => sanitizeText(interest));
+    (profileData as any).interests = wizardData.interests.map(interest => sanitizeText(interest));
   }
   if (wizardData.hobbies && Array.isArray(wizardData.hobbies)) {
-    profileData.hobbies = wizardData.hobbies.map(hobby => sanitizeText(hobby));
+    (profileData as any).hobbies = wizardData.hobbies.map(hobby => sanitizeText(hobby));
   }
   if (wizardData.creative_pursuits && Array.isArray(wizardData.creative_pursuits)) {
-    profileData.creative_pursuits = wizardData.creative_pursuits.map(pursuit => sanitizeText(pursuit));
+    (profileData as any).creative_pursuits = wizardData.creative_pursuits.map(pursuit => sanitizeText(pursuit));
   }
   if (wizardData.weekend_activities && Array.isArray(wizardData.weekend_activities)) {
-    profileData.weekend_activities = wizardData.weekend_activities.map(activity => sanitizeText(activity));
+    (profileData as any).weekend_activities = wizardData.weekend_activities.map(activity => sanitizeText(activity));
   }
   if (wizardData.music_instruments && Array.isArray(wizardData.music_instruments)) {
-    profileData.music_instruments = wizardData.music_instruments.map(instrument => sanitizeText(instrument));
+    (profileData as any).music_instruments = wizardData.music_instruments.map(instrument => sanitizeText(instrument));
   }
   if (wizardData.tech_skills && Array.isArray(wizardData.tech_skills)) {
-    profileData.tech_skills = wizardData.tech_skills.map(skill => sanitizeText(skill));
+    (profileData as any).tech_skills = wizardData.tech_skills.map(skill => sanitizeText(skill));
   }
 
   // Favorites
   if (wizardData.favorite_books && Array.isArray(wizardData.favorite_books)) {
-    profileData.favorite_books = wizardData.favorite_books.map(book => sanitizeText(book));
+    (profileData as any).favorite_books = wizardData.favorite_books.map(book => sanitizeText(book));
   }
   if (wizardData.favorite_movies && Array.isArray(wizardData.favorite_movies)) {
-    profileData.favorite_movies = wizardData.favorite_movies.map(movie => sanitizeText(movie));
+    (profileData as any).favorite_movies = wizardData.favorite_movies.map(movie => sanitizeText(movie));
   }
   if (wizardData.favorite_music && Array.isArray(wizardData.favorite_music)) {
-    profileData.favorite_music = wizardData.favorite_music.map(music => sanitizeText(music));
+    (profileData as any).favorite_music = wizardData.favorite_music.map(music => sanitizeText(music));
   }
   if (wizardData.favorite_foods && Array.isArray(wizardData.favorite_foods)) {
-    profileData.favorite_foods = wizardData.favorite_foods.map(food => sanitizeText(food));
+    (profileData as any).favorite_foods = wizardData.favorite_foods.map(food => sanitizeText(food));
   }
   if (wizardData.favorite_games && Array.isArray(wizardData.favorite_games)) {
-    profileData.favorite_games = wizardData.favorite_games.map(game => sanitizeText(game));
+    (profileData as any).favorite_games = wizardData.favorite_games.map(game => sanitizeText(game));
   }
   if (wizardData.favorite_podcasts && Array.isArray(wizardData.favorite_podcasts)) {
-    profileData.favorite_podcasts = wizardData.favorite_podcasts.map(podcast => sanitizeText(podcast));
+    (profileData as any).favorite_podcasts = wizardData.favorite_podcasts.map(podcast => sanitizeText(podcast));
   }
 
   // Final touches
