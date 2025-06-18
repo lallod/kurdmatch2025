@@ -5,6 +5,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import SwipeHeader from '@/components/swipe/SwipeHeader';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import NoMoreProfiles from '@/components/swipe/NoMoreProfiles';
+import ExpandedProfileModal from '@/components/swipe/ExpandedProfileModal';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 
 const mockProfiles: Profile[] = [{
@@ -78,14 +79,20 @@ const Swipe = () => {
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [expandedProfileOpen, setExpandedProfileOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const currentProfile = profiles[currentIndex];
 
   const handleSwipeAction = (action: SwipeAction, profileId: number) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
     setLastAction({
       type: action,
       profileId
     });
+
     switch (action) {
       case 'pass':
         toast("Profile passed", {
@@ -104,42 +111,58 @@ const Swipe = () => {
         break;
     }
 
-    // Move to next profile
-    if (currentIndex < profiles.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setCurrentPhotoIndex(0);
-      setIsExpanded(false);
-    } else {
-      toast("No more profiles to show", {
-        icon: "🔄"
-      });
-    }
+    // Animate card exit and move to next profile
+    setTimeout(() => {
+      if (currentIndex < profiles.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+        setCurrentPhotoIndex(0);
+        setIsExpanded(false);
+        setExpandedProfileOpen(false);
+      } else {
+        toast("No more profiles to show", {
+          icon: "🔄"
+        });
+      }
+      setIsAnimating(false);
+    }, 500);
   };
+
   const handleUndo = () => {
     if (lastAction && currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setLastAction(null);
+      setIsAnimating(false);
       toast("Action undone", {
         icon: "↩️"
       });
     }
   };
+
   const handleMessage = (profileId: number) => {
     navigate(`/messages?user=${profileId}`);
   };
+
   const handleReport = (profileId: number) => {
     toast("Profile reported. Thank you for keeping our community safe.", {
       icon: "🛡️"
     });
   };
+
   const nextPhoto = () => {
     if (currentProfile?.photos && currentPhotoIndex < currentProfile.photos.length - 1) {
       setCurrentPhotoIndex(currentPhotoIndex + 1);
     }
   };
+
   const prevPhoto = () => {
     if (currentPhotoIndex > 0) {
       setCurrentPhotoIndex(currentPhotoIndex - 1);
+    }
+  };
+
+  const handleProfileTap = () => {
+    if (!isAnimating) {
+      setExpandedProfileOpen(true);
     }
   };
 
@@ -152,9 +175,29 @@ const Swipe = () => {
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
       {/* Main Card - optimized spacing for better viewport utilization */}
-      <div className="pt-12 pb-16 h-full flex flex-col">
+      <div className="pt-10 pb-14 h-full flex flex-col">
         <div className="flex-1 px-2 sm:px-3 py-1 flex items-center justify-center min-h-0">
-          <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg h-full flex">
+          <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg h-full flex relative">
+            {/* Next card preview (behind current card) */}
+            {profiles[currentIndex + 1] && !isAnimating && (
+              <div className="absolute inset-0 scale-95 opacity-50 -z-10">
+                <SwipeCard 
+                  profile={profiles[currentIndex + 1]}
+                  currentPhotoIndex={0}
+                  isExpanded={false}
+                  onNextPhoto={() => {}}
+                  onPrevPhoto={() => {}}
+                  onToggleExpanded={() => {}}
+                  onReport={() => {}}
+                  onSwipeAction={() => {}}
+                  onMessage={() => {}}
+                  onTap={() => {}}
+                  isAnimating={true}
+                />
+              </div>
+            )}
+            
+            {/* Current card */}
             <SwipeCard 
               profile={currentProfile} 
               currentPhotoIndex={currentPhotoIndex} 
@@ -164,11 +207,22 @@ const Swipe = () => {
               onToggleExpanded={() => setIsExpanded(!isExpanded)} 
               onReport={handleReport} 
               onSwipeAction={handleSwipeAction} 
-              onMessage={handleMessage} 
+              onMessage={handleMessage}
+              onTap={handleProfileTap}
+              isAnimating={isAnimating}
             />
           </div>
         </div>
       </div>
+
+      {/* Expanded Profile Modal */}
+      <ExpandedProfileModal
+        profile={currentProfile}
+        isOpen={expandedProfileOpen}
+        onClose={() => setExpandedProfileOpen(false)}
+        onSwipeAction={handleSwipeAction}
+        onMessage={handleMessage}
+      />
 
       <BottomNavigation />
     </div>

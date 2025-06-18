@@ -28,3 +28,10 @@ export interface LastAction {
   type: string;
   profileId: number;
 }
+
+export interface SwipeGestureState {
+  isDragging: boolean;
+  dragOffset: { x: number; y: number };
+  rotation: number;
+  scale: number;
+}

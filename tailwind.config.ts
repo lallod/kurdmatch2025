@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -104,6 +105,15 @@ export default {
 				'pulse-heart': {
 					'0%, 100%': { transform: 'scale(1)' },
 					'50%': { transform: 'scale(1.25)' }
+				},
+				'elastic-snap': {
+					'0%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.05)' },
+					'100%': { transform: 'scale(1)' }
+				},
+				'card-entrance': {
+					'0%': { transform: 'scale(0.8) translateY(50px)', opacity: '0' },
+					'100%': { transform: 'scale(1) translateY(0)', opacity: '1' }
 				}
 			},
 			animation: {
@@ -115,7 +125,9 @@ export default {
 				'swipe-right': 'swipe-right 0.5s ease-out forwards',
 				'swipe-left': 'swipe-left 0.5s ease-out forwards',
 				'bounce-in': 'bounce-in 0.5s ease-out',
-				'pulse-heart': 'pulse-heart 1.5s infinite'
+				'pulse-heart': 'pulse-heart 1.5s infinite',
+				'elastic-snap': 'elastic-snap 0.4s ease-out',
+				'card-entrance': 'card-entrance 0.6s ease-out'
 			},
 			backgroundImage: {
 				'gradient-tinder': 'linear-gradient(to right, #FD297B, #FF5864)',
