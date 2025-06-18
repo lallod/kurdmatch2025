@@ -151,23 +151,19 @@ const Swipe = () => {
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
-      {/* Main Card - positioned between fixed header and bottom nav */}
-      <div className="pt-16 pb-20 h-full flex flex-col">
-        <div className="flex-1 px-3 sm:px-4 py-2 flex items-center justify-center">
-          <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg h-full flex">
-            <SwipeCard 
-              profile={currentProfile} 
-              currentPhotoIndex={currentPhotoIndex} 
-              isExpanded={isExpanded} 
-              onNextPhoto={nextPhoto} 
-              onPrevPhoto={prevPhoto} 
-              onToggleExpanded={() => setIsExpanded(!isExpanded)} 
-              onReport={handleReport} 
-              onSwipeAction={handleSwipeAction} 
-              onMessage={handleMessage} 
-            />
-          </div>
-        </div>
+      {/* Full Screen Scrollable Card - no padding, fills entire space */}
+      <div className="pt-16 pb-20 h-full">
+        <SwipeCard 
+          profile={currentProfile} 
+          currentPhotoIndex={currentPhotoIndex} 
+          isExpanded={isExpanded} 
+          onNextPhoto={nextPhoto} 
+          onPrevPhoto={prevPhoto} 
+          onToggleExpanded={() => setIsExpanded(!isExpanded)} 
+          onReport={handleReport} 
+          onSwipeAction={handleSwipeAction} 
+          onMessage={handleMessage} 
+        />
       </div>
 
       <BottomNavigation />

@@ -16,7 +16,7 @@ const ProfilePhotoGallery = ({
   onPrevPhoto 
 }: ProfilePhotoGalleryProps) => {
   return (
-    <div className="relative h-96 sm:h-[28rem] md:h-[32rem]">
+    <div className="relative h-screen w-full">
       <img
         src={profile.photos?.[currentPhotoIndex] || profile.avatar}
         alt={profile.name}
@@ -28,21 +28,21 @@ const ProfilePhotoGallery = ({
         <>
           <button
             onClick={onPrevPhoto}
-            className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-black/50 rounded-full flex items-center justify-center text-white touch-manipulation"
+            className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-black/50 rounded-full flex items-center justify-center text-white touch-manipulation z-10"
             disabled={currentPhotoIndex === 0}
           >
             <span className="text-lg sm:text-xl">‹</span>
           </button>
           <button
             onClick={onNextPhoto}
-            className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-black/50 rounded-full flex items-center justify-center text-white touch-manipulation"
+            className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-black/50 rounded-full flex items-center justify-center text-white touch-manipulation z-10"
             disabled={currentPhotoIndex === profile.photos.length - 1}
           >
             <span className="text-lg sm:text-xl">›</span>
           </button>
           
           {/* Photo Indicators */}
-          <div className="absolute top-3 sm:top-4 left-1/2 transform -translate-x-1/2 flex gap-1">
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 flex gap-1 z-10">
             {profile.photos.map((_, index) => (
               <div
                 key={index}
