@@ -34,12 +34,12 @@ export const useSwipeGesture = ({
   });
 
   const touchStartRef = useRef<TouchPosition | null>(null);
-  const dragStartRef = useRef<TouchPosition | null>(null);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    console.log('Touch start detected');
+    e.preventDefault();
     const touch = e.touches[0];
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    dragStartRef.current = { x: touch.clientX, y: touch.clientY };
     
     setGestureState(prev => ({
       ...prev,
@@ -49,11 +49,14 @@ export const useSwipeGesture = ({
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!touchStartRef.current || !gestureState.isDragging) return;
-
+    if (!touchStartRef.current) return;
+    
+    e.preventDefault();
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStartRef.current.x;
     const deltaY = touch.clientY - touchStartRef.current.y;
+    
+    console.log('Touch move:', { deltaX, deltaY });
     
     // Calculate rotation based on horizontal movement
     const rotation = deltaX * 0.1;
@@ -63,23 +66,29 @@ export const useSwipeGesture = ({
       dragOffset: { x: deltaX, y: deltaY },
       rotation: Math.max(-15, Math.min(15, rotation))
     }));
-  }, [gestureState.isDragging]);
+  }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (!gestureState.isDragging) return;
+    console.log('Touch end detected');
+    if (!touchStartRef.current) return;
 
     const { x: deltaX, y: deltaY } = gestureState.dragOffset;
+    console.log('Final delta:', { deltaX, deltaY });
     
     // Determine swipe direction and execute action
     if (Math.abs(deltaX) > swipeThreshold) {
       if (deltaX > 0) {
+        console.log('Swiping right');
         onSwipeRight();
       } else {
+        console.log('Swiping left');
         onSwipeLeft();
       }
     } else if (deltaY < -swipeThreshold) {
+      console.log('Swiping up');
       onSwipeUp();
     } else {
+      console.log('Snapping back to center');
       // Snap back to center
       setGestureState({
         isDragging: false,
@@ -88,9 +97,12 @@ export const useSwipeGesture = ({
         scale: 1
       });
     }
-  }, [gestureState, swipeThreshold, onSwipeLeft, onSwipeRight, onSwipeUp]);
+
+    touchStartRef.current = null;
+  }, [gestureState.dragOffset, swipeThreshold, onSwipeLeft, onSwipeRight, onSwipeUp]);
 
   const resetGesture = useCallback(() => {
+    console.log('Resetting gesture');
     setGestureState({
       isDragging: false,
       dragOffset: { x: 0, y: 0 },
@@ -98,7 +110,6 @@ export const useSwipeGesture = ({
       scale: 1
     });
     touchStartRef.current = null;
-    dragStartRef.current = null;
   }, []);
 
   return {
