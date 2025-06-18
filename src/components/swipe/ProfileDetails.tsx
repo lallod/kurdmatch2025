@@ -15,22 +15,32 @@ interface ProfileDetailsProps {
 }
 
 const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetailsProps) => {
+  // Track which sections have been opened for viewing percentage calculation
+  const handleAccordionChange = (openSections: string[]) => {
+    const totalSections = 8; // Total number of accordion sections
+    const viewedPercentage = Math.round((openSections.length / totalSections) * 100);
+    
+    // Store viewing progress in localStorage
+    const viewingData = JSON.parse(localStorage.getItem('profileViewing') || '{}');
+    viewingData[profile.id] = {
+      viewedSections: openSections,
+      percentage: viewedPercentage,
+      lastViewed: new Date().toISOString()
+    };
+    localStorage.setItem('profileViewing', JSON.stringify(viewingData));
+  };
+
   return (
     <div className="p-1 sm:p-2 max-h-96 overflow-y-auto">
       <ProfileQuickBadges profile={profile} />
 
-      {/* Bio - Maximum Width Usage - Show Complete Bio */}
-      {profile.bio && (
-        <div className="mb-2">
-          <p className="text-white text-sm leading-snug">
-            {profile.bio}
-          </p>
-        </div>
-      )}
-
       {/* Comprehensive Profile Information */}
       <div className="space-y-2">
-        <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "career"]} className="w-full">
+        <Accordion 
+          type="multiple" 
+          className="w-full"
+          onValueChange={handleAccordionChange}
+        >
           {/* Basic Information */}
           <AccordionSectionItem
             value="basics"
@@ -38,6 +48,14 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
             icon={<User />}
             color="text-purple-300"
           >
+            {profile.bio && (
+              <div className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10">
+                <h4 className="text-sm font-medium text-white mb-2">Bio</h4>
+                <p className="text-white text-sm leading-snug">
+                  {profile.bio}
+                </p>
+              </div>
+            )}
             <ProfileDetailItem label="Gender" value={profile.gender} />
             <ProfileDetailItem label="Body Type" value={profile.bodyType} />
             <ProfileDetailItem label="Ethnicity" value={profile.ethnicity} />

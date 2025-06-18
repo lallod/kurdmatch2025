@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -9,6 +9,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ViewedMe = () => {
   const navigate = useNavigate();
+  const [profileViewingData, setProfileViewingData] = useState({});
+
+  // Load profile viewing data from localStorage
+  useEffect(() => {
+    const viewingData = JSON.parse(localStorage.getItem('profileViewing') || '{}');
+    setProfileViewingData(viewingData);
+  }, []);
+
+  const getViewingPercentage = (profileId: number) => {
+    return profileViewingData[profileId]?.percentage || 0;
+  };
+
   const viewedProfiles = [
     {
       id: 1,
@@ -110,51 +122,62 @@ const ViewedMe = () => {
 
         <TabsContent value="viewed" className="mt-0">
           <div className="grid grid-cols-1 gap-4">
-            {viewedProfiles.map((profile) => (
-              <Card 
-                key={profile.id} 
-                className="overflow-hidden hover:bg-muted/30 transition-colors cursor-pointer"
-                onClick={() => handleProfileClick(profile.id)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={profile.avatar} alt={profile.name} />
-                        <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium">{profile.name}</span>
-                          <span className="text-muted-foreground">{profile.age}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          <span>{profile.viewedAt}</span>
+            {viewedProfiles.map((profile) => {
+              const viewingPercentage = getViewingPercentage(profile.id);
+              
+              return (
+                <Card 
+                  key={profile.id} 
+                  className="overflow-hidden hover:bg-muted/30 transition-colors cursor-pointer"
+                  onClick={() => handleProfileClick(profile.id)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={profile.avatar} alt={profile.name} />
+                          <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{profile.name}</span>
+                            <span className="text-muted-foreground">{profile.age}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>{profile.viewedAt}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <Badge className={`${
-                        profile.compatibilityScore > 90 
-                          ? 'bg-green-100 text-green-700 border-green-200' 
-                          : profile.compatibilityScore > 80 
-                            ? 'bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20'
-                            : 'bg-orange-100 text-orange-700 border-orange-200'
-                      }`}>
-                        {profile.compatibilityScore}% match
-                      </Badge>
-                      {!profile.hasViewed && (
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
-                          New
+                      <div className="flex flex-col items-end gap-2">
+                        <Badge className={`${
+                          profile.compatibilityScore > 90 
+                            ? 'bg-green-100 text-green-700 border-green-200' 
+                            : profile.compatibilityScore > 80 
+                              ? 'bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20'
+                              : 'bg-orange-100 text-orange-700 border-orange-200'
+                        }`}>
+                          {profile.compatibilityScore}% match
                         </Badge>
-                      )}
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                        
+                        {viewingPercentage > 0 && (
+                          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                            {viewingPercentage}% profile viewed
+                          </Badge>
+                        )}
+                        
+                        {!profile.hasViewed && (
+                          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                            New
+                          </Badge>
+                        )}
+                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {viewedProfiles.length === 0 && (
@@ -170,50 +193,61 @@ const ViewedMe = () => {
 
         <TabsContent value="likes" className="mt-0">
           <div className="grid grid-cols-1 gap-4">
-            {likedProfiles.map((profile) => (
-              <Card 
-                key={profile.id} 
-                className="overflow-hidden hover:bg-muted/30 transition-colors cursor-pointer"
-                onClick={() => handleProfileClick(profile.id)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={profile.avatar} alt={profile.name} />
-                        <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium">{profile.name}</span>
-                          <span className="text-muted-foreground">{profile.age}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          <span>{profile.likedAt}</span>
+            {likedProfiles.map((profile) => {
+              const viewingPercentage = getViewingPercentage(profile.id);
+              
+              return (
+                <Card 
+                  key={profile.id} 
+                  className="overflow-hidden hover:bg-muted/30 transition-colors cursor-pointer"
+                  onClick={() => handleProfileClick(profile.id)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={profile.avatar} alt={profile.name} />
+                          <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{profile.name}</span>
+                            <span className="text-muted-foreground">{profile.age}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>{profile.likedAt}</span>
+                          </div>
                         </div>
                       </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <Badge className={`${
+                          profile.compatibilityScore > 90 
+                            ? 'bg-green-100 text-green-700 border-green-200' 
+                            : profile.compatibilityScore > 80 
+                              ? 'bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20'
+                              : 'bg-orange-100 text-orange-700 border-orange-200'
+                        }`}>
+                          {profile.compatibilityScore}% match
+                        </Badge>
+                        
+                        {viewingPercentage > 0 && (
+                          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                            {viewingPercentage}% profile viewed
+                          </Badge>
+                        )}
+                        
+                        <Badge variant="outline" className="bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20">
+                          <Heart className="h-3 w-3 mr-1 fill-tinder-rose" />
+                          Liked you
+                        </Badge>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <Badge className={`${
-                        profile.compatibilityScore > 90 
-                          ? 'bg-green-100 text-green-700 border-green-200' 
-                          : profile.compatibilityScore > 80 
-                            ? 'bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20'
-                            : 'bg-orange-100 text-orange-700 border-orange-200'
-                      }`}>
-                        {profile.compatibilityScore}% match
-                      </Badge>
-                      <Badge variant="outline" className="bg-tinder-rose/10 text-tinder-rose border-tinder-rose/20">
-                        <Heart className="h-3 w-3 mr-1 fill-tinder-rose" />
-                        Liked you
-                      </Badge>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {likedProfiles.length === 0 && (
