@@ -15,9 +15,9 @@ interface ProfileInfoProps {
 const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInfoProps) => {
   return (
     <>
-      {/* Profile Info Overlay - Reduced Blur */}
+      {/* Profile Info Overlay */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-sm p-2 sm:p-3">
-        {/* Action Buttons - Moved to Top */}
+        {/* Action Buttons */}
         <div className="flex justify-center items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
           <Button
             onClick={() => onSwipeAction('pass', profile.id)}
@@ -77,8 +77,8 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
               </div>
             )}
             
-            {/* Quick Info Badges - Moved here from ProfilePhotoGallery */}
-            <div className="flex flex-wrap gap-1 mb-1">
+            {/* Quick Info Badges - Enhanced for mobile visibility */}
+            <div className="flex flex-wrap gap-1 mb-2 lg:mb-1">
               {profile.occupation && (
                 <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
                   {profile.occupation}
