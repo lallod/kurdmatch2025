@@ -18,6 +18,7 @@ interface DatabaseProfile {
   
   // Basic Info
   height: string | null;
+  body_type: string | null;
   ethnicity: string | null;
   kurdistan_region: string | null;
   languages: string[] | null;
@@ -29,6 +30,8 @@ interface DatabaseProfile {
   smoking: string | null;
   dietary_preferences: string | null;
   sleep_schedule: string | null;
+  travel_frequency: string | null;
+  transportation_preference: string | null;
   
   // Values & Beliefs
   religion: string | null;
@@ -47,6 +50,9 @@ interface DatabaseProfile {
   // Career
   education: string | null;
   company: string | null;
+  career_ambitions: string | null;
+  work_environment: string | null;
+  work_life_balance: string | null;
   
   // Interests & Hobbies
   interests: string[] | null;
@@ -68,7 +74,29 @@ interface DatabaseProfile {
   dream_vacation: string | null;
   ideal_date: string | null;
   communication_style: string | null;
-  travel_frequency: string | null;
+  
+  // Personal Growth & Habits
+  growth_goals: string[] | null;
+  morning_routine: string | null;
+  evening_routine: string | null;
+  financial_habits: string | null;
+  stress_relievers: string[] | null;
+  
+  // Social & Personality
+  friendship_style: string | null;
+  decision_making_style: string | null;
+  charity_involvement: string | null;
+  
+  // Preferences
+  favorite_memory: string | null;
+  favorite_quote: string | null;
+  favorite_season: string | null;
+  ideal_weather: string | null;
+  dream_home: string | null;
+  
+  // Special Traits
+  hidden_talents: string[] | null;
+  pet_peeves: string[] | null;
   
   created_at: string | null;
 }
@@ -101,7 +129,26 @@ export const useRealProfileData = () => {
             ? profile.love_language 
             : profile.love_language 
               ? [profile.love_language] 
-              : null
+              : null,
+          // Ensure other array fields are properly handled
+          languages: Array.isArray(profile.languages) ? profile.languages : profile.languages ? [profile.languages] : null,
+          values: Array.isArray(profile.values) ? profile.values : profile.values ? [profile.values] : null,
+          interests: Array.isArray(profile.interests) ? profile.interests : profile.interests ? [profile.interests] : null,
+          hobbies: Array.isArray(profile.hobbies) ? profile.hobbies : profile.hobbies ? [profile.hobbies] : null,
+          creative_pursuits: Array.isArray(profile.creative_pursuits) ? profile.creative_pursuits : profile.creative_pursuits ? [profile.creative_pursuits] : null,
+          weekend_activities: Array.isArray(profile.weekend_activities) ? profile.weekend_activities : profile.weekend_activities ? [profile.weekend_activities] : null,
+          music_instruments: Array.isArray(profile.music_instruments) ? profile.music_instruments : profile.music_instruments ? [profile.music_instruments] : null,
+          tech_skills: Array.isArray(profile.tech_skills) ? profile.tech_skills : profile.tech_skills ? [profile.tech_skills] : null,
+          favorite_books: Array.isArray(profile.favorite_books) ? profile.favorite_books : profile.favorite_books ? [profile.favorite_books] : null,
+          favorite_movies: Array.isArray(profile.favorite_movies) ? profile.favorite_movies : profile.favorite_movies ? [profile.favorite_movies] : null,
+          favorite_music: Array.isArray(profile.favorite_music) ? profile.favorite_music : profile.favorite_music ? [profile.favorite_music] : null,
+          favorite_foods: Array.isArray(profile.favorite_foods) ? profile.favorite_foods : profile.favorite_foods ? [profile.favorite_foods] : null,
+          favorite_games: Array.isArray(profile.favorite_games) ? profile.favorite_games : profile.favorite_games ? [profile.favorite_games] : null,
+          favorite_podcasts: Array.isArray(profile.favorite_podcasts) ? profile.favorite_podcasts : profile.favorite_podcasts ? [profile.favorite_podcasts] : null,
+          growth_goals: Array.isArray(profile.growth_goals) ? profile.growth_goals : profile.growth_goals ? [profile.growth_goals] : null,
+          stress_relievers: Array.isArray(profile.stress_relievers) ? profile.stress_relievers : profile.stress_relievers ? [profile.stress_relievers] : null,
+          hidden_talents: Array.isArray(profile.hidden_talents) ? profile.hidden_talents : profile.hidden_talents ? [profile.hidden_talents] : null,
+          pet_peeves: Array.isArray(profile.pet_peeves) ? profile.pet_peeves : profile.pet_peeves ? [profile.pet_peeves] : null
         };
         
         setProfileData(convertedProfile);

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,10 @@ import {
   Coffee,
   Music,
   Book,
-  Dumbbell
+  Dumbbell,
+  TrendingUp,
+  Users,
+  Sparkles
 } from 'lucide-react';
 import BasicInfoEditor from './editors/BasicInfoEditor';
 import LifestyleEditor from './editors/LifestyleEditor';
@@ -23,6 +27,10 @@ import InterestsHobbiesEditor from './editors/InterestsHobbiesEditor';
 import CareerEducationEditor from './editors/CareerEducationEditor';
 import FavoritesEditor from './editors/FavoritesEditor';
 import RelationshipPreferencesEditor from './editors/RelationshipPreferencesEditor';
+import PersonalGrowthEditor from './editors/PersonalGrowthEditor';
+import SocialStyleEditor from './editors/SocialStyleEditor';
+import PreferencesEditor from './editors/PreferencesEditor';
+import SpecialTraitsEditor from './editors/SpecialTraitsEditor';
 
 interface ComprehensiveProfileEditorProps {
   profileData: ProfileData;
@@ -84,6 +92,34 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
       icon: Heart,
       component: RelationshipPreferencesEditor,
       fields: ['relationshipGoals', 'childrenStatus', 'familyCloseness']
+    },
+    { 
+      id: 'growth', 
+      label: 'Personal Growth', 
+      icon: TrendingUp,
+      component: PersonalGrowthEditor,
+      fields: ['growthGoals', 'morningRoutine', 'eveningRoutine', 'financialHabits', 'stressRelievers']
+    },
+    { 
+      id: 'social', 
+      label: 'Social Style', 
+      icon: Users,
+      component: SocialStyleEditor,
+      fields: ['friendshipStyle', 'decisionMakingStyle', 'charityInvolvement']
+    },
+    { 
+      id: 'preferences', 
+      label: 'Preferences', 
+      icon: MapPin,
+      component: PreferencesEditor,
+      fields: ['favoriteSeason', 'idealWeather', 'dreamHome', 'travelFrequency']
+    },
+    { 
+      id: 'traits', 
+      label: 'Special Traits', 
+      icon: Sparkles,
+      component: SpecialTraitsEditor,
+      fields: ['hiddenTalents', 'petPeeves', 'favoriteMemory', 'favoriteQuote']
     }
   ];
 
@@ -114,7 +150,7 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
               bg-white/15 backdrop-blur-lg border border-white/30 
               rounded-2xl shadow-xl
               flex overflow-x-auto scrollbar-hide
-              md:grid md:grid-cols-4 lg:grid-cols-7
+              md:grid md:grid-cols-4 lg:grid-cols-6
               gap-1 md:gap-2
             ">
               {profileSections.map((section) => {
@@ -126,7 +162,7 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
                     key={section.id}
                     value={section.id} 
                     className="
-                      relative flex-shrink-0 min-w-[100px] h-auto
+                      relative flex-shrink-0 min-w-[90px] h-auto
                       data-[state=active]:bg-gradient-to-r 
                       data-[state=active]:from-purple-500 
                       data-[state=active]:to-pink-500 
@@ -135,7 +171,7 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
                       data-[state=active]:border-white/20
                       text-white/80 hover:text-white
                       flex flex-col items-center justify-center 
-                      gap-1.5 p-3 md:p-4
+                      gap-1.5 p-2 md:p-3
                       rounded-xl transition-all duration-300
                       hover:bg-white/10
                       border border-transparent
@@ -145,12 +181,12 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
                   >
                     {/* Icon with enhanced visibility */}
                     <div className="
-                      relative p-1.5 rounded-lg
+                      relative p-1 rounded-lg
                       bg-white/10 group-data-[state=active]:bg-white/20
                       transition-all duration-300
                     ">
                       <IconComponent className="
-                        h-5 w-5 md:h-6 md:w-6
+                        h-4 w-4 md:h-5 md:w-5
                         transition-all duration-300
                         group-data-[state=active]:scale-110
                       " />
@@ -158,7 +194,7 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
                     
                     {/* Label with better typography */}
                     <span className="
-                      text-xs md:text-sm font-medium
+                      text-xs font-medium
                       text-center leading-tight
                       group-data-[state=active]:font-semibold
                       transition-all duration-300
@@ -169,7 +205,7 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
                     {/* Enhanced completion badge */}
                     <Badge 
                       className={`
-                        text-xs px-2 py-0.5 font-bold
+                        text-xs px-1.5 py-0.5 font-bold
                         border transition-all duration-300
                         shadow-sm
                         ${completion === 100 
@@ -212,7 +248,7 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
             " />
           </div>
 
-          {/* Tab content remains the same */}
+          {/* Tab content */}
           {profileSections.map((section) => {
             const EditorComponent = section.component;
             return (
