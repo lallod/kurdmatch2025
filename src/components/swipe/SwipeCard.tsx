@@ -30,8 +30,8 @@ const SwipeCard = ({
   onMessage
 }: SwipeCardProps) => {
   return (
-    <Card className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl">
-      <div className="relative">
+    <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl flex flex-col">
+      <div className="relative flex-1">
         <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
@@ -45,11 +45,13 @@ const SwipeCard = ({
           onMessage={onMessage}
         />
       </div>
-      <ProfileDetails
-        profile={profile}
-        isExpanded={isExpanded}
-        onToggleExpanded={onToggleExpanded}
-      />
+      <div className="flex-shrink-0">
+        <ProfileDetails
+          profile={profile}
+          isExpanded={isExpanded}
+          onToggleExpanded={onToggleExpanded}
+        />
+      </div>
     </Card>
   );
 };

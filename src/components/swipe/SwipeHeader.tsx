@@ -11,7 +11,7 @@ interface SwipeHeaderProps {
 
 const SwipeHeader = ({ lastAction, onUndo }: SwipeHeaderProps) => {
   return (
-    <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+    <div className="fixed top-0 left-0 right-0 w-full bg-black/20 backdrop-blur shadow-sm border-b border-white/20 z-20">
       <div className="w-full px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-2">

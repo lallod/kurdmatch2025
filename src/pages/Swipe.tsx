@@ -78,7 +78,9 @@ const Swipe = () => {
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+
   const currentProfile = profiles[currentIndex];
+
   const handleSwipeAction = (action: SwipeAction, profileId: number) => {
     setLastAction({
       type: action,
@@ -140,23 +142,37 @@ const Swipe = () => {
       setCurrentPhotoIndex(currentPhotoIndex - 1);
     }
   };
+
   if (!currentProfile) {
     return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
   }
-  return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-20 sm:pb-24">
+
+  return (
+    <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
-      {/* Main Card */}
-      <div className="w-full h-full px-3 sm:px-4 py-4 sm:py-6">
-        <div className="max-w-sm sm:max-w-md lg:max-w-lg mx-auto h-full">
-          <SwipeCard profile={currentProfile} currentPhotoIndex={currentPhotoIndex} isExpanded={isExpanded} onNextPhoto={nextPhoto} onPrevPhoto={prevPhoto} onToggleExpanded={() => setIsExpanded(!isExpanded)} onReport={handleReport} onSwipeAction={handleSwipeAction} onMessage={handleMessage} />
-
-          {/* Profile Counter */}
-          
+      {/* Main Card - positioned between fixed header and bottom nav */}
+      <div className="pt-16 pb-20 h-full flex flex-col">
+        <div className="flex-1 px-3 sm:px-4 py-2 flex items-center justify-center">
+          <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg h-full flex">
+            <SwipeCard 
+              profile={currentProfile} 
+              currentPhotoIndex={currentPhotoIndex} 
+              isExpanded={isExpanded} 
+              onNextPhoto={nextPhoto} 
+              onPrevPhoto={prevPhoto} 
+              onToggleExpanded={() => setIsExpanded(!isExpanded)} 
+              onReport={handleReport} 
+              onSwipeAction={handleSwipeAction} 
+              onMessage={handleMessage} 
+            />
+          </div>
         </div>
       </div>
 
       <BottomNavigation />
-    </div>;
+    </div>
+  );
 };
+
 export default Swipe;
