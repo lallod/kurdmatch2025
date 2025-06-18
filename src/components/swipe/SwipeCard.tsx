@@ -35,26 +35,13 @@ const SwipeCard = ({
   onTap,
   isAnimating = false
 }: SwipeCardProps) => {
-  const { gestureState, handleTouchStart, handleTouchMove, handleTouchEnd, resetGesture } = useSwipeGesture({
-    onSwipeLeft: () => {
-      console.log('Executing swipe left action');
-      onSwipeAction('pass', profile.id);
-      resetGesture();
-    },
-    onSwipeRight: () => {
-      console.log('Executing swipe right action');
-      onSwipeAction('like', profile.id);
-      resetGesture();
-    },
-    onSwipeUp: () => {
-      console.log('Executing swipe up action');
-      onSwipeAction('superlike', profile.id);
-      resetGesture();
-    }
+  const { gestureState, handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipeGesture({
+    onSwipeLeft: () => onSwipeAction('pass', profile.id),
+    onSwipeRight: () => onSwipeAction('like', profile.id),
+    onSwipeUp: () => onSwipeAction('superlike', profile.id)
   });
 
   const handleCardClick = (e: React.MouseEvent) => {
-    console.log('Card clicked');
     // Only trigger tap if not dragging and click is on the card content
     if (!gestureState.isDragging && e.target === e.currentTarget) {
       onTap();

@@ -85,7 +85,6 @@ const Swipe = () => {
   const currentProfile = profiles[currentIndex];
 
   const handleSwipeAction = (action: SwipeAction, profileId: number) => {
-    console.log('Swipe action triggered:', action, profileId);
     if (isAnimating) return;
     
     setIsAnimating(true);
@@ -129,7 +128,6 @@ const Swipe = () => {
   };
 
   const handleUndo = () => {
-    console.log('Undo action triggered');
     if (lastAction && currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setLastAction(null);
@@ -141,43 +139,35 @@ const Swipe = () => {
   };
 
   const handleMessage = (profileId: number) => {
-    console.log('Message action triggered:', profileId);
     navigate(`/messages?user=${profileId}`);
   };
 
   const handleReport = (profileId: number) => {
-    console.log('Report action triggered:', profileId);
     toast("Profile reported. Thank you for keeping our community safe.", {
       icon: "🛡️"
     });
   };
 
   const nextPhoto = () => {
-    console.log('Next photo action triggered');
     if (currentProfile?.photos && currentPhotoIndex < currentProfile.photos.length - 1) {
       setCurrentPhotoIndex(currentPhotoIndex + 1);
     }
   };
 
   const prevPhoto = () => {
-    console.log('Previous photo action triggered');
     if (currentPhotoIndex > 0) {
       setCurrentPhotoIndex(currentPhotoIndex - 1);
     }
   };
 
   const handleProfileTap = () => {
-    console.log('Profile tap action triggered');
     if (!isAnimating) {
       setExpandedProfileOpen(true);
     }
   };
 
   if (!currentProfile) {
-    return <NoMoreProfiles onStartOver={() => {
-      console.log('Start over action triggered');
-      setCurrentIndex(0);
-    }} />;
+    return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
   }
 
   return (
@@ -214,10 +204,7 @@ const Swipe = () => {
               isExpanded={isExpanded} 
               onNextPhoto={nextPhoto} 
               onPrevPhoto={prevPhoto} 
-              onToggleExpanded={() => {
-                console.log('Toggle expanded action triggered');
-                setIsExpanded(!isExpanded);
-              }} 
+              onToggleExpanded={() => setIsExpanded(!isExpanded)} 
               onReport={handleReport} 
               onSwipeAction={handleSwipeAction} 
               onMessage={handleMessage}
@@ -232,10 +219,7 @@ const Swipe = () => {
       <ExpandedProfileModal
         profile={currentProfile}
         isOpen={expandedProfileOpen}
-        onClose={() => {
-          console.log('Modal close action triggered');
-          setExpandedProfileOpen(false);
-        }}
+        onClose={() => setExpandedProfileOpen(false)}
         onSwipeAction={handleSwipeAction}
         onMessage={handleMessage}
       />
