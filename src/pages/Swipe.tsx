@@ -258,9 +258,7 @@ const Swipe = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
-      {/* Removed SwipeHeader - No header needed */}
-
-      {/* Main Card - Full screen usage */}
+      {/* Main Card - full screen usage without header padding */}
       <div className="pb-16 h-full flex flex-col">
         <div className="flex-1 h-full w-full flex items-center justify-center min-h-0">
           <div className="w-full h-full flex">
