@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { Card } from "@/components/ui/card";
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
-import ProfileDetails from './ProfileDetails';
+import ExpandedProfile from './ExpandedProfile';
 import { Profile, SwipeAction } from '@/types/swipe';
 
 interface SwipeCardProps {
@@ -30,29 +29,36 @@ const SwipeCard = ({
   onMessage
 }: SwipeCardProps) => {
   return (
-    <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl flex flex-col">
-      <div className="relative flex-1 min-h-0">
-        <ProfilePhotoGallery
-          profile={profile}
-          currentPhotoIndex={currentPhotoIndex}
-          onNextPhoto={onNextPhoto}
-          onPrevPhoto={onPrevPhoto}
-        />
-        <ProfileInfo 
-          profile={profile} 
-          onReport={onReport}
-          onSwipeAction={onSwipeAction}
-          onMessage={onMessage}
-        />
+    <div className="w-full h-full overflow-auto backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl">
+      {/* Photo Section - Takes full viewport height */}
+      <div className="relative min-h-screen flex flex-col">
+        <div className="relative flex-1">
+          <ProfilePhotoGallery
+            profile={profile}
+            currentPhotoIndex={currentPhotoIndex}
+            onNextPhoto={onNextPhoto}
+            onPrevPhoto={onPrevPhoto}
+          />
+          <ProfileInfo 
+            profile={profile} 
+            onReport={onReport}
+            onSwipeAction={onSwipeAction}
+            onMessage={onMessage}
+          />
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 animate-bounce">
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-xs">Scroll for more</span>
+            <div className="w-1 h-6 bg-white/40 rounded-full"></div>
+          </div>
+        </div>
       </div>
-      <div className="flex-shrink-0">
-        <ProfileDetails
-          profile={profile}
-          isExpanded={isExpanded}
-          onToggleExpanded={onToggleExpanded}
-        />
-      </div>
-    </Card>
+
+      {/* Expanded Profile Section */}
+      <ExpandedProfile profile={profile} />
+    </div>
   );
 };
 
