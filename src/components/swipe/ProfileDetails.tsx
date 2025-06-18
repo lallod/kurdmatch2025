@@ -33,8 +33,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
 
   return (
     <div className="p-1 sm:p-2 max-h-96 overflow-y-auto">
-      {/* Quick Info - Full Width Usage */}
-      <div className="flex flex-wrap gap-1 mb-1 sm:mb-2">
+      {/* Quick Info - Desktop Only */}
+      <div className="hidden md:flex flex-wrap gap-1 mb-1 sm:mb-2">
         {profile.occupation && (
           <Badge variant="secondary" className="text-xs bg-white/10 text-purple-200 px-1.5 py-0.5">
             {profile.occupation}

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Badge } from "@/components/ui/badge";
 import { Profile } from '@/types/swipe';
 
 interface ProfilePhotoGalleryProps {
@@ -24,6 +25,27 @@ const ProfilePhotoGallery = ({
           alt={profile.name}
           className="w-full h-full object-cover object-center"
         />
+        
+        {/* Quick Info Badges - On Photo for Mobile */}
+        <div className="absolute top-12 left-2 right-2 md:hidden">
+          <div className="flex flex-wrap gap-1">
+            {profile.occupation && (
+              <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
+                {profile.occupation}
+              </Badge>
+            )}
+            {profile.height && (
+              <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
+                {profile.height}cm
+              </Badge>
+            )}
+            {profile.languages && (
+              <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
+                {profile.languages[0]}{profile.languages.length > 1 ? ` +${profile.languages.length - 1}` : ''}
+              </Badge>
+            )}
+          </div>
+        </div>
         
         {/* Photo Navigation - Edge to Edge */}
         {profile.photos && profile.photos.length > 1 && (

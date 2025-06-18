@@ -31,7 +31,7 @@ const SwipeCard = ({
 }: SwipeCardProps) => {
   return (
     <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border-0 shadow-2xl flex flex-col rounded-none">
-      <div className="relative flex-1 min-h-0">
+      <div className="relative flex-1 min-h-0 md:flex-[0.7]">
         <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
@@ -45,7 +45,7 @@ const SwipeCard = ({
           onMessage={onMessage}
         />
       </div>
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 md:flex-[0.3]">
         <ProfileDetails
           profile={profile}
           isExpanded={isExpanded}
