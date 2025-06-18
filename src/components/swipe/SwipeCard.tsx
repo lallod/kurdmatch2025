@@ -1,6 +1,6 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
+import React from 'react';
+import { Card } from "@/components/ui/card";
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
 import ProfileDetails from './ProfileDetails';
@@ -29,59 +29,9 @@ const SwipeCard = ({
   onSwipeAction,
   onMessage
 }: SwipeCardProps) => {
-  const [hasViewedProfile, setHasViewedProfile] = useState(false);
-  const profileDetailsRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasViewedProfile) {
-            setHasViewedProfile(true);
-            toast(`You viewed ${profile.name}'s profile`, {
-              icon: "👁️",
-              duration: 2000,
-            });
-          }
-        });
-      },
-      {
-        threshold: 0.3, // Trigger when 30% of the profile details are visible
-      }
-    );
-
-    if (profileDetailsRef.current) {
-      observer.observe(profileDetailsRef.current);
-    }
-
-    return () => {
-      if (profileDetailsRef.current) {
-        observer.unobserve(profileDetailsRef.current);
-      }
-    };
-  }, [profile.name, hasViewedProfile]);
-
-  // Reset view tracking when profile changes
-  useEffect(() => {
-    setHasViewedProfile(false);
-  }, [profile.id]);
-
   return (
-    <div 
-      ref={containerRef}
-      className="h-full w-full overflow-y-auto scroll-smooth"
-      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-    >
-      {/* Hide scrollbar for webkit browsers */}
-      <style jsx>{`
-        div::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
-      
-      {/* Full Screen Photo Section */}
-      <div className="relative h-screen w-full">
+    <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl flex flex-col">
+      <div className="relative flex-1">
         <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
@@ -95,26 +45,14 @@ const SwipeCard = ({
           onMessage={onMessage}
         />
       </div>
-
-      {/* Profile Details Section - Revealed on Scroll */}
-      <div 
-        ref={profileDetailsRef}
-        className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 min-h-screen"
-      >
+      <div className="flex-shrink-0">
         <ProfileDetails
           profile={profile}
           isExpanded={isExpanded}
           onToggleExpanded={onToggleExpanded}
         />
-        
-        {/* Additional spacing and scroll indicator */}
-        <div className="p-4 text-center">
-          <div className="text-white/60 text-sm">
-            Scroll up to see photos again
-          </div>
-        </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
