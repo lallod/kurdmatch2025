@@ -72,10 +72,29 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
               </Badge>
             )}
             {profile.relationshipGoals && (
-              <div className="text-xs sm:text-sm text-white/90 drop-shadow-md">
+              <div className="text-xs sm:text-sm text-white/90 drop-shadow-md mb-1">
                 Looking for: {profile.relationshipGoals}
               </div>
             )}
+            
+            {/* Quick Info Badges - Moved here from ProfilePhotoGallery */}
+            <div className="flex flex-wrap gap-1 mb-1">
+              {profile.occupation && (
+                <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
+                  {profile.occupation}
+                </Badge>
+              )}
+              {profile.height && (
+                <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
+                  {profile.height}cm
+                </Badge>
+              )}
+              {profile.languages && (
+                <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
+                  {profile.languages[0]}{profile.languages.length > 1 ? ` +${profile.languages.length - 1}` : ''}
+                </Badge>
+              )}
+            </div>
           </div>
           <Badge className="bg-gradient-to-r from-green-500/90 to-emerald-500/90 backdrop-blur-sm text-white text-xs sm:text-sm flex-shrink-0 shadow-lg">
             <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
