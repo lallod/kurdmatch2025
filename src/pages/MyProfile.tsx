@@ -26,104 +26,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
 import ComprehensiveProfileEditor from '@/components/my-profile/sections/ComprehensiveProfileEditor';
 import BottomNavigation from '@/components/BottomNavigation';
-import { useRealProfileData } from '@/hooks/useRealProfileData';
 
 const MyProfile = () => {
   const [isEditingSections, setIsEditingSections] = useState(false);
   const [profileBgColor, setProfileBgColor] = useState("#F1F0FB");
-  const { profileData: realProfileData, loading, updateProfileData } = useRealProfileData();
-
-  // Convert real profile data to ProfileData format with ALL fields
-  const profileData: ProfileData = realProfileData ? {
-    name: realProfileData.name || "User",
-    age: realProfileData.age || 18,
-    location: realProfileData.location || "Not specified",
-    occupation: realProfileData.occupation || "Not specified",
-    lastActive: realProfileData.last_active || "Unknown",
-    verified: realProfileData.verified || false,
-    profileImage: realProfileData.profile_image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80",
-    distance: 0,
-    kurdistanRegion: (realProfileData.kurdistan_region as KurdistanRegion) || "South-Kurdistan",
-    bio: realProfileData.bio || "Tell us about yourself...",
-    height: realProfileData.height || "Not specified",
-    bodyType: realProfileData.body_type || "Not specified",
-    ethnicity: realProfileData.ethnicity || "Not specified",
-    religion: realProfileData.religion || "Not specified",
-    politicalViews: realProfileData.political_views || "Not specified",
-    values: realProfileData.values || [],
-    interests: realProfileData.interests || [],
-    hobbies: realProfileData.hobbies || [],
-    languages: realProfileData.languages || [],
-    education: realProfileData.education || "Not specified",
-    company: realProfileData.company || "Not specified",
-    exerciseHabits: realProfileData.exercise_habits || "Not specified",
-    relationshipGoals: realProfileData.relationship_goals || "Not specified",
-    wantChildren: realProfileData.want_children || "Not specified",
-    havePets: realProfileData.have_pets || "Not specified",
-    drinking: realProfileData.drinking || "Not specified",
-    smoking: realProfileData.smoking || "Not specified",
-    dietaryPreferences: realProfileData.dietary_preferences || "Not specified",
-    zodiacSign: realProfileData.zodiac_sign || "Not specified",
-    personalityType: realProfileData.personality_type || "Not specified",
-    sleepSchedule: realProfileData.sleep_schedule || "Not specified",
-    communicationStyle: realProfileData.communication_style || "Not specified",
-    favoriteBooks: realProfileData.favorite_books || [],
-    favoriteMovies: realProfileData.favorite_movies || [],
-    favoriteMusic: realProfileData.favorite_music || [],
-    favoriteFoods: realProfileData.favorite_foods || [],
-    favoriteGames: realProfileData.favorite_games || [],
-    favoritePodcasts: realProfileData.favorite_podcasts || [],
-    creativePursuits: realProfileData.creative_pursuits || [],
-    weekendActivities: realProfileData.weekend_activities || [],
-    musicInstruments: realProfileData.music_instruments || [],
-    techSkills: realProfileData.tech_skills || [],
-    dreamVacation: realProfileData.dream_vacation || "Not specified",
-    idealDate: realProfileData.ideal_date || "Not specified",
-    loveLanguage: realProfileData.love_language ? realProfileData.love_language.join(', ') : "Not specified",
-    familyCloseness: realProfileData.family_closeness || "Not specified",
-    childrenStatus: realProfileData.children_status || "Not specified",
-    travelFrequency: realProfileData.travel_frequency || "Not specified",
-    careerAmbitions: realProfileData.career_ambitions || "Not specified",
-    workEnvironment: realProfileData.work_environment || "Not specified",
-    workLifeBalance: realProfileData.work_life_balance || "Not specified",
-    growthGoals: realProfileData.growth_goals || [],
-    morningRoutine: realProfileData.morning_routine || "Not specified",
-    eveningRoutine: realProfileData.evening_routine || "Not specified",
-    financialHabits: realProfileData.financial_habits || "Not specified",
-    stressRelievers: realProfileData.stress_relievers || [],
-    friendshipStyle: realProfileData.friendship_style || "Not specified",
-    decisionMakingStyle: realProfileData.decision_making_style || "Not specified",
-    charityInvolvement: realProfileData.charity_involvement || "Not specified",
-    favoriteMemory: realProfileData.favorite_memory || "Not specified",
-    favoriteQuote: realProfileData.favorite_quote || "Not specified",
-    favoriteSeason: realProfileData.favorite_season || "Not specified",
-    idealWeather: realProfileData.ideal_weather || "Not specified",
-    dreamHome: realProfileData.dream_home || "Not specified",
-    hiddenTalents: realProfileData.hidden_talents || [],
-    petPeeves: realProfileData.pet_peeves || [],
-    transportationPreference: realProfileData.transportation_preference || "Not specified"
-  } : {
-    name: "User",
-    age: 18,
-    location: "Not specified",
-    occupation: "Not specified",
-    lastActive: "Unknown",
-    verified: false,
+  
+  const initialProfileData: ProfileData = {
+    name: "Sarah",
+    age: 28,
+    location: "San Francisco, CA",
+    occupation: "UX Designer",
+    lastActive: "2 hours ago",
+    verified: true,
     profileImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80",
-    distance: 0,
-    kurdistanRegion: "South-Kurdistan",
-    bio: "Tell us about yourself...",
-    height: "Not specified",
-    bodyType: "Not specified",
-    ethnicity: "Not specified",
-    religion: "Not specified",
-    politicalViews: "Not specified",
-    values: [],
-    interests: [],
-    hobbies: [],
-    languages: []
+    distance: 8,
+    kurdistanRegion: "South-Kurdistan" as KurdistanRegion,
+    bio: "Designer, hiker, and coffee enthusiast. Looking for someone who enjoys meaningful conversation and outdoor adventure.",
+    height: "5'7\"",
+    bodyType: "Athletic",
+    ethnicity: "Middle Eastern",
+    religion: "Spiritual",
+    politicalViews: "Moderate",
+    values: ["Honesty", "Kindness", "Growth", "Balance"],
+    interests: ["Hiking", "Photography", "Design", "Travel", "Coffee", "Cooking"],
+    hobbies: ["Drawing", "Yoga", "Reading"],
+    languages: ["English", "Kurdish", "Farsi"]
   };
   
+  const [profileData, setProfileData] = useState<ProfileData>(initialProfileData);
+
   const [galleryImages, setGalleryImages] = useState([
     profileData.profileImage,
     "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80",
@@ -131,56 +62,33 @@ const MyProfile = () => {
     "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80"
   ]);
 
-  // Enhanced profile completion calculation based on ALL available data
+  // Profile completion calculation
   const calculateProfileCompletion = () => {
-    if (!realProfileData) return 0;
-    
     let completed = 0;
-    const total = 35; // Increased total to include all new fields
+    const total = 15;
     
-    if (realProfileData.name) completed++;
-    if (realProfileData.bio && realProfileData.bio.length > 50) completed++;
-    if (realProfileData.interests && realProfileData.interests.length >= 3) completed++;
-    if (realProfileData.occupation) completed++;
-    if (realProfileData.languages && realProfileData.languages.length >= 1) completed++;
-    if (realProfileData.height) completed++;
-    if (realProfileData.values && realProfileData.values.length >= 3) completed++;
-    if (realProfileData.hobbies && realProfileData.hobbies.length >= 2) completed++;
-    if (realProfileData.verified) completed++;
-    if (realProfileData.religion) completed++;
-    if (realProfileData.ethnicity) completed++;
-    if (realProfileData.exercise_habits) completed++;
-    if (realProfileData.relationship_goals) completed++;
-    if (realProfileData.education) completed++;
-    if (realProfileData.want_children) completed++;
-    if (realProfileData.have_pets) completed++;
-    if (realProfileData.dietary_preferences) completed++;
-    if (realProfileData.dream_vacation) completed++;
-    if (realProfileData.ideal_date) completed++;
-    if (realProfileData.kurdistan_region) completed++;
-    // NEW COMPLETION CHECKS
-    if (realProfileData.body_type) completed++;
-    if (realProfileData.travel_frequency) completed++;
-    if (realProfileData.career_ambitions) completed++;
-    if (realProfileData.growth_goals && realProfileData.growth_goals.length > 0) completed++;
-    if (realProfileData.morning_routine) completed++;
-    if (realProfileData.evening_routine) completed++;
-    if (realProfileData.financial_habits) completed++;
-    if (realProfileData.friendship_style) completed++;
-    if (realProfileData.decision_making_style) completed++;
-    if (realProfileData.favorite_memory) completed++;
-    if (realProfileData.favorite_quote) completed++;
-    if (realProfileData.favorite_season) completed++;
-    if (realProfileData.ideal_weather) completed++;
-    if (realProfileData.dream_home) completed++;
-    if (realProfileData.hidden_talents && realProfileData.hidden_talents.length > 0) completed++;
+    if (profileData.name) completed++;
+    if (profileData.bio && profileData.bio.length > 50) completed++;
+    if (galleryImages.length >= 3) completed++;
+    if (profileData.interests.length >= 3) completed++;
+    if (profileData.occupation) completed++;
+    if (profileData.languages.length >= 1) completed++;
+    if (profileData.height) completed++;
+    if (profileData.values.length >= 3) completed++;
+    if (profileData.hobbies.length >= 2) completed++;
+    if (profileData.verified) completed++;
+    if (profileData.religion) completed++;
+    if (profileData.ethnicity) completed++;
+    if (profileData.exerciseHabits) completed++;
+    if (profileData.relationshipGoals) completed++;
+    if (profileData.education) completed++;
     
     return Math.round((completed / total) * 100);
   };
 
   const profileCompletion = calculateProfileCompletion();
 
-  // Mock stats data (this would come from analytics in a real app)
+  // Mock stats data
   const profileStats = {
     views: 234,
     likes: 89,
@@ -208,79 +116,14 @@ const MyProfile = () => {
   };
 
   const handleBioSave = (newBio: string) => {
-    updateProfileData({ bio: newBio });
+    setProfileData(prev => ({ ...prev, bio: newBio }));
   };
 
   const handleProfileUpdate = (updates: Partial<ProfileData>) => {
+    setProfileData(prev => ({ ...prev, ...updates }));
+    // Here you would typically save to database
     console.log('Profile updated:', updates);
-    // Convert ProfileData updates to DatabaseProfile format and update with ALL fields
-    const dbUpdates: any = {};
-    Object.entries(updates).forEach(([key, value]) => {
-      // Map ProfileData keys to database column names
-      if (key === 'kurdistanRegion') dbUpdates.kurdistan_region = value;
-      else if (key === 'politicalViews') dbUpdates.political_views = value;
-      else if (key === 'exerciseHabits') dbUpdates.exercise_habits = value;
-      else if (key === 'relationshipGoals') dbUpdates.relationship_goals = value;
-      else if (key === 'wantChildren') dbUpdates.want_children = value;
-      else if (key === 'havePets') dbUpdates.have_pets = value;
-      else if (key === 'dietaryPreferences') dbUpdates.dietary_preferences = value;
-      else if (key === 'zodiacSign') dbUpdates.zodiac_sign = value;
-      else if (key === 'personalityType') dbUpdates.personality_type = value;
-      else if (key === 'sleepSchedule') dbUpdates.sleep_schedule = value;
-      else if (key === 'communicationStyle') dbUpdates.communication_style = value;
-      else if (key === 'favoriteBooks') dbUpdates.favorite_books = value;
-      else if (key === 'favoriteMovies') dbUpdates.favorite_movies = value;
-      else if (key === 'favoriteMusic') dbUpdates.favorite_music = value;
-      else if (key === 'favoriteFoods') dbUpdates.favorite_foods = value;
-      else if (key === 'favoriteGames') dbUpdates.favorite_games = value;
-      else if (key === 'favoritePodcasts') dbUpdates.favorite_podcasts = value;
-      else if (key === 'creativePursuits') dbUpdates.creative_pursuits = value;
-      else if (key === 'weekendActivities') dbUpdates.weekend_activities = value;
-      else if (key === 'musicInstruments') dbUpdates.music_instruments = value;
-      else if (key === 'techSkills') dbUpdates.tech_skills = value;
-      else if (key === 'dreamVacation') dbUpdates.dream_vacation = value;
-      else if (key === 'idealDate') dbUpdates.ideal_date = value;
-      else if (key === 'familyCloseness') dbUpdates.family_closeness = value;
-      else if (key === 'childrenStatus') dbUpdates.children_status = value;
-      else if (key === 'loveLanguage') dbUpdates.love_language = typeof value === 'string' ? [value] : value;
-      // NEW FIELD MAPPINGS
-      else if (key === 'travelFrequency') dbUpdates.travel_frequency = value;
-      else if (key === 'careerAmbitions') dbUpdates.career_ambitions = value;
-      else if (key === 'workEnvironment') dbUpdates.work_environment = value;
-      else if (key === 'workLifeBalance') dbUpdates.work_life_balance = value;
-      else if (key === 'growthGoals') dbUpdates.growth_goals = value;
-      else if (key === 'morningRoutine') dbUpdates.morning_routine = value;
-      else if (key === 'eveningRoutine') dbUpdates.evening_routine = value;
-      else if (key === 'financialHabits') dbUpdates.financial_habits = value;
-      else if (key === 'stressRelievers') dbUpdates.stress_relievers = value;
-      else if (key === 'friendshipStyle') dbUpdates.friendship_style = value;
-      else if (key === 'decisionMakingStyle') dbUpdates.decision_making_style = value;
-      else if (key === 'charityInvolvement') dbUpdates.charity_involvement = value;
-      else if (key === 'favoriteMemory') dbUpdates.favorite_memory = value;
-      else if (key === 'favoriteQuote') dbUpdates.favorite_quote = value;
-      else if (key === 'favoriteSeason') dbUpdates.favorite_season = value;
-      else if (key === 'idealWeather') dbUpdates.ideal_weather = value;
-      else if (key === 'dreamHome') dbUpdates.dream_home = value;
-      else if (key === 'hiddenTalents') dbUpdates.hidden_talents = value;
-      else if (key === 'petPeeves') dbUpdates.pet_peeves = value;
-      else if (key === 'transportationPreference') dbUpdates.transportation_preference = value;
-      else dbUpdates[key] = value;
-    });
-    updateProfileData(dbUpdates);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
-        <div className="animate-bounce flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4">
-            <Heart size={40} className="text-purple-600 animate-pulse" />
-          </div>
-          <div className="text-white text-xl font-semibold">Loading your profile...</div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
@@ -531,7 +374,7 @@ const MyProfile = () => {
                   profileData={profileData}
                 />
 
-                {/* Comprehensive Profile Editor with ALL sections */}
+                {/* Comprehensive Profile Editor */}
                 <ComprehensiveProfileEditor
                   profileData={profileData}
                   onUpdateProfile={handleProfileUpdate}
