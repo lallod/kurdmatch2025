@@ -95,6 +95,14 @@ export const useProfileData = () => {
       if (error) throw error;
 
       if (data) {
+        // Helper function to ensure array fields are properly handled
+        const ensureArray = (value: any): string[] | undefined => {
+          if (!value) return undefined;
+          if (Array.isArray(value)) return value;
+          if (typeof value === 'string') return [value];
+          return undefined;
+        };
+
         // Transform database profile to match our comprehensive Profile interface
         const transformedProfile: Profile = {
           id: parseInt(data.id),
@@ -107,19 +115,19 @@ export const useProfileData = () => {
           kurdistanRegion: data.kurdistan_region || undefined,
           area: data.kurdistan_region || 'Unknown',
           
-          // Basic fields
-          interests: data.interests || [],
+          // Basic fields with proper array handling
+          interests: ensureArray(data.interests) || [],
           occupation: data.occupation || undefined,
           religion: data.religion || undefined,
           bodyType: data.body_type || undefined,
-          languages: data.languages || [],
+          languages: ensureArray(data.languages) || [],
           height: data.height || undefined,
           photos: data.photos?.map(p => p.url) || [data.profile_image || ''],
           bio: data.bio || undefined,
           relationshipGoals: data.relationship_goals || undefined,
           verified: data.verified || false,
           
-          // Extended comprehensive fields
+          // Extended comprehensive fields with proper array handling
           ethnicity: data.ethnicity || undefined,
           exerciseHabits: data.exercise_habits || undefined,
           havePets: data.have_pets || undefined,
@@ -129,38 +137,38 @@ export const useProfileData = () => {
           sleepSchedule: data.sleep_schedule || undefined,
           travelFrequency: data.travel_frequency || undefined,
           transportationPreference: data.transportation_preference || undefined,
-          values: data.values || undefined,
+          values: ensureArray(data.values),
           zodiacSign: data.zodiac_sign || undefined,
           personalityType: data.personality_type || undefined,
           politicalViews: data.political_views || undefined,
           wantChildren: data.want_children || undefined,
           childrenStatus: data.children_status || undefined,
           familyCloseness: data.family_closeness || undefined,
-          loveLanguage: data.love_language || undefined,
+          loveLanguage: ensureArray(data.love_language),
           education: data.education || undefined,
           company: data.company || undefined,
           careerAmbitions: data.career_ambitions || undefined,
           workEnvironment: data.work_environment || undefined,
           workLifeBalance: data.work_life_balance || undefined,
-          hobbies: data.hobbies || undefined,
-          creativePursuits: data.creative_pursuits || undefined,
-          weekendActivities: data.weekend_activities || undefined,
-          musicInstruments: data.music_instruments || undefined,
-          techSkills: data.tech_skills || undefined,
-          favoriteBooks: data.favorite_books || undefined,
-          favoriteMovies: data.favorite_movies || undefined,
-          favoriteMusic: data.favorite_music || undefined,
-          favoriteFoods: data.favorite_foods || undefined,
-          favoriteGames: data.favorite_games || undefined,
-          favoritePodcasts: data.favorite_podcasts || undefined,
+          hobbies: ensureArray(data.hobbies),
+          creativePursuits: ensureArray(data.creative_pursuits),
+          weekendActivities: ensureArray(data.weekend_activities),
+          musicInstruments: ensureArray(data.music_instruments),
+          techSkills: ensureArray(data.tech_skills),
+          favoriteBooks: ensureArray(data.favorite_books),
+          favoriteMovies: ensureArray(data.favorite_movies),
+          favoriteMusic: ensureArray(data.favorite_music),
+          favoriteFoods: ensureArray(data.favorite_foods),
+          favoriteGames: ensureArray(data.favorite_games),
+          favoritePodcasts: ensureArray(data.favorite_podcasts),
           dreamVacation: data.dream_vacation || undefined,
           idealDate: data.ideal_date || undefined,
           communicationStyle: data.communication_style || undefined,
-          growthGoals: data.growth_goals || undefined,
+          growthGoals: ensureArray(data.growth_goals),
           morningRoutine: data.morning_routine || undefined,
           eveningRoutine: data.evening_routine || undefined,
           financialHabits: data.financial_habits || undefined,
-          stressRelievers: data.stress_relievers || undefined,
+          stressRelievers: ensureArray(data.stress_relievers),
           friendshipStyle: data.friendship_style || undefined,
           decisionMakingStyle: data.decision_making_style || undefined,
           charityInvolvement: data.charity_involvement || undefined,
@@ -169,8 +177,8 @@ export const useProfileData = () => {
           favoriteSeason: data.favorite_season || undefined,
           idealWeather: data.ideal_weather || undefined,
           dreamHome: data.dream_home || undefined,
-          hiddenTalents: data.hidden_talents || undefined,
-          petPeeves: data.pet_peeves || undefined
+          hiddenTalents: ensureArray(data.hidden_talents),
+          petPeeves: ensureArray(data.pet_peeves)
         };
 
         setFullProfileData(transformedProfile);
