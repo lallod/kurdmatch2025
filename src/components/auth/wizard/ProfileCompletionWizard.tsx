@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { WizardLayout } from './WizardLayout';
 import { Step1AboutYou } from './steps/Step1AboutYou';
@@ -221,11 +220,12 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
     <WizardLayout
       currentStep={currentStep}
       totalSteps={totalSteps}
+      stepTitle={`Step ${currentStep} of ${totalSteps}`}
       onNext={handleNext}
       onBack={handleBack}
       onSkip={onSkip}
+      canProceed={true}
       isLoading={isLoading}
-      isLastStep={currentStep === totalSteps}
     >
       {renderStep()}
     </WizardLayout>

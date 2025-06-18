@@ -92,7 +92,19 @@ export const useRealProfileData = () => {
       
       if (profile) {
         console.log('Loaded profile data:', profile);
-        setProfileData(profile);
+        
+        // Convert profile data to match our interface, handling type mismatches
+        const convertedProfile: DatabaseProfile = {
+          ...profile,
+          // Ensure love_language is always an array
+          love_language: Array.isArray(profile.love_language) 
+            ? profile.love_language 
+            : profile.love_language 
+              ? [profile.love_language] 
+              : null
+        };
+        
+        setProfileData(convertedProfile);
 
         // Get onboarding progress
         const progress = await getUserOnboardingProgress(profile.id);
