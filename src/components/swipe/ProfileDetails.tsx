@@ -31,18 +31,12 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
         )}
       </div>
 
-      {/* Bio - Maximum Width Usage */}
+      {/* Bio - Maximum Width Usage - Show Complete Bio */}
       {profile.bio && (
         <div className="mb-1 sm:mb-2">
           <p className="text-white text-sm leading-snug">
-            {isExpanded ? profile.bio : `${profile.bio.slice(0, 80)}...`}
+            {profile.bio}
           </p>
-          <button
-            onClick={onToggleExpanded}
-            className="text-purple-300 text-sm mt-0.5 hover:text-purple-200 touch-manipulation"
-          >
-            {isExpanded ? 'Show less' : 'Read more'}
-          </button>
         </div>
       )}
 
