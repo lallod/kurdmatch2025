@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -261,8 +262,8 @@ const Swipe = () => {
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
-      {/* Main Card - zero padding for full screen usage */}
-      <div className="pt-12 pb-16 h-full flex flex-col">
+      {/* Main Card - remove top padding to make photo start at top */}
+      <div className="pb-16 h-full flex flex-col">
         <div className="flex-1 h-full w-full flex items-center justify-center min-h-0">
           <div className="w-full h-full flex">
             <SwipeCard 
