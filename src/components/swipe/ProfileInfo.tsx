@@ -15,41 +15,10 @@ interface ProfileInfoProps {
 const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInfoProps) => {
   return (
     <>
-      {/* Profile Info Overlay - Minimal Padding */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-lg p-2 sm:p-3">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
-              <h2 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">{profile.name}</h2>
-              <span className="text-lg sm:text-xl text-white drop-shadow-lg">{profile.age}</span>
-              {profile.verified && (
-                <Badge className="bg-blue-500 text-white text-xs shadow-lg">✓</Badge>
-              )}
-            </div>
-            <div className="flex items-center gap-1 text-xs sm:text-sm text-white/95 mb-1 drop-shadow-md">
-              <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
-              <span className="truncate">{profile.location}</span>
-              <span>• {profile.distance}km away</span>
-            </div>
-            {profile.kurdistanRegion && (
-              <Badge variant="outline" className="text-xs bg-purple-500/30 backdrop-blur-sm text-white border-purple-400/40 mb-1 shadow-lg">
-                {profile.kurdistanRegion}
-              </Badge>
-            )}
-            {profile.relationshipGoals && (
-              <div className="text-xs sm:text-sm text-white/90 drop-shadow-md">
-                Looking for: {profile.relationshipGoals}
-              </div>
-            )}
-          </div>
-          <Badge className="bg-gradient-to-r from-green-500/90 to-emerald-500/90 backdrop-blur-sm text-white text-xs sm:text-sm flex-shrink-0 shadow-lg">
-            <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
-            {profile.compatibilityScore}%
-          </Badge>
-        </div>
-
-        {/* Action Buttons - Minimal Spacing */}
-        <div className="flex justify-center items-center gap-3 sm:gap-4 mt-3 sm:mt-4">
+      {/* Profile Info Overlay - Reduced Blur */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-sm p-2 sm:p-3">
+        {/* Action Buttons - Moved to Top */}
+        <div className="flex justify-center items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
           <Button
             onClick={() => onSwipeAction('pass', profile.id)}
             variant="outline"
@@ -81,6 +50,37 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
           >
             <Star className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
+        </div>
+
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">{profile.name}</h2>
+              <span className="text-lg sm:text-xl text-white drop-shadow-lg">{profile.age}</span>
+              {profile.verified && (
+                <Badge className="bg-blue-500 text-white text-xs shadow-lg">✓</Badge>
+              )}
+            </div>
+            <div className="flex items-center gap-1 text-xs sm:text-sm text-white/95 mb-1 drop-shadow-md">
+              <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
+              <span className="truncate">{profile.location}</span>
+              <span>• {profile.distance}km away</span>
+            </div>
+            {profile.kurdistanRegion && (
+              <Badge variant="outline" className="text-xs bg-purple-500/30 backdrop-blur-sm text-white border-purple-400/40 mb-1 shadow-lg">
+                {profile.kurdistanRegion}
+              </Badge>
+            )}
+            {profile.relationshipGoals && (
+              <div className="text-xs sm:text-sm text-white/90 drop-shadow-md">
+                Looking for: {profile.relationshipGoals}
+              </div>
+            )}
+          </div>
+          <Badge className="bg-gradient-to-r from-green-500/90 to-emerald-500/90 backdrop-blur-sm text-white text-xs sm:text-sm flex-shrink-0 shadow-lg">
+            <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
+            {profile.compatibilityScore}%
+          </Badge>
         </div>
       </div>
 
