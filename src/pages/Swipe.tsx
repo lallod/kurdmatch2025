@@ -7,6 +7,7 @@ import SwipeCard from '@/components/swipe/SwipeCard';
 import NoMoreProfiles from '@/components/swipe/NoMoreProfiles';
 import ExpandedProfileModal from '@/components/swipe/ExpandedProfileModal';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
+import { useProfileData } from '@/hooks/useProfileData';
 
 const mockProfiles: Profile[] = [{
   id: 1,
@@ -81,6 +82,8 @@ const Swipe = () => {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [expandedProfileOpen, setExpandedProfileOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  const { fetchFullProfile, fullProfileData, loading } = useProfileData();
 
   const currentProfile = profiles[currentIndex];
 
@@ -160,7 +163,15 @@ const Swipe = () => {
     }
   };
 
-  const handleProfileTap = () => {
+  const handleProfileTap = async () => {
+    if (!isAnimating && currentProfile) {
+      // Try to fetch full profile data from database
+      const fullProfile = await fetchFullProfile(currentProfile.id);
+      setExpandedProfileOpen(true);
+    }
+  };
+
+  const handleRegularTap = () => {
     if (!isAnimating) {
       setExpandedProfileOpen(true);
     }
@@ -169,6 +180,8 @@ const Swipe = () => {
   if (!currentProfile) {
     return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
   }
+
+  const profileToShow = fullProfileData || currentProfile;
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
@@ -208,7 +221,8 @@ const Swipe = () => {
               onReport={handleReport} 
               onSwipeAction={handleSwipeAction} 
               onMessage={handleMessage}
-              onTap={handleProfileTap}
+              onTap={handleRegularTap}
+              onProfileTap={handleProfileTap}
               isAnimating={isAnimating}
             />
           </div>
@@ -217,12 +231,24 @@ const Swipe = () => {
 
       {/* Expanded Profile Modal */}
       <ExpandedProfileModal
-        profile={currentProfile}
+        profile={profileToShow}
         isOpen={expandedProfileOpen}
-        onClose={() => setExpandedProfileOpen(false)}
+        onClose={() => {
+          setExpandedProfileOpen(false);
+          // Clear full profile data when modal closes
+          // setFullProfileData(null); - keeping it for better UX
+        }}
         onSwipeAction={handleSwipeAction}
         onMessage={handleMessage}
       />
+
+      {loading && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white/20 backdrop-blur-md rounded-lg p-4">
+            <div className="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"></div>
+          </div>
+        </div>
+      )}
 
       <BottomNavigation />
     </div>

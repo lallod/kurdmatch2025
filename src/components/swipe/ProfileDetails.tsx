@@ -7,11 +7,22 @@ interface ProfileDetailsProps {
   profile: Profile;
   isExpanded: boolean;
   onToggleExpanded: () => void;
+  onProfileTap?: () => void;
 }
 
-const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetailsProps) => {
+const ProfileDetails = ({ profile, isExpanded, onToggleExpanded, onProfileTap }: ProfileDetailsProps) => {
+  const handleProfileTap = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onProfileTap?.();
+  };
+
+  const handleReadMoreClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleExpanded();
+  };
+
   return (
-    <div className="p-2 sm:p-3">
+    <div className="p-2 sm:p-3 cursor-pointer" onClick={handleProfileTap}>
       {/* Quick Info */}
       <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 sm:mb-3">
         {profile.occupation && (
@@ -38,7 +49,7 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
             {isExpanded ? profile.bio : `${profile.bio.slice(0, 80)}...`}
           </p>
           <button
-            onClick={onToggleExpanded}
+            onClick={handleReadMoreClick}
             className="text-purple-300 text-sm mt-0.5 hover:text-purple-200 touch-manipulation"
           >
             {isExpanded ? 'Show less' : 'Read more'}

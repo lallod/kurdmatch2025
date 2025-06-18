@@ -19,6 +19,7 @@ interface SwipeCardProps {
   onSwipeAction: (action: SwipeAction, profileId: number) => void;
   onMessage: (profileId: number) => void;
   onTap: () => void;
+  onProfileTap?: () => void;
   isAnimating?: boolean;
 }
 
@@ -33,6 +34,7 @@ const SwipeCard = ({
   onSwipeAction,
   onMessage,
   onTap,
+  onProfileTap,
   isAnimating = false
 }: SwipeCardProps) => {
   const { gestureState, handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipeGesture({
@@ -89,6 +91,7 @@ const SwipeCard = ({
           profile={profile}
           isExpanded={isExpanded}
           onToggleExpanded={onToggleExpanded}
+          onProfileTap={onProfileTap}
         />
       </div>
     </Card>
