@@ -30,7 +30,7 @@ const SwipeCard = ({
   onMessage
 }: SwipeCardProps) => {
   return (
-    <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border-0 shadow-2xl flex flex-col rounded-none">
+    <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border-0 shadow-2xl flex flex-col rounded-none p-0">
       <div className="relative flex-1 min-h-0">
         <ProfilePhotoGallery
           profile={profile}
