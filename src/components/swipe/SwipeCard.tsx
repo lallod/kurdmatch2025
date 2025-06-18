@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
 import ProfileDetails from './ProfileDetails';
-import ImageBioContainer from './ImageBioContainer';
 import { Profile, SwipeAction } from '@/types/swipe';
 
 interface SwipeCardProps {
@@ -32,9 +31,8 @@ const SwipeCard = ({
 }: SwipeCardProps) => {
   return (
     <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border-0 shadow-2xl flex flex-col rounded-none">
-      {/* Mobile/Tablet: Show ImageBio in full screen, Desktop: Show split layout */}
-      <div className="md:hidden h-full">
-        <ImageBioContainer
+      <div className="relative h-[75%] min-h-0">
+        <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
           onNextPhoto={onNextPhoto}
@@ -47,30 +45,12 @@ const SwipeCard = ({
           onMessage={onMessage}
         />
       </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden md:flex md:flex-col md:h-full">
-        <div className="relative h-[75%] min-h-0">
-          <ProfilePhotoGallery
-            profile={profile}
-            currentPhotoIndex={currentPhotoIndex}
-            onNextPhoto={onNextPhoto}
-            onPrevPhoto={onPrevPhoto}
-          />
-          <ProfileInfo 
-            profile={profile} 
-            onReport={onReport}
-            onSwipeAction={onSwipeAction}
-            onMessage={onMessage}
-          />
-        </div>
-        <div className="h-[25%] flex-shrink-0">
-          <ProfileDetails
-            profile={profile}
-            isExpanded={isExpanded}
-            onToggleExpanded={onToggleExpanded}
-          />
-        </div>
+      <div className="h-[25%] flex-shrink-0">
+        <ProfileDetails
+          profile={profile}
+          isExpanded={isExpanded}
+          onToggleExpanded={onToggleExpanded}
+        />
       </div>
     </Card>
   );

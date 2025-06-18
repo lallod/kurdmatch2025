@@ -19,6 +19,15 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
     <div className="p-1 sm:p-2 max-h-96 overflow-y-auto">
       <ProfileQuickBadges profile={profile} />
 
+      {/* Bio - Maximum Width Usage - Show Complete Bio */}
+      {profile.bio && (
+        <div className="mb-2">
+          <p className="text-white text-sm leading-snug">
+            {profile.bio}
+          </p>
+        </div>
+      )}
+
       {/* Comprehensive Profile Information */}
       <div className="space-y-2">
         <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "career"]} className="w-full">
