@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Briefcase, GraduationCap, Heart2, Globe, MessageSquare } from 'lucide-react';
+import { MapPin, Briefcase, GraduationCap, Heart, Globe, MessageSquare } from 'lucide-react';
 import { Profile } from '@/types/swipe';
 
 interface ExpandedProfileProps {
@@ -14,7 +14,7 @@ const ExpandedProfile = ({ profile }: ExpandedProfileProps) => {
       {/* About Section */}
       <div className="space-y-3">
         <h3 className="text-xl font-bold flex items-center gap-2">
-          <Heart2 className="h-5 w-5 text-pink-400" />
+          <Heart className="h-5 w-5 text-pink-400" />
           About {profile.name}
         </h3>
         {profile.bio && (
