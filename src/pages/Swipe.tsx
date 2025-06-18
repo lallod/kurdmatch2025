@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -8,7 +8,9 @@ import NoMoreProfiles from '@/components/swipe/NoMoreProfiles';
 import ExpandedProfileModal from '@/components/swipe/ExpandedProfileModal';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { useProfileData } from '@/hooks/useProfileData';
+import { getMatchRecommendations } from '@/api/profiles';
 
+// Keep mock profiles as fallback
 const mockProfiles: Profile[] = [{
   id: 1,
   name: "Emma Johnson",
@@ -29,7 +31,13 @@ const mockProfiles: Profile[] = [{
   photos: ["https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?auto=format&fit=crop&w=400&q=80", "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80"],
   bio: "Passionate about languages and cultures. Love exploring the rich heritage of Kurdistan while building bridges between communities.",
   relationshipGoals: "Long-term relationship",
-  verified: true
+  verified: true,
+  // Extended fields for demonstration
+  exerciseHabits: "Regular gym sessions",
+  values: ["Family", "Education", "Cultural Heritage"],
+  hobbies: ["Reading", "Traveling", "Cooking"],
+  favoriteBooks: ["The Alchemist", "Kurdish Poetry"],
+  dreamVacation: "Exploring ancient Mesopotamian sites"
 }, {
   id: 2,
   name: "Lucas Davis",
@@ -50,40 +58,98 @@ const mockProfiles: Profile[] = [{
   photos: ["https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=400&q=80", "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80"],
   bio: "Tech enthusiast who loves staying active. Looking for someone to share adventures and build a meaningful connection.",
   relationshipGoals: "Serious dating",
-  verified: false
-}, {
-  id: 3,
-  name: "Mia Garcia",
-  age: 27,
-  location: "Erbil, Kurdistan",
-  avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=150&q=80",
-  distance: 12,
-  compatibilityScore: 88,
-  kurdistanRegion: "South-Kurdistan",
-  area: "South-Kurdistan",
-  interests: ["Cooking", "Reading", "Travel"],
-  occupation: "Teacher",
-  religion: "muslim",
-  bodyType: "average",
-  languages: ["kurdish", "english", "arabic"],
-  height: "165",
-  dietaryPreferences: "No restrictions",
-  photos: ["https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=400&q=80"],
-  bio: "Educator with a passion for learning and sharing knowledge. Love cooking traditional Kurdish dishes and exploring new places.",
-  relationshipGoals: "Marriage",
-  verified: true
+  verified: false,
+  // Extended fields
+  exerciseHabits: "CrossFit and hiking",
+  values: ["Innovation", "Adventure", "Fitness"],
+  hobbies: ["Programming", "Mountain climbing", "Photography"],
+  favoriteMovies: ["Inception", "Kurdish Cinema"],
+  dreamVacation: "Silicon Valley tech tours"
 }];
+
 const Swipe = () => {
   const navigate = useNavigate();
-  const [profiles] = useState<Profile[]>(mockProfiles);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [expandedProfileOpen, setExpandedProfileOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
   
   const { fetchFullProfile, fullProfileData, loading } = useProfileData();
+
+  // Load real profiles from database
+  useEffect(() => {
+    const loadProfiles = async () => {
+      try {
+        setLoadingProfiles(true);
+        const realProfiles = await getMatchRecommendations(10);
+        
+        if (realProfiles && realProfiles.length > 0) {
+          // Transform database profiles to Profile interface
+          const transformedProfiles: Profile[] = realProfiles.map((dbProfile, index) => ({
+            id: parseInt(dbProfile.id),
+            name: dbProfile.name || 'Unknown',
+            age: dbProfile.age || 25,
+            location: dbProfile.location || 'Kurdistan',
+            avatar: dbProfile.profile_image || `https://images.unsplash.com/photo-${1500000000000 + index}?auto=format&fit=crop&w=150&q=80`,
+            distance: Math.floor(Math.random() * 50) + 1,
+            compatibilityScore: Math.floor(Math.random() * 30) + 70,
+            kurdistanRegion: dbProfile.kurdistan_region || undefined,
+            area: dbProfile.kurdistan_region || 'Kurdistan',
+            interests: dbProfile.interests || [],
+            occupation: dbProfile.occupation || undefined,
+            religion: dbProfile.religion || undefined,
+            bodyType: dbProfile.body_type || undefined,
+            languages: dbProfile.languages || [],
+            height: dbProfile.height || undefined,
+            photos: dbProfile.photos?.map(p => p.url) || [dbProfile.profile_image].filter(Boolean),
+            bio: dbProfile.bio || undefined,
+            relationshipGoals: dbProfile.relationship_goals || undefined,
+            verified: dbProfile.verified || false,
+            
+            // Map extended fields
+            ethnicity: dbProfile.ethnicity || undefined,
+            exerciseHabits: dbProfile.exercise_habits || undefined,
+            havePets: dbProfile.have_pets || undefined,
+            drinking: dbProfile.drinking || undefined,
+            smoking: dbProfile.smoking || undefined,
+            dietaryPreferences: dbProfile.dietary_preferences || undefined,
+            sleepSchedule: dbProfile.sleep_schedule || undefined,
+            travelFrequency: dbProfile.travel_frequency || undefined,
+            values: dbProfile.values || undefined,
+            zodiacSign: dbProfile.zodiac_sign || undefined,
+            personalityType: dbProfile.personality_type || undefined,
+            wantChildren: dbProfile.want_children || undefined,
+            education: dbProfile.education || undefined,
+            company: dbProfile.company || undefined,
+            hobbies: dbProfile.hobbies || undefined,
+            favoriteBooks: dbProfile.favorite_books || undefined,
+            favoriteMovies: dbProfile.favorite_movies || undefined,
+            favoriteMusic: dbProfile.favorite_music || undefined,
+            dreamVacation: dbProfile.dream_vacation || undefined,
+            favoriteQuote: dbProfile.favorite_quote || undefined,
+            growthGoals: dbProfile.growth_goals || undefined
+          }));
+          
+          setProfiles(transformedProfiles);
+        } else {
+          // Fallback to mock profiles if no real profiles
+          setProfiles(mockProfiles);
+        }
+      } catch (error) {
+        console.error('Error loading profiles:', error);
+        setProfiles(mockProfiles); // Fallback to mock data
+        toast.error('Using demo profiles');
+      } finally {
+        setLoadingProfiles(false);
+      }
+    };
+
+    loadProfiles();
+  }, []);
 
   const currentProfile = profiles[currentIndex];
 
@@ -177,6 +243,17 @@ const Swipe = () => {
     }
   };
 
+  if (loadingProfiles) {
+    return (
+      <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
+        <div className="bg-white/20 backdrop-blur-md rounded-lg p-6 text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-white">Loading profiles...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentProfile) {
     return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
   }
@@ -235,8 +312,6 @@ const Swipe = () => {
         isOpen={expandedProfileOpen}
         onClose={() => {
           setExpandedProfileOpen(false);
-          // Clear full profile data when modal closes
-          // setFullProfileData(null); - keeping it for better UX
         }}
         onSwipeAction={handleSwipeAction}
         onMessage={handleMessage}
