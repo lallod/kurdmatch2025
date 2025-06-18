@@ -15,22 +15,24 @@ const HeightSelector = ({ value, onChange, unit = 'cm' }: HeightSelectorProps) =
   const generateHeightOptions = () => {
     if (unit === 'cm') {
       const options = [];
-      for (let i = 140; i <= 210; i++) {
+      for (let i = 145; i <= 185; i++) {
         options.push({ value: `${i}`, label: `${i} cm` });
       }
       return options;
     } else {
       const options = [];
-      for (let feet = 4; feet <= 7; feet++) {
+      for (let feet = 4; feet <= 6; feet++) {
         for (let inches = 0; inches < 12; inches++) {
-          if (feet === 7 && inches > 6) break; // Max 7'6"
-          if (feet === 4 && inches < 6) continue; // Min 4'6"
+          if (feet === 6 && inches > 1) break; // Max 6'1" (185cm)
+          if (feet === 4 && inches < 9) continue; // Min 4'9" (145cm)
           const totalInches = feet * 12 + inches;
           const cm = Math.round(totalInches * 2.54);
-          options.push({ 
-            value: `${cm}`, 
-            label: `${feet}'${inches}" (${cm} cm)` 
-          });
+          if (cm >= 145 && cm <= 185) {
+            options.push({ 
+              value: `${cm}`, 
+              label: `${feet}'${inches}" (${cm} cm)` 
+            });
+          }
         }
       }
       return options;
