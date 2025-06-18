@@ -32,9 +32,7 @@ const BottomNavigation = () => {
         const isActive = currentPath === item.path;
         return <Link key={item.name} to={item.path} className={cn("flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-300", isActive ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transform scale-105" : "text-purple-200 hover:text-white hover:bg-white/10")} aria-label={item.name}>
               <item.icon size={22} className={cn("transition-all mb-1", isActive ? "stroke-white" : "stroke-purple-200")} />
-              <span className={cn("text-xs font-medium transition-all", isActive ? "text-white" : "text-purple-200")}>
-                {item.name}
-              </span>
+              
             </Link>;
       })}
       </div>
