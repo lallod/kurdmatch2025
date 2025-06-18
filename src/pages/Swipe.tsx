@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import BottomNavigation from '@/components/BottomNavigation';
-import SwipeHeader from '@/components/swipe/SwipeHeader';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import NoMoreProfiles from '@/components/swipe/NoMoreProfiles';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
@@ -260,9 +258,7 @@ const Swipe = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
-      <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
-
-      {/* Main Card - starts from top with no padding */}
+      {/* Main Card - full screen usage without header padding */}
       <div className="pb-16 h-full flex flex-col">
         <div className="flex-1 h-full w-full flex items-center justify-center min-h-0">
           <div className="w-full h-full flex">
