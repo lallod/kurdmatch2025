@@ -16,6 +16,14 @@ interface ProfileInfoProps {
 const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInfoProps) => {
   const { generatedBio, isGenerating } = useBioGeneration(profile);
 
+  // Mock current user interests for matching (in real app, this would come from auth context)
+  const currentUserInterests = ["Language", "Culture", "Travel", "Reading", "Technology", "Sports"];
+  
+  // Find matching interests between current user and viewed profile
+  const matchingInterests = profile.interests?.filter(interest => 
+    currentUserInterests.includes(interest)
+  ) || [];
+
   return (
     <>
       {/* Profile Info Overlay - Reduced Blur */}
@@ -124,22 +132,31 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
                 {generatedBio}
               </p>
               
-              {/* Interest Tags */}
-              {profile.interests && profile.interests.length > 0 && (
+              {/* Matching Interest Tags - Only show interests that both users have */}
+              {matchingInterests.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  {profile.interests.slice(0, 3).map((interest, index) => (
+                  <Badge variant="secondary" className="text-xs bg-green-500/20 backdrop-blur-sm text-green-200 border-green-400/30 px-1.5 py-0.5 mb-1">
+                    🤝 {matchingInterests.length} common interests
+                  </Badge>
+                  {matchingInterests.slice(0, 3).map((interest, index) => (
                     <Badge 
                       key={index}
-                      className="text-xs bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm text-purple-200 border-purple-400/30 px-1.5 py-0.5"
+                      className="text-xs bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm text-green-200 border-green-400/30 px-1.5 py-0.5"
                     >
                       {interest}
                     </Badge>
                   ))}
-                  {profile.interests.length > 3 && (
+                  {matchingInterests.length > 3 && (
                     <Badge className="text-xs bg-white/10 backdrop-blur-sm text-white/70 border-white/20 px-1.5 py-0.5">
-                      +{profile.interests.length - 3} more
+                      +{matchingInterests.length - 3} more
                     </Badge>
                   )}
+                </div>
+              )}
+              
+              {matchingInterests.length === 0 && profile.interests && (
+                <div className="text-xs text-white/60">
+                  No common interests found
                 </div>
               )}
             </div>
