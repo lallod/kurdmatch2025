@@ -35,15 +35,20 @@ const SwipeCard = ({
   useEffect(() => {
     const handleScroll = () => {
       if (cardRef.current) {
-        const scrollTop = cardRef.current.scrollTop;
-        // Show details after scrolling down 50px
-        setShowDetails(scrollTop > 50);
+        const { scrollTop, scrollHeight, clientHeight } = cardRef.current;
+        const scrollPercentage = scrollTop / (scrollHeight - clientHeight);
+        
+        // Show details after scrolling down 10% of the scrollable content
+        setShowDetails(scrollPercentage > 0.1 || scrollTop > 30);
       }
     };
 
     const cardElement = cardRef.current;
     if (cardElement) {
-      cardElement.addEventListener('scroll', handleScroll);
+      cardElement.addEventListener('scroll', handleScroll, { passive: true });
+      // Also check initial scroll position
+      handleScroll();
+      
       return () => cardElement.removeEventListener('scroll', handleScroll);
     }
   }, []);
@@ -85,7 +90,7 @@ const SwipeCard = ({
       
       {/* Scroll indicator when details are hidden */}
       {!showDetails && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white/60 animate-pulse">
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white/60 animate-pulse z-10">
           <div className="text-xs mb-1">Scroll for more</div>
           <div className="w-1 h-8 bg-white/30 rounded-full">
             <div className="w-1 h-2 bg-white/60 rounded-full animate-bounce"></div>
