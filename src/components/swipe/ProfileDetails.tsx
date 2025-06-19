@@ -31,22 +31,22 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
   };
 
   return (
-    <div className="p-4 sm:p-6 max-h-screen overflow-y-auto">
+    <div className="p-1 sm:p-2 max-h-96 overflow-y-auto">
       <ProfileQuickBadges profile={profile} />
 
       {/* Comprehensive Profile Information */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <Accordion 
           type="multiple" 
-          className="w-full space-y-2"
+          className="w-full"
           onValueChange={handleAccordionChange}
         >
           {/* Basic Information */}
           <AccordionSectionItem
             value="basics"
             title="Basic Info"
-            icon={<User className="h-5 w-5" />}
-            color="text-white"
+            icon={<User />}
+            color="text-purple-300"
           >
             {profile.bio && (
               <div className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10">
@@ -69,8 +69,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
           <AccordionSectionItem
             value="career"
             title="Career & Education"
-            icon={<Briefcase className="h-5 w-5" />}
-            color="text-white"
+            icon={<Briefcase />}
+            color="text-purple-300"
           >
             <ProfileDetailItem label="Education" value={profile.education} />
             <ProfileDetailItem label="Company" value={profile.company} />
@@ -83,8 +83,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
           <AccordionSectionItem
             value="lifestyle"
             title="Lifestyle"
-            icon={<Home className="h-5 w-5" />}
-            color="text-white"
+            icon={<Home />}
+            color="text-purple-300"
           >
             <ProfileDetailItem label="Exercise Habits" value={profile.exerciseHabits} />
             <ProfileDetailItem label="Dietary Preferences" value={profile.dietaryPreferences} />
@@ -100,8 +100,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
           <AccordionSectionItem
             value="beliefs"
             title="Beliefs & Values"
-            icon={<Star className="h-5 w-5" />}
-            color="text-white"
+            icon={<Star />}
+            color="text-purple-300"
           >
             <ProfileDetailItem label="Religion" value={profile.religion} />
             <ProfileDetailItem label="Political Views" value={profile.politicalViews} />
@@ -112,8 +112,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
           <AccordionSectionItem
             value="relationships"
             title="Relationships"
-            icon={<Heart className="h-5 w-5" />}
-            color="text-white"
+            icon={<Heart />}
+            color="text-purple-300"
           >
             <ProfileDetailItem label="Want Children" value={profile.wantChildren} />
             <ProfileDetailItem label="Children Status" value={profile.childrenStatus} />
@@ -126,8 +126,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
           <AccordionSectionItem
             value="interests"
             title="Interests & Hobbies"
-            icon={<Palette className="h-5 w-5" />}
-            color="text-white"
+            icon={<Palette />}
+            color="text-purple-300"
           >
             <ProfileInterestsBadges interests={profile.interests || []} />
             <ProfileDetailItem label="Hobbies" value={profile.hobbies} />
@@ -141,8 +141,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
           <AccordionSectionItem
             value="favorites"
             title="Favorites"
-            icon={<Trophy className="h-5 w-5" />}
-            color="text-white"
+            icon={<Trophy />}
+            color="text-purple-300"
           >
             <ProfileDetailItem label="Books" value={profile.favoriteBooks} />
             <ProfileDetailItem label="Movies" value={profile.favoriteMovies} />
@@ -159,8 +159,8 @@ const ProfileDetails = ({ profile, isExpanded, onToggleExpanded }: ProfileDetail
           <AccordionSectionItem
             value="growth"
             title="Personal Growth"
-            icon={<Globe className="h-5 w-5" />}
-            color="text-white"
+            icon={<Globe />}
+            color="text-purple-300"
           >
             <ProfileDetailItem label="Growth Goals" value={profile.growthGoals} />
             <ProfileDetailItem label="Morning Routine" value={profile.morningRoutine} />

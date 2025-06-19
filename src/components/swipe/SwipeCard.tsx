@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronDown } from 'lucide-react';
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
 import ProfileDetails from './ProfileDetails';
@@ -32,77 +30,73 @@ const SwipeCard = ({
   onMessage
 }: SwipeCardProps) => {
   const [showDetails, setShowDetails] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (!scrollElement) return;
-
     const handleScroll = () => {
-      const scrollTop = scrollElement.scrollTop;
-      console.log('Scroll position:', scrollTop); // Debug log
-      
-      // Show details when user scrolls down more than 30px
-      if (scrollTop > 30 && !showDetails) {
-        console.log('Showing details'); // Debug log
-        setShowDetails(true);
-      } else if (scrollTop <= 30 && showDetails) {
-        console.log('Hiding details'); // Debug log
-        setShowDetails(false);
+      if (cardRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = cardRef.current;
+        const scrollPercentage = scrollTop / (scrollHeight - clientHeight);
+        
+        // Show details after scrolling down 10% of the scrollable content
+        setShowDetails(scrollPercentage > 0.1 || scrollTop > 30);
       }
     };
 
-    scrollElement.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      scrollElement.removeEventListener('scroll', handleScroll);
-    };
-  }, [showDetails]);
+    const cardElement = cardRef.current;
+    if (cardElement) {
+      cardElement.addEventListener('scroll', handleScroll, { passive: true });
+      // Also check initial scroll position
+      handleScroll();
+      
+      return () => cardElement.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   return (
-    <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border-0 shadow-2xl flex flex-col rounded-none">
-      <div className="flex-1 relative">
-        <ScrollArea className="h-full" ref={scrollRef}>
-          <div className="min-h-[200vh]"> {/* Ensure scrollable content */}
-            {/* Main Content - Photo and Info */}
-            <div className="relative h-screen">
-              <ProfilePhotoGallery
-                profile={profile}
-                currentPhotoIndex={currentPhotoIndex}
-                onNextPhoto={onNextPhoto}
-                onPrevPhoto={onPrevPhoto}
-              />
-              <ProfileInfo 
-                profile={profile} 
-                onReport={onReport}
-                onSwipeAction={onSwipeAction}
-                onMessage={onMessage}
-              />
-              
-              {/* Scroll Indicator - Always show if details are not visible */}
-              {!showDetails && (
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-                  <div className="flex flex-col items-center text-white/80 bg-black/30 backdrop-blur-sm rounded-full px-3 py-2">
-                    <span className="text-xs mb-1 font-medium">Scroll for more</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Details Section - Show when scrolling */}
-            <div className={`transition-all duration-300 ${showDetails ? 'opacity-100' : 'opacity-0'}`}>
-              <div className="bg-gradient-to-b from-purple-900/95 via-purple-800/90 to-pink-900/90 backdrop-blur-lg min-h-screen">
-                <ProfileDetails
-                  profile={profile}
-                  isExpanded={true}
-                  onToggleExpanded={onToggleExpanded}
-                />
-              </div>
-            </div>
-          </div>
-        </ScrollArea>
+    <Card 
+      ref={cardRef}
+      className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border-0 shadow-2xl flex flex-col rounded-none overflow-y-auto"
+    >
+      <div className="relative h-[75%] min-h-0 flex-shrink-0">
+        <ProfilePhotoGallery
+          profile={profile}
+          currentPhotoIndex={currentPhotoIndex}
+          onNextPhoto={onNextPhoto}
+          onPrevPhoto={onPrevPhoto}
+        />
+        <ProfileInfo 
+          profile={profile} 
+          onReport={onReport}
+          onSwipeAction={onSwipeAction}
+          onMessage={onMessage}
+        />
       </div>
+      
+      {/* ProfileDetails - Only show after scrolling */}
+      <div className={`transition-all duration-500 ease-in-out ${
+        showDetails 
+          ? 'h-[25%] opacity-100 translate-y-0' 
+          : 'h-0 opacity-0 translate-y-4'
+      } flex-shrink-0 overflow-hidden`}>
+        {showDetails && (
+          <ProfileDetails
+            profile={profile}
+            isExpanded={isExpanded}
+            onToggleExpanded={onToggleExpanded}
+          />
+        )}
+      </div>
+      
+      {/* Scroll indicator when details are hidden */}
+      {!showDetails && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white/60 animate-pulse z-10">
+          <div className="text-xs mb-1">Scroll for more</div>
+          <div className="w-1 h-8 bg-white/30 rounded-full">
+            <div className="w-1 h-2 bg-white/60 rounded-full animate-bounce"></div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
