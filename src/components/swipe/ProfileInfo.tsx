@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Sparkles, Flag, X, MessageCircle, Heart, Star } from 'lucide-react';
 import { Profile, SwipeAction } from '@/types/swipe';
+import { useBioGeneration } from '@/hooks/useBioGeneration';
 
 interface ProfileInfoProps {
   profile: Profile;
@@ -13,6 +14,8 @@ interface ProfileInfoProps {
 }
 
 const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInfoProps) => {
+  const { generatedBio, isGenerating } = useBioGeneration(profile);
+
   return (
     <>
       {/* Profile Info Overlay - Reduced Blur */}
@@ -100,6 +103,49 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
             <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
             {profile.compatibilityScore}%
           </Badge>
+        </div>
+      </div>
+
+      {/* Auto-Generated Bio Section */}
+      <div className="absolute bottom-[-120px] left-0 right-0 bg-gradient-to-b from-transparent via-black/80 to-black/95 backdrop-blur-md p-3 sm:p-4 animate-fade-in">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-4 shadow-2xl">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Sparkles className="h-4 w-4 text-white" />
+            </div>
+            <h3 className="text-white font-semibold text-sm sm:text-base">About {profile.name}</h3>
+          </div>
+          
+          {isGenerating ? (
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              <div className="animate-pulse">Generating bio...</div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-white/95 text-sm sm:text-base leading-relaxed">
+                {generatedBio}
+              </p>
+              
+              {/* Interest Tags */}
+              {profile.interests && profile.interests.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {profile.interests.slice(0, 4).map((interest, index) => (
+                    <Badge 
+                      key={index}
+                      className="text-xs bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm text-purple-200 border-purple-400/30 px-2 py-1"
+                    >
+                      {interest}
+                    </Badge>
+                  ))}
+                  {profile.interests.length > 4 && (
+                    <Badge className="text-xs bg-white/10 backdrop-blur-sm text-white/70 border-white/20 px-2 py-1">
+                      +{profile.interests.length - 4} more
+                    </Badge>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
