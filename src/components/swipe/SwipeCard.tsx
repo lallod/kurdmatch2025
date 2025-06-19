@@ -41,8 +41,8 @@ const SwipeCard = ({
       
       setScrollPosition(scrollTop);
       
-      // Show details when user scrolls down more than 100px
-      if (scrollTop > 100) {
+      // Show details when user scrolls down more than 50px
+      if (scrollTop > 50) {
         setShowDetails(true);
       } else {
         setShowDetails(false);
@@ -88,9 +88,9 @@ const SwipeCard = ({
             )}
           </div>
 
-          {/* Details Section - Only visible when scrolling */}
+          {/* Details Section - Accordion sections visible when scrolling */}
           {showDetails && (
-            <div className="bg-gradient-to-b from-black/95 to-black/80 backdrop-blur-lg">
+            <div className="bg-gradient-to-b from-purple-900/95 via-purple-800/90 to-pink-900/90 backdrop-blur-lg min-h-screen">
               <ProfileDetails
                 profile={profile}
                 isExpanded={true}

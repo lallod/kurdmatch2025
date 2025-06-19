@@ -12,16 +12,19 @@ interface AccordionSectionItemProps {
 
 const AccordionSectionItem = ({ value, title, icon, color, children }: AccordionSectionItemProps) => {
   return (
-    <AccordionItem value={value} className="border-purple-400/20">
-      <AccordionTrigger className="text-white hover:text-purple-200 py-2">
-        <div className="flex items-center gap-2">
-          <div className={`h-4 w-4 ${color}`}>
+    <AccordionItem 
+      value={value} 
+      className="border border-white/20 bg-white/5 backdrop-blur-sm rounded-xl px-4 py-2 hover:bg-white/10 transition-all duration-200"
+    >
+      <AccordionTrigger className="text-white hover:text-purple-200 py-3 hover:no-underline">
+        <div className="flex items-center gap-3">
+          <div className={`${color} flex-shrink-0`}>
             {icon}
           </div>
-          <span className="text-sm font-medium">{title}</span>
+          <span className="text-base font-medium">{title}</span>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="space-y-1 pt-2">
+      <AccordionContent className="space-y-2 pt-2 pb-1">
         {children}
       </AccordionContent>
     </AccordionItem>
