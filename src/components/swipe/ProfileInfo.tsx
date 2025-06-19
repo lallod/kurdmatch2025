@@ -104,42 +104,40 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
             {profile.compatibilityScore}%
           </Badge>
         </div>
-      </div>
 
-      {/* Auto-Generated Bio Section */}
-      <div className="absolute bottom-[-120px] left-0 right-0 bg-gradient-to-b from-transparent via-black/80 to-black/95 backdrop-blur-md p-3 sm:p-4 animate-fade-in">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-4 shadow-2xl">
+        {/* Auto-Generated Bio Section - Moved inside main overlay to prevent overlap */}
+        <div className="mt-4 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-3 sm:p-4 shadow-2xl animate-fade-in">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-white" />
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
             </div>
-            <h3 className="text-white font-semibold text-sm sm:text-base">About {profile.name}</h3>
+            <h3 className="text-white font-semibold text-xs sm:text-sm">About {profile.name}</h3>
           </div>
           
           {isGenerating ? (
-            <div className="flex items-center gap-2 text-white/80 text-sm">
+            <div className="flex items-center gap-2 text-white/80 text-xs sm:text-sm">
               <div className="animate-pulse">Generating bio...</div>
             </div>
           ) : (
-            <div className="space-y-3">
-              <p className="text-white/95 text-sm sm:text-base leading-relaxed">
+            <div className="space-y-2">
+              <p className="text-white/95 text-xs sm:text-sm leading-relaxed">
                 {generatedBio}
               </p>
               
               {/* Interest Tags */}
               {profile.interests && profile.interests.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {profile.interests.slice(0, 4).map((interest, index) => (
+                <div className="flex flex-wrap gap-1">
+                  {profile.interests.slice(0, 3).map((interest, index) => (
                     <Badge 
                       key={index}
-                      className="text-xs bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm text-purple-200 border-purple-400/30 px-2 py-1"
+                      className="text-xs bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm text-purple-200 border-purple-400/30 px-1.5 py-0.5"
                     >
                       {interest}
                     </Badge>
                   ))}
-                  {profile.interests.length > 4 && (
-                    <Badge className="text-xs bg-white/10 backdrop-blur-sm text-white/70 border-white/20 px-2 py-1">
-                      +{profile.interests.length - 4} more
+                  {profile.interests.length > 3 && (
+                    <Badge className="text-xs bg-white/10 backdrop-blur-sm text-white/70 border-white/20 px-1.5 py-0.5">
+                      +{profile.interests.length - 3} more
                     </Badge>
                   )}
                 </div>
