@@ -15,8 +15,12 @@ const ProfilePhotoGallery = ({
 }: ProfilePhotoGalleryProps) => {
   return <div className="relative w-full h-full">
       {/* Image Container with Full Screen Coverage */}
-      <div className="relative w-full h-full">
-        <img src={profile.photos?.[currentPhotoIndex] || profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+      <div className="relative w-full h-full overflow-hidden">
+        <img 
+          src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
+          alt={profile.name} 
+          className="w-full h-full object-cover object-center" 
+        />
         
         {/* Photo Navigation - Edge to Edge */}
         {profile.photos && profile.photos.length > 1 && <>
