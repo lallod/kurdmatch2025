@@ -19,7 +19,7 @@ const ProfilePhotoGallery = ({
         <img 
           src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
           alt={profile.name} 
-          className="w-full h-full object-cover object-center" 
+          className="w-full h-full object-cover object-center min-w-full min-h-full" 
         />
         
         {/* Photo Navigation - Edge to Edge */}
