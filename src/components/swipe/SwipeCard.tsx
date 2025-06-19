@@ -38,13 +38,11 @@ const SwipeCard = ({
   const handleScroll = () => {
     if (scrollRef.current) {
       const scrollTop = scrollRef.current.scrollTop;
-      const scrollHeight = scrollRef.current.scrollHeight;
-      const clientHeight = scrollRef.current.clientHeight;
       
       setScrollPosition(scrollTop);
       
-      // Show details when user starts scrolling
-      if (scrollTop > 50) {
+      // Show details when user scrolls down more than 100px
+      if (scrollTop > 100) {
         setShowDetails(true);
       } else {
         setShowDetails(false);
@@ -63,9 +61,9 @@ const SwipeCard = ({
   return (
     <Card className="w-full h-full overflow-hidden backdrop-blur-md bg-white/10 border-0 shadow-2xl flex flex-col rounded-none">
       <ScrollArea className="flex-1" ref={scrollRef}>
-        <div className="h-full">
+        <div className="h-full pb-20">
           {/* Main Content - Photo and Info */}
-          <div className="relative min-h-screen">
+          <div className="relative h-screen">
             <ProfilePhotoGallery
               profile={profile}
               currentPhotoIndex={currentPhotoIndex}
@@ -81,10 +79,10 @@ const SwipeCard = ({
             
             {/* Scroll Indicator */}
             {!showDetails && (
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <div className="flex flex-col items-center text-white/70">
-                  <span className="text-xs mb-1">Scroll for more</span>
-                  <ChevronDown className="h-5 w-5" />
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+                <div className="flex flex-col items-center text-white/80 bg-black/30 backdrop-blur-sm rounded-full px-3 py-2">
+                  <span className="text-xs mb-1 font-medium">Scroll for more</span>
+                  <ChevronDown className="h-4 w-4" />
                 </div>
               </div>
             )}
@@ -100,9 +98,6 @@ const SwipeCard = ({
               />
             </div>
           )}
-          
-          {/* Extra spacing to allow full scroll */}
-          <div className="h-20"></div>
         </div>
       </ScrollArea>
     </Card>

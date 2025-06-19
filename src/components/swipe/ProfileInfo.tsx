@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Sparkles, Flag, X, MessageCircle, Heart, Star } from 'lucide-react';
+import { MapPin, Sparkles, Flag, X, MessageCircle, Heart, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { Profile, SwipeAction } from '@/types/swipe';
 import { useBioGeneration } from '@/hooks/useBioGeneration';
 
@@ -15,6 +15,7 @@ interface ProfileInfoProps {
 
 const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInfoProps) => {
   const { generatedBio, isGenerating } = useBioGeneration(profile);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
 
   // Mock current user interests for matching (in real app, this would come from auth context)
   const currentUserInterests = ["Language", "Culture", "Travel", "Reading", "Technology", "Sports"];
@@ -24,16 +25,25 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
     currentUserInterests.includes(interest)
   ) || [];
 
+  // Function to truncate bio to 3 lines
+  const truncateBio = (text: string, maxLength: number = 120) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  const displayBio = isBioExpanded ? generatedBio : truncateBio(generatedBio);
+  const shouldShowReadMore = generatedBio.length > 120;
+
   return (
     <>
-      {/* Profile Info Overlay - Reduced Blur */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-sm p-2 sm:p-3">
+      {/* Profile Info Overlay - Positioned to fit screen */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent backdrop-blur-sm p-3 pb-6">
         {/* Action Buttons - Moved to Top */}
-        <div className="flex justify-center items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+        <div className="flex justify-center items-center gap-3 mb-4">
           <Button
             onClick={() => onSwipeAction('pass', profile.id)}
             variant="outline"
-            className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-red-500/30 backdrop-blur-md border-red-400/40 text-red-300 hover:bg-red-500/40 hover:backdrop-blur-lg touch-manipulation shadow-lg transition-all duration-200"
+            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-500/30 backdrop-blur-md border-red-400/40 text-red-300 hover:bg-red-500/40 hover:backdrop-blur-lg touch-manipulation shadow-lg transition-all duration-200"
           >
             <X className="h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
@@ -49,7 +59,7 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
           <Button
             onClick={() => onSwipeAction('like', profile.id)}
             variant="outline"
-            className="w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-md border-purple-400/40 text-purple-300 hover:from-purple-500/40 hover:to-pink-500/40 hover:backdrop-blur-lg touch-manipulation shadow-lg transition-all duration-200"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-md border-purple-400/40 text-purple-300 hover:from-purple-500/40 hover:to-pink-500/40 hover:backdrop-blur-lg touch-manipulation shadow-lg transition-all duration-200"
           >
             <Heart className="h-6 w-6 sm:h-7 sm:w-7" />
           </Button>
@@ -63,9 +73,9 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
           </Button>
         </div>
 
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
+            <div className="flex items-center gap-1.5 mb-1">
               <h2 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">{profile.name}</h2>
               <span className="text-lg sm:text-xl text-white drop-shadow-lg">{profile.age}</span>
               {profile.verified && (
@@ -88,8 +98,8 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
               </div>
             )}
             
-            {/* Quick Info Badges - Moved here from ProfilePhotoGallery */}
-            <div className="flex flex-wrap gap-1 mb-1">
+            {/* Quick Info Badges */}
+            <div className="flex flex-wrap gap-1 mb-2">
               {profile.occupation && (
                 <Badge variant="secondary" className="text-xs bg-black/40 backdrop-blur-sm text-white border-white/20 px-1.5 py-0.5">
                   {profile.occupation}
@@ -113,13 +123,13 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
           </Badge>
         </div>
 
-        {/* Auto-Generated Bio Section - Moved inside main overlay to prevent overlap */}
-        <div className="mt-4 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-3 sm:p-4 shadow-2xl animate-fade-in">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+        {/* Auto-Generated Bio Section - Compact with Read More */}
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-3 shadow-2xl">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Sparkles className="h-3 w-3 text-white" />
             </div>
-            <h3 className="text-white font-semibold text-xs sm:text-sm">About {profile.name}</h3>
+            <h3 className="text-white font-semibold text-sm">About {profile.name}</h3>
           </div>
           
           {isGenerating ? (
@@ -128,17 +138,33 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
             </div>
           ) : (
             <div className="space-y-2">
-              <p className="text-white/95 text-xs sm:text-sm leading-relaxed">
-                {generatedBio}
-              </p>
+              <div className="text-white/95 text-xs sm:text-sm leading-relaxed">
+                {displayBio}
+                {shouldShowReadMore && (
+                  <button
+                    onClick={() => setIsBioExpanded(!isBioExpanded)}
+                    className="ml-2 text-purple-300 hover:text-purple-200 font-medium inline-flex items-center gap-1 transition-colors"
+                  >
+                    {isBioExpanded ? (
+                      <>
+                        Read Less <ChevronUp className="h-3 w-3" />
+                      </>
+                    ) : (
+                      <>
+                        Read More <ChevronDown className="h-3 w-3" />
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
               
               {/* Matching Interest Tags - Only show interests that both users have */}
               {matchingInterests.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  <Badge variant="secondary" className="text-xs bg-green-500/20 backdrop-blur-sm text-green-200 border-green-400/30 px-1.5 py-0.5 mb-1">
+                  <Badge variant="secondary" className="text-xs bg-green-500/20 backdrop-blur-sm text-green-200 border-green-400/30 px-1.5 py-0.5">
                     🤝 {matchingInterests.length} common interests
                   </Badge>
-                  {matchingInterests.slice(0, 3).map((interest, index) => (
+                  {matchingInterests.slice(0, 2).map((interest, index) => (
                     <Badge 
                       key={index}
                       className="text-xs bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm text-green-200 border-green-400/30 px-1.5 py-0.5"
@@ -146,9 +172,9 @@ const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInf
                       {interest}
                     </Badge>
                   ))}
-                  {matchingInterests.length > 3 && (
+                  {matchingInterests.length > 2 && (
                     <Badge className="text-xs bg-white/10 backdrop-blur-sm text-white/70 border-white/20 px-1.5 py-0.5">
-                      +{matchingInterests.length - 3} more
+                      +{matchingInterests.length - 2} more
                     </Badge>
                   )}
                 </div>
