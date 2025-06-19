@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Profile } from '@/types/swipe';
 interface ProfilePhotoGalleryProps {
@@ -15,7 +16,7 @@ const ProfilePhotoGallery = ({
   return <div className="relative w-full h-full">
       {/* Image Container with Full Screen Coverage */}
       <div className="relative w-full h-full">
-        <img src={profile.photos?.[currentPhotoIndex] || profile.avatar} alt={profile.name} className="max-w-full min-h-full max-h-full min-h-full object-cover" />
+        <img src={profile.photos?.[currentPhotoIndex] || profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
         
         {/* Photo Navigation - Edge to Edge */}
         {profile.photos && profile.photos.length > 1 && <>
