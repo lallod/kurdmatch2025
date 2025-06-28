@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,10 +6,12 @@ import { Eye, Clock, ArrowRight, Crown, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import BottomNavigation from '@/components/BottomNavigation';
+import PremiumPlansDialog from '@/components/subscription/PremiumPlansDialog';
 
 const ViewedMe = () => {
   const navigate = useNavigate();
   const [profileViewingData, setProfileViewingData] = useState({});
+  const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   
   // Mock subscription status - in real app, this would come from auth context
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -81,8 +82,14 @@ const ViewedMe = () => {
   };
 
   const handleUpgrade = () => {
-    // In real app, this would navigate to subscription page
-    console.log('Navigate to subscription page');
+    setShowPremiumDialog(true);
+  };
+
+  const handleSelectPlan = (planId: string) => {
+    // In real app, this would integrate with Stripe
+    console.log('Selected plan:', planId);
+    setShowPremiumDialog(false);
+    // Navigate to checkout or handle subscription logic
   };
 
   // Subscription gate component
@@ -234,6 +241,13 @@ const ViewedMe = () => {
           </div>
         )}
       </div>
+      
+      <PremiumPlansDialog
+        open={showPremiumDialog}
+        onOpenChange={setShowPremiumDialog}
+        onSelectPlan={handleSelectPlan}
+      />
+      
       <BottomNavigation />
     </div>
   );
