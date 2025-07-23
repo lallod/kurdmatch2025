@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { useLocationManager } from '@/components/my-profile/sections/location/useLocationManager';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { registrationSchema, RegistrationFormValues } from '../utils/registrationSchema';
@@ -175,6 +176,98 @@ export const useRegistrationFormLogic = () => {
       
       const { data: signUpData, error: signUpError } = await signUp(data.email, data.password);
       if (signUpError) throw signUpError;
+      
+      if (!signUpData.user) throw new Error("User not created.");
+      
+      const userId = signUpData.user.id;
+      
+      // Create profile data
+      const profileData = {
+        id: userId,
+        name: `${data.firstName} ${data.lastName}`,
+        age: (() => {
+          const birthDate = new Date(data.dateOfBirth);
+          if (!isNaN(birthDate.getTime())) {
+            const ageDifMs = Date.now() - birthDate.getTime();
+            const ageDate = new Date(ageDifMs);
+            return Math.abs(ageDate.getUTCFullYear() - 1970);
+          }
+          return 18;
+        })(),
+        gender: data.gender,
+        height: data.height,
+        born_in: data.bornIn,
+        languages: data.languages,
+        occupation: data.occupation,
+        location: data.location,
+        dream_vacation: data.dreamVacation || null,
+      };
+      
+      console.log('Creating profile:', profileData);
+      
+      // Insert profile into database
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert(profileData);
+      
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        throw new Error('Failed to create profile: ' + profileError.message);
+      }
+      
+      // Handle photo uploads if any
+      if (data.photos && data.photos.length > 0) {
+        const photoUrls: string[] = [];
+        
+        for (const [index, fileDataUrl] of data.photos.entries()) {
+          try {
+            const response = await fetch(fileDataUrl);
+            const blob = await response.blob();
+            
+            const fileExt = blob.type.split('/')[1];
+            const fileName = `${userId}/profile_${index + 1}_${Date.now()}.${fileExt}`;
+            
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from('profile-photos')
+              .upload(fileName, blob, { 
+                cacheControl: '3600', 
+                upsert: false, 
+                contentType: blob.type 
+              });
+
+            if (uploadError) {
+              console.error(`Photo ${index + 1} upload failed:`, uploadError);
+              continue;
+            }
+
+            const { data: urlData } = supabase.storage
+              .from('profile-photos')
+              .getPublicUrl(uploadData.path);
+            
+            photoUrls.push(urlData.publicUrl);
+          } catch (error) {
+            console.error(`Error processing photo ${index + 1}:`, error);
+            continue;
+          }
+        }
+        
+        // Insert photos into photos table
+        if (photoUrls.length > 0) {
+          const photoRecords = photoUrls.map((url, index) => ({
+            profile_id: userId,
+            url: url,
+            is_primary: index === 0,
+          }));
+          
+          const { error: photoInsertError } = await supabase
+            .from('photos')
+            .insert(photoRecords);
+            
+          if (photoInsertError) {
+            console.error("Failed to save photos:", photoInsertError);
+          }
+        }
+      }
       
       clearSavedData();
       
