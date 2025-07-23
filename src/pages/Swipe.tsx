@@ -259,24 +259,36 @@ const Swipe = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
+    <div className="h-screen relative overflow-hidden">
+      {/* Enhanced Purple Gradient Background with Depth */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent" />
+      </div>
+
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
-      {/* Main Card - remove top padding to make photo start at top */}
-      <div className="pb-16 h-full flex flex-col">
-        <div className="flex-1 h-full w-full flex items-center justify-center min-h-0">
-          <div className="w-full h-full flex">
-            <SwipeCard 
-              profile={currentProfile} 
-              currentPhotoIndex={currentPhotoIndex} 
-              isExpanded={isExpanded} 
-              onNextPhoto={nextPhoto} 
-              onPrevPhoto={prevPhoto} 
-              onToggleExpanded={() => setIsExpanded(!isExpanded)} 
-              onReport={handleReport} 
-              onSwipeAction={handleSwipeAction} 
-              onMessage={handleMessage} 
-            />
+      {/* Main Card Container with Enhanced Styling */}
+      <div className="relative h-full pb-16">
+        <div className="h-full w-full flex items-center justify-center p-2 md:p-4">
+          <div className="w-full max-w-sm md:max-w-md lg:max-w-lg h-full relative">
+            {/* Card Glow Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75" />
+            
+            {/* Main Card */}
+            <div className="relative h-full animate-scale-in">
+              <SwipeCard 
+                profile={currentProfile} 
+                currentPhotoIndex={currentPhotoIndex} 
+                isExpanded={isExpanded} 
+                onNextPhoto={nextPhoto} 
+                onPrevPhoto={prevPhoto} 
+                onToggleExpanded={() => setIsExpanded(!isExpanded)} 
+                onReport={handleReport} 
+                onSwipeAction={handleSwipeAction} 
+                onMessage={handleMessage} 
+              />
+            </div>
           </div>
         </div>
       </div>
