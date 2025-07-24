@@ -84,6 +84,37 @@ const AIPhotoStudioDialog: React.FC<AIPhotoStudioDialogProps> = ({
     });
   };
 
+  const handleAIEnhance = async () => {
+    if (!photoUrl) return;
+
+    setIsLoading(true);
+    toast({ 
+      title: 'AI Photo Enhancement', 
+      description: 'Enhancing your photo with AI to get more matches...' 
+    });
+
+    try {
+      // Simulate AI enhancement process
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // In a real implementation, this would call an AI service
+      // For now, we'll just show a success message
+      toast({ 
+        title: 'Photo Enhanced!', 
+        description: 'Your photo has been enhanced with AI for better match potential. This is a premium feature preview.' 
+      });
+      
+    } catch (error) {
+      toast({
+        title: 'Enhancement Failed',
+        description: 'AI photo enhancement is a premium feature. Upgrade to access!',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!photoUrl) return null;
 
   return (
@@ -110,6 +141,7 @@ const AIPhotoStudioDialog: React.FC<AIPhotoStudioDialogProps> = ({
                     <AIToolButton icon={Crop} label="Smart Crop" onClick={() => handleToolClick('Smart Crop')} disabled={isLoading} />
                     <AIToolButton icon={Palette} label="Style Filters" onClick={() => handleToolClick('Style Filters')} disabled={isLoading} />
                     <AIToolButton icon={Eraser} label="Magic Eraser" onClick={() => handleToolClick('Magic Eraser')} isPremium disabled={isLoading} />
+                    <AIToolButton icon={Wand2} label="AI Enhance" onClick={handleAIEnhance} isPremium disabled={isLoading} />
                 </div>
             </div>
         </div>

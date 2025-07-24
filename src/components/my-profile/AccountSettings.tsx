@@ -4,6 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { useNavigate } from 'react-router-dom';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { 
   Shield, 
   Bell, 
@@ -19,7 +21,8 @@ import {
   Trash2,
   Settings,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  LogOut
 } from 'lucide-react';
 import { toast } from 'sonner';
 import DownloadDataDialog from './dialogs/DownloadDataDialog';
@@ -28,6 +31,8 @@ import ConnectedAccountsDialog from './dialogs/ConnectedAccountsDialog';
 import DeleteAccountDialog from './dialogs/DeleteAccountDialog';
 
 const AccountSettings = () => {
+  const navigate = useNavigate();
+  const { signOut } = useSupabaseAuth();
   const [notifications, setNotifications] = useState({
     matches: true,
     messages: true,
@@ -71,6 +76,17 @@ const AccountSettings = () => {
 
   const closeDialog = (dialogName: keyof typeof dialogStates) => {
     setDialogStates(prev => ({ ...prev, [dialogName]: false }));
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success('Logged out successfully');
+      navigate('/auth');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Failed to log out. Please try again.');
+    }
   };
 
   return (
@@ -311,6 +327,15 @@ const AccountSettings = () => {
             >
               <Globe className="w-4 h-4 mr-2" />
               Connected Accounts
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+              onClick={handleLogout}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
             </Button>
             
             <Button 
