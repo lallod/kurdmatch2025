@@ -436,101 +436,37 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="h-screen relative overflow-hidden">
-      {/* Enhanced Purple Gradient Background with Depth - matching swipe page */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent" />
-      </div>
-
-      <div className="relative h-full pb-16">
-        {/* Main Card Container with Enhanced Styling - matching swipe page */}
-        <div className="h-full w-full flex items-center justify-center p-2 md:p-4">
-          <div className="w-full max-w-sm md:max-w-md lg:max-w-lg h-full relative">
-            {/* Card Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75" />
-            
-            {/* Main Card */}
-            <div className="relative h-full animate-scale-in">
-              <div className="h-full bg-white/5 backdrop-blur-md rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                {isMobile ? (
-                  // Mobile Layout - Single Column
-                  <div className="h-full flex flex-col">
-                    <div className="flex-1 relative">
-                      <PhotoGallery 
-                        photos={profileData.photos} 
-                        name={profileData.name}
-                        age={profileData.age}
-                      />
-                      {/* Profile Header Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                        <div className="text-white">
-                          <h1 className="text-2xl font-bold">{profileData.name}, {profileData.age}</h1>
-                          <p className="text-white/80">{profileData.location}</p>
-                          <p className="text-white/60">{profileData.occupation}</p>
-                          {profileData.verified && (
-                            <div className="flex items-center gap-1 mt-2">
-                              <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                <span className="text-white text-xs">✓</span>
-                              </div>
-                              <span className="text-white/80 text-sm">Verified</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* Scrollable Details Section */}
-                    <div className="h-1/3 bg-black/10 backdrop-blur-sm">
-                      <ScrollArea className="h-full">
-                        <div className="p-4">
-                          <ProfileDetails details={profileData.details} />
-                        </div>
-                      </ScrollArea>
-                    </div>
-                  </div>
-                ) : (
-                  // Desktop Layout - Side by Side
-                  <div className="h-full grid grid-cols-2">
-                    {/* Photo Section */}
-                    <div className="relative">
-                      <PhotoGallery 
-                        photos={profileData.photos} 
-                        name={profileData.name}
-                        age={profileData.age}
-                      />
-                      {/* Profile Header Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                        <div className="text-white">
-                          <h1 className="text-3xl font-bold">{profileData.name}, {profileData.age}</h1>
-                          <p className="text-white/80 text-lg">{profileData.location}</p>
-                          <p className="text-white/60">{profileData.occupation}</p>
-                          {profileData.verified && (
-                            <div className="flex items-center gap-2 mt-3">
-                              <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                                <span className="text-white text-sm">✓</span>
-                              </div>
-                              <span className="text-white/80">Verified Profile</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* Details Section */}
-                    <div className="bg-black/10 backdrop-blur-sm">
-                      <ScrollArea className="h-full">
-                        <div className="p-6">
-                          <ProfileDetails details={profileData.details} />
-                        </div>
-                      </ScrollArea>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <ProfileHeader
+        name={profileData.name}
+        age={profileData.age}
+        location={profileData.location}
+        occupation={profileData.occupation}
+        lastActive={profileData.lastActive}
+        verified={profileData.verified}
+        profileImage={profileData.profileImage}
+      />
+      
+      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
+      
+      <ScrollArea className="max-h-[60vh] md:max-h-[65vh] overflow-hidden">
+        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
+          <PhotoGallery 
+            photos={profileData.photos} 
+            name={profileData.name} 
+            age={profileData.age} 
+          />
         </div>
-      </div>
-    </div>
+      </ScrollArea>
+      
+      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-orange/30 to-transparent"></div>
+      
+      <ProfileDetails details={profileData.details} />
+      
+      <footer className="w-full py-6 md:py-8 px-4 text-center text-sm text-muted-foreground">
+        <p>© {new Date().getFullYear()} Dating Profile App</p>
+      </footer>
+    </main>
   );
 };
 
