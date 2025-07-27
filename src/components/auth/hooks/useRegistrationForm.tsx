@@ -61,7 +61,16 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       }
 
       // Handle photo uploads
-      const photoUrls = await handlePhotoUploads(data, userId, enabledQuestions);
+      const { photoUrls, errors: photoErrors } = await handlePhotoUploads(data, userId, enabledQuestions);
+      
+      // Show photo upload errors if any
+      if (photoErrors.length > 0) {
+        console.warn('Photo upload errors:', photoErrors);
+        toast({
+          title: "Photo Upload Warning",
+          description: `${photoErrors.length} photo(s) failed to upload. Your profile was still created successfully.`,
+        });
+      }
 
       // Generate AI bio if bio question exists
       const bioQuestion = enabledQuestions.find(q => q.profileField === 'bio');

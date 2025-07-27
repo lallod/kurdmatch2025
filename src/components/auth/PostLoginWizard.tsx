@@ -6,6 +6,7 @@ import { CompletionCelebration } from './wizard/CompletionCelebration';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { checkProfileCompleteness } from '@/utils/auth/profileUtils';
 
 interface PostLoginWizardProps {
   onComplete: () => void;
@@ -25,25 +26,21 @@ export const PostLoginWizard: React.FC<PostLoginWizardProps> = ({ onComplete }) 
       if (!user) return;
 
       try {
-        const { data: profile, error } = await supabase
+        // Get user name for welcome modal
+        const { data: profile } = await supabase
           .from('profiles')
-          .select('name, bio, interests, hobbies, values')
+          .select('name')
           .eq('id', user.id)
           .single();
 
-        if (error) {
-          console.error('Error fetching profile:', error);
-          return;
-        }
-
         setUserName(profile?.name || '');
         
-        // Check if profile has key fields filled (indicates completion)
-        const hasBasicInfo = !!(profile?.bio && profile?.interests?.length > 0);
-        setProfileCompleted(hasBasicInfo);
+        // Use the improved profile completeness check
+        const isProfileComplete = await checkProfileCompleteness(user.id);
+        setProfileCompleted(isProfileComplete);
 
         // Show welcome modal only if profile is not completed
-        if (!hasBasicInfo) {
+        if (!isProfileComplete) {
           setShowWelcome(true);
         } else {
           onComplete();

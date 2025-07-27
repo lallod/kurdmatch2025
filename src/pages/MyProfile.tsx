@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,50 +26,97 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
 import ComprehensiveProfileEditor from '@/components/my-profile/sections/ComprehensiveProfileEditor';
 import BottomNavigation from '@/components/BottomNavigation';
+import { useRealProfileData } from '@/hooks/useRealProfileData';
+import { toast } from 'sonner';
 
 const MyProfile = () => {
   const [isEditingSections, setIsEditingSections] = useState(false);
   const [profileBgColor, setProfileBgColor] = useState("#F1F0FB");
   
-  const initialProfileData: ProfileData = {
-    name: "Sarah",
-    age: 28,
-    location: "San Francisco, CA",
-    occupation: "UX Designer",
-    lastActive: "2 hours ago",
-    verified: true,
-    profileImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80",
-    distance: 8,
-    kurdistanRegion: "South-Kurdistan" as KurdistanRegion,
-    bio: "Designer, hiker, and coffee enthusiast. Looking for someone who enjoys meaningful conversation and outdoor adventure.",
-    height: "5'7\"",
-    bodyType: "Athletic",
-    ethnicity: "Middle Eastern",
-    religion: "Spiritual",
-    politicalViews: "Moderate",
-    values: ["Honesty", "Kindness", "Growth", "Balance"],
-    interests: ["Hiking", "Photography", "Design", "Travel", "Coffee", "Cooking"],
-    hobbies: ["Drawing", "Yoga", "Reading"],
-    languages: ["English", "Kurdish", "Farsi"]
-  };
-  
-  const [profileData, setProfileData] = useState<ProfileData>(initialProfileData);
+  // Use real profile data hook
+  const { 
+    profileData: realProfileData, 
+    loading, 
+    onboardingProgress, 
+    engagement, 
+    updateProfileData,
+    refreshData 
+  } = useRealProfileData();
 
-  const [galleryImages, setGalleryImages] = useState([
-    profileData.profileImage,
-    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80",
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80",
-    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80"
-  ]);
+  // Convert database profile to UI format
+  const profileData: ProfileData = realProfileData ? {
+    name: realProfileData.name || '',
+    age: realProfileData.age || 0,
+    location: realProfileData.location || '',
+    occupation: realProfileData.occupation || '',
+    lastActive: realProfileData.last_active || '',
+    verified: realProfileData.verified || false,
+    profileImage: realProfileData.profile_image || '',
+    distance: 0, // This would be calculated based on user location
+    kurdistanRegion: (realProfileData.kurdistan_region as KurdistanRegion) || "South-Kurdistan",
+    bio: realProfileData.bio || '',
+    height: realProfileData.height || '',
+    bodyType: realProfileData.body_type || '',
+    ethnicity: realProfileData.ethnicity || '',
+    religion: realProfileData.religion || '',
+    politicalViews: realProfileData.political_views || '',
+    values: realProfileData.values || [],
+    interests: realProfileData.interests || [],
+    hobbies: realProfileData.hobbies || [],
+    languages: realProfileData.languages || [],
+    education: realProfileData.education || '',
+    company: realProfileData.company || '',
+    relationshipGoals: realProfileData.relationship_goals || '',
+    wantChildren: realProfileData.want_children || '',
+    havePets: realProfileData.have_pets || '',
+    exerciseHabits: realProfileData.exercise_habits || '',
+    zodiacSign: realProfileData.zodiac_sign || '',
+    personalityType: realProfileData.personality_type || '',
+    sleepSchedule: realProfileData.sleep_schedule || '',
+    travelFrequency: realProfileData.travel_frequency || '',
+    communicationStyle: realProfileData.communication_style || '',
+    loveLanguage: realProfileData.love_language || ''
+  } : {
+    name: '',
+    age: 0,
+    location: '',
+    occupation: '',
+    lastActive: '',
+    verified: false,
+    profileImage: '',
+    distance: 0,
+    kurdistanRegion: "South-Kurdistan" as KurdistanRegion,
+    bio: '',
+    height: '',
+    bodyType: '',
+    ethnicity: '',
+    religion: '',
+    politicalViews: '',
+    values: [],
+    interests: [],
+    hobbies: [],
+    languages: []
+  };
+
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+
+  // Update gallery images when profile data loads
+  useEffect(() => {
+    if (profileData.profileImage) {
+      setGalleryImages([profileData.profileImage]);
+    }
+  }, [profileData.profileImage]);
 
   // Profile completion calculation
   const calculateProfileCompletion = () => {
+    if (!realProfileData) return 0;
+    
     let completed = 0;
     const total = 15;
     
     if (profileData.name) completed++;
     if (profileData.bio && profileData.bio.length > 50) completed++;
-    if (galleryImages.length >= 3) completed++;
+    if (galleryImages.length >= 1) completed++;
     if (profileData.interests.length >= 3) completed++;
     if (profileData.occupation) completed++;
     if (profileData.languages.length >= 1) completed++;
@@ -88,13 +135,25 @@ const MyProfile = () => {
 
   const profileCompletion = calculateProfileCompletion();
 
-  // Mock stats data
+  // Use engagement data for stats
   const profileStats = {
-    views: 234,
-    likes: 89,
-    matches: 12,
-    messages: 7
+    views: engagement?.profileViews || 0,
+    likes: engagement?.likesReceived || 0,
+    matches: engagement?.totalMatches || 0,
+    messages: engagement?.messagesReceived || 0
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -115,14 +174,51 @@ const MyProfile = () => {
     setGalleryImages(newGallery);
   };
 
-  const handleBioSave = (newBio: string) => {
-    setProfileData(prev => ({ ...prev, bio: newBio }));
+  const handleBioSave = async (newBio: string) => {
+    try {
+      await updateProfileData({ bio: newBio });
+      toast.success('Bio updated successfully');
+      refreshData();
+    } catch (error) {
+      console.error('Error updating bio:', error);
+      toast.error('Failed to update bio');
+    }
   };
 
-  const handleProfileUpdate = (updates: Partial<ProfileData>) => {
-    setProfileData(prev => ({ ...prev, ...updates }));
-    // Here you would typically save to database
-    console.log('Profile updated:', updates);
+  const handleProfileUpdate = async (updates: Partial<ProfileData>) => {
+    try {
+      // Convert UI format back to database format
+      const dbUpdates: any = {};
+      
+      if (updates.height) dbUpdates.height = updates.height;
+      if (updates.bodyType) dbUpdates.body_type = updates.bodyType;
+      if (updates.ethnicity) dbUpdates.ethnicity = updates.ethnicity;
+      if (updates.religion) dbUpdates.religion = updates.religion;
+      if (updates.politicalViews) dbUpdates.political_views = updates.politicalViews;
+      if (updates.values) dbUpdates.values = updates.values;
+      if (updates.interests) dbUpdates.interests = updates.interests;
+      if (updates.hobbies) dbUpdates.hobbies = updates.hobbies;
+      if (updates.languages) dbUpdates.languages = updates.languages;
+      if (updates.education) dbUpdates.education = updates.education;
+      if (updates.company) dbUpdates.company = updates.company;
+      if (updates.relationshipGoals) dbUpdates.relationship_goals = updates.relationshipGoals;
+      if (updates.wantChildren) dbUpdates.want_children = updates.wantChildren;
+      if (updates.havePets) dbUpdates.have_pets = updates.havePets;
+      if (updates.exerciseHabits) dbUpdates.exercise_habits = updates.exerciseHabits;
+      if (updates.zodiacSign) dbUpdates.zodiac_sign = updates.zodiacSign;
+      if (updates.personalityType) dbUpdates.personality_type = updates.personalityType;
+      if (updates.sleepSchedule) dbUpdates.sleep_schedule = updates.sleepSchedule;
+      if (updates.travelFrequency) dbUpdates.travel_frequency = updates.travelFrequency;
+      if (updates.communicationStyle) dbUpdates.communication_style = updates.communicationStyle;
+      if (updates.loveLanguage) dbUpdates.love_language = updates.loveLanguage;
+
+      await updateProfileData(dbUpdates);
+      toast.success('Profile updated successfully');
+      refreshData();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
   };
 
   return (

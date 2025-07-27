@@ -218,13 +218,30 @@ export const useRegistrationFormLogic = () => {
       // Handle photo uploads if any
       if (data.photos && data.photos.length > 0) {
         const photoUrls: string[] = [];
+        const photoErrors: string[] = [];
         
         for (const [index, fileDataUrl] of data.photos.entries()) {
           try {
+            // Validate data URL format
+            if (!fileDataUrl.startsWith('data:image/')) {
+              const error = `Photo ${index + 1}: Invalid image format`;
+              console.error(error);
+              photoErrors.push(error);
+              continue;
+            }
+
             const response = await fetch(fileDataUrl);
             const blob = await response.blob();
             
-            const fileExt = blob.type.split('/')[1];
+            // Validate blob size
+            if (blob.size === 0) {
+              const error = `Photo ${index + 1}: Empty file`;
+              console.error(error);
+              photoErrors.push(error);
+              continue;
+            }
+            
+            const fileExt = blob.type.split('/')[1] || 'jpg';
             const fileName = `${userId}/profile_${index + 1}_${Date.now()}.${fileExt}`;
             
             const { data: uploadData, error: uploadError } = await supabase.storage
@@ -236,7 +253,9 @@ export const useRegistrationFormLogic = () => {
               });
 
             if (uploadError) {
-              console.error(`Photo ${index + 1} upload failed:`, uploadError);
+              const error = `Photo ${index + 1} upload failed: ${uploadError.message}`;
+              console.error(error);
+              photoErrors.push(error);
               continue;
             }
 
@@ -245,10 +264,22 @@ export const useRegistrationFormLogic = () => {
               .getPublicUrl(uploadData.path);
             
             photoUrls.push(urlData.publicUrl);
+            console.log(`Photo ${index + 1} uploaded successfully`);
           } catch (error) {
-            console.error(`Error processing photo ${index + 1}:`, error);
+            const errorMsg = `Error processing photo ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+            console.error(errorMsg);
+            photoErrors.push(errorMsg);
             continue;
           }
+        }
+        
+        // Show photo upload errors if any
+        if (photoErrors.length > 0) {
+          console.warn('Photo upload errors:', photoErrors);
+          toast({
+            title: "Photo Upload Warning",
+            description: `${photoErrors.length} photo(s) failed to upload. Your profile was still created successfully.`,
+          });
         }
         
         // Insert photos into photos table
@@ -265,6 +296,12 @@ export const useRegistrationFormLogic = () => {
             
           if (photoInsertError) {
             console.error("Failed to save photos:", photoInsertError);
+            toast({
+              title: "Photo Storage Error",
+              description: "Photos uploaded but failed to save to database",
+            });
+          } else {
+            console.log(`${photoUrls.length} photos saved successfully`);
           }
         }
       }
