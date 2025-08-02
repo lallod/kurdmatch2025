@@ -7,74 +7,59 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import BottomNavigation from '@/components/BottomNavigation';
 import PremiumPlansDialog from '@/components/subscription/PremiumPlansDialog';
+import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 
 const ViewedMe = () => {
   const navigate = useNavigate();
-  const [profileViewingData, setProfileViewingData] = useState({});
+  const { user } = useSupabaseAuth();
+  const [viewedProfiles, setViewedProfiles] = useState([]);
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Mock subscription status - in real app, this would come from auth context
+  // For now, we'll mock the premium status since we don't have a subscription system
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  // Load profile viewing data from localStorage
   useEffect(() => {
-    const viewingData = JSON.parse(localStorage.getItem('profileViewing') || '{}');
-    setProfileViewingData(viewingData);
-  }, []);
+    const loadViewedProfiles = async () => {
+      if (!user) return;
+      
+      try {
+        setIsLoading(true);
+        
+        // For now, we'll create a mock viewed profiles system
+        // In a real app, you'd track profile views in the database
+        const { data: profiles, error } = await supabase
+          .from('profiles')
+          .select('id, name, age, profile_image, location, verified')
+          .neq('id', user.id)
+          .limit(10);
+          
+        if (error) throw error;
+        
+        // Mock viewing data with timestamps
+        const mockViewedProfiles = profiles?.map((profile, index) => ({
+          ...profile,
+          viewedAt: index === 0 ? '10 minutes ago' : 
+                   index === 1 ? '2 hours ago' : 
+                   index === 2 ? 'Yesterday' : 
+                   `${index} days ago`,
+          hasViewed: Math.random() > 0.5,
+          compatibilityScore: Math.floor(Math.random() * 30) + 70
+        })) || [];
+        
+        setViewedProfiles(mockViewedProfiles);
+      } catch (error) {
+        console.error('Failed to load viewed profiles:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const getViewingPercentage = (profileId: number) => {
-    return profileViewingData[profileId]?.percentage || 0;
-  };
+    loadViewedProfiles();
+  }, [user]);
 
-  const viewedProfiles = [
-    {
-      id: 1,
-      name: "Noah Williams",
-      age: 29,
-      avatar: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=150&q=80",
-      viewedAt: "10 minutes ago",
-      hasViewed: false,
-      compatibilityScore: 92
-    },
-    {
-      id: 2,
-      name: "Mia Garcia",
-      age: 27,
-      avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=150&q=80",
-      viewedAt: "2 hours ago",
-      hasViewed: true,
-      compatibilityScore: 88
-    },
-    {
-      id: 3,
-      name: "Liam Wilson",
-      age: 32,
-      avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=150&q=80",
-      viewedAt: "Yesterday",
-      hasViewed: false,
-      compatibilityScore: 76
-    },
-    {
-      id: 4,
-      name: "Sophia Brown",
-      age: 25,
-      avatar: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=150&q=80",
-      viewedAt: "2 days ago",
-      hasViewed: true,
-      compatibilityScore: 85
-    },
-    {
-      id: 5,
-      name: "Lucas Davis",
-      age: 30,
-      avatar: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=150&q=80",
-      viewedAt: "3 days ago",
-      hasViewed: false,
-      compatibilityScore: 91
-    }
-  ];
-
-  const handleProfileClick = (profileId: number) => {
+  const handleProfileClick = (profileId: string) => {
     if (!isSubscribed) {
       return;
     }
@@ -86,10 +71,11 @@ const ViewedMe = () => {
   };
 
   const handleSelectPlan = (planId: string) => {
-    // In real app, this would integrate with Stripe
     console.log('Selected plan:', planId);
     setShowPremiumDialog(false);
-    // Navigate to checkout or handle subscription logic
+    // In a real app, this would integrate with Stripe
+    // For demo purposes, we'll set the user as subscribed
+    setIsSubscribed(true);
   };
 
   // Subscription gate component
@@ -150,6 +136,16 @@ const ViewedMe = () => {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-white text-xl">Loading profile views...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
       <div className="px-4 pt-8 pb-24">
@@ -170,64 +166,62 @@ const ViewedMe = () => {
 
         {viewedProfiles.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
-            {viewedProfiles.map((profile) => {
-              const viewingPercentage = getViewingPercentage(profile.id);
-              
-              return (
-                <Card 
-                  key={profile.id} 
-                  className="overflow-hidden bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-200 cursor-pointer transform hover:scale-[1.02]"
-                  onClick={() => handleProfileClick(profile.id)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-12 w-12 ring-2 ring-white/30">
-                          <AvatarImage src={profile.avatar} alt={profile.name} />
-                          <AvatarFallback className="bg-purple-600 text-white">
-                            {profile.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-white">{profile.name}</span>
-                            <span className="text-purple-200">{profile.age}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-purple-200 mt-1">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>{profile.viewedAt}</span>
-                          </div>
+            {viewedProfiles.map((profile) => (
+              <Card 
+                key={profile.id} 
+                className="overflow-hidden bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-200 cursor-pointer transform hover:scale-[1.02]"
+                onClick={() => handleProfileClick(profile.id)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-12 w-12 ring-2 ring-white/30">
+                        <AvatarImage src={profile.profile_image} alt={profile.name} />
+                        <AvatarFallback className="bg-purple-600 text-white">
+                          {profile.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-white">{profile.name}</span>
+                          <span className="text-purple-200">{profile.age}</span>
+                          {profile.verified && (
+                            <Badge className="bg-blue-500/20 text-blue-300 border-blue-400/30 text-xs">
+                              ✓
+                            </Badge>
+                          )}
                         </div>
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <Badge className={`${
-                          profile.compatibilityScore > 90 
-                            ? 'bg-green-500/20 text-green-300 border-green-400/30' 
-                            : profile.compatibilityScore > 80 
-                              ? 'bg-purple-500/20 text-purple-300 border-purple-400/30'
-                              : 'bg-orange-500/20 text-orange-300 border-orange-400/30'
-                        } backdrop-blur-sm`}>
-                          {profile.compatibilityScore}% match
-                        </Badge>
-                        
-                        {viewingPercentage > 0 && (
-                          <Badge className="text-xs bg-blue-500/20 text-blue-300 border-blue-400/30 backdrop-blur-sm">
-                            {viewingPercentage}% viewed
-                          </Badge>
+                        <div className="flex items-center gap-2 text-sm text-purple-200 mt-1">
+                          <Clock className="h-3.5 w-3.5" />
+                          <span>{profile.viewedAt}</span>
+                        </div>
+                        {profile.location && (
+                          <p className="text-purple-300 text-sm">{profile.location}</p>
                         )}
-                        
-                        {!profile.hasViewed && (
-                          <Badge className="text-xs bg-pink-500/20 text-pink-300 border-pink-400/30 backdrop-blur-sm">
-                            New
-                          </Badge>
-                        )}
-                        <ArrowRight className="h-4 w-4 text-purple-300" />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                    <div className="flex flex-col items-end gap-2">
+                      <Badge className={`${
+                        profile.compatibilityScore > 90 
+                          ? 'bg-green-500/20 text-green-300 border-green-400/30' 
+                          : profile.compatibilityScore > 80 
+                            ? 'bg-purple-500/20 text-purple-300 border-purple-400/30'
+                            : 'bg-orange-500/20 text-orange-300 border-orange-400/30'
+                      } backdrop-blur-sm`}>
+                        {profile.compatibilityScore}% match
+                      </Badge>
+                      
+                      {!profile.hasViewed && (
+                        <Badge className="text-xs bg-pink-500/20 text-pink-300 border-pink-400/30 backdrop-blur-sm">
+                          New
+                        </Badge>
+                      )}
+                      <ArrowRight className="h-4 w-4 text-purple-300" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-[60vh] text-center">
