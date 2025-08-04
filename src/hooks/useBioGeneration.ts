@@ -21,7 +21,7 @@ export const useBioGeneration = (profile: Profile) => {
         const bio = await generateBio(tone, keywords);
         setGeneratedBio(bio);
       } catch (error) {
-        console.error('Failed to generate bio:', error);
+        // Fallback to a generic bio if generation fails
         setGeneratedBio(`${profile.name} loves exploring new experiences and connecting with like-minded people. Looking for meaningful connections and shared adventures.`);
       } finally {
         setIsGenerating(false);

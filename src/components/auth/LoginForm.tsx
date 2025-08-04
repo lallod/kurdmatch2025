@@ -48,7 +48,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      console.log('Login form submitted:', data);
+      // Login form submitted
       
       const { error } = await signIn(data.email, data.password);
       

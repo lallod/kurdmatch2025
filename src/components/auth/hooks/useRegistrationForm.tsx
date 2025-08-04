@@ -43,7 +43,7 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       if (isOAuthUser) {
         // OAuth user - already authenticated, just complete profile
         userId = sessionData.session.user.id;
-        console.log('Completing profile for OAuth user:', userId);
+        // Completing profile for OAuth user
       } else {
         // Manual registration - create new account
         const emailQuestion = enabledQuestions.find(q => q.profileField === 'email');
@@ -83,7 +83,7 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       // Prepare profile data with proper typing
       const profileInsertData = mapFormDataToProfile(processedData, userId, enabledQuestions);
       
-      console.log('Profile data to insert:', profileInsertData);
+      // Inserting profile data
       
       // Insert profile data
       const { error: profileError } = await supabase
@@ -143,20 +143,19 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
   };
 
   const nextStep = async () => {
-    console.log(`Attempting to go from step ${currentStep} to ${currentStep + 1}`);
-    console.log('Current form values:', form.getValues());
+    // Moving to next step
     
     if (currentStep === steps.length - 1) {
       // On the photos step - check photos validation
       const photos = form.getValues('sys_6') || form.getValues('photos') || [];
-      console.log('Photos validation:', photos);
+      // Validating photos
       
       if (!Array.isArray(photos) || photos.length === 0) {
         form.setError('sys_6', { 
           type: 'manual', 
           message: 'Please upload at least one photo' 
         });
-        console.log('Photos validation failed');
+        // Photos validation failed
         return;
       }
     } else {
@@ -165,27 +164,27 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
         .filter(q => q.profileField !== 'bio')
         .map(q => q.id);
       
-      console.log('Validating fields for current step:', currentFields);
+      // Validating current step fields
       
       const isValid = await form.trigger(currentFields as any);
-      console.log('Step validation result:', isValid);
+      // Step validation completed
       
       if (!isValid) {
-        console.log('Form errors:', form.formState.errors);
+        // Form validation failed
         return;
       }
     }
     
     if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
-      console.log(`Successfully moved to step ${currentStep + 1}`);
+      // Successfully moved to next step
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
-      console.log(`Moved back to step ${currentStep - 1}`);
+      // Moved back to previous step
     }
   };
 

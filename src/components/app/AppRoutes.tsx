@@ -3,6 +3,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { RegisterProtection } from './RegisterProtection';
+import EmailVerificationGuard from './EmailVerificationGuard';
 import Index from '@/pages/Index';
 import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
@@ -72,30 +73,54 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         element={<SuperAdminSetup />} 
       />
       
-      {/* Protected routes */}
+      {/* Protected routes - wrapped with email verification */}
       <Route 
         path="/swipe" 
-        element={user ? <Swipe /> : <Navigate to="/auth" replace />} 
+        element={user ? (
+          <EmailVerificationGuard>
+            <Swipe />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/discovery" 
-        element={user ? <Discovery /> : <Navigate to="/auth" replace />} 
+        element={user ? (
+          <EmailVerificationGuard>
+            <Discovery />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/liked-me" 
-        element={user ? <LikedMe /> : <Navigate to="/auth" replace />} 
+        element={user ? (
+          <EmailVerificationGuard>
+            <LikedMe />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/viewed-me" 
-        element={user ? <ViewedMe /> : <Navigate to="/auth" replace />} 
+        element={user ? (
+          <EmailVerificationGuard>
+            <ViewedMe />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/messages" 
-        element={user ? <Messages /> : <Navigate to="/auth" replace />} 
+        element={user ? (
+          <EmailVerificationGuard>
+            <Messages />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/my-profile" 
-        element={user ? <MyProfile /> : <Navigate to="/auth" replace />} 
+        element={user ? (
+          <EmailVerificationGuard>
+            <MyProfile />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/user/:id" 

@@ -16,7 +16,7 @@ export const usePhotoUpload = ({ form, photoFieldId }: UsePhotoUploadProps) => {
 
   useEffect(() => {
     const formPhotos = form.getValues(photoFieldId) || [];
-    console.log('PhotoUploadStep: Initial photos from form:', formPhotos);
+    // Initial photos from form
     
     if (Array.isArray(formPhotos) && formPhotos.length > 0) {
       setPhotos(formPhotos);
@@ -84,7 +84,7 @@ export const usePhotoUpload = ({ form, photoFieldId }: UsePhotoUploadProps) => {
     form.setValue(photoFieldId, newPhotos, { shouldValidate: true });
     form.clearErrors(photoFieldId);
     
-    console.log('PhotoUploadStep: Saved photo, new photos array:', newPhotos);
+    // Photo saved successfully
 
     if (pendingPhotos.length > 0) {
       setPhotoToEdit(pendingPhotos[0]);
@@ -109,7 +109,7 @@ export const usePhotoUpload = ({ form, photoFieldId }: UsePhotoUploadProps) => {
     
     form.setValue(photoFieldId, newPhotos, { shouldValidate: true });
     
-    console.log('PhotoUploadStep: Removed photo, new photos array:', newPhotos);
+    // Photo removed successfully
   };
 
   return {

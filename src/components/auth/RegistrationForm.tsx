@@ -116,7 +116,7 @@ const RegistrationForm = () => {
   const onSubmit = async (data: RegistrationFormValues) => {
     try {
       // Add registration logic here (in a real app this would connect to an auth service)
-      console.log('Registration form submitted:', data);
+      // Registration form submitted
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));

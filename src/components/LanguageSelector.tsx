@@ -26,7 +26,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const [open, setOpen] = useState(false);
 
   const toggleLanguage = (language: string) => {
-    console.log('Toggling language:', language);
+    // Language toggled
     if (selectedLanguages.includes(language)) {
       onChange(selectedLanguages.filter(l => l !== language));
     } else {

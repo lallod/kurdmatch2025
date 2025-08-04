@@ -187,7 +187,6 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
 
       onComplete();
     } catch (error) {
-      console.error('Error completing profile:', error);
       toast({
         title: "Error",
         description: "Failed to save your profile. Please try again.",

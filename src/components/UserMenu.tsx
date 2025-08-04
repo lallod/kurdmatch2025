@@ -70,7 +70,7 @@ const UserMenu = () => {
     }
     
     // In a real app, this would send the report to the backend
-    console.log('Report submitted:', reportText);
+    // Report submitted
     
     toast({
       title: 'Report Submitted',

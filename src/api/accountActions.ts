@@ -28,7 +28,7 @@ export const downloadUserData = async (): Promise<UserDataExport> => {
     export_date: new Date().toISOString()
   };
 
-  console.log('User data export completed:', { size: JSON.stringify(exportData).length });
+  // User data export completed
 
   return exportData;
 };

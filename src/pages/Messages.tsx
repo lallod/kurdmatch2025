@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,46 +10,59 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import BottomNavigation from '@/components/BottomNavigation';
+import { getConversations, getMessagesByConversation, sendMessage } from '@/api/messages';
+import { getNewMatches } from '@/api/matches';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { toast } from 'sonner';
 const Messages = () => {
-  const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
+  const { user } = useSupabaseAuth();
+  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
-  const newMatches = [{
-    id: 101,
-    name: "Lily Chen",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
-    matchTime: "2 hours ago",
-    isNew: true,
-    matchedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 hours ago
-  }, {
-    id: 102,
-    name: "Mark Johnson",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
-    matchTime: "Yesterday",
-    isNew: false,
-    matchedAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 day ago
-  }, {
-    id: 103,
-    name: "Sophia Lee",
-    avatar: "https://images.unsplash.com/photo-1607503873903-c5e95f80d7b9?auto=format&fit=crop&w=150&q=80",
-    matchTime: "3 days ago",
-    isNew: false,
-    matchedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) // 3 days ago
-  }, {
-    id: 104,
-    name: "David Brown",
-    avatar: "https://images.unsplash.com/photo-1567784177951-6fa58317e16b?auto=format&fit=crop&w=150&q=80",
-    matchTime: "4 days ago",
-    isNew: false,
-    matchedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) // 4 days ago
-  }, {
-    id: 105,
-    name: "Nina Williams",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
-    matchTime: "5 days ago",
-    isNew: false,
-    matchedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) // 5 days ago
-  }];
-  const conversations = [{
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [newMatches, setNewMatches] = useState<any[]>([]);
+  const [conversationMessages, setConversationMessages] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!user) return;
+      
+      try {
+        setIsLoading(true);
+        const [conversationsData, matchesData] = await Promise.all([
+          getConversations(),
+          getNewMatches(5)
+        ]);
+        
+        setConversations(conversationsData);
+        setNewMatches(matchesData);
+      } catch (error) {
+        toast.error('Failed to load messages');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [user]);
+
+  useEffect(() => {
+    const loadMessages = async () => {
+      if (!selectedConversation) return;
+      
+      try {
+        const messages = await getMessagesByConversation(selectedConversation);
+        setConversationMessages(messages);
+      } catch (error) {
+        toast.error('Failed to load conversation');
+      }
+    };
+
+    loadMessages();
+  }, [selectedConversation]);
+
+  // Mock conversations for demo - should be replaced with real data
+  const mockConversations = [{
     id: 1,
     name: "Emma Watson",
     avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=150&q=80",
@@ -206,14 +219,15 @@ const Messages = () => {
     }]
   }];
 
-  // Calculate notification counts
-  const totalUnreadMessages = conversations.reduce((sum, conv) => sum + conv.unreadCount, 0);
-  const newMatchesCount = newMatches.filter(match => match.isNew).length;
-  const onlineCount = conversations.filter(conv => conv.online).length;
-  const typingCount = conversations.filter(conv => conv.isTyping).length;
+  // Calculate notification counts - use real data when available, fallback to mock
+  const displayConversations = conversations.length > 0 ? conversations : mockConversations;
+  const totalUnreadMessages = displayConversations.reduce((sum, conv) => sum + (conv.unreadCount || 0), 0);
+  const newMatchesCount = newMatches.length;
+  const onlineCount = displayConversations.filter(conv => conv.online).length;
+  const typingCount = displayConversations.filter(conv => conv.isTyping).length;
 
   // Sort conversations by priority and activity
-  const sortedConversations = [...conversations].sort((a, b) => {
+  const sortedConversations = [...displayConversations].sort((a, b) => {
     const priorityOrder = {
       high: 3,
       medium: 2,
@@ -221,8 +235,10 @@ const Messages = () => {
       low: 0
     };
     if (a.unread !== b.unread) return b.unread ? 1 : -1;
-    if (a.priority !== b.priority) return priorityOrder[b.priority] - priorityOrder[a.priority];
-    return b.lastMessageTime.getTime() - a.lastMessageTime.getTime();
+    if (a.priority !== b.priority) return priorityOrder[b.priority || 'normal'] - priorityOrder[a.priority || 'normal'];
+    const aTime = a.lastMessageTime || new Date(a.time);
+    const bTime = b.lastMessageTime || new Date(b.time);
+    return bTime.getTime() - aTime.getTime();
   });
   const getUrgencyColor = (messageTime: Date) => {
     const hoursDiff = (Date.now() - messageTime.getTime()) / (1000 * 60 * 60);
@@ -246,10 +262,19 @@ const Messages = () => {
         return <Bell className="w-3 h-3" />;
     }
   };
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
-    console.log("Sending message:", newMessage);
-    setNewMessage('');
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedConversation) return;
+    
+    try {
+      await sendMessage(selectedConversation, newMessage);
+      setNewMessage('');
+      // Reload messages to show the new one
+      const messages = await getMessagesByConversation(selectedConversation);
+      setConversationMessages(messages);
+      toast.success('Message sent!');
+    } catch (error) {
+      toast.error('Failed to send message');
+    }
   };
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -258,7 +283,7 @@ const Messages = () => {
     }
   };
   if (selectedConversation !== null) {
-    const conversation = conversations.find(c => c.id === selectedConversation);
+    const conversation = displayConversations.find(c => c.id === selectedConversation);
     if (!conversation) return null;
     return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
         {/* Header */}
@@ -306,7 +331,8 @@ const Messages = () => {
 
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4 max-w-4xl mx-auto">
-            {conversation.messages.map(message => <div key={message.id} className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
+            {(conversationMessages.length > 0 ? conversationMessages : conversation.messages || []).map(message => (
+              <div key={message.id} className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`
                   max-w-[80%] rounded-xl p-3 backdrop-blur-md border
                   ${message.sender === 'me' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-purple-400/30' : 'bg-white/10 text-white border-white/20'}
@@ -316,7 +342,8 @@ const Messages = () => {
                     {message.time}
                   </span>
                 </div>
-              </div>)}
+              </div>
+            ))}
           </div>
         </ScrollArea>
 
@@ -391,9 +418,9 @@ const Messages = () => {
               
               <Carousel className="w-full">
                 <CarouselContent className="-ml-2">
-                  {newMatches.map(match => <CarouselItem key={match.id} className="pl-2 basis-20">
+                {newMatches.map(match => <CarouselItem key={match.id} className="pl-2 basis-20">
                       <div onClick={() => {
-                    console.log("Starting chat with", match.name);
+                    setSelectedConversation(match.profileId || match.id);
                   }} className="relative flex flex-col items-center cursor-pointer my-[16px]">
                         <div className="relative">
                           <div className={`absolute inset-0 rounded-full p-0.5 ${match.isNew ? 'bg-gradient-to-br from-red-500 to-pink-500 animate-pulse' : 'bg-gradient-to-br from-purple-500 to-pink-500'}`}>

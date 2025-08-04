@@ -90,7 +90,7 @@ export const getUserEngagementData = async () => {
     .limit(30);
 
   if (error) {
-    console.log('No engagement data found - this is normal for real-users-only mode');
+    // No engagement data found - normal for real-users-only mode
     return [];
   }
   return data || [];

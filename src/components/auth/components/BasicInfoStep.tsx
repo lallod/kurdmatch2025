@@ -22,7 +22,7 @@ interface BasicInfoStepProps {
 }
 
 const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
-  console.log('BasicInfoStep rendering with form values:', form.getValues());
+  // BasicInfoStep rendering
 
   return (
     <div className="space-y-6">

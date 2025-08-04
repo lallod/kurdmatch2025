@@ -46,7 +46,7 @@ export const useAdminAuth = () => {
     }
 
     try {
-      console.log(`Attempting to sign in admin with: ${email}`);
+      // Attempting admin sign in
       const result = await validateAdminCredentials(email, password);
 
       if (!result.success) {
