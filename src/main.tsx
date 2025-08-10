@@ -8,10 +8,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // Create a client
 const queryClient = new QueryClient()
 
-// Seeding disabled - only show real user data from normal registration
-// if (process.env.NODE_ENV === 'development') {
-//   seedDatabase().catch(console.error);
-// }
+// Disable console logs in production
+if (import.meta.env.PROD) {
+  // Remove non-error logs in production
+  console.log = () => {};
+  console.info = () => {};
+  console.debug = () => {};
+  console.warn = () => {};
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

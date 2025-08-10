@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { getCurrentUserProfile } from '@/api/profiles';
+import { getCurrentUserProfile, updateProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement } from '@/utils/realUserEnhancement';
 import { toast } from 'sonner';
 
@@ -78,9 +78,9 @@ export const useRealProfileData = () => {
 
   const updateProfileData = async (updates: Partial<DatabaseProfile>) => {
     try {
-      // Update in database would happen here via API
       if (profileData) {
-        setProfileData({ ...profileData, ...updates });
+        const updated = await updateProfile(updates as any);
+        setProfileData(updated as any);
         toast.success('Profile updated successfully');
         
         // Refresh onboarding progress

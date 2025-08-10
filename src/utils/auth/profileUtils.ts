@@ -16,7 +16,6 @@ export const checkProfileCompleteness = async (userId: string): Promise<boolean>
 
     // If no profile exists, consider it a new user
     if (!profile) {
-      console.log('No profile found - new user');
       return false;
     }
 
@@ -31,16 +30,6 @@ export const checkProfileCompleteness = async (userId: string): Promise<boolean>
       profile.hobbies?.length > 0
     );
 
-    console.log('Profile completeness check:', {
-      hasName: !!profile.name,
-      hasBio: !!profile.bio,
-      hasOccupation: !!profile.occupation,
-      hasLocation: !!profile.location,
-      hasAge: !!profile.age,
-      hasInterests: profile.interests?.length > 0,
-      hasHobbies: profile.hobbies?.length > 0,
-      isComplete: hasEssentialInfo
-    });
 
     return hasEssentialInfo;
   } catch (error) {

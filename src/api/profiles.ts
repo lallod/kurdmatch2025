@@ -54,7 +54,7 @@ export const uploadProfilePhoto = async (file: File, isPrimary: boolean = false)
   // Upload to storage
   const { data: uploadData, error: uploadError } = await supabase
     .storage
-    .from('profile_photos')
+    .from('profile-photos')
     .upload(filePath, file);
   
   if (uploadError) throw uploadError;
@@ -62,7 +62,7 @@ export const uploadProfilePhoto = async (file: File, isPrimary: boolean = false)
   // Get public URL
   const { data: urlData } = supabase
     .storage
-    .from('profile_photos')
+    .from('profile-photos')
     .getPublicUrl(filePath);
   
   // Save to photos table

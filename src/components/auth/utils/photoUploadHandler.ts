@@ -14,11 +14,11 @@ export const handlePhotoUploads = async (
   
   if (photoQuestion && data[photoQuestion.id] && Array.isArray(data[photoQuestion.id])) {
     const photoFiles = data[photoQuestion.id] as string[]; // These are data URLs
-    console.log(`Processing ${photoFiles.length} photos for upload...`);
+    
 
     for (const [index, fileDataUrl] of photoFiles.entries()) {
       try {
-        console.log(`Processing photo ${index + 1}...`);
+        
         
         // Validate data URL format
         if (!fileDataUrl.startsWith('data:image/')) {
@@ -55,7 +55,7 @@ export const handlePhotoUploads = async (
         // Sanitize filename to prevent path traversal
         const sanitizedFileName = `${userId}/profile_${index + 1}_${Date.now()}.${fileExt}`;
         
-        console.log(`Uploading photo ${index + 1} as ${sanitizedFileName}...`);
+        
         
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('profile-photos')
@@ -77,7 +77,7 @@ export const handlePhotoUploads = async (
           .getPublicUrl(uploadData.path);
         
         photoUrls.push(urlData.publicUrl);
-        console.log(`Photo ${index + 1} uploaded successfully`);
+        
       } catch (error) {
         const errorMsg = `Error processing photo ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`;
         console.error(errorMsg);
@@ -87,6 +87,6 @@ export const handlePhotoUploads = async (
     }
   }
   
-  console.log(`Photo upload completed: ${photoUrls.length} successful, ${errors.length} errors`);
+  
   return { photoUrls, errors };
 };

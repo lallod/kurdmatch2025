@@ -28,7 +28,7 @@ import ComprehensiveProfileEditor from '@/components/my-profile/sections/Compreh
 import BottomNavigation from '@/components/BottomNavigation';
 import { useRealProfileData } from '@/hooks/useRealProfileData';
 import { toast } from 'sonner';
-
+import { uploadProfilePhoto } from '@/api/profiles';
 const MyProfile = () => {
   const [isEditingSections, setIsEditingSections] = useState(false);
   const [profileBgColor, setProfileBgColor] = useState("#F1F0FB");
@@ -155,11 +155,18 @@ const MyProfile = () => {
     );
   }
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      const newImageUrl = URL.createObjectURL(files[0]);
-      setGalleryImages(prev => [newImageUrl, ...prev]);
+      try {
+        const isPrimary = galleryImages.length === 0;
+        const photo = await uploadProfilePhoto(files[0], isPrimary);
+        setGalleryImages(prev => [photo.url, ...prev]);
+        toast.success(isPrimary ? 'Profile photo set' : 'Photo uploaded');
+      } catch (error) {
+        console.error('Photo upload failed:', error);
+        toast.error('Failed to upload photo');
+      }
     }
   };
 
