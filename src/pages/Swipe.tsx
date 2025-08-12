@@ -9,27 +9,25 @@ import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-
 const Swipe = () => {
   const navigate = useNavigate();
-  const { user } = useSupabaseAuth();
+  const {
+    user
+  } = useSupabaseAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
   const currentProfile = profiles[currentIndex];
-
   useEffect(() => {
     const loadProfiles = async () => {
       if (!user) return;
-      
       try {
         setIsLoading(true);
         const profilesData = await getMatchRecommendations(50);
-        
+
         // Transform database profiles to match Profile interface
         const transformedProfiles = profilesData?.map(profile => ({
           id: profile.id,
@@ -37,8 +35,10 @@ const Swipe = () => {
           age: profile.age,
           location: profile.location,
           avatar: profile.profile_image || profile.photos?.[0]?.url || '',
-          distance: Math.floor(Math.random() * 20) + 1, // Mock distance for now
-          compatibilityScore: Math.floor(Math.random() * 30) + 70, // Mock score for now
+          distance: Math.floor(Math.random() * 20) + 1,
+          // Mock distance for now
+          compatibilityScore: Math.floor(Math.random() * 30) + 70,
+          // Mock score for now
           kurdistanRegion: profile.kurdistan_region || 'South-Kurdistan',
           area: profile.kurdistan_region || 'South-Kurdistan',
           interests: profile.interests || [],
@@ -104,7 +104,6 @@ const Swipe = () => {
           dreamHome: profile.dream_home || '',
           idealWeather: profile.ideal_weather || ''
         })) || [];
-        
         setProfiles(transformedProfiles);
       } catch (error) {
         console.error('Failed to load profiles:', error);
@@ -113,16 +112,13 @@ const Swipe = () => {
         setIsLoading(false);
       }
     };
-
     loadProfiles();
   }, [user]);
-
   const handleSwipeAction = async (action: SwipeAction, profileId: string) => {
     setLastAction({
       type: action,
       profileId
     });
-
     try {
       switch (action) {
         case 'pass':
@@ -166,7 +162,6 @@ const Swipe = () => {
       });
     }
   };
-
   const handleUndo = () => {
     if (lastAction && currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -176,48 +171,38 @@ const Swipe = () => {
       });
     }
   };
-
   const handleMessage = (profileId: string) => {
     navigate(`/messages?user=${profileId}`);
   };
-
   const handleReport = (profileId: string) => {
     toast("Profile reported. Thank you for keeping our community safe.", {
       icon: "🛡️"
     });
   };
-
   const nextPhoto = () => {
     if (currentProfile?.photos && currentPhotoIndex < currentProfile.photos.length - 1) {
       setCurrentPhotoIndex(currentPhotoIndex + 1);
     }
   };
-
   const prevPhoto = () => {
     if (currentPhotoIndex > 0) {
       setCurrentPhotoIndex(currentPhotoIndex - 1);
     }
   };
-
   if (isLoading) {
-    return (
-      <div className="h-screen relative overflow-hidden">
+    return <div className="h-screen relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
         </div>
         <div className="h-full flex items-center justify-center">
           <div className="text-white text-xl font-semibold">Loading profiles...</div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!currentProfile) {
     return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
   }
-
-  return (
-    <div className="h-screen relative overflow-hidden">
+  return <div className="h-screen relative overflow-hidden">
       {/* Enhanced Purple Gradient Background with Depth */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
@@ -228,32 +213,20 @@ const Swipe = () => {
 
       {/* Main Card Container with Enhanced Styling */}
       <div className="relative h-full pb-16">
-        <div className="h-full w-full flex items-center justify-center p-2 md:p-4">
+        <div className="h-full w-full flex items-center justify-center p-2 md:p-4 px-0 py-0">
           <div className="w-full max-w-sm md:max-w-md lg:max-w-lg h-full relative">
             {/* Card Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75" />
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75 mx-0 my-[10px] py-[10px] px-0" />
             
             {/* Main Card */}
             <div className="relative h-full animate-scale-in">
-              <SwipeCard 
-                profile={currentProfile} 
-                currentPhotoIndex={currentPhotoIndex} 
-                isExpanded={isExpanded} 
-                onNextPhoto={nextPhoto} 
-                onPrevPhoto={prevPhoto} 
-                onToggleExpanded={() => setIsExpanded(!isExpanded)} 
-                onReport={handleReport} 
-                onSwipeAction={handleSwipeAction} 
-                onMessage={handleMessage} 
-              />
+              <SwipeCard profile={currentProfile} currentPhotoIndex={currentPhotoIndex} isExpanded={isExpanded} onNextPhoto={nextPhoto} onPrevPhoto={prevPhoto} onToggleExpanded={() => setIsExpanded(!isExpanded)} onReport={handleReport} onSwipeAction={handleSwipeAction} onMessage={handleMessage} />
             </div>
           </div>
         </div>
       </div>
 
       <BottomNavigation />
-    </div>
-  );
+    </div>;
 };
-
 export default Swipe;
