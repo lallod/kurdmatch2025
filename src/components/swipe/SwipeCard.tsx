@@ -30,19 +30,17 @@ const SwipeCard = ({
   onMessage
 }: SwipeCardProps) => {
   return (
-    <Card className="w-full h-full overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col rounded-3xl group transition-all duration-500 hover:shadow-[0_25px_50px_rgba(147,51,234,0.2)]">
+    <Card className="w-full overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col rounded-3xl group transition-all duration-500 hover:shadow-[0_25px_50px_rgba(147,51,234,0.2)]">
       {/* Photo Section with Enhanced Styling */}
-      <div className="relative h-[75%] min-h-0 rounded-t-3xl overflow-hidden">
+      <div className="relative aspect-[3/4] rounded-t-3xl overflow-hidden">
         <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
           onNextPhoto={onNextPhoto}
           onPrevPhoto={onPrevPhoto}
         />
-        
         {/* Enhanced Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
-        
         <ProfileInfo 
           profile={profile} 
           onReport={onReport}
@@ -50,9 +48,8 @@ const SwipeCard = ({
           onMessage={onMessage}
         />
       </div>
-      
       {/* Details Section with Glass Effect */}
-      <div className="h-[25%] flex-shrink-0 bg-black/20 backdrop-blur-sm border-t border-white/10">
+      <div className="bg-black/20 backdrop-blur-sm border-t border-white/10">
         <ProfileDetails
           profile={profile}
           isExpanded={isExpanded}

@@ -9,6 +9,7 @@ import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { createReport } from '@/api/reports';
 const Swipe = () => {
   const navigate = useNavigate();
   const {
@@ -174,10 +175,15 @@ const Swipe = () => {
   const handleMessage = (profileId: string) => {
     navigate(`/messages?user=${profileId}`);
   };
-  const handleReport = (profileId: string) => {
-    toast("Profile reported. Thank you for keeping our community safe.", {
-      icon: "🛡️"
-    });
+  const handleReport = async (profileId: string) => {
+    const reason = window.prompt('Report reason (e.g., spam, inappropriate content):') || 'unspecified';
+    try {
+      await createReport({ reported_user_id: profileId, reason, context: { source: 'swipe' } });
+      toast('Profile reported. Thank you for keeping our community safe.', { icon: '🛡️' });
+    } catch (err) {
+      console.error('Report failed', err);
+      toast.error('Could not submit report. Please try again.');
+    }
   };
   const nextPhoto = () => {
     if (currentProfile?.photos && currentPhotoIndex < currentProfile.photos.length - 1) {
@@ -190,7 +196,7 @@ const Swipe = () => {
     }
   };
   if (isLoading) {
-    return <div className="h-screen relative overflow-hidden">
+    return <div className="min-h-screen relative">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
         </div>
@@ -202,7 +208,7 @@ const Swipe = () => {
   if (!currentProfile) {
     return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
   }
-  return <div className="h-screen relative overflow-hidden">
+  return <div className="min-h-screen relative">
       {/* Enhanced Purple Gradient Background with Depth */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
@@ -212,9 +218,9 @@ const Swipe = () => {
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
       {/* Main Card Container with Enhanced Styling */}
-      <div className="relative h-full pb-16">
-        <div className="h-full w-full flex items-center justify-center p-2 md:p-4 px-0 py-0">
-          <div className="w-full max-w-sm md:max-w-md lg:max-w-lg h-full relative">
+      <div className="relative pb-16">
+        <div className="w-full flex items-center justify-center p-2 md:p-4 px-0 py-0">
+          <div className="w-full max-w-sm md:max-w-md lg:max-w-lg relative">
             {/* Card Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75 mx-0 my-[10px] py-[10px] px-0" />
             

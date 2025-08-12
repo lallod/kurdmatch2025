@@ -93,7 +93,8 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, onUpdate
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-gray-700 border-gray-600 text-white opacity-60"
+                disabled
               />
             </div>
             
@@ -106,8 +107,8 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, onUpdate
                 max="100"
                 value={formData.age}
                 onChange={(e) => handleInputChange('age', parseInt(e.target.value))}
-                className="bg-gray-700 border-gray-600 text-white"
-              />
+                className="bg-gray-700 border-gray-600 text-white opacity-60"
+                disabled
             </div>
             
             <div>
