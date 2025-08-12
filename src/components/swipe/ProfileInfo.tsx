@@ -8,9 +8,9 @@ import { useBioGeneration } from '@/hooks/useBioGeneration';
 
 interface ProfileInfoProps {
   profile: Profile;
-  onReport: (profileId: number) => void;
-  onSwipeAction: (action: SwipeAction, profileId: number) => void;
-  onMessage: (profileId: number) => void;
+  onReport: (profileId: string) => void;
+  onSwipeAction: (action: SwipeAction, profileId: string) => void;
+  onMessage: (profileId: string) => void;
 }
 
 const ProfileInfo = ({ profile, onReport, onSwipeAction, onMessage }: ProfileInfoProps) => {

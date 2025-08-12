@@ -35,10 +35,17 @@ export const getConversations = async () => {
         avatar: otherUser.profile_image,
         lastMessage: message.text,
         time: message.created_at,
+        lastMessageTime: new Date(message.created_at),
         unread: message.recipient.id === userId && !message.read,
+        unreadCount: 0,
         online: false, // Could be determined by checking last_active
         messages: []
       };
+    }
+    
+    // Track unread count for this conversation
+    if (message.recipient.id === userId && !message.read) {
+      acc[conversationId].unreadCount = (acc[conversationId].unreadCount || 0) + 1;
     }
     
     acc[conversationId].messages.push({

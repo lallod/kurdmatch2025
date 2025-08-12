@@ -32,7 +32,7 @@ const Swipe = () => {
         
         // Transform database profiles to match Profile interface
         const transformedProfiles = profilesData?.map(profile => ({
-          id: parseInt(profile.id),
+          id: profile.id,
           name: profile.name,
           age: profile.age,
           location: profile.location,
@@ -117,7 +117,7 @@ const Swipe = () => {
     loadProfiles();
   }, [user]);
 
-  const handleSwipeAction = async (action: SwipeAction, profileId: number) => {
+  const handleSwipeAction = async (action: SwipeAction, profileId: string) => {
     setLastAction({
       type: action,
       profileId
@@ -126,13 +126,13 @@ const Swipe = () => {
     try {
       switch (action) {
         case 'pass':
-          await unlikeProfile(profileId.toString());
+          await unlikeProfile(profileId);
           toast("Profile passed", {
             icon: "👋"
           });
           break;
         case 'like':
-          const result = await likeProfile(profileId.toString());
+          const result = await likeProfile(profileId);
           if (result.match) {
             toast("It's a match! 🎉", {
               icon: "💜"
@@ -144,7 +144,7 @@ const Swipe = () => {
           }
           break;
         case 'superlike':
-          await likeProfile(profileId.toString());
+          await likeProfile(profileId);
           toast("Super like sent!", {
             icon: "⭐"
           });
@@ -177,11 +177,11 @@ const Swipe = () => {
     }
   };
 
-  const handleMessage = (profileId: number) => {
+  const handleMessage = (profileId: string) => {
     navigate(`/messages?user=${profileId}`);
   };
 
-  const handleReport = (profileId: number) => {
+  const handleReport = (profileId: string) => {
     toast("Profile reported. Thank you for keeping our community safe.", {
       icon: "🛡️"
     });

@@ -13,9 +13,9 @@ interface SwipeCardProps {
   onNextPhoto: () => void;
   onPrevPhoto: () => void;
   onToggleExpanded: () => void;
-  onReport: (profileId: number) => void;
-  onSwipeAction: (action: SwipeAction, profileId: number) => void;
-  onMessage: (profileId: number) => void;
+  onReport: (profileId: string) => void;
+  onSwipeAction: (action: SwipeAction, profileId: string) => void;
+  onMessage: (profileId: string) => void;
 }
 
 const SwipeCard = ({

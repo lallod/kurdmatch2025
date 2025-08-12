@@ -46,6 +46,15 @@ const Messages = () => {
     loadData();
   }, [user]);
 
+  // Auto-open conversation from query param (?user=<id>)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userParam = params.get('user');
+    if (userParam) {
+      setSelectedConversation(userParam);
+    }
+  }, []);
+
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedConversation) return;
@@ -61,191 +70,34 @@ const Messages = () => {
     loadMessages();
   }, [selectedConversation]);
 
-  // Mock conversations for demo - should be replaced with real data
-  const mockConversations = [{
-    id: 1,
-    name: "Emma Watson",
-    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=150&q=80",
-    lastMessage: "I'd love to get coffee sometime this week!",
-    time: "2 min ago",
-    unread: true,
-    unreadCount: 3,
-    online: true,
-    isTyping: false,
-    priority: "high",
-    lastMessageTime: new Date(Date.now() - 2 * 60 * 1000),
-    // 2 minutes ago
-    notifications: ["new_message", "online"],
-    messages: [{
-      id: 1,
-      text: "Hey there! How are you doing today?",
-      sender: "them",
-      time: "10:30 AM"
-    }, {
-      id: 2,
-      text: "I'm doing great, thanks for asking! How about you?",
-      sender: "me",
-      time: "10:32 AM"
-    }, {
-      id: 3,
-      text: "Pretty good! Just finishing up some work. Are you free this week?",
-      sender: "them",
-      time: "10:35 AM"
-    }, {
-      id: 4,
-      text: "I'd love to get coffee sometime this week!",
-      sender: "them",
-      time: "10:36 AM"
-    }]
-  }, {
-    id: 2,
-    name: "Michael Chen",
-    avatar: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=150&q=80",
-    lastMessage: "Thanks for the recommendations, will check them out.",
-    time: "Yesterday",
-    unread: false,
-    unreadCount: 0,
-    online: false,
-    isTyping: false,
-    priority: "normal",
-    lastMessageTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    // 1 day ago
-    notifications: ["viewed_profile"],
-    messages: [{
-      id: 1,
-      text: "Do you have any movie recommendations?",
-      sender: "me",
-      time: "3:45 PM"
-    }, {
-      id: 2,
-      text: "I would recommend 'The Shawshank Redemption' and 'Inception'",
-      sender: "them",
-      time: "4:00 PM"
-    }, {
-      id: 3,
-      text: "Thanks for the recommendations, will check them out.",
-      sender: "me",
-      time: "4:05 PM"
-    }]
-  }, {
-    id: 3,
-    name: "Sophia Rodriguez",
-    avatar: "https://images.unsplash.com/photo-1518770660439-4636190af44d?auto=format&fit=crop&w=150&q=80",
-    lastMessage: "Did you see that new movie we talked about?",
-    time: "2 days ago",
-    unread: false,
-    unreadCount: 0,
-    online: true,
-    isTyping: true,
-    priority: "normal",
-    lastMessageTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    // 2 days ago
-    notifications: ["typing", "online"],
-    messages: [{
-      id: 1,
-      text: "Hey! Did you see that new movie we talked about?",
-      sender: "them",
-      time: "5:20 PM"
-    }, {
-      id: 2,
-      text: "Not yet, is it good?",
-      sender: "me",
-      time: "6:30 PM"
-    }, {
-      id: 3,
-      text: "It's amazing! You should definitely watch it.",
-      sender: "them",
-      time: "6:35 PM"
-    }]
-  }, {
-    id: 4,
-    name: "James Wilson",
-    avatar: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=150&q=80",
-    lastMessage: "I'll be in your area next weekend, let's meet up!",
-    time: "3 days ago",
-    unread: true,
-    unreadCount: 1,
-    online: false,
-    isTyping: false,
-    priority: "medium",
-    lastMessageTime: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    // 3 days ago
-    notifications: ["new_message"],
-    messages: [{
-      id: 1,
-      text: "Hey, how's it going?",
-      sender: "them",
-      time: "11:00 AM"
-    }, {
-      id: 2,
-      text: "Good! How about you?",
-      sender: "me",
-      time: "11:15 AM"
-    }, {
-      id: 3,
-      text: "I'll be in your area next weekend, let's meet up!",
-      sender: "them",
-      time: "11:30 AM"
-    }]
-  }, {
-    id: 5,
-    name: "Olivia Parker",
-    avatar: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=150&q=80",
-    lastMessage: "Looking forward to our hiking trip next month!",
-    time: "1 week ago",
-    unread: false,
-    unreadCount: 0,
-    online: false,
-    isTyping: false,
-    priority: "low",
-    lastMessageTime: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    // 1 week ago
-    notifications: ["liked_photo"],
-    messages: [{
-      id: 1,
-      text: "Have you started planning for the hiking trip?",
-      sender: "them",
-      time: "9:00 AM"
-    }, {
-      id: 2,
-      text: "Yes! I've got most of the gear we need.",
-      sender: "me",
-      time: "9:30 AM"
-    }, {
-      id: 3,
-      text: "Great! Looking forward to our hiking trip next month!",
-      sender: "them",
-      time: "10:00 AM"
-    }]
-  }];
-
-  // Calculate notification counts - use real data when available, fallback to mock
-  const displayConversations = conversations.length > 0 ? conversations : mockConversations;
-  const totalUnreadMessages = displayConversations.reduce((sum, conv) => sum + (conv.unreadCount || 0), 0);
+  // Calculate notification counts based on real data
+  const totalUnreadMessages = conversations.reduce((sum, conv) => sum + (conv.unreadCount || 0), 0);
   const newMatchesCount = newMatches.length;
-  const onlineCount = displayConversations.filter(conv => conv.online).length;
-  const typingCount = displayConversations.filter(conv => conv.isTyping).length;
+  const onlineCount = conversations.filter(conv => conv.online).length || 0;
+  const typingCount = conversations.filter(conv => conv.isTyping).length || 0;
 
   // Sort conversations by priority and activity
-  const sortedConversations = [...displayConversations].sort((a, b) => {
+  const sortedConversations = [...conversations].sort((a, b) => {
     const priorityOrder = {
       high: 3,
       medium: 2,
       normal: 1,
       low: 0
-    };
-    if (a.unread !== b.unread) return b.unread ? 1 : -1;
-    if (a.priority !== b.priority) return priorityOrder[b.priority || 'normal'] - priorityOrder[a.priority || 'normal'];
-    const aTime = a.lastMessageTime || new Date(a.time);
-    const bTime = b.lastMessageTime || new Date(b.time);
+    } as Record<string, number>;
+    if ((a.unread ? 1 : 0) !== (b.unread ? 1 : 0)) return (b.unread ? 1 : 0) - (a.unread ? 1 : 0);
+    if ((a.priority || 'normal') !== (b.priority || 'normal')) return (priorityOrder[b.priority || 'normal'] - priorityOrder[a.priority || 'normal']);
+    const aTime = (a as any).lastMessageTime || new Date(a.time);
+    const bTime = (b as any).lastMessageTime || new Date(b.time);
     return bTime.getTime() - aTime.getTime();
   });
+
   const getUrgencyColor = (messageTime: Date) => {
     const hoursDiff = (Date.now() - messageTime.getTime()) / (1000 * 60 * 60);
     if (hoursDiff < 1) return 'from-red-500 to-red-600';
     if (hoursDiff < 6) return 'from-orange-500 to-orange-600';
     return 'from-purple-500 to-pink-500';
   };
+
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'new_message':
@@ -283,7 +135,7 @@ const Messages = () => {
     }
   };
   if (selectedConversation !== null) {
-    const conversation = displayConversations.find(c => c.id === selectedConversation);
+    const conversation = conversations.find(c => c.id === selectedConversation);
     if (!conversation) return null;
     return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
         {/* Header */}

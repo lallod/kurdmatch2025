@@ -1,6 +1,6 @@
 
 export interface Profile {
-  id: number;
+  id: string;
   name: string;
   age: number;
   location: string;
@@ -97,5 +97,5 @@ export type SwipeAction = 'pass' | 'like' | 'superlike';
 
 export interface LastAction {
   type: string;
-  profileId: number;
+  profileId: string;
 }
