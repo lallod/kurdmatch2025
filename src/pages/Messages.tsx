@@ -137,7 +137,8 @@ const Messages = () => {
   if (selectedConversation !== null) {
     const conversation = conversations.find(c => c.id === selectedConversation);
     if (!conversation) return null;
-    return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
+    return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+        <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
         {/* Header */}
         <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
           <div className="flex items-center p-4">
@@ -210,11 +211,13 @@ const Messages = () => {
             </Button>
           </div>
         </div>
+        </div>
 
         <BottomNavigation />
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-32">
+  return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+      <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
       {/* Header with Enhanced Notifications */}
       <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-6">
@@ -413,6 +416,7 @@ const Messages = () => {
               </div>}
           </div>
         </div>
+      </div>
       </div>
 
       <BottomNavigation />

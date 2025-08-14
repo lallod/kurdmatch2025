@@ -163,8 +163,8 @@ const LikedMe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
-      <div className="px-4 pt-8 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 pt-8 pb-24">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">

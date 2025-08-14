@@ -208,9 +208,9 @@ const Swipe = () => {
   if (!currentProfile) {
     return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
   }
-  return <div className="min-h-screen relative">
+  return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col relative">
       {/* Enhanced Purple Gradient Background with Depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+      <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent" />
       </div>
@@ -218,7 +218,7 @@ const Swipe = () => {
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
       {/* Main Card Container with Enhanced Styling */}
-      <div className="relative pb-16 px-2 sm:px-4 lg:px-8">
+      <div className="flex-1 overflow-y-auto scrollbar-hide relative pb-16 px-2 sm:px-4 lg:px-8">
         <div className="w-full flex items-center justify-center">
           <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl relative">
             {/* Card Glow Effect */}

@@ -78,63 +78,10 @@ const ViewedMe = () => {
     setIsSubscribed(true);
   };
 
-  // Subscription gate component
-  if (!isSubscribed) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
-        <div className="flex flex-col items-center justify-center min-h-screen px-4 text-white">
-          <div className="text-center max-w-md">
-            <div className="mb-6">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-                <Crown className="h-10 w-10 text-white" />
-              </div>
-              <h1 className="text-3xl font-bold mb-2">Premium Feature</h1>
-              <p className="text-purple-200 text-lg">
-                See who's been checking out your profile with Premium insights
-              </p>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-white/20">
-              <div className="flex items-center gap-3 mb-4">
-                <Eye className="h-6 w-6 text-purple-300" />
-                <span className="text-lg font-medium">Profile View Insights</span>
-              </div>
-              <p className="text-purple-200 text-sm mb-4">
-                Discover who's interested in you and boost your connection chances
-              </p>
-              <div className="space-y-2 text-sm text-purple-200">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>See detailed viewing analytics</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Track profile completion rates</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Get compatibility insights</span>
-                </div>
-              </div>
-            </div>
-
-            <Button 
-              onClick={handleUpgrade}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-full text-lg transition-all duration-200 transform hover:scale-105"
-            >
-              <Crown className="h-5 w-5 mr-2" />
-              Upgrade to Premium
-            </Button>
-
-            <p className="text-purple-300 text-sm mt-4">
-              Unlock all premium features and boost your dating success
-            </p>
-          </div>
-        </div>
-        <BottomNavigation />
-      </div>
-    );
-  }
+  // Premium feature now available to all users (will be restricted later)
+  // if (!isSubscribed) {
+  //   return premium gate component...
+  // }
 
   if (isLoading) {
     return (
@@ -147,8 +94,8 @@ const ViewedMe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-hidden">
-      <div className="px-4 pt-8 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 pt-8 pb-24">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
