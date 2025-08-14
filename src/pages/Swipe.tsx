@@ -218,14 +218,14 @@ const Swipe = () => {
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
       {/* Main Card Container with Enhanced Styling */}
-      <div className="relative pb-16">
-        <div className="w-full flex items-center justify-center p-2 md:p-4 px-0 py-0">
-          <div className="w-full max-w-sm md:max-w-md lg:max-w-lg relative">
+      <div className="relative pb-16 px-2 sm:px-4 lg:px-8">
+        <div className="w-full flex items-center justify-center">
+          <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl relative">
             {/* Card Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75 mx-0 my-[10px] py-[10px] px-0" />
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75" />
             
             {/* Main Card */}
-            <div className="relative h-full animate-scale-in">
+            <div className="relative animate-scale-in">
               <SwipeCard profile={currentProfile} currentPhotoIndex={currentPhotoIndex} isExpanded={isExpanded} onNextPhoto={nextPhoto} onPrevPhoto={prevPhoto} onToggleExpanded={() => setIsExpanded(!isExpanded)} onReport={handleReport} onSwipeAction={handleSwipeAction} onMessage={handleMessage} />
             </div>
           </div>

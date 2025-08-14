@@ -100,9 +100,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
       <div className="absolute inset-0 bg-gradient-to-t from-tinder-rose/20 to-tinder-orange/20 mix-blend-overlay"></div>
 
-      <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-8 md:py-16 lg:py-24 flex flex-col md:flex-row items-center gap-6 md:gap-8">
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-16 lg:py-24 flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8">
         <div className="relative">
-          <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] md:w-[280px] md:h-[280px] rounded-full overflow-hidden border-4 border-white shadow-xl transition-transform-slow hover:scale-[1.02]">
+          <div className="w-32 h-32 xs:w-40 xs:h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-72 lg:h-72 rounded-full overflow-hidden border-4 border-white shadow-xl transition-transform-slow hover:scale-[1.02]">
             <img 
               src={profileImage} 
               alt={`${name}'s profile`} 
@@ -117,11 +117,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-3 md:gap-4 animate-fade-up">
           <div>
             <div className="flex items-center gap-2 mb-1 justify-center md:justify-start">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight">
+              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight">
                 {name}, <span className="font-normal">{age}</span>
               </h1>
             </div>
-            <p className="text-md sm:text-lg text-muted-foreground">{occupation}</p>
+            <p className="text-sm xs:text-base sm:text-lg md:text-xl text-muted-foreground">{occupation}</p>
           </div>
 
           <div className="flex flex-wrap gap-2 justify-center md:justify-start">

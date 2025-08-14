@@ -181,7 +181,7 @@ const Messages = () => {
           </div>
         </div>
 
-        <ScrollArea className="flex-1 p-4">
+        <div className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-4 max-w-4xl mx-auto">
             {(conversationMessages.length > 0 ? conversationMessages : conversation.messages || []).map(message => (
               <div key={message.id} className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
@@ -197,7 +197,7 @@ const Messages = () => {
               </div>
             ))}
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="backdrop-blur-md bg-white/10 border-t border-white/20 p-3 flex items-end gap-2 max-w-4xl mx-auto">
           <Textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={handleKeyPress} placeholder="Type a message..." className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" />
