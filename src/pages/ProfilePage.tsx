@@ -436,37 +436,43 @@ const ProfilePage = () => {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <ProfileHeader
-        name={profileData.name}
-        age={profileData.age}
-        location={profileData.location}
-        occupation={profileData.occupation}
-        lastActive={profileData.lastActive}
-        verified={profileData.verified}
-        profileImage={profileData.profileImage}
-      />
-      
-      <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
-      
-      <ScrollArea className="max-h-[60vh] md:max-h-[65vh] overflow-hidden">
-        <div className="rounded-xl overflow-hidden max-w-4xl mx-auto my-6 sm:my-8 px-4">
-          <PhotoGallery 
-            photos={profileData.photos} 
-            name={profileData.name} 
-            age={profileData.age} 
-          />
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Full-screen profile card section */}
+      <div className="min-h-screen flex flex-col w-full">
+        <ProfileHeader
+          name={profileData.name}
+          age={profileData.age}
+          location={profileData.location}
+          occupation={profileData.occupation}
+          lastActive={profileData.lastActive}
+          verified={profileData.verified}
+          profileImage={profileData.profileImage}
+        />
+        
+        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-rose/30 to-transparent"></div>
+        
+        <div className="flex-1 flex items-center justify-center w-full">
+          <div className="w-full max-w-4xl">
+            <PhotoGallery 
+              photos={profileData.photos} 
+              name={profileData.name} 
+              age={profileData.age} 
+            />
+          </div>
         </div>
-      </ScrollArea>
+      </div>
       
+      {/* Details section - part of main scroll flow */}
       <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-tinder-orange/30 to-transparent"></div>
       
-      <ProfileDetails details={profileData.details} />
+      <div className="w-full">
+        <ProfileDetails details={profileData.details} />
+      </div>
       
-      <footer className="w-full py-6 md:py-8 px-4 text-center text-sm text-muted-foreground">
+      <footer className="w-full py-6 md:py-8 text-center text-sm text-muted-foreground">
         <p>© {new Date().getFullYear()} Dating Profile App</p>
       </footer>
-    </main>
+    </div>
   );
 };
 

@@ -238,7 +238,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
   };
 
   return (
-    <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden max-w-4xl mx-auto">
+    <section className="w-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 rounded-xl overflow-hidden">
       <div className="block w-full h-full border border-tinder-rose/20 rounded-xl overflow-hidden">
         {getPhotoGridLayout()}
       </div>

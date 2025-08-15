@@ -100,7 +100,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
       <div className="absolute inset-0 bg-gradient-to-t from-tinder-rose/20 to-tinder-orange/20 mix-blend-overlay"></div>
 
-      <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-16 lg:py-24 flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8">
+      <div className="relative z-10 w-full px-4 sm:px-6 py-6 sm:py-8 md:py-16 lg:py-24 flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8">
         <div className="relative">
           <div className="w-32 h-32 xs:w-40 xs:h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-72 lg:h-72 rounded-full overflow-hidden border-4 border-white shadow-xl transition-transform-slow hover:scale-[1.02]">
             <img 
