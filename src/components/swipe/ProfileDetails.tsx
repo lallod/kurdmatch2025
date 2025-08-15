@@ -30,7 +30,7 @@ const ProfileDetails = ({
     };
     localStorage.setItem('profileViewing', JSON.stringify(viewingData));
   };
-  return <div className="p-1 sm:p-2 max-h-96 overflow-y-auto py-[3px]">
+  return <div className="p-1 sm:p-2 max-h-96 overflow-y-auto px-0 py-0">
       <ProfileQuickBadges profile={profile} />
 
       {/* Comprehensive Profile Information */}

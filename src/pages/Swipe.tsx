@@ -178,8 +178,16 @@ const Swipe = () => {
   const handleReport = async (profileId: string) => {
     const reason = window.prompt('Report reason (e.g., spam, inappropriate content):') || 'unspecified';
     try {
-      await createReport({ reported_user_id: profileId, reason, context: { source: 'swipe' } });
-      toast('Profile reported. Thank you for keeping our community safe.', { icon: '🛡️' });
+      await createReport({
+        reported_user_id: profileId,
+        reason,
+        context: {
+          source: 'swipe'
+        }
+      });
+      toast('Profile reported. Thank you for keeping our community safe.', {
+        icon: '🛡️'
+      });
     } catch (err) {
       console.error('Report failed', err);
       toast.error('Could not submit report. Please try again.');
@@ -218,11 +226,11 @@ const Swipe = () => {
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
       {/* Main Card Container with Enhanced Styling */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide relative pb-16 px-2 sm:px-4 lg:px-8">
-        <div className="w-full flex items-center justify-center">
+      <div className="flex-1 overflow-y-auto scrollbar-hide relative pb-16 sm:px-4 lg:px-8 px-0">
+        <div className="w-full flex items-center justify-center mx-0 px-0 my-0">
           <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl relative">
             {/* Card Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75" />
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75 mx-0" />
             
             {/* Main Card */}
             <div className="relative animate-scale-in">
