@@ -30,7 +30,7 @@ const SwipeCard = ({
   onMessage
 }: SwipeCardProps) => {
   return (
-    <Card className="w-full overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col rounded-3xl group transition-all duration-500 hover:shadow-[0_25px_50px_rgba(147,51,234,0.2)]">
+    <Card className="w-full h-full overflow-hidden backdrop-blur-xl bg-white/5 border-0 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col m-0 p-0 group transition-all duration-500 hover:shadow-[0_25px_50px_rgba(147,51,234,0.2)]">
       {/* Photo Section with Enhanced Styling */}
       <div className="relative aspect-[3/4] sm:aspect-[3/4.5] md:aspect-[3/5] lg:aspect-[3/4] rounded-t-3xl overflow-hidden">
         <ProfilePhotoGallery
