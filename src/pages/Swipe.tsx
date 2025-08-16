@@ -226,7 +226,7 @@ const Swipe = () => {
       <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
 
       {/* Main Card Container with Enhanced Styling */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide relative pb-16 sm:px-4 lg:px-8 px-0">
+      <div className="flex-1 overflow-y-auto scrollbar-hide relative pb-16 px-0">
         <div className="w-full flex items-center justify-center mx-0 px-0 my-0">
           <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl relative">
             {/* Card Glow Effect */}
