@@ -3,7 +3,8 @@ import React from 'react';
 import { Card } from "@/components/ui/card";
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
-import ProfileDetails from './ProfileDetails';
+import ProfileBioSection from './ProfileBioSection';
+import ProfileDetails from '@/components/ProfileDetails';
 import { Profile, SwipeAction } from '@/types/swipe';
 
 interface SwipeCardProps {
@@ -30,32 +31,56 @@ const SwipeCard = ({
   onMessage
 }: SwipeCardProps) => {
   return (
-    <Card className="w-full h-full overflow-hidden backdrop-blur-xl bg-white/5 border-0 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col m-0 p-0 group transition-all duration-500 hover:shadow-[0_25px_50px_rgba(147,51,234,0.2)]">
-      {/* Photo Section with Enhanced Styling */}
-      <div className="relative w-full h-[75vh] sm:h-[70vh] md:h-[65vh] lg:h-[60vh] max-h-[600px] rounded-t-3xl overflow-hidden">
-        <ProfilePhotoGallery
-          profile={profile}
-          currentPhotoIndex={currentPhotoIndex}
-          onNextPhoto={onNextPhoto}
-          onPrevPhoto={onPrevPhoto}
-        />
-        {/* Enhanced Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
-        <ProfileInfo 
-          profile={profile} 
-          onReport={onReport}
-          onSwipeAction={onSwipeAction}
-          onMessage={onMessage}
-        />
-      </div>
-      {/* Details Section with Glass Effect */}
-      <div className="bg-black/20 backdrop-blur-sm border-t border-white/10">
-        <ProfileDetails
-          profile={profile}
-          isExpanded={isExpanded}
-          onToggleExpanded={onToggleExpanded}
-        />
-      </div>
+    <Card className="relative w-full max-w-md mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+      <ProfilePhotoGallery 
+        profile={profile} 
+        currentPhotoIndex={currentPhotoIndex}
+        onNextPhoto={onNextPhoto}
+        onPrevPhoto={onPrevPhoto}
+      />
+      
+      <ProfileInfo 
+        profile={profile}
+        onReport={onReport}
+        onSwipeAction={onSwipeAction}
+        onMessage={onMessage}
+      />
+      
+      <ProfileBioSection profile={profile} />
+      
+      {isExpanded && (
+        <div className="absolute inset-0 bg-white rounded-3xl overflow-y-auto z-20">
+          <div className="p-6">
+            <ProfileDetails details={{
+              about: profile.bio || '',
+              height: profile.height || '',
+              bodyType: profile.bodyType || '',
+              ethnicity: profile.ethnicity || '',
+              education: profile.education || '',
+              occupation: profile.occupation || '',
+              company: profile.company || '',
+              religion: profile.religion || '',
+              politicalViews: profile.politicalViews || '',
+              drinking: profile.drinking || '',
+              smoking: profile.smoking || '',
+              relationshipGoals: profile.relationshipGoals || '',
+              wantChildren: profile.wantChildren || '',
+              havePets: profile.havePets || '',
+              exerciseHabits: profile.exerciseHabits || '',
+              interests: profile.interests || [],
+              hobbies: profile.hobbies || [],
+              languages: profile.languages || [],
+              values: profile.values || [],
+              favoriteBooks: profile.favoriteBooks || [],
+              favoriteMovies: profile.favoriteMovies || [],
+              favoriteMusic: profile.favoriteMusic || [],
+              favoriteFoods: profile.favoriteFoods || [],
+              favoriteGames: profile.favoriteGames || [],
+              favoritePodcasts: profile.favoritePodcasts || []
+            } as any} />
+          </div>
+        </div>
+      )}
     </Card>
   );
 };

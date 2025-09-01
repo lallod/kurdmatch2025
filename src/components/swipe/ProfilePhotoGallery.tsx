@@ -15,12 +15,12 @@ const ProfilePhotoGallery = ({
 }: ProfilePhotoGalleryProps) => {
   return (
     <div className="relative w-full h-full group">
-      {/* Enhanced Image Container */}
-      <div className="relative w-full h-full overflow-hidden bg-black/10">
+      {/* Enhanced Image Container with 16:9 Aspect Ratio */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden bg-black/10 rounded-t-3xl">
         <img 
           src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
           alt={profile.name} 
-          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
         />
         
         {/* Enhanced Photo Navigation */}
@@ -59,7 +59,12 @@ const ProfilePhotoGallery = ({
         )}
         
         {/* Subtle Vignette Effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/15 pointer-events-none" />
+      </div>
+      
+      {/* Profile Info Container - Takes up to 25% of photo height */}
+      <div className="relative bg-white/95 backdrop-blur-sm rounded-b-3xl min-h-[25%]">
+        {/* This will be populated by ProfileInfo component */}
       </div>
     </div>
   );

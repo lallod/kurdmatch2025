@@ -1,182 +1,239 @@
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Heart, Sparkles } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
-import SocialLogin from '@/components/auth/components/SocialLogin';
-import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 
 const Auth = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { signIn, user } = useSupabaseAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Check if this is an OAuth callback - if so, redirect to callback handler immediately
-    const urlParams = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const isOAuthCallback = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token');
-    
-    if (isOAuthCallback) {
-      console.log('OAuth callback detected, redirecting to callback handler');
-      navigate('/auth/callback', { replace: true });
+    // Check if user is already logged in
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/swipe');
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
-    // Only redirect authenticated users if this is NOT an OAuth callback
-    if (!user || !user.id) return;
-    
-    const checkUserRole = async () => {
-      try {
-        console.log("Checking role for user ID:", user.id);
-        const isSuperAdmin = await isUserSuperAdmin(user.id);
-
-        if (isSuperAdmin) {
-          console.log("User has super_admin role, redirecting to super-admin");
-          navigate('/super-admin', { replace: true });
-          return;
-        }
-
-        console.log("Regular user, redirecting to discovery");
-        navigate('/discovery', { replace: true });
-      } catch (error) {
-        console.error('Error checking user role:', error);
-        navigate('/discovery', { replace: true });
-      }
-    };
-
-    checkUserRole();
-  }, [user, navigate]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage(null);
+    setLoading(true);
+    setError('');
 
     try {
-      console.log(`Attempting to sign in with: ${email}`);
-      const { error } = await signIn(email, password);
+      const redirectUrl = `${window.location.origin}/swipe`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            name: name
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.user && !data.session) {
+        toast({
+          title: 'Check your email',
+          description: 'We sent you a confirmation link to complete your registration.',
+        });
+      } else if (data.session) {
+        toast({
+          title: 'Welcome!',
+          description: 'Your account has been created successfully.',
+        });
+        navigate('/swipe');
+      }
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
       if (error) throw error;
 
       toast({
-        title: "Welcome back!",
-        description: "You've successfully logged in.",
+        title: 'Welcome back!',
+        description: 'You have been signed in successfully.',
       });
+      navigate('/swipe');
     } catch (error: any) {
-      console.error('Authentication error:', error);
-      
-      if (error.message === 'Email not confirmed') {
-        setErrorMessage("Please check your email to confirm your account before logging in.");
-      } else {
-        setErrorMessage(error.message || "Something went wrong. Please try again.");
-      }
-      
-      toast({
-        title: "Authentication failed",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+      setError(error.message);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg space-y-6 sm:space-y-8 bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-lg">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent">
-            Welcome Back
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Log in to continue your journey
-          </p>
-        </div>
-        
-        <div className="flex justify-start">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center text-gray-600 hover:text-gray-900"
-            onClick={() => navigate('/')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Landing Page
-          </Button>
-        </div>
-        
-        {errorMessage && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative flex items-start" role="alert">
-            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
-            <span className="block">{errorMessage}</span>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
+      
+      <Card className="w-full max-w-md relative z-10 bg-white/10 backdrop-blur-lg border-white/20">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <div className="relative">
+              <Heart className="h-12 w-12 text-pink-400" fill="currentColor" />
+              <Sparkles className="h-6 w-6 text-yellow-400 absolute -top-1 -right-1" />
+            </div>
           </div>
-        )}
+          <CardTitle className="text-2xl font-bold text-white">AI Dating</CardTitle>
+          <CardDescription className="text-white/80">
+            Find your perfect match with AI-powered connections
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          {error && (
+            <Alert className="mb-4 bg-red-500/20 border-red-400/40 text-red-200">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your.email@example.com"
-              required
-              disabled={isLoading}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              disabled={isLoading}
-            />
-          </div>
-          
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90 text-white"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Logging In...
-              </>
-            ) : (
-              'Log In'
-            )}
-          </Button>
-        </form>
-        
-        <div className="text-center mt-4">
-          <Link
-            to="/register"
-            className="text-sm text-gray-600 hover:text-gray-900"
-          >
-            Don't have an account? Sign up
-          </Link>
-        </div>
-
-        <div className="pt-4">
-          <SocialLogin isLoading={isLoading} />
-        </div>
-      </div>
+          <Tabs defaultValue="signin" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-white/10">
+              <TabsTrigger value="signin" className="data-[state=active]:bg-white/20 text-white">
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger value="signup" className="data-[state=active]:bg-white/20 text-white">
+                Sign Up
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="signin">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-white">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-white">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  disabled={loading}
+                >
+                  {loading ? 'Signing In...' : 'Sign In'}
+                </Button>
+              </form>
+            </TabsContent>
+            
+            <TabsContent value="signup">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-white">Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email" className="text-white">Email</Label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password" className="text-white">Password</Label>
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    placeholder="Create a password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password" className="text-white">Confirm Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  disabled={loading}
+                >
+                  {loading ? 'Creating Account...' : 'Create Account'}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };
