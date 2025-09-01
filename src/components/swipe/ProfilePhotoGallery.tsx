@@ -16,11 +16,11 @@ const ProfilePhotoGallery = ({
   return (
     <div className="relative w-full h-full group">
       {/* Enhanced Image Container */}
-      <div className="relative w-full h-full overflow-hidden">
+      <div className="relative w-full h-full overflow-hidden bg-black/10">
         <img 
           src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
           alt={profile.name} 
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" 
         />
         
         {/* Enhanced Photo Navigation */}
