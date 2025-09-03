@@ -10,7 +10,6 @@ import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { createReport } from '@/api/reports';
-import { initializeAutoDataGeneration } from '@/utils/autoDataGeneration';
 const Swipe = () => {
   const navigate = useNavigate();
   const {
@@ -24,9 +23,6 @@ const Swipe = () => {
   const [isLoading, setIsLoading] = useState(true);
   const currentProfile = profiles[currentIndex];
   useEffect(() => {
-    // Initialize auto data generation
-    const cleanup = initializeAutoDataGeneration();
-    
     const loadProfiles = async () => {
       if (!user) return;
       try {
@@ -117,10 +113,7 @@ const Swipe = () => {
         setIsLoading(false);
       }
     };
-    
     loadProfiles();
-    
-    return cleanup; // Clean up auto data generation on unmount
   }, [user]);
   const handleSwipeAction = async (action: SwipeAction, profileId: string) => {
     setLastAction({
