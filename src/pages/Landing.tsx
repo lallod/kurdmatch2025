@@ -1,90 +1,81 @@
-
-import React, { useState, useEffect } from 'react';
-import HeroSection from '@/components/landing/HeroSection';
-import FeaturesSection from '@/components/landing/FeaturesSection';
-import KurdistanSection from '@/components/landing/KurdistanSection';
-import Footer from '@/components/landing/Footer';
-import { supabase } from '@/integrations/supabase/client';
-import { LandingPageContent, initialContent } from '@/pages/SuperAdmin/pages/LandingPageEditor/types';
-import { Json } from '@/integrations/supabase/types';
-import { Loader2 } from 'lucide-react';
-
-// Helper function to safely validate and parse the content
-const isValidLandingPageContent = (data: any): data is LandingPageContent => {
-  return (
-    typeof data === 'object' && 
-    data !== null && 
-    !Array.isArray(data) &&
-    'hero' in data && 
-    'features' in data && 
-    'kurdistan' in data && 
-    'footer' in data
-  );
-};
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Heart, MessageCircle, Users, Star } from 'lucide-react';
 
 const Landing = () => {
-  const [content, setContent] = useState<LandingPageContent>(initialContent);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchLandingPageContent = async () => {
-      try {
-        console.log('Fetching landing page content...');
-        const { data, error } = await supabase
-          .from('landing_page_content')
-          .select('content')
-          .limit(1)
-          .single();
-        
-        if (error) {
-          console.error('Error fetching landing page content:', error);
-          // Fallback to initial content - already set by default
-        } else if (data && data.content) {
-          console.log('Landing page content received:', data.content);
-          // Safely parse the content
-          const contentData = data.content as Json;
-          
-          // Check if it has the expected shape before using it
-          if (isValidLandingPageContent(contentData)) {
-            setContent(contentData);
-          } else {
-            console.error('Invalid landing page content format:', contentData);
-            // Fallback to initial content - already set by default
-          }
-        }
-      } catch (error) {
-        console.error('Unexpected error fetching landing page content:', error);
-        // Fallback to initial content - already set by default
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLandingPageContent();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black">
-        <Loader2 className="h-10 w-10 text-purple-500 animate-spin mb-4" />
-        <p className="text-white">Loading beautiful Kurdish experiences...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-black to-indigo-950">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-rose-900">
       {/* Hero Section */}
-      <HeroSection content={content.hero} />
-
-      {/* Features Section */}
-      <FeaturesSection content={content.features} />
-
-      {/* Kurdistan Heritage Section */}
-      <KurdistanSection content={content.kurdistan} />
-
-      {/* Footer */}
-      <Footer content={content.footer} />
+      <div className="container mx-auto px-4 py-20">
+        <div className="text-center text-white max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-pink-300 to-purple-300 bg-clip-text text-transparent">
+            Find Your Perfect Match
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 text-purple-100">
+            Connect with like-minded people and discover meaningful relationships
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <Button asChild size="lg" className="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3">
+              <Link to="/register">Get Started</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-purple-900 px-8 py-3">
+              <Link to="/auth">Sign In</Link>
+            </Button>
+          </div>
+          
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-4 gap-8 mt-20">
+            <div className="text-center">
+              <div className="bg-white/10 rounded-full p-6 mx-auto mb-4 w-20 h-20 flex items-center justify-center">
+                <Heart className="h-8 w-8 text-pink-300" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Smart Matching</h3>
+              <p className="text-purple-200">Our algorithm finds your perfect matches</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-white/10 rounded-full p-6 mx-auto mb-4 w-20 h-20 flex items-center justify-center">
+                <MessageCircle className="h-8 w-8 text-blue-300" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Easy Messaging</h3>
+              <p className="text-purple-200">Chat instantly with your matches</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-white/10 rounded-full p-6 mx-auto mb-4 w-20 h-20 flex items-center justify-center">
+                <Users className="h-8 w-8 text-green-300" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Real People</h3>
+              <p className="text-purple-200">Verified profiles for authentic connections</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-white/10 rounded-full p-6 mx-auto mb-4 w-20 h-20 flex items-center justify-center">
+                <Star className="h-8 w-8 text-yellow-300" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Premium Features</h3>
+              <p className="text-purple-200">Advanced filters and priority matching</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* CTA Section */}
+      <div className="bg-black/20 py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Ready to Find Love?
+          </h2>
+          <p className="text-purple-200 mb-8 max-w-2xl mx-auto">
+            Join thousands of singles who have found their perfect match. Start your journey today.
+          </p>
+          <Button asChild size="lg" className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white px-12 py-4">
+            <Link to="/register">Start Matching Now</Link>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
