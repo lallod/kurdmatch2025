@@ -1,26 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import BottomNavigation from '@/components/BottomNavigation';
-import SwipeHeader from '@/components/swipe/SwipeHeader';
 import SwipeCard from '@/components/swipe/SwipeCard';
-import NoMoreProfiles from '@/components/swipe/NoMoreProfiles';
+import SwipeActions from '@/components/swipe/SwipeActions';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { createReport } from '@/api/reports';
+
+interface SwipeContainerProps {
+  profile: Profile;
+  onSwipeAction: (action: SwipeAction, profileId: string) => void;
+  onMessage: (profileId: string) => void;
+}
+
+const SwipeContainer: React.FC<SwipeContainerProps> = ({
+  profile,
+  onSwipeAction,
+  onMessage
+}) => {
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <SwipeCard 
+          profile={profile}
+          onSwipeLeft={() => onSwipeAction('pass', profile.id)}
+          onSwipeRight={() => onSwipeAction('like', profile.id)}
+        />
+      </div>
+      
+      <SwipeActions
+        onSwipeAction={onSwipeAction}
+        onMessage={onMessage}
+        profileId={profile.id}
+      />
+    </div>
+  );
+};
 const Swipe = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useSupabaseAuth();
+  const { user } = useSupabaseAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
   const currentProfile = profiles[currentIndex];
   useEffect(() => {
     const loadProfiles = async () => {
@@ -116,35 +140,25 @@ const Swipe = () => {
     loadProfiles();
   }, [user]);
   const handleSwipeAction = async (action: SwipeAction, profileId: string) => {
-    setLastAction({
-      type: action,
-      profileId
-    });
+    setLastAction({ type: action, profileId });
+    
     try {
       switch (action) {
         case 'pass':
           await unlikeProfile(profileId);
-          toast("Profile passed", {
-            icon: "👋"
-          });
+          toast("Profile passed", { icon: "👋" });
           break;
         case 'like':
           const result = await likeProfile(profileId);
           if (result.match) {
-            toast("It's a match! 🎉", {
-              icon: "💜"
-            });
+            toast("It's a match! 🎉", { icon: "💜" });
           } else {
-            toast("Profile liked!", {
-              icon: "💜"
-            });
+            toast("Profile liked!", { icon: "💜" });
           }
           break;
         case 'superlike':
           await likeProfile(profileId);
-          toast("Super like sent!", {
-            icon: "⭐"
-          });
+          toast("Super like sent!", { icon: "⭐" });
           break;
       }
     } catch (error) {
@@ -155,92 +169,43 @@ const Swipe = () => {
     // Move to next profile
     if (currentIndex < profiles.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setCurrentPhotoIndex(0);
-      setIsExpanded(false);
     } else {
-      toast("No more profiles to show", {
-        icon: "🔄"
-      });
-    }
-  };
-  const handleUndo = () => {
-    if (lastAction && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setLastAction(null);
-      toast("Action undone", {
-        icon: "↩️"
-      });
+      toast("No more profiles to show", { icon: "🔄" });
     }
   };
   const handleMessage = (profileId: string) => {
     navigate(`/messages?user=${profileId}`);
   };
-  const handleReport = async (profileId: string) => {
-    const reason = window.prompt('Report reason (e.g., spam, inappropriate content):') || 'unspecified';
-    try {
-      await createReport({
-        reported_user_id: profileId,
-        reason,
-        context: {
-          source: 'swipe'
-        }
-      });
-      toast('Profile reported. Thank you for keeping our community safe.', {
-        icon: '🛡️'
-      });
-    } catch (err) {
-      console.error('Report failed', err);
-      toast.error('Could not submit report. Please try again.');
-    }
-  };
-  const nextPhoto = () => {
-    if (currentProfile?.photos && currentPhotoIndex < currentProfile.photos.length - 1) {
-      setCurrentPhotoIndex(currentPhotoIndex + 1);
-    }
-  };
-  const prevPhoto = () => {
-    if (currentPhotoIndex > 0) {
-      setCurrentPhotoIndex(currentPhotoIndex - 1);
-    }
-  };
+
   if (isLoading) {
-    return <div className="min-h-screen relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
-        </div>
-        <div className="h-full flex items-center justify-center">
-          <div className="text-white text-xl font-semibold">Loading profiles...</div>
-        </div>
-      </div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-pink-900">
+        <div className="text-white text-xl font-semibold">Loading profiles...</div>
+      </div>
+    );
   }
+
   if (!currentProfile) {
-    return <NoMoreProfiles onStartOver={() => setCurrentIndex(0)} />;
-  }
-  return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col relative">
-      {/* Enhanced Purple Gradient Background with Depth */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-900/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent" />
-      </div>
-
-      <SwipeHeader lastAction={lastAction} onUndo={handleUndo} />
-
-      {/* Main Card Container with Enhanced Styling */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide relative pb-16 px-0">
-        <div className="w-full h-full">
-          <div className="w-full h-full relative">
-            {/* Card Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl transform scale-105 opacity-75 mx-0" />
-            
-            {/* Main Card */}
-            <div className="relative animate-scale-in">
-              <SwipeCard profile={currentProfile} currentPhotoIndex={currentPhotoIndex} isExpanded={isExpanded} onNextPhoto={nextPhoto} onPrevPhoto={prevPhoto} onToggleExpanded={() => setIsExpanded(!isExpanded)} onReport={handleReport} onSwipeAction={handleSwipeAction} onMessage={handleMessage} />
-            </div>
-          </div>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-pink-900">
+        <div className="text-center text-white">
+          <h2 className="text-2xl font-bold mb-2">No more profiles</h2>
+          <p className="text-purple-200">Check back later for new matches!</p>
         </div>
       </div>
+    );
+  }
 
-      <BottomNavigation />
-    </div>;
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-pink-900">
+      <div className="h-screen flex flex-col">
+        <SwipeContainer
+          profile={currentProfile}
+          onSwipeAction={handleSwipeAction}
+          onMessage={handleMessage}
+        />
+      </div>
+    </div>
+  );
 };
 export default Swipe;

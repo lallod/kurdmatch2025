@@ -1,62 +1,60 @@
 
-import React from 'react';
-import { Card } from "@/components/ui/card";
+import React, { useState } from 'react';
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
-import ProfileDetails from './ProfileDetails';
-import { Profile, SwipeAction } from '@/types/swipe';
+import ProfileBioSection from './ProfileBioSection';
+import { Profile } from '@/types/swipe';
 
 interface SwipeCardProps {
   profile: Profile;
-  currentPhotoIndex: number;
-  isExpanded: boolean;
-  onNextPhoto: () => void;
-  onPrevPhoto: () => void;
-  onToggleExpanded: () => void;
-  onReport: (profileId: string) => void;
-  onSwipeAction: (action: SwipeAction, profileId: string) => void;
-  onMessage: (profileId: string) => void;
+  onSwipeLeft: () => void;
+  onSwipeRight: () => void;
+  style?: React.CSSProperties;
 }
 
-const SwipeCard = ({
+const SwipeCard: React.FC<SwipeCardProps> = ({
   profile,
-  currentPhotoIndex,
-  isExpanded,
-  onNextPhoto,
-  onPrevPhoto,
-  onToggleExpanded,
-  onReport,
-  onSwipeAction,
-  onMessage
-}: SwipeCardProps) => {
+  onSwipeLeft,
+  onSwipeRight,
+  style
+}) => {
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+
+  const handleNextPhoto = () => {
+    const photoCount = profile.photos?.length || 1;
+    setCurrentPhotoIndex((prev) => (prev + 1) % photoCount);
+  };
+
+  const handlePrevPhoto = () => {
+    const photoCount = profile.photos?.length || 1;
+    setCurrentPhotoIndex((prev) => (prev - 1 + photoCount) % photoCount);
+  };
+
   return (
-    <Card className="w-full h-full overflow-hidden backdrop-blur-xl bg-white/5 border-0 shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex flex-col m-0 p-0 group transition-all duration-500 hover:shadow-[0_25px_50px_rgba(147,51,234,0.2)]">
-      {/* Photo Section with Enhanced Styling */}
-      <div className="relative w-full h-[75vh] sm:h-[70vh] md:h-[65vh] lg:h-[60vh] max-h-[600px] rounded-t-3xl overflow-hidden">
+    <div 
+      className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden"
+      style={style}
+    >
+      {/* Photo Gallery with 16:9 aspect ratio */}
+      <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
         <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
-          onNextPhoto={onNextPhoto}
-          onPrevPhoto={onPrevPhoto}
+          onNextPhoto={handleNextPhoto}
+          onPrevPhoto={handlePrevPhoto}
         />
-        {/* Enhanced Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
-        <ProfileInfo 
-          profile={profile} 
-          onReport={onReport}
-          onSwipeAction={onSwipeAction}
-          onMessage={onMessage}
-        />
+        
+        {/* Profile Info overlay at bottom - max 25% height */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent" style={{ height: '25%' }}>
+          <div className="absolute bottom-4 left-4 right-4">
+            <ProfileInfo profile={profile} />
+          </div>
+        </div>
       </div>
-      {/* Details Section with Glass Effect */}
-      <div className="bg-black/20 backdrop-blur-sm border-t border-white/10">
-        <ProfileDetails
-          profile={profile}
-          isExpanded={isExpanded}
-          onToggleExpanded={onToggleExpanded}
-        />
-      </div>
-    </Card>
+      
+      {/* Bio section appears after photo */}
+      <ProfileBioSection profile={profile} />
+    </div>
   );
 };
 

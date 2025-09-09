@@ -38,6 +38,39 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_stats: {
+        Row: {
+          change_percentage: number
+          created_at: string | null
+          icon: string
+          id: number
+          stat_name: string
+          stat_value: number
+          trend: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          change_percentage?: number
+          created_at?: string | null
+          icon: string
+          id: number
+          stat_name: string
+          stat_value?: number
+          trend?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          change_percentage?: number
+          created_at?: string | null
+          icon?: string
+          id?: number
+          stat_name?: string
+          stat_value?: number
+          trend?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       landing_page_content: {
         Row: {
           content: Json
