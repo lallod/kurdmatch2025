@@ -6,10 +6,11 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
-  signOut: () => Promise<{ error: any }>;
-  signInWithProvider: (provider: 'google' | 'facebook') => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<any>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<any>;
+  signOut: () => Promise<any>;
+  signInWithProvider: (provider: 'google' | 'facebook') => Promise<any>;
+  supabase: typeof supabase;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   signUp: async () => ({ error: null }),
   signOut: async () => ({ error: null }),
   signInWithProvider: async () => ({ error: null }),
+  supabase,
 });
 
 export const useSupabaseAuth = () => {
@@ -30,7 +32,6 @@ export const useSupabaseAuth = () => {
   return context;
 };
 
-// Export as useAuth for consistency with main app  
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -39,7 +40,7 @@ export const useAuth = () => {
   return context;
 };
 
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,17 +66,17 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const response = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    return { error };
+    return response;
   };
 
   const signUp = async (email: string, password: string, metadata = {}) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const response = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -83,22 +84,22 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         data: metadata
       }
     });
-    return { error };
+    return response;
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    const response = await supabase.auth.signOut();
+    return response;
   };
 
   const signInWithProvider = async (provider: 'google' | 'facebook') => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const response = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`
       }
     });
-    return { error };
+    return response;
   };
 
   const value: AuthContextType = {
@@ -109,6 +110,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     signUp,
     signOut,
     signInWithProvider,
+    supabase,
   };
 
   return (
@@ -117,5 +119,3 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     </AuthContext.Provider>
   );
 };
-
-export { AuthProvider, useAuth, useSupabaseAuth };
