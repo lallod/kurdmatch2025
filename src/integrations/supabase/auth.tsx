@@ -30,6 +30,15 @@ export const useSupabaseAuth = () => {
   return context;
 };
 
+// Export as useAuth for consistency with main app  
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -109,4 +118,4 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   );
 };
 
-export { AuthProvider };
+export { AuthProvider, useAuth, useSupabaseAuth };

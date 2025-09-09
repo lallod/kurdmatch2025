@@ -6,7 +6,7 @@ import SwipeActions from '@/components/swipe/SwipeActions';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/integrations/supabase/auth';
 
 const Swipe = () => {
   const navigate = useNavigate();

@@ -1,119 +1,124 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
-export const likeProfile = async (profileId: string) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
-  
-  const { data, error } = await supabase
-    .from('likes')
-    .insert({
-      liker_id: session.user.id,
-      likee_id: profileId
-    })
-    .select()
-    .single();
-  
-  if (error) throw error;
-  
-  // Check if this creates a mutual match
-  const { data: matchData, error: matchError } = await supabase
-    .from('likes')
-    .select()
-    .eq('liker_id', profileId)
-    .eq('likee_id', session.user.id)
-    .single();
-  
-  // If there's a mutual like, create a match
-  if (matchData && !matchError) {
-    const { data: newMatch, error: newMatchError } = await supabase
-      .from('matches')
+export interface LikeResult {
+  success: boolean;
+  match?: boolean;
+  error?: string;
+}
+
+export const likeProfile = async (profileId: string): Promise<LikeResult> => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) throw new Error('No user authenticated');
+
+    const userId = session.user.id;
+
+    // Check if already liked
+    const { data: existingLike } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('liker_id', userId)
+      .eq('likee_id', profileId)
+      .maybeSingle();
+
+    if (existingLike) {
+      return { success: false, error: 'Already liked this profile' };
+    }
+
+    // Create the like
+    const { error: likeError } = await supabase
+      .from('likes')
       .insert({
-        user1_id: session.user.id,
-        user2_id: profileId
-      })
-      .select()
-      .single();
-    
-    if (newMatchError) throw newMatchError;
-    
-    return { like: data, match: newMatch };
+        liker_id: userId,
+        likee_id: profileId
+      });
+
+    if (likeError) throw likeError;
+
+    // Check for mutual like (match)
+    const { data: mutualLike } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('liker_id', profileId)
+      .eq('likee_id', userId)
+      .maybeSingle();
+
+    let matchCreated = false;
+    if (mutualLike) {
+      // Create match - use correct column names for matches table
+      const { error: matchError } = await supabase
+        .from('matches')
+        .insert({
+          user1_id: userId,
+          user2_id: profileId
+        });
+
+      if (!matchError) {
+        matchCreated = true;
+      }
+    }
+
+    return { success: true, match: matchCreated };
+  } catch (error: any) {
+    console.error('Error liking profile:', error);
+    return { success: false, error: error.message };
   }
-  
-  return { like: data, match: null };
 };
 
-export const unlikeProfile = async (profileId: string) => {
+export const unlikeProfile = async (profileId: string): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) throw new Error('No user authenticated');
+
+    const { error } = await supabase
+      .from('likes')
+      .delete()
+      .eq('liker_id', session.user.id)
+      .eq('likee_id', profileId);
+
+    if (error) throw error;
+
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error unliking profile:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getLikedProfiles = async () => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('No user authenticated');
-  
+
   const { data, error } = await supabase
     .from('likes')
-    .delete()
+    .select(`
+      *,
+      likee:profiles!likes_likee_id_fkey (
+        id, name, profile_image, age, location
+      )
+    `)
     .eq('liker_id', session.user.id)
-    .eq('likee_id', profileId)
-    .select()
-    .single();
-  
+    .order('created_at', { ascending: false });
+
   if (error) throw error;
-  
-  // Also remove any matches
-  await supabase
-    .from('matches')
-    .delete()
-    .or(`and(user1_id.eq.${session.user.id},user2_id.eq.${profileId}),and(user1_id.eq.${profileId},user2_id.eq.${session.user.id})`);
-  
-  return data;
+  return data?.map(like => like.likee) || [];
 };
 
 export const getProfilesWhoLikedMe = async () => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('No user authenticated');
-  
+
   const { data, error } = await supabase
     .from('likes')
-    .select('liker:liker_id(*)')
-    .eq('likee_id', session.user.id);
-  
-  if (error) throw error;
-  return data.map((like: any) => like.liker);
-};
-
-export const getProfilesILiked = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
-  
-  const { data, error } = await supabase
-    .from('likes')
-    .select('likee:likee_id(*)')
-    .eq('liker_id', session.user.id);
-  
-  if (error) throw error;
-  return data.map((like: any) => like.likee);
-};
-
-export const getMatches = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
-  
-  const { data, error } = await supabase
-    .from('matches')
     .select(`
-      id,
-      matched_at,
-      user1:user1_id(*),
-      user2:user2_id(*)
+      *,
+      liker:profiles!likes_liker_id_fkey (
+        id, name, profile_image, age, location
+      )
     `)
-    .or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`);
-  
+    .eq('likee_id', session.user.id)
+    .order('created_at', { ascending: false });
+
   if (error) throw error;
-  
-  return data.map((match: any) => {
-    const otherUser = match.user1.id === session.user.id ? match.user2 : match.user1;
-    return {
-      matchId: match.id,
-      profile: otherUser,
-      matchedAt: match.matched_at
-    };
-  });
+  return data?.map(like => like.liker) || [];
 };

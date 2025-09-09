@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider } from '@/hooks/useAuth'
+import { AuthProvider } from '@/integrations/supabase/auth'
 
 // Create a client
 const queryClient = new QueryClient()

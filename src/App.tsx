@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";  
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/integrations/supabase/auth";
 import { AppRoutes } from "@/components/app/AppRoutes";
 import { LoadingSpinner } from "@/components/app/LoadingSpinner";
 
