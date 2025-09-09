@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from './client';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthContextType {
   user: User | null;
@@ -22,15 +22,15 @@ const AuthContext = createContext<AuthContextType>({
   signInWithProvider: async () => ({ error: null }),
 });
 
-export const useSupabaseAuth = () => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useSupabaseAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
 
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -108,5 +108,3 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     </AuthContext.Provider>
   );
 };
-
-export { AuthProvider };

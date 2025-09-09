@@ -6,49 +6,22 @@ import SwipeActions from '@/components/swipe/SwipeActions';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
-import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useAuth } from '@/hooks/useAuth';
 
-interface SwipeContainerProps {
-  profile: Profile;
-  onSwipeAction: (action: SwipeAction, profileId: string) => void;
-  onMessage: (profileId: string) => void;
-}
-
-const SwipeContainer: React.FC<SwipeContainerProps> = ({
-  profile,
-  onSwipeAction,
-  onMessage
-}) => {
-  return (
-    <div className="h-full flex flex-col">
-      <div className="flex-1 flex items-center justify-center p-4">
-        <SwipeCard 
-          profile={profile}
-          onSwipeLeft={() => onSwipeAction('pass', profile.id)}
-          onSwipeRight={() => onSwipeAction('like', profile.id)}
-        />
-      </div>
-      
-      <SwipeActions
-        onSwipeAction={onSwipeAction}
-        onMessage={onMessage}
-        profileId={profile.id}
-      />
-    </div>
-  );
-};
 const Swipe = () => {
   const navigate = useNavigate();
-  const { user } = useSupabaseAuth();
+  const { user } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const currentProfile = profiles[currentIndex];
+
   useEffect(() => {
     const loadProfiles = async () => {
       if (!user) return;
+      
       try {
         setIsLoading(true);
         const profilesData = await getMatchRecommendations(50);
@@ -61,9 +34,7 @@ const Swipe = () => {
           location: profile.location,
           avatar: profile.profile_image || profile.photos?.[0]?.url || '',
           distance: Math.floor(Math.random() * 20) + 1,
-          // Mock distance for now
           compatibilityScore: Math.floor(Math.random() * 30) + 70,
-          // Mock score for now
           kurdistanRegion: profile.kurdistan_region || 'South-Kurdistan',
           area: profile.kurdistan_region || 'South-Kurdistan',
           interests: profile.interests || [],
@@ -129,6 +100,7 @@ const Swipe = () => {
           dreamHome: profile.dream_home || '',
           idealWeather: profile.ideal_weather || ''
         })) || [];
+
         setProfiles(transformedProfiles);
       } catch (error) {
         console.error('Failed to load profiles:', error);
@@ -137,8 +109,10 @@ const Swipe = () => {
         setIsLoading(false);
       }
     };
+
     loadProfiles();
   }, [user]);
+
   const handleSwipeAction = async (action: SwipeAction, profileId: string) => {
     setLastAction({ type: action, profileId });
     
@@ -173,6 +147,7 @@ const Swipe = () => {
       toast("No more profiles to show", { icon: "🔄" });
     }
   };
+
   const handleMessage = (profileId: string) => {
     navigate(`/messages?user=${profileId}`);
   };
@@ -199,13 +174,22 @@ const Swipe = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 to-pink-900">
       <div className="h-screen flex flex-col">
-        <SwipeContainer
-          profile={currentProfile}
+        <div className="flex-1 flex items-center justify-center p-4">
+          <SwipeCard 
+            profile={currentProfile}
+            onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
+            onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
+          />
+        </div>
+        
+        <SwipeActions
           onSwipeAction={handleSwipeAction}
           onMessage={handleMessage}
+          profileId={currentProfile.id}
         />
       </div>
     </div>
   );
 };
+
 export default Swipe;
