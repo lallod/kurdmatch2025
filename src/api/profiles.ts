@@ -118,7 +118,35 @@ export const updateProfile = async (id: string, updates: Partial<Profile>) => {
   return data;
 };
 
+import { getMessages } from './messages';
+
 export const getMessagesByConversation = getMessages;
+
+export const uploadProfilePhoto = async (file: File, isPrimary: boolean = false): Promise<string> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) throw new Error('No user authenticated');
+
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = `${session.user.id}/${fileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('profile-photos')
+    .upload(filePath, file);
+
+  if (uploadError) throw uploadError;
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('profile-photos')
+    .getPublicUrl(filePath);
+
+  // Update profile with new photo URL
+  if (isPrimary) {
+    await updateProfile(session.user.id, { profile_image: publicUrl });
+  }
+
+  return publicUrl;
+};
 
 export const getCurrentUserProfile = async (): Promise<Profile | null> => {
   const { data: { session } } = await supabase.auth.getSession();

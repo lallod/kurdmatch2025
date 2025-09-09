@@ -58,7 +58,42 @@ export const useRealProfileData = () => {
       const profile = await getCurrentUserProfile();
       
       if (profile) {
-        setProfileData(profile);
+        // Convert Profile to DatabaseProfile
+        const dbProfile: DatabaseProfile = {
+          id: profile.id,
+          name: profile.name,
+          age: profile.age,
+          location: profile.location,
+          occupation: profile.occupation || null,
+          bio: profile.bio || null,
+          verified: profile.verified || null,
+          profile_image: profile.profile_image || null,
+          last_active: profile.last_active || null,
+          kurdistan_region: profile.kurdistan_region || null,
+          height: profile.height || null,
+          body_type: profile.body_type || null,
+          ethnicity: profile.ethnicity || null,
+          religion: profile.religion || null,
+          political_views: profile.political_views || null,
+          values: profile.values || null,
+          interests: profile.interests || null,
+          hobbies: profile.hobbies || null,
+          languages: profile.languages || null,
+          education: profile.education || null,
+          company: profile.company || null,
+          relationship_goals: profile.relationship_goals || null,
+          want_children: profile.want_children || null,
+          have_pets: profile.have_pets || null,
+          exercise_habits: profile.exercise_habits || null,
+          zodiac_sign: profile.zodiac_sign || null,
+          personality_type: profile.personality_type || null,
+          sleep_schedule: profile.sleep_schedule || null,
+          travel_frequency: profile.travel_frequency || null,
+          communication_style: profile.communication_style || null,
+          love_language: profile.love_language || null,
+          created_at: profile.created_at || null,
+        };
+        setProfileData(dbProfile);
 
         // Get onboarding progress
         const progress = await getUserOnboardingProgress(profile.id);
@@ -79,7 +114,7 @@ export const useRealProfileData = () => {
   const updateProfileData = async (updates: Partial<DatabaseProfile>) => {
     try {
       if (profileData) {
-        const updated = await updateProfile(updates as any);
+        const updated = await updateProfile(profileData.id, updates as any);
         setProfileData(updated as any);
         toast.success('Profile updated successfully');
         

@@ -161,7 +161,7 @@ const MyProfile = () => {
       try {
         const isPrimary = galleryImages.length === 0;
         const photo = await uploadProfilePhoto(files[0], isPrimary);
-        setGalleryImages(prev => [photo.url, ...prev]);
+        setGalleryImages(prev => [photo, ...prev]);
         toast.success(isPrimary ? 'Profile photo set' : 'Photo uploaded');
       } catch (error) {
         console.error('Photo upload failed:', error);

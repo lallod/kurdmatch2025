@@ -59,7 +59,7 @@ const Settings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateProfile({
+      await updateProfile(user.id, {
         name: formData.name,
         age: parseInt(formData.age) || null,
         location: formData.location,
