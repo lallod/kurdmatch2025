@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Profile } from '@/types/swipe';
+import { SWIPE_CONFIG } from '@/config/swipe';
 interface ProfilePhotoGalleryProps {
   profile: Profile;
   currentPhotoIndex: number;
@@ -39,14 +40,14 @@ const ProfilePhotoGallery = ({
             />
             
             {/* Modern Photo Indicators */}
-            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 flex gap-1.5 bg-black/40 backdrop-blur-xl rounded-full px-3 py-2">
+            <div className={`absolute ${SWIPE_CONFIG.gallery.indicators.top} left-1/2 transform -translate-x-1/2 flex ${SWIPE_CONFIG.gallery.indicators.gap} bg-black/40 backdrop-blur-xl rounded-full ${SWIPE_CONFIG.gallery.indicators.padding}`}>
               {profile.photos.map((_, index) => (
                 <div 
                   key={index} 
-                  className={`h-1 rounded-full transition-all duration-300 ${
+                  className={`${SWIPE_CONFIG.gallery.indicators.size} rounded-full transition-all duration-300 ${
                     index === currentPhotoIndex 
-                      ? 'bg-white w-8 shadow-lg' 
-                      : 'bg-white/50 w-1.5'
+                      ? `bg-white ${SWIPE_CONFIG.gallery.indicators.active} shadow-lg`
+                      : `bg-white/50 ${SWIPE_CONFIG.gallery.indicators.inactive}`
                   }`} 
                 />
               ))}

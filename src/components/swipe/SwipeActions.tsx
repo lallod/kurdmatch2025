@@ -1,5 +1,6 @@
 import React from 'react';
 import { RotateCcw, X, Heart, Star, Zap } from 'lucide-react';
+import { SWIPE_CONFIG } from '@/config/swipe';
 
 interface SwipeActionsProps {
   onRewind: () => void;
@@ -17,45 +18,45 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
   onBoost
 }) => {
   return (
-    <div className="flex items-center justify-center gap-4 px-8">
+    <div className={`flex items-center justify-center ${SWIPE_CONFIG.actions.buttons.gap} ${SWIPE_CONFIG.actions.container.padding}`}>
       {/* Rewind */}
       <button
         onClick={onRewind}
-        className="w-14 h-14 bg-yellow-500 hover:bg-yellow-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95"
+        className={`${SWIPE_CONFIG.actions.buttons.small} bg-yellow-500 hover:bg-yellow-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
       >
-        <RotateCcw className="w-6 h-6 text-white" />
+        <RotateCcw className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-white`} />
       </button>
 
       {/* Pass */}
       <button
         onClick={onPass}
-        className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95"
+        className={`${SWIPE_CONFIG.actions.buttons.large} bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
       >
-        <X className="w-8 h-8 text-white" strokeWidth={3} />
+        <X className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} strokeWidth={3} />
       </button>
 
       {/* Like */}
       <button
         onClick={onLike}
-        className="w-16 h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95"
+        className={`${SWIPE_CONFIG.actions.buttons.large} bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
       >
-        <Heart className="w-8 h-8 text-white" fill="currentColor" />
+        <Heart className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} fill="currentColor" />
       </button>
 
       {/* Super Like */}
       <button
         onClick={onSuperLike}
-        className="w-16 h-16 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95"
+        className={`${SWIPE_CONFIG.actions.buttons.large} bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
       >
-        <Star className="w-8 h-8 text-white" fill="currentColor" />
+        <Star className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} fill="currentColor" />
       </button>
 
       {/* Boost */}
       <button
         onClick={onBoost}
-        className="w-14 h-14 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95"
+        className={`${SWIPE_CONFIG.actions.buttons.small} bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
       >
-        <Zap className="w-6 h-6 text-white" fill="currentColor" />
+        <Zap className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-white`} fill="currentColor" />
       </button>
     </div>
   );

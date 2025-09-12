@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
-import ProfileBioSection from './ProfileBioSection';
 import { Profile } from '@/types/swipe';
+import { SWIPE_CONFIG } from '@/config/swipe';
 
 interface SwipeCardProps {
   profile: Profile;
@@ -63,7 +63,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
 
     const handleMouseUp = () => {
       setIsDragging(false);
-      const threshold = 100;
+      const threshold = SWIPE_CONFIG.animations.threshold;
       
       if (Math.abs(dragPosition.x) > threshold) {
         if (dragPosition.x > 0) {
@@ -85,18 +85,15 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const cardRotation = dragPosition.x * 0.1;
-  const cardOpacity = Math.max(0.7, 1 - Math.abs(dragPosition.x) * 0.001);
+  const cardRotation = dragPosition.x * SWIPE_CONFIG.animations.dragRotation;
+  const cardOpacity = Math.max(SWIPE_CONFIG.animations.minOpacity, 1 - Math.abs(dragPosition.x) * SWIPE_CONFIG.animations.opacityMultiplier);
 
   return (
     <div 
-      className="relative w-full max-w-sm mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing select-none"
+      className={`relative mx-auto bg-white dark:bg-gray-800 ${SWIPE_CONFIG.card.borderRadius} shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing select-none ${SWIPE_CONFIG.card.maxWidth.mobile} sm:${SWIPE_CONFIG.card.maxWidth.tablet} lg:${SWIPE_CONFIG.card.maxWidth.desktop} ${SWIPE_CONFIG.card.height.mobile} sm:${SWIPE_CONFIG.card.height.tablet} lg:${SWIPE_CONFIG.card.height.desktop} ${SWIPE_CONFIG.card.minHeight} ${SWIPE_CONFIG.card.maxHeight}`}
       style={{
         transform: `translateX(${dragPosition.x}px) translateY(${dragPosition.y}px) rotate(${cardRotation}deg)`,
         opacity: cardOpacity,
-        height: '85vh',
-        maxHeight: '700px',
-        minHeight: '600px',
         transition: isDragging ? 'none' : 'transform 0.3s ease-out, opacity 0.3s ease-out',
         ...style
       }}
@@ -106,13 +103,13 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
       {swipeDirection && !isBackground && (
         <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
           <div
-            className={`text-6xl font-bold transform rotate-12 px-8 py-4 rounded-2xl border-4 ${
+            className={`${SWIPE_CONFIG.overlay.textSize} font-bold transform rotate-12 ${SWIPE_CONFIG.overlay.padding} ${SWIPE_CONFIG.overlay.borderRadius} ${SWIPE_CONFIG.overlay.borderWidth} ${
               swipeDirection === 'right'
                 ? 'text-green-500 border-green-500 bg-green-500/10'
                 : 'text-red-500 border-red-500 bg-red-500/10'
             }`}
             style={{
-              opacity: Math.min(1, Math.abs(dragPosition.x) / 100)
+              opacity: Math.min(1, Math.abs(dragPosition.x) / SWIPE_CONFIG.animations.threshold)
             }}
           >
             {swipeDirection === 'right' ? 'LIKE' : 'NOPE'}
@@ -131,8 +128,8 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
         />
         
         {/* Profile info overlay at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent h-40">
-          <div className="absolute bottom-6 left-6 right-6">
+        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${SWIPE_CONFIG.info.overlay.height}`}>
+          <div className={`absolute ${SWIPE_CONFIG.info.overlay.padding}`}>
             <ProfileInfo profile={profile} minimal={true} />
           </div>
         </div>
