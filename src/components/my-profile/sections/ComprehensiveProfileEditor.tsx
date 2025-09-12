@@ -26,12 +26,22 @@ import RelationshipPreferencesEditor from './editors/RelationshipPreferencesEdit
 
 interface ComprehensiveProfileEditorProps {
   profileData: ProfileData;
+  categoryProgress?: {
+    basicInfo: number;
+    lifestyle: number;
+    valuesAndBeliefs: number;
+    interestsAndHobbies: number;
+    careerAndEducation: number;
+    relationshipGoals: number;
+    overall: number;
+  };
   onUpdateProfile: (updates: Partial<ProfileData>) => void;
 }
 
-const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
-  profileData,
-  onUpdateProfile
+const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({ 
+  profileData, 
+  categoryProgress,
+  onUpdateProfile 
 }) => {
   const [activeTab, setActiveTab] = useState('basic');
 
@@ -87,7 +97,34 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
     }
   ];
 
-  const calculateSectionCompletion = (fields: string[]) => {
+  const calculateSectionCompletion = (fields: string[]): number => {
+    if (!profileData) return 0;
+    
+    // Use category progress if available
+    if (categoryProgress) {
+      const sectionId = profileSections.find(s => 
+        JSON.stringify(s.fields) === JSON.stringify(fields)
+      )?.id;
+      
+      switch (sectionId) {
+        case 'basics':
+          return categoryProgress.basicInfo;
+        case 'lifestyle': 
+          return categoryProgress.lifestyle;
+        case 'values':
+          return categoryProgress.valuesAndBeliefs;
+        case 'interests':
+          return categoryProgress.interestsAndHobbies;
+        case 'career':
+          return categoryProgress.careerAndEducation;
+        case 'relationship':
+          return categoryProgress.relationshipGoals;
+        default:
+          break;
+      }
+    }
+    
+    // Fallback calculation
     const completedFields = fields.filter(field => {
       const value = profileData[field as keyof ProfileData];
       if (Array.isArray(value)) return value.length > 0;

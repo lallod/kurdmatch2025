@@ -38,6 +38,7 @@ const MyProfile = () => {
     profileData: realProfileData, 
     loading, 
     onboardingProgress, 
+    categoryProgress,
     engagement, 
     updateProfileData,
     refreshData 
@@ -75,7 +76,15 @@ const MyProfile = () => {
     sleepSchedule: realProfileData.sleep_schedule || '',
     travelFrequency: realProfileData.travel_frequency || '',
     communicationStyle: realProfileData.communication_style || '',
-    loveLanguage: realProfileData.love_language || ''
+    loveLanguage: realProfileData.love_language || '',
+    creativePursuits: realProfileData.creative_pursuits || [],
+    weekendActivities: realProfileData.weekend_activities || [],
+    dietaryPreferences: realProfileData.dietary_preferences || '',
+    smoking: realProfileData.smoking || '',
+    drinking: realProfileData.drinking || '',
+    idealDate: realProfileData.ideal_date || '',
+    workLifeBalance: realProfileData.work_life_balance || '',
+    careerAmbitions: realProfileData.career_ambitions || ''
   } : {
     name: '',
     age: 0,
@@ -155,33 +164,8 @@ const MyProfile = () => {
     }
   }, [profileData.profileImage]);
 
-  // Profile completion calculation
-  const calculateProfileCompletion = () => {
-    if (!realProfileData) return 0;
-    
-    let completed = 0;
-    const total = 15;
-    
-    if (profileData.name) completed++;
-    if (profileData.bio && profileData.bio.length > 50) completed++;
-    if (galleryImages.length >= 1) completed++;
-    if (profileData.interests.length >= 3) completed++;
-    if (profileData.occupation) completed++;
-    if (profileData.languages.length >= 1) completed++;
-    if (profileData.height) completed++;
-    if (profileData.values.length >= 3) completed++;
-    if (profileData.hobbies.length >= 2) completed++;
-    if (profileData.verified) completed++;
-    if (profileData.religion) completed++;
-    if (profileData.ethnicity) completed++;
-    if (profileData.exerciseHabits) completed++;
-    if (profileData.relationshipGoals) completed++;
-    if (profileData.education) completed++;
-    
-    return Math.round((completed / total) * 100);
-  };
-
-  const profileCompletion = calculateProfileCompletion();
+  // Use the comprehensive profile completion from categoryProgress
+  const profileCompletion = categoryProgress?.overall || 0;
 
   // Use engagement data for stats
   const profileStats = {
@@ -266,6 +250,14 @@ const MyProfile = () => {
       if (updates.travelFrequency) dbUpdates.travel_frequency = updates.travelFrequency;
       if (updates.communicationStyle) dbUpdates.communication_style = updates.communicationStyle;
       if (updates.loveLanguage) dbUpdates.love_language = updates.loveLanguage;
+      if (updates.creativePursuits) dbUpdates.creative_pursuits = updates.creativePursuits;
+      if (updates.weekendActivities) dbUpdates.weekend_activities = updates.weekendActivities;
+      if (updates.dietaryPreferences) dbUpdates.dietary_preferences = updates.dietaryPreferences;
+      if (updates.smoking) dbUpdates.smoking = updates.smoking;
+      if (updates.drinking) dbUpdates.drinking = updates.drinking;
+      if (updates.idealDate) dbUpdates.ideal_date = updates.idealDate;
+      if (updates.workLifeBalance) dbUpdates.work_life_balance = updates.workLifeBalance;
+      if (updates.careerAmbitions) dbUpdates.career_ambitions = updates.careerAmbitions;
 
       await updateProfileData(dbUpdates);
       toast.success('Profile updated successfully');
@@ -529,6 +521,7 @@ const MyProfile = () => {
                 {/* Comprehensive Profile Editor */}
                 <ComprehensiveProfileEditor
                   profileData={profileData}
+                  categoryProgress={categoryProgress}
                   onUpdateProfile={handleProfileUpdate}
                 />
               </TabsContent>

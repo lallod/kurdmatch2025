@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { getCurrentUserProfile, updateProfile } from '@/api/profiles';
-import { getUserOnboardingProgress, getRealUserEngagement } from '@/utils/realUserEnhancement';
+import { getUserOnboardingProgress, getRealUserEngagement, CategoryProgress } from '@/utils/realUserEnhancement';
 import { toast } from 'sonner';
 
 // Define a database-compatible profile interface
@@ -37,6 +37,14 @@ interface DatabaseProfile {
   travel_frequency: string | null;
   communication_style: string | null;
   love_language: string | null;
+  creative_pursuits: string[] | null;
+  weekend_activities: string[] | null;
+  dietary_preferences: string | null;
+  smoking: string | null;
+  drinking: string | null;
+  ideal_date: string | null;
+  work_life_balance: string | null;
+  career_ambitions: string | null;
   created_at: string | null;
 }
 
@@ -44,6 +52,7 @@ export const useRealProfileData = () => {
   const [profileData, setProfileData] = useState<DatabaseProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [onboardingProgress, setOnboardingProgress] = useState<any>(null);
+  const [categoryProgress, setCategoryProgress] = useState<CategoryProgress | null>(null);
   const [engagement, setEngagement] = useState<any>(null);
 
   useEffect(() => {
@@ -91,13 +100,22 @@ export const useRealProfileData = () => {
           travel_frequency: profile.travel_frequency || null,
           communication_style: profile.communication_style || null,
           love_language: profile.love_language || null,
+          creative_pursuits: profile.creative_pursuits || null,
+          weekend_activities: profile.weekend_activities || null,
+          dietary_preferences: profile.dietary_preferences || null,
+          smoking: profile.smoking || null,
+          drinking: profile.drinking || null,
+          ideal_date: profile.ideal_date || null,
+          work_life_balance: profile.work_life_balance || null,
+          career_ambitions: profile.career_ambitions || null,
           created_at: profile.created_at || null,
         };
         setProfileData(dbProfile);
 
-        // Get onboarding progress
+        // Get onboarding progress with category breakdown
         const progress = await getUserOnboardingProgress(profile.id);
         setOnboardingProgress(progress);
+        setCategoryProgress(progress.categoryProgress);
 
         // Get engagement metrics
         const userEngagement = await getRealUserEngagement(profile.id);
@@ -121,6 +139,7 @@ export const useRealProfileData = () => {
         // Refresh onboarding progress
         const progress = await getUserOnboardingProgress(profileData.id);
         setOnboardingProgress(progress);
+        setCategoryProgress(progress.categoryProgress);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -132,6 +151,7 @@ export const useRealProfileData = () => {
     profileData,
     loading,
     onboardingProgress,
+    categoryProgress,
     engagement,
     updateProfileData,
     refreshData: loadRealProfileData

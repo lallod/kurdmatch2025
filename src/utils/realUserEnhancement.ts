@@ -21,9 +21,107 @@ export interface CulturalSuggestion {
 }
 
 /**
- * Get user onboarding progress
+ * Category-based progress interface
  */
-export const getUserOnboardingProgress = async (userId: string): Promise<UserOnboardingProgress> => {
+export interface CategoryProgress {
+  basicInfo: number;
+  lifestyle: number;
+  valuesAndBeliefs: number;
+  interestsAndHobbies: number;
+  careerAndEducation: number;
+  relationshipGoals: number;
+  overall: number;
+}
+
+/**
+ * Calculate category-based profile completion
+ */
+export const calculateCategoryProgress = (profile: any, photoCount: number = 0): CategoryProgress => {
+  // Basic Info (8 fields)
+  let basicInfoCompleted = 0;
+  const basicInfoTotal = 8;
+  if (profile.name) basicInfoCompleted++;
+  if (profile.age && profile.age >= 18) basicInfoCompleted++;
+  if (profile.location) basicInfoCompleted++;
+  if (profile.height) basicInfoCompleted++;
+  if (profile.body_type) basicInfoCompleted++;
+  if (profile.ethnicity) basicInfoCompleted++;
+  if (profile.kurdistan_region) basicInfoCompleted++;
+  if (photoCount >= 1) basicInfoCompleted++;
+  
+  // Lifestyle (7 fields)
+  let lifestyleCompleted = 0;
+  const lifestyleTotal = 7;
+  if (profile.exercise_habits) lifestyleCompleted++;
+  if (profile.dietary_preferences) lifestyleCompleted++;
+  if (profile.smoking) lifestyleCompleted++;
+  if (profile.drinking) lifestyleCompleted++;
+  if (profile.sleep_schedule) lifestyleCompleted++;
+  if (profile.have_pets) lifestyleCompleted++;
+  if (profile.travel_frequency) lifestyleCompleted++;
+  
+  // Values & Beliefs (4 fields)
+  let valuesCompleted = 0;
+  const valuesTotal = 4;
+  if (profile.religion) valuesCompleted++;
+  if (profile.political_views) valuesCompleted++;
+  if (profile.values && profile.values.length >= 3) valuesCompleted++;
+  if (profile.communication_style) valuesCompleted++;
+  
+  // Interests & Hobbies (4 fields)
+  let interestsCompleted = 0;
+  const interestsTotal = 4;
+  if (profile.interests && profile.interests.length >= 3) interestsCompleted++;
+  if (profile.hobbies && profile.hobbies.length >= 2) interestsCompleted++;
+  if (profile.creative_pursuits && profile.creative_pursuits.length >= 1) interestsCompleted++;
+  if (profile.weekend_activities && profile.weekend_activities.length >= 2) interestsCompleted++;
+  
+  // Career & Education (5 fields)
+  let careerCompleted = 0;
+  const careerTotal = 5;
+  if (profile.occupation && profile.occupation !== 'Not specified') careerCompleted++;
+  if (profile.education && profile.education !== 'Not specified') careerCompleted++;
+  if (profile.company) careerCompleted++;
+  if (profile.work_life_balance) careerCompleted++;
+  if (profile.career_ambitions) careerCompleted++;
+  
+  // Relationship Goals (5 fields)
+  let relationshipCompleted = 0;
+  const relationshipTotal = 5;
+  if (profile.relationship_goals) relationshipCompleted++;
+  if (profile.want_children) relationshipCompleted++;
+  if (profile.love_language) relationshipCompleted++;
+  if (profile.ideal_date) relationshipCompleted++;
+  if (profile.bio && profile.bio.length > 50 && profile.bio !== 'Tell us about yourself...') relationshipCompleted++;
+
+  // Calculate percentages
+  const basicInfo = Math.round((basicInfoCompleted / basicInfoTotal) * 100);
+  const lifestyle = Math.round((lifestyleCompleted / lifestyleTotal) * 100);
+  const valuesAndBeliefs = Math.round((valuesCompleted / valuesTotal) * 100);
+  const interestsAndHobbies = Math.round((interestsCompleted / interestsTotal) * 100);
+  const careerAndEducation = Math.round((careerCompleted / careerTotal) * 100);
+  const relationshipGoals = Math.round((relationshipCompleted / relationshipTotal) * 100);
+  
+  // Overall completion
+  const totalCompleted = basicInfoCompleted + lifestyleCompleted + valuesCompleted + interestsCompleted + careerCompleted + relationshipCompleted;
+  const totalPossible = basicInfoTotal + lifestyleTotal + valuesTotal + interestsTotal + careerTotal + relationshipTotal;
+  const overall = Math.round((totalCompleted / totalPossible) * 100);
+
+  return {
+    basicInfo,
+    lifestyle,
+    valuesAndBeliefs,
+    interestsAndHobbies,
+    careerAndEducation,
+    relationshipGoals,
+    overall
+  };
+};
+
+/**
+ * Get user onboarding progress with comprehensive category tracking
+ */
+export const getUserOnboardingProgress = async (userId: string): Promise<UserOnboardingProgress & { categoryProgress: CategoryProgress }> => {
   try {
     const { data: profile } = await supabase
       .from('profiles')
@@ -35,72 +133,108 @@ export const getUserOnboardingProgress = async (userId: string): Promise<UserOnb
       throw new Error('Profile not found');
     }
 
-    const completedSteps = [];
-    const suggestions = [];
-    let profileCompletion = 0;
-    const totalSteps = 15;
-
-    // Check completed profile elements
-    if (profile.name) { completedSteps.push('name'); profileCompletion++; }
-    if (profile.bio && profile.bio.length > 50) { completedSteps.push('bio'); profileCompletion++; }
-    if (profile.location) { completedSteps.push('location'); profileCompletion++; }
-    if (profile.occupation) { completedSteps.push('occupation'); profileCompletion++; }
-    if (profile.height) { completedSteps.push('height'); profileCompletion++; }
-    if (profile.languages && profile.languages.length > 0) { completedSteps.push('languages'); profileCompletion++; }
-    if (profile.interests && profile.interests.length >= 3) { completedSteps.push('interests'); profileCompletion++; }
-    if (profile.values && profile.values.length >= 3) { completedSteps.push('values'); profileCompletion++; }
-    if (profile.hobbies && profile.hobbies.length >= 2) { completedSteps.push('hobbies'); profileCompletion++; }
-    if (profile.education) { completedSteps.push('education'); profileCompletion++; }
-    if (profile.relationship_goals) { completedSteps.push('relationship_goals'); profileCompletion++; }
-    if (profile.exercise_habits) { completedSteps.push('exercise_habits'); profileCompletion++; }
-    if (profile.verified) { completedSteps.push('verification'); profileCompletion++; }
-
     // Check photos
     const { count: photoCount } = await supabase
       .from('photos')
       .select('*', { count: 'exact', head: true })
       .eq('profile_id', userId);
 
-    if (photoCount && photoCount >= 3) { 
-      completedSteps.push('photos'); 
-      profileCompletion++; 
+    // Calculate category-based progress
+    const categoryProgress = calculateCategoryProgress(profile, photoCount || 0);
+    
+    const completedSteps = [];
+    const suggestions = [];
+
+    // Comprehensive completion tracking
+    if (profile.name) completedSteps.push('name');
+    if (profile.bio && profile.bio.length > 50) completedSteps.push('bio');
+    if (profile.location) completedSteps.push('location');
+    if (profile.occupation && profile.occupation !== 'Not specified') completedSteps.push('occupation');
+    if (profile.height) completedSteps.push('height');
+    if (profile.languages && profile.languages.length > 0) completedSteps.push('languages');
+    if (profile.interests && profile.interests.length >= 3) completedSteps.push('interests');
+    if (profile.values && profile.values.length >= 3) completedSteps.push('values');
+    if (profile.hobbies && profile.hobbies.length >= 2) completedSteps.push('hobbies');
+    if (profile.education && profile.education !== 'Not specified') completedSteps.push('education');
+    if (profile.relationship_goals) completedSteps.push('relationship_goals');
+    if (profile.exercise_habits) completedSteps.push('exercise_habits');
+    if (profile.verified) completedSteps.push('verification');
+    if (profile.body_type) completedSteps.push('body_type');
+    if (profile.ethnicity) completedSteps.push('ethnicity');
+    if (profile.religion) completedSteps.push('religion');
+    if (profile.kurdistan_region) completedSteps.push('kurdistan_region');
+    if (profile.dietary_preferences) completedSteps.push('dietary_preferences');
+    if (profile.smoking) completedSteps.push('smoking');
+    if (profile.drinking) completedSteps.push('drinking');
+    if (profile.sleep_schedule) completedSteps.push('sleep_schedule');
+    if (profile.have_pets) completedSteps.push('have_pets');
+    if (profile.travel_frequency) completedSteps.push('travel_frequency');
+    if (profile.political_views) completedSteps.push('political_views');
+    if (profile.communication_style) completedSteps.push('communication_style');
+    if (profile.love_language) completedSteps.push('love_language');
+    if (profile.ideal_date) completedSteps.push('ideal_date');
+    if (profile.creative_pursuits && profile.creative_pursuits.length >= 1) completedSteps.push('creative_pursuits');
+    if (profile.weekend_activities && profile.weekend_activities.length >= 2) completedSteps.push('weekend_activities');
+    if (profile.work_life_balance) completedSteps.push('work_life_balance');
+    if (profile.career_ambitions) completedSteps.push('career_ambitions');
+
+    if (photoCount && photoCount >= 1) { 
+      completedSteps.push('photos');
     } else {
-      suggestions.push('Add at least 3 photos to improve your profile visibility');
+      suggestions.push('Add at least 1 photo to improve your profile visibility');
     }
 
-    // Add suggestions based on missing elements
-    if (!completedSteps.includes('bio')) {
-      suggestions.push('Write a compelling bio that showcases your personality');
+    // Add category-specific suggestions
+    if (categoryProgress.basicInfo < 80) {
+      suggestions.push('Complete basic information for better matching');
     }
-    if (!completedSteps.includes('interests')) {
-      suggestions.push('Add more interests to help with matching');
+    if (categoryProgress.interestsAndHobbies < 70) {
+      suggestions.push('Add more interests and hobbies to find compatible matches');
+    }
+    if (categoryProgress.lifestyle < 70) {
+      suggestions.push('Share your lifestyle preferences to attract like-minded people');
     }
     if (!completedSteps.includes('verification')) {
       suggestions.push('Complete profile verification for increased trust');
     }
+    if ((photoCount || 0) < 3) {
+      suggestions.push('Add more photos to showcase your personality');
+    }
 
-    // Determine current step
+    // Determine current step based on category progress
     let currentStep = 'profile_complete';
-    if (!completedSteps.includes('name')) currentStep = 'basic_info';
-    else if (!completedSteps.includes('photos')) currentStep = 'photos';
-    else if (!completedSteps.includes('bio')) currentStep = 'bio';
-    else if (!completedSteps.includes('interests')) currentStep = 'interests';
+    if (categoryProgress.basicInfo < 100) currentStep = 'basic_info';
+    else if (categoryProgress.relationshipGoals < 100) currentStep = 'relationship_goals';
+    else if (categoryProgress.interestsAndHobbies < 100) currentStep = 'interests';
+    else if (categoryProgress.lifestyle < 100) currentStep = 'lifestyle';
     else if (!completedSteps.includes('verification')) currentStep = 'verification';
 
     return {
       userId,
       completedSteps,
       currentStep,
-      profileCompletion: Math.round((profileCompletion / totalSteps) * 100),
+      profileCompletion: categoryProgress.overall,
+      categoryProgress,
       suggestions
     };
   } catch (error) {
     console.error('Error getting onboarding progress:', error);
+    const defaultCategoryProgress: CategoryProgress = {
+      basicInfo: 0,
+      lifestyle: 0,
+      valuesAndBeliefs: 0,
+      interestsAndHobbies: 0,
+      careerAndEducation: 0,
+      relationshipGoals: 0,
+      overall: 0
+    };
+    
     return {
       userId,
       completedSteps: [],
       currentStep: 'basic_info',
       profileCompletion: 0,
+      categoryProgress: defaultCategoryProgress,
       suggestions: ['Complete your profile to get started']
     };
   }
