@@ -23,7 +23,7 @@ const ProfilePhotoGallery = ({
         <img 
           src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
           alt={`${profile.name}'s photo`} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.02]" 
         />
         
         {/* Photo Navigation - Only show if multiple photos and not background */}
