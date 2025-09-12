@@ -8,9 +8,9 @@ export const SWIPE_CONFIG = {
       desktop: 'w-[80vw] max-w-[480px]'
     },
     height: {
-      mobile: 'h-[calc(100vh-160px)]',
-      tablet: 'h-[calc(100vh-180px)]',
-      desktop: 'h-[calc(100vh-200px)]'
+      mobile: 'h-[calc(100vh-240px)]',
+      tablet: 'h-[calc(100vh-260px)]',
+      desktop: 'h-[calc(100vh-280px)]'
     },
     minHeight: 'min-h-[600px]',
     maxHeight: 'max-h-[calc(100vh-140px)]',

@@ -190,7 +190,7 @@ const Swipe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
         <div className={`${SWIPE_CONFIG.header.maxWidth} mx-auto ${SWIPE_CONFIG.header.padding} ${SWIPE_CONFIG.header.height}`}>
@@ -209,7 +209,7 @@ const Swipe = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden">
+      <div className="flex-1 flex items-center justify-center">
         {/* Card Stack Container */}
         <div className={`relative flex items-center justify-center w-full h-[90%] ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
           {/* Background Cards (stacked behind) */}
