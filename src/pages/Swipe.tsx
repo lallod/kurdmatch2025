@@ -209,7 +209,7 @@ const Swipe = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden pb-24">
+      <div className="flex-1 flex items-center justify-center overflow-hidden">
         {/* Card Stack Container */}
         <div className={`relative flex items-center justify-center w-full h-full ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
           {/* Background Cards (stacked behind) */}
@@ -246,17 +246,17 @@ const Swipe = () => {
             />
           </div>
         </div>
+      </div>
         
-        {/* Action Buttons at Bottom */}
-        <div className={`fixed ${SWIPE_CONFIG.actions.container.bottom} left-0 right-0 z-30`}>
-          <SwipeActions
-            onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
-            onPass={() => handleSwipeAction('pass', currentProfile.id)}
-            onLike={() => handleSwipeAction('like', currentProfile.id)}
-            onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
-            onBoost={() => toast("Boost is a premium feature", { icon: "⚡" })}
-          />
-        </div>
+      {/* Action Buttons Section */}
+      <div className="bg-black/10 backdrop-blur-sm border-t border-white/10 py-3 sm:py-4">
+        <SwipeActions
+          onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
+          onPass={() => handleSwipeAction('pass', currentProfile.id)}
+          onLike={() => handleSwipeAction('like', currentProfile.id)}
+          onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
+          onBoost={() => toast("Boost is a premium feature", { icon: "⚡" })}
+        />
       </div>
 
       {/* Bottom Navigation */}
