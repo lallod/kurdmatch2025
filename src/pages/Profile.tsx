@@ -6,6 +6,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import BottomNavigation from '@/components/BottomNavigation';
+import SwipeActions from '@/components/swipe/SwipeActions';
+import { likeProfile } from '@/api/likes';
+import { toast } from 'sonner';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -97,12 +100,38 @@ const Profile = () => {
 
   const calculateDistance = () => Math.floor(Math.random() * 30) + 5;
 
-  const actionButtons = [
-    { icon: X, color: 'bg-red-500/20 text-red-400', size: 'w-14 h-14' },
-    { icon: MessageCircle, color: 'bg-blue-500/20 text-blue-400', size: 'w-14 h-14' },
-    { icon: Heart, color: 'bg-pink-500/20 text-pink-400', size: 'w-16 h-16' },
-    { icon: Star, color: 'bg-yellow-500/20 text-yellow-400', size: 'w-14 h-14' }
-  ];
+  const handleLike = async () => {
+    try {
+      const result = await likeProfile(profileId);
+      if (result.success) {
+        toast.success(result.match ? "It's a match! 🎉" : "Liked!");
+        if (result.match) {
+          // Handle match logic if needed
+        }
+      } else {
+        toast.error(result.error || "Failed to like profile");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handlePass = () => {
+    toast.info("Passed");
+    navigate(-1);
+  };
+
+  const handleRewind = () => {
+    toast.info("Rewind");
+  };
+
+  const handleSuperLike = () => {
+    toast.info("Super liked!");
+  };
+
+  const handleBoost = () => {
+    toast.info("Boosted!");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
@@ -341,6 +370,17 @@ const Profile = () => {
               </AccordionItem>
             </Accordion>
           </div>
+        </div>
+        
+        {/* Swipe Actions */}
+        <div className="mt-6">
+          <SwipeActions
+            onRewind={handleRewind}
+            onPass={handlePass}
+            onLike={handleLike}
+            onSuperLike={handleSuperLike}
+            onBoost={handleBoost}
+          />
         </div>
       </div>
 
