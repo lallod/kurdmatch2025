@@ -18,8 +18,8 @@ const ProfilePhotoGallery = ({
 }: ProfilePhotoGalleryProps) => {
   return (
     <div className="relative w-full h-full group">
-      {/* Image Container with better aspect ratio handling */}
-      <div className="relative w-full h-full overflow-hidden bg-muted/10">
+      {/* Image Container with proper height fitting */}
+      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-muted/10">
         <img 
           src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
           alt={`${profile.name}'s photo`} 
