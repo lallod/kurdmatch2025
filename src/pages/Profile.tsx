@@ -6,8 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import BottomNavigation from '@/components/BottomNavigation';
-import SwipeActions from '@/components/swipe/SwipeActions';
-import { likeProfile } from '@/api/likes';
+import ProfileSwipeActions from '@/components/swipe/ProfileSwipeActions';
 import { toast } from 'sonner';
 
 const Profile = () => {
@@ -99,39 +98,6 @@ const Profile = () => {
   }
 
   const calculateDistance = () => Math.floor(Math.random() * 30) + 5;
-
-  const handleLike = async () => {
-    try {
-      const result = await likeProfile(profileId);
-      if (result.success) {
-        toast.success(result.match ? "It's a match! 🎉" : "Liked!");
-        if (result.match) {
-          // Handle match logic if needed
-        }
-      } else {
-        toast.error(result.error || "Failed to like profile");
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  };
-
-  const handlePass = () => {
-    toast.info("Passed");
-    navigate(-1);
-  };
-
-  const handleRewind = () => {
-    toast.info("Rewind");
-  };
-
-  const handleSuperLike = () => {
-    toast.info("Super liked!");
-  };
-
-  const handleBoost = () => {
-    toast.info("Boosted!");
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
@@ -372,14 +338,12 @@ const Profile = () => {
           </div>
         </div>
         
-        {/* Swipe Actions */}
+        {/* Profile Swipe Actions */}
         <div className="mt-6">
-          <SwipeActions
-            onRewind={handleRewind}
-            onPass={handlePass}
-            onLike={handleLike}
-            onSuperLike={handleSuperLike}
-            onBoost={handleBoost}
+          <ProfileSwipeActions
+            profileId={profileId}
+            profileName={profile.name}
+            profileImage={profile.profile_image || '/placeholder.svg'}
           />
         </div>
       </div>
