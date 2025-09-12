@@ -249,7 +249,7 @@ const Swipe = () => {
       </div>
         
       {/* Action Buttons Section */}
-      <div className="bg-black/10 backdrop-blur-sm border-t border-white/10 py-3 sm:py-4">
+      <div className="bg-black/10 backdrop-blur-sm border-t border-white/10">
         <SwipeActions
           onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
           onPass={() => handleSwipeAction('pass', currentProfile.id)}
