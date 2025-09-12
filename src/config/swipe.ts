@@ -3,17 +3,17 @@ export const SWIPE_CONFIG = {
   // Card Dimensions (responsive)
   card: {
     maxWidth: {
-      mobile: 'w-[95vw]', // Increased from 90vw to fit device better
-      tablet: 'w-[450px]', // Increased from 400px
-      desktop: 'w-[480px]' // Increased from 420px
+      mobile: 'w-[90vw]',
+      tablet: 'w-[400px]',
+      desktop: 'w-[420px]'
     },
     height: {
-      mobile: 'h-[80vh]', // Increased from 75vh to fit device better
-      tablet: 'h-[650px]', // Increased from 600px
-      desktop: 'h-[700px]' // Increased from 650px
+      mobile: 'h-[75vh]',
+      tablet: 'h-[600px]',
+      desktop: 'h-[650px]'
     },
-    minHeight: 'min-h-[550px]', // Increased from 500px
-    maxHeight: 'max-h-[750px]', // Increased from 700px
+    minHeight: 'min-h-[500px]',
+    maxHeight: 'max-h-[700px]',
     borderRadius: 'rounded-3xl'
   },
 
@@ -35,9 +35,9 @@ export const SWIPE_CONFIG = {
   // Card Stack Configuration
   stack: {
     container: {
-      padding: 'px-2 sm:px-4', // Responsive padding
-      minHeight: 'flex-1', // Fill available space
-      spacing: 'flex items-center justify-center' // Center content, remove vertical spacing
+      padding: 'px-2 sm:px-4',
+      minHeight: 'min-h-[calc(100vh-240px)]',
+      spacing: 'py-4 sm:py-8'
     },
     background: {
       scale: [0.95, 0.90], // Scale factors for background cards
