@@ -604,6 +604,10 @@ export type Database = {
         Args: { email: string; user_uuid: string }
         Returns: Json
       }
+      enrich_profiles_with_test_data: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       is_profile_complete: {
         Args: { profile_id: string }
         Returns: boolean
