@@ -11,6 +11,7 @@ interface SwipeCardProps {
   onSwipeRight: () => void;
   onMessage: () => void;
   onSuperLike: () => void;
+  onProfileClick?: () => void;
   isBackground?: boolean;
   style?: React.CSSProperties;
 }
@@ -21,6 +22,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
   onSwipeRight,
   onMessage,
   onSuperLike,
+  onProfileClick,
   isBackground = false,
   style
 }) => {
@@ -127,8 +129,16 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
           isBackground={isBackground}
         />
         
-        {/* Profile info overlay at bottom */}
-        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${SWIPE_CONFIG.info.overlay.height}`}>
+        {/* Profile info overlay at bottom - Transparent and clickable */}
+        <div 
+          className={`absolute bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/10 ${SWIPE_CONFIG.info.overlay.height} ${onProfileClick ? 'cursor-pointer hover:bg-black/30 transition-all duration-200' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onProfileClick && !isBackground) {
+              onProfileClick();
+            }
+          }}
+        >
           <div className={`absolute ${SWIPE_CONFIG.info.overlay.padding}`}>
             <ProfileInfo profile={profile} minimal={true} />
           </div>

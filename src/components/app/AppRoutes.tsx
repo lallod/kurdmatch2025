@@ -8,6 +8,7 @@ import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
 import Swipe from '@/pages/Swipe';
+import Profile from '@/pages/Profile';
 import Discovery from '@/pages/Discovery';
 import LikedMe from '@/pages/LikedMe';
 import ViewedMe from '@/pages/ViewedMe';
@@ -135,6 +136,14 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       <Route 
         path="/profile/:id" 
         element={user ? <ProfilePage /> : <Navigate to="/auth" replace />} 
+      />
+      <Route 
+        path="/profile" 
+        element={user ? (
+          <EmailVerificationGuard>
+            <Profile />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/admin" 

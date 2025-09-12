@@ -154,6 +154,10 @@ const Swipe = () => {
     navigate(`/messages?user=${profileId}`);
   };
 
+  const handleProfileClick = (profile: Profile) => {
+    navigate('/profile', { state: { profile } });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
@@ -242,6 +246,7 @@ const Swipe = () => {
               onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
               onMessage={() => handleMessage(currentProfile.id)}
               onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
+              onProfileClick={() => handleProfileClick(currentProfile)}
               isBackground={false}
             />
           </div>
