@@ -64,9 +64,10 @@ const Landing = () => {
         });
       } else {
         toast({
-          title: "Welcome back!",
-          description: "You have been signed in successfully.",
+          title: "Success", 
+          description: "Logged in successfully!",
         });
+        // Let AppRoutes handle the proper redirection based on profile completion
         navigate('/discovery');
       }
     } catch (error: any) {

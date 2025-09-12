@@ -21,9 +21,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <BrowserRouter>
-          <ProfileCompletionGuard>
-            <AppRoutes showWizard={false} isOAuthFlow={false} />
-          </ProfileCompletionGuard>
+          <AppRoutes showWizard={false} isOAuthFlow={false} />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
