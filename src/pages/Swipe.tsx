@@ -172,22 +172,35 @@ const Swipe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-pink-900">
-      <div className="h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center p-4">
-          <SwipeCard 
-            profile={currentProfile}
-            onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
-            onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
-          />
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background/95">
+      {/* Header */}
+      <div className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border/50">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-sm">K</span>
+            </div>
+            <span className="font-semibold text-foreground">Kurdistan Connect</span>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {profiles.length - currentIndex} profiles remaining
+          </div>
         </div>
-        
-        <SwipeActions
-          onSwipeAction={handleSwipeAction}
-          onMessage={handleMessage}
-          profileId={currentProfile.id}
+      </div>
+
+      <div className="pt-20 pb-32 px-4 flex items-center justify-center min-h-screen">
+        <SwipeCard 
+          profile={currentProfile}
+          onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
+          onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
         />
       </div>
+      
+      <SwipeActions
+        onSwipeAction={handleSwipeAction}
+        onMessage={handleMessage}
+        profileId={currentProfile.id}
+      />
     </div>
   );
 };

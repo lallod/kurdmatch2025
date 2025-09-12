@@ -32,11 +32,11 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
 
   return (
     <div 
-      className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden"
+      className="w-full max-w-sm mx-auto bg-card rounded-3xl shadow-2xl overflow-hidden border border-border/20"
       style={style}
     >
-      {/* Photo Gallery with 16:9 aspect ratio */}
-      <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+      {/* Main Photo Display */}
+      <div className="relative w-full h-[600px]">
         <ProfilePhotoGallery
           profile={profile}
           currentPhotoIndex={currentPhotoIndex}
@@ -44,15 +44,15 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
           onPrevPhoto={handlePrevPhoto}
         />
         
-        {/* Profile Info overlay at bottom - max 25% height */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent" style={{ height: '25%' }}>
-          <div className="absolute bottom-4 left-4 right-4">
+        {/* Modern gradient overlay with profile info */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent h-48">
+          <div className="absolute bottom-6 left-6 right-6">
             <ProfileInfo profile={profile} />
           </div>
         </div>
       </div>
       
-      {/* Bio section appears after photo */}
+      {/* Compact bio section */}
       <ProfileBioSection profile={profile} />
     </div>
   );
