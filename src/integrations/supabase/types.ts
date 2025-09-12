@@ -38,6 +38,42 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_usage: {
+        Row: {
+          boosts_count: number
+          created_at: string
+          date: string
+          id: string
+          likes_count: number
+          rewinds_count: number
+          super_likes_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          boosts_count?: number
+          created_at?: string
+          date?: string
+          id?: string
+          likes_count?: number
+          rewinds_count?: number
+          super_likes_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          boosts_count?: number
+          created_at?: string
+          date?: string
+          id?: string
+          likes_count?: number
+          rewinds_count?: number
+          super_likes_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       dashboard_stats: {
         Row: {
           change_percentage: number
@@ -583,11 +619,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          subscription_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          subscription_type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          subscription_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      can_perform_action: {
+        Args: { action_type: string; user_uuid: string }
+        Returns: Record<string, unknown>
+      }
       create_demo_profile: {
         Args: {
           user_age: number
@@ -611,6 +678,24 @@ export type Database = {
       enrich_profiles_with_test_data: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      get_or_create_daily_usage: {
+        Args: { user_uuid: string }
+        Returns: {
+          boosts_count: number
+          created_at: string
+          date: string
+          id: string
+          likes_count: number
+          rewinds_count: number
+          super_likes_count: number
+          updated_at: string
+          user_id: string
+        }
+      }
+      increment_usage_count: {
+        Args: { action_type: string; user_uuid: string }
+        Returns: boolean
       }
       is_profile_complete: {
         Args: { profile_id: string }
