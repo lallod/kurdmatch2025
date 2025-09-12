@@ -155,7 +155,7 @@ const Swipe = () => {
   };
 
   const handleProfileClick = (profile: Profile) => {
-    navigate('/profile', { state: { profile } });
+    navigate('/profile', { state: { profileId: profile.id } });
   };
 
   if (isLoading) {
