@@ -36,7 +36,7 @@ export const SWIPE_CONFIG = {
   stack: {
     container: {
       padding: 'px-1 sm:px-2', // Reduced padding for more space
-      minHeight: 'min-h-[calc(100vh-160px)]', // Increased height to fit device
+      minHeight: 'h-full', // Fill 100% height
       spacing: 'py-2 sm:py-4' // Reduced spacing for more card space
     },
     background: {
