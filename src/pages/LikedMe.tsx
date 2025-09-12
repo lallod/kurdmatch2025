@@ -12,14 +12,17 @@ import PhotoGallery from "@/components/PhotoGallery";
 import { getProfilesWhoLikedMe } from '@/api/likes';
 import { likeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import SwipeActions from '@/components/swipe/SwipeActions';
+import { toast } from 'sonner';
 
 const LikedMe = () => {
-  const { toast } = useToast();
+  const { toast: toastHook } = useToast();
   const { user } = useSupabaseAuth();
   const [likedProfiles, setLikedProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showFullProfile, setShowFullProfile] = useState(false);
+  const [showSwipeActions, setShowSwipeActions] = useState(false);
 
   useEffect(() => {
     const loadLikedProfiles = async () => {
@@ -31,7 +34,7 @@ const LikedMe = () => {
         setLikedProfiles(profiles || []);
       } catch (error) {
         console.error('Failed to load liked profiles:', error);
-        toast({
+        toastHook({
           title: "Error",
           description: "Failed to load profiles who liked you",
           variant: "destructive",
@@ -42,21 +45,15 @@ const LikedMe = () => {
     };
 
     loadLikedProfiles();
-  }, [user, toast]);
+  }, [user, toastHook]);
 
   const handleLikeBack = async (profileId: string) => {
     try {
       const result = await likeProfile(profileId);
       if (result.match) {
-        toast({
-          title: "It's a Match! 🎉",
-          description: "You can now message each other!",
-        });
+        toast.success("It's a match! 🎉");
       } else {
-        toast({
-          title: "Liked Back!",
-          description: "Your like has been sent.",
-        });
+        toast.success("Liked back!");
       }
       
       // Update the profile to show it's been liked back
@@ -69,11 +66,7 @@ const LikedMe = () => {
       );
     } catch (error) {
       console.error('Error liking profile back:', error);
-      toast({
-        title: "Error",
-        description: "Failed to like profile. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to like profile. Please try again.");
     }
   };
 
@@ -83,15 +76,26 @@ const LikedMe = () => {
       profiles.filter(profile => profile.id !== profileId)
     );
     
-    toast({
-      title: "Profile Passed",
-      description: "Profile removed from your likes.",
-    });
+    toast.info("Profile passed");
+  };
+
+  const handleRewind = () => {
+    toast.info("Rewind");
+  };
+
+  const handleSuperLike = () => {
+    if (!selectedProfile) return;
+    toast.info("Super liked!");
+    setShowSwipeActions(false);
+  };
+
+  const handleBoost = () => {
+    toast.info("Boosted!");
   };
 
   const handleProfileClick = (profile: any) => {
     setSelectedProfile(profile);
-    setShowFullProfile(true);
+    setShowSwipeActions(true);
   };
 
   if (isLoading) {
@@ -325,6 +329,63 @@ const LikedMe = () => {
           </div>
         )}
       </div>
+      
+      {/* Profile Modal with Swipe Actions */}
+      {showSwipeActions && selectedProfile && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-purple-900/90 via-purple-800/90 to-pink-900/90 backdrop-blur-md rounded-3xl max-w-sm w-full max-h-[80vh] overflow-hidden shadow-2xl border border-white/20">
+            {/* Profile Info */}
+            <div className="aspect-[3/4] relative overflow-hidden">
+              <img
+                src={selectedProfile.profile_image}
+                alt={selectedProfile.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-2xl font-bold text-white">{selectedProfile.name}</h1>
+                    <span className="text-xl text-white/90">{selectedProfile.age}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-white/90 mb-3">
+                  <span>{selectedProfile.location}</span>
+                </div>
+                {selectedProfile.occupation && (
+                  <Badge className="bg-pink-500/80 text-white text-sm">
+                    {selectedProfile.occupation}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowSwipeActions(false)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/80 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            {/* Swipe Actions */}
+            <div className="p-4">
+              <SwipeActions
+                onRewind={handleRewind}
+                onPass={() => {
+                  handlePass(selectedProfile.id);
+                  setShowSwipeActions(false);
+                }}
+                onLike={() => {
+                  handleLikeBack(selectedProfile.id);
+                  setShowSwipeActions(false);
+                }}
+                onSuperLike={handleSuperLike}
+                onBoost={handleBoost}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

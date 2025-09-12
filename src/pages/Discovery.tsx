@@ -35,6 +35,9 @@ import { Switch } from "@/components/ui/switch";
 import { KurdistanRegion } from '@/types/profile';
 import { Input } from '@/components/ui/input';
 import BottomNavigation from '@/components/BottomNavigation';
+import SwipeActions from '@/components/swipe/SwipeActions';
+import { likeProfile } from '@/api/likes';
+import { toast } from 'sonner';
 
 const areas = [
   { value: "all", name: "All Regions" },
@@ -121,6 +124,7 @@ const Discovery = () => {
   const [selectedArea, setSelectedArea] = useState("all");
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [activeFilters, setActiveFilters] = useState(0);
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   
   const form = useForm<FilterFormValues>({
     defaultValues: {
@@ -354,8 +358,42 @@ const Discovery = () => {
            matchesBodyType && matchesLanguage && matchesHeight && matchesDietary;
   });
 
-  const handleProfileClick = (profileId: number) => {
-    navigate(`/profile/${profileId}`);
+  const handleProfileClick = (profile: Profile) => {
+    setSelectedProfile(profile);
+  };
+
+  const handleLike = async () => {
+    if (!selectedProfile) return;
+    try {
+      const result = await likeProfile(selectedProfile.id.toString());
+      if (result.success) {
+        toast.success(result.match ? "It's a match! 🎉" : "Liked!");
+        setSelectedProfile(null);
+      } else {
+        toast.error(result.error || "Failed to like profile");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handlePass = () => {
+    toast.info("Passed");
+    setSelectedProfile(null);
+  };
+
+  const handleRewind = () => {
+    toast.info("Rewind");
+  };
+
+  const handleSuperLike = () => {
+    if (!selectedProfile) return;
+    toast.info("Super liked!");
+    setSelectedProfile(null);
+  };
+
+  const handleBoost = () => {
+    toast.info("Boosted!");
   };
 
   const resetFilters = () => {
@@ -613,7 +651,7 @@ const Discovery = () => {
                 <Card 
                   key={profile.id} 
                   className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
-                  onClick={() => handleProfileClick(profile.id)}
+                  onClick={() => handleProfileClick(profile)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3 mb-3">
@@ -716,6 +754,63 @@ const Discovery = () => {
       </div>
 
       </div>
+      
+      {/* Profile Modal with Swipe Actions */}
+      {selectedProfile && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-purple-900/90 via-purple-800/90 to-pink-900/90 backdrop-blur-md rounded-3xl max-w-sm w-full max-h-[80vh] overflow-hidden shadow-2xl border border-white/20">
+            {/* Profile Info */}
+            <div className="aspect-[3/4] relative overflow-hidden">
+              <img
+                src={selectedProfile.avatar}
+                alt={selectedProfile.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-2xl font-bold text-white">{selectedProfile.name}</h1>
+                    <span className="text-xl text-white/90">{selectedProfile.age}</span>
+                  </div>
+                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-3 py-1">
+                    ⚡ {selectedProfile.compatibilityScore}%
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2 text-white/90 mb-3">
+                  <MapPin className="w-4 h-4" />
+                  <span>{selectedProfile.location}</span>
+                  <span className="text-white/70">•</span>
+                  <span>{selectedProfile.distance}km away</span>
+                </div>
+                {selectedProfile.occupation && (
+                  <Badge className="bg-pink-500/80 text-white text-sm">
+                    {selectedProfile.occupation}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedProfile(null)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/80 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            {/* Swipe Actions */}
+            <div className="p-4">
+              <SwipeActions
+                onRewind={handleRewind}
+                onPass={handlePass}
+                onLike={handleLike}
+                onSuperLike={handleSuperLike}
+                onBoost={handleBoost}
+              />
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Bottom Navigation */}
       <BottomNavigation />

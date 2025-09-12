@@ -4,12 +4,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Heart, Sparkles, MapPin } from 'lucide-react';
+import { MessageCircle, Heart, Sparkles, MapPin, X } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import BottomNavigation from '@/components/BottomNavigation';
 import { getMatches, getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
+import SwipeActions from '@/components/swipe/SwipeActions';
+import { likeProfile } from '@/api/likes';
 
 interface Match {
   id: string;
@@ -28,6 +30,8 @@ const Matches = () => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [newMatches, setNewMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [showSwipeActions, setShowSwipeActions] = useState(false);
 
   useEffect(() => {
     const loadMatches = async () => {
@@ -58,6 +62,44 @@ const Matches = () => {
 
   const handleViewProfile = (profileId: string) => {
     navigate(`/profile/${profileId}`);
+  };
+
+  const handleMatchClick = (match: Match) => {
+    setSelectedMatch(match);
+    setShowSwipeActions(true);
+  };
+
+  const handleLike = async () => {
+    if (!selectedMatch) return;
+    try {
+      const result = await likeProfile(selectedMatch.profileId);
+      if (result.success) {
+        toast.success("Liked!");
+        setShowSwipeActions(false);
+      } else {
+        toast.error(result.error || "Failed to like profile");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handlePass = () => {
+    toast.info("Passed");
+    setShowSwipeActions(false);
+  };
+
+  const handleRewind = () => {
+    toast.info("Rewind");
+  };
+
+  const handleSuperLike = () => {
+    toast.info("Super liked!");
+    setShowSwipeActions(false);
+  };
+
+  const handleBoost = () => {
+    toast.info("Boosted!");
   };
 
   const formatMatchTime = (date: string) => {
@@ -131,9 +173,12 @@ const Matches = () => {
                 
                 <Carousel className="w-full">
                   <CarouselContent className="-ml-2">
-                    {newMatches.map((match) => (
-                      <CarouselItem key={match.id} className="pl-2 basis-20">
-                        <div className="relative flex flex-col items-center cursor-pointer">
+                     {newMatches.map((match) => (
+                       <CarouselItem key={match.id} className="pl-2 basis-20">
+                         <div 
+                           className="relative flex flex-col items-center cursor-pointer"
+                           onClick={() => handleMatchClick(match)}
+                         >
                           <div className="relative">
                             <div className="absolute inset-0 rounded-full p-0.5 bg-gradient-to-br from-red-500 to-pink-500 animate-pulse">
                               <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900"></div>
@@ -179,9 +224,13 @@ const Matches = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {matches.map((match) => (
-                    <Card key={match.id} className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   {matches.map((match) => (
+                     <Card 
+                       key={match.id} 
+                       className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors cursor-pointer"
+                       onClick={() => handleMatchClick(match)}
+                     >
                       <CardContent className="p-4">
                         <div className="flex items-center space-x-4">
                           <div className="relative">
@@ -240,6 +289,56 @@ const Matches = () => {
           </div>
         </div>
       </div>
+
+      {/* Profile Modal with Swipe Actions */}
+      {showSwipeActions && selectedMatch && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-purple-900/90 via-purple-800/90 to-pink-900/90 backdrop-blur-md rounded-3xl max-w-sm w-full max-h-[80vh] overflow-hidden shadow-2xl border border-white/20">
+            {/* Profile Info */}
+            <div className="aspect-[3/4] relative overflow-hidden">
+              <img
+                src={selectedMatch.avatar}
+                alt={selectedMatch.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-2xl font-bold text-white">{selectedMatch.name}</h1>
+                    <span className="text-xl text-white/90">{selectedMatch.age}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-white/90 mb-3">
+                  <MapPin className="w-4 h-4" />
+                  <span>{selectedMatch.location}</span>
+                </div>
+                <Badge className="bg-pink-500/80 text-white text-sm">
+                  Matched {formatMatchTime(selectedMatch.matchedAt)}
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowSwipeActions(false)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/80 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            {/* Swipe Actions */}
+            <div className="p-4">
+              <SwipeActions
+                onRewind={handleRewind}
+                onPass={handlePass}
+                onLike={handleLike}
+                onSuperLike={handleSuperLike}
+                onBoost={handleBoost}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNavigation />
     </div>
