@@ -133,17 +133,6 @@ const Profile = () => {
               className="w-full h-full object-cover"
             />
             
-            {/* Action Buttons Overlay */}
-            <div className="absolute top-6 left-6 right-6 flex justify-between items-center">
-              {actionButtons.map((button, index) => (
-                <button
-                  key={index}
-                  className={`${button.size} ${button.color} rounded-full backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110`}
-                >
-                  <button.icon className="w-6 h-6" />
-                </button>
-              ))}
-            </div>
 
             {/* Profile Info Overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
