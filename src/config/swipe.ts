@@ -35,9 +35,9 @@ export const SWIPE_CONFIG = {
   // Card Stack Configuration
   stack: {
     container: {
-      padding: 'px-1 sm:px-2', // Reduced padding for more space
-      minHeight: 'h-full', // Fill 100% height
-      spacing: 'py-2 sm:py-4' // Reduced spacing for more card space
+      padding: 'px-2 sm:px-4', // Responsive padding
+      minHeight: 'flex-1', // Fill available space
+      spacing: 'flex items-center justify-center' // Center content, remove vertical spacing
     },
     background: {
       scale: [0.95, 0.90], // Scale factors for background cards
