@@ -18,21 +18,33 @@ const Profile = () => {
   useEffect(() => {
     if (profileId) {
       fetchProfile();
+    } else {
+      console.log('No profile ID provided');
+      setLoading(false);
     }
   }, [profileId]);
 
   const fetchProfile = async () => {
     try {
+      setLoading(true);
+      console.log('Fetching profile for ID:', profileId);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', profileId)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Profile data received:', data);
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setProfile(null);
     } finally {
       setLoading(false);
     }
