@@ -26,20 +26,28 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [formData, setFormData] = useState<Partial<Profile>>({});
 
-  // Available options for select fields
-  const heightOptions = ['4\'10"', '4\'11"', '5\'0"', '5\'1"', '5\'2"', '5\'3"', '5\'4"', '5\'5"', '5\'6"', '5\'7"', '5\'8"', '5\'9"', '5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"', '6\'4"', '6\'5"', '6\'6"'];
-  const bodyTypeOptions = ['Slim', 'Athletic', 'Average', 'Curvy', 'Muscular', 'Plus-size'];
-  const ethnicityOptions = ['Kurdish', 'Arab', 'Turkish', 'Persian', 'European', 'Mixed', 'Other', 'Prefer not to say'];
-  const religionOptions = ['Islam', 'Christianity', 'Judaism', 'Spiritual', 'Agnostic', 'Atheist', 'Other', 'Prefer not to say'];
-  const educationOptions = ['High School', 'Some College', 'Bachelor\'s Degree', 'Master\'s Degree', 'PhD', 'Trade School', 'Other'];
-  const relationshipGoalOptions = ['Long-term relationship', 'Marriage', 'Casual dating', 'Friendship first', 'Not sure yet'];
-  const childrenOptions = ['Want children', 'Don\'t want children', 'Open to children', 'Have children', 'It\'s complicated'];
-  const exerciseOptions = ['Daily', 'Few times a week', 'Sometimes', 'Rarely', 'Never'];
-  const smokingOptions = ['Never', 'Socially', 'Occasionally', 'Regularly', 'Trying to quit'];
-  const drinkingOptions = ['Never', 'Socially', 'Occasionally', 'Regularly', 'Prefer not to say'];
-  const languageOptions = ['Kurdish', 'English', 'Arabic', 'Turkish', 'Persian', 'German', 'French', 'Spanish', 'Italian', 'Dutch', 'Swedish'];
+  // Available options for select fields (Kurdish-focused)
+  const heightOptions = ['5\'2"', '5\'3"', '5\'4"', '5\'5"', '5\'6"', '5\'7"', '5\'8"', '5\'9"', '5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"'];
+  const bodyTypeOptions = ['Slim', 'Average', 'Athletic', 'Curvy', 'Plus-size'];
+  const ethnicityOptions = ['Kurdish', 'Kurdish-Persian', 'Kurdish-Turkish', 'Kurdish-Arab', 'Middle Eastern', 'Mixed'];
+  const kurdistanRegionOptions = ['South-Kurdistan', 'West-Kurdistan', 'East-Kurdistan', 'North-Kurdistan'];
+  const religionOptions = ['Islam', 'Yarsanism', 'Yazidism', 'Christianity', 'Secular', 'Spiritual'];
+  const politicalViewOptions = ['Progressive', 'Liberal', 'Moderate', 'Conservative', 'Kurdish Nationalist', 'Apolitical'];
+  const educationOptions = ['High School', 'Some College', 'Bachelor\'s Degree', 'Master\'s Degree', 'PhD'];
+  const relationshipGoalOptions = ['Looking for something serious', 'Marriage', 'Friendship first', 'Taking things slow', 'Seeking connection'];
+  const childrenOptions = ['Want children someday', 'Don\'t want children', 'Open to children', 'Have children already'];
+  const exerciseOptions = ['Regular exercise', 'Occasional exercise', 'Daily fitness routine', 'Sports enthusiast'];
+  const smokingOptions = ['Non-smoker', 'Social smoker', 'Regular smoker', 'Former smoker'];
+  const drinkingOptions = ['Non-drinker', 'Social drinker', 'Regular drinker', 'Former drinker'];
+  const sleepScheduleOptions = ['Early bird', 'Night owl', 'Balanced sleeper', 'Inconsistent schedule'];
+  const petOptions = ['Have pets', 'Love pets but don\'t have any', 'Allergic to pets', 'No pets'];
+  const languageOptions = ['Kurdish', 'English', 'Arabic', 'Turkish', 'Persian', 'German', 'French', 'Spanish'];
 
-  const interestOptions = ['Travel', 'Photography', 'Cooking', 'Hiking', 'Reading', 'Music', 'Dancing', 'Sports', 'Fitness', 'Art', 'Movies', 'Gaming', 'Technology', 'Fashion', 'Food', 'Nature', 'Animals', 'History', 'Science', 'Politics'];
+  const valueOptions = ['Family', 'Kurdish heritage', 'Honesty', 'Community', 'Tradition', 'Freedom', 'Education', 'Respect', 'Cultural preservation', 'Independence'];
+  const interestOptions = ['Kurdish music', 'Poetry', 'Literature', 'Cultural events', 'Traditional dance', 'History', 'Politics', 'Art', 'Photography', 'Travel'];
+  const hobbyOptions = ['Reading', 'Dancing', 'Cooking', 'Photography', 'Hiking', 'Music', 'Writing', 'Travel', 'Learning languages', 'Volunteering'];
+  const creativePursuitOptions = ['Photography', 'Painting', 'Drawing', 'Writing', 'Music production', 'Graphic design', 'Pottery', 'Jewelry making'];
+  const weekendActivityOptions = ['Family gatherings', 'Cultural events', 'Outdoor activities', 'Relaxing at home', 'Exploring new places', 'Creative projects'];
 
   useEffect(() => {
     if (user) {
@@ -57,7 +65,9 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
         values: profileData?.values || [],
         interests: profileData?.interests || [],
         hobbies: profileData?.hobbies || [],
-        languages: profileData?.languages || []
+        languages: profileData?.languages || [],
+        creative_pursuits: profileData?.creative_pursuits || [],
+        weekend_activities: profileData?.weekend_activities || []
       });
     } catch (error) {
       console.error('Failed to load profile:', error);
@@ -271,6 +281,20 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                       placeholder="Your location"
                     />
                   </div>
+
+                  <div>
+                    <Label htmlFor="kurdistan_region">Kurdistan Region</Label>
+                    <Select value={formData.kurdistan_region} onValueChange={(value) => handleInputChange('kurdistan_region', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Kurdistan region" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {kurdistanRegionOptions.map(region => (
+                          <SelectItem key={region} value={region}>{region}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {/* Languages */}
@@ -328,10 +352,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   <Label htmlFor="dietary_preferences">Dietary Preferences</Label>
                   <Select value={formData.dietary_preferences} onValueChange={(value) => handleInputChange('dietary_preferences', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select dietary preference" />
+                      <SelectValue placeholder="What's your diet like?" />
                     </SelectTrigger>
                     <SelectContent>
-                      {['Omnivore', 'Vegetarian', 'Vegan', 'Pescatarian', 'Halal', 'Kosher', 'Other'].map(option => (
+                      {['Halal', 'Vegetarian', 'Omnivore', 'Pescatarian'].map(option => (
                         <SelectItem key={option} value={option}>{option}</SelectItem>
                       ))}
                     </SelectContent>
@@ -356,7 +380,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   <Label htmlFor="drinking">Drinking</Label>
                   <Select value={formData.drinking} onValueChange={(value) => handleInputChange('drinking', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Do you drink?" />
+                      <SelectValue placeholder="Do you drink alcohol?" />
                     </SelectTrigger>
                     <SelectContent>
                       {drinkingOptions.map(option => (
@@ -373,7 +397,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                       <SelectValue placeholder="Are you a night owl or early bird?" />
                     </SelectTrigger>
                     <SelectContent>
-                      {['Early bird', 'Night owl', 'Flexible', 'It varies'].map(option => (
+                      {sleepScheduleOptions.map(option => (
                         <SelectItem key={option} value={option}>{option}</SelectItem>
                       ))}
                     </SelectContent>
@@ -387,7 +411,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                       <SelectValue placeholder="Do you have pets?" />
                     </SelectTrigger>
                     <SelectContent>
-                      {['Have pets', 'Want pets', 'Don\'t have pets', 'Allergic to pets', 'It\'s complicated'].map(option => (
+                      {petOptions.map(option => (
                         <SelectItem key={option} value={option}>{option}</SelectItem>
                       ))}
                     </SelectContent>
@@ -412,7 +436,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                       <SelectValue placeholder="Add value" />
                     </SelectTrigger>
                     <SelectContent>
-                      {['Honesty', 'Kindness', 'Growth', 'Balance', 'Adventure', 'Family', 'Career', 'Health', 'Creativity', 'Spirituality', 'Freedom', 'Loyalty'].filter(val => !(formData.values || []).includes(val)).map(val => (
+                      {valueOptions.filter(val => !(formData.values || []).includes(val)).map(val => (
                         <SelectItem key={val} value={val}>{val}</SelectItem>
                       ))}
                     </SelectContent>
@@ -454,8 +478,50 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                       <SelectValue placeholder="Add hobby" />
                     </SelectTrigger>
                     <SelectContent>
-                      {['Drawing', 'Painting', 'Writing', 'Singing', 'Dancing', 'Gardening', 'Crafting', 'Collecting', 'Gaming', 'Yoga', 'Running', 'Cycling', 'Swimming', 'Chess'].filter(hobby => !(formData.hobbies || []).includes(hobby)).map(hobby => (
+                      {hobbyOptions.filter(hobby => !(formData.hobbies || []).includes(hobby)).map(hobby => (
                         <SelectItem key={hobby} value={hobby}>{hobby}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Creative Pursuits</Label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {(formData.creative_pursuits || []).map(pursuit => (
+                      <Badge key={pursuit} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('creative_pursuits', pursuit)}>
+                        {pursuit} <X className="h-3 w-3 ml-1" />
+                      </Badge>
+                    ))}
+                  </div>
+                  <Select onValueChange={(value) => handleArrayAdd('creative_pursuits', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Add creative pursuit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {creativePursuitOptions.filter(pursuit => !(formData.creative_pursuits || []).includes(pursuit)).map(pursuit => (
+                        <SelectItem key={pursuit} value={pursuit}>{pursuit}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Weekend Activities</Label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {(formData.weekend_activities || []).map(activity => (
+                      <Badge key={activity} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('weekend_activities', activity)}>
+                        {activity} <X className="h-3 w-3 ml-1" />
+                      </Badge>
+                    ))}
+                  </div>
+                  <Select onValueChange={(value) => handleArrayAdd('weekend_activities', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Add weekend activity" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {weekendActivityOptions.filter(activity => !(formData.weekend_activities || []).includes(activity)).map(activity => (
+                        <SelectItem key={activity} value={activity}>{activity}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -633,7 +699,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                       <SelectValue placeholder="Select political views" />
                     </SelectTrigger>
                     <SelectContent>
-                      {['Liberal', 'Conservative', 'Moderate', 'Progressive', 'Libertarian', 'Apolitical', 'Other', 'Prefer not to say'].map(view => (
+                      {politicalViewOptions.map(view => (
                         <SelectItem key={view} value={view}>{view}</SelectItem>
                       ))}
                     </SelectContent>
@@ -666,27 +732,6 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="md:col-span-2">
-                  <Label htmlFor="dream_vacation">Dream Vacation</Label>
-                  <Input
-                    id="dream_vacation"
-                    value={formData.dream_vacation || ''}
-                    onChange={(e) => handleInputChange('dream_vacation', e.target.value)}
-                    placeholder="Describe your dream vacation"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <Label htmlFor="favorite_quote">Favorite Quote</Label>
-                  <Textarea
-                    id="favorite_quote"
-                    value={formData.favorite_quote || ''}
-                    onChange={(e) => handleInputChange('favorite_quote', e.target.value)}
-                    placeholder="Share your favorite quote or motto"
-                    rows={2}
-                  />
                 </div>
               </div>
             </TabsContent>

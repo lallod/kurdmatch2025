@@ -604,6 +604,10 @@ export type Database = {
         Args: { email: string; user_uuid: string }
         Returns: Json
       }
+      enrich_all_profiles_with_kurdish_data: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       enrich_profiles_with_test_data: {
         Args: Record<PropertyKey, never>
         Returns: number
