@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import SwipeActions from '@/components/swipe/SwipeActions';
+import BottomNavigation from '@/components/BottomNavigation';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
@@ -154,72 +155,109 @@ const Swipe = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-pink-900">
-        <div className="text-white text-xl font-semibold">Loading profiles...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </div>
+          <div className="text-white text-xl font-semibold">Loading profiles...</div>
+          <div className="text-purple-200 mt-2">Finding your perfect matches</div>
+        </div>
       </div>
     );
   }
 
   if (!currentProfile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-pink-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
         <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-2">No more profiles</h2>
+          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">No more profiles</h2>
           <p className="text-purple-200">Check back later for new matches!</p>
         </div>
+        <BottomNavigation />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
-      {/* Card Stack Container */}
-      <div className="relative flex items-center justify-center min-h-screen px-4 py-12">
-        {/* Background Cards (stacked behind) */}
-        {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
-          <div
-            key={profile.id}
-            className="absolute"
-            style={{
-              transform: `scale(${0.95 - index * 0.05}) translateY(${index * 8}px)`,
-              zIndex: 10 - index,
-              opacity: 0.7 - index * 0.2
-            }}
-          >
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+      {/* Header */}
+      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className="text-center space-y-2">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+              Discover Love
+            </h1>
+            <p className="text-purple-200">Swipe to find your perfect match</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
+        {/* Card Stack Container */}
+        <div className="relative flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-8">
+          {/* Background Cards (stacked behind) */}
+          {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
+            <div
+              key={profile.id}
+              className="absolute"
+              style={{
+                transform: `scale(${0.95 - index * 0.05}) translateY(${index * 8}px)`,
+                zIndex: 10 - index,
+                opacity: 0.7 - index * 0.2
+              }}
+            >
+              <SwipeCard 
+                profile={profile}
+                onSwipeLeft={() => {}}
+                onSwipeRight={() => {}}
+                onMessage={() => {}}
+                onSuperLike={() => {}}
+                isBackground={true}
+              />
+            </div>
+          ))}
+          
+          {/* Main Active Card */}
+          <div className="relative z-20">
             <SwipeCard 
-              profile={profile}
-              onSwipeLeft={() => {}}
-              onSwipeRight={() => {}}
-              onMessage={() => {}}
-              onSuperLike={() => {}}
-              isBackground={true}
+              profile={currentProfile}
+              onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
+              onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
+              onMessage={() => handleMessage(currentProfile.id)}
+              onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
+              isBackground={false}
             />
           </div>
-        ))}
+        </div>
         
-        {/* Main Active Card */}
-        <div className="relative z-20">
-          <SwipeCard 
-            profile={currentProfile}
-            onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
-            onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
-            onMessage={() => handleMessage(currentProfile.id)}
+        {/* Action Buttons at Bottom */}
+        <div className="fixed bottom-20 left-0 right-0 z-30">
+          <SwipeActions
+            onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
+            onPass={() => handleSwipeAction('pass', currentProfile.id)}
+            onLike={() => handleSwipeAction('like', currentProfile.id)}
             onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
-            isBackground={false}
+            onBoost={() => toast("Boost is a premium feature", { icon: "⚡" })}
           />
         </div>
       </div>
-      
-      {/* Action Buttons at Bottom */}
-      <div className="fixed bottom-8 left-0 right-0 z-30">
-        <SwipeActions
-          onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
-          onPass={() => handleSwipeAction('pass', currentProfile.id)}
-          onLike={() => handleSwipeAction('like', currentProfile.id)}
-          onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
-          onBoost={() => toast("Boost is a premium feature", { icon: "⚡" })}
-        />
-      </div>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </div>
   );
 };
