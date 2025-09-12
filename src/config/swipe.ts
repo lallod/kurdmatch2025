@@ -8,9 +8,9 @@ export const SWIPE_CONFIG = {
       desktop: 'w-[420px]'
     },
     height: {
-      mobile: 'h-[75vh]',
-      tablet: 'h-[600px]',
-      desktop: 'h-[650px]'
+      mobile: 'h-[85vh]',
+      tablet: 'h-[650px]',
+      desktop: 'h-[700px]'
     },
     minHeight: 'min-h-[500px]',
     maxHeight: 'max-h-[700px]',
@@ -36,8 +36,8 @@ export const SWIPE_CONFIG = {
   stack: {
     container: {
       padding: 'px-2 sm:px-4',
-      minHeight: 'min-h-[calc(100vh-240px)]',
-      spacing: 'py-4 sm:py-8'
+      minHeight: 'min-h-[calc(100vh-180px)]',
+      spacing: 'py-1 sm:py-2'
     },
     background: {
       scale: [0.95, 0.90], // Scale factors for background cards
