@@ -19,16 +19,16 @@ export const SWIPE_CONFIG = {
 
   // Header Configuration
   header: {
-    height: 'py-4 sm:py-6',
+    height: 'py-1.5 sm:py-2.5', // Reduced by 60%
     padding: 'px-4 sm:px-6',
     maxWidth: 'max-w-4xl',
     icon: {
-      size: 'w-12 h-12 sm:w-16 sm:h-16',
-      margin: 'mb-2 sm:mb-4'
+      size: 'w-8 h-8 sm:w-10 sm:h-10', // Reduced by 60%
+      margin: 'mb-1 sm:mb-1.5' // Reduced by 60%
     },
     title: {
-      size: 'text-2xl sm:text-3xl',
-      spacing: 'space-y-1 sm:space-y-2'
+      size: 'text-lg sm:text-xl', // Reduced by 60%
+      spacing: 'space-y-0.5 sm:space-y-1' // Reduced by 60%
     }
   },
 
