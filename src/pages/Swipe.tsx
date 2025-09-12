@@ -209,7 +209,7 @@ const Swipe = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center pb-24">
         {/* Card Stack Container */}
         <div className={`relative flex items-center justify-center w-full h-[90%] ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
           {/* Background Cards (stacked behind) */}
