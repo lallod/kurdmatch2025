@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import SimpleRegistrationForm from '@/components/auth/SimpleRegistrationForm';
-import DynamicRegistrationForm from '@/components/auth/DynamicRegistrationForm';
+import EnhancedDynamicRegistrationForm from '@/components/auth/EnhancedDynamicRegistrationForm';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +54,7 @@ const Register = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 animate-pulse"></div>
           
           <div className="relative z-10">
-            <DynamicRegistrationForm />
+            <EnhancedDynamicRegistrationForm />
           </div>
         </div>
         

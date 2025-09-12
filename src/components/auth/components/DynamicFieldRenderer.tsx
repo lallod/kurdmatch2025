@@ -2,15 +2,13 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { DynamicRegistrationFormValues } from '@/components/auth/utils/dynamicRegistrationSchema';
-import {
-  TextField,
-  TextAreaField,
-  SelectField,
-  MultiSelectField,
-  RadioField,
-  CheckboxField,
-  DateField
-} from '@/components/auth/form-fields';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
 
 interface DynamicFieldRendererProps {
   question: QuestionItem;
@@ -21,48 +19,257 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
   question,
   form
 }) => {
-  const commonProps = {
-    form,
-    name: question.id,
-    question
+  const { id, text, fieldType, required, fieldOptions, placeholder } = question;
+  const fieldValue = form.watch(id);
+  const fieldState = form.getFieldState(id);
+  
+  // Check if field is complete
+  const isFieldComplete = () => {
+    if (!required) return true;
+    
+    if (fieldType === 'multi-select') {
+      let minSelections = 1;
+      if (id === 'interests') minSelections = 3;
+      else if (id === 'hobbies') minSelections = 2;
+      else if (id === 'values') minSelections = 3;
+      else if (id === 'languages') minSelections = 1;
+      return Array.isArray(fieldValue) && fieldValue.length >= minSelections;
+    }
+    
+    if (fieldType === 'checkbox') {
+      return fieldValue === true;
+    }
+    
+    if (id === 'age') {
+      const numValue = typeof fieldValue === 'string' ? parseFloat(fieldValue) : fieldValue;
+      return numValue >= 18;
+    }
+    
+    return fieldValue && fieldValue.toString().trim().length > 0;
   };
 
-  switch (question.fieldType) {
+  const isComplete = isFieldComplete();
+
+  // Render badges
+  const renderBadges = () => (
+    <div className="flex gap-2">
+      {required && (
+        <Badge variant="outline" className="bg-pink-900/30 text-pink-300 border-pink-500/30 text-xs">
+          Required
+        </Badge>
+      )}
+      {isComplete && (
+        <Badge variant="outline" className="bg-green-900/30 text-green-300 border-green-500/30 text-xs">
+          <CheckCircle size={10} className="mr-1" />
+          Complete
+        </Badge>
+      )}
+    </div>
+  );
+
+  // Render field label with completion indicator
+  const renderLabel = () => (
+    <FormLabel className="text-white flex items-center justify-between">
+      <span className="flex items-center gap-2">
+        {text}
+        {isComplete && <CheckCircle size={16} className="text-green-400" />}
+        {required && !isComplete && <AlertCircle size={16} className="text-yellow-400" />}
+      </span>
+      {renderBadges()}
+    </FormLabel>
+  );
+
+  const commonFieldProps = {
+    className: "bg-white/10 border-white/20 text-white placeholder:text-white/60"
+  };
+
+  switch (fieldType) {
     case 'text':
-      return <TextField {...commonProps} />;
-    
+      return (
+        <FormField
+          control={form.control}
+          name={id}
+          render={({ field }) => (
+            <FormItem>
+              {renderLabel()}
+              <FormControl>
+                <Input 
+                  placeholder={placeholder || `Enter ${text.toLowerCase()}`}
+                  {...field}
+                  {...commonFieldProps}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      );
+
     case 'textarea':
-      return <TextAreaField {...commonProps} />;
-    
+      return (
+        <FormField
+          control={form.control}
+          name={id}
+          render={({ field }) => (
+            <FormItem>
+              {renderLabel()}
+              <FormControl>
+                <Textarea 
+                  placeholder={placeholder || `Enter ${text.toLowerCase()}`}
+                  {...field}
+                  {...commonFieldProps}
+                  rows={3}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      );
+
     case 'select':
       return (
-        <SelectField 
-          {...commonProps}
+        <FormField
+          control={form.control}
+          name={id}
+          render={({ field }) => (
+            <FormItem>
+              {renderLabel()}
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger {...commonFieldProps}>
+                    <SelectValue placeholder={placeholder || `Select ${text.toLowerCase()}`} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="bg-gray-800 border-gray-600">
+                  {fieldOptions?.map((option) => (
+                    <SelectItem key={option} value={option} className="text-white hover:bg-gray-700">
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
         />
       );
-    
+
     case 'multi-select':
       return (
-        <MultiSelectField 
-          {...commonProps}
+        <FormField
+          control={form.control}
+          name={id}
+          render={({ field }) => (
+            <FormItem>
+              {renderLabel()}
+              <FormDescription className="text-purple-200 text-sm">
+                {id === 'interests' && 'Select at least 3 interests'}
+                {id === 'hobbies' && 'Select at least 2 hobbies'}
+                {id === 'values' && 'Select at least 3 core values'}
+                {id === 'languages' && 'Select at least 1 language'}
+                {!['interests', 'hobbies', 'values', 'languages'].includes(id) && 'Select one or more options'}
+              </FormDescription>
+              <FormControl>
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-white/5 rounded-lg border border-white/10">
+                  {fieldOptions?.map((option) => (
+                    <div key={option} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`${id}-${option}`}
+                        checked={field.value?.includes(option) || false}
+                        onCheckedChange={(checked) => {
+                          const currentValue = field.value || [];
+                          if (checked) {
+                            field.onChange([...currentValue, option]);
+                          } else {
+                            field.onChange(currentValue.filter((v: string) => v !== option));
+                          }
+                        }}
+                        className="border-white/30 text-white"
+                      />
+                      <label
+                        htmlFor={`${id}-${option}`}
+                        className="text-sm text-white cursor-pointer"
+                      >
+                        {option}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
       );
-    
-    case 'radio':
-      return (
-        <RadioField 
-          {...commonProps}
-        />
-      );
-    
+
     case 'checkbox':
-      return <CheckboxField {...commonProps} />;
-    
+      return (
+        <FormField
+          control={form.control}
+          name={id}
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  className="border-white/30 text-white"
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-white">
+                  {text}
+                </FormLabel>
+                {renderBadges()}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      );
+
     case 'date':
-      return <DateField {...commonProps} />;
-    
+      return (
+        <FormField
+          control={form.control}
+          name={id}
+          render={({ field }) => (
+            <FormItem>
+              {renderLabel()}
+              <FormControl>
+                <Input 
+                  type="date"
+                  {...field}
+                  {...commonFieldProps}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      );
+
     default:
-      return <TextField {...commonProps} />;
+      return (
+        <FormField
+          control={form.control}
+          name={id}
+          render={({ field }) => (
+            <FormItem>
+              {renderLabel()}
+              <FormControl>
+                <Input 
+                  placeholder={placeholder || `Enter ${text.toLowerCase()}`}
+                  {...field}
+                  {...commonFieldProps}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      );
   }
 };
 
