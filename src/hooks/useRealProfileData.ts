@@ -65,6 +65,7 @@ export const useRealProfileData = () => {
 
       // Get real user profile from database
       const profile = await getCurrentUserProfile();
+      console.log('Loaded profile:', profile?.name || 'No profile found');
       
       if (profile) {
         // Convert Profile to DatabaseProfile
@@ -120,6 +121,10 @@ export const useRealProfileData = () => {
         // Get engagement metrics
         const userEngagement = await getRealUserEngagement(profile.id);
         setEngagement(userEngagement);
+        
+        console.log('Profile completion:', progress.profileCompletion);
+        console.log('Category progress:', progress.categoryProgress);
+        console.log('Profile data loaded successfully for:', profile.name);
       }
     } catch (error) {
       console.error('Error loading real profile data:', error);

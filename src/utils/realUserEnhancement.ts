@@ -139,8 +139,12 @@ export const getUserOnboardingProgress = async (userId: string): Promise<UserOnb
       .select('*', { count: 'exact', head: true })
       .eq('profile_id', userId);
 
+    console.log('Photo count for user', userId, ':', photoCount || 0);
+
     // Calculate category-based progress
     const categoryProgress = calculateCategoryProgress(profile, photoCount || 0);
+    
+    console.log('Calculated category progress:', categoryProgress);
     
     const completedSteps = [];
     const suggestions = [];

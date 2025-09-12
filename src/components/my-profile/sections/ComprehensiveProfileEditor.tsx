@@ -51,21 +51,21 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
       label: 'Basic Info', 
       icon: User,
       component: BasicInfoEditor,
-      fields: ['name', 'age', 'height', 'ethnicity', 'languages', 'location']
+      fields: ['name', 'age', 'height', 'ethnicity', 'languages', 'location', 'bodyType', 'kurdistanRegion']
     },
     { 
       id: 'lifestyle', 
       label: 'Lifestyle', 
       icon: Dumbbell,
       component: LifestyleEditor,
-      fields: ['exerciseHabits', 'dietaryPreferences', 'smoking', 'drinking', 'sleepSchedule']
+      fields: ['exerciseHabits', 'dietaryPreferences', 'smoking', 'drinking', 'sleepSchedule', 'havePets', 'travelFrequency']
     },
     { 
       id: 'values', 
       label: 'Values & Beliefs', 
       icon: Star,
       component: ValuesPersonalityEditor,
-      fields: ['religion', 'values', 'zodiacSign', 'personalityType']
+      fields: ['religion', 'values', 'zodiacSign', 'personalityType', 'politicalViews', 'communicationStyle']
     },
     { 
       id: 'interests', 
@@ -79,21 +79,14 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
       label: 'Career & Education', 
       icon: Briefcase,
       component: CareerEducationEditor,
-      fields: ['occupation', 'education', 'company', 'careerAmbitions']
-    },
-    { 
-      id: 'favorites', 
-      label: 'Favorites', 
-      icon: Coffee,
-      component: FavoritesEditor,
-      fields: ['favoriteBooks', 'favoriteMovies', 'favoriteMusic', 'favoriteFoods']
+      fields: ['occupation', 'education', 'company', 'careerAmbitions', 'workLifeBalance']
     },
     { 
       id: 'relationship', 
       label: 'Relationship Goals', 
       icon: Heart,
       component: RelationshipPreferencesEditor,
-      fields: ['relationshipGoals', 'childrenStatus', 'familyCloseness']
+      fields: ['relationshipGoals', 'wantChildren', 'loveLanguage', 'idealDate']
     }
   ];
 
