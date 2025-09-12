@@ -4,7 +4,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { RegisterProtection } from './RegisterProtection';
 import EmailVerificationGuard from './EmailVerificationGuard';
-import Index from '@/pages/Index';
 import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
@@ -41,7 +40,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
     <Routes>
       <Route 
         path="/" 
-        element={user ? <Navigate to="/swipe" replace /> : <Landing />} 
+        element={user ? <Navigate to="/discovery" replace /> : <Landing />} 
       />
       <Route 
         path="/auth" 
