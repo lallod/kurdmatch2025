@@ -70,10 +70,10 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading profile...</p>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="w-8 h-8 border-2 border-purple-300 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-purple-200">Loading profile...</p>
         </div>
       </div>
     );
@@ -81,12 +81,12 @@ const Profile = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Profile not found</h2>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <h2 className="text-2xl font-bold mb-2 text-white">Profile not found</h2>
           <button 
             onClick={() => navigate(-1)}
-            className="text-primary hover:text-primary/80"
+            className="text-purple-300 hover:text-purple-200"
           >
             Go back
           </button>
@@ -105,7 +105,7 @@ const Profile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/30 via-secondary/30 to-accent/30">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
       {/* Header */}
       <div className="relative z-10 p-4">
         <button
@@ -152,7 +152,7 @@ const Profile = () => {
                   <h1 className="text-2xl font-bold text-white">{profile.name}</h1>
                   <span className="text-xl text-white/90">{profile.age}</span>
                 </div>
-                <Badge className="bg-green-500 text-white font-semibold px-3 py-1">
+                <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-3 py-1">
                   ⚡ {matchPercentage}%
                 </Badge>
               </div>
@@ -168,7 +168,7 @@ const Profile = () => {
               </div>
 
               {profile.kurdistan_region && (
-                <Badge className="bg-primary/80 text-white mb-3 mr-2">
+                <Badge className="bg-purple-500/80 text-white mb-3 mr-2">
                   {profile.kurdistan_region}
                 </Badge>
               )}
@@ -178,7 +178,7 @@ const Profile = () => {
               </div>
 
               {profile.occupation && (
-                <Badge className="bg-secondary/80 text-white text-sm">
+                <Badge className="bg-pink-500/80 text-white text-sm">
                   {profile.occupation}
                 </Badge>
               )}
@@ -294,7 +294,7 @@ const Profile = () => {
                         <span className="text-white/70">Values:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {profile.values.map((value: string, index: number) => (
-                            <Badge key={index} className="bg-primary/30 text-white text-xs">
+                            <Badge key={index} className="bg-purple-500/30 text-white text-xs">
                               {value}
                             </Badge>
                           ))}
@@ -307,7 +307,7 @@ const Profile = () => {
                         <span className="text-white/70">Interests:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {profile.interests.map((interest: string, index: number) => (
-                            <Badge key={index} className="bg-secondary/30 text-white text-xs">
+                            <Badge key={index} className="bg-pink-500/30 text-white text-xs">
                               {interest}
                             </Badge>
                           ))}
@@ -340,7 +340,7 @@ const Profile = () => {
                         <span className="text-white/70">Languages:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {profile.languages.map((language: string, index: number) => (
-                            <Badge key={index} className="bg-accent/30 text-white text-xs">
+                            <Badge key={index} className="bg-purple-400/30 text-white text-xs">
                               {language}
                             </Badge>
                           ))}

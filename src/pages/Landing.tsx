@@ -83,20 +83,20 @@ const Landing = () => {
 
   if (contentLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
         <Loader2 className="h-8 w-8 animate-spin text-white" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-secondary to-accent">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-10 p-6">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <Heart className="w-6 h-6 text-primary" />
+              <Heart className="w-6 h-6 text-purple-600" />
             </div>
             <div>
               <h1 className="text-white font-bold text-xl">KurdMatch</h1>
@@ -130,7 +130,7 @@ const Landing = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold px-8 py-4 text-lg"
+                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-8 py-4 text-lg"
                 onClick={() => navigate('/register')}
               >
                 Get Started - It's Free
@@ -139,7 +139,7 @@ const Landing = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 text-lg"
+                className="border-2 border-purple-300/30 text-white hover:bg-purple-500/10 font-semibold px-8 py-4 text-lg"
                 onClick={() => document.getElementById('login-form')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Sign In
@@ -149,7 +149,7 @@ const Landing = () => {
           
           {/* Right Side - Login Form */}
           <div className="flex justify-center lg:justify-end">
-            <Card id="login-form" className="w-full max-w-md bg-gray-800/90 backdrop-blur-md border-0 shadow-2xl">
+            <Card id="login-form" className="w-full max-w-md bg-purple-900/90 backdrop-blur-md border-0 shadow-2xl">
               <CardContent className="p-8">
                 <div className="space-y-6">
                   <div className="text-center space-y-2">
@@ -166,7 +166,7 @@ const Landing = () => {
                         placeholder="email@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-500"
+                        className="bg-purple-700/50 border-purple-600 text-white placeholder:text-purple-300 focus:border-purple-400"
                         required
                       />
                     </div>
@@ -179,17 +179,17 @@ const Landing = () => {
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-500"
+                        className="bg-purple-700/50 border-purple-600 text-white placeholder:text-purple-300 focus:border-purple-400"
                         required
                       />
                     </div>
                     
                     <div className="flex items-center justify-between text-sm">
-                      <label className="flex items-center gap-2 text-gray-400">
-                        <input type="checkbox" className="rounded border-gray-600" />
+                      <label className="flex items-center gap-2 text-purple-300">
+                        <input type="checkbox" className="rounded border-purple-600" />
                         Remember me
                       </label>
-                      <Link to="/auth" className="text-purple-400 hover:text-purple-300">
+                      <Link to="/auth" className="text-purple-300 hover:text-purple-200">
                         Forgot password?
                       </Link>
                     </div>
@@ -197,7 +197,7 @@ const Landing = () => {
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-3"
+                      className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-3"
                     >
                       {isLoading ? (
                         <>
@@ -213,27 +213,27 @@ const Landing = () => {
                   <div className="space-y-4">
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-600"></div>
+                        <div className="w-full border-t border-purple-600"></div>
                       </div>
                       <div className="relative flex justify-center text-sm">
-                        <span className="bg-gray-800 px-2 text-gray-400">OR CONTINUE WITH</span>
+                        <span className="bg-purple-900 px-2 text-purple-300">OR CONTINUE WITH</span>
                       </div>
                     </div>
                     
                     <SocialLogin />
                   </div>
                   
-                  <div className="text-center text-sm text-gray-400">
+                  <div className="text-center text-sm text-purple-300">
                     Don't have an account?{' '}
                     <Link 
                       to="/register" 
-                      className="text-purple-400 hover:text-purple-300 font-medium"
+                      className="text-purple-200 hover:text-white font-medium"
                     >
                       Create one now →
                     </Link>
                   </div>
                   
-                  <p className="text-xs text-gray-500 text-center">
+                  <p className="text-xs text-purple-400 text-center">
                     By continuing, you agree to our Terms of Service and Privacy Policy.
                   </p>
                 </div>
