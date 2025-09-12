@@ -16,10 +16,13 @@ const Profile = () => {
   const [matchPercentage] = useState(Math.floor(Math.random() * 20) + 75); // Mock match percentage
 
   useEffect(() => {
+    console.log('Location state:', location.state);
+    console.log('Profile ID from state:', profileId);
+    
     if (profileId) {
       fetchProfile();
     } else {
-      console.log('No profile ID provided');
+      console.log('No profile ID provided - location.state:', location.state);
       setLoading(false);
     }
   }, [profileId]);
@@ -28,6 +31,15 @@ const Profile = () => {
     try {
       setLoading(true);
       console.log('Fetching profile for ID:', profileId);
+      console.log('ProfileId type:', typeof profileId);
+      console.log('ProfileId value:', profileId);
+      
+      // Check if profileId exists
+      if (!profileId) {
+        console.error('No profileId provided');
+        setProfile(null);
+        return;
+      }
       
       const { data, error } = await supabase
         .from('profiles')
@@ -35,9 +47,15 @@ const Profile = () => {
         .eq('id', profileId)
         .maybeSingle();
 
+      console.log('Supabase query result:', { data, error });
+
       if (error) {
         console.error('Supabase error:', error);
         throw error;
+      }
+      
+      if (!data) {
+        console.log('No profile found for ID:', profileId);
       }
       
       console.log('Profile data received:', data);
