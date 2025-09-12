@@ -78,7 +78,7 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Globe className="w-5 h-5 text-purple-600" />
-        <Label className="text-white">Born In</Label>
+        <Label className="text-white">Born In (Kurdistan?)</Label>
       </div>
       
       <div className="relative">
