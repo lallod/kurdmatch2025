@@ -211,7 +211,7 @@ const Swipe = () => {
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center overflow-hidden">
         {/* Card Stack Container */}
-        <div className={`relative flex items-center justify-center w-full h-full ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
+        <div className={`relative flex items-center justify-center w-full h-[90%] ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
           {/* Background Cards (stacked behind) */}
           {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
             <div
