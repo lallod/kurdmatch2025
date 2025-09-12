@@ -190,9 +190,9 @@ const Swipe = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
       {/* Header */}
-      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 z-10">
+      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
         <div className={`${SWIPE_CONFIG.header.maxWidth} mx-auto ${SWIPE_CONFIG.header.padding} ${SWIPE_CONFIG.header.height}`}>
           <div className={`text-center ${SWIPE_CONFIG.header.title.spacing}`}>
             <div className={`${SWIPE_CONFIG.header.icon.size} bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin}`}>
@@ -208,10 +208,10 @@ const Swipe = () => {
         </div>
       </div>
 
-      {/* Main Content - Card Stack */}
-      <div className="flex-1 flex items-center justify-center px-2">
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
         {/* Card Stack Container */}
-        <div className="relative flex items-center justify-center w-full h-full">
+        <div className={`relative flex items-center justify-center ${SWIPE_CONFIG.stack.container.minHeight} ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
           {/* Background Cards (stacked behind) */}
           {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
             <div
@@ -247,8 +247,8 @@ const Swipe = () => {
           </div>
         </div>
         
-        {/* Action Buttons */}
-        <div className="px-4 sm:px-8 pb-4">
+        {/* Action Buttons at Bottom */}
+        <div className={`fixed ${SWIPE_CONFIG.actions.container.bottom} left-0 right-0 z-30`}>
           <SwipeActions
             onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
             onPass={() => handleSwipeAction('pass', currentProfile.id)}
