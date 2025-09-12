@@ -159,7 +159,7 @@ const PremiumFeatureModal: React.FC<PremiumFeatureModalProps> = ({
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1 border-white/20 text-white hover:bg-white/10"
+              className="flex-1 bg-gray-600/50 border-gray-500 text-white hover:bg-gray-600/70"
             >
               Maybe Later
             </Button>
