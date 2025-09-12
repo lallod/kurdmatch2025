@@ -9,45 +9,50 @@ interface ProfileInfoProps {
 
 const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile }) => {
   return (
-    <div className="text-white space-y-3">
-      <div className="flex items-center gap-3 mb-2">
-        <h2 className="text-3xl font-bold tracking-tight">{profile.name}</h2>
-        <span className="text-2xl font-light">{profile.age}</span>
-        {profile.verified && (
-          <div className="bg-blue-500 rounded-full p-1">
-            <Verified className="h-4 w-4 text-white" />
-          </div>
-        )}
-      </div>
-      
-      <div className="flex items-center gap-2 text-white/90">
-        <span className="text-base">{profile.location}</span>
-        {profile.kurdistanRegion && (
-          <>
-            <span className="text-white/60">•</span>
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-xs">
-              {profile.kurdistanRegion}
-            </Badge>
-          </>
-        )}
-      </div>
-      
-      {profile.occupation && (
-        <div className="text-white/80 text-sm font-medium">
-          {profile.occupation}
-          {profile.company && (
-            <span className="text-white/60"> at {profile.company}</span>
-          )}
+    <div className="text-white space-y-2">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <h2 className="text-2xl font-semibold">{profile.name}</h2>
+          <span className="text-xl font-normal">{profile.age}</span>
         </div>
-      )}
-
-      {/* Quick compatibility highlights */}
-      <div className="flex flex-wrap gap-2 mt-3">
-        {profile.languages?.slice(0, 3).map((language, index) => (
-          <span key={index} className="px-2 py-1 bg-white/20 rounded-full text-xs text-white backdrop-blur-sm">
-            {language}
+        
+        {/* Compatibility percentage */}
+        <div className="bg-green-500 px-3 py-1 rounded-full flex items-center gap-1">
+          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span className="text-white font-semibold text-sm">
+            {profile.compatibilityScore || Math.floor(Math.random() * 20) + 80}%
           </span>
-        ))}
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-1 text-white/90 text-sm">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span>{profile.location}</span>
+        <span className="text-white/70">•</span>
+        <span>{profile.distance || Math.floor(Math.random() * 20) + 1}km away</span>
+      </div>
+      
+      <div className="flex items-center gap-2 mt-2">
+        {profile.kurdistanRegion && (
+          <span className="bg-purple-600/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+            {profile.kurdistanRegion}
+          </span>
+        )}
+      </div>
+
+      <div className="text-white/90 text-sm mt-2">
+        Looking for: {profile.relationshipGoals || 'Long-term relationship'}
+      </div>
+      
+      <div className="flex gap-2 mt-2">
+        <span className="bg-purple-600/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+          {profile.occupation || 'Not specified'}
+        </span>
       </div>
     </div>
   );
