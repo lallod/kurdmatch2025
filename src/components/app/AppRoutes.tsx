@@ -22,6 +22,7 @@ import SuperAdminLogin from '@/components/auth/SuperAdminLogin';
 import SuperAdminSetup from '@/components/auth/SuperAdminSetup';
 import AuthCallback from '@/components/auth/AuthCallback';
 import NotFound from '@/pages/NotFound';
+import { CompleteProfile } from '@/pages/CompleteProfile';
 
 interface AppRoutesProps {
   showWizard: boolean;
@@ -59,6 +60,12 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       <Route 
         path="/auth/callback" 
         element={<AuthCallback />} 
+      />
+      
+      {/* Profile Completion Route */}
+      <Route 
+        path="/complete-profile" 
+        element={user ? <CompleteProfile /> : <Navigate to="/auth" replace />} 
       />
       
       {/* Super Admin Login Route - accessible without authentication */}

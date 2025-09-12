@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { useSupabaseAuth as useAuth } from '@/integrations/supabase/auth';
 import { AppRoutes } from "@/components/app/AppRoutes";
 import { LoadingSpinner } from "@/components/app/LoadingSpinner";
+import { ProfileCompletionGuard } from "@/components/app/ProfileCompletionGuard";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,9 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <BrowserRouter>
-          <AppRoutes showWizard={false} isOAuthFlow={false} />
+          <ProfileCompletionGuard>
+            <AppRoutes showWizard={false} isOAuthFlow={false} />
+          </ProfileCompletionGuard>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

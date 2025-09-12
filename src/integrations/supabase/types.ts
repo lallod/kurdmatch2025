@@ -241,8 +241,8 @@ export type Database = {
       profiles: {
         Row: {
           age: number
-          bio: string | null
-          body_type: string | null
+          bio: string
+          body_type: string
           career_ambitions: string | null
           charity_involvement: string | null
           children_status: string | null
@@ -255,10 +255,10 @@ export type Database = {
           dream_home: string | null
           dream_vacation: string | null
           drinking: string | null
-          education: string | null
-          ethnicity: string | null
+          education: string
+          ethnicity: string
           evening_routine: string | null
-          exercise_habits: string | null
+          exercise_habits: string
           family_closeness: string | null
           favorite_books: string[] | null
           favorite_foods: string[] | null
@@ -274,14 +274,14 @@ export type Database = {
           gender: string | null
           growth_goals: string[] | null
           have_pets: string | null
-          height: string | null
+          height: string
           hidden_talents: string[] | null
           hobbies: string[] | null
           id: string
           ideal_date: string | null
           ideal_weather: string | null
           interests: string[] | null
-          kurdistan_region: string | null
+          kurdistan_region: string
           languages: string[] | null
           last_active: string | null
           location: string
@@ -289,13 +289,13 @@ export type Database = {
           morning_routine: string | null
           music_instruments: string[] | null
           name: string
-          occupation: string | null
+          occupation: string
           personality_type: string | null
           pet_peeves: string[] | null
           political_views: string | null
-          profile_image: string | null
-          relationship_goals: string | null
-          religion: string | null
+          profile_image: string
+          relationship_goals: string
+          religion: string
           sleep_schedule: string | null
           smoking: string | null
           stress_relievers: string[] | null
@@ -304,7 +304,7 @@ export type Database = {
           travel_frequency: string | null
           values: string[] | null
           verified: boolean | null
-          want_children: string | null
+          want_children: string
           weekend_activities: string[] | null
           work_environment: string | null
           work_life_balance: string | null
@@ -312,8 +312,8 @@ export type Database = {
         }
         Insert: {
           age: number
-          bio?: string | null
-          body_type?: string | null
+          bio?: string
+          body_type?: string
           career_ambitions?: string | null
           charity_involvement?: string | null
           children_status?: string | null
@@ -326,10 +326,10 @@ export type Database = {
           dream_home?: string | null
           dream_vacation?: string | null
           drinking?: string | null
-          education?: string | null
-          ethnicity?: string | null
+          education?: string
+          ethnicity?: string
           evening_routine?: string | null
-          exercise_habits?: string | null
+          exercise_habits?: string
           family_closeness?: string | null
           favorite_books?: string[] | null
           favorite_foods?: string[] | null
@@ -345,14 +345,14 @@ export type Database = {
           gender?: string | null
           growth_goals?: string[] | null
           have_pets?: string | null
-          height?: string | null
+          height?: string
           hidden_talents?: string[] | null
           hobbies?: string[] | null
           id: string
           ideal_date?: string | null
           ideal_weather?: string | null
           interests?: string[] | null
-          kurdistan_region?: string | null
+          kurdistan_region?: string
           languages?: string[] | null
           last_active?: string | null
           location: string
@@ -360,13 +360,13 @@ export type Database = {
           morning_routine?: string | null
           music_instruments?: string[] | null
           name: string
-          occupation?: string | null
+          occupation?: string
           personality_type?: string | null
           pet_peeves?: string[] | null
           political_views?: string | null
-          profile_image?: string | null
-          relationship_goals?: string | null
-          religion?: string | null
+          profile_image?: string
+          relationship_goals?: string
+          religion?: string
           sleep_schedule?: string | null
           smoking?: string | null
           stress_relievers?: string[] | null
@@ -375,7 +375,7 @@ export type Database = {
           travel_frequency?: string | null
           values?: string[] | null
           verified?: boolean | null
-          want_children?: string | null
+          want_children?: string
           weekend_activities?: string[] | null
           work_environment?: string | null
           work_life_balance?: string | null
@@ -383,8 +383,8 @@ export type Database = {
         }
         Update: {
           age?: number
-          bio?: string | null
-          body_type?: string | null
+          bio?: string
+          body_type?: string
           career_ambitions?: string | null
           charity_involvement?: string | null
           children_status?: string | null
@@ -397,10 +397,10 @@ export type Database = {
           dream_home?: string | null
           dream_vacation?: string | null
           drinking?: string | null
-          education?: string | null
-          ethnicity?: string | null
+          education?: string
+          ethnicity?: string
           evening_routine?: string | null
-          exercise_habits?: string | null
+          exercise_habits?: string
           family_closeness?: string | null
           favorite_books?: string[] | null
           favorite_foods?: string[] | null
@@ -416,14 +416,14 @@ export type Database = {
           gender?: string | null
           growth_goals?: string[] | null
           have_pets?: string | null
-          height?: string | null
+          height?: string
           hidden_talents?: string[] | null
           hobbies?: string[] | null
           id?: string
           ideal_date?: string | null
           ideal_weather?: string | null
           interests?: string[] | null
-          kurdistan_region?: string | null
+          kurdistan_region?: string
           languages?: string[] | null
           last_active?: string | null
           location?: string
@@ -431,13 +431,13 @@ export type Database = {
           morning_routine?: string | null
           music_instruments?: string[] | null
           name?: string
-          occupation?: string | null
+          occupation?: string
           personality_type?: string | null
           pet_peeves?: string[] | null
           political_views?: string | null
-          profile_image?: string | null
-          relationship_goals?: string | null
-          religion?: string | null
+          profile_image?: string
+          relationship_goals?: string
+          religion?: string
           sleep_schedule?: string | null
           smoking?: string | null
           stress_relievers?: string[] | null
@@ -446,7 +446,7 @@ export type Database = {
           travel_frequency?: string | null
           values?: string[] | null
           verified?: boolean | null
-          want_children?: string | null
+          want_children?: string
           weekend_activities?: string[] | null
           work_environment?: string | null
           work_life_balance?: string | null
@@ -603,6 +603,10 @@ export type Database = {
       create_dummy_auth_user: {
         Args: { email: string; user_uuid: string }
         Returns: Json
+      }
+      is_profile_complete: {
+        Args: { profile_id: string }
+        Returns: boolean
       }
     }
     Enums: {

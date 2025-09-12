@@ -6,28 +6,28 @@ export interface ProfileData {
   name: string;
   age: number;
   location: string;
-  occupation: string;
+  occupation: string; // Required
   lastActive: string;
   verified: boolean;
-  profileImage: string;
+  profileImage: string; // Required
   distance: number;
-  kurdistanRegion: KurdistanRegion;
-  bio: string;
-  height: string;
-  bodyType: string;
-  ethnicity: string;
-  religion: string;
+  kurdistanRegion: KurdistanRegion; // Required
+  bio: string; // Required (min 20 chars)
+  height: string; // Required
+  bodyType: string; // Required
+  ethnicity: string; // Required
+  religion: string; // Required
   politicalViews: string;
-  values: string[];
-  interests: string[];
-  hobbies: string[];
-  languages: string[];
-  education?: string;
+  values: string[]; // Required (min 3)
+  interests: string[]; // Required (min 3)
+  hobbies: string[]; // Required (min 2)
+  languages: string[]; // Required (min 1)
+  education: string; // Required
   company?: string;
-  relationshipGoals?: string;
-  wantChildren?: string;
+  relationshipGoals: string; // Required
+  wantChildren: string; // Required
   havePets?: string;
-  exerciseHabits?: string;
+  exerciseHabits: string; // Required
   zodiacSign?: string;
   personalityType?: string;
   sleepSchedule?: string;
