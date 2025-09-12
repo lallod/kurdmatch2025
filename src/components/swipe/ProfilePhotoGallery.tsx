@@ -6,12 +6,14 @@ interface ProfilePhotoGalleryProps {
   currentPhotoIndex: number;
   onNextPhoto: () => void;
   onPrevPhoto: () => void;
+  isBackground?: boolean;
 }
 const ProfilePhotoGallery = ({
   profile,
   currentPhotoIndex,
   onNextPhoto,
-  onPrevPhoto
+  onPrevPhoto,
+  isBackground = false
 }: ProfilePhotoGalleryProps) => {
   return (
     <div className="relative w-full h-full group">
@@ -23,8 +25,8 @@ const ProfilePhotoGallery = ({
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
         />
         
-        {/* Photo Navigation - Only show if multiple photos */}
-        {profile.photos && profile.photos.length > 1 && (
+        {/* Photo Navigation - Only show if multiple photos and not background */}
+        {!isBackground && profile.photos && profile.photos.length > 1 && (
           <>
             {/* Invisible click zones for easier navigation */}
             <div 
@@ -51,9 +53,6 @@ const ProfilePhotoGallery = ({
             </div>
           </>
         )}
-        
-        {/* Enhanced gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none" />
       </div>
     </div>
   );

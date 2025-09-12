@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import SwipeCard from '@/components/swipe/SwipeCard';
+import SwipeActions from '@/components/swipe/SwipeActions';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
@@ -171,14 +172,52 @@ const Swipe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800">
-      <div className="flex items-center justify-center min-h-screen px-4 py-8">
-        <SwipeCard 
-          profile={currentProfile}
-          onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
-          onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
-          onMessage={() => handleMessage(currentProfile.id)}
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+      {/* Card Stack Container */}
+      <div className="relative flex items-center justify-center min-h-screen px-4 py-12">
+        {/* Background Cards (stacked behind) */}
+        {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
+          <div
+            key={profile.id}
+            className="absolute"
+            style={{
+              transform: `scale(${0.95 - index * 0.05}) translateY(${index * 8}px)`,
+              zIndex: 10 - index,
+              opacity: 0.7 - index * 0.2
+            }}
+          >
+            <SwipeCard 
+              profile={profile}
+              onSwipeLeft={() => {}}
+              onSwipeRight={() => {}}
+              onMessage={() => {}}
+              onSuperLike={() => {}}
+              isBackground={true}
+            />
+          </div>
+        ))}
+        
+        {/* Main Active Card */}
+        <div className="relative z-20">
+          <SwipeCard 
+            profile={currentProfile}
+            onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
+            onSwipeRight={() => handleSwipeAction('like', currentProfile.id)}
+            onMessage={() => handleMessage(currentProfile.id)}
+            onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
+            isBackground={false}
+          />
+        </div>
+      </div>
+      
+      {/* Action Buttons at Bottom */}
+      <div className="fixed bottom-8 left-0 right-0 z-30">
+        <SwipeActions
+          onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
+          onPass={() => handleSwipeAction('pass', currentProfile.id)}
+          onLike={() => handleSwipeAction('like', currentProfile.id)}
           onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
+          onBoost={() => toast("Boost is a premium feature", { icon: "⚡" })}
         />
       </div>
     </div>
