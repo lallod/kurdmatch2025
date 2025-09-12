@@ -11,11 +11,11 @@ export const getMatches = async () => {
     .from('matches')
     .select(`
       *,
-      profile1: profile1_id (id, name, profile_image, age, location),
-      profile2: profile2_id (id, name, profile_image, age, location)
+      profile1: user1_id (id, name, profile_image, age, location),
+      profile2: user2_id (id, name, profile_image, age, location)
     `)
-    .or(`profile1_id.eq.${userId},profile2_id.eq.${userId}`)
-    .order('created_at', { ascending: false });
+    .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+    .order('matched_at', { ascending: false });
   
   if (error) throw error;
   
@@ -29,8 +29,8 @@ export const getMatches = async () => {
       avatar: otherProfile.profile_image,
       age: otherProfile.age,
       location: otherProfile.location,
-      matchedAt: match.created_at,
-      isNew: new Date(match.created_at).getTime() > Date.now() - 24 * 60 * 60 * 1000 // New if less than 24 hours
+      matchedAt: match.matched_at,
+      isNew: new Date(match.matched_at).getTime() > Date.now() - 24 * 60 * 60 * 1000 // New if less than 24 hours
     };
   });
 };
