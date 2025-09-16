@@ -49,7 +49,7 @@ export const calculateCategoryProgress = (profile: any, photoCount: number = 0):
   if (profile.kurdistan_region) basicInfoCompleted++;
   if (photoCount >= 1) basicInfoCompleted++;
   
-  // Lifestyle (7 fields)
+  // Lifestyle (7 fields) - using database field names (snake_case)
   let lifestyleCompleted = 0;
   const lifestyleTotal = 7;
   if (profile.exercise_habits) lifestyleCompleted++;
@@ -60,7 +60,7 @@ export const calculateCategoryProgress = (profile: any, photoCount: number = 0):
   if (profile.have_pets) lifestyleCompleted++;
   if (profile.travel_frequency) lifestyleCompleted++;
   
-  // Values & Beliefs (4 fields)
+  // Values & Beliefs (4 fields) - using database field names (snake_case)
   let valuesCompleted = 0;
   const valuesTotal = 4;
   if (profile.religion) valuesCompleted++;
@@ -68,7 +68,7 @@ export const calculateCategoryProgress = (profile: any, photoCount: number = 0):
   if (profile.values && profile.values.length >= 3) valuesCompleted++;
   if (profile.communication_style) valuesCompleted++;
   
-  // Interests & Hobbies (4 fields)
+  // Interests & Hobbies (4 fields) - using camelCase names to match UI components
   let interestsCompleted = 0;
   const interestsTotal = 4;
   if (profile.interests && profile.interests.length >= 3) interestsCompleted++;
@@ -76,7 +76,7 @@ export const calculateCategoryProgress = (profile: any, photoCount: number = 0):
   if (profile.creative_pursuits && profile.creative_pursuits.length >= 1) interestsCompleted++;
   if (profile.weekend_activities && profile.weekend_activities.length >= 2) interestsCompleted++;
   
-  // Career & Education (5 fields)
+  // Career & Education (5 fields) - using database field names (snake_case)
   let careerCompleted = 0;
   const careerTotal = 5;
   if (profile.occupation && profile.occupation !== 'Not specified') careerCompleted++;
@@ -85,7 +85,7 @@ export const calculateCategoryProgress = (profile: any, photoCount: number = 0):
   if (profile.work_life_balance) careerCompleted++;
   if (profile.career_ambitions) careerCompleted++;
   
-  // Relationship Goals (5 fields)
+  // Relationship Goals (5 fields) - using database field names (snake_case)
   let relationshipCompleted = 0;
   const relationshipTotal = 5;
   if (profile.relationship_goals) relationshipCompleted++;
@@ -149,7 +149,7 @@ export const getUserOnboardingProgress = async (userId: string, enhancedProfile?
     const completedSteps = [];
     const suggestions = [];
 
-    // Comprehensive completion tracking
+    // Comprehensive completion tracking - using database field names (snake_case)
     if (profile.name) completedSteps.push('name');
     if (profile.bio && profile.bio.length > 50) completedSteps.push('bio');
     if (profile.location) completedSteps.push('location');

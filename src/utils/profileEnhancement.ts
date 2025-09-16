@@ -23,29 +23,38 @@ export interface EnhancedProfileData {
   fieldSources: FieldSource;
 }
 
-// Single select field mappings
+// Single select field mappings - using database field names (snake_case)
 const singleSelectMappings = {
+  // Values & Personality
   religion: OPTIONS.religion,
   political_views: OPTIONS.politicalViews,
   zodiac_sign: OPTIONS.zodiacSign,
   personality_type: OPTIONS.personalityType,
+  
+  // Lifestyle & Habits  
+  exercise_habits: OPTIONS.exerciseHabits,
+  dietary_preferences: OPTIONS.dietaryPreferences,
+  smoking: OPTIONS.smoking,
+  drinking: OPTIONS.drinking,
+  sleep_schedule: OPTIONS.sleepSchedule,
+  have_pets: OPTIONS.petsOwned,
+  travel_frequency: OPTIONS.travelFrequency,
+  work_life_balance: OPTIONS.workLifeBalance,
+  
+  // Relationship & Family
   relationship_goals: OPTIONS.relationshipGoals,
   want_children: OPTIONS.wantChildren,
   children_status: OPTIONS.childrenStatus,
   family_closeness: OPTIONS.familyCloseness,
-  exercise_habits: OPTIONS.exerciseHabits,
-  sleep_schedule: OPTIONS.sleepSchedule,
-  drinking: OPTIONS.drinking,
-  smoking: OPTIONS.smoking,
-  education: OPTIONS.education,
   communication_style: OPTIONS.communicationStyle,
   love_language: OPTIONS.loveLanguage,
-  travel_frequency: OPTIONS.travelFrequency,
-  dietary_preferences: OPTIONS.dietaryPreferences,
-  have_pets: OPTIONS.petsOwned,
-  work_life_balance: OPTIONS.workLifeBalance,
+  
+  // Basic Info
   body_type: OPTIONS.bodyType,
   ethnicity: OPTIONS.ethnicity,
+  education: OPTIONS.education,
+  
+  // Additional
   financial_habits: OPTIONS.financialHabits,
   favorite_season: OPTIONS.favoriteSeason
 };
@@ -80,7 +89,15 @@ export const assignRandomValues = (profileData: any, existingFieldSources?: Fiel
 
   // Process single select fields
   Object.entries(singleSelectMappings).forEach(([fieldName, options]) => {
-    if (!enhancedProfile[fieldName] || enhancedProfile[fieldName] === '' || enhancedProfile[fieldName] === 'Not specified' || enhancedProfile[fieldName] === 'Prefer not to say') {
+    // Check for various empty states
+    const isEmpty = !enhancedProfile[fieldName] || 
+                   enhancedProfile[fieldName] === '' || 
+                   enhancedProfile[fieldName] === 'Not specified' || 
+                   enhancedProfile[fieldName] === 'Prefer not to say' ||
+                   enhancedProfile[fieldName] === null ||
+                   enhancedProfile[fieldName] === undefined;
+                   
+    if (isEmpty) {
       enhancedProfile[fieldName] = getRandomElement(options);
       fieldSources[fieldName] = 'random';
     } else if (!fieldSources[fieldName]) {
@@ -90,7 +107,14 @@ export const assignRandomValues = (profileData: any, existingFieldSources?: Fiel
 
   // Process multi-select fields
   Object.entries(multiSelectMappings).forEach(([fieldName, config]) => {
-    if (!enhancedProfile[fieldName] || !Array.isArray(enhancedProfile[fieldName]) || enhancedProfile[fieldName].length === 0) {
+    // Check for various empty states for arrays
+    const isEmpty = !enhancedProfile[fieldName] || 
+                   !Array.isArray(enhancedProfile[fieldName]) || 
+                   enhancedProfile[fieldName].length === 0 ||
+                   enhancedProfile[fieldName] === null ||
+                   enhancedProfile[fieldName] === undefined;
+                   
+    if (isEmpty) {
       enhancedProfile[fieldName] = getRandomSubset(config.options, config.count);
       fieldSources[fieldName] = 'random';
     } else if (!fieldSources[fieldName]) {
