@@ -12,10 +12,11 @@ import { Save, X } from 'lucide-react';
 
 interface CareerEducationEditorProps {
   profileData: ProfileData;
+  fieldSources?: { [key: string]: 'user' | 'random' | 'initial' };
   onUpdate: (updates: Partial<ProfileData>) => void;
 }
 
-const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileData, onUpdate }) => {
+const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileData, fieldSources = {}, onUpdate }) => {
   const [formData, setFormData] = useState({
     occupation: profileData.occupation || '',
     education: profileData.education || '',

@@ -35,12 +35,14 @@ interface ComprehensiveProfileEditorProps {
     relationshipGoals: number;
     overall: number;
   };
+  fieldSources?: { [key: string]: 'user' | 'random' | 'initial' };
   onUpdateProfile: (updates: Partial<ProfileData>) => void;
 }
 
 const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({ 
   profileData, 
-  categoryProgress,
+  categoryProgress, 
+  fieldSources = {},
   onUpdateProfile 
 }) => {
   const [activeTab, setActiveTab] = useState('basic');
@@ -248,7 +250,8 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
             return (
               <TabsContent key={section.id} value={section.id} className="space-y-4">
                 <EditorComponent 
-                  profileData={profileData}
+                  profileData={profileData} 
+                  fieldSources={fieldSources}
                   onUpdate={onUpdateProfile}
                 />
               </TabsContent>

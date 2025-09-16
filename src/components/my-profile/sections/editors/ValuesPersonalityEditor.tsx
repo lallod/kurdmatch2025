@@ -8,13 +8,16 @@ import { Badge } from '@/components/ui/badge';
 import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
+import { SuggestionBadge } from '@/components/ui/suggestion-badge';
+import { getFieldSourceIndicator } from '@/utils/profileEnhancement';
 
 interface ValuesPersonalityEditorProps {
   profileData: ProfileData;
+  fieldSources?: { [key: string]: 'user' | 'random' | 'initial' };
   onUpdate: (updates: Partial<ProfileData>) => void;
 }
 
-const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profileData, onUpdate }) => {
+const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profileData, fieldSources = {}, onUpdate }) => {
   const [formData, setFormData] = useState({
     religion: profileData.religion || '',
     values: profileData.values || [],
@@ -79,9 +82,12 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label className="text-purple-200">Religion</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-purple-200">Religion</Label>
+                <SuggestionBadge show={fieldSources.religion === 'random'} />
+              </div>
               <Select value={formData.religion} onValueChange={(value) => handleInputChange('religion', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.religion === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
                   <SelectValue placeholder="Select religion" />
                 </SelectTrigger>
                 <SelectContent>
@@ -100,9 +106,12 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
             </div>
             
             <div>
-              <Label className="text-purple-200">Political Views</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-purple-200">Political Views</Label>
+                <SuggestionBadge show={fieldSources.political_views === 'random'} />
+              </div>
               <Select value={formData.politicalViews} onValueChange={(value) => handleInputChange('politicalViews', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.political_views === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
                   <SelectValue placeholder="Select political views" />
                 </SelectTrigger>
                 <SelectContent>
@@ -118,9 +127,12 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
             </div>
             
             <div>
-              <Label className="text-purple-200">Zodiac Sign</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-purple-200">Zodiac Sign</Label>
+                <SuggestionBadge show={fieldSources.zodiac_sign === 'random'} />
+              </div>
               <Select value={formData.zodiacSign} onValueChange={(value) => handleInputChange('zodiacSign', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.zodiac_sign === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
                   <SelectValue placeholder="Select zodiac sign" />
                 </SelectTrigger>
                 <SelectContent>
@@ -132,9 +144,12 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
             </div>
             
             <div>
-              <Label className="text-purple-200">Personality Type (MBTI)</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-purple-200">Personality Type (MBTI)</Label>
+                <SuggestionBadge show={fieldSources.personality_type === 'random'} />
+              </div>
               <Select value={formData.personalityType} onValueChange={(value) => handleInputChange('personalityType', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.personality_type === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
                   <SelectValue placeholder="Select personality type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,8 +162,11 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
           </div>
           
           <div>
-            <Label className="text-purple-200">Core Values</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex items-center gap-2 mb-2">
+              <Label className="text-purple-200">Core Values</Label>
+              <SuggestionBadge show={fieldSources.values === 'random'} />
+            </div>
+            <div className={`flex flex-wrap gap-2 mt-2 p-3 rounded-lg ${fieldSources.values === 'random' ? 'bg-blue-500/10 border border-blue-400/30' : ''}`}>
               {commonValues.map(value => (
                 <Badge
                   key={value}

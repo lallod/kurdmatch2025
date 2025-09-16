@@ -11,10 +11,11 @@ import { Save, X } from 'lucide-react';
 
 interface RelationshipPreferencesEditorProps {
   profileData: ProfileData;
+  fieldSources?: { [key: string]: 'user' | 'random' | 'initial' };
   onUpdate: (updates: Partial<ProfileData>) => void;
 }
 
-const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps> = ({ profileData, onUpdate }) => {
+const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps> = ({ profileData, fieldSources = {}, onUpdate }) => {
   const [formData, setFormData] = useState({
     relationshipGoals: profileData.relationshipGoals || '',
     childrenStatus: profileData.childrenStatus || '',

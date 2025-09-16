@@ -36,11 +36,12 @@ const MyProfile = () => {
   // Use real profile data hook
   const { 
     profileData: realProfileData, 
+    fieldSources = {},
     loading, 
     onboardingProgress, 
-    categoryProgress,
+    categoryProgress, 
     engagement, 
-    updateProfileData,
+    updateProfileData, 
     refreshData 
   } = useRealProfileData();
 
@@ -522,6 +523,7 @@ const MyProfile = () => {
                 <ComprehensiveProfileEditor
                   profileData={profileData}
                   categoryProgress={categoryProgress}
+                  fieldSources={fieldSources}
                   onUpdateProfile={handleProfileUpdate}
                 />
               </TabsContent>

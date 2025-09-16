@@ -8,13 +8,15 @@ import { Badge } from '@/components/ui/badge';
 import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
+import { SuggestionBadge } from '@/components/ui/suggestion-badge';
 
 interface LifestyleEditorProps {
   profileData: ProfileData;
+  fieldSources?: { [key: string]: 'user' | 'random' | 'initial' };
   onUpdate: (updates: Partial<ProfileData>) => void;
 }
 
-const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, onUpdate }) => {
+const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSources = {}, onUpdate }) => {
   const [formData, setFormData] = useState({
     exerciseHabits: profileData.exerciseHabits || '',
     dietaryPreferences: profileData.dietaryPreferences || '',
@@ -60,9 +62,12 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, onUpdate
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label className="text-purple-200">Exercise Habits</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-purple-200">Exercise Habits</Label>
+                <SuggestionBadge show={fieldSources.exercise_habits === 'random'} />
+              </div>
               <Select value={formData.exerciseHabits} onValueChange={(value) => handleInputChange('exerciseHabits', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.exercise_habits === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
                   <SelectValue placeholder="How often do you exercise?" />
                 </SelectTrigger>
                 <SelectContent>
@@ -94,9 +99,12 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, onUpdate
             </div>
             
             <div>
-              <Label className="text-purple-200">Smoking</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-purple-200">Smoking</Label>
+                <SuggestionBadge show={fieldSources.smoking === 'random'} />
+              </div>
               <Select value={formData.smoking} onValueChange={(value) => handleInputChange('smoking', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.smoking === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
                   <SelectValue placeholder="Do you smoke?" />
                 </SelectTrigger>
                 <SelectContent>

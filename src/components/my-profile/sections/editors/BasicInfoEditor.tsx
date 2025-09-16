@@ -9,13 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
+import { SuggestionBadge } from '@/components/ui/suggestion-badge';
 
 interface BasicInfoEditorProps {
   profileData: ProfileData;
+  fieldSources?: { [key: string]: 'user' | 'random' | 'initial' };
   onUpdate: (updates: Partial<ProfileData>) => void;
 }
 
-const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, onUpdate }) => {
+const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSources = {}, onUpdate }) => {
   const [formData, setFormData] = useState({
     name: profileData.name || '',
     age: profileData.age || 18,

@@ -12,10 +12,11 @@ import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 
 interface InterestsHobbiesEditorProps {
   profileData: ProfileData;
+  fieldSources?: { [key: string]: 'user' | 'random' | 'initial' };
   onUpdate: (updates: Partial<ProfileData>) => void;
 }
 
-const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profileData, onUpdate }) => {
+const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profileData, fieldSources = {}, onUpdate }) => {
   const { user } = useSupabaseAuth();
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [formData, setFormData] = useState({

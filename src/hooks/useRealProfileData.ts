@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getCurrentUserProfile, updateProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement, CategoryProgress } from '@/utils/realUserEnhancement';
+import { assignRandomValues, updateFieldWithSource, EnhancedProfileData, FieldSource } from '@/utils/profileEnhancement';
 import { toast } from 'sonner';
 
 // Define a database-compatible profile interface
@@ -50,6 +51,7 @@ interface DatabaseProfile {
 
 export const useRealProfileData = () => {
   const [profileData, setProfileData] = useState<DatabaseProfile | null>(null);
+  const [enhancedData, setEnhancedData] = useState<EnhancedProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [onboardingProgress, setOnboardingProgress] = useState<any>(null);
   const [categoryProgress, setCategoryProgress] = useState<CategoryProgress | null>(null);
@@ -113,8 +115,12 @@ export const useRealProfileData = () => {
         };
         setProfileData(dbProfile);
 
-        // Get onboarding progress with category breakdown
-        const progress = await getUserOnboardingProgress(profile.id);
+        // Apply random values to empty fields
+        const enhanced = assignRandomValues(dbProfile);
+        setEnhancedData(enhanced);
+
+        // Get onboarding progress with category breakdown (using enhanced data)
+        const progress = await getUserOnboardingProgress(profile.id, enhanced.profileData);
         setOnboardingProgress(progress);
         setCategoryProgress(progress.categoryProgress);
 
@@ -136,13 +142,26 @@ export const useRealProfileData = () => {
 
   const updateProfileData = async (updates: Partial<DatabaseProfile>) => {
     try {
-      if (profileData) {
+      if (profileData && enhancedData) {
         const updated = await updateProfile(profileData.id, updates as any);
         setProfileData(updated as any);
+        
+        // Update enhanced data and mark fields as user-set
+        let newEnhanced = { ...enhancedData };
+        Object.keys(updates).forEach(fieldName => {
+          newEnhanced = updateFieldWithSource(
+            newEnhanced.profileData,
+            newEnhanced.fieldSources,
+            fieldName,
+            updates[fieldName as keyof DatabaseProfile]
+          );
+        });
+        setEnhancedData(newEnhanced);
+        
         toast.success('Profile updated successfully');
         
-        // Refresh onboarding progress
-        const progress = await getUserOnboardingProgress(profileData.id);
+        // Refresh onboarding progress with enhanced data
+        const progress = await getUserOnboardingProgress(profileData.id, newEnhanced.profileData);
         setOnboardingProgress(progress);
         setCategoryProgress(progress.categoryProgress);
       }
@@ -153,7 +172,8 @@ export const useRealProfileData = () => {
   };
 
   return {
-    profileData,
+    profileData: enhancedData?.profileData || profileData,
+    fieldSources: enhancedData?.fieldSources || {},
     loading,
     onboardingProgress,
     categoryProgress,

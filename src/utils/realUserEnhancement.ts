@@ -121,7 +121,7 @@ export const calculateCategoryProgress = (profile: any, photoCount: number = 0):
 /**
  * Get user onboarding progress with comprehensive category tracking
  */
-export const getUserOnboardingProgress = async (userId: string): Promise<UserOnboardingProgress & { categoryProgress: CategoryProgress }> => {
+export const getUserOnboardingProgress = async (userId: string, enhancedProfile?: any): Promise<UserOnboardingProgress & { categoryProgress: CategoryProgress }> => {
   try {
     const { data: profile } = await supabase
       .from('profiles')
