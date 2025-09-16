@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getCurrentUserProfile, updateProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement, CategoryProgress } from '@/utils/realUserEnhancement';
 import { assignRandomValues, updateFieldWithSource, EnhancedProfileData, FieldSource } from '@/utils/profileEnhancement';
+import { fillEmptyProfileFields } from '@/utils/directProfileFiller';
 import { toast } from 'sonner';
 
 // Define a database-compatible profile interface
@@ -115,8 +116,30 @@ export const useRealProfileData = () => {
         };
         setProfileData(dbProfile);
 
-        // Apply random values to empty fields
-        const enhanced = assignRandomValues(dbProfile);
+        // Fill empty fields directly with random values
+        const filledProfile = fillEmptyProfileFields(dbProfile);
+        console.log('Applied direct profile filling');
+
+        // Apply additional random values using the original system
+        const enhanced = assignRandomValues(filledProfile);
+        console.log('Profile enhanced with random values:', {
+          originalProfileSample: {
+            exercise_habits: dbProfile.exercise_habits,
+            dietary_preferences: dbProfile.dietary_preferences,
+            smoking: dbProfile.smoking,
+            drinking: dbProfile.drinking
+          },
+          enhancedProfileSample: {
+            exercise_habits: enhanced.profileData.exercise_habits,
+            exerciseHabits: enhanced.profileData.exerciseHabits,
+            dietary_preferences: enhanced.profileData.dietary_preferences,
+            dietaryPreferences: enhanced.profileData.dietaryPreferences
+          },
+          fieldSourcesSample: {
+            exercise_habits: enhanced.fieldSources.exercise_habits,
+            exerciseHabits: enhanced.fieldSources.exerciseHabits
+          }
+        });
         setEnhancedData(enhanced);
 
         // Get onboarding progress with category breakdown (using enhanced data)

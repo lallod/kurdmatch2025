@@ -1,5 +1,13 @@
 import { OPTIONS } from '@/components/DetailEditor/constants';
 import { values, interests, hobbies, weekendActivities, techSkills, musicInstruments, favoriteGames, favoritePodcasts, favoriteBooks, favoriteMovies, favoriteMusic, favoriteFoods, growthGoals, hiddenTalents, stressRelievers } from '@/utils/profileGenerator/data/interestsAndHobbies';
+import { convertDbToUiProfile, dbToUiFieldMapping } from '@/utils/fieldNameMapping';
+
+/**
+ * Helper to get UI field name from database field name
+ */
+const getUiFieldName = (dbFieldName: string): string => {
+  return dbToUiFieldMapping[dbFieldName] || dbFieldName;
+};
 
 // Helper to get random element from array
 const getRandomElement = <T>(array: T[]): T => {
@@ -84,10 +92,11 @@ const multiSelectMappings = {
  * Assigns random values to empty profile fields
  */
 export const assignRandomValues = (profileData: any, existingFieldSources?: FieldSource): EnhancedProfileData => {
+  // Work with database field names first
   const enhancedProfile = { ...profileData };
   const fieldSources: FieldSource = { ...existingFieldSources };
 
-  // Process single select fields
+  // Process single select fields using database field names
   Object.entries(singleSelectMappings).forEach(([fieldName, options]) => {
     // Check for various empty states
     const isEmpty = !enhancedProfile[fieldName] || 
@@ -105,7 +114,7 @@ export const assignRandomValues = (profileData: any, existingFieldSources?: Fiel
     }
   });
 
-  // Process multi-select fields
+  // Process multi-select fields using database field names
   Object.entries(multiSelectMappings).forEach(([fieldName, config]) => {
     // Check for various empty states for arrays
     const isEmpty = !enhancedProfile[fieldName] || 
@@ -219,9 +228,45 @@ export const assignRandomValues = (profileData: any, existingFieldSources?: Fiel
     fieldSources.favorite_quote = 'user';
   }
 
+  // Convert to UI format with both database and UI field names
+  const uiProfile = convertDbToUiProfile(enhancedProfile);
+  
+  // Also create field sources for UI field names
+  const uiFieldSources = { ...fieldSources };
+  Object.entries(singleSelectMappings).forEach(([dbField]) => {
+    if (fieldSources[dbField]) {
+      // Map database field source to UI field name for components
+      const uiField = getUiFieldName(dbField);
+      if (uiField !== dbField) {
+        uiFieldSources[uiField] = fieldSources[dbField];
+      }
+    }
+  });
+  
+  Object.entries(multiSelectMappings).forEach(([dbField]) => {
+    if (fieldSources[dbField]) {
+      // Map database field source to UI field name for components
+      const uiField = getUiFieldName(dbField);
+      if (uiField !== dbField) {
+        uiFieldSources[uiField] = fieldSources[dbField];
+      }
+    }
+  });
+
+  console.log('Enhanced profile with field sources:', {
+    profileKeys: Object.keys(uiProfile),
+    fieldSourceKeys: Object.keys(uiFieldSources),
+    sampleData: {
+      exerciseHabits: uiProfile.exerciseHabits,
+      exercise_habits: uiProfile.exercise_habits,
+      exerciseHabitsSource: uiFieldSources.exerciseHabits,
+      exercise_habitsSource: uiFieldSources.exercise_habits
+    }
+  });
+
   return {
-    profileData: enhancedProfile,
-    fieldSources
+    profileData: uiProfile,
+    fieldSources: uiFieldSources
   };
 };
 
