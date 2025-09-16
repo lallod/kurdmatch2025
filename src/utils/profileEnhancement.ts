@@ -31,6 +31,8 @@ const singleSelectMappings = {
   personality_type: OPTIONS.personalityType,
   relationship_goals: OPTIONS.relationshipGoals,
   want_children: OPTIONS.wantChildren,
+  children_status: OPTIONS.childrenStatus,
+  family_closeness: OPTIONS.familyCloseness,
   exercise_habits: OPTIONS.exerciseHabits,
   sleep_schedule: OPTIONS.sleepSchedule,
   drinking: OPTIONS.drinking,
@@ -43,7 +45,9 @@ const singleSelectMappings = {
   have_pets: OPTIONS.petsOwned,
   work_life_balance: OPTIONS.workLifeBalance,
   body_type: OPTIONS.bodyType,
-  ethnicity: OPTIONS.ethnicity
+  ethnicity: OPTIONS.ethnicity,
+  financial_habits: OPTIONS.financialHabits,
+  favorite_season: OPTIONS.favoriteSeason
 };
 
 // Multi-select field mappings with target counts
@@ -118,6 +122,77 @@ export const assignRandomValues = (profileData: any, existingFieldSources?: Fiel
     fieldSources.occupation = 'random';
   } else if (!fieldSources.occupation) {
     fieldSources.occupation = 'user';
+  }
+
+  // Handle text field suggestions
+  if (!enhancedProfile.ideal_date || enhancedProfile.ideal_date.trim() === '') {
+    const idealDates = [
+      'A cozy dinner followed by a walk under the stars',
+      'Coffee shop conversation and exploring local art galleries',
+      'Hiking adventure followed by a picnic',
+      'Cooking together and watching a good movie',
+      'Cultural event or museum visit with meaningful conversation'
+    ];
+    enhancedProfile.ideal_date = getRandomElement(idealDates);
+    fieldSources.ideal_date = 'random';
+  } else if (!fieldSources.ideal_date) {
+    fieldSources.ideal_date = 'user';
+  }
+
+  if (!enhancedProfile.career_ambitions || enhancedProfile.career_ambitions.trim() === '') {
+    const careerGoals = [
+      'Growing in my field while making a positive impact',
+      'Building a career that balances success with personal fulfillment',
+      'Leading innovative projects that make a difference',
+      'Developing expertise while mentoring others',
+      'Creating work that contributes meaningfully to society'
+    ];
+    enhancedProfile.career_ambitions = getRandomElement(careerGoals);
+    fieldSources.career_ambitions = 'random';
+  } else if (!fieldSources.career_ambitions) {
+    fieldSources.career_ambitions = 'user';
+  }
+
+  if (!enhancedProfile.morning_routine || enhancedProfile.morning_routine.trim() === '') {
+    const morningRoutines = [
+      'Early coffee, light exercise, and planning my day',
+      'Meditation, healthy breakfast, and reading',
+      'Quick workout followed by energizing music',
+      'Journaling, stretching, and a nutritious start',
+      'Peaceful moments with tea and reflection'
+    ];
+    enhancedProfile.morning_routine = getRandomElement(morningRoutines);
+    fieldSources.morning_routine = 'random';
+  } else if (!fieldSources.morning_routine) {
+    fieldSources.morning_routine = 'user';
+  }
+
+  if (!enhancedProfile.evening_routine || enhancedProfile.evening_routine.trim() === '') {
+    const eveningRoutines = [
+      'Unwinding with a book and herbal tea',
+      'Reflecting on the day and preparing for tomorrow',
+      'Quality time with loved ones and relaxation',
+      'Light exercise or yoga to decompress',
+      'Creative activities and peaceful moments'
+    ];
+    enhancedProfile.evening_routine = getRandomElement(eveningRoutines);
+    fieldSources.evening_routine = 'random';
+  } else if (!fieldSources.evening_routine) {
+    fieldSources.evening_routine = 'user';
+  }
+
+  if (!enhancedProfile.favorite_quote || enhancedProfile.favorite_quote.trim() === '') {
+    const quotes = [
+      'Be yourself; everyone else is already taken.',
+      'Life is what happens when you\'re busy making other plans.',
+      'The journey of a thousand miles begins with one step.',
+      'In the middle of difficulty lies opportunity.',
+      'Happiness is not by chance, but by choice.'
+    ];
+    enhancedProfile.favorite_quote = getRandomElement(quotes);
+    fieldSources.favorite_quote = 'random';
+  } else if (!fieldSources.favorite_quote) {
+    fieldSources.favorite_quote = 'user';
   }
 
   return {
