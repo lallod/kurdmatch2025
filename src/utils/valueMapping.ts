@@ -62,10 +62,10 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Variable': 'flexible'
   },
   
-  // Pets
+// Add missing pets mapping values
   have_pets: {
     'Yes, dogs': 'yes-dogs',
-    'Yes, cats': 'yes-cats',
+    'Yes, cats': 'yes-cats', 
     'Yes, other pets': 'yes-other',
     'No, but I love them': 'no-but-love',
     'No, I\'m allergic': 'no-allergic',
@@ -73,7 +73,9 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Dog owner': 'yes-dogs',
     'Cat owner': 'yes-cats',
     'Pet lover': 'no-but-love',
-    'No pets': 'no-but-love'
+    'No pets': 'no-but-love',
+    'Love pets but don\'t have any': 'no-but-love',
+    'Allergic to pets': 'no-allergic'
   },
   
   // Religion
@@ -151,6 +153,30 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Life comes first': 'life-first',
     'Balanced approach': 'balanced',
     'Depends on the situation': 'situational'
+  },
+  
+  // Education
+  education: {
+    'High School': 'high-school',
+    'Some College': 'some-college',
+    'Associate\'s Degree': 'associates',
+    'Bachelor\'s Degree': 'bachelors',
+    'Master\'s Degree': 'masters',
+    'PhD': 'phd',
+    'Trade School': 'trade-school',
+    'Professional Degree': 'professional'
+  },
+  
+  // Relationship Goals
+  relationship_goals: {
+    'Long-term relationship': 'long-term',
+    'Marriage': 'marriage', 
+    'Casual dating': 'casual',
+    'Something serious': 'serious',
+    'Let\'s see what happens': 'see-what-happens',
+    'Looking for something serious': 'serious',
+    'Friendship first': 'friendship-first',
+    'Taking things slow': 'taking-slow'
   }
 };
 

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
+import { SuggestionBadge } from '@/components/ui/suggestion-badge';
 
 interface InterestsHobbiesEditorProps {
   profileData: ProfileData;
@@ -97,8 +98,11 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
         <CardContent className="space-y-6">
           {/* Interests */}
           <div>
-            <Label className="text-purple-200">Interests</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex items-center gap-2 mb-2">
+              <Label className="text-purple-200">Interests</Label>
+              <SuggestionBadge show={fieldSources.interests === 'random'} />
+            </div>
+            <div className={`flex flex-wrap gap-2 mt-2 ${fieldSources.interests === 'random' ? 'bg-blue-500/10 border border-blue-400/30 rounded-lg p-3' : ''}`}>
               {commonInterests.map(interest => (
                 <Badge
                   key={interest}
@@ -118,8 +122,11 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
 
           {/* Hobbies */}
           <div>
-            <Label className="text-purple-200">Hobbies</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex items-center gap-2 mb-2">
+              <Label className="text-purple-200">Hobbies</Label>
+              <SuggestionBadge show={fieldSources.hobbies === 'random'} />
+            </div>
+            <div className={`flex flex-wrap gap-2 mt-2 ${fieldSources.hobbies === 'random' ? 'bg-blue-500/10 border border-blue-400/30 rounded-lg p-3' : ''}`}>
               {commonHobbies.map(hobby => (
                 <Badge
                   key={hobby}
@@ -139,8 +146,11 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
 
           {/* Creative Pursuits */}
           <div>
-            <Label className="text-purple-200">Creative Pursuits</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex items-center gap-2 mb-2">
+              <Label className="text-purple-200">Creative Pursuits</Label>
+              <SuggestionBadge show={fieldSources.creative_pursuits === 'random'} />
+            </div>
+            <div className={`flex flex-wrap gap-2 mt-2 ${fieldSources.creative_pursuits === 'random' ? 'bg-blue-500/10 border border-blue-400/30 rounded-lg p-3' : ''}`}>
               {creativePursuits.map(pursuit => (
                 <Badge
                   key={pursuit}
@@ -160,8 +170,11 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
 
           {/* Weekend Activities */}
           <div>
-            <Label className="text-purple-200">Weekend Activities</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex items-center gap-2 mb-2">
+              <Label className="text-purple-200">Weekend Activities</Label>
+              <SuggestionBadge show={fieldSources.weekend_activities === 'random'} />
+            </div>
+            <div className={`flex flex-wrap gap-2 mt-2 ${fieldSources.weekend_activities === 'random' ? 'bg-blue-500/10 border border-blue-400/30 rounded-lg p-3' : ''}`}>
               {weekendActivities.map(activity => (
                 <Badge
                   key={activity}

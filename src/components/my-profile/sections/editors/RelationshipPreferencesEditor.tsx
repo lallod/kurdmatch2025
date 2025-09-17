@@ -85,15 +85,22 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label className="text-purple-200">Relationship Goals</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-purple-200">Relationship Goals</Label>
+                <SuggestionBadge show={fieldSources.relationship_goals === 'random'} />
+              </div>
               <Select value={formData.relationshipGoals} onValueChange={(value) => handleInputChange('relationshipGoals', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.relationship_goals === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
                   <SelectValue placeholder="What are you looking for?" />
                 </SelectTrigger>
                 <SelectContent>
-                  {relationshipGoalsOptions.map(goal => (
-                    <SelectItem key={goal} value={goal}>{goal}</SelectItem>
-                  ))}
+                  <SelectItem value="long-term">Long-term relationship</SelectItem>
+                  <SelectItem value="marriage">Marriage</SelectItem>
+                  <SelectItem value="casual">Casual dating</SelectItem>
+                  <SelectItem value="serious">Something serious</SelectItem>
+                  <SelectItem value="see-what-happens">Let's see what happens</SelectItem>
+                  <SelectItem value="friendship-first">Friendship first</SelectItem>
+                  <SelectItem value="taking-slow">Taking things slow</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -172,13 +179,16 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           </div>
           
           <div>
-            <Label htmlFor="ideal-date" className="text-purple-200">Ideal Date</Label>
+            <div className="flex items-center gap-2 mb-2">
+              <Label htmlFor="ideal-date" className="text-purple-200">Ideal Date</Label>
+              <SuggestionBadge show={fieldSources.ideal_date === 'random'} />
+            </div>
             <Textarea
               id="ideal-date"
               value={formData.idealDate}
               onChange={(e) => handleInputChange('idealDate', e.target.value)}
               rows={3}
-              className="bg-gray-700 border-gray-600 text-white"
+              className={`bg-gray-700 border-gray-600 text-white ${fieldSources.ideal_date === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}
               placeholder="Describe your perfect date..."
             />
           </div>

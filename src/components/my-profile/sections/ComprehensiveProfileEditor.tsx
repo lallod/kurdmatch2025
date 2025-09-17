@@ -20,7 +20,7 @@ import BasicInfoEditor from './editors/BasicInfoEditor';
 import LifestyleEditor from './editors/LifestyleEditor';
 import ValuesPersonalityEditor from './editors/ValuesPersonalityEditor';
 import InterestsHobbiesEditor from './editors/InterestsHobbiesEditor';
-import CareerEducationEditor from './editors/CareerEducationEditor';
+import EducationCareerEditor from './editors/EducationCareerEditor';
 import FavoritesEditor from './editors/FavoritesEditor';
 import RelationshipPreferencesEditor from './editors/RelationshipPreferencesEditor';
 
@@ -80,7 +80,7 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
       id: 'career', 
       label: 'Career & Education', 
       icon: Briefcase,
-      component: CareerEducationEditor,
+      component: EducationCareerEditor,
       fields: ['occupation', 'education', 'company', 'careerAmbitions', 'workLifeBalance']
     },
     { 

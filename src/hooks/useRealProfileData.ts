@@ -146,7 +146,11 @@ export const useRealProfileData = () => {
           smoking: uiCompatibleProfile.smoking,
           drinking: uiCompatibleProfile.drinking,
           religion: uiCompatibleProfile.religion,
-          zodiac_sign: uiCompatibleProfile.zodiac_sign
+          zodiac_sign: uiCompatibleProfile.zodiac_sign,
+          education: uiCompatibleProfile.education,
+          relationship_goals: uiCompatibleProfile.relationship_goals,
+          work_life_balance: uiCompatibleProfile.work_life_balance,
+          have_pets: uiCompatibleProfile.have_pets
         });
 
         // Convert field names from snake_case to camelCase for UI
