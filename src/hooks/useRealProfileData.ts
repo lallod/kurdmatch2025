@@ -138,9 +138,12 @@ export const useRealProfileData = () => {
           zodiac_sign: filledProfile.zodiac_sign
         });
 
+        console.log('🚀 STARTING AGGRESSIVE PROFILE FILLING');
+        console.log('📋 Input profile keys:', Object.keys(filledProfile));
+        
         // Convert database values to UI values for proper display
         const uiCompatibleProfile = convertDbToUiValues(filledProfile);
-        console.log('AFTER value conversion - Sample fields:', {
+        console.log('✅ AFTER value conversion - Sample fields:', {
           exercise_habits: uiCompatibleProfile.exercise_habits,
           dietary_preferences: uiCompatibleProfile.dietary_preferences,
           smoking: uiCompatibleProfile.smoking,
@@ -155,14 +158,23 @@ export const useRealProfileData = () => {
 
         // Convert field names from snake_case to camelCase for UI
         const finalProfile = convertDbToUiProfile(uiCompatibleProfile);
-        console.log('FINAL profile with camelCase fields:', {
+        console.log('✅ FINAL profile with camelCase fields:', {
           exerciseHabits: finalProfile.exerciseHabits,
           dietaryPreferences: finalProfile.dietaryPreferences,
           smoking: finalProfile.smoking,
           drinking: finalProfile.drinking,
           religion: finalProfile.religion,
-          zodiacSign: finalProfile.zodiacSign
+          zodiacSign: finalProfile.zodiacSign,
+          education: finalProfile.education,
+          relationshipGoals: finalProfile.relationshipGoals,
+          workLifeBalance: finalProfile.workLifeBalance,
+          havePets: finalProfile.havePets
         });
+
+        console.log('🔍 CHECKING VALUE MAPPINGS:');
+        console.log('Database education:', filledProfile.education, '→ UI:', finalProfile.education);
+        console.log('Database dietary_preferences:', filledProfile.dietary_preferences, '→ UI:', finalProfile.dietaryPreferences);
+        console.log('Database have_pets:', filledProfile.have_pets, '→ UI:', finalProfile.havePets);
 
         // Apply additional random values using the original system
         const enhanced = assignRandomValues(finalProfile);

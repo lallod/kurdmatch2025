@@ -141,46 +141,51 @@ export const getUserOnboardingProgress = async (userId: string, enhancedProfile?
 
     console.log('Photo count for user', userId, ':', photoCount || 0);
 
-    // Calculate category-based progress
-    const categoryProgress = calculateCategoryProgress(profile, photoCount || 0);
+    // Use enhanced profile data if available, otherwise use raw profile
+    const profileToAnalyze = enhancedProfile || profile;
+
+    // Calculate category-based progress using enhanced data
+    const categoryProgress = calculateCategoryProgress(profileToAnalyze, photoCount || 0);
     
     console.log('Calculated category progress:', categoryProgress);
     
     const completedSteps = [];
     const suggestions = [];
 
-    // Comprehensive completion tracking - using database field names (snake_case)
-    if (profile.name) completedSteps.push('name');
-    if (profile.bio && profile.bio.length > 50) completedSteps.push('bio');
-    if (profile.location) completedSteps.push('location');
-    if (profile.occupation && profile.occupation !== 'Not specified') completedSteps.push('occupation');
-    if (profile.height) completedSteps.push('height');
-    if (profile.languages && profile.languages.length > 0) completedSteps.push('languages');
-    if (profile.interests && profile.interests.length >= 3) completedSteps.push('interests');
-    if (profile.values && profile.values.length >= 3) completedSteps.push('values');
-    if (profile.hobbies && profile.hobbies.length >= 2) completedSteps.push('hobbies');
-    if (profile.education && profile.education !== 'Not specified') completedSteps.push('education');
-    if (profile.relationship_goals) completedSteps.push('relationship_goals');
-    if (profile.exercise_habits) completedSteps.push('exercise_habits');
-    if (profile.verified) completedSteps.push('verification');
-    if (profile.body_type) completedSteps.push('body_type');
-    if (profile.ethnicity) completedSteps.push('ethnicity');
-    if (profile.religion) completedSteps.push('religion');
-    if (profile.kurdistan_region) completedSteps.push('kurdistan_region');
-    if (profile.dietary_preferences) completedSteps.push('dietary_preferences');
-    if (profile.smoking) completedSteps.push('smoking');
-    if (profile.drinking) completedSteps.push('drinking');
-    if (profile.sleep_schedule) completedSteps.push('sleep_schedule');
-    if (profile.have_pets) completedSteps.push('have_pets');
-    if (profile.travel_frequency) completedSteps.push('travel_frequency');
-    if (profile.political_views) completedSteps.push('political_views');
-    if (profile.communication_style) completedSteps.push('communication_style');
-    if (profile.love_language) completedSteps.push('love_language');
-    if (profile.ideal_date) completedSteps.push('ideal_date');
-    if (profile.creative_pursuits && profile.creative_pursuits.length >= 1) completedSteps.push('creative_pursuits');
-    if (profile.weekend_activities && profile.weekend_activities.length >= 2) completedSteps.push('weekend_activities');
-    if (profile.work_life_balance) completedSteps.push('work_life_balance');
-    if (profile.career_ambitions) completedSteps.push('career_ambitions');
+    // Comprehensive completion tracking - using enhanced profile data
+    if (profileToAnalyze.name) completedSteps.push('name');
+    if (profileToAnalyze.bio && profileToAnalyze.bio.length > 50) completedSteps.push('bio');
+    if (profileToAnalyze.location) completedSteps.push('location');
+    if (profileToAnalyze.occupation && profileToAnalyze.occupation !== 'Not specified') completedSteps.push('occupation');
+    if (profileToAnalyze.height) completedSteps.push('height');
+    if (profileToAnalyze.languages && profileToAnalyze.languages.length > 0) completedSteps.push('languages');
+    if (profileToAnalyze.interests && profileToAnalyze.interests.length >= 3) completedSteps.push('interests');
+    if (profileToAnalyze.values && profileToAnalyze.values.length >= 3) completedSteps.push('values');
+    if (profileToAnalyze.hobbies && profileToAnalyze.hobbies.length >= 2) completedSteps.push('hobbies');
+    if (profileToAnalyze.education && profileToAnalyze.education !== 'Not specified') completedSteps.push('education');
+    if (profileToAnalyze.relationshipGoals || profileToAnalyze.relationship_goals) completedSteps.push('relationship_goals');
+    if (profileToAnalyze.exerciseHabits || profileToAnalyze.exercise_habits) completedSteps.push('exercise_habits');
+    if (profileToAnalyze.verified) completedSteps.push('verification');
+    if (profileToAnalyze.bodyType || profileToAnalyze.body_type) completedSteps.push('body_type');
+    if (profileToAnalyze.ethnicity) completedSteps.push('ethnicity');
+    if (profileToAnalyze.religion) completedSteps.push('religion');
+    if (profileToAnalyze.kurdistanRegion || profileToAnalyze.kurdistan_region) completedSteps.push('kurdistan_region');
+    if (profileToAnalyze.dietaryPreferences || profileToAnalyze.dietary_preferences) completedSteps.push('dietary_preferences');
+    if (profileToAnalyze.smoking) completedSteps.push('smoking');
+    if (profileToAnalyze.drinking) completedSteps.push('drinking');
+    if (profileToAnalyze.sleepSchedule || profileToAnalyze.sleep_schedule) completedSteps.push('sleep_schedule');
+    if (profileToAnalyze.havePets || profileToAnalyze.have_pets) completedSteps.push('have_pets');
+    if (profileToAnalyze.travelFrequency || profileToAnalyze.travel_frequency) completedSteps.push('travel_frequency');
+    if (profileToAnalyze.politicalViews || profileToAnalyze.political_views) completedSteps.push('political_views');
+    if (profileToAnalyze.communicationStyle || profileToAnalyze.communication_style) completedSteps.push('communication_style');
+    if (profileToAnalyze.loveLanguage || profileToAnalyze.love_language) completedSteps.push('love_language');
+    if (profileToAnalyze.idealDate || profileToAnalyze.ideal_date) completedSteps.push('ideal_date');
+    if ((profileToAnalyze.creativePursuits || profileToAnalyze.creative_pursuits) && 
+        (profileToAnalyze.creativePursuits?.length || profileToAnalyze.creative_pursuits?.length) >= 1) completedSteps.push('creative_pursuits');
+    if ((profileToAnalyze.weekendActivities || profileToAnalyze.weekend_activities) && 
+        (profileToAnalyze.weekendActivities?.length || profileToAnalyze.weekend_activities?.length) >= 2) completedSteps.push('weekend_activities');
+    if (profileToAnalyze.workLifeBalance || profileToAnalyze.work_life_balance) completedSteps.push('work_life_balance');
+    if (profileToAnalyze.careerAmbitions || profileToAnalyze.career_ambitions) completedSteps.push('career_ambitions');
 
     if (photoCount && photoCount >= 1) { 
       completedSteps.push('photos');

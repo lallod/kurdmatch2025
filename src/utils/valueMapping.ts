@@ -8,25 +8,30 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
   // Exercise Habits
   exercise_habits: {
     'Daily exercise': 'daily',
-    'Few times a week': 'few-times-week',
+    'Few times a week': 'few-times-week', 
     'Weekly': 'weekly',
     'Occasionally': 'occasionally',
     'Rarely': 'rarely',
-    'Sometimes': 'occasionally', // Handle existing data variation
+    'Sometimes': 'occasionally',
     'Regular exercise': 'few-times-week',
-    'Never': 'rarely'
+    'Never': 'rarely',
+    'Occasional exercise': 'occasionally',
+    'Daily fitness routine': 'daily',
+    'Sports enthusiast': 'daily'
   },
   
-  // Dietary Preferences
+  // Dietary Preferences  
   dietary_preferences: {
+    'No restrictions': 'omnivore',
     'Omnivore': 'omnivore',
     'Vegetarian': 'vegetarian',
     'Vegan': 'vegan',
     'Pescatarian': 'pescatarian',
     'Keto': 'keto',
+    'Paleo': 'paleo',
+    'Gluten-free': 'gluten-free',
     'Halal': 'halal',
-    'Other': 'other',
-    'No specific diet': 'omnivore'
+    'Other': 'other'
   },
   
   // Smoking
@@ -50,7 +55,8 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Regular drinker': 'regularly',
     'Regularly': 'regularly',
     'Occasionally': 'occasionally',
-    'Light drinker': 'occasionally'
+    'Light drinker': 'occasionally',
+    'Former drinker': 'never'
   },
   
   // Sleep Schedule
@@ -59,10 +65,12 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Night owl': 'night-owl',
     'Flexible': 'flexible',
     'Depends on the day': 'depends',
-    'Variable': 'flexible'
+    'Variable': 'flexible',
+    'Balanced sleeper': 'flexible',
+    'Inconsistent schedule': 'depends'
   },
   
-// Add missing pets mapping values
+// Add missing pets mapping values  
   have_pets: {
     'Yes, dogs': 'yes-dogs',
     'Yes, cats': 'yes-cats', 
@@ -75,7 +83,8 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Pet lover': 'no-but-love',
     'No pets': 'no-but-love',
     'Love pets but don\'t have any': 'no-but-love',
-    'Allergic to pets': 'no-allergic'
+    'Allergic to pets': 'no-allergic',
+    'Have pets': 'yes-other'
   },
   
   // Religion
@@ -89,7 +98,11 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Agnostic': 'agnostic',
     'Atheist': 'atheist',
     'Other': 'other',
-    'Prefer not to say': 'prefer-not-say'
+    'Prefer not to say': 'prefer-not-say',
+    'Islam': 'muslim',
+    'Yazidism': 'other',
+    'Spiritual': 'spiritual',
+    'Yarsanism': 'other'
   },
   
   // Political Views
@@ -100,7 +113,8 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Progressive': 'progressive',
     'Libertarian': 'libertarian',
     'Apolitical': 'apolitical',
-    'Prefer not to say': 'prefer-not-say'
+    'Prefer not to say': 'prefer-not-say',
+    'Kurdish Nationalist': 'progressive'
   },
   
   // Zodiac Sign
@@ -135,7 +149,10 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Expressive': 'expressive',
     'Reserved': 'reserved',
     'Analytical': 'analytical',
-    'Empathetic': 'empathetic'
+    'Empathetic': 'empathetic',
+    'Direct and honest': 'direct',
+    'Thoughtful and reflective': 'diplomatic',
+    'Reserved but caring': 'reserved'
   },
   
   // Children
@@ -152,7 +169,8 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Work comes first': 'work-first',
     'Life comes first': 'life-first',
     'Balanced approach': 'balanced',
-    'Depends on the situation': 'situational'
+    'Depends on the situation': 'situational',
+    'Depends on season': 'situational'
   },
   
   // Education
@@ -197,11 +215,24 @@ Object.keys(dbToUiValueMapping).forEach(field => {
 export const convertDbToUiValues = (profileData: any): any => {
   const converted = { ...profileData };
   
+  console.log('Converting DB to UI values...');
+  
   Object.keys(dbToUiValueMapping).forEach(field => {
     if (profileData[field] && dbToUiValueMapping[field][profileData[field]]) {
+      const oldValue = profileData[field];
       converted[field] = dbToUiValueMapping[field][profileData[field]];
-      console.log(`Converted ${field}: "${profileData[field]}" → "${converted[field]}"`);
+      console.log(`✅ Converted ${field}: "${oldValue}" → "${converted[field]}"`);
+    } else if (profileData[field]) {
+      console.log(`⚠️  No mapping found for ${field}: "${profileData[field]}"`);
     }
+  });
+  
+  console.log('✅ Final converted profile sample:', {
+    education: converted.education,
+    dietary_preferences: converted.dietary_preferences,
+    have_pets: converted.have_pets,
+    smoking: converted.smoking,
+    drinking: converted.drinking
   });
   
   return converted;
