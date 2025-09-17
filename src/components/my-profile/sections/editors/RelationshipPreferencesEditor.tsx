@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
+import { SuggestionBadge } from '@/components/ui/suggestion-badge';
 
 interface RelationshipPreferencesEditorProps {
   profileData: ProfileData;
@@ -97,19 +98,24 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
               </Select>
             </div>
             
-            <div>
-              <Label className="text-purple-200">Children</Label>
-              <Select value={formData.wantChildren} onValueChange={(value) => handleInputChange('wantChildren', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Your thoughts on children?" />
-                </SelectTrigger>
-                <SelectContent>
-                  {childrenOptions.map(option => (
-                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-purple-200">Children</Label>
+                  <SuggestionBadge show={fieldSources.want_children === 'random'} />
+                </div>
+                <Select value={formData.wantChildren} onValueChange={(value) => handleInputChange('wantChildren', value)}>
+                  <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.want_children === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
+                    <SelectValue placeholder="Your thoughts on children?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="want">Want children</SelectItem>
+                    <SelectItem value="dont-want">Don't want children</SelectItem>
+                    <SelectItem value="open">Open to children</SelectItem>
+                    <SelectItem value="have">Already have children</SelectItem>
+                    <SelectItem value="undecided">Undecided</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             
             <div>
               <Label className="text-purple-200">Family Closeness</Label>
@@ -125,33 +131,44 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
               </Select>
             </div>
             
-            <div>
-              <Label className="text-purple-200">Love Language</Label>
-              <Select value={formData.loveLanguage} onValueChange={(value) => handleInputChange('loveLanguage', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="How do you feel most loved?" />
-                </SelectTrigger>
-                <SelectContent>
-                  {loveLanguageOptions.map(language => (
-                    <SelectItem key={language} value={language}>{language}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-purple-200">Love Language</Label>
+                  <SuggestionBadge show={fieldSources.love_language === 'random'} />
+                </div>
+                <Select value={formData.loveLanguage} onValueChange={(value) => handleInputChange('loveLanguage', value)}>
+                  <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.love_language === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
+                    <SelectValue placeholder="How do you feel most loved?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="words-of-affirmation">Words of Affirmation</SelectItem>
+                    <SelectItem value="quality-time">Quality Time</SelectItem>
+                    <SelectItem value="physical-touch">Physical Touch</SelectItem>
+                    <SelectItem value="acts-of-service">Acts of Service</SelectItem>
+                    <SelectItem value="receiving-gifts">Receiving Gifts</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             
-            <div className="md:col-span-2">
-              <Label className="text-purple-200">Communication Style</Label>
-              <Select value={formData.communicationStyle} onValueChange={(value) => handleInputChange('communicationStyle', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="How do you communicate?" />
-                </SelectTrigger>
-                <SelectContent>
-                  {communicationStyleOptions.map(style => (
-                    <SelectItem key={style} value={style}>{style}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="md:col-span-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-purple-200">Communication Style</Label>
+                  <SuggestionBadge show={fieldSources.communication_style === 'random'} />
+                </div>
+                <Select value={formData.communicationStyle} onValueChange={(value) => handleInputChange('communicationStyle', value)}>
+                  <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.communication_style === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
+                    <SelectValue placeholder="How do you communicate?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="direct">Direct</SelectItem>
+                    <SelectItem value="diplomatic">Diplomatic</SelectItem>
+                    <SelectItem value="expressive">Expressive</SelectItem>
+                    <SelectItem value="reserved">Reserved</SelectItem>
+                    <SelectItem value="analytical">Analytical</SelectItem>
+                    <SelectItem value="empathetic">Empathetic</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
           </div>
           
           <div>

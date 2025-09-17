@@ -4,6 +4,8 @@ import { getCurrentUserProfile, updateProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement, CategoryProgress } from '@/utils/realUserEnhancement';
 import { assignRandomValues, updateFieldWithSource, EnhancedProfileData, FieldSource } from '@/utils/profileEnhancement';
 import { fillEmptyProfileFields } from '@/utils/directProfileFiller';
+import { convertDbToUiValues, convertUiToDbValues } from '@/utils/valueMapping';
+import { convertDbToUiProfile, convertUiToDbProfile } from '@/utils/fieldNameMapping';
 import { toast } from 'sonner';
 
 // Define a database-compatible profile interface
@@ -136,25 +138,33 @@ export const useRealProfileData = () => {
           zodiac_sign: filledProfile.zodiac_sign
         });
 
+        // Convert database values to UI values for proper display
+        const uiCompatibleProfile = convertDbToUiValues(filledProfile);
+        console.log('AFTER value conversion - Sample fields:', {
+          exercise_habits: uiCompatibleProfile.exercise_habits,
+          dietary_preferences: uiCompatibleProfile.dietary_preferences,
+          smoking: uiCompatibleProfile.smoking,
+          drinking: uiCompatibleProfile.drinking,
+          religion: uiCompatibleProfile.religion,
+          zodiac_sign: uiCompatibleProfile.zodiac_sign
+        });
+
+        // Convert field names from snake_case to camelCase for UI
+        const finalProfile = convertDbToUiProfile(uiCompatibleProfile);
+        console.log('FINAL profile with camelCase fields:', {
+          exerciseHabits: finalProfile.exerciseHabits,
+          dietaryPreferences: finalProfile.dietaryPreferences,
+          smoking: finalProfile.smoking,
+          drinking: finalProfile.drinking,
+          religion: finalProfile.religion,
+          zodiacSign: finalProfile.zodiacSign
+        });
+
         // Apply additional random values using the original system
-        const enhanced = assignRandomValues(filledProfile);
-        console.log('FINAL enhanced profile - Sample fields:', {
-          originalProfileSample: {
-            exercise_habits: dbProfile.exercise_habits,
-            dietary_preferences: dbProfile.dietary_preferences,
-            smoking: dbProfile.smoking,
-            drinking: dbProfile.drinking
-          },
-          enhancedProfileSample: {
-            exercise_habits: enhanced.profileData.exercise_habits,
-            exerciseHabits: enhanced.profileData.exerciseHabits,
-            dietary_preferences: enhanced.profileData.dietary_preferences,
-            dietaryPreferences: enhanced.profileData.dietaryPreferences
-          },
-          fieldSourcesSample: {
-            exercise_habits: enhanced.fieldSources.exercise_habits,
-            exerciseHabits: enhanced.fieldSources.exerciseHabits
-          }
+        const enhanced = assignRandomValues(finalProfile);
+        console.log('Enhanced field sources:', {
+          exerciseHabits: enhanced.fieldSources.exerciseHabits,
+          exercise_habits: enhanced.fieldSources.exercise_habits
         });
         setEnhancedData(enhanced);
 
@@ -182,7 +192,17 @@ export const useRealProfileData = () => {
   const updateProfileData = async (updates: Partial<DatabaseProfile>) => {
     try {
       if (profileData && enhancedData) {
-        const updated = await updateProfile(profileData.id, updates as any);
+        // Convert UI updates to database format before saving
+        const dbUpdates = convertUiToDbProfile(updates);
+        const dbValueUpdates = convertUiToDbValues(dbUpdates);
+        
+        console.log('Update conversion:', {
+          originalUpdates: updates,
+          dbUpdates: dbUpdates,
+          dbValueUpdates: dbValueUpdates
+        });
+        
+        const updated = await updateProfile(profileData.id, dbValueUpdates as any);
         setProfileData(updated as any);
         
         // Update enhanced data and mark fields as user-set

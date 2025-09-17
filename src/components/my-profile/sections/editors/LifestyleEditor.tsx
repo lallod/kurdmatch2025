@@ -80,23 +80,26 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
               </Select>
             </div>
             
-            <div>
-              <Label className="text-purple-200">Dietary Preferences</Label>
-              <Select value={formData.dietaryPreferences} onValueChange={(value) => handleInputChange('dietaryPreferences', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="What's your diet like?" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="omnivore">Omnivore</SelectItem>
-                  <SelectItem value="vegetarian">Vegetarian</SelectItem>
-                  <SelectItem value="vegan">Vegan</SelectItem>
-                  <SelectItem value="pescatarian">Pescatarian</SelectItem>
-                  <SelectItem value="keto">Keto</SelectItem>
-                  <SelectItem value="halal">Halal</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-purple-200">Dietary Preferences</Label>
+                  <SuggestionBadge show={fieldSources.dietary_preferences === 'random'} />
+                </div>
+                <Select value={formData.dietaryPreferences} onValueChange={(value) => handleInputChange('dietaryPreferences', value)}>
+                  <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.dietary_preferences === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
+                    <SelectValue placeholder="What's your diet like?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="omnivore">Omnivore</SelectItem>
+                    <SelectItem value="vegetarian">Vegetarian</SelectItem>
+                    <SelectItem value="vegan">Vegan</SelectItem>
+                    <SelectItem value="pescatarian">Pescatarian</SelectItem>
+                    <SelectItem value="keto">Keto</SelectItem>
+                    <SelectItem value="halal">Halal</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -116,52 +119,61 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
               </Select>
             </div>
             
-            <div>
-              <Label className="text-purple-200">Drinking</Label>
-              <Select value={formData.drinking} onValueChange={(value) => handleInputChange('drinking', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Do you drink alcohol?" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="never">Never</SelectItem>
-                  <SelectItem value="socially">Socially</SelectItem>
-                  <SelectItem value="regularly">Regularly</SelectItem>
-                  <SelectItem value="occasionally">Occasionally</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-purple-200">Drinking</Label>
+                  <SuggestionBadge show={fieldSources.drinking === 'random'} />
+                </div>
+                <Select value={formData.drinking} onValueChange={(value) => handleInputChange('drinking', value)}>
+                  <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.drinking === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
+                    <SelectValue placeholder="Do you drink alcohol?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="never">Never</SelectItem>
+                    <SelectItem value="socially">Socially</SelectItem>
+                    <SelectItem value="regularly">Regularly</SelectItem>
+                    <SelectItem value="occasionally">Occasionally</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             
-            <div>
-              <Label className="text-purple-200">Sleep Schedule</Label>
-              <Select value={formData.sleepSchedule} onValueChange={(value) => handleInputChange('sleepSchedule', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Are you a night owl or early bird?" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="early-bird">Early bird</SelectItem>
-                  <SelectItem value="night-owl">Night owl</SelectItem>
-                  <SelectItem value="flexible">Flexible</SelectItem>
-                  <SelectItem value="depends">Depends on the day</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-purple-200">Sleep Schedule</Label>
+                  <SuggestionBadge show={fieldSources.sleep_schedule === 'random'} />
+                </div>
+                <Select value={formData.sleepSchedule} onValueChange={(value) => handleInputChange('sleepSchedule', value)}>
+                  <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.sleep_schedule === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
+                    <SelectValue placeholder="Are you a night owl or early bird?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="early-bird">Early bird</SelectItem>
+                    <SelectItem value="night-owl">Night owl</SelectItem>
+                    <SelectItem value="flexible">Flexible</SelectItem>
+                    <SelectItem value="depends">Depends on the day</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             
-            <div>
-              <Label className="text-purple-200">Pets</Label>
-              <Select value={formData.havePets} onValueChange={(value) => handleInputChange('havePets', value)}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Do you have pets?" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes-dogs">Yes, dogs</SelectItem>
-                  <SelectItem value="yes-cats">Yes, cats</SelectItem>
-                  <SelectItem value="yes-other">Yes, other pets</SelectItem>
-                  <SelectItem value="no-but-love">No, but I love them</SelectItem>
-                  <SelectItem value="no-allergic">No, I'm allergic</SelectItem>
-                  <SelectItem value="no-not-interested">No, not interested</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-purple-200">Pets</Label>
+                  <SuggestionBadge show={fieldSources.have_pets === 'random'} />
+                </div>
+                <Select value={formData.havePets} onValueChange={(value) => handleInputChange('havePets', value)}>
+                  <SelectTrigger className={`bg-gray-700 border-gray-600 text-white ${fieldSources.have_pets === 'random' ? 'bg-blue-500/10 border-blue-400/30' : ''}`}>
+                    <SelectValue placeholder="Do you have pets?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="yes-dogs">Yes, dogs</SelectItem>
+                    <SelectItem value="yes-cats">Yes, cats</SelectItem>
+                    <SelectItem value="yes-other">Yes, other pets</SelectItem>
+                    <SelectItem value="no-but-love">No, but I love them</SelectItem>
+                    <SelectItem value="no-allergic">No, I'm allergic</SelectItem>
+                    <SelectItem value="no-not-interested">No, not interested</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
           </div>
         </CardContent>
       </Card>
