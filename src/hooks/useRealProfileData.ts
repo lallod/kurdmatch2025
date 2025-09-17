@@ -116,13 +116,29 @@ export const useRealProfileData = () => {
         };
         setProfileData(dbProfile);
 
-        // Fill empty fields directly with random values
+        // Fill empty fields directly with random values FIRST
+        console.log('BEFORE filling - Sample fields:', {
+          exercise_habits: dbProfile.exercise_habits,
+          dietary_preferences: dbProfile.dietary_preferences,
+          smoking: dbProfile.smoking,
+          drinking: dbProfile.drinking,
+          religion: dbProfile.religion,
+          zodiac_sign: dbProfile.zodiac_sign
+        });
+        
         const filledProfile = fillEmptyProfileFields(dbProfile);
-        console.log('Applied direct profile filling');
+        console.log('AFTER direct filling - Sample fields:', {
+          exercise_habits: filledProfile.exercise_habits,
+          dietary_preferences: filledProfile.dietary_preferences,
+          smoking: filledProfile.smoking,
+          drinking: filledProfile.drinking,
+          religion: filledProfile.religion,
+          zodiac_sign: filledProfile.zodiac_sign
+        });
 
         // Apply additional random values using the original system
         const enhanced = assignRandomValues(filledProfile);
-        console.log('Profile enhanced with random values:', {
+        console.log('FINAL enhanced profile - Sample fields:', {
           originalProfileSample: {
             exercise_habits: dbProfile.exercise_habits,
             dietary_preferences: dbProfile.dietary_preferences,
