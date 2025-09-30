@@ -50,20 +50,20 @@ const CreatePost = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div className="sticky top-0 z-10 bg-black/20 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="gap-2"
+            className="gap-2 text-white hover:bg-white/10"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <h1 className="text-xl font-bold text-foreground">Create Post</h1>
+          <h1 className="text-xl font-bold text-white">Create Post</h1>
         </div>
       </div>
 
@@ -71,38 +71,39 @@ const CreatePost = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Content */}
           <div className="space-y-2">
-            <Label htmlFor="content">What's on your mind?</Label>
+            <Label htmlFor="content" className="text-white">What's on your mind?</Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Share your thoughts..."
               rows={6}
-              className="resize-none"
+              className="resize-none bg-white/10 border-white/20 text-white placeholder:text-white/50"
             />
           </div>
 
           {/* Media URL */}
           <div className="space-y-2">
-            <Label htmlFor="mediaUrl">Media URL (optional)</Label>
+            <Label htmlFor="mediaUrl" className="text-white">Media URL (optional)</Label>
             <Input
               id="mediaUrl"
               type="url"
               value={mediaUrl}
               onChange={(e) => setMediaUrl(e.target.value)}
               placeholder="https://example.com/image.jpg or video link"
+              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
             />
           </div>
 
           {/* Media Type */}
           {mediaUrl && (
             <div className="space-y-2">
-              <Label htmlFor="mediaType">Media Type</Label>
+              <Label htmlFor="mediaType" className="text-white">Media Type</Label>
               <Select
                 value={mediaType}
                 onValueChange={(value: 'image' | 'video') => setMediaType(value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-white/10 border-white/20 text-white">
                   <SelectValue placeholder="Select media type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -125,7 +126,7 @@ const CreatePost = () => {
 
           {/* Media Preview */}
           {mediaUrl && mediaType && (
-            <div className="rounded-lg overflow-hidden border border-border">
+            <div className="rounded-lg overflow-hidden border border-white/20">
               {mediaType === 'image' ? (
                 <img src={mediaUrl} alt="Preview" className="w-full h-auto max-h-96 object-cover" />
               ) : (
@@ -135,7 +136,11 @@ const CreatePost = () => {
           )}
 
           {/* Submit */}
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white" 
+            disabled={loading}
+          >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

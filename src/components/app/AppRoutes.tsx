@@ -12,6 +12,7 @@ import Profile from '@/pages/Profile';
 import Discovery from '@/pages/Discovery';
 import DiscoveryFeed from '@/pages/DiscoveryFeed';
 import CreatePost from '@/pages/CreatePost';
+import CreateEvent from '@/pages/CreateEvent';
 import LikedMe from '@/pages/LikedMe';
 import ViewedMe from '@/pages/ViewedMe';
 import Messages from '@/pages/Messages';
@@ -112,6 +113,14 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         element={user ? (
           <EmailVerificationGuard>
             <CreatePost />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
+      />
+      <Route 
+        path="/create-event" 
+        element={user ? (
+          <EmailVerificationGuard>
+            <CreateEvent />
           </EmailVerificationGuard>
         ) : <Navigate to="/auth" replace />} 
       />

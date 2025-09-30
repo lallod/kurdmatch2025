@@ -27,7 +27,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg p-4 space-y-3 animate-fade-in">
+    <div className="space-y-3 animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Avatar 
@@ -41,15 +41,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           <div className="flex items-center gap-1">
             <button
               onClick={handleUsernameClick}
-              className="font-semibold text-foreground hover:underline"
+              className="font-semibold text-white hover:underline"
             >
               {post.profiles.name}
             </button>
             {post.profiles.verified && (
-              <CheckCircle className="w-4 h-4 text-primary fill-primary" />
+              <CheckCircle className="w-4 h-4 text-pink-400 fill-pink-400" />
             )}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-white/70">
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
           </p>
         </div>
@@ -57,7 +57,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
       {/* Content */}
       <div className="space-y-3">
-        <p className="text-foreground whitespace-pre-wrap">{post.content}</p>
+        <p className="text-white whitespace-pre-wrap">{post.content}</p>
         
         {/* Media */}
         {post.media_url && (
@@ -83,11 +83,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       <div className="flex items-center gap-6 pt-2">
         <button
           onClick={handleLike}
-          className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group"
+          className="flex items-center gap-2 text-white/70 hover:text-pink-400 transition-colors group"
         >
           <Heart 
             className={`w-5 h-5 transition-all ${
-              isLiked ? 'fill-primary text-primary scale-110' : 'group-hover:scale-110'
+              isLiked ? 'fill-pink-400 text-pink-400 scale-110' : 'group-hover:scale-110'
             }`}
           />
           <span className="text-sm">{likesCount}</span>
@@ -95,13 +95,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         
         <button
           onClick={() => onComment(post.id)}
-          className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors group"
+          className="flex items-center gap-2 text-white/70 hover:text-purple-400 transition-colors group"
         >
           <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
           <span className="text-sm">{post.comments_count}</span>
         </button>
         
-        <button className="flex items-center gap-2 text-muted-foreground hover:text-secondary transition-colors group ml-auto">
+        <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group ml-auto">
           <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
         </button>
       </div>

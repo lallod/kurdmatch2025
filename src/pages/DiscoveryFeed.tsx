@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPosts, getStories, likePost, unlikePost, Post, Story } from '@/api/posts';
+import { getEvents, joinEvent, leaveEvent, Event } from '@/api/events';
 import StoryBubbles from '@/components/discovery/StoryBubbles';
 import PostCard from '@/components/discovery/PostCard';
+import EventCard from '@/components/discovery/EventCard';
 import { Button } from '@/components/ui/button';
-import { PenSquare, Loader2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PenSquare, Loader2, Calendar, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNavigation from '@/components/BottomNavigation';
 
@@ -13,7 +16,9 @@ const DiscoveryFeed = () => {
   const { toast } = useToast();
   const [posts, setPosts] = useState<Post[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('posts');
 
   useEffect(() => {
     loadData();
@@ -22,12 +27,14 @@ const DiscoveryFeed = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [postsData, storiesData] = await Promise.all([
+      const [postsData, storiesData, eventsData] = await Promise.all([
         getPosts(),
-        getStories()
+        getStories(),
+        getEvents()
       ]);
       setPosts(postsData);
       setStories(storiesData);
+      setEvents(eventsData);
     } catch (error) {
       console.error('Error loading feed:', error);
       toast({
@@ -84,60 +91,162 @@ const DiscoveryFeed = () => {
     navigate('/create-post');
   };
 
+  const handleCreateEvent = () => {
+    navigate('/create-event');
+  };
+
+  const handleJoinEvent = async (eventId: string) => {
+    try {
+      await joinEvent(eventId);
+      setEvents(events.map(event => 
+        event.id === eventId 
+          ? { ...event, is_attending: true, attendees_count: event.attendees_count + 1 }
+          : event
+      ));
+      toast({
+        title: 'Success',
+        description: 'Joined event successfully!'
+      });
+    } catch (error) {
+      console.error('Error joining event:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to join event',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleLeaveEvent = async (eventId: string) => {
+    try {
+      await leaveEvent(eventId);
+      setEvents(events.map(event => 
+        event.id === eventId 
+          ? { ...event, is_attending: false, attendees_count: Math.max(0, event.attendees_count - 1) }
+          : event
+      ));
+      toast({
+        title: 'Left event',
+        description: 'You are no longer attending this event'
+      });
+    } catch (error) {
+      console.error('Error leaving event:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to leave event',
+        variant: 'destructive'
+      });
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div className="sticky top-0 z-10 bg-black/20 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Discovery</h1>
-          <Button onClick={handleCreatePost} size="sm" className="gap-2">
-            <PenSquare className="w-4 h-4" />
-            New Post
+          <h1 className="text-2xl font-bold text-white">Discovery</h1>
+          <Button 
+            onClick={activeTab === 'posts' ? handleCreatePost : handleCreateEvent}
+            size="sm" 
+            className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0"
+          >
+            <Plus className="w-4 h-4" />
+            {activeTab === 'posts' ? 'New Post' : 'New Event'}
           </Button>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        {/* Stories Section */}
-        {stories.length > 0 && (
-          <div className="bg-card border border-border rounded-lg p-4">
-            <StoryBubbles
-              stories={stories}
-              onStoryClick={handleStoryClick}
-              onAddStory={handleAddStory}
-            />
-          </div>
-        )}
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 bg-white/10 backdrop-blur-sm border border-white/20">
+            <TabsTrigger 
+              value="posts" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-white/70"
+            >
+              Posts
+            </TabsTrigger>
+            <TabsTrigger 
+              value="events"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-white/70"
+            >
+              Events
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Posts Feed */}
-        <div className="space-y-4">
-          {posts.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No posts yet</p>
-              <Button onClick={handleCreatePost} className="gap-2">
-                <PenSquare className="w-4 h-4" />
-                Create First Post
-              </Button>
+          {/* Posts Tab */}
+          <TabsContent value="posts" className="space-y-6">
+            {/* Stories Section */}
+            {stories.length > 0 && (
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
+                <StoryBubbles
+                  stories={stories}
+                  onStoryClick={handleStoryClick}
+                  onAddStory={handleAddStory}
+                />
+              </div>
+            )}
+
+            {/* Posts Feed */}
+            <div className="space-y-4">
+              {posts.length === 0 ? (
+                <div className="text-center py-12 text-white">
+                  <p className="text-white/70 mb-4">No posts yet</p>
+                  <Button 
+                    onClick={handleCreatePost} 
+                    className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+                  >
+                    <PenSquare className="w-4 h-4" />
+                    Create First Post
+                  </Button>
+                </div>
+              ) : (
+                posts.map((post) => (
+                  <div key={post.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
+                    <PostCard
+                      post={post}
+                      onLike={handleLike}
+                      onComment={handleComment}
+                    />
+                  </div>
+                ))
+              )}
             </div>
-          ) : (
-            posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onLike={handleLike}
-                onComment={handleComment}
-              />
-            ))
-          )}
-        </div>
+          </TabsContent>
+
+          {/* Events Tab */}
+          <TabsContent value="events" className="space-y-4">
+            {events.length === 0 ? (
+              <div className="text-center py-12 text-white">
+                <Calendar className="w-16 h-16 mx-auto mb-4 text-white/50" />
+                <p className="text-white/70 mb-4">No upcoming events</p>
+                <Button 
+                  onClick={handleCreateEvent} 
+                  className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Create First Event
+                </Button>
+              </div>
+            ) : (
+              events.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onJoin={handleJoinEvent}
+                  onLeave={handleLeaveEvent}
+                />
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       <BottomNavigation />
