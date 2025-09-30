@@ -6,6 +6,7 @@ export interface Profile {
   location: string;
   avatar: string;
   distance: number;
+  distance_km?: number; // GPS-based distance in kilometers (from nearby_users RPC)
   compatibilityScore: number;
   kurdistanRegion?: string;
   area: string;
