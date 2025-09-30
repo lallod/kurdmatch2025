@@ -6,7 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createEvent } from '@/api/events';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, Calendar } from 'lucide-react';
+import { ArrowLeft, Loader2, Calendar, Upload, X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
@@ -17,9 +18,59 @@ const CreateEvent = () => {
   const [description, setDescription] = useState('');
   const [eventDate, setEventDate] = useState('');
   const [location, setLocation] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState('');
   const [maxAttendees, setMaxAttendees] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'Error',
+          description: 'Image must be less than 5MB',
+          variant: 'destructive'
+        });
+        return;
+      }
+      
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+  };
+
+  const uploadImage = async (): Promise<string | undefined> => {
+    if (!imageFile) return undefined;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const fileExt = imageFile.name.split('.').pop();
+    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('event-images')
+      .upload(filePath, imageFile);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('event-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,12 +86,15 @@ const CreateEvent = () => {
 
     try {
       setLoading(true);
+      
+      const imageUrl = await uploadImage();
+      
       await createEvent(
         title,
         description,
         eventDate,
         location,
-        imageUrl || undefined,
+        imageUrl,
         category || undefined,
         maxAttendees ? parseInt(maxAttendees) : undefined
       );
@@ -130,17 +184,46 @@ const CreateEvent = () => {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div className="space-y-2">
-            <Label htmlFor="imageUrl" className="text-white">Event Image URL (optional)</Label>
-            <Input
-              id="imageUrl"
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/event-image.jpg"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
+            <Label htmlFor="image" className="text-white">Event Image (optional)</Label>
+            
+            {imagePreview ? (
+              <div className="relative">
+                <img 
+                  src={imagePreview} 
+                  alt="Event preview" 
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2"
+                  onClick={handleRemoveImage}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center hover:border-white/40 transition-colors">
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <label 
+                  htmlFor="image" 
+                  className="cursor-pointer flex flex-col items-center gap-2"
+                >
+                  <Upload className="w-8 h-8 text-white/50" />
+                  <p className="text-white/70 text-sm">Click to upload event image</p>
+                  <p className="text-white/50 text-xs">Max 5MB</p>
+                </label>
+              </div>
+            )}
           </div>
 
           {/* Category */}

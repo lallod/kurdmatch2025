@@ -5,9 +5,10 @@ import { getEvents, joinEvent, leaveEvent, Event } from '@/api/events';
 import StoryBubbles from '@/components/discovery/StoryBubbles';
 import PostCard from '@/components/discovery/PostCard';
 import EventCard from '@/components/discovery/EventCard';
+import EventFilters from '@/components/discovery/EventFilters';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PenSquare, Loader2, Calendar, Plus } from 'lucide-react';
+import { PenSquare, Loader2, Calendar, Plus, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNavigation from '@/components/BottomNavigation';
 
@@ -19,6 +20,13 @@ const DiscoveryFeed = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('posts');
+  const [showEventFilters, setShowEventFilters] = useState(false);
+  
+  // Event filters
+  const [eventCategory, setEventCategory] = useState('all');
+  const [eventLocation, setEventLocation] = useState('');
+  const [eventDateFrom, setEventDateFrom] = useState('');
+  const [eventDateTo, setEventDateTo] = useState('');
 
   useEffect(() => {
     loadData();
@@ -139,6 +147,37 @@ const DiscoveryFeed = () => {
     }
   };
 
+  const handleClearEventFilters = () => {
+    setEventCategory('all');
+    setEventLocation('');
+    setEventDateFrom('');
+    setEventDateTo('');
+  };
+
+  const filteredEvents = events.filter(event => {
+    // Category filter
+    if (eventCategory !== 'all' && event.category !== eventCategory) {
+      return false;
+    }
+    
+    // Location filter
+    if (eventLocation && !event.location.toLowerCase().includes(eventLocation.toLowerCase())) {
+      return false;
+    }
+    
+    // Date from filter
+    if (eventDateFrom && new Date(event.event_date) < new Date(eventDateFrom)) {
+      return false;
+    }
+    
+    // Date to filter
+    if (eventDateTo && new Date(event.event_date) > new Date(eventDateTo)) {
+      return false;
+    }
+    
+    return true;
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
@@ -153,14 +192,27 @@ const DiscoveryFeed = () => {
       <div className="sticky top-0 z-10 bg-black/20 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Discovery</h1>
-          <Button 
-            onClick={activeTab === 'posts' ? handleCreatePost : handleCreateEvent}
-            size="sm" 
-            className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0"
-          >
-            <Plus className="w-4 h-4" />
-            {activeTab === 'posts' ? 'New Post' : 'New Event'}
-          </Button>
+          <div className="flex items-center gap-2">
+            {activeTab === 'events' && (
+              <Button 
+                onClick={() => setShowEventFilters(!showEventFilters)}
+                size="sm"
+                variant="outline"
+                className="gap-2 border-white/20 text-white hover:bg-white/10"
+              >
+                <Filter className="w-4 h-4" />
+                Filters
+              </Button>
+            )}
+            <Button 
+              onClick={activeTab === 'posts' ? handleCreatePost : handleCreateEvent}
+              size="sm" 
+              className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0"
+            >
+              <Plus className="w-4 h-4" />
+              {activeTab === 'posts' ? 'New Post' : 'New Event'}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -223,20 +275,46 @@ const DiscoveryFeed = () => {
 
           {/* Events Tab */}
           <TabsContent value="events" className="space-y-4">
-            {events.length === 0 ? (
+            {/* Event Filters */}
+            {showEventFilters && (
+              <EventFilters
+                category={eventCategory}
+                location={eventLocation}
+                dateFrom={eventDateFrom}
+                dateTo={eventDateTo}
+                onCategoryChange={setEventCategory}
+                onLocationChange={setEventLocation}
+                onDateFromChange={setEventDateFrom}
+                onDateToChange={setEventDateTo}
+                onClearFilters={handleClearEventFilters}
+              />
+            )}
+
+            {filteredEvents.length === 0 ? (
               <div className="text-center py-12 text-white">
                 <Calendar className="w-16 h-16 mx-auto mb-4 text-white/50" />
-                <p className="text-white/70 mb-4">No upcoming events</p>
-                <Button 
-                  onClick={handleCreateEvent} 
-                  className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
-                >
-                  <Calendar className="w-4 h-4" />
-                  Create First Event
-                </Button>
+                <p className="text-white/70 mb-4">
+                  {events.length === 0 ? 'No upcoming events' : 'No events match your filters'}
+                </p>
+                {events.length === 0 ? (
+                  <Button 
+                    onClick={handleCreateEvent} 
+                    className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    Create First Event
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleClearEventFilters} 
+                    className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+                  >
+                    Clear Filters
+                  </Button>
+                )}
               </div>
             ) : (
-              events.map((event) => (
+              filteredEvents.map((event) => (
                 <EventCard
                   key={event.id}
                   event={event}
