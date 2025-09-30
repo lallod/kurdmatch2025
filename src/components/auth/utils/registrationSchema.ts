@@ -22,6 +22,8 @@ export const registrationSchema = z.object({
   languages: z.array(z.string()).min(1, { message: 'Please select at least one language' }),
   occupation: z.string().min(1, { message: 'Occupation is required' }),
   location: z.string().min(2, { message: 'Location is required' }),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
   dreamVacation: z.string().optional(),
   photos: z.array(z.string()).min(1, { message: 'At least one photo is required' }),
 }).refine(data => data.password === data.confirmPassword, {

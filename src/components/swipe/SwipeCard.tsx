@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
+import DistanceBadge from '@/components/location/DistanceBadge';
 import { Profile } from '@/types/swipe';
 import { SWIPE_CONFIG } from '@/config/swipe';
 
@@ -128,6 +129,13 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
           onPrevPhoto={handlePrevPhoto}
           isBackground={isBackground}
         />
+        
+        {/* Distance Badge - Top Right */}
+        {!isBackground && profile.distance_km !== undefined && (
+          <div className="absolute top-4 right-4 z-30">
+            <DistanceBadge distanceKm={profile.distance_km} />
+          </div>
+        )}
         
         {/* Profile info overlay at bottom - Transparent and clickable */}
         <div 

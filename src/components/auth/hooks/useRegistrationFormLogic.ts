@@ -200,6 +200,8 @@ export const useRegistrationFormLogic = () => {
         languages: data.languages,
         occupation: data.occupation,
         location: data.location,
+        latitude: data.latitude || null,
+        longitude: data.longitude || null,
         dream_vacation: data.dreamVacation || null,
       };
       

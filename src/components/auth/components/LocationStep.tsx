@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { MapPin, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import SimpleLocationSearch from './enhanced-fields/SimpleLocationSearch';
+import LocationCapture from '@/components/location/LocationCapture';
+import { Coordinates } from '@/types/location';
 
 interface LocationStepProps {
   form: UseFormReturn<any>;
@@ -20,6 +22,14 @@ interface LocationStepProps {
 }
 
 const LocationStep = ({ form, location, locationLoading }: LocationStepProps) => {
+  const [showManualInput, setShowManualInput] = useState(false);
+
+  const handleLocationCapture = (coords: Coordinates, locationName: string) => {
+    form.setValue('location', locationName);
+    form.setValue('latitude', coords.latitude);
+    form.setValue('longitude', coords.longitude);
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
@@ -27,36 +37,9 @@ const LocationStep = ({ form, location, locationLoading }: LocationStepProps) =>
         <p className="text-purple-200 mt-1">Where are you from and where do you dream to go?</p>
       </div>
       
-      <FormField
-        control={form.control}
-        name="location"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-white">Current Location</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-pink-400" />
-                {locationLoading ? (
-                  <div className="flex items-center gap-2 p-3 bg-white/10 backdrop-blur border border-purple-300/30 rounded-lg text-white">
-                    <Loader2 className="h-4 w-4 animate-spin text-pink-400" />
-                    <span>Detecting your location...</span>
-                  </div>
-                ) : (
-                  <Input 
-                    placeholder="Detecting location..." 
-                    className="pl-10 bg-white/10 backdrop-blur border-purple-300/30 text-white placeholder:text-purple-300 cursor-not-allowed opacity-75 focus:border-pink-400 focus:ring-pink-400/20" 
-                    value={field.value}
-                    readOnly
-                  />
-                )}
-              </div>
-            </FormControl>
-            <FormDescription className="text-xs text-purple-300">
-              Your location is automatically detected. You can change this later in settings.
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
+      <LocationCapture
+        onLocationCapture={handleLocationCapture}
+        initialLocation={location}
       />
 
       <FormField

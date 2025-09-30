@@ -11,6 +11,7 @@ import Swipe from '@/pages/Swipe';
 import Profile from '@/pages/Profile';
 import InstagramProfile from '@/pages/InstagramProfile';
 import Discovery from '@/pages/Discovery';
+import DiscoveryNearby from '@/pages/DiscoveryNearby';
 import DiscoveryFeed from '@/pages/DiscoveryFeed';
 import CreatePost from '@/pages/CreatePost';
 import CreateEvent from '@/pages/CreateEvent';
@@ -106,6 +107,14 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         element={user ? (
           <EmailVerificationGuard>
             <Discovery />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
+      />
+      <Route 
+        path="/discovery-nearby" 
+        element={user ? (
+          <EmailVerificationGuard>
+            <DiscoveryNearby />
           </EmailVerificationGuard>
         ) : <Navigate to="/auth" replace />} 
       />
