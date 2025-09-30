@@ -28,6 +28,7 @@ export interface Story {
   views_count: number;
   created_at: string;
   expires_at: string;
+  reactions?: any[];
   profiles: {
     id: string;
     name: string;
@@ -92,7 +93,8 @@ export const getStories = async (): Promise<Story[]> => {
   if (error) throw error;
   return (stories || []).map(story => ({
     ...story,
-    media_type: story.media_type as 'image' | 'video'
+    media_type: story.media_type as 'image' | 'video',
+    reactions: Array.isArray(story.reactions) ? story.reactions : []
   }));
 };
 
@@ -226,7 +228,8 @@ export const getStoriesByUserId = async (userId: string): Promise<Story[]> => {
   if (error) throw error;
   return (stories || []).map(story => ({
     ...story,
-    media_type: story.media_type as 'image' | 'video'
+    media_type: story.media_type as 'image' | 'video',
+    reactions: Array.isArray(story.reactions) ? story.reactions : []
   }));
 };
 

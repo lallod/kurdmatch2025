@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -15,6 +14,7 @@ import DiscoveryNearby from '@/pages/DiscoveryNearby';
 import DiscoveryFeed from '@/pages/DiscoveryFeed';
 import CreatePost from '@/pages/CreatePost';
 import CreateEvent from '@/pages/CreateEvent';
+import EventDetail from '@/pages/EventDetail';
 import LikedMe from '@/pages/LikedMe';
 import ViewedMe from '@/pages/ViewedMe';
 import Messages from '@/pages/Messages';
@@ -135,6 +135,14 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         ) : <Navigate to="/auth" replace />} 
       />
       <Route 
+        path="/event/:id" 
+        element={user ? (
+          <EmailVerificationGuard>
+            <EventDetail />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
+      />
+      <Route
         path="/liked-me"
         element={user ? (
           <EmailVerificationGuard>

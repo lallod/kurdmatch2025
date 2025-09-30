@@ -7,36 +7,16 @@ import { Ruler } from 'lucide-react';
 interface HeightSelectorProps {
   value?: string;
   onChange: (value: string) => void;
-  unit?: 'cm' | 'ft';
 }
 
-const HeightSelector = ({ value, onChange, unit = 'cm' }: HeightSelectorProps) => {
-  // Generate height options based on unit
+const HeightSelector = ({ value, onChange }: HeightSelectorProps) => {
+  // Generate height options in CM ONLY (145-210 cm range)
   const generateHeightOptions = () => {
-    if (unit === 'cm') {
-      const options = [];
-      for (let i = 145; i <= 185; i++) {
-        options.push({ value: `${i}`, label: `${i} cm` });
-      }
-      return options;
-    } else {
-      const options = [];
-      for (let feet = 4; feet <= 6; feet++) {
-        for (let inches = 0; inches < 12; inches++) {
-          if (feet === 6 && inches > 1) break; // Max 6'1" (185cm)
-          if (feet === 4 && inches < 9) continue; // Min 4'9" (145cm)
-          const totalInches = feet * 12 + inches;
-          const cm = Math.round(totalInches * 2.54);
-          if (cm >= 145 && cm <= 185) {
-            options.push({ 
-              value: `${cm}`, 
-              label: `${feet}'${inches}" (${cm} cm)` 
-            });
-          }
-        }
-      }
-      return options;
+    const options = [];
+    for (let i = 145; i <= 210; i++) {
+      options.push({ value: `${i} cm`, label: `${i} cm` });
     }
+    return options;
   };
 
   const heightOptions = generateHeightOptions();

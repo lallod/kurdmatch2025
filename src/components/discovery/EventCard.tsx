@@ -20,7 +20,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, onJoin, onLeave }) => {
     navigate(`/profile/${event.user_id}`);
   };
 
-  const handleJoinToggle = () => {
+  const handleEventClick = () => {
+    navigate(`/event/${event.id}`);
+  };
+
+  const handleJoinToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (event.is_attending) {
       onLeave(event.id);
     } else {
@@ -31,7 +36,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, onJoin, onLeave }) => {
   const isFull = event.max_attendees && event.attendees_count >= event.max_attendees;
 
   return (
-    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all animate-fade-in">
+    <div 
+      className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all animate-fade-in cursor-pointer"
+      onClick={handleEventClick}
+    >
       {/* Event Image */}
       {event.image_url && (
         <div className="aspect-video overflow-hidden">
@@ -112,6 +120,17 @@ const EventCard: React.FC<EventCardProps> = ({ event, onJoin, onLeave }) => {
           }`}
         >
           {event.is_attending ? 'Going ✓' : isFull ? 'Event Full' : 'Join Event'}
+        </Button>
+        
+        <Button
+          variant="ghost"
+          className="w-full text-white hover:bg-white/20"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEventClick();
+          }}
+        >
+          View Details
         </Button>
       </div>
     </div>

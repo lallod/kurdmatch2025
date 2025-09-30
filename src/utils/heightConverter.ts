@@ -54,17 +54,32 @@ export const parseHeightToCm = (height: string): number => {
 };
 
 /**
- * Formats height in centimeters for display
+ * Formats height in centimeters for display (CM ONLY)
  */
-export const formatHeightCm = (heightCm: number): string => {
-  if (!heightCm || heightCm === 0) return 'Not specified';
-  return `${heightCm} cm`;
+export const formatHeightCm = (heightCm: number | string): string => {
+  // If already a string with "cm", return as is
+  if (typeof heightCm === 'string') {
+    if (heightCm.includes('cm')) return heightCm;
+    // If it's a number string, convert it
+    const num = parseInt(heightCm);
+    if (!isNaN(num)) return `${num} cm`;
+  }
+  
+  if (typeof heightCm === 'number') {
+    if (!heightCm || heightCm === 0) return 'Not specified';
+    return `${heightCm} cm`;
+  }
+  
+  return 'Not specified';
 };
 
 /**
- * Converts a height string to cm and formats it
+ * Converts a height string to cm and formats it (CM ONLY OUTPUT)
  */
 export const convertAndFormatHeight = (height: string): string => {
+  // If already in cm format, return as is
+  if (height && height.includes('cm')) return height;
+  
   const heightCm = parseHeightToCm(height);
   return formatHeightCm(heightCm);
 };
