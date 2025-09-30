@@ -27,6 +27,7 @@ const DiscoveryFeed = () => {
   const [eventLocation, setEventLocation] = useState('');
   const [eventDateFrom, setEventDateFrom] = useState('');
   const [eventDateTo, setEventDateTo] = useState('');
+  const [eventSearchQuery, setEventSearchQuery] = useState('');
 
   useEffect(() => {
     loadData();
@@ -152,6 +153,7 @@ const DiscoveryFeed = () => {
     setEventLocation('');
     setEventDateFrom('');
     setEventDateTo('');
+    setEventSearchQuery('');
   };
 
   const filteredEvents = events.filter(event => {
@@ -173,6 +175,18 @@ const DiscoveryFeed = () => {
     // Date to filter
     if (eventDateTo && new Date(event.event_date) > new Date(eventDateTo)) {
       return false;
+    }
+
+    // Search filter
+    if (eventSearchQuery) {
+      const query = eventSearchQuery.toLowerCase();
+      if (
+        !event.title.toLowerCase().includes(query) &&
+        !event.description.toLowerCase().includes(query) &&
+        !event.location.toLowerCase().includes(query)
+      ) {
+        return false;
+      }
     }
     
     return true;
@@ -282,10 +296,12 @@ const DiscoveryFeed = () => {
                 location={eventLocation}
                 dateFrom={eventDateFrom}
                 dateTo={eventDateTo}
+                searchQuery={eventSearchQuery}
                 onCategoryChange={setEventCategory}
                 onLocationChange={setEventLocation}
                 onDateFromChange={setEventDateFrom}
                 onDateToChange={setEventDateTo}
+                onSearchChange={setEventSearchQuery}
                 onClearFilters={handleClearEventFilters}
               />
             )}

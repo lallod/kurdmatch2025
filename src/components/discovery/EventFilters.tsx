@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar, MapPin, Users, X } from 'lucide-react';
+import { Calendar, MapPin, Users, X, Search } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -16,10 +16,12 @@ interface EventFiltersProps {
   location: string;
   dateFrom: string;
   dateTo: string;
+  searchQuery: string;
   onCategoryChange: (value: string) => void;
   onLocationChange: (value: string) => void;
   onDateFromChange: (value: string) => void;
   onDateToChange: (value: string) => void;
+  onSearchChange: (value: string) => void;
   onClearFilters: () => void;
 }
 
@@ -28,13 +30,15 @@ const EventFilters: React.FC<EventFiltersProps> = ({
   location,
   dateFrom,
   dateTo,
+  searchQuery,
   onCategoryChange,
   onLocationChange,
   onDateFromChange,
   onDateToChange,
+  onSearchChange,
   onClearFilters,
 }) => {
-  const hasActiveFilters = category !== 'all' || location || dateFrom || dateTo;
+  const hasActiveFilters = category !== 'all' || location || dateFrom || dateTo || searchQuery;
 
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 space-y-4">
@@ -51,6 +55,21 @@ const EventFilters: React.FC<EventFiltersProps> = ({
             Clear
           </Button>
         )}
+      </div>
+
+      {/* Search Input */}
+      <div className="space-y-2">
+        <Label className="text-white/80 text-sm flex items-center gap-2">
+          <Search className="w-4 h-4" />
+          Search
+        </Label>
+        <Input
+          type="text"
+          placeholder="Search events by title, description..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

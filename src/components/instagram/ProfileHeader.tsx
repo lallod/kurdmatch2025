@@ -150,7 +150,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
                   variant="outline"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Message
+                  PM
                   {!isPremium && (
                     <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
                       PRO
@@ -220,7 +220,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
           <DialogHeader>
             <DialogTitle className="text-white text-2xl flex items-center gap-2">
               <MessageCircle className="w-6 h-6 text-pink-400" />
-              Messaging - Premium Feature
+              PM - Premium Feature
             </DialogTitle>
             <DialogDescription className="text-white/70 space-y-4">
               <p>Send unlimited messages to Premium and Gold members!</p>

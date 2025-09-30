@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/api/profiles';
 import { Post, Story } from '@/api/posts';
 import { getPostsByUserId, getStoriesByUserId, getUserStats } from '@/api/posts';
+import { Button } from '@/components/ui/button';
 import ProfileHeader from '@/components/instagram/ProfileHeader';
 import StoryHighlights from '@/components/instagram/StoryHighlights';
 import ProfileTabs from '@/components/instagram/ProfileTabs';
+import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import BottomNavigation from '@/components/BottomNavigation';
 
 const InstagramProfile = () => {
@@ -19,6 +21,7 @@ const InstagramProfile = () => {
   const [stats, setStats] = useState({ posts: 0, followers: 0, following: 0 });
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [showCreateStory, setShowCreateStory] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -112,6 +115,20 @@ const InstagramProfile = () => {
           isOwnProfile={isOwnProfile}
         />
 
+        {/* Story creation button for own profile */}
+        {isOwnProfile && (
+          <div className="mb-4">
+            <Button
+              onClick={() => setShowCreateStory(true)}
+              variant="outline"
+              className="w-full gap-2 bg-white/10 hover:bg-white/20 text-white border-white/20"
+            >
+              <Plus className="w-4 h-4" />
+              Create Story
+            </Button>
+          </div>
+        )}
+
         {/* Story Highlights */}
         {stories.length > 0 && (
           <StoryHighlights 
@@ -127,6 +144,18 @@ const InstagramProfile = () => {
           onRefreshPosts={() => getPostsByUserId(id!).then(setPosts)}
         />
       </div>
+
+      {/* Create Story Modal */}
+      {id && (
+        <CreateStoryModal
+          open={showCreateStory}
+          onOpenChange={setShowCreateStory}
+          onStoryCreated={() => {
+            getStoriesByUserId(id).then(setStories);
+          }}
+          userId={id}
+        />
+      )}
 
       <BottomNavigation />
     </div>
