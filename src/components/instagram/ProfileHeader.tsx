@@ -6,6 +6,7 @@ import { CheckCircle, MapPin, Briefcase } from 'lucide-react';
 import { Profile } from '@/api/profiles';
 import { followUser, unfollowUser, checkIsFollowing } from '@/api/posts';
 import { toast } from 'sonner';
+import { getKurdistanRegionDisplay, parseLocation } from '@/utils/profileDataNormalizer';
 
 interface ProfileHeaderProps {
   profile: Profile;
@@ -124,28 +125,42 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
       {/* Profile Info */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-white">{profile.name}</h2>
+          <h2 className="text-xl font-bold text-white">
+            {profile.name}, {profile.age}
+          </h2>
           {profile.verified && (
             <CheckCircle className="w-5 h-5 text-pink-400 fill-pink-400" />
           )}
         </div>
 
-        {profile.bio && (
-          <p className="text-white/90 text-sm leading-relaxed">{profile.bio}</p>
-        )}
-
-        {profile.location && (
+        {/* Kurdistan Region Origin */}
+        {profile.kurdistan_region && (
           <div className="flex items-center gap-2 text-white/70 text-sm">
             <MapPin className="w-4 h-4" />
-            <span>{profile.location}</span>
+            <span>From {getKurdistanRegionDisplay(profile.kurdistan_region)}</span>
           </div>
         )}
+
+        {/* Current Location */}
+        {profile.location && (() => {
+          const locationInfo = parseLocation(profile.location);
+          return (
+            <div className="flex items-center gap-2 text-white/70 text-sm">
+              <span>📍</span>
+              <span>Lives in {locationInfo.city}{locationInfo.country ? `, ${locationInfo.country}` : ''}</span>
+            </div>
+          );
+        })()}
 
         {profile.occupation && (
           <div className="flex items-center gap-2 text-white/70 text-sm">
             <Briefcase className="w-4 h-4" />
             <span>{profile.occupation}</span>
           </div>
+        )}
+
+        {profile.bio && (
+          <p className="text-white/90 text-sm leading-relaxed mt-3">{profile.bio}</p>
         )}
       </div>
     </div>

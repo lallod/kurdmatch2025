@@ -3,6 +3,8 @@ import { Badge } from '@/components/ui/badge';
 import { Verified } from 'lucide-react';
 import { Profile } from '@/types/swipe';
 import { SWIPE_CONFIG } from '@/config/swipe';
+import { convertAndFormatHeight } from '@/utils/heightConverter';
+import { getKurdistanRegionDisplay } from '@/utils/profileDataNormalizer';
 
 interface ProfileInfoProps {
   profile: Profile;
@@ -10,6 +12,9 @@ interface ProfileInfoProps {
 }
 
 const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false }) => {
+  const heightDisplay = convertAndFormatHeight(profile.height || '');
+  const kurdistanRegion = getKurdistanRegionDisplay(profile.kurdistanRegion || '');
+
   return (
     <div className={`text-white ${SWIPE_CONFIG.info.name.size === 'text-2xl sm:text-3xl' ? 'space-y-2 sm:space-y-3' : 'space-y-3'}`}>
       {/* Name and Age */}
@@ -28,6 +33,23 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false }) =
         <span className="text-white/70">•</span>
         <span>{profile.distance || Math.floor(Math.random() * 20) + 1}km away</span>
       </div>
+
+      {/* Kurdistan Region & Height */}
+      {(profile.kurdistanRegion || profile.height) && (
+        <div className="flex items-center gap-2 text-white/80 text-sm">
+          {profile.kurdistanRegion && (
+            <>
+              <span>From {kurdistanRegion}</span>
+              {profile.height && heightDisplay !== 'Not specified' && (
+                <span className="text-white/70">•</span>
+              )}
+            </>
+          )}
+          {profile.height && heightDisplay !== 'Not specified' && (
+            <span>{heightDisplay}</span>
+          )}
+        </div>
+      )}
       
       {/* Interests/Bio snippet */}
       {minimal && profile.interests && profile.interests.length > 0 && (
