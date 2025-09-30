@@ -7,11 +7,11 @@ import {
 
 interface ProfileFavoritesProps {
   details: {
-    favoriteBooks: string[];
-    favoriteMovies: string[];
-    favoriteMusic: string[];
-    favoriteFoods: string[];
-    favoritePodcasts?: string[] | string;
+    favoriteBooks?: string[] | null;
+    favoriteMovies?: string[] | null;
+    favoriteMusic?: string[] | null;
+    favoriteFoods?: string[] | null;
+    favoritePodcasts?: string[] | string | null;
     favoriteQuote?: string;
   };
   tinderBadgeStyle: string;
@@ -45,7 +45,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
           <span className="text-sm font-medium">Books</span>
         </div>
         <div className="flex flex-wrap gap-2">
-          {details.favoriteBooks.map((book, index) => (
+          {(details.favoriteBooks || []).map((book, index) => (
             <Badge key={index} variant="outline" className={tinderBadgeStyle}>{book}</Badge>
           ))}
         </div>
@@ -57,7 +57,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
           <span className="text-sm font-medium">Movies</span>
         </div>
         <div className="flex flex-wrap gap-2">
-          {details.favoriteMovies.map((movie, index) => (
+          {(details.favoriteMovies || []).map((movie, index) => (
             <Badge key={index} variant="outline" className={tinderBadgeStyle}>{movie}</Badge>
           ))}
         </div>
@@ -69,7 +69,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
           <span className="text-sm font-medium">Music</span>
         </div>
         <div className="flex flex-wrap gap-2">
-          {details.favoriteMusic.map((music, index) => (
+          {(details.favoriteMusic || []).map((music, index) => (
             <Badge key={index} variant="outline" className={tinderBadgeStyle}>
               <span className="flex items-center">
                 {music}
@@ -86,7 +86,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
           <span className="text-sm font-medium">Food</span>
         </div>
         <div className="flex flex-wrap gap-2">
-          {details.favoriteFoods.map((food, index) => (
+          {(details.favoriteFoods || []).map((food, index) => (
             <Badge key={index} variant="outline" className={tinderBadgeStyle}>{food}</Badge>
           ))}
         </div>
