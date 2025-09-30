@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Eye, Heart, MessageCircle, UserRound, Search, Settings } from 'lucide-react';
+import { Home, Eye, Heart, MessageCircle, UserRound, Newspaper } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 
 const BottomNavigation = () => {
@@ -11,13 +11,13 @@ const BottomNavigation = () => {
   const { counts } = useNotifications();
   
   const navItems = [{
-    name: 'Home',
+    name: 'Discovery',
+    icon: Newspaper,
+    path: '/discovery'
+  }, {
+    name: 'Swipe',
     icon: Home,
     path: '/swipe'
-  }, {
-    name: 'Discovery',
-    icon: Search,
-    path: '/discovery'
   }, {
     name: 'Messages',
     icon: MessageCircle,
