@@ -166,3 +166,134 @@ export const unlikePost = async (postId: string) => {
       .eq('id', postId);
   }
 };
+
+// Get posts by specific user
+export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      profiles (
+        id,
+        name,
+        profile_image,
+        verified
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  // Check which posts current user has liked
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: likes } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .eq('user_id', user.id);
+
+    const likedPostIds = new Set(likes?.map(l => l.post_id) || []);
+    return (posts || []).map(post => ({
+      ...post,
+      media_type: post.media_type as 'image' | 'video' | undefined,
+      is_liked: likedPostIds.has(post.id)
+    }));
+  }
+
+  return (posts || []).map(post => ({
+    ...post,
+    media_type: post.media_type as 'image' | 'video' | undefined
+  }));
+};
+
+// Get stories by specific user
+export const getStoriesByUserId = async (userId: string): Promise<Story[]> => {
+  const { data: stories, error } = await supabase
+    .from('stories')
+    .select(`
+      *,
+      profiles (
+        id,
+        name,
+        profile_image
+      )
+    `)
+    .eq('user_id', userId)
+    .gt('expires_at', new Date().toISOString())
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return (stories || []).map(story => ({
+    ...story,
+    media_type: story.media_type as 'image' | 'video'
+  }));
+};
+
+// Get user stats (followers, following, posts count)
+export const getUserStats = async (userId: string) => {
+  // Get posts count
+  const { count: postsCount } = await supabase
+    .from('posts')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId);
+
+  // Get followers count
+  const { count: followersCount } = await supabase
+    .from('followers')
+    .select('*', { count: 'exact', head: true })
+    .eq('following_id', userId);
+
+  // Get following count
+  const { count: followingCount } = await supabase
+    .from('followers')
+    .select('*', { count: 'exact', head: true })
+    .eq('follower_id', userId);
+
+  return {
+    posts: postsCount || 0,
+    followers: followersCount || 0,
+    following: followingCount || 0
+  };
+};
+
+// Follow a user
+export const followUser = async (userId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { error } = await supabase
+    .from('followers')
+    .insert({ follower_id: user.id, following_id: userId });
+
+  if (error) throw error;
+};
+
+// Unfollow a user
+export const unfollowUser = async (userId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { error } = await supabase
+    .from('followers')
+    .delete()
+    .eq('follower_id', user.id)
+    .eq('following_id', userId);
+
+  if (error) throw error;
+};
+
+// Check if current user is following another user
+export const checkIsFollowing = async (userId: string): Promise<boolean> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data } = await supabase
+    .from('followers')
+    .select('id')
+    .eq('follower_id', user.id)
+    .eq('following_id', userId)
+    .maybeSingle();
+
+  return !!data;
+};

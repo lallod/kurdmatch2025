@@ -9,6 +9,7 @@ import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
 import Swipe from '@/pages/Swipe';
 import Profile from '@/pages/Profile';
+import InstagramProfile from '@/pages/InstagramProfile';
 import Discovery from '@/pages/Discovery';
 import DiscoveryFeed from '@/pages/DiscoveryFeed';
 import CreatePost from '@/pages/CreatePost';
@@ -162,7 +163,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       />
       <Route 
         path="/profile/:id" 
-        element={user ? <ProfilePage /> : <Navigate to="/auth" replace />} 
+        element={user ? <InstagramProfile /> : <Navigate to="/auth" replace />} 
       />
       <Route 
         path="/profile" 

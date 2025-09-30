@@ -196,6 +196,27 @@ export type Database = {
           },
         ]
       }
+      followers: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       landing_page_content: {
         Row: {
           content: Json
@@ -772,6 +793,7 @@ export type Database = {
       }
       stories: {
         Row: {
+          category: string | null
           created_at: string
           duration: number | null
           expires_at: string
@@ -782,6 +804,7 @@ export type Database = {
           views_count: number
         }
         Insert: {
+          category?: string | null
           created_at?: string
           duration?: number | null
           expires_at?: string
@@ -792,6 +815,7 @@ export type Database = {
           views_count?: number
         }
         Update: {
+          category?: string | null
           created_at?: string
           duration?: number | null
           expires_at?: string
