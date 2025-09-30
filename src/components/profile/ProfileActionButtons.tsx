@@ -110,12 +110,12 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
           onClick={handleMessage}
           variant="outline"
           size="sm"
-          className="flex-1 gap-1 md:gap-2 relative text-xs md:text-sm px-2 md:px-4"
+          className="flex-1 gap-1 md:gap-2 relative text-xs md:text-sm px-2 md:px-4 border-pink-500/30"
         >
           <MessageCircle className="w-3 h-3 md:w-4 md:h-4" />
           <span className="hidden sm:inline">PM</span>
           {!isPremium && (
-            <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-[10px] px-1 py-0.5 rounded-full">
+            <span className="absolute -top-0.5 -right-0.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-[8px] px-1 py-0 rounded-full leading-tight">
               PRO
             </span>
           )}
