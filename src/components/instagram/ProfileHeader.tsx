@@ -122,11 +122,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 md:gap-2">
             {isOwnProfile ? (
               <Button
                 onClick={handleEditProfile}
-                className="flex-1 bg-white/10 hover:bg-white/20 text-white border-white/20"
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white border-white/20 text-xs md:text-sm px-2 md:px-4"
                 variant="outline"
               >
                 Edit Profile
@@ -136,7 +136,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
                 <Button
                   onClick={handleFollowToggle}
                   disabled={loading}
-                  className={`flex-1 ${
+                  size="sm"
+                  className={`flex-1 text-xs md:text-sm px-2 md:px-4 ${
                     isFollowing
                       ? 'bg-white/10 hover:bg-white/20 text-white'
                       : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
@@ -146,13 +147,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
                 </Button>
                 <Button
                   onClick={handleMessage}
-                  className="flex-1 bg-white/10 hover:bg-white/20 text-white relative"
+                  size="sm"
+                  className="flex-1 bg-white/10 hover:bg-white/20 text-white relative text-xs md:text-sm px-2 md:px-4"
                   variant="outline"
                 >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  PM
+                  <MessageCircle className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">PM</span>
                   {!isPremium && (
-                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-[10px] px-1 py-0.5 rounded-full">
                       PRO
                     </span>
                   )}
@@ -160,11 +162,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
                 <SuperLikeButton postId={profile.id} userId={profile.id} />
                 <Button
                   onClick={handleShare}
-                  size="icon"
-                  className="bg-white/10 hover:bg-white/20 text-white"
+                  size="sm"
+                  className="bg-white/10 hover:bg-white/20 text-white p-1.5 md:p-2"
                   variant="outline"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
               </>
             )}
