@@ -10,6 +10,8 @@ import Register from '@/pages/Register';
 import Swipe from '@/pages/Swipe';
 import Profile from '@/pages/Profile';
 import Discovery from '@/pages/Discovery';
+import DiscoveryFeed from '@/pages/DiscoveryFeed';
+import CreatePost from '@/pages/CreatePost';
 import LikedMe from '@/pages/LikedMe';
 import ViewedMe from '@/pages/ViewedMe';
 import Messages from '@/pages/Messages';
@@ -93,12 +95,28 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         path="/discovery" 
         element={user ? (
           <EmailVerificationGuard>
+            <DiscoveryFeed />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
+      />
+      <Route 
+        path="/discovery-old" 
+        element={user ? (
+          <EmailVerificationGuard>
             <Discovery />
           </EmailVerificationGuard>
         ) : <Navigate to="/auth" replace />} 
       />
       <Route 
-        path="/liked-me" 
+        path="/create-post" 
+        element={user ? (
+          <EmailVerificationGuard>
+            <CreatePost />
+          </EmailVerificationGuard>
+        ) : <Navigate to="/auth" replace />} 
+      />
+      <Route 
+        path="/liked-me"
         element={user ? (
           <EmailVerificationGuard>
             <LikedMe />
