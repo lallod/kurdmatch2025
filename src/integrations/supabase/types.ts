@@ -839,6 +839,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      generate_sample_posts: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       get_or_create_daily_usage: {
         Args: { user_uuid: string }
         Returns: {

@@ -7,6 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Badge } from '@/components/ui/badge';
 import BottomNavigation from '@/components/BottomNavigation';
 import ProfileSwipeActions from '@/components/swipe/ProfileSwipeActions';
+import ProfileActionButtons from '@/components/profile/ProfileActionButtons';
 import { toast } from 'sonner';
 
 const Profile = () => {
@@ -338,8 +339,16 @@ const Profile = () => {
           </div>
         </div>
         
-        {/* Profile Swipe Actions */}
+        {/* Profile Action Buttons */}
         <div className="mt-6">
+          <ProfileActionButtons
+            userId={profileId}
+            userName={profile.name}
+          />
+        </div>
+        
+        {/* Profile Swipe Actions */}
+        <div className="mt-4">
           <ProfileSwipeActions
             profileId={profileId}
             profileName={profile.name}
