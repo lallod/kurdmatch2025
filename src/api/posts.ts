@@ -300,3 +300,50 @@ export const checkIsFollowing = async (userId: string): Promise<boolean> => {
 
   return !!data;
 };
+
+// Get posts from followed users only
+export const getFollowingPosts = async (): Promise<Post[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  // Get list of users the current user follows
+  const { data: following } = await supabase
+    .from('followers')
+    .select('following_id')
+    .eq('follower_id', user.id);
+
+  if (!following || following.length === 0) return [];
+
+  const followingIds = following.map(f => f.following_id);
+
+  // Get posts from followed users
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      profiles (
+        id,
+        name,
+        profile_image,
+        verified
+      )
+    `)
+    .in('user_id', followingIds)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) throw error;
+
+  // Check which posts current user has liked
+  const { data: likes } = await supabase
+    .from('post_likes')
+    .select('post_id')
+    .eq('user_id', user.id);
+
+  const likedPostIds = new Set(likes?.map(l => l.post_id) || []);
+  return (posts || []).map(post => ({
+    ...post,
+    media_type: post.media_type as 'image' | 'video' | undefined,
+    is_liked: likedPostIds.has(post.id)
+  }));
+};

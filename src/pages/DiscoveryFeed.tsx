@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPosts, getStories, likePost, unlikePost, Post, Story } from '@/api/posts';
+import { getPosts, getStories, likePost, unlikePost, Post, Story, getFollowingPosts } from '@/api/posts';
 import { getEvents, joinEvent, leaveEvent, Event } from '@/api/events';
 import StoryBubbles from '@/components/discovery/StoryBubbles';
 import PostCard from '@/components/discovery/PostCard';
@@ -8,9 +8,12 @@ import EventCard from '@/components/discovery/EventCard';
 import EventFilters from '@/components/discovery/EventFilters';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PenSquare, Loader2, Calendar, Plus, Filter } from 'lucide-react';
+import { PenSquare, Loader2, Calendar, Plus, Filter, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNavigation from '@/components/BottomNavigation';
+import StoryViewer from '@/components/stories/StoryViewer';
+import CreateStoryModal from '@/components/stories/CreateStoryModal';
+import { supabase } from '@/integrations/supabase/client';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
@@ -21,6 +24,10 @@ const DiscoveryFeed = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('posts');
   const [showEventFilters, setShowEventFilters] = useState(false);
+  const [showFollowingOnly, setShowFollowingOnly] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  const [showCreateStory, setShowCreateStory] = useState(false);
   
   // Event filters
   const [eventCategory, setEventCategory] = useState('all');
@@ -33,11 +40,23 @@ const DiscoveryFeed = () => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    loadPosts();
+  }, [showFollowingOnly]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    fetchUser();
+  }, []);
+
   const loadData = async () => {
     try {
       setLoading(true);
       const [postsData, storiesData, eventsData] = await Promise.all([
-        getPosts(),
+        showFollowingOnly ? getFollowingPosts() : getPosts(),
         getStories(),
         getEvents()
       ]);
@@ -53,6 +72,15 @@ const DiscoveryFeed = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPosts = async () => {
+    try {
+      const postsData = showFollowingOnly ? await getFollowingPosts() : await getPosts();
+      setPosts(postsData);
+    } catch (error) {
+      console.error('Error loading posts:', error);
     }
   };
 
@@ -83,17 +111,16 @@ const DiscoveryFeed = () => {
   };
 
   const handleStoryClick = (story: Story) => {
-    toast({
-      title: 'Story Viewer',
-      description: 'Story viewer coming soon!'
-    });
+    setSelectedStory(story);
   };
 
   const handleAddStory = () => {
-    toast({
-      title: 'Add Story',
-      description: 'Story creation coming soon!'
-    });
+    setShowCreateStory(true);
+  };
+
+  const handleStoryCreated = async () => {
+    const storiesData = await getStories();
+    setStories(storiesData);
   };
 
   const handleCreatePost = () => {
@@ -207,6 +234,17 @@ const DiscoveryFeed = () => {
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Discovery</h1>
           <div className="flex items-center gap-2">
+            {activeTab === 'posts' && (
+              <Button 
+                onClick={() => setShowFollowingOnly(!showFollowingOnly)}
+                size="sm"
+                variant={showFollowingOnly ? "default" : "outline"}
+                className={`gap-2 ${showFollowingOnly ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0' : 'border-white/20 text-white hover:bg-white/10'}`}
+              >
+                <Users className="w-4 h-4" />
+                Following
+              </Button>
+            )}
             {activeTab === 'events' && (
               <Button 
                 onClick={() => setShowEventFilters(!showEventFilters)}
@@ -344,6 +382,26 @@ const DiscoveryFeed = () => {
       </div>
 
       <BottomNavigation />
+
+      {/* Story Viewer */}
+      {selectedStory && (
+        <StoryViewer
+          open={!!selectedStory}
+          onOpenChange={(open) => !open && setSelectedStory(null)}
+          stories={stories}
+          initialIndex={stories.findIndex(s => s.id === selectedStory.id)}
+        />
+      )}
+
+      {/* Create Story Modal */}
+      {currentUserId && (
+        <CreateStoryModal
+          open={showCreateStory}
+          onOpenChange={setShowCreateStory}
+          onStoryCreated={handleStoryCreated}
+          userId={currentUserId}
+        />
+      )}
     </div>
   );
 };

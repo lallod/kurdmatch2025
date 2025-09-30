@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { getStories, Story } from '@/api/posts';
+import StoryBubbles from '@/components/discovery/StoryBubbles';
+import StoryViewer from '@/components/stories/StoryViewer';
+import CreateStoryModal from '@/components/stories/CreateStoryModal';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Select, 
   SelectContent, 
@@ -125,6 +130,24 @@ const Discovery = () => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [activeFilters, setActiveFilters] = useState(0);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  const [showCreateStory, setShowCreateStory] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadStories = async () => {
+      const storiesData = await getStories();
+      setStories(storiesData);
+    };
+    loadStories();
+
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    fetchUser();
+  }, []);
   
   const form = useForm<FilterFormValues>({
     defaultValues: {
@@ -396,6 +419,19 @@ const Discovery = () => {
     toast.info("Boosted!");
   };
 
+  const handleStoryClick = (story: Story) => {
+    setSelectedStory(story);
+  };
+
+  const handleAddStory = () => {
+    setShowCreateStory(true);
+  };
+
+  const handleStoryCreated = async () => {
+    const storiesData = await getStories();
+    setStories(storiesData);
+  };
+
   const resetFilters = () => {
     form.reset({
       area: "all",
@@ -435,6 +471,17 @@ const Discovery = () => {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Stories Section */}
+        {stories.length > 0 && (
+          <div className="mb-6 backdrop-blur-md bg-white/10 rounded-2xl border border-white/20 p-4">
+            <StoryBubbles
+              stories={stories}
+              onStoryClick={handleStoryClick}
+              onAddStory={handleAddStory}
+            />
+          </div>
+        )}
+
         <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
           {/* Animated background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 animate-pulse"></div>
@@ -810,6 +857,26 @@ const Discovery = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Story Viewer */}
+      {selectedStory && (
+        <StoryViewer
+          open={!!selectedStory}
+          onOpenChange={(open) => !open && setSelectedStory(null)}
+          stories={stories}
+          initialIndex={stories.findIndex(s => s.id === selectedStory.id)}
+        />
+      )}
+
+      {/* Create Story Modal */}
+      {currentUserId && (
+        <CreateStoryModal
+          open={showCreateStory}
+          onOpenChange={setShowCreateStory}
+          onStoryCreated={handleStoryCreated}
+          userId={currentUserId}
+        />
       )}
       
       {/* Bottom Navigation */}
