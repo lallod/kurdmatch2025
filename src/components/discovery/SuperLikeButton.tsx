@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart } from 'lucide-react';
+import { Star, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { checkActionLimit, performAction } from '@/api/usage';
 import { getUserSubscription } from '@/api/usage';
@@ -95,14 +95,31 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
         disabled={loading || (!isPremium && false) || (isPremium && !canSuperLike)}
         variant="ghost"
         size="sm"
-        className="gap-2 text-white/70 hover:text-pink-400 hover:bg-white/10 transition-colors relative"
+        className={`gap-1 relative group transition-all duration-300 ${
+          isPremium 
+            ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 hover:from-yellow-500/30 hover:to-orange-500/30 border border-yellow-500/30' 
+            : 'hover:bg-white/10 border border-pink-500/30'
+        } ${isPremium && canSuperLike ? 'hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/50' : ''} p-1.5 md:p-2`}
       >
-        <Heart className={`w-5 h-5 ${isPremium ? 'fill-pink-400 text-pink-400' : ''}`} />
+        <div className="relative">
+          <Star 
+            className={`w-3 h-3 md:w-4 md:h-4 transition-all duration-300 ${
+              isPremium 
+                ? 'fill-yellow-400 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] group-hover:drop-shadow-[0_0_12px_rgba(250,204,21,1)]' 
+                : 'text-white/70 group-hover:text-yellow-400'
+            }`} 
+          />
+          {isPremium && canSuperLike && (
+            <Sparkles className="absolute -top-1 -right-1 w-2 h-2 text-yellow-300 animate-pulse" />
+          )}
+        </div>
         {isPremium && remainingCount > 0 && (
-          <span className="text-xs">({remainingCount})</span>
+          <span className="text-[10px] text-yellow-400 font-semibold hidden md:inline">
+            {remainingCount}
+          </span>
         )}
         {!isPremium && (
-          <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+          <span className="absolute -top-0.5 -right-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[8px] px-1 py-0 rounded-full leading-tight font-bold">
             PRO
           </span>
         )}
@@ -112,7 +129,7 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
         <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
           <DialogHeader>
             <DialogTitle className="text-white text-2xl flex items-center gap-2">
-              <Heart className="w-6 h-6 fill-pink-400 text-pink-400" />
+              <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
               Super Like - Premium Feature
             </DialogTitle>
             <DialogDescription className="text-white/70 space-y-4">
