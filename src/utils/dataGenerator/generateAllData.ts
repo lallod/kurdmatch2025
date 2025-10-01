@@ -93,14 +93,23 @@ export const generateAllData = async (): Promise<{
 
     console.log(`Generating data for ${profiles.length} users`);
 
-    // 1. Generate likes, matches, and messages using existing function
+    // 1. Clear existing data
+    console.log('Clearing existing data...');
+    await supabase.from('likes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('matches').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('messages').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('posts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('post_comments').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('post_reactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    
+    // 2. Generate likes, matches, and messages using existing function
     console.log('Generating likes, matches, and messages...');
     const activityResults = await generateRandomUserActivity(profiles.length);
     stats.likes = activityResults.likesGenerated;
     stats.matches = activityResults.matchesGenerated;
     stats.messages = activityResults.messagesGenerated;
 
-    // 2. Generate posts (2-4 per user)
+    // 3. Generate posts (2-4 per user)
     console.log('Generating posts...');
     for (const profile of profiles) {
       const postCount = Math.floor(Math.random() * 3) + 2;
@@ -116,11 +125,11 @@ export const generateAllData = async (): Promise<{
       }
     }
 
-    // 3. Get all posts for comments and reactions
+    // 4. Get all posts for comments and reactions
     const { data: posts } = await supabase.from('posts').select('id, user_id');
     
     if (posts) {
-      // 4. Generate comments (1-5 per post)
+      // 5. Generate comments (1-5 per post)
       console.log('Generating comments...');
       for (const post of posts) {
         const commentCount = Math.floor(Math.random() * 5) + 1;
@@ -136,24 +145,27 @@ export const generateAllData = async (): Promise<{
         }
       }
 
-      // 5. Generate post reactions (2-10 per post)
+      // 6. Generate post reactions (2-10 per post)
       console.log('Generating post reactions...');
-      const reactionTypes = ['like', 'love', 'haha', 'wow', 'sad', 'fire', 'applause', 'thoughtful'];
+      const reactionTypes = ['love', 'haha', 'fire', 'applause', 'thoughtful', 'wow', 'sad'];
       for (const post of posts) {
         const reactionCount = Math.floor(Math.random() * 9) + 2;
         const reactors = profiles.filter(p => p.id !== post.user_id).slice(0, reactionCount);
         
         for (const reactor of reactors) {
-          await supabase.from('post_reactions').insert({
+          const { error } = await supabase.from('post_reactions').insert({
             post_id: post.id,
             user_id: reactor.id,
             reaction_type: reactionTypes[Math.floor(Math.random() * reactionTypes.length)]
           });
+          if (error) {
+            console.error('Error inserting reaction:', error);
+          }
         }
       }
     }
 
-    // 6. Generate stories (20% of users)
+    // 7. Generate stories (20% of users)
     console.log('Generating stories...');
     const storyUsers = profiles.slice(0, Math.floor(profiles.length * 0.2));
     for (const user of storyUsers) {
@@ -180,7 +192,7 @@ export const generateAllData = async (): Promise<{
       }
     }
 
-    // 7. Generate events (5% of users create events)
+    // 8. Generate events (5% of users create events)
     console.log('Generating events...');
     const eventCreators = profiles.slice(0, Math.floor(profiles.length * 0.05));
     for (const creator of eventCreators) {
@@ -209,7 +221,7 @@ export const generateAllData = async (): Promise<{
       }
     }
 
-    // 8. Generate followers (each user follows 5-20 others)
+    // 9. Generate followers (each user follows 5-20 others)
     console.log('Generating followers...');
     for (const user of profiles) {
       const followCount = Math.floor(Math.random() * 16) + 5;
