@@ -58,7 +58,14 @@ export const performAction = async (actionType: 'like' | 'super_like' | 'rewind'
 export const getUserSubscription = async (): Promise<UserSubscription | null> => {
   try {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    if (!session?.user) {
+      // Return default free subscription for non-authenticated users
+      return {
+        id: 'guest',
+        userId: 'guest',
+        subscriptionType: 'free',
+      };
+    }
 
     const { data, error } = await supabase
       .from('user_subscriptions')
@@ -69,10 +76,34 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
       .limit(1)
       .maybeSingle();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error querying subscription:', error);
+      // Return default free subscription on error
+      return {
+        id: session.user.id,
+        userId: session.user.id,
+        subscriptionType: 'free',
+      };
+    }
 
     if (!data) {
-      // Create default free subscription
+      // Check if profile exists first
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (profileError || !profile) {
+        // Profile doesn't exist yet, return default free subscription without inserting
+        return {
+          id: session.user.id,
+          userId: session.user.id,
+          subscriptionType: 'free',
+        };
+      }
+
+      // Profile exists, safe to create subscription record
       const { data: newSub, error: createError } = await supabase
         .from('user_subscriptions')
         .insert({
@@ -82,7 +113,16 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
         .select()
         .single();
 
-      if (createError) throw createError;
+      if (createError) {
+        console.error('Error creating subscription:', createError);
+        // Return default free subscription on error
+        return {
+          id: session.user.id,
+          userId: session.user.id,
+          subscriptionType: 'free',
+        };
+      }
+
       return {
         id: newSub.id,
         userId: newSub.user_id,
@@ -99,7 +139,12 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
     };
   } catch (error: any) {
     console.error('Error getting user subscription:', error);
-    return null;
+    // Always return a default free subscription instead of null
+    return {
+      id: 'default',
+      userId: 'default',
+      subscriptionType: 'free',
+    };
   }
 };
 
