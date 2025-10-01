@@ -1,11 +1,10 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useMockAuth } from '@/integrations/supabase/mockAuth';
 import { RegisterProtection } from './RegisterProtection';
 import EmailVerificationGuard from './EmailVerificationGuard';
 import Landing from '@/pages/Landing';
-import Auth from '@/pages/Auth';
-import Register from '@/pages/Register';
+import ProfileSelector from '@/pages/ProfileSelector';
 import Swipe from '@/pages/Swipe';
 import Profile from '@/pages/Profile';
 import InstagramProfile from '@/pages/InstagramProfile';
@@ -35,10 +34,10 @@ interface AppRoutesProps {
 }
 
 export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow }) => {
-  const { user, loading } = useSupabaseAuth();
+  const { currentProfile, loading } = useMockAuth();
 
   // Main app routes - only show if wizard is not active or during OAuth flow
-  if (user && showWizard && !isOAuthFlow) {
+  if (currentProfile && showWizard && !isOAuthFlow) {
     return null;
   }
 
@@ -46,19 +45,19 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
     <Routes>
       <Route 
         path="/" 
-        element={user ? <Navigate to="/discovery" replace /> : <Landing />} 
+        element={currentProfile ? <Navigate to="/discovery" replace /> : <Landing />} 
+      />
+      <Route 
+        path="/profile-selector" 
+        element={currentProfile ? <Navigate to="/discovery" replace /> : <ProfileSelector />} 
       />
       <Route 
         path="/auth" 
-        element={user ? <Navigate to="/swipe" replace /> : <Auth />} 
+        element={<Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/register" 
-        element={
-          <RegisterProtection>
-            <Register />
-          </RegisterProtection>
-        } 
+        element={<Navigate to="/profile-selector" replace />} 
       />
       
       {/* OAuth Callback Route */}
@@ -70,7 +69,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       {/* Profile Completion Route */}
       <Route 
         path="/complete-profile" 
-        element={user ? <CompleteProfile /> : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <CompleteProfile /> : <Navigate to="/profile-selector" replace />} 
       />
       
       {/* Super Admin Login Route - accessible without authentication */}
@@ -85,114 +84,66 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         element={<SuperAdminSetup />} 
       />
       
-      {/* Protected routes - wrapped with email verification */}
+      {/* Protected routes - no email verification needed for mock auth */}
       <Route 
         path="/swipe" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <Swipe />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <Swipe /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/discovery" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <DiscoveryFeed />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <DiscoveryFeed /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/discovery-old" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <Discovery />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <Discovery /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/discovery-nearby" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <DiscoveryNearby />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <DiscoveryNearby /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/create-post" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <CreatePost />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <CreatePost /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/create-event" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <CreateEvent />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <CreateEvent /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/event/:id" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <EventDetail />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <EventDetail /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route
         path="/liked-me"
-        element={user ? (
-          <EmailVerificationGuard>
-            <LikedMe />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <LikedMe /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/viewed-me" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <ViewedMe />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <ViewedMe /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/messages" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <Messages />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <Messages /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/my-profile" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <MyProfile />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <MyProfile /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/user/:id" 
-        element={user ? <UserProfile /> : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <UserProfile /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/profile/:id" 
-        element={user ? <InstagramProfile /> : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <InstagramProfile /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/profile" 
-        element={user ? (
-          <EmailVerificationGuard>
-            <Profile />
-          </EmailVerificationGuard>
-        ) : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <Profile /> : <Navigate to="/profile-selector" replace />} 
       />
       <Route 
         path="/admin" 
-        element={user ? <Admin /> : <Navigate to="/auth" replace />} 
+        element={currentProfile ? <Admin /> : <Navigate to="/profile-selector" replace />} 
       />
       
       {/* Super Admin routes with stable loading state */}
