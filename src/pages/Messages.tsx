@@ -86,9 +86,16 @@ const Messages = () => {
     } as Record<string, number>;
     if ((a.unread ? 1 : 0) !== (b.unread ? 1 : 0)) return (b.unread ? 1 : 0) - (a.unread ? 1 : 0);
     if ((a.priority || 'normal') !== (b.priority || 'normal')) return (priorityOrder[b.priority || 'normal'] - priorityOrder[a.priority || 'normal']);
-    const aTime = (a as any).lastMessageTime || new Date(a.time);
-    const bTime = (b as any).lastMessageTime || new Date(b.time);
-    return bTime.getTime() - aTime.getTime();
+    
+    // Safely parse dates with fallback to current time
+    const getTime = (conv: any): number => {
+      const timeValue = conv.lastMessageTime || conv.time;
+      if (!timeValue) return 0;
+      const date = typeof timeValue === 'string' ? new Date(timeValue) : timeValue;
+      return date instanceof Date && !isNaN(date.getTime()) ? date.getTime() : 0;
+    };
+    
+    return getTime(b) - getTime(a);
   });
 
   const getUrgencyColor = (messageTime: Date) => {
