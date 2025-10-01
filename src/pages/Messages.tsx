@@ -181,10 +181,10 @@ const Messages = () => {
             </div>
             {/* Notification indicators in header */}
             <div className="flex items-center gap-2">
-              {conversation.notifications.includes('online') && <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+              {conversation.notifications?.includes('online') && <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
                   Online
                 </Badge>}
-              {conversation.notifications.includes('viewed_profile') && <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+              {conversation.notifications?.includes('viewed_profile') && <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
                   <Eye className="w-3 h-3 mr-1" />
                   Viewed
                 </Badge>}
