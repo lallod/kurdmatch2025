@@ -1,20 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useMockAuth } from '@/integrations/supabase/mockAuth';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import ComprehensiveProfileSettings from '@/components/settings/ComprehensiveProfileSettings';
 
 const Settings = () => {
-  const { logout } = useMockAuth();
+  const { signOut } = useSupabaseAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
-      logout();
+      await signOut();
       toast.success('Logged out successfully');
-      navigate('/profile-selector');
+      navigate('/auth');
     } catch (error) {
       console.error('Sign out error:', error);
       toast.error('Failed to sign out');

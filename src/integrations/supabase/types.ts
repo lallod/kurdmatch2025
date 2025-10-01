@@ -1587,7 +1587,9 @@ export type Database = {
         Returns: string
       }
       can_perform_action: {
-        Args: { action_type: string; user_uuid: string }
+        Args:
+          | { action_type: string }
+          | { action_type: string; user_uuid: string }
         Returns: Record<string, unknown>
       }
       create_demo_profile: {

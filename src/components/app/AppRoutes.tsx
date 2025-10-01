@@ -1,10 +1,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useMockAuth } from '@/integrations/supabase/mockAuth';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { Loader2 } from 'lucide-react';
 import { RegisterProtection } from './RegisterProtection';
 import EmailVerificationGuard from './EmailVerificationGuard';
 import Landing from '@/pages/Landing';
-import ProfileSelector from '@/pages/ProfileSelector';
+import Auth from '@/pages/Auth';
+import Register from '@/pages/Register';
 import Swipe from '@/pages/Swipe';
 import Profile from '@/pages/Profile';
 import InstagramProfile from '@/pages/InstagramProfile';
@@ -28,36 +30,42 @@ import AuthCallback from '@/components/auth/AuthCallback';
 import NotFound from '@/pages/NotFound';
 import { CompleteProfile } from '@/pages/CompleteProfile';
 
-interface AppRoutesProps {
-  showWizard: boolean;
-  isOAuthFlow: boolean;
+interface ProtectedRouteProps {
+  children: React.ReactNode;
 }
 
-export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow }) => {
-  const { currentProfile, loading } = useMockAuth();
+export const AppRoutes: React.FC = () => {
+  const { user, loading } = useSupabaseAuth();
 
-  // Main app routes - only show if wizard is not active or during OAuth flow
-  if (currentProfile && showWizard && !isOAuthFlow) {
-    return null;
-  }
+  const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+    if (loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      );
+    }
+
+    if (!user) {
+      return <Navigate to="/auth" replace />;
+    }
+
+    return <>{children}</>;
+  };
 
   return (
     <Routes>
       <Route 
         path="/" 
-        element={currentProfile ? <Navigate to="/discovery" replace /> : <Landing />} 
-      />
-      <Route 
-        path="/profile-selector" 
-        element={currentProfile ? <Navigate to="/discovery" replace /> : <ProfileSelector />} 
+        element={user ? <Navigate to="/discovery" replace /> : <Landing />} 
       />
       <Route 
         path="/auth" 
-        element={<Navigate to="/profile-selector" replace />} 
+        element={user ? <Navigate to="/discovery" replace /> : <Auth />} 
       />
       <Route 
         path="/register" 
-        element={<Navigate to="/profile-selector" replace />} 
+        element={user ? <Navigate to="/discovery" replace /> : <Register />} 
       />
       
       {/* OAuth Callback Route */}
@@ -69,7 +77,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
       {/* Profile Completion Route */}
       <Route 
         path="/complete-profile" 
-        element={currentProfile ? <CompleteProfile /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><CompleteProfile /></ProtectedRoute>} 
       />
       
       {/* Super Admin Login Route - accessible without authentication */}
@@ -84,76 +92,76 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ showWizard, isOAuthFlow })
         element={<SuperAdminSetup />} 
       />
       
-      {/* Protected routes - no email verification needed for mock auth */}
+      {/* Protected routes */}
       <Route 
         path="/swipe" 
-        element={currentProfile ? <Swipe /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><Swipe /></ProtectedRoute>} 
       />
       <Route 
         path="/discovery" 
-        element={currentProfile ? <DiscoveryFeed /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><DiscoveryFeed /></ProtectedRoute>} 
       />
       <Route 
         path="/discovery-old" 
-        element={currentProfile ? <Discovery /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><Discovery /></ProtectedRoute>} 
       />
       <Route 
         path="/discovery-nearby" 
-        element={currentProfile ? <DiscoveryNearby /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><DiscoveryNearby /></ProtectedRoute>} 
       />
       <Route 
         path="/create-post" 
-        element={currentProfile ? <CreatePost /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><CreatePost /></ProtectedRoute>} 
       />
       <Route 
         path="/create-event" 
-        element={currentProfile ? <CreateEvent /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} 
       />
       <Route 
         path="/event/:id" 
-        element={currentProfile ? <EventDetail /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><EventDetail /></ProtectedRoute>} 
       />
       <Route
         path="/liked-me"
-        element={currentProfile ? <LikedMe /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><LikedMe /></ProtectedRoute>} 
       />
       <Route 
         path="/viewed-me" 
-        element={currentProfile ? <ViewedMe /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><ViewedMe /></ProtectedRoute>} 
       />
       <Route 
         path="/messages" 
-        element={currentProfile ? <Messages /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><Messages /></ProtectedRoute>} 
       />
       <Route 
         path="/my-profile" 
-        element={currentProfile ? <MyProfile /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><MyProfile /></ProtectedRoute>} 
       />
       <Route 
         path="/user/:id" 
-        element={currentProfile ? <UserProfile /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><UserProfile /></ProtectedRoute>} 
       />
       <Route 
         path="/profile/:id" 
-        element={currentProfile ? <InstagramProfile /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><InstagramProfile /></ProtectedRoute>} 
       />
       <Route 
         path="/profile" 
-        element={currentProfile ? <Profile /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><Profile /></ProtectedRoute>} 
       />
       <Route 
         path="/admin" 
-        element={currentProfile ? <Admin /> : <Navigate to="/profile-selector" replace />} 
+        element={<ProtectedRoute><Admin /></ProtectedRoute>} 
       />
       
-      {/* Super Admin routes with stable loading state */}
+      {/* Super Admin routes */}
       <Route 
         path="/super-admin/*" 
         element={
           loading ? (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
+                <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
                 <p>Verifying admin access...</p>
               </div>
             </div>

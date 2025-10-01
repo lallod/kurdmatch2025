@@ -21,7 +21,7 @@ export interface Comment {
 }
 
 export const getComments = async (postId: string): Promise<Comment[]> => {
-  const currentProfileId = localStorage.getItem('mock_current_profile_id');
+  const { data: { user } } = await supabase.auth.getUser();
   
   const { data, error } = await supabase
     .from('post_comments')
@@ -40,11 +40,11 @@ export const getComments = async (postId: string): Promise<Comment[]> => {
   if (error) throw error;
 
   // Check which comments the user has liked
-  if (currentProfileId) {
+  if (user) {
     const { data: likes } = await supabase
       .from('comment_likes')
       .select('comment_id')
-      .eq('user_id', currentProfileId)
+      .eq('user_id', user.id)
       .in('comment_id', data.map(c => c.id));
     
     const likedIds = new Set(likes?.map(l => l.comment_id) || []);
@@ -64,8 +64,8 @@ export const createComment = async (
   parentCommentId?: string,
   mentions?: string[]
 ) => {
-  const currentProfileId = localStorage.getItem('mock_current_profile_id');
-  if (!currentProfileId) throw new Error('Not authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   // Calculate depth
   let depth = 0;
@@ -83,7 +83,7 @@ export const createComment = async (
     .from('post_comments')
     .insert({
       post_id: postId,
-      user_id: currentProfileId,
+      user_id: user.id,
       parent_comment_id: parentCommentId,
       content,
       mentions: mentions || [],
@@ -105,41 +105,41 @@ export const createComment = async (
 };
 
 export const likeComment = async (commentId: string) => {
-  const currentProfileId = localStorage.getItem('mock_current_profile_id');
-  if (!currentProfileId) throw new Error('Not authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { error } = await supabase
     .from('comment_likes')
     .insert({
       comment_id: commentId,
-      user_id: currentProfileId,
+      user_id: user.id,
     });
   
   if (error) throw error;
 };
 
 export const unlikeComment = async (commentId: string) => {
-  const currentProfileId = localStorage.getItem('mock_current_profile_id');
-  if (!currentProfileId) throw new Error('Not authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { error } = await supabase
     .from('comment_likes')
     .delete()
     .eq('comment_id', commentId)
-    .eq('user_id', currentProfileId);
+    .eq('user_id', user.id);
   
   if (error) throw error;
 };
 
 export const deleteComment = async (commentId: string) => {
-  const currentProfileId = localStorage.getItem('mock_current_profile_id');
-  if (!currentProfileId) throw new Error('Not authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { error } = await supabase
     .from('post_comments')
     .delete()
     .eq('id', commentId)
-    .eq('user_id', currentProfileId);
+    .eq('user_id', user.id);
   
   if (error) throw error;
 };

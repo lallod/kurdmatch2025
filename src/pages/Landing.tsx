@@ -87,9 +87,9 @@ const Landing = () => {
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-12 py-6 text-xl"
-              onClick={() => navigate('/profile-selector')}
+              onClick={() => navigate('/register')}
             >
-              Browse 502 Profiles
+              Start Your Journey
             </Button>
           </div>
 
