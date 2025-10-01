@@ -1,203 +1,276 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Profile {
   id: string;
   name: string;
   age: number;
-  location: string;
-  profile_image?: string;
-  bio?: string;
-  verified?: boolean;
   gender?: string;
+  location: string;
+  profile_image: string;
+  bio: string;
+  verified: boolean;
   occupation?: string;
-  kurdistan_region?: string;
+  interests?: string[];
+  hobbies?: string[];
+  values?: string[];
+  languages?: string[];
   height?: string;
   body_type?: string;
   ethnicity?: string;
   religion?: string;
-  political_views?: string;
+  kurdistan_region?: string;
   education?: string;
-  company?: string;
   relationship_goals?: string;
-  want_children?: string;
-  have_pets?: string;
-  exercise_habits?: string;
+  latitude?: number;
+  longitude?: number;
   zodiac_sign?: string;
   personality_type?: string;
-  sleep_schedule?: string;
-  travel_frequency?: string;
-  communication_style?: string;
-  love_language?: string;
+  company?: string;
   work_environment?: string;
-  decision_making_style?: string;
+  career_ambitions?: string;
+  exercise_habits?: string;
+  dietary_preferences?: string;
   smoking?: string;
   drinking?: string;
-  values?: string[];
-  interests?: string[];
-  hobbies?: string[];
-  languages?: string[];
-  tech_skills?: string[];
-  music_instruments?: string[];
-  favorite_books?: string[];
-  favorite_movies?: string[];
-  favorite_music?: string[];
-  favorite_foods?: string[];
-  favorite_games?: string[];
-  favorite_podcasts?: string[];
-  pet_peeves?: string[];
-  weekend_activities?: string[];
-  growth_goals?: string[];
-  hidden_talents?: string[];
-  stress_relievers?: string[];
-  creative_pursuits?: string[];
-  favorite_quote?: string;
-  favorite_memory?: string;
-  dream_vacation?: string;
-  dream_home?: string;
-  transportation_preference?: string;
-  charity_involvement?: string;
-  financial_habits?: string;
-  morning_routine?: string;
-  evening_routine?: string;
+  sleep_schedule?: string;
+  have_pets?: string;
+  want_children?: string;
+  love_language?: string;
+  communication_style?: string;
   ideal_date?: string;
-  favorite_season?: string;
-  ideal_weather?: string;
   family_closeness?: string;
-  friendship_style?: string;
+  creative_pursuits?: string[];
+  weekend_activities?: string[];
+  political_views?: string;
   work_life_balance?: string;
-  career_ambitions?: string;
-  dietary_preferences?: string;
-  children_status?: string;
-  photos?: { url: string; is_primary: boolean }[];
-  created_at?: string;
+  travel_frequency?: string;
   last_active?: string;
+  created_at?: string;
+  photos?: Array<{ id: string; url: string; is_primary: boolean }>;
 }
 
-export const getMatchRecommendations = async (limit: number = 20): Promise<Profile[]> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
-
-  const { data, error } = await supabase
-    .from('profiles')
-    .select(`
-      *,
-      photos (url, is_primary)
-    `)
-    .neq('id', session.user.id)
-    .eq('verified', true)
-    .order('last_active', { ascending: false })
-    .limit(limit);
-
-  if (error) throw error;
-  return data || [];
+// Get match recommendations for current user
+export const getMatchRecommendations = async (): Promise<Profile[]> => {
+  return getProfileSuggestions();
 };
 
-export const getProfile = async (id: string): Promise<Profile | null> => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select(`
-      *,
-      photos (url, is_primary)
-    `)
-    .eq('id', id)
-    .single();
-
-  if (error) throw error;
-  return data;
+// Get current user profile
+export const getCurrentUserProfile = async (): Promise<Profile | null> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  
+  return getProfileById(user.id);
 };
 
-export const updateProfile = async (id: string, updates: Partial<Profile>) => {
-  const { data, error } = await supabase
+// Update profile
+export const updateProfile = async (updates: Partial<Profile>): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
+  const { error } = await supabase
     .from('profiles')
     .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
-
+    .eq('id', user.id);
+    
   if (error) throw error;
-  return data;
 };
 
-import { getMessages } from './messages';
-
-export const getMessagesByConversation = getMessages;
-
-export const uploadProfilePhoto = async (file: File, isPrimary: boolean = false): Promise<string> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
-
+// Upload profile photo
+export const uploadProfilePhoto = async (file: File): Promise<string> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
   const fileExt = file.name.split('.').pop();
-  const fileName = `${Date.now()}.${fileExt}`;
-  const filePath = `${session.user.id}/${fileName}`;
-
+  const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+  const filePath = `${user.id}/${fileName}`;
+  
   const { error: uploadError } = await supabase.storage
     .from('profile-photos')
     .upload(filePath, file);
-
+    
   if (uploadError) throw uploadError;
-
-  const { data: { publicUrl } } = supabase.storage
+  
+  const { data } = supabase.storage
     .from('profile-photos')
     .getPublicUrl(filePath);
-
-  // Update profile with new photo URL
-  if (isPrimary) {
-    await updateProfile(session.user.id, { profile_image: publicUrl });
-  }
-
-  return publicUrl;
+    
+  return data.publicUrl;
 };
 
-export const getCurrentUserProfile = async (): Promise<Profile | null> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  // Debug logging
-  console.log('Auth session:', session?.user?.id || 'No user');
-  
-  if (!session?.user) {
-    // For demo purposes, return a random profile when no user is authenticated
-    console.log('No authenticated user, fetching random profile for demo');
-    const { data, error } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        photos (url, is_primary)
-      `)
-      .limit(1);
-    
-    if (error) {
-      console.error('Error fetching demo profile:', error);
-      return null;
-    }
-    
-    return data?.[0] || null;
+export interface SearchFilters {
+  query?: string;
+  ageMin?: number;
+  ageMax?: number;
+  gender?: string;
+  location?: string;
+  kurdistan_region?: string;
+  religion?: string;
+  body_type?: string;
+  languages?: string[];
+  interests?: string[];
+  verified?: boolean;
+  distance?: number;
+  userLatitude?: number;
+  userLongitude?: number;
+}
+
+// Search profiles with advanced filters
+export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]> => {
+  let query = supabase
+    .from('profiles')
+    .select('*');
+
+  // Text search across name, bio, occupation
+  if (filters.query) {
+    query = query.or(`name.ilike.%${filters.query}%,bio.ilike.%${filters.query}%,occupation.ilike.%${filters.query}%`);
   }
 
-  // Try to get user's profile
-  const userProfile = await getProfile(session.user.id);
-  
-  if (!userProfile) {
-    // If user has no profile, create one using existing data or return a demo profile
-    console.log('User has no profile, using demo profile');
-    const { data, error } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        photos (url, is_primary)
-      `)
-      .limit(1);
-    
-    if (error) {
-      console.error('Error fetching demo profile:', error);
-      return null;
-    }
-    
-    // Return the demo profile with the user's ID for editing purposes
-    const demoProfile = data?.[0];
-    if (demoProfile) {
-      return { ...demoProfile, id: session.user.id };
-    }
+  // Age range
+  if (filters.ageMin) {
+    query = query.gte('age', filters.ageMin);
   }
-  
-  return userProfile;
+  if (filters.ageMax) {
+    query = query.lte('age', filters.ageMax);
+  }
+
+  // Gender filter
+  if (filters.gender) {
+    query = query.eq('gender', filters.gender);
+  }
+
+  // Location filter
+  if (filters.location) {
+    query = query.ilike('location', `%${filters.location}%`);
+  }
+
+  // Kurdistan region filter
+  if (filters.kurdistan_region) {
+    query = query.eq('kurdistan_region', filters.kurdistan_region);
+  }
+
+  // Religion filter
+  if (filters.religion) {
+    query = query.eq('religion', filters.religion);
+  }
+
+  // Body type filter
+  if (filters.body_type) {
+    query = query.eq('body_type', filters.body_type);
+  }
+
+  // Verified only
+  if (filters.verified) {
+    query = query.eq('verified', true);
+  }
+
+  // Languages filter (array contains)
+  if (filters.languages && filters.languages.length > 0) {
+    query = query.contains('languages', filters.languages);
+  }
+
+  // Interests filter (array overlap)
+  if (filters.interests && filters.interests.length > 0) {
+    query = query.overlaps('interests', filters.interests);
+  }
+
+  const { data, error } = await query
+    .order('last_active', { ascending: false })
+    .limit(50);
+
+  if (error) throw error;
+
+  // If distance filter is provided and we have user location
+  if (filters.distance && filters.userLatitude && filters.userLongitude) {
+    return (data || []).filter(profile => {
+      if (!profile.latitude || !profile.longitude) return false;
+      const distance = calculateDistance(
+        filters.userLatitude!,
+        filters.userLongitude!,
+        profile.latitude,
+        profile.longitude
+      );
+      return distance <= filters.distance!;
+    });
+  }
+
+  return data || [];
+};
+
+// Get profile by ID
+export const getProfileById = async (profileId: string): Promise<Profile | null> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', profileId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+
+// Get nearby profiles based on location
+export const getNearbyProfiles = async (
+  latitude: number,
+  longitude: number,
+  radiusKm: number = 50
+): Promise<Profile[]> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .not('latitude', 'is', null)
+    .not('longitude', 'is', null)
+    .order('last_active', { ascending: false })
+    .limit(100);
+
+  if (error) throw error;
+
+  // Filter by distance
+  return (data || []).filter(profile => {
+    if (!profile.latitude || !profile.longitude) return false;
+    const distance = calculateDistance(latitude, longitude, profile.latitude, profile.longitude);
+    return distance <= radiusKm;
+  }).slice(0, 50);
+};
+
+// Calculate distance between two coordinates (Haversine formula)
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Earth's radius in km
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function toRad(degrees: number): number {
+  return degrees * (Math.PI / 180);
+}
+
+// Get profile suggestions based on current user's profile
+export const getProfileSuggestions = async (): Promise<Profile[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data: currentProfile } = await supabase
+    .from('profiles')
+    .select('interests, values, hobbies, kurdistan_region')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (!currentProfile) return [];
+
+  // Get profiles with similar interests/values
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .neq('id', user.id)
+    .or(`interests.ov.{${currentProfile.interests?.join(',') || ''}},values.ov.{${currentProfile.values?.join(',') || ''}}`)
+    .order('last_active', { ascending: false })
+    .limit(20);
+
+  if (error) throw error;
+  return data || [];
 };

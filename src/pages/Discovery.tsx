@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search, Sparkles } from 'lucide-react';
+import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search as SearchIcon, Sparkles } from 'lucide-react';
+import SearchBar from '@/components/discovery/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { getStories, Story } from '@/api/posts';
@@ -457,14 +458,19 @@ const Discovery = () => {
       {/* Header */}
       <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-4">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-white" />
+              <SearchIcon className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
               Discover People
             </h1>
             <p className="text-purple-200">Find your perfect match in our community</p>
+            
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto">
+              <SearchBar />
+            </div>
           </div>
         </div>
       </div>
