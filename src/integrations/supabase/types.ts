@@ -799,6 +799,51 @@ export type Database = {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          context: Json | null
+          created_at: string
+          details: string | null
+          id: string
+          reason: string
+          reported_user_id: string | null
+          reporter_user_id: string
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason: string
+          reported_user_id?: string | null
+          reporter_user_id: string
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason?: string
+          reported_user_id?: string | null
+          reporter_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_reported_user_id_fkey"
+            columns: ["reported_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_user_id_fkey"
+            columns: ["reporter_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_login_providers: {
         Row: {
           client_id: string | null
