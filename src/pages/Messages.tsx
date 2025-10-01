@@ -76,8 +76,8 @@ const Messages = () => {
   const onlineCount = conversations.filter(conv => conv.online).length || 0;
   const typingCount = conversations.filter(conv => conv.isTyping).length || 0;
 
-  // Sort conversations by priority and activity
-  const sortedConversations = [...conversations].sort((a, b) => {
+  // Sort conversations by priority and activity with safety check
+  const sortedConversations = (conversations || []).length > 0 ? [...conversations].sort((a, b) => {
     const priorityOrder = {
       high: 3,
       medium: 2,
@@ -96,9 +96,12 @@ const Messages = () => {
     };
     
     return getTime(b) - getTime(a);
-  });
+  }) : [];
 
-  const getUrgencyColor = (messageTime: Date) => {
+  const getUrgencyColor = (messageTime: Date | undefined) => {
+    if (!messageTime || !(messageTime instanceof Date) || isNaN(messageTime.getTime())) {
+      return 'from-purple-500 to-pink-500';
+    }
     const hoursDiff = (Date.now() - messageTime.getTime()) / (1000 * 60 * 60);
     if (hoursDiff < 1) return 'from-red-500 to-red-600';
     if (hoursDiff < 6) return 'from-orange-500 to-orange-600';
