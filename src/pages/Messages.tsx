@@ -283,7 +283,7 @@ const Messages = () => {
               
               <Carousel className="w-full">
                 <CarouselContent className="-ml-2">
-                {newMatches.map(match => <CarouselItem key={match.id} className="pl-2 basis-20">
+                {(newMatches || []).map(match => <CarouselItem key={match.id} className="pl-2 basis-20">
                       <div onClick={() => {
                     setSelectedConversation(match.profileId || match.id);
                   }} className="relative flex flex-col items-center cursor-pointer my-[16px]">
@@ -389,11 +389,11 @@ const Messages = () => {
                         </div>
                         <div className="flex items-center justify-between">
                           <p className={`text-sm truncate ${conversation.unread ? 'font-medium text-white' : 'text-purple-200'}`}>
-                            {conversation.isTyping ? <span className="italic text-blue-300">typing...</span> : conversation.lastMessage}
+                          {conversation.isTyping ? <span className="italic text-blue-300">typing...</span> : conversation.lastMessage}
                           </p>
                           {/* Activity Notifications */}
                           <div className="flex items-center gap-1 ml-2">
-                            {conversation.notifications.map((notification, index) => <div key={index} className="text-purple-300 opacity-70" title={notification.replace('_', ' ').toUpperCase()}>
+                            {(conversation.notifications || []).map((notification, index) => <div key={index} className="text-purple-300 opacity-70" title={notification.replace('_', ' ').toUpperCase()}>
                                 {getNotificationIcon(notification)}
                               </div>)}
                           </div>
