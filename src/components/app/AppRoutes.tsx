@@ -24,6 +24,7 @@ import UserProfile from '@/pages/UserProfile';
 import ProfilePage from '@/pages/ProfilePage';
 import Admin from '@/pages/Admin';
 import SuperAdmin from '@/pages/SuperAdmin';
+import DataGenerator from '@/pages/DataGenerator';
 import SuperAdminLogin from '@/components/auth/SuperAdminLogin';
 import SuperAdminSetup from '@/components/auth/SuperAdminSetup';
 import AuthCallback from '@/components/auth/AuthCallback';
@@ -152,6 +153,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/admin" 
         element={<ProtectedRoute><Admin /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/data-generator" 
+        element={<ProtectedRoute><DataGenerator /></ProtectedRoute>} 
       />
       
       {/* Super Admin routes */}
