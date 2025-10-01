@@ -38,7 +38,7 @@ const InstagramProfile = () => {
           .from('profiles')
           .select(`
             *,
-            photos (url, is_primary)
+            photos (id, url, is_primary)
           `)
           .eq('id', id)
           .single();

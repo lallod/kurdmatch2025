@@ -47,11 +47,38 @@ export interface Profile {
   last_active?: string;
   created_at?: string;
   photos?: Array<{ id: string; url: string; is_primary: boolean }>;
+  transportation_preference?: string;
+  children_status?: string;
+  music_instruments?: string[];
+  tech_skills?: string[];
+  favorite_books?: string[];
+  favorite_movies?: string[];
+  favorite_music?: string[];
+  favorite_foods?: string[];
+  favorite_games?: string[];
+  favorite_podcasts?: string[];
+  favorite_quote?: string;
+  favorite_memory?: string;
+  favorite_season?: string;
+  growth_goals?: string[];
+  morning_routine?: string;
+  evening_routine?: string;
+  stress_relievers?: string[];
+  financial_habits?: string;
+  friendship_style?: string;
+  decision_making_style?: string;
+  charity_involvement?: string;
+  hidden_talents?: string[];
+  pet_peeves?: string[];
+  dream_vacation?: string;
+  dream_home?: string;
+  ideal_weather?: string;
 }
 
 // Get match recommendations for current user
-export const getMatchRecommendations = async (): Promise<Profile[]> => {
-  return getProfileSuggestions();
+export const getMatchRecommendations = async (limit?: number): Promise<Profile[]> => {
+  const profiles = await getProfileSuggestions();
+  return limit ? profiles.slice(0, limit) : profiles;
 };
 
 // Get current user profile
@@ -63,20 +90,17 @@ export const getCurrentUserProfile = async (): Promise<Profile | null> => {
 };
 
 // Update profile
-export const updateProfile = async (updates: Partial<Profile>): Promise<void> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-  
+export const updateProfile = async (userId: string, updates: Partial<Profile>): Promise<void> => {
   const { error } = await supabase
     .from('profiles')
     .update(updates)
-    .eq('id', user.id);
+    .eq('id', userId);
     
   if (error) throw error;
 };
 
 // Upload profile photo
-export const uploadProfilePhoto = async (file: File): Promise<string> => {
+export const uploadProfilePhoto = async (file: File, showProgress?: boolean): Promise<string> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   

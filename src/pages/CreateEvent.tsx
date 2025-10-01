@@ -92,11 +92,11 @@ const CreateEvent = () => {
       await createEvent(
         title,
         description,
-        eventDate,
         location,
-        imageUrl,
+        eventDate,
         category || undefined,
-        maxAttendees ? parseInt(maxAttendees) : undefined
+        maxAttendees ? parseInt(maxAttendees) : undefined,
+        imageUrl
       );
       toast({
         title: 'Success',
