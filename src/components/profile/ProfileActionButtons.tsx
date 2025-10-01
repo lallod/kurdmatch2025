@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Share2, UserPlus, UserCheck, Sparkles } from 'lucide-react';
+import { MessageCircle, UserPlus, UserCheck, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { getUserSubscription } from '@/api/usage';
@@ -47,15 +47,6 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
       return;
     }
     navigate('/messages', { state: { userId } });
-  };
-
-  const handleShare = () => {
-    const url = `${window.location.origin}/profile/${userId}`;
-    navigator.clipboard.writeText(url);
-      toast({
-        title: 'Link copied!',
-        description: 'Profile link copied to clipboard'
-      });
   };
 
   const handleFollow = () => {
@@ -123,16 +114,6 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
 
         {/* Super Like Button - Premium Only */}
         <SuperLikeButton postId={userId} userId={userId} />
-
-        {/* Share Button */}
-        <Button
-          onClick={handleShare}
-          variant="outline"
-          size="sm"
-          className="p-1.5 md:p-2"
-        >
-          <Share2 className="w-3 h-3 md:w-4 md:h-4" />
-        </Button>
       </div>
 
       {/* Message Upgrade Dialog */}

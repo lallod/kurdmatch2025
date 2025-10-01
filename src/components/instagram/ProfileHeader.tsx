@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, MapPin, Briefcase, Share2, MessageCircle, Sparkles } from 'lucide-react';
+import { CheckCircle, MapPin, Briefcase, MessageCircle, Sparkles } from 'lucide-react';
 import { Profile } from '@/api/profiles';
 import { followUser, unfollowUser, checkIsFollowing } from '@/api/posts';
 import { toast } from 'sonner';
@@ -73,12 +73,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
       return;
     }
     navigate(`/messages?userId=${profile.id}`);
-  };
-
-  const handleShare = () => {
-    const url = `${window.location.origin}/instagram-profile/${profile.id}`;
-    navigator.clipboard.writeText(url);
-    toast.success('Profile link copied to clipboard');
   };
 
   const handleUpgrade = async () => {
@@ -160,14 +154,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
                   )}
                 </Button>
                 <SuperLikeButton postId={profile.id} userId={profile.id} />
-                <Button
-                  onClick={handleShare}
-                  size="sm"
-                  className="bg-white/10 hover:bg-white/20 text-white p-1.5 md:p-2"
-                  variant="outline"
-                >
-                  <Share2 className="w-3 h-3 md:w-4 md:h-4" />
-                </Button>
               </>
             )}
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Post } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, Share2, CheckCircle, MoreVertical, Flag, Ban } from 'lucide-react';
+import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { getUserSubscription } from '@/api/usage';
@@ -231,10 +231,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
               PRO
             </span>
           )}
-        </button>
-        
-        <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group">
-          <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
         </button>
 
         <DropdownMenu>
