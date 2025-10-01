@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Post } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, CheckCircle } from 'lucide-react';
+import { MessageCircle, Share2, CheckCircle, MoreVertical, Flag, Ban } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { getUserSubscription } from '@/api/usage';
 import { createPremiumCheckout } from '@/api/payments';
 import { useToast } from '@/hooks/use-toast';
 import SuperLikeButton from './SuperLikeButton';
+import ReactionPicker from './ReactionPicker';
+import ReactionsSummary from './ReactionsSummary';
+import CommentSection from './CommentSection';
+import ReportDialog from './ReportDialog';
+import BlockUserDialog from './BlockUserDialog';
+import { addReaction, removeReaction, getUserReaction, ReactionType } from '@/api/reactions';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +22,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 
 interface PostCardProps {
@@ -26,13 +39,28 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLiked, setIsLiked] = useState(post.is_liked || false);
-  const [likesCount, setLikesCount] = useState(post.likes_count);
+  const [currentReaction, setCurrentReaction] = useState<ReactionType | null>(null);
+  const [reactions, setReactions] = useState({
+    love_count: post.love_count || 0,
+    haha_count: post.haha_count || 0,
+    fire_count: post.fire_count || 0,
+    applause_count: post.applause_count || 0,
+    thoughtful_count: post.thoughtful_count || 0,
+    wow_count: post.wow_count || 0,
+    sad_count: post.sad_count || 0,
+    total_reactions: post.total_reactions || 0,
+  });
   const [isPremium, setIsPremium] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>();
 
   useEffect(() => {
     checkSubscription();
+    loadUserReaction();
+    getCurrentUser();
   }, []);
 
   const checkSubscription = async () => {
@@ -40,10 +68,63 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
     setIsPremium(subscription?.subscriptionType !== 'free');
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
-    onLike(post.id);
+  const getCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setCurrentUserId(user?.id);
+  };
+
+  const loadUserReaction = async () => {
+    const reaction = await getUserReaction(post.id);
+    setCurrentReaction(reaction);
+  };
+
+  const handleReaction = async (reactionType: ReactionType) => {
+    try {
+      if (currentReaction === reactionType) {
+        // Remove reaction
+        await removeReaction(post.id);
+        setCurrentReaction(null);
+        setReactions(prev => ({
+          ...prev,
+          [`${reactionType}_count`]: Math.max(0, prev[`${reactionType}_count` as keyof typeof prev] - 1),
+          total_reactions: Math.max(0, prev.total_reactions - 1),
+        }));
+      } else {
+        // Add or change reaction
+        await addReaction(post.id, reactionType);
+        
+        setReactions(prev => {
+          const newReactions = { ...prev };
+          
+          // Decrease old reaction count
+          if (currentReaction) {
+            newReactions[`${currentReaction}_count` as keyof typeof newReactions] = Math.max(
+              0,
+              prev[`${currentReaction}_count` as keyof typeof prev] - 1
+            );
+          }
+          
+          // Increase new reaction count
+          newReactions[`${reactionType}_count` as keyof typeof newReactions] = 
+            prev[`${reactionType}_count` as keyof typeof prev] + 1;
+          
+          // Update total
+          if (!currentReaction) {
+            newReactions.total_reactions = prev.total_reactions + 1;
+          }
+          
+          return newReactions;
+        });
+        
+        setCurrentReaction(reactionType);
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update reaction',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleUsernameClick = () => {
@@ -125,22 +206,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
       {/* Actions */}
       <div className="flex items-center gap-4 pt-2">
-        <button
-          onClick={handleLike}
-          className="flex items-center gap-2 text-white/70 hover:text-pink-400 transition-colors group"
-        >
-          <Heart 
-            className={`w-5 h-5 transition-all ${
-              isLiked ? 'fill-pink-400 text-pink-400 scale-110' : 'group-hover:scale-110'
-            }`}
-          />
-          <span className="text-sm">{likesCount}</span>
-        </button>
+        <ReactionPicker
+          onReactionSelect={handleReaction}
+          currentReaction={currentReaction}
+        />
         
-        <SuperLikeButton postId={post.id} userId={post.user_id} />
+        <ReactionsSummary reactions={reactions} />
         
         <button
-          onClick={() => onComment(post.id)}
+          onClick={() => setShowComments(!showComments)}
           className="flex items-center gap-2 text-white/70 hover:text-purple-400 transition-colors group"
         >
           <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -159,11 +233,39 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           )}
         </button>
         
-        <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group ml-auto">
+        <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group">
           <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
         </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="ml-auto text-white/70 hover:text-white">
+              <MoreVertical className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
+              <Flag className="w-4 h-4 mr-2" />
+              Report Post
+            </DropdownMenuItem>
+            {currentUserId !== post.user_id && (
+              <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive">
+                <Ban className="w-4 h-4 mr-2" />
+                Block User
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
+      {/* Comment Section */}
+      {showComments && (
+        <div className="mt-4 pt-4 border-t border-white/10">
+          <CommentSection postId={post.id} currentUserId={currentUserId} />
+        </div>
+      )}
+
+      {/* Dialogs */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
         <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
           <DialogHeader>
@@ -193,6 +295,27 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           </DialogHeader>
         </DialogContent>
       </Dialog>
+
+      <ReportDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+        contentId={post.id}
+        contentType="post"
+        reportedUserId={post.user_id}
+      />
+
+      <BlockUserDialog
+        open={showBlockDialog}
+        onOpenChange={setShowBlockDialog}
+        userId={post.user_id}
+        userName={post.profiles.name}
+        onBlocked={() => {
+          toast({
+            title: 'User Blocked',
+            description: 'This user has been blocked successfully',
+          });
+        }}
+      />
     </div>
   );
 };

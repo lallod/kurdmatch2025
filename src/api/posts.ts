@@ -8,6 +8,14 @@ export interface Post {
   media_type?: 'image' | 'video';
   likes_count: number;
   comments_count: number;
+  love_count?: number;
+  haha_count?: number;
+  fire_count?: number;
+  applause_count?: number;
+  thoughtful_count?: number;
+  wow_count?: number;
+  sad_count?: number;
+  total_reactions?: number;
   created_at: string;
   updated_at: string;
   profiles: {
