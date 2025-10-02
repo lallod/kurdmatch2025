@@ -2,3 +2,9 @@ project_id = "bqgjfxilcpqosmccextj"
 
 [functions.generate-bio]
 verify_jwt = true
+
+[functions.moderate-message]
+verify_jwt = true
+
+[functions.generate-insights]
+verify_jwt = true
