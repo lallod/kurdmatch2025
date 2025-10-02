@@ -38,6 +38,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_conversation_insights: {
+        Row: {
+          communication_style: string | null
+          conversation_partner_id: string
+          conversation_summary: string | null
+          created_at: string
+          id: string
+          last_updated: string | null
+          shared_interests: Json | null
+          suggested_topics: Json | null
+          user_id: string
+        }
+        Insert: {
+          communication_style?: string | null
+          conversation_partner_id: string
+          conversation_summary?: string | null
+          created_at?: string
+          id?: string
+          last_updated?: string | null
+          shared_interests?: Json | null
+          suggested_topics?: Json | null
+          user_id: string
+        }
+        Update: {
+          communication_style?: string | null
+          conversation_partner_id?: string
+          conversation_summary?: string | null
+          created_at?: string
+          id?: string
+          last_updated?: string | null
+          shared_interests?: Json | null
+          suggested_topics?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       blocked_users: {
         Row: {
           blocked_id: string
@@ -112,6 +148,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      conversation_metadata: {
+        Row: {
+          created_at: string
+          id: string
+          is_archived: boolean | null
+          last_message_at: string | null
+          updated_at: string
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          updated_at?: string
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          updated_at?: string
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: []
       }
       daily_usage: {
         Row: {
@@ -1043,6 +1109,56 @@ export type Database = {
         }
         Relationships: []
       }
+      reported_messages: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          message_id: string | null
+          reason: string
+          reported_user_id: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          message_id?: string | null
+          reason: string
+          reported_user_id: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          message_id?: string | null
+          reason?: string
+          reported_user_id?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reported_messages_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reports: {
         Row: {
           admin_notes: string | null
@@ -1911,6 +2027,10 @@ export type Database = {
       }
       is_profile_complete: {
         Args: { profile_id: string }
+        Returns: boolean
+      }
+      is_user_blocked: {
+        Args: { target_user_id: string }
         Returns: boolean
       }
       json: {
