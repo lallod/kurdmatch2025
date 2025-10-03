@@ -2,17 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import BottomNavigation from '@/components/BottomNavigation';
 import { getConversations, getMessagesByConversation, sendMessage } from '@/api/messages';
 import { getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useMessageModeration } from '@/hooks/useMessageModeration';
+import { useConversationInsights } from '@/hooks/useConversationInsights';
+import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
+import { ConversationInsights } from '@/components/chat/ConversationInsights';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 const Messages = () => {
   const { user } = useSupabaseAuth();
@@ -22,6 +28,12 @@ const Messages = () => {
   const [newMatches, setNewMatches] = useState<any[]>([]);
   const [conversationMessages, setConversationMessages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [showInsights, setShowInsights] = useState(false);
+  
+  const { moderateMessage, isChecking } = useMessageModeration();
+  const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
 
   useEffect(() => {
     const loadData = async () => {
@@ -128,6 +140,14 @@ const Messages = () => {
     if (!newMessage.trim() || !selectedConversation) return;
     
     try {
+      // Moderate the message before sending
+      const moderationResult = await moderateMessage(newMessage);
+      
+      if (!moderationResult.safe) {
+        // Message was flagged, don't send it
+        return;
+      }
+      
       await sendMessage(selectedConversation, newMessage);
       setNewMessage('');
       // Reload messages to show the new one
@@ -138,6 +158,48 @@ const Messages = () => {
       toast.error('Failed to send message');
     }
   };
+  
+  const handleBlockUser = async () => {
+    if (!selectedConversation || !user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('blocked_users')
+        .insert({
+          blocker_id: user.id,
+          blocked_id: selectedConversation,
+          reason: 'Blocked from conversation'
+        });
+      
+      if (error) throw error;
+      
+      toast.success('User blocked successfully');
+      setSelectedConversation(null);
+      
+      // Refresh conversations
+      const conversationsData = await getConversations();
+      setConversations(conversationsData);
+    } catch (error) {
+      console.error('Error blocking user:', error);
+      toast.error('Failed to block user');
+    }
+  };
+  
+  const handleGenerateInsights = async () => {
+    if (!selectedConversation || !user) return;
+    
+    await generateInsights(user.id, selectedConversation);
+    setShowInsights(true);
+  };
+  
+  useEffect(() => {
+    const loadInsights = async () => {
+      if (!selectedConversation || !user) return;
+      await fetchStoredInsights(user.id, selectedConversation);
+    };
+    
+    loadInsights();
+  }, [selectedConversation, user]);
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -188,12 +250,55 @@ const Messages = () => {
                   <Eye className="w-3 h-3 mr-1" />
                   Viewed
                 </Badge>}
+              
+              {/* AI Insights Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleGenerateInsights}
+                disabled={isGenerating}
+                className="text-purple-200 hover:text-white"
+              >
+                <Sparkles className="h-4 w-4" />
+              </Button>
+              
+              {/* More Options Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
+                  <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
+                    <Flag className="h-4 w-4 mr-2" />
+                    Report Conversation
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleBlockUser} className="text-destructive">
+                    <Ban className="h-4 w-4 mr-2" />
+                    Block User
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 p-4 overflow-y-auto">
+        <div className="flex-1 p-4 overflow-y-auto space-y-4">
           <div className="space-y-4 max-w-4xl mx-auto">
+            {/* AI Insights */}
+            {showInsights && insights && (
+              <ConversationInsights
+                sharedInterests={insights.sharedInterests}
+                suggestedTopics={insights.suggestedTopics}
+                conversationSummary={insights.conversationSummary}
+                communicationStyle={insights.communicationStyle}
+                onRefresh={handleGenerateInsights}
+                isLoading={isGenerating}
+              />
+            )}
+            
+            {/* Messages */}
             {(conversationMessages.length > 0 ? conversationMessages : conversation.messages || []).map(message => (
               <div key={message.id} className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`
@@ -211,17 +316,39 @@ const Messages = () => {
         </div>
 
         <div className="backdrop-blur-md bg-white/10 border-t border-white/20 p-3 flex items-end gap-2 max-w-4xl mx-auto">
-          <Textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={handleKeyPress} placeholder="Type a message..." className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" />
+          <Textarea 
+            value={newMessage} 
+            onChange={e => setNewMessage(e.target.value)} 
+            onKeyDown={handleKeyPress} 
+            placeholder="Type a message..." 
+            disabled={isChecking}
+            className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" 
+          />
           <div className="flex flex-col gap-2">
             <Button variant="ghost" size="icon" className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10">
               <Mic className="h-5 w-5" />
             </Button>
-            <Button variant="default" size="icon" onClick={handleSendMessage} disabled={!newMessage.trim()} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0">
+            <Button 
+              variant="default" 
+              size="icon" 
+              onClick={handleSendMessage} 
+              disabled={!newMessage.trim() || isChecking} 
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0"
+            >
               <Send className="h-5 w-5" />
             </Button>
           </div>
         </div>
         </div>
+        
+        {/* Report Dialog */}
+        <ReportMessageDialog
+          open={reportDialogOpen}
+          onOpenChange={setReportDialogOpen}
+          messageId={selectedMessageId || ''}
+          reportedUserId={selectedConversation || ''}
+          conversationId={selectedConversation || ''}
+        />
 
         <BottomNavigation />
       </div>;
