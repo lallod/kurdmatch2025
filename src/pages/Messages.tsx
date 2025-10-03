@@ -300,11 +300,35 @@ const Messages = () => {
             
             {/* Messages */}
             {(conversationMessages.length > 0 ? conversationMessages : conversation.messages || []).map(message => (
-              <div key={message.id} className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
+              <div key={message.id} className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'} group`}>
                 <div className={`
-                  max-w-[80%] rounded-xl p-3 backdrop-blur-md border
+                  max-w-[80%] rounded-xl p-3 backdrop-blur-md border relative
                   ${message.sender === 'me' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-purple-400/30' : 'bg-white/10 text-white border-white/20'}
                 `}>
+                  {message.sender !== 'me' && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 text-white hover:bg-white/10"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            setSelectedMessageId(message.id);
+                            setReportDialogOpen(true);
+                          }}
+                        >
+                          <Flag className="h-4 w-4 mr-2" />
+                          Report Message
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                   <p>{message.text}</p>
                   <span className="text-xs opacity-70 block text-right mt-1">
                     {message.time}
