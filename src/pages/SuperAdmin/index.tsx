@@ -2,7 +2,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SuperAdminLayout from './SuperAdminLayout';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/DashboardNew';
 import UsersPage from './pages/UsersPage';
 import CategoriesPage from './pages/CategoriesPage';
 import MessagesPage from './pages/MessagesPage';

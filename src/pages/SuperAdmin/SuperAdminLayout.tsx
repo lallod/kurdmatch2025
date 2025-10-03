@@ -102,36 +102,36 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="absolute inset-0 opacity-5 pointer-events-none z-0">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(253,41,123,0.05),transparent_50%)]"></div>
-        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_80%,rgba(255,88,100,0.05),transparent_50%)]"></div>
-      </div>
-      
+    <div className="flex min-h-screen bg-[#0a0a0a]">
+      {/* Sidebar */}
       <aside 
-        className={`fixed top-0 left-0 z-40 h-screen backdrop-blur-sm bg-white/90 border-r border-tinder-rose/10 transition-all duration-300 ${
+        className={`fixed top-0 left-0 z-40 h-screen bg-[#0f0f0f] border-r border-white/5 transition-all duration-300 ${
           collapsed ? 'w-16' : 'w-64'
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b border-tinder-rose/10">
+          {/* Logo Header */}
+          <div className="flex items-center justify-between p-4 border-b border-white/5">
             {!collapsed && (
-              <div className="flex items-center">
-                <Brain size={20} className="mr-2 text-tinder-rose" />
-                <h2 className="text-xl font-bold ai-text-gradient">AI Admin</h2>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">L</span>
+                </div>
+                <span className="text-white font-semibold">LoveAffection</span>
               </div>
             )}
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={toggleSidebar} 
-              className="ml-auto text-tinder-rose hover:bg-tinder-rose/5"
+              className="ml-auto text-white/60 hover:text-white hover:bg-white/5"
             >
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </Button>
           </div>
           
-          <nav className="flex-1 py-4 overflow-y-auto">
+          {/* Navigation */}
+          <nav className="flex-1 py-4 overflow-y-auto scrollbar-hide">
             <ul className="space-y-1 px-2">
               {menuItems.map((item, index) => (
                 <li key={index}>
@@ -139,38 +139,40 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                     to={item.path}
                     end={item.path === '/super-admin'}
                     className={({ isActive }) => 
-                      `flex items-center p-2 rounded-lg transition-all duration-200 ${
+                      `flex items-center p-3 rounded-lg transition-all duration-200 group ${
                         isActive 
-                          ? 'bg-gradient-to-r from-tinder-rose/10 to-tinder-orange/10 text-tinder-rose' 
-                          : 'hover:bg-gray-100 text-gray-700'
-                      } ${collapsed ? 'justify-center' : 'px-3'}`
+                          ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-500' 
+                          : 'hover:bg-white/5 text-white/60 hover:text-white'
+                      } ${collapsed ? 'justify-center' : ''}`
                     }
                   >
                     <span className="transition-colors duration-200">
                       {item.icon}
                     </span>
-                    {!collapsed && <span className="ml-3">{item.label}</span>}
+                    {!collapsed && <span className="ml-3 text-sm">{item.label}</span>}
                   </NavLink>
                 </li>
               ))}
             </ul>
           </nav>
           
-          <div className="p-4 border-t border-tinder-rose/10">
+          {/* Sign Out */}
+          <div className="p-4 border-t border-white/5">
             <Button
               onClick={handleSignOut}
               variant="ghost"
-              className="flex items-center p-2 text-red-600 rounded-lg hover:bg-red-50 w-full justify-start"
+              className="flex items-center p-3 text-red-500 rounded-lg hover:bg-red-500/10 w-full justify-start"
             >
               <LogOut size={20} />
-              {!collapsed && <span className="ml-3">Sign Out</span>}
+              {!collapsed && <span className="ml-3 text-sm">Sign Out</span>}
             </Button>
           </div>
         </div>
       </aside>
       
+      {/* Main Content */}
       <main className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-16' : 'ml-64'}`}>
-        <div className="p-6 relative z-10">
+        <div className="p-8">
           {children}
         </div>
       </main>
