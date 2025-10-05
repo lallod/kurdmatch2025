@@ -20,6 +20,7 @@ import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
 import { ConversationInsights } from '@/components/chat/ConversationInsights';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { messageSchema } from '@/utils/validation/messageValidation';
 const Messages = () => {
   const { user } = useSupabaseAuth();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
@@ -35,6 +36,7 @@ const Messages = () => {
   const { moderateMessage, isChecking } = useMessageModeration();
   const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
 
+  // Load conversations and subscribe to updates
   useEffect(() => {
     const loadData = async () => {
       if (!user) return;
@@ -56,6 +58,30 @@ const Messages = () => {
     };
 
     loadData();
+
+    if (!user) return;
+
+    // Subscribe to conversation updates
+    const conversationsChannel = supabase
+      .channel('conversations-list')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `recipient_id=eq.${user.id}`
+        },
+        () => {
+          // Reload conversations when new messages arrive
+          loadData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(conversationsChannel);
+    };
   }, [user]);
 
   // Auto-open conversation from query param (?user=<id>)
@@ -67,6 +93,7 @@ const Messages = () => {
     }
   }, []);
 
+  // Real-time message updates
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedConversation) return;
@@ -80,7 +107,66 @@ const Messages = () => {
     };
 
     loadMessages();
-  }, [selectedConversation]);
+
+    if (!selectedConversation || !user) return;
+
+    // Set up realtime subscription for messages
+    const channel = supabase
+      .channel(`conversation-${selectedConversation}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${selectedConversation},recipient_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('New message received:', payload);
+          setConversationMessages(prev => [...prev, {
+            id: payload.new.id,
+            text: payload.new.text,
+            sender: 'them',
+            time: new Date(payload.new.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            read: payload.new.read
+          }]);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${user.id},recipient_id=eq.${selectedConversation}`
+        },
+        (payload) => {
+          console.log('Own message confirmed:', payload);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages'
+        },
+        (payload) => {
+          console.log('Message updated:', payload);
+          setConversationMessages(prev => 
+            prev.map(msg => msg.id === payload.new.id ? {
+              ...msg,
+              read: payload.new.read
+            } : msg)
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [selectedConversation, user]);
 
   // Calculate notification counts based on real data
   const totalUnreadMessages = conversations.reduce((sum, conv) => sum + (conv.unreadCount || 0), 0);
@@ -140,21 +226,34 @@ const Messages = () => {
     if (!newMessage.trim() || !selectedConversation) return;
     
     try {
+      // Validate input before sending
+      const validation = messageSchema.safeParse({
+        text: newMessage,
+        recipientId: selectedConversation
+      });
+
+      if (!validation.success) {
+        const errors = validation.error.errors.map(e => e.message).join(', ');
+        toast.error(errors);
+        return;
+      }
+      
       // Moderate the message before sending
-      const moderationResult = await moderateMessage(newMessage);
+      const moderationResult = await moderateMessage(validation.data.text);
       
       if (!moderationResult.safe) {
         // Message was flagged, don't send it
         return;
       }
       
-      await sendMessage(selectedConversation, newMessage);
+      await sendMessage(selectedConversation, validation.data.text);
       setNewMessage('');
       // Reload messages to show the new one
       const messages = await getMessagesByConversation(selectedConversation);
       setConversationMessages(messages);
       toast.success('Message sent!');
     } catch (error) {
+      console.error('Send message error:', error);
       toast.error('Failed to send message');
     }
   };
