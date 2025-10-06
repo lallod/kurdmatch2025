@@ -474,6 +474,30 @@ export type Database = {
           },
         ]
       }
+      message_rate_limits: {
+        Row: {
+          created_at: string
+          id: string
+          message_count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_count?: number
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_count?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           created_at: string | null

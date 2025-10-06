@@ -21,6 +21,8 @@ import { ConversationInsights } from '@/components/chat/ConversationInsights';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { messageSchema } from '@/utils/validation/messageValidation';
+import LoadingState from '@/components/LoadingState';
+import EmptyState from '@/components/EmptyState';
 const Messages = () => {
   const { user } = useSupabaseAuth();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
@@ -252,9 +254,15 @@ const Messages = () => {
       const messages = await getMessagesByConversation(selectedConversation);
       setConversationMessages(messages);
       toast.success('Message sent!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Send message error:', error);
-      toast.error('Failed to send message');
+      
+      // Handle rate limiting error
+      if (error?.message?.includes('Rate limit exceeded')) {
+        toast.error('You\'re sending messages too quickly. Please wait a moment.');
+      } else {
+        toast.error('Failed to send message');
+      }
     }
   };
   
