@@ -24,7 +24,8 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
     nextStep,
     prevStep,
     onSubmit,
-    setStep
+    setStep,
+    totalSteps
   } = useDynamicRegistrationForm();
 
   // Check if this is an OAuth registration flow
@@ -60,7 +61,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
 
   // Enhanced navigation handlers with validation
   const handleNext = () => {
-    if (isCurrentStepComplete && step < categories.length) {
+    if (isCurrentStepComplete && step < totalSteps) {
       nextStep();
     }
   };
@@ -159,7 +160,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
               <div className="relative">
                 <EnhancedFormNavigation
                   currentStep={step}
-                  totalSteps={categories.length}
+                  totalSteps={totalSteps}
                   isStepComplete={isCurrentStepComplete}
                   isSubmitting={isSubmitting}
                   onPrevious={prevStep}

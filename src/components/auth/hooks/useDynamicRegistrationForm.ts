@@ -19,6 +19,7 @@ export const useDynamicRegistrationForm = () => {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalSteps, setTotalSteps] = useState(7);
   
   // Location management for step 3
   const { location, handleLocationDetection, isLoading: locationLoading } = useLocationManager('');
@@ -30,6 +31,11 @@ export const useDynamicRegistrationForm = () => {
         const enabledQuestions = await getRegistrationQuestions();
         const filteredQuestions = enabledQuestions.filter(q => q.enabled);
         setQuestions(filteredQuestions);
+        
+        // Calculate total steps from categories
+        const { createEnhancedStepCategories } = await import('../utils/enhancedStepCategories');
+        const categories = createEnhancedStepCategories(filteredQuestions);
+        setTotalSteps(categories.length);
         
         // Create dynamic schema and form
         const schema = createDynamicRegistrationSchema(filteredQuestions);
@@ -65,7 +71,7 @@ export const useDynamicRegistrationForm = () => {
 
   // Step navigation
   const nextStep = () => {
-    if (step < 4) {
+    if (step < totalSteps) {
       setStep(step + 1);
       if (!completedSteps.includes(step)) {
         setCompletedSteps([...completedSteps, step]);
@@ -231,6 +237,7 @@ export const useDynamicRegistrationForm = () => {
     nextStep,
     prevStep,
     onSubmit,
-    setStep
+    setStep,
+    totalSteps
   };
 };
