@@ -10,7 +10,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Wand2, Crop, Eraser, Palette, Droplet, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { removeBackground } from '@/utils/ai-photo-editor';
 
 interface AIPhotoStudioDialogProps {
   open: boolean;
@@ -46,35 +45,10 @@ const AIPhotoStudioDialog: React.FC<AIPhotoStudioDialogProps> = ({
   }, [open]);
 
   const handleRemoveBackground = async () => {
-    if (!photoUrl) return;
-
-    setIsLoading(true);
-    toast({ title: 'Removing background...', description: 'The AI model is being prepared. This might take a moment on first use.' });
-
-    try {
-      const image = new Image();
-      image.crossOrigin = 'anonymous'; // Needed for images from other domains
-      image.src = photoUrl;
-      await new Promise((resolve, reject) => {
-        image.onload = resolve;
-        image.onerror = (err) => reject(new Error('Failed to load image. It might be a network issue or the image is protected.'));
-      });
-
-      const resultBlob = await removeBackground(image);
-      const newPhotoUrl = URL.createObjectURL(resultBlob);
-      setEditedPhoto(newPhotoUrl);
-      toast({ title: 'Success!', description: 'Background removed. Save the photo to keep the changes.' });
-    } catch (error) {
-      console.error('Failed to remove background', error);
-      const errorMessage = error instanceof Error ? error.message : 'Could not remove background. Please try again.';
-      toast({
-          title: 'Error',
-          description: errorMessage,
-          variant: 'destructive',
-      });
-    } finally {
-        setIsLoading(false);
-    }
+    toast({
+      title: 'Feature Migration in Progress',
+      description: 'Background removal is being migrated to our new AI infrastructure. Check back soon!',
+    });
   };
 
   const handleToolClick = (toolName: string) => {
