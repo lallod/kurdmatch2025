@@ -1,89 +1,94 @@
-import React from 'react';
-import { Sparkles, Globe, Camera, Circle, Image, MessageCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Video, MessageCircle, Calendar } from 'lucide-react';
 
 const features = [
   {
-    icon: Sparkles,
-    title: 'AI-Powered Matchmaking',
-    description: 'Smart algorithm finds compatible Kurdish singles based on your preferences and values',
-  },
-  {
-    icon: Globe,
-    title: 'Cultural Discovery',
-    description: 'Connect through shared Kurdish heritage, traditions, and cultural identity',
-  },
-  {
-    icon: Camera,
-    title: 'Social Feed',
-    description: 'Share posts, stories, photos, and life moments with your community',
-  },
-  {
-    icon: Circle,
-    title: 'Live Stories',
-    description: 'View and share daily stories from your matches and connections',
-  },
-  {
-    icon: Image,
-    title: 'Photo Sharing',
-    description: 'Share beautiful moments and memories with your Kurdish community',
+    icon: Video,
+    title: 'Video Call',
+    description: 'Connect face-to-face with Kurds worldwide through high-quality video calls.',
   },
   {
     icon: MessageCircle,
     title: 'Instant Messaging',
-    description: 'Real-time chat with matches featuring text, photos, and emojis',
+    description: 'Chat seamlessly in Kurdish, English, or any language you prefer.',
+  },
+  {
+    icon: Calendar,
+    title: 'Global Events',
+    description: 'Join Kurdish gatherings, meetups, and cultural events in your area.',
   },
 ];
 
 const SocialFeatureCards = () => {
-  return (
-    <div className="w-full max-w-7xl mx-auto px-6 py-20">
-      <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
-        Everything You Need to Connect
-      </h2>
-      <p className="text-purple-200 text-center mb-12 max-w-2xl mx-auto">
-        Modern features designed for meaningful connections within the Kurdish community
-      </p>
+  const [cardRotations, setCardRotations] = useState<{ [key: number]: { rotateX: number; rotateY: number } }>({});
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {features.map((feature, index) => {
-          const Icon = feature.icon;
-          return (
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (centerX - x) / 20;
+
+    setCardRotations(prev => ({
+      ...prev,
+      [index]: { rotateX, rotateY }
+    }));
+  };
+
+  const handleMouseLeave = () => {
+    setCardRotations({});
+  };
+
+  return (
+    <section className="py-20 px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-16 animate-fade-in">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Everything You Need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Connect</span>
+          </h2>
+          <p className="text-xl text-purple-200 max-w-2xl mx-auto">
+            Features designed specifically for the Kurdish community
+          </p>
+        </div>
+
+        {/* Feature Cards Grid - Now 3 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+          {features.map((feature, index) => (
             <div
               key={index}
-              className="group p-6 rounded-xl bg-indigo-900/20 backdrop-blur-lg border border-indigo-800/30 hover:border-purple-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 transform-gpu perspective-card"
+              className="relative group"
+              onMouseMove={(e) => handleMouseMove(e, index)}
+              onMouseLeave={handleMouseLeave}
               style={{
-                animationDelay: `${index * 0.1}s`,
-                transformStyle: 'preserve-3d',
-              }}
-              onMouseMove={(e) => {
-                const card = e.currentTarget;
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (y - centerY) / 10;
-                const rotateY = (centerX - x) / 10;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-              }}
-              onMouseLeave={(e) => {
-                const card = e.currentTarget;
-                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+                transform: `perspective(1000px) rotateX(${cardRotations[index]?.rotateX || 0}deg) rotateY(${cardRotations[index]?.rotateY || 0}deg)`,
+                transition: 'transform 0.1s ease-out',
               }}
             >
-              <div 
-                className="w-14 h-14 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-500 group-hover:rotate-12"
-                style={{ transform: 'translateZ(30px)' }}
-              >
-                <Icon className="w-7 h-7 text-purple-400 group-hover:text-pink-400 transition-colors" />
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 h-full hover:bg-white/10 transition-all duration-300 hover:border-purple-400/50 group-hover:shadow-2xl group-hover:shadow-purple-500/20">
+                {/* Icon with gradient background */}
+                <div className="mb-6 inline-flex">
+                  <div className="bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl p-4 group-hover:scale-110 transition-transform duration-300">
+                    <feature.icon className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-400 group-hover:to-purple-400 transition-all duration-300">
+                  {feature.title}
+                </h3>
+                <p className="text-purple-200 leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-              <p className="text-purple-200 text-sm leading-relaxed">{feature.description}</p>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

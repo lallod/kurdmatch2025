@@ -7,9 +7,13 @@ import { LandingPageContent, initialContent } from '@/pages/SuperAdmin/pages/Lan
 import FloatingCulturalElements from '@/components/landing/FloatingCulturalElements';
 import GlassmorphismLoginCard from '@/components/landing/GlassmorphismLoginCard';
 import SocialFeatureCards from '@/components/landing/SocialFeatureCards';
-import CulturalShowcase from '@/components/landing/CulturalShowcase';
 import LandingCTA from '@/components/landing/LandingCTA';
 import Scene3D from '@/components/landing/Scene3D';
+import MeetTheConnection from '@/components/landing/MeetTheConnection';
+import DynamicCommunity from '@/components/landing/DynamicCommunity';
+import CommunityPhone from '@/components/landing/CommunityPhone';
+import CommunityTestimonials from '@/components/landing/CommunityTestimonials';
+import EnhancedFooter from '@/components/landing/EnhancedFooter';
 
 const Landing = () => {
   const [content, setContent] = useState<LandingPageContent>(initialContent);
@@ -151,15 +155,25 @@ const Landing = () => {
         <SocialFeatureCards />
       </div>
 
-      {/* Cultural Showcase Section */}
-      <div className="relative">
-        <CulturalShowcase />
-      </div>
+      {/* Meet The Connection Section */}
+      <MeetTheConnection />
+
+      {/* Dynamic Community Section */}
+      <DynamicCommunity />
+
+      {/* Community Phone Section */}
+      <CommunityPhone />
+
+      {/* Testimonials Section */}
+      <CommunityTestimonials />
 
       {/* Final CTA Section */}
       <div className="relative">
         <LandingCTA />
       </div>
+
+      {/* Enhanced Footer */}
+      <EnhancedFooter />
     </div>
   );
 };
