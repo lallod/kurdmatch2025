@@ -1,5 +1,8 @@
 project_id = "bqgjfxilcpqosmccextj"
 
+[functions.create-super-admin]
+verify_jwt = false
+
 [functions.generate-bio]
 verify_jwt = true
 

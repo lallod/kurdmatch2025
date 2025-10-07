@@ -31,6 +31,7 @@ import AuthCallback from '@/components/auth/AuthCallback';
 import NotFound from '@/pages/NotFound';
 import { CompleteProfile } from '@/pages/CompleteProfile';
 import Subscription from '@/pages/Subscription';
+import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -92,6 +93,12 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/admin-setup" 
         element={<SuperAdminSetup />} 
+      />
+      
+      {/* Create Super Admin Route - public access */}
+      <Route 
+        path="/create-admin" 
+        element={<CreateSuperAdmin />} 
       />
       
       {/* Protected routes */}
