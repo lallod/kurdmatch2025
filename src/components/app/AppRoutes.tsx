@@ -8,9 +8,7 @@ import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
 import Swipe from '@/pages/Swipe';
-import Profile from '@/pages/Profile';
-import InstagramProfile from '@/pages/InstagramProfile';
-import Discovery from '@/pages/Discovery';
+
 import DiscoveryNearby from '@/pages/DiscoveryNearby';
 import DiscoveryFeed from '@/pages/DiscoveryFeed';
 import CreatePost from '@/pages/CreatePost';
@@ -21,7 +19,6 @@ import ViewedMe from '@/pages/ViewedMe';
 import Messages from '@/pages/Messages';
 import MyProfile from '@/pages/MyProfile';
 import UserProfile from '@/pages/UserProfile';
-import ProfilePage from '@/pages/ProfilePage';
 import Admin from '@/pages/Admin';
 import SuperAdmin from '@/pages/SuperAdmin';
 import DataGenerator from '@/pages/DataGenerator';
@@ -111,10 +108,6 @@ export const AppRoutes: React.FC = () => {
         element={<ProtectedRoute><DiscoveryFeed /></ProtectedRoute>} 
       />
       <Route 
-        path="/discovery-old" 
-        element={<ProtectedRoute><Discovery /></ProtectedRoute>} 
-      />
-      <Route 
         path="/discovery-nearby" 
         element={<ProtectedRoute><DiscoveryNearby /></ProtectedRoute>} 
       />
@@ -149,14 +142,6 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/user/:id" 
         element={<ProtectedRoute><UserProfile /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/profile/:id" 
-        element={<ProtectedRoute><InstagramProfile /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/profile" 
-        element={<ProtectedRoute><Profile /></ProtectedRoute>} 
       />
       <Route 
         path="/admin" 
