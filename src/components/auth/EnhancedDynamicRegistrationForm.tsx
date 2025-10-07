@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/app/LoadingSpinner';
 import { useDynamicRegistrationForm } from './hooks/useDynamicRegistrationForm';
 import { createEnhancedStepCategories, getStepCompletionStatus } from './utils/enhancedStepCategories';
@@ -9,6 +11,7 @@ import EnhancedFormNavigation from './components/EnhancedFormNavigation';
 import SocialLogin from './components/SocialLogin';
 
 const EnhancedDynamicRegistrationForm: React.FC = () => {
+  const navigate = useNavigate();
   const {
     form,
     step,
@@ -42,7 +45,17 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   const completionStatus = getStepCompletionStatus(categories, formValues);
   
   // Get current category and check if current step is complete
-  const currentCategory = categories.find(cat => cat.step === step);
+  let currentCategory = categories.find(cat => cat.step === step);
+  
+  // Fallback: if current step doesn't have a category, use the first available category
+  if (!currentCategory && categories.length > 0) {
+    currentCategory = categories[0];
+    // Also update the step to match the first available category
+    if (step !== currentCategory.step) {
+      setStep(currentCategory.step);
+    }
+  }
+  
   const isCurrentStepComplete = completionStatus[step] || false;
 
   // Enhanced navigation handlers with validation
@@ -67,11 +80,28 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   }
 
   if (!currentCategory) {
+    console.error('No current category found', { 
+      step, 
+      categoriesLength: categories.length,
+      questionsLength: questions.length,
+      categories: categories.map(c => ({ name: c.name, step: c.step, questionCount: c.questions.length }))
+    });
+    
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 flex items-center justify-center">
-        <div className="text-white text-center">
-          <h2 className="text-2xl font-bold mb-2">Registration Error</h2>
-          <p className="text-purple-200">Unable to load registration form. Please refresh the page.</p>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+            <h2 className="text-2xl font-bold mb-4 text-white">Registration Setup Required</h2>
+            <p className="text-purple-200 mb-6">
+              The registration form needs to be configured by an administrator. Please contact support or try again later.
+            </p>
+            <Button 
+              onClick={() => navigate('/')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              Return to Home
+            </Button>
+          </div>
         </div>
       </div>
     );
