@@ -22,7 +22,8 @@ import {
   Settings,
   CheckCircle2,
   AlertTriangle,
-  LogOut
+  LogOut,
+  Crown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import DownloadDataDialog from './dialogs/DownloadDataDialog';
@@ -91,6 +92,29 @@ const AccountSettings = () => {
 
   return (
     <div className="space-y-6">
+      {/* Subscription Management */}
+      <Card className="backdrop-blur-md bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20 border border-primary/20">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-tinder-rose to-tinder-orange rounded-full flex items-center justify-center">
+                <Crown className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-white font-medium">Premium Subscription</p>
+                <p className="text-purple-200 text-sm">Unlock all premium features</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate('/subscription')}
+              className="bg-gradient-to-r from-tinder-rose to-tinder-orange hover:opacity-90"
+            >
+              Manage Plan
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Account Status */}
       <Card className="backdrop-blur-md bg-white/10 border border-white/20">
         <CardContent className="p-6">

@@ -30,6 +30,7 @@ import SuperAdminSetup from '@/components/auth/SuperAdminSetup';
 import AuthCallback from '@/components/auth/AuthCallback';
 import NotFound from '@/pages/NotFound';
 import { CompleteProfile } from '@/pages/CompleteProfile';
+import Subscription from '@/pages/Subscription';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -157,6 +158,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/data-generator" 
         element={<ProtectedRoute><DataGenerator /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/subscription" 
+        element={<ProtectedRoute><Subscription /></ProtectedRoute>} 
       />
       
       {/* Super Admin routes */}
