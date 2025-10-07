@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -20,28 +19,15 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { 
   Search, 
-  Filter, 
-  Calendar, 
   Download, 
-  Eye, 
-  RefreshCw, 
-  User, 
-  FileText, 
-  Trash, 
-  Edit, 
-  Lock, 
-  Unlock, 
-  Plus, 
-  Settings, 
-  UserPlus,
-  UserCheck,
-  UserX,
-  Brain
+  RefreshCw,
+  Eye,
+  Shield,
+  Activity
 } from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 
-  DialogDescription, 
   DialogHeader, 
   DialogTitle, 
   DialogFooter 
@@ -53,488 +39,250 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs';
+import { format } from 'date-fns';
+import { useAdminAuditLogs } from '../hooks/useAdminAuditLogs';
 
 const AuditLogsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [actionFilter, setActionFilter] = useState('all');
-  const [userFilter, setUserFilter] = useState('all');
-  const [refreshing, setRefreshing] = useState(false);
+  const [activityTypeFilter, setActivityTypeFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedLog, setSelectedLog] = useState<any>(null);
+  const { logs, loading, totalCount, fetchLogs } = useAdminAuditLogs();
 
-  // Mock data for audit logs
-  const auditLogs = [
-    {
-      id: 'LOG-10045',
-      action: 'user.create',
-      user: 'admin@example.com',
-      userRole: 'Admin',
-      timestamp: '2023-05-18 14:32:45',
-      ipAddress: '192.168.1.101',
-      details: {
-        userId: 'user-789',
-        userName: 'John Smith',
-        userEmail: 'john.smith@example.com'
-      },
-      status: 'success'
-    },
-    {
-      id: 'LOG-10044',
-      action: 'user.update',
-      user: 'moderator@example.com',
-      userRole: 'Moderator',
-      timestamp: '2023-05-18 13:21:18',
-      ipAddress: '192.168.1.105',
-      details: {
-        userId: 'user-456',
-        field: 'status',
-        oldValue: 'active',
-        newValue: 'suspended',
-        reason: 'Violation of terms'
-      },
-      status: 'success'
-    },
-    {
-      id: 'LOG-10043',
-      action: 'content.delete',
-      user: 'moderator@example.com',
-      userRole: 'Moderator',
-      timestamp: '2023-05-18 11:45:22',
-      ipAddress: '192.168.1.105',
-      details: {
-        contentType: 'photo',
-        contentId: 'photo-12345',
-        userId: 'user-234',
-        reason: 'Inappropriate content'
-      },
-      status: 'success'
-    },
-    {
-      id: 'LOG-10042',
-      action: 'settings.update',
-      user: 'admin@example.com',
-      userRole: 'Admin',
-      timestamp: '2023-05-17 16:38:09',
-      ipAddress: '192.168.1.101',
-      details: {
-        setting: 'privacy.policy',
-        oldValue: 'v1.2',
-        newValue: 'v1.3'
-      },
-      status: 'success'
-    },
-    {
-      id: 'LOG-10041',
-      action: 'user.authentication',
-      user: 'admin@example.com',
-      userRole: 'Admin',
-      timestamp: '2023-05-17 09:02:55',
-      ipAddress: '192.168.1.120',
-      details: {
-        method: '2FA',
-        device: 'Web Browser - Chrome 113.0.5672.93',
-        location: 'New York, US'
-      },
-      status: 'failed'
-    },
-    {
-      id: 'LOG-10040',
-      action: 'user.authentication',
-      user: 'admin@example.com',
-      userRole: 'Admin',
-      timestamp: '2023-05-17 09:04:10',
-      ipAddress: '192.168.1.101',
-      details: {
-        method: '2FA',
-        device: 'Web Browser - Chrome 113.0.5672.93',
-        location: 'New York, US'
-      },
-      status: 'success'
-    },
-    {
-      id: 'LOG-10039',
-      action: 'role.update',
-      user: 'admin@example.com',
-      userRole: 'Admin',
-      timestamp: '2023-05-16 15:22:30',
-      ipAddress: '192.168.1.101',
-      details: {
-        userId: 'user-345',
-        userName: 'Sarah Williams',
-        oldRole: 'User',
-        newRole: 'Moderator'
-      },
-      status: 'success'
-    }
-  ];
+  React.useEffect(() => {
+    fetchLogs(currentPage, 20, activityTypeFilter);
+  }, [currentPage, activityTypeFilter]);
 
-  // Filter logs based on search term, action type, and user
-  const filteredLogs = auditLogs.filter(log => {
-    const matchesSearch = 
-      log.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.action.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesAction = 
-      actionFilter === 'all' || 
-      log.action.split('.')[0] === actionFilter;
-    
-    const matchesUser = 
-      userFilter === 'all' || 
-      log.user === userFilter;
-    
-    return matchesSearch && matchesAction && matchesUser;
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchLogs(1, 20, activityTypeFilter);
+  };
+
+  const handleRefresh = () => {
+    fetchLogs(currentPage, 20, activityTypeFilter);
+  };
+
+  const filteredLogs = logs.filter(log => {
+    if (!searchTerm) return true;
+    return (
+      log.activity_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
-  // Get unique users for filter
-  const uniqueUsers = Array.from(new Set(auditLogs.map(log => log.user)));
+  const totalPages = Math.ceil(totalCount / 20);
 
-  // Status badge component
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'success':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Success</Badge>;
-      case 'failed':
-        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">Failed</Badge>;
-      case 'warning':
-        return <Badge variant="outline" className="bg-amber-100 text-amber-800 hover:bg-amber-100">Warning</Badge>;
-      default:
-        return <Badge>{status}</Badge>;
+  const getActivityBadge = (activityType: string) => {
+    const lowerType = activityType.toLowerCase();
+    
+    if (lowerType.includes('create') || lowerType.includes('add')) {
+      return <Badge className="bg-green-500/20 text-green-300">{activityType}</Badge>;
+    } else if (lowerType.includes('delete') || lowerType.includes('remove')) {
+      return <Badge className="bg-red-500/20 text-red-300">{activityType}</Badge>;
+    } else if (lowerType.includes('update') || lowerType.includes('edit')) {
+      return <Badge className="bg-blue-500/20 text-blue-300">{activityType}</Badge>;
+    } else if (lowerType.includes('login') || lowerType.includes('auth')) {
+      return <Badge className="bg-purple-500/20 text-purple-300">{activityType}</Badge>;
+    } else {
+      return <Badge className="bg-white/10 text-white/80">{activityType}</Badge>;
     }
-  };
-
-  // Action icon component
-  const getActionIcon = (action: string) => {
-    const actionType = action.split('.')[0];
-    switch (actionType) {
-      case 'user':
-        if (action === 'user.create') return <UserPlus size={16} className="text-green-500" />;
-        if (action === 'user.update') return <Edit size={16} className="text-blue-500" />;
-        if (action === 'user.delete') return <UserX size={16} className="text-red-500" />;
-        if (action === 'user.authentication') return <User size={16} className="text-purple-500" />;
-        return <User size={16} className="text-gray-500" />;
-      case 'content':
-        if (action === 'content.create') return <Plus size={16} className="text-green-500" />;
-        if (action === 'content.update') return <Edit size={16} className="text-blue-500" />;
-        if (action === 'content.delete') return <Trash size={16} className="text-red-500" />;
-        return <FileText size={16} className="text-gray-500" />;
-      case 'settings':
-        return <Settings size={16} className="text-blue-500" />;
-      case 'role':
-        return <UserCheck size={16} className="text-amber-500" />;
-      case 'security':
-        if (action === 'security.lock') return <Lock size={16} className="text-red-500" />;
-        if (action === 'security.unlock') return <Unlock size={16} className="text-green-500" />;
-        return <Lock size={16} className="text-gray-500" />;
-      default:
-        return <FileText size={16} className="text-gray-500" />;
-    }
-  };
-
-  // Handle functions
-  const handleRefresh = () => {
-    setRefreshing(true);
-    // Simulate data reload
-    setTimeout(() => setRefreshing(false), 1000);
-  };
-
-  const handleViewDetails = (log: any) => {
-    setSelectedLog(log);
-  };
-
-  const handleExportLogs = () => {
-    console.log('Exporting audit logs...');
-    // In a real app, this would generate and download a file
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Audit Logs</h1>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
-            {refreshing ? "Refreshing..." : "Refresh"}
-          </Button>
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={handleExportLogs}
-          >
-            <Download size={16} />
-            Export Logs
-          </Button>
-        </div>
-      </div>
-
-      {/* AI banner */}
-      <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
-        <Brain size={24} className="text-tinder-rose mr-3" />
         <div>
-          <h3 className="font-semibold text-gray-800">AI-Enhanced Audit Analysis</h3>
-          <p className="text-sm text-gray-600">Our AI system detects unusual patterns in user and admin actions to help identify potential security issues</p>
+          <h1 className="text-3xl font-bold text-white">Audit Logs</h1>
+          <p className="text-white/60 mt-1">Track all administrative actions</p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={handleRefresh} variant="outline" size="sm" disabled={loading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Button variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="all">
-        <TabsList className="mb-4">
-          <TabsTrigger value="all">All Logs</TabsTrigger>
-          <TabsTrigger value="user">User Actions</TabsTrigger>
-          <TabsTrigger value="content">Content Actions</TabsTrigger>
-          <TabsTrigger value="system">System Actions</TabsTrigger>
-          <TabsTrigger value="security">Security Events</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search logs by ID, user, or action..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Select value={actionFilter} onValueChange={setActionFilter}>
-                    <SelectTrigger className="w-[150px]">
-                      <SelectValue placeholder="Filter by action" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Actions</SelectItem>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="content">Content</SelectItem>
-                      <SelectItem value="settings">Settings</SelectItem>
-                      <SelectItem value="role">Role</SelectItem>
-                      <SelectItem value="security">Security</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={userFilter} onValueChange={setUserFilter}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Filter by user" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Users</SelectItem>
-                      {uniqueUsers.map((user, index) => (
-                        <SelectItem key={index} value={user}>{user}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="icon">
-                    <Filter size={16} />
-                  </Button>
-                </div>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="bg-[#141414] border-white/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/60">Total Activities</p>
+                <p className="text-2xl font-bold text-white">{totalCount}</p>
               </div>
+              <Activity className="h-8 w-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
 
-              <div className="rounded-md border overflow-hidden">
+        <Card className="bg-[#141414] border-white/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/60">Today's Activities</p>
+                <p className="text-2xl font-bold text-white">
+                  {logs.filter(log => {
+                    const today = new Date().toISOString().split('T')[0];
+                    const logDate = new Date(log.created_at).toISOString().split('T')[0];
+                    return today === logDate;
+                  }).length}
+                </p>
+              </div>
+              <Shield className="h-8 w-8 text-green-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-[#141414] border-white/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/60">Active Admins</p>
+                <p className="text-2xl font-bold text-white">
+                  {new Set(logs.map(log => log.user_id).filter(Boolean)).size}
+                </p>
+              </div>
+              <Shield className="h-8 w-8 text-purple-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="bg-[#141414] border-white/5">
+        <CardHeader>
+          <CardTitle className="text-white">Activity Log</CardTitle>
+          <CardDescription className="text-white/60">Complete history of administrative actions</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex-1">
+              <Input
+                placeholder="Search activities..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
+              />
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-12 text-white/60">Loading audit logs...</div>
+          ) : filteredLogs.length === 0 ? (
+            <div className="text-center py-12 text-white/60">No audit logs found</div>
+          ) : (
+            <>
+              <div className="rounded-md border border-white/5">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Log ID</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead>Timestamp</TableHead>
-                      <TableHead>IP Address</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                    <TableRow className="border-white/5 hover:bg-white/5">
+                      <TableHead className="text-white/80">Activity</TableHead>
+                      <TableHead className="text-white/80">User</TableHead>
+                      <TableHead className="text-white/80">Description</TableHead>
+                      <TableHead className="text-white/80">Timestamp</TableHead>
+                      <TableHead className="text-right text-white/80">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredLogs.length > 0 ? (
-                      filteredLogs.map((log) => (
-                        <TableRow key={log.id}>
-                          <TableCell className="font-medium">{log.id}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center">
-                              {getActionIcon(log.action)}
-                              <span className="ml-2">{log.action}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div>{log.user}</div>
-                            <div className="text-xs text-gray-500">{log.userRole}</div>
-                          </TableCell>
-                          <TableCell>{log.timestamp}</TableCell>
-                          <TableCell>{log.ipAddress}</TableCell>
-                          <TableCell>{getStatusBadge(log.status)}</TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="gap-2"
-                              onClick={() => handleViewDetails(log)}
-                            >
-                              <Eye size={16} />
-                              Details
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-6">
-                          No audit logs found
+                    {filteredLogs.map((log) => (
+                      <TableRow key={log.id} className="border-white/5 hover:bg-white/5">
+                        <TableCell>
+                          {getActivityBadge(log.activity_type)}
+                        </TableCell>
+                        <TableCell className="text-white">
+                          {log.user?.name || 'System'}
+                        </TableCell>
+                        <TableCell className="text-white/60 max-w-md truncate">
+                          {log.description || 'No description'}
+                        </TableCell>
+                        <TableCell className="text-white/60">
+                          {format(new Date(log.created_at), 'MMM dd, yyyy HH:mm:ss')}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedLog(log)}
+                            className="text-white/80 hover:text-white hover:bg-white/10"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
                         </TableCell>
                       </TableRow>
-                    )}
+                    ))}
                   </TableBody>
                 </Table>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Security Insights Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Insights</CardTitle>
-              <CardDescription>AI-detected patterns and security recommendations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="p-4 border rounded-lg bg-yellow-50">
-                  <h4 className="font-semibold text-amber-800 mb-2">Unusual Admin Activity</h4>
-                  <p className="text-amber-700">
-                    We've detected a failed authentication attempt for admin@example.com from an unusual location, 
-                    followed by a successful login 2 minutes later. This could indicate a potential security concern.
-                  </p>
-                </div>
-                
-                <div className="p-4 border rounded-lg bg-blue-50">
-                  <h4 className="font-semibold text-blue-800 mb-2">Access Pattern Analysis</h4>
-                  <p className="text-blue-700">
-                    There's been a 43% increase in user role changes over the past week compared to the previous 30-day average. 
-                    Consider reviewing recent role modifications for appropriate authorization.
-                  </p>
-                </div>
-                
-                <div className="p-4 border rounded-lg bg-green-50">
-                  <h4 className="font-semibold text-green-800 mb-2">System Security</h4>
-                  <p className="text-green-700">
-                    All system settings modifications in the past 30 days have been properly authorized and documented.
-                    No suspicious pattern detected.
-                  </p>
+              {/* Pagination */}
+              <div className="flex items-center justify-between mt-4">
+                <p className="text-sm text-white/60">
+                  Page {currentPage} of {totalPages}
+                </p>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1 || loading}
+                  >
+                    Previous
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages || loading}
+                  >
+                    Next
+                  </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
-        <TabsContent value="user">
-          <Card>
-            <CardHeader>
-              <CardTitle>User Action Logs</CardTitle>
-              <CardDescription>Logs for user-related actions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>User action logs will appear here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="content">
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Action Logs</CardTitle>
-              <CardDescription>Logs for content-related actions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Content action logs will appear here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="system">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Action Logs</CardTitle>
-              <CardDescription>Logs for system-related actions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>System action logs will appear here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="security">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Event Logs</CardTitle>
-              <CardDescription>Logs for security-related events</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Security event logs will appear here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Log Details Dialog */}
+      {/* View Log Details Dialog */}
       {selectedLog && (
         <Dialog open={!!selectedLog} onOpenChange={() => setSelectedLog(null)}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="bg-[#141414] border-white/10 text-white">
             <DialogHeader>
-              <DialogTitle>Audit Log Details</DialogTitle>
-              <DialogDescription>
-                Detailed information for log ID: {selectedLog.id}
-              </DialogDescription>
+              <DialogTitle className="text-white">Activity Details</DialogTitle>
             </DialogHeader>
             
-            <div className="py-4">
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div>
-                  <div className="text-sm text-gray-500">Action</div>
-                  <div className="font-medium flex items-center mt-1">
-                    {getActionIcon(selectedLog.action)}
-                    <span className="ml-2">{selectedLog.action}</span>
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">Status</div>
-                  <div className="mt-1">{getStatusBadge(selectedLog.status)}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">Timestamp</div>
-                  <div className="font-medium mt-1">{selectedLog.timestamp}</div>
-                </div>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-white/60">Activity Type</p>
+                {getActivityBadge(selectedLog.activity_type)}
               </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <div className="text-sm text-gray-500">User</div>
-                  <div className="font-medium mt-1">{selectedLog.user}</div>
-                  <div className="text-xs text-gray-500">{selectedLog.userRole}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">IP Address</div>
-                  <div className="font-medium mt-1">{selectedLog.ipAddress}</div>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-white/60">Performed By</p>
+                <p className="text-white mt-1">{selectedLog.user?.name || 'System'}</p>
               </div>
-              
-              <div className="mb-4">
-                <div className="text-sm text-gray-500 mb-2">Details</div>
-                <div className="p-4 bg-gray-50 rounded-md">
-                  <pre className="text-xs whitespace-pre-wrap">
-                    {JSON.stringify(selectedLog.details, null, 2)}
-                  </pre>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-white/60">Timestamp</p>
+                <p className="text-white mt-1">
+                  {format(new Date(selectedLog.created_at), 'MMMM dd, yyyy HH:mm:ss')}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-white/60">Description</p>
+                <p className="text-white mt-1">{selectedLog.description || 'No description'}</p>
               </div>
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setSelectedLog(null)}>Close</Button>
+              <Button variant="outline" onClick={() => setSelectedLog(null)}>
+                Close
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

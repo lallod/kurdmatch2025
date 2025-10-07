@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -12,336 +11,273 @@ import {
   Bar, 
   LineChart, 
   Line, 
-  PieChart, 
-  Pie, 
   ResponsiveContainer, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Legend, 
-  Cell 
+  Legend
 } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Brain, Download, Calendar, RefreshCw, ChevronDown } from 'lucide-react';
+import { Brain, Download, RefreshCw, TrendingUp, Users, MessageSquare, Heart } from 'lucide-react';
 import { 
   ChartContainer, 
   ChartTooltip, 
   ChartTooltipContent 
 } from '@/components/ui/chart';
+import { useAdminAnalytics } from '../hooks/useAdminAnalytics';
 
 const AnalyticsPage = () => {
-  const [timeRange, setTimeRange] = useState('month');
+  const { analytics, loading, refetch } = useAdminAnalytics();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Mock data for charts
-  const userGrowthData = [
-    { month: 'Jan', users: 1500, premium: 120 },
-    { month: 'Feb', users: 1800, premium: 150 },
-    { month: 'Mar', users: 2200, premium: 185 },
-    { month: 'Apr', users: 2600, premium: 230 },
-    { month: 'May', users: 3100, premium: 290 },
-    { month: 'Jun', users: 3800, premium: 370 },
-  ];
-
-  const retentionData = [
-    { day: '1', retention: 100 },
-    { day: '3', retention: 82 },
-    { day: '7', retention: 68 },
-    { day: '14', retention: 52 },
-    { day: '30', retention: 41 },
-    { day: '60', retention: 32 },
-    { day: '90', retention: 25 },
-  ];
-
-  const engagementData = [
-    { name: 'Messages', value: 45 },
-    { name: 'Profile Views', value: 30 },
-    { name: 'Likes', value: 15 },
-    { name: 'Photo Uploads', value: 10 },
-  ];
-
-  const userTypeData = [
-    { name: 'Free Users', value: 70 },
-    { name: 'Premium Users', value: 25 },
-    { name: 'Trial Users', value: 5 },
-  ];
-
-  const COLORS = ['#FF4B91', '#FF6B55', '#8075FF', '#2563EB'];
-
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    // Simulate data reload
-    setTimeout(() => setRefreshing(false), 1000);
+    await refetch();
+    setRefreshing(false);
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Advanced Analytics</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-white">Advanced Analytics</h1>
+          <p className="text-white/60 mt-1">Real-time insights from your platform</p>
+        </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Calendar size={16} />
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select time range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="day">Last 24 hours</SelectItem>
-                <SelectItem value="week">Last 7 days</SelectItem>
-                <SelectItem value="month">Last 30 days</SelectItem>
-                <SelectItem value="quarter">Last 90 days</SelectItem>
-                <SelectItem value="year">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           <Button 
-            variant="outline" 
-            size="sm" 
             onClick={handleRefresh} 
-            disabled={refreshing}
-            className="gap-2"
+            disabled={refreshing || loading}
+            variant="outline"
+            size="sm"
           >
-            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
-            {refreshing ? "Refreshing..." : "Refresh"}
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing || loading ? 'animate-spin' : ''}`} />
+            {refreshing || loading ? 'Refreshing...' : 'Refresh'}
           </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download size={16} />
+          <Button variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
         </div>
       </div>
 
       {/* AI banner */}
-      <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
-        <Brain size={24} className="text-tinder-rose mr-3" />
+      <div className="p-4 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border border-white/10 flex items-center">
+        <Brain size={24} className="text-primary mr-3" />
         <div>
-          <h3 className="font-semibold text-gray-800">AI-Powered Analytics</h3>
-          <p className="text-sm text-gray-600">Our AI system identifies trends and provides insights to help you optimize user engagement and retention</p>
+          <h3 className="font-semibold text-white">AI-Powered Analytics</h3>
+          <p className="text-sm text-white/60">Our AI system identifies trends and provides insights to optimize user engagement</p>
         </div>
       </div>
 
-      <Tabs defaultValue="overview">
-        <TabsList className="mb-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="acquisition">User Acquisition</TabsTrigger>
-          <TabsTrigger value="engagement">Engagement</TabsTrigger>
-          <TabsTrigger value="retention">Retention</TabsTrigger>
-          <TabsTrigger value="conversion">Conversion</TabsTrigger>
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-[#141414] border-white/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/60">Total Users</p>
+                <p className="text-2xl font-bold text-white">{analytics.totalUsers.toLocaleString()}</p>
+                <p className="text-xs text-green-400 mt-1">
+                  <TrendingUp className="inline h-3 w-3 mr-1" />
+                  {analytics.newUsersThisMonth} new this month
+                </p>
+              </div>
+              <Users className="h-8 w-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-[#141414] border-white/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/60">Active Users</p>
+                <p className="text-2xl font-bold text-white">{analytics.activeUsers.toLocaleString()}</p>
+                <p className="text-xs text-white/40 mt-1">Last 7 days</p>
+              </div>
+              <Users className="h-8 w-8 text-green-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-[#141414] border-white/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/60">Total Messages</p>
+                <p className="text-2xl font-bold text-white">{analytics.totalMessages.toLocaleString()}</p>
+                <p className="text-xs text-white/40 mt-1">{analytics.totalMatches} matches made</p>
+              </div>
+              <MessageSquare className="h-8 w-8 text-purple-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-[#141414] border-white/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/60">Premium Users</p>
+                <p className="text-2xl font-bold text-white">{analytics.premiumSubscribers.toLocaleString()}</p>
+                <p className="text-xs text-green-400 mt-1">
+                  {formatCurrency(analytics.totalRevenue)} revenue
+                </p>
+              </div>
+              <Heart className="h-8 w-8 text-pink-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList className="bg-white/5 border-white/10">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-white/10">Overview</TabsTrigger>
+          <TabsTrigger value="growth" className="data-[state=active]:bg-white/10">User Growth</TabsTrigger>
+          <TabsTrigger value="activity" className="data-[state=active]:bg-white/10">Activity</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>User Growth</CardTitle>
-                <CardDescription>Total and premium user growth over time</CardDescription>
+                <CardTitle className="text-white">User Growth (Last 30 Days)</CardTitle>
+                <CardDescription className="text-white/60">New user registrations over time</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer
-                  config={{
-                    users: { color: "#FF4B91" },
-                    premium: { color: "#FF6B55" }
-                  }}
-                  className="h-80"
-                >
-                  <LineChart data={userGrowthData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <ChartTooltip 
-                      content={
-                        <ChartTooltipContent />
-                      }
-                    />
-                    <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="users" 
-                      name="Total Users" 
-                      stroke="var(--color-users)" 
-                      activeDot={{ r: 8 }} 
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="premium" 
-                      name="Premium Users" 
-                      stroke="var(--color-premium)" 
-                    />
-                  </LineChart>
-                </ChartContainer>
+                {analytics.userGrowthData.length > 0 ? (
+                  <ChartContainer
+                    config={{
+                      count: { color: "#3b82f6" }
+                    }}
+                    className="h-80"
+                  >
+                    <LineChart data={analytics.userGrowthData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis 
+                        dataKey="date" 
+                        stroke="rgba(255,255,255,0.5)"
+                        tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      />
+                      <YAxis stroke="rgba(255,255,255,0.5)" />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="count" 
+                        name="New Users" 
+                        stroke="var(--color-count)" 
+                        strokeWidth={2}
+                        dot={{ fill: 'var(--color-count)' }}
+                      />
+                    </LineChart>
+                  </ChartContainer>
+                ) : (
+                  <div className="h-80 flex items-center justify-center text-white/40">
+                    No user growth data available
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>Retention Rate</CardTitle>
-                <CardDescription>User retention over different periods</CardDescription>
+                <CardTitle className="text-white">Message Activity (Last 30 Days)</CardTitle>
+                <CardDescription className="text-white/60">Messages sent over time</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer
-                  config={{
-                    retention: { color: "#8075FF" }
-                  }}
-                  className="h-80"
-                >
-                  <BarChart data={retentionData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <ChartTooltip 
-                      content={
-                        <ChartTooltipContent />
-                      }
-                    />
-                    <Legend />
-                    <Bar 
-                      dataKey="retention" 
-                      name="Retention %" 
-                      fill="var(--color-retention)" 
-                    />
-                  </BarChart>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Engagement Distribution</CardTitle>
-                <CardDescription>Breakdown of user engagement activities</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={engagementData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {engagementData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => `${value}%`} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>User Type Distribution</CardTitle>
-                <CardDescription>Breakdown of user types</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={userTypeData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {userTypeData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => `${value}%`} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+                {analytics.messageActivityData.length > 0 ? (
+                  <ChartContainer
+                    config={{
+                      count: { color: "#8b5cf6" }
+                    }}
+                    className="h-80"
+                  >
+                    <BarChart data={analytics.messageActivityData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis 
+                        dataKey="date" 
+                        stroke="rgba(255,255,255,0.5)"
+                        tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      />
+                      <YAxis stroke="rgba(255,255,255,0.5)" />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar 
+                        dataKey="count" 
+                        name="Messages" 
+                        fill="var(--color-count)" 
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ChartContainer>
+                ) : (
+                  <div className="h-80 flex items-center justify-center text-white/40">
+                    No message activity data available
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
 
-          <Card>
+          <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle>AI Insights</CardTitle>
-              <CardDescription>AI-generated insights based on your analytics data</CardDescription>
+              <CardTitle className="text-white">Platform Summary</CardTitle>
+              <CardDescription className="text-white/60">Key metrics at a glance</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="p-4 border rounded-lg bg-blue-50">
-                  <h4 className="font-semibold text-blue-800">User Growth Trend</h4>
-                  <p className="text-blue-700">There's been a 22.5% increase in user growth month-over-month, which exceeds industry average of 15%. Continue your current acquisition strategy.</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <p className="text-sm text-white/60">Total Photos</p>
+                  <p className="text-xl font-bold text-white mt-1">{analytics.totalPhotos.toLocaleString()}</p>
                 </div>
-                <div className="p-4 border rounded-lg bg-amber-50">
-                  <h4 className="font-semibold text-amber-800">Retention Alert</h4>
-                  <p className="text-amber-700">The 30-day retention rate has decreased by 3% compared to last month. Consider implementing re-engagement campaigns for users who haven't been active for 2+ weeks.</p>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <p className="text-sm text-white/60">Verified Users</p>
+                  <p className="text-xl font-bold text-white mt-1">{analytics.verifiedUsers.toLocaleString()}</p>
                 </div>
-                <div className="p-4 border rounded-lg bg-green-50">
-                  <h4 className="font-semibold text-green-800">Conversion Opportunity</h4>
-                  <p className="text-green-700">Users who view 5+ profiles in their first session have a 68% higher chance of converting to premium. Consider highlighting profile discovery in the onboarding flow.</p>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <p className="text-sm text-white/60">Total Matches</p>
+                  <p className="text-xl font-bold text-white mt-1">{analytics.totalMatches.toLocaleString()}</p>
+                </div>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <p className="text-sm text-white/60">Conversion Rate</p>
+                  <p className="text-xl font-bold text-white mt-1">
+                    {analytics.totalUsers > 0 
+                      ? ((analytics.premiumSubscribers / analytics.totalUsers) * 100).toFixed(1)
+                      : 0}%
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="acquisition">
-          <Card>
+        <TabsContent value="growth" className="space-y-4">
+          <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle>User Acquisition</CardTitle>
-              <CardDescription>Detailed user acquisition metrics and channels</CardDescription>
+              <CardTitle className="text-white">Detailed User Growth Analysis</CardTitle>
+              <CardDescription className="text-white/60">Track user acquisition trends</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>User acquisition analytics will appear here.</p>
+              <p className="text-white/60">Detailed growth analytics will appear here.</p>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="engagement">
-          <Card>
+        <TabsContent value="activity" className="space-y-4">
+          <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle>User Engagement</CardTitle>
-              <CardDescription>Detailed user engagement metrics and trends</CardDescription>
+              <CardTitle className="text-white">Platform Activity Metrics</CardTitle>
+              <CardDescription className="text-white/60">Monitor user engagement and activity</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>User engagement analytics will appear here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="retention">
-          <Card>
-            <CardHeader>
-              <CardTitle>User Retention</CardTitle>
-              <CardDescription>Detailed user retention metrics and cohort analysis</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>User retention analytics will appear here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="conversion">
-          <Card>
-            <CardHeader>
-              <CardTitle>Conversion Metrics</CardTitle>
-              <CardDescription>Detailed conversion metrics and funnel analysis</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Conversion analytics will appear here.</p>
+              <p className="text-white/60">Activity metrics will appear here.</p>
             </CardContent>
           </Card>
         </TabsContent>

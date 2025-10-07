@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { useAdminPayments } from '../hooks/useAdminPayments';
 
 // Import our refactored components
 import { PageHeader } from '../components/payments/PageHeader';
@@ -14,174 +15,10 @@ import { ResendReceiptDialog } from '../components/payments/ResendReceiptDialog'
 import { RefundDialog } from '../components/payments/RefundDialog';
 import { Payment } from '../components/types/payment';
 
-// Mock data for payment transactions
-const initialPayments: Payment[] = [
-  {
-    id: 'pay-001',
-    userId: 'user-123',
-    userName: 'John Smith',
-    email: 'john.smith@example.com',
-    amount: 19.99,
-    date: '2023-06-15',
-    status: 'completed',
-    method: 'credit_card',
-    planName: 'Premium',
-    description: 'Monthly subscription payment',
-    invoiceNumber: 'INV-2023-001',
-    billingAddress: {
-      name: 'John Smith',
-      address: '123 Main St',
-      city: 'New York',
-      state: 'NY',
-      postalCode: '10001',
-      country: 'USA',
-    },
-    cardInfo: {
-      type: 'Visa',
-      last4: '4242',
-      expiryDate: '05/25',
-    }
-  },
-  {
-    id: 'pay-002',
-    userId: 'user-234',
-    userName: 'Emily Johnson',
-    email: 'emily.johnson@example.com',
-    amount: 9.99,
-    date: '2023-06-14',
-    status: 'completed',
-    method: 'paypal',
-    planName: 'Basic',
-    description: 'Monthly subscription payment',
-    invoiceNumber: 'INV-2023-002',
-    billingAddress: {
-      name: 'Emily Johnson',
-      address: '456 Oak Ave',
-      city: 'Los Angeles',
-      state: 'CA',
-      postalCode: '90001',
-      country: 'USA',
-    }
-  },
-  {
-    id: 'pay-003',
-    userId: 'user-345',
-    userName: 'Michael Brown',
-    email: 'michael.brown@example.com',
-    amount: 29.99,
-    date: '2023-06-13',
-    status: 'pending',
-    method: 'bank_transfer',
-    planName: 'Ultimate',
-    description: 'Monthly subscription payment',
-    invoiceNumber: 'INV-2023-003',
-    billingAddress: {
-      name: 'Michael Brown',
-      address: '789 Pine St',
-      city: 'Chicago',
-      state: 'IL',
-      postalCode: '60007',
-      country: 'USA',
-    }
-  },
-  {
-    id: 'pay-004',
-    userId: 'user-456',
-    userName: 'Sarah Davis',
-    email: 'sarah.davis@example.com',
-    amount: 19.99,
-    date: '2023-06-12',
-    status: 'failed',
-    method: 'credit_card',
-    planName: 'Premium',
-    description: 'Monthly subscription payment failed due to expired card',
-    invoiceNumber: 'INV-2023-004',
-    billingAddress: {
-      name: 'Sarah Davis',
-      address: '321 Elm St',
-      city: 'Miami',
-      state: 'FL',
-      postalCode: '33101',
-      country: 'USA',
-    },
-    cardInfo: {
-      type: 'Mastercard',
-      last4: '5678',
-      expiryDate: '03/23',
-    }
-  },
-  {
-    id: 'pay-005',
-    userId: 'user-567',
-    userName: 'David Wilson',
-    email: 'david.wilson@example.com',
-    amount: 9.99,
-    date: '2023-06-11',
-    status: 'refunded',
-    method: 'apple_pay',
-    planName: 'Basic',
-    description: 'Refund processed due to customer request',
-    invoiceNumber: 'INV-2023-005',
-    billingAddress: {
-      name: 'David Wilson',
-      address: '555 Maple Dr',
-      city: 'Seattle',
-      state: 'WA',
-      postalCode: '98101',
-      country: 'USA',
-    }
-  },
-  {
-    id: 'pay-006',
-    userId: 'user-678',
-    userName: 'Jennifer Lee',
-    email: 'jennifer.lee@example.com',
-    amount: 29.99,
-    date: '2023-06-10',
-    status: 'completed',
-    method: 'google_pay',
-    planName: 'Ultimate',
-    description: 'Monthly subscription payment',
-    invoiceNumber: 'INV-2023-006',
-    billingAddress: {
-      name: 'Jennifer Lee',
-      address: '777 Cedar Ln',
-      city: 'Boston',
-      state: 'MA',
-      postalCode: '02108',
-      country: 'USA',
-    }
-  },
-  {
-    id: 'pay-007',
-    userId: 'user-789',
-    userName: 'Robert Taylor',
-    email: 'robert.taylor@example.com',
-    amount: 19.99,
-    date: '2023-06-09',
-    status: 'disputed',
-    method: 'credit_card',
-    planName: 'Premium',
-    description: 'Payment disputed by customer',
-    invoiceNumber: 'INV-2023-007',
-    billingAddress: {
-      name: 'Robert Taylor',
-      address: '999 Birch Ave',
-      city: 'Denver',
-      state: 'CO',
-      postalCode: '80201',
-      country: 'USA',
-    },
-    cardInfo: {
-      type: 'Amex',
-      last4: '9876',
-      expiryDate: '12/24',
-    }
-  }
-];
+// Payment data now comes from useAdminPayments hook
 
 const PaymentsPage = () => {
-  const [payments, setPayments] = useState<Payment[]>(initialPayments);
+  const { payments: adminPayments, loading, totalCount, stats, fetchPayments, refundPayment } = useAdminPayments();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [methodFilter, setMethodFilter] = useState('all');
@@ -189,6 +26,26 @@ const PaymentsPage = () => {
   const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
   const [activeTab, setActiveTab] = useState('transactions');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    fetchPayments(currentPage, 10, statusFilter);
+  }, [currentPage, statusFilter]);
+
+  // Convert AdminPayment to Payment type for compatibility
+  const payments: Payment[] = adminPayments.map(p => ({
+    id: p.id,
+    userId: p.user_id,
+    userName: p.profile?.name || 'Unknown',
+    email: '',
+    amount: p.amount,
+    date: p.created_at,
+    status: p.status as any,
+    method: p.payment_method || 'credit_card',
+    planName: p.subscription_type || 'N/A',
+    description: p.description || '',
+    invoiceNumber: `INV-${p.id.slice(0, 8)}`,
+  }));
   
   // Dialog states
   const [isViewReceiptOpen, setIsViewReceiptOpen] = useState(false);
@@ -196,28 +53,20 @@ const PaymentsPage = () => {
   const [isRefundOpen, setIsRefundOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
 
-  // Filter payments based on search term, status, method, and date
+  // Filter payments based on search term and method
   const filteredPayments = payments.filter(payment => {
     const matchesSearch = 
-      payment.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = 
-      statusFilter === 'all' || 
-      payment.status === statusFilter;
+      payment.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesMethod = 
       methodFilter === 'all' || 
       payment.method === methodFilter;
     
-    // Date filtering (simplified for demo)
-    const matchesDate = dateFilter === 'all' || true;
-    
-    return matchesSearch && matchesStatus && matchesMethod && matchesDate;
+    return matchesSearch && matchesMethod;
   });
 
-  // Sort payments
+  // Sort payments  
   const sortedPayments = [...filteredPayments].sort((a, b) => {
     let comparison = 0;
     
@@ -259,27 +108,23 @@ const PaymentsPage = () => {
     }).format(amount);
   };
 
-  // Calculate total revenue
+  // Calculate total revenue from stats
   const calculateTotalRevenue = () => {
-    return payments
-      .filter(payment => payment.status === 'completed')
-      .reduce((total, payment) => total + payment.amount, 0);
+    return stats.totalRevenue;
   };
 
   // Process refund
-  const handleRefund = () => {
+  const handleRefund = async () => {
     if (!selectedPayment) return;
     
-    const updatedPayments = payments.map(payment => 
-      payment.id === selectedPayment.id 
-        ? { ...payment, status: 'refunded' } 
-        : payment
-    );
-    
-    setPayments(updatedPayments);
-    setIsRefundOpen(false);
-    setSelectedPayment(null);
-    toast.success("Payment refunded successfully");
+    const success = await refundPayment(selectedPayment.id);
+    if (success) {
+      toast.success("Payment refunded successfully");
+      setIsRefundOpen(false);
+      setSelectedPayment(null);
+    } else {
+      toast.error("Failed to refund payment");
+    }
   };
 
   // Resend receipt
