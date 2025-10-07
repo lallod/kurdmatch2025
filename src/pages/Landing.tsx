@@ -64,24 +64,54 @@ const Landing = () => {
       <FloatingCulturalElements />
 
       {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-10 p-6">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <Heart className="w-6 h-6 text-purple-600" />
+      <header className="fixed top-0 left-0 right-0 z-50 animate-fade-in">
+        <div className="bg-white/5 backdrop-blur-xl border-b border-white/10">
+          <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-4">
+            {/* Logo Section */}
+            <div className="flex items-center gap-3 group cursor-pointer transition-all duration-300 hover:scale-105">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-md opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <Heart className="w-7 h-7 text-purple-600 group-hover:scale-110 transition-transform" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-white font-bold text-xl tracking-tight">KurdMatch</h1>
+                <p className="text-purple-200 text-xs font-medium">Connect Kurdish Hearts</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-white font-bold text-xl">KurdMatch</h1>
-              <p className="text-purple-200 text-sm">Connect Kurdish Hearts</p>
+            
+            {/* Right Section */}
+            <div className="flex items-center gap-6">
+              {/* Connecting Worldwide Badge */}
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full hover:bg-white/20 transition-all duration-300 hover:scale-105 cursor-default">
+                <Globe className="w-4 h-4 text-purple-300 animate-pulse" />
+                <span className="text-purple-100 text-sm font-medium">Connecting Kurds Worldwide</span>
+              </div>
+
+              {/* Login/Signup Buttons */}
+              <div className="hidden lg:flex items-center gap-3">
+                <Button 
+                  variant="ghost"
+                  className="text-white hover:bg-white/10 backdrop-blur-sm"
+                  onClick={() => navigate('/auth')}
+                >
+                  Log In
+                </Button>
+                <Button 
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  onClick={() => navigate('/register')}
+                >
+                  Sign Up
+                </Button>
+              </div>
             </div>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-2 text-purple-200 text-sm">
-            <Globe className="w-4 h-4" />
-            <span>Connecting Kurds Worldwide</span>
           </div>
         </div>
       </header>
+
+      {/* Spacer for fixed header */}
+      <div className="h-20"></div>
 
       {/* Hero Section - Split Layout */}
       <div className="relative flex min-h-screen items-center justify-center px-6 py-20">
