@@ -23,17 +23,17 @@ interface CategoryItemProps {
 
 const CategoryItem: React.FC<CategoryItemProps> = ({ icon, name, count, color, onClick }) => (
   <div 
-    className="flex items-center p-2 rounded-lg hover:bg-secondary/50 cursor-pointer"
+    className="flex items-center p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
     onClick={onClick}
   >
     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${color}`}>
       {icon}
     </div>
     <div className="ml-3 flex-1">
-      <p className="text-sm font-medium">{name}</p>
+      <p className="text-sm font-medium text-white">{name}</p>
     </div>
-    <div className="bg-secondary rounded-full w-6 h-6 flex items-center justify-center">
-      <span className="text-xs">{count}</span>
+    <div className="bg-white/10 rounded-full w-6 h-6 flex items-center justify-center">
+      <span className="text-xs text-white">{count}</span>
     </div>
   </div>
 );
@@ -47,49 +47,49 @@ const QuestionCategoriesSection = () => {
       icon: <User size={16} />, 
       name: 'Basics', 
       count: getCategoryCount(questions, 'Basics'), 
-      color: 'bg-blue-100 text-blue-700',
+      color: 'bg-blue-500/10 text-blue-400',
       tabValue: 'basic'
     },
     { 
       icon: <Heart size={16} />, 
       name: 'Relationships', 
       count: getCategoryCount(questions, 'Relationships'), 
-      color: 'bg-red-100 text-red-700',
+      color: 'bg-red-500/10 text-red-400',
       tabValue: 'relationships'
     },
     { 
       icon: <Coffee size={16} />, 
       name: 'Lifestyle', 
       count: getCategoryCount(questions, 'Lifestyle'), 
-      color: 'bg-amber-100 text-amber-700',
+      color: 'bg-amber-500/10 text-amber-400',
       tabValue: 'lifestyle'
     },
     { 
       icon: <Scroll size={16} />, 
       name: 'Beliefs', 
       count: getCategoryCount(questions, 'Beliefs'), 
-      color: 'bg-purple-100 text-purple-700',
+      color: 'bg-purple-500/10 text-purple-400',
       tabValue: 'beliefs'
     },
     { 
       icon: <Brain size={16} />, 
       name: 'Personality', 
       count: getCategoryCount(questions, 'Personality'), 
-      color: 'bg-indigo-100 text-indigo-700',
+      color: 'bg-indigo-500/10 text-indigo-400',
       tabValue: 'personality'
     },
     { 
       icon: <Star size={16} />, 
       name: 'Interests', 
       count: getCategoryCount(questions, 'Interests'), 
-      color: 'bg-green-100 text-green-700',
+      color: 'bg-green-500/10 text-green-400',
       tabValue: 'interests'
     },
     { 
       icon: <Activity size={16} />, 
       name: 'Physical', 
       count: getCategoryCount(questions, 'Physical'), 
-      color: 'bg-orange-100 text-orange-700',
+      color: 'bg-orange-500/10 text-orange-400',
       tabValue: 'physical'
     },
   ];
@@ -98,19 +98,19 @@ const QuestionCategoriesSection = () => {
   const totalQuestions = questions.length;
 
   return (
-    <Card>
+    <Card className="bg-[#141414] border-white/5">
       <CardHeader>
-        <CardTitle>Question Categories</CardTitle>
+        <CardTitle className="text-white">Question Categories</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div 
-          className="flex items-center p-2 rounded-lg hover:bg-secondary/50 cursor-pointer mb-2 border-b pb-3"
+          className="flex items-center p-2 rounded-lg hover:bg-white/5 cursor-pointer mb-2 border-b border-white/5 pb-3 transition-colors"
           onClick={() => setActiveTab('all')}
         >
           <div className="ml-1 flex-1">
-            <p className="text-sm font-medium">All Questions</p>
+            <p className="text-sm font-medium text-white">All Questions</p>
           </div>
-          <div className="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center">
+          <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
             <span className="text-xs">{totalQuestions}</span>
           </div>
         </div>

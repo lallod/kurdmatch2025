@@ -112,9 +112,9 @@ const QuestionPreviewCard: React.FC<QuestionPreviewCardProps> = ({ question }) =
   };
 
   return (
-    <Card>
+    <Card className="bg-[#141414] border-white/5">
       <CardHeader>
-        <CardTitle className="flex justify-between items-center">
+        <CardTitle className="flex justify-between items-center text-white">
           <span>Preview</span>
           <Tabs defaultValue="mobile" className="w-[180px]">
             <TabsList className="grid w-full grid-cols-2">
@@ -131,10 +131,10 @@ const QuestionPreviewCard: React.FC<QuestionPreviewCardProps> = ({ question }) =
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 border p-4 rounded-lg bg-background">
+        <div className="space-y-4 border border-white/5 p-4 rounded-lg bg-black/20">
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">Registration Preview</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-lg font-medium text-white">Registration Preview</h3>
+            <p className="text-sm text-white/60">
               {question ? 
                 `Question from the "${question.category}" category for the "${question.registrationStep}" step` : 
                 "Select a question to preview how it will appear to users"}

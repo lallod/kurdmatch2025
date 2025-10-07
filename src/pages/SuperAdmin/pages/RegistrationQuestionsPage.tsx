@@ -43,8 +43,8 @@ const RegistrationQuestionsPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Registration Questions</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold text-white">Registration Questions</h1>
+          <p className="text-white/60">
             Manage the questions users are asked during the registration process
           </p>
         </div>
@@ -68,9 +68,9 @@ const RegistrationQuestionsPage = () => {
 
       <div className="flex space-x-4">
         <div className="w-2/3 space-y-6">
-          <Card>
+          <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <QuestionsToolbar 
+              <QuestionsToolbar
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
                 onFilterSelect={setActiveTab}

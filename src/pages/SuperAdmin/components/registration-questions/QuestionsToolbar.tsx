@@ -27,8 +27,8 @@ const QuestionsToolbar: React.FC<QuestionsToolbarProps> = ({
   return (
     <div className="flex justify-between items-center">
       <div>
-        <CardTitle>Registration Questions</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-white">Registration Questions</CardTitle>
+        <CardDescription className="text-white/60">
           Configure questions users will answer during registration
         </CardDescription>
       </div>

@@ -18,8 +18,8 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   if (selectedCount === 0) return null;
   
   return (
-    <div className="bg-secondary/30 p-2 rounded-lg flex items-center justify-between">
-      <span className="text-sm">{selectedCount} questions selected</span>
+    <div className="bg-white/5 p-2 rounded-lg flex items-center justify-between border border-white/10">
+      <span className="text-sm text-white">{selectedCount} questions selected</span>
       <div className="flex space-x-2">
         <Button 
           variant="outline" 
