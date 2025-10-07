@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Loader2, Heart, Globe, Users, Shield } from 'lucide-react';
+import { Loader2, Heart, Globe, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { LandingPageContent, initialContent } from '@/pages/SuperAdmin/pages/LandingPageEditor/types';
+import FloatingCulturalElements from '@/components/landing/FloatingCulturalElements';
+import GlassmorphismLoginCard from '@/components/landing/GlassmorphismLoginCard';
+import SocialFeatureCards from '@/components/landing/SocialFeatureCards';
+import CulturalShowcase from '@/components/landing/CulturalShowcase';
+import LandingCTA from '@/components/landing/LandingCTA';
 
 const Landing = () => {
   const [content, setContent] = useState<LandingPageContent>(initialContent);
@@ -20,7 +25,6 @@ const Landing = () => {
           .maybeSingle();
 
         if (!error && data?.content) {
-          // Validate and set content safely
           if (typeof data.content === 'object' && data.content !== null && !Array.isArray(data.content)) {
             const contentData = data.content as Record<string, any>;
             if (contentData.hero && contentData.features && contentData.kurdistan && contentData.footer) {
@@ -47,7 +51,10 @@ const Landing = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 relative overflow-hidden">
+      {/* Floating Cultural Elements */}
+      <FloatingCulturalElements />
+
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-10 p-6">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -68,82 +75,86 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex min-h-screen items-center justify-center px-6 py-20">
-        <div className="w-full max-w-4xl text-center space-y-12">
+      {/* Hero Section - Split Layout */}
+      <div className="relative flex min-h-screen items-center justify-center px-6 py-20">
+        <div className="w-full max-w-7xl grid md:grid-cols-2 gap-12 items-center">
           
-          {/* Hero Content */}
-          <div className="space-y-6">
-            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-              Find Your Kurdish <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Match</span>
+          {/* Left Side - Hero Content */}
+          <div className="space-y-8 text-center md:text-left">
+            {/* Animated Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full animate-fade-in">
+              <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
+              <span className="text-purple-200 text-sm font-medium">AI-Powered Kurdish Dating</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight animate-fade-in">
+              Find Your Kurdish{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 animate-gradient-slow">
+                Match
+              </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-purple-200 max-w-3xl mx-auto">
-              {content.hero.subtitle || "The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values."}
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-purple-200 leading-relaxed animate-fade-in">
+              {content.hero.subtitle || "The first dating platform designed exclusively for Kurdish people, bringing together singles who share our rich heritage and values."}
             </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-12 py-6 text-xl"
-              onClick={() => navigate('/register')}
-            >
-              Start Your Journey
-            </Button>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-12 py-6 text-xl shadow-lg shadow-purple-500/50 animate-pulse-slow"
+                onClick={() => navigate('/register')}
+              >
+                Join Now – Free
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-2 border-white/30 bg-white/5 hover:bg-white/10 text-white font-semibold px-12 py-6 text-xl backdrop-blur-sm"
+              >
+                Learn More
+              </Button>
+            </div>
+
+            {/* User Count with Avatar Stack */}
+            <div className="flex items-center justify-center md:justify-start gap-3 pt-4 animate-fade-in">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div 
+                    key={i} 
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 border-2 border-white/20" 
+                  />
+                ))}
+              </div>
+              <span className="text-purple-200 font-medium">
+                <span className="text-white font-bold">10,502</span> Kurdish singles ready to connect
+              </span>
+            </div>
           </div>
 
-          {/* Stats */}
-          <div className="flex items-center justify-center gap-2 pt-8">
-            <div className="flex -space-x-2">
-              {[1,2,3,4,5].map(i => (
-                <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 border-2 border-white/20" />
-              ))}
-            </div>
-            <span className="text-purple-200 font-medium ml-2">502 Kurdish singles ready to connect</span>
+          {/* Right Side - Glassmorphism Login Card */}
+          <div className="flex justify-center md:justify-end animate-fade-in">
+            <GlassmorphismLoginCard />
           </div>
         </div>
       </div>
-      
-      {/* Features Section */}
-      <div className="bg-gradient-to-b from-transparent to-black/20 py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
-            Connecting Kurdish Hearts
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
-                <Globe className="w-8 h-8 text-purple-300" />
-              </div>
-              <h3 className="text-xl font-semibold text-white">Worldwide Connection</h3>
-              <p className="text-purple-200">
-                Connect with Kurdish singles from all regions of Kurdistan and across the global diaspora.
-              </p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
-                <Users className="w-8 h-8 text-purple-300" />
-              </div>
-              <h3 className="text-xl font-semibold text-white">Cultural Understanding</h3>
-              <p className="text-purple-200">
-                Find someone who shares your Kurdish heritage, traditions, and values.
-              </p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
-                <Heart className="w-8 h-8 text-purple-300" />
-              </div>
-              <h3 className="text-xl font-semibold text-white">Meaningful Relationships</h3>
-              <p className="text-purple-200">
-                Build connections based on shared cultural identity and personal compatibility.
-              </p>
-            </div>
-          </div>
-        </div>
+
+      {/* Social Feature Cards Section */}
+      <div className="relative bg-gradient-to-b from-black/20 via-transparent to-black/20">
+        <SocialFeatureCards />
+      </div>
+
+      {/* Cultural Showcase Section */}
+      <div className="relative">
+        <CulturalShowcase />
+      </div>
+
+      {/* Final CTA Section */}
+      <div className="relative">
+        <LandingCTA />
       </div>
     </div>
   );
