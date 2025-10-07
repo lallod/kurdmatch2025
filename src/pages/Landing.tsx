@@ -88,31 +88,31 @@ const Landing = () => {
         <div className="w-full max-w-7xl grid md:grid-cols-2 gap-12 items-center">
           
           {/* Left Side - Hero Content */}
-          <div className="space-y-8 text-center md:text-left">
+          <div className="space-y-6 text-left">
             {/* Animated Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full animate-fade-in hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50 cursor-default">
-              <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full animate-fade-in">
+              <Sparkles className="w-4 h-4 text-yellow-300" />
               <span className="text-purple-200 text-sm font-medium">AI-Powered Kurdish Dating</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight animate-fade-in">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight animate-fade-in">
               Find Your Kurdish{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 animate-gradient-slow">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-pink-300 to-purple-400">
                 Match
               </span>
             </h1>
             
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-purple-200 leading-relaxed animate-fade-in">
-              {content.hero.subtitle || "The first dating platform designed exclusively for Kurdish people, bringing together singles who share our rich heritage and values."}
+            <p className="text-lg md:text-xl text-purple-200 leading-relaxed max-w-xl animate-fade-in">
+              The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in">
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in pt-2">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-12 py-6 text-xl shadow-lg shadow-purple-500/50 animate-pulse-slow transform-gpu transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-purple-500/70 button-3d"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-10 py-6 text-lg shadow-lg transition-all duration-300 hover:scale-105 rounded-full"
                 onClick={() => navigate('/register')}
               >
                 Join Now – Free
@@ -120,24 +120,23 @@ const Landing = () => {
               
               <Button 
                 size="lg"
-                variant="outline"
-                className="border-2 border-white/30 bg-white/5 hover:bg-white/10 text-white font-semibold px-12 py-6 text-xl backdrop-blur-sm transform-gpu transition-all duration-300 hover:scale-105 hover:border-purple-400/50 button-3d"
+                className="border-2 border-white/30 bg-transparent hover:bg-white/10 text-white font-semibold px-10 py-6 text-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 rounded-full"
               >
                 Learn More
               </Button>
             </div>
 
             {/* User Count with Avatar Stack */}
-            <div className="flex items-center justify-center md:justify-start gap-3 pt-4 animate-fade-in">
-              <div className="flex -space-x-2">
+            <div className="flex items-center gap-3 pt-4 animate-fade-in">
+              <div className="flex -space-x-3">
                 {[1, 2, 3, 4, 5].map(i => (
                   <div 
                     key={i} 
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 border-2 border-white/20" 
+                    className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 border-2 border-purple-900" 
                   />
                 ))}
               </div>
-              <span className="text-purple-200 font-medium">
+              <span className="text-purple-200 font-medium text-base">
                 <span className="text-white font-bold">10,502</span> Kurdish singles ready to connect
               </span>
             </div>
