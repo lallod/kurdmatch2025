@@ -7,6 +7,8 @@ import EmailVerificationGuard from './EmailVerificationGuard';
 import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 import Swipe from '@/pages/Swipe';
 
 import DiscoveryNearby from '@/pages/DiscoveryNearby';
@@ -66,6 +68,14 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/register" 
         element={user ? <Navigate to="/discovery" replace /> : <Register />} 
+      />
+      <Route 
+        path="/forgot-password" 
+        element={user ? <Navigate to="/discovery" replace /> : <ForgotPassword />} 
+      />
+      <Route 
+        path="/reset-password" 
+        element={<ResetPassword />} 
       />
       
       {/* OAuth Callback Route */}
