@@ -1994,27 +1994,47 @@ export type Database = {
         Row: {
           age: number | null
           bio: string | null
-          body_type: string | null
-          education: string | null
-          ethnicity: string | null
           gender: string | null
-          height: string | null
           hobbies: string[] | null
           id: string | null
           interests: string[] | null
           kurdistan_region: string | null
           languages: string[] | null
-          last_active: string | null
-          latitude: number | null
           location: string | null
-          longitude: number | null
           name: string | null
           occupation: string | null
           profile_image: string | null
-          relationship_goals: string | null
-          religion: string | null
           verified: boolean | null
-          want_children: string | null
+        }
+        Insert: {
+          age?: number | null
+          bio?: string | null
+          gender?: string | null
+          hobbies?: string[] | null
+          id?: string | null
+          interests?: string[] | null
+          kurdistan_region?: string | null
+          languages?: string[] | null
+          location?: string | null
+          name?: string | null
+          occupation?: string | null
+          profile_image?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          age?: number | null
+          bio?: string | null
+          gender?: string | null
+          hobbies?: string[] | null
+          id?: string | null
+          interests?: string[] | null
+          kurdistan_region?: string | null
+          languages?: string[] | null
+          location?: string | null
+          name?: string | null
+          occupation?: string | null
+          profile_image?: string | null
+          verified?: boolean | null
         }
         Relationships: []
       }
