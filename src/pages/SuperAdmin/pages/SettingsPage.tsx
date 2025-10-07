@@ -1,10 +1,8 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Card, 
   CardContent, 
   CardDescription, 
-  CardFooter, 
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
@@ -19,17 +17,11 @@ import {
 } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { 
-  Cloud, 
   AlertTriangle, 
   Mail, 
-  Shield, 
-  BellRing, 
-  Percent, 
   SaveIcon, 
-  Key, 
-  Smartphone,
-  Trash2,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -48,127 +40,51 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
+import { useAdminSettings } from '@/hooks/useAdminSettings';
 
 const SettingsPage = () => {
-  // States for various settings
-  const [emailSettings, setEmailSettings] = useState({
-    dailyDigest: true,
-    newUserNotifications: true,
-    reportAlerts: true,
-    marketingEmails: false
-  });
-  
-  const [systemSettings, setSystemSettings] = useState({
-    maintenanceMode: false,
-    userRegistration: true,
-    photoUploads: true,
-    messageSystem: true
-  });
-  
-  const [securitySettings, setSecuritySettings] = useState({
-    twoFactorAuth: true,
-    passwordExpiry: '90',
-    sessionTimeout: '30',
-    ipRestriction: false
-  });
-  
-  const [apiSettings, setApiSettings] = useState({
-    rateLimiting: true,
-    requestsPerMinute: '100',
-    apiKey: 'sk_test_51LzMNHIuUdN4PkgVRi9JbvZnJO8LgMjA7YfZbWTBUdPwssKS2',
-    webhookUrl: 'https://example.com/webhook'
-  });
-  
+  const { settings, isLoading, getSetting, updateSetting, updateMultipleSettings, resetToDefaults } = useAdminSettings();
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  
-  const handleEmailSettingChange = (key: keyof typeof emailSettings) => {
-    setEmailSettings({
-      ...emailSettings,
-      [key]: !emailSettings[key]
-    });
-  };
-  
-  const handleSystemSettingChange = (key: keyof typeof systemSettings) => {
-    setSystemSettings({
-      ...systemSettings,
-      [key]: !systemSettings[key]
-    });
-  };
-  
-  const handleSecuritySettingChange = (
-    key: keyof typeof securitySettings, 
-    value: string | boolean
-  ) => {
-    setSecuritySettings({
-      ...securitySettings,
+  const [localSettings, setLocalSettings] = useState<Record<string, any>>({});
+
+  // Initialize local settings from database
+  useEffect(() => {
+    if (settings) {
+      const settingsMap: Record<string, any> = {};
+      settings.forEach(setting => {
+        settingsMap[setting.setting_key] = setting.setting_value;
+      });
+      setLocalSettings(settingsMap);
+    }
+  }, [settings]);
+
+  const handleSettingChange = (key: string, value: any) => {
+    setLocalSettings(prev => ({
+      ...prev,
       [key]: value
-    });
+    }));
   };
-  
-  const handleApiSettingChange = (
-    key: keyof typeof apiSettings, 
-    value: string | boolean
-  ) => {
-    setApiSettings({
-      ...apiSettings,
-      [key]: value
-    });
+
+  const saveAllSettings = () => {
+    const updates = Object.entries(localSettings).map(([key, value]) => ({
+      key,
+      value
+    }));
+    updateMultipleSettings.mutate(updates);
   };
-  
-  const saveSettings = () => {
-    setIsSaving(true);
-    
-    // Simulate API call to save settings
-    setTimeout(() => {
-      setIsSaving(false);
-      // Success notification would be shown here
-    }, 1000);
-  };
-  
-  const resetSettings = () => {
-    // Reset all settings to their default values
-    setEmailSettings({
-      dailyDigest: true,
-      newUserNotifications: true,
-      reportAlerts: true,
-      marketingEmails: false
-    });
-    
-    setSystemSettings({
-      maintenanceMode: false,
-      userRegistration: true,
-      photoUploads: true,
-      messageSystem: true
-    });
-    
-    setSecuritySettings({
-      twoFactorAuth: true,
-      passwordExpiry: '90',
-      sessionTimeout: '30',
-      ipRestriction: false
-    });
-    
-    setApiSettings({
-      rateLimiting: true,
-      requestsPerMinute: '100',
-      apiKey: 'sk_test_51LzMNHIuUdN4PkgVRi9JbvZnJO8LgMjA7YfZbWTBUdPwssKS2',
-      webhookUrl: 'https://example.com/webhook'
-    });
-    
+
+  const handleResetConfirm = () => {
+    resetToDefaults.mutate();
     setIsResetConfirmOpen(false);
   };
-  
-  const regenerateApiKey = () => {
-    // Generate a new random API key (in a real app, this would be done securely on the server)
-    const newKey = 'sk_test_' + Math.random().toString(36).substring(2, 15) + 
-                   Math.random().toString(36).substring(2, 15);
-    
-    setApiSettings({
-      ...apiSettings,
-      apiKey: newKey
-    });
-  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -177,8 +93,8 @@ const SettingsPage = () => {
         <div className="flex gap-2">
           <Dialog open={isResetConfirmOpen} onOpenChange={setIsResetConfirmOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <RefreshCw size={16} />
+              <Button variant="outline" className="gap-2" disabled={resetToDefaults.isPending}>
+                <RefreshCw size={16} className={resetToDefaults.isPending ? 'animate-spin' : ''} />
                 Reset to Defaults
               </Button>
             </DialogTrigger>
@@ -193,16 +109,16 @@ const SettingsPage = () => {
                 <Button variant="outline" onClick={() => setIsResetConfirmOpen(false)}>
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={resetSettings}>
-                  Reset All Settings
+                <Button variant="destructive" onClick={handleResetConfirm} disabled={resetToDefaults.isPending}>
+                  {resetToDefaults.isPending ? 'Resetting...' : 'Reset All Settings'}
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
           
-          <Button className="gap-2" onClick={saveSettings} disabled={isSaving}>
+          <Button className="gap-2" onClick={saveAllSettings} disabled={updateMultipleSettings.isPending}>
             <SaveIcon size={16} />
-            {isSaving ? 'Saving...' : 'Save Settings'}
+            {updateMultipleSettings.isPending ? 'Saving...' : 'Save Settings'}
           </Button>
         </div>
       </div>
@@ -234,7 +150,7 @@ const SettingsPage = () => {
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    {systemSettings.maintenanceMode && (
+                    {localSettings.maintenance_mode?.enabled && (
                       <Badge variant="outline" className="text-yellow-500 border-yellow-200 bg-yellow-50">
                         <AlertTriangle size={12} className="mr-1" />
                         Enabled
@@ -242,8 +158,8 @@ const SettingsPage = () => {
                     )}
                     <Switch
                       id="maintenance-mode"
-                      checked={systemSettings.maintenanceMode}
-                      onCheckedChange={() => handleSystemSettingChange('maintenanceMode')}
+                      checked={localSettings.maintenance_mode?.enabled || false}
+                      onCheckedChange={(checked) => handleSettingChange('maintenance_mode', { enabled: checked })}
                     />
                   </div>
                 </div>
@@ -257,8 +173,8 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="user-registration"
-                    checked={systemSettings.userRegistration}
-                    onCheckedChange={() => handleSystemSettingChange('userRegistration')}
+                    checked={localSettings.user_registration?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('user_registration', { enabled: checked })}
                   />
                 </div>
                 
@@ -271,8 +187,8 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="photo-uploads"
-                    checked={systemSettings.photoUploads}
-                    onCheckedChange={() => handleSystemSettingChange('photoUploads')}
+                    checked={localSettings.photo_uploads?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('photo_uploads', { enabled: checked })}
                   />
                 </div>
                 
@@ -285,8 +201,8 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="message-system"
-                    checked={systemSettings.messageSystem}
-                    onCheckedChange={() => handleSystemSettingChange('messageSystem')}
+                    checked={localSettings.message_system?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('message_system', { enabled: checked })}
                   />
                 </div>
               </CardContent>
@@ -302,12 +218,21 @@ const SettingsPage = () => {
               <CardContent className="space-y-4">
                 <div className="grid gap-2">
                   <Label htmlFor="app-name">Application Name</Label>
-                  <Input id="app-name" defaultValue="Dating App" />
+                  <Input 
+                    id="app-name" 
+                    value={localSettings.app_name?.value || ''} 
+                    onChange={(e) => handleSettingChange('app_name', { value: e.target.value })}
+                  />
                 </div>
                 
                 <div className="grid gap-2">
                   <Label htmlFor="support-email">Support Email</Label>
-                  <Input id="support-email" type="email" defaultValue="support@datingapp.com" />
+                  <Input 
+                    id="support-email" 
+                    type="email" 
+                    value={localSettings.support_email?.value || ''} 
+                    onChange={(e) => handleSettingChange('support_email', { value: e.target.value })}
+                  />
                 </div>
                 
                 <div className="grid gap-2">
@@ -357,30 +282,52 @@ const SettingsPage = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="smtp-host">SMTP Host</Label>
-                    <Input id="smtp-host" defaultValue="smtp.example.com" />
+                    <Input 
+                      id="smtp-host" 
+                      value={localSettings.smtp_host?.value || ''} 
+                      onChange={(e) => handleSettingChange('smtp_host', { value: e.target.value })}
+                    />
                   </div>
                   
                   <div className="grid gap-2">
                     <Label htmlFor="smtp-port">SMTP Port</Label>
-                    <Input id="smtp-port" defaultValue="587" />
+                    <Input 
+                      id="smtp-port" 
+                      value={localSettings.smtp_port?.value || ''} 
+                      onChange={(e) => handleSettingChange('smtp_port', { value: e.target.value })}
+                    />
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="smtp-username">SMTP Username</Label>
-                    <Input id="smtp-username" defaultValue="notifications@example.com" />
+                    <Input 
+                      id="smtp-username" 
+                      value={localSettings.smtp_username?.value || ''} 
+                      onChange={(e) => handleSettingChange('smtp_username', { value: e.target.value })}
+                    />
                   </div>
                   
                   <div className="grid gap-2">
                     <Label htmlFor="smtp-password">SMTP Password</Label>
-                    <Input id="smtp-password" type="password" defaultValue="••••••••••••" />
+                    <Input 
+                      id="smtp-password" 
+                      type="password" 
+                      placeholder="••••••••••••"
+                      value={localSettings.smtp_password?.value || ''} 
+                      onChange={(e) => handleSettingChange('smtp_password', { value: e.target.value })}
+                    />
                   </div>
                 </div>
                 
                 <div className="grid gap-2">
                   <Label htmlFor="from-email">From Email Address</Label>
-                  <Input id="from-email" defaultValue="no-reply@datingapp.com" />
+                  <Input 
+                    id="from-email" 
+                    value={localSettings.from_email?.value || ''} 
+                    onChange={(e) => handleSettingChange('from_email', { value: e.target.value })}
+                  />
                 </div>
                 
                 <div className="flex items-center space-x-2">
@@ -417,8 +364,8 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="daily-digest"
-                    checked={emailSettings.dailyDigest}
-                    onCheckedChange={() => handleEmailSettingChange('dailyDigest')}
+                    checked={localSettings.daily_digest?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('daily_digest', { enabled: checked })}
                   />
                 </div>
                 
@@ -431,8 +378,8 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="new-user-notifications"
-                    checked={emailSettings.newUserNotifications}
-                    onCheckedChange={() => handleEmailSettingChange('newUserNotifications')}
+                    checked={localSettings.new_user_notifications?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('new_user_notifications', { enabled: checked })}
                   />
                 </div>
                 
@@ -445,22 +392,8 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="report-alerts"
-                    checked={emailSettings.reportAlerts}
-                    onCheckedChange={() => handleEmailSettingChange('reportAlerts')}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="marketing-emails">Marketing Emails</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Send promotional emails to users
-                    </p>
-                  </div>
-                  <Switch
-                    id="marketing-emails"
-                    checked={emailSettings.marketingEmails}
-                    onCheckedChange={() => handleEmailSettingChange('marketingEmails')}
+                    checked={localSettings.report_alerts?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('report_alerts', { enabled: checked })}
                   />
                 </div>
               </CardContent>
@@ -486,19 +419,11 @@ const SettingsPage = () => {
                       Require 2FA for admin accounts
                     </p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {securitySettings.twoFactorAuth && (
-                      <Badge variant="outline" className="text-green-500 border-green-200 bg-green-50">
-                        <Shield size={12} className="mr-1" />
-                        Enabled
-                      </Badge>
-                    )}
-                    <Switch
-                      id="two-factor-auth"
-                      checked={securitySettings.twoFactorAuth}
-                      onCheckedChange={() => handleSecuritySettingChange('twoFactorAuth', !securitySettings.twoFactorAuth)}
-                    />
-                  </div>
+                  <Switch
+                    id="two-factor-auth"
+                    checked={localSettings.two_factor_auth?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('two_factor_auth', { enabled: checked })}
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -510,31 +435,25 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="ip-restriction"
-                    checked={securitySettings.ipRestriction}
-                    onCheckedChange={() => handleSecuritySettingChange('ipRestriction', !securitySettings.ipRestriction)}
+                    checked={localSettings.ip_restriction?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('ip_restriction', { enabled: checked })}
                   />
                 </div>
                 
                 <div className="grid gap-2">
                   <Label htmlFor="password-expiry">Password Expiry (days)</Label>
-                  <div className="flex gap-2">
-                    <Input 
-                      id="password-expiry" 
-                      value={securitySettings.passwordExpiry}
-                      onChange={(e) => handleSecuritySettingChange('passwordExpiry', e.target.value)}
-                    />
-                    <Button variant="outline" className="gap-2 whitespace-nowrap">
-                      <Key size={16} />
-                      Test Policy
-                    </Button>
-                  </div>
+                  <Input 
+                    id="password-expiry" 
+                    value={localSettings.password_expiry?.days || '90'}
+                    onChange={(e) => handleSettingChange('password_expiry', { days: parseInt(e.target.value) })}
+                  />
                 </div>
                 
                 <div className="grid gap-2">
                   <Label htmlFor="session-timeout">Session Timeout (minutes)</Label>
                   <Select 
-                    value={securitySettings.sessionTimeout}
-                    onValueChange={(value) => handleSecuritySettingChange('sessionTimeout', value)}
+                    value={localSettings.session_timeout?.minutes?.toString() || '30'}
+                    onValueChange={(value) => handleSettingChange('session_timeout', { minutes: parseInt(value) })}
                   >
                     <SelectTrigger id="session-timeout">
                       <SelectValue placeholder="Select timeout period" />
@@ -646,109 +565,22 @@ const SettingsPage = () => {
                   </div>
                   <Switch
                     id="rate-limiting"
-                    checked={apiSettings.rateLimiting}
-                    onCheckedChange={() => handleApiSettingChange('rateLimiting', !apiSettings.rateLimiting)}
+                    checked={localSettings.rate_limiting?.enabled || false}
+                    onCheckedChange={(checked) => handleSettingChange('rate_limiting', { enabled: checked })}
                   />
                 </div>
                 
-                {apiSettings.rateLimiting && (
+                {(localSettings.rate_limiting?.enabled || false) && (
                   <div className="grid gap-2">
                     <Label htmlFor="requests-per-minute">Requests Per Minute</Label>
                     <Input 
                       id="requests-per-minute" 
-                      value={apiSettings.requestsPerMinute}
-                      onChange={(e) => handleApiSettingChange('requestsPerMinute', e.target.value)}
+                      type="number"
+                      value={localSettings.requests_per_minute?.value || '100'}
+                      onChange={(e) => handleSettingChange('requests_per_minute', { value: parseInt(e.target.value) })}
                     />
                   </div>
                 )}
-                
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="api-key">API Key</Label>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={regenerateApiKey}
-                      className="text-xs h-8"
-                    >
-                      Regenerate
-                    </Button>
-                  </div>
-                  <div className="flex gap-2">
-                    <Input 
-                      id="api-key" 
-                      value={apiSettings.apiKey} 
-                      readOnly 
-                      className="font-mono text-xs"
-                    />
-                    <Button variant="outline" size="icon" className="shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="grid gap-2">
-                  <Label htmlFor="webhook-url">Webhook URL</Label>
-                  <Input 
-                    id="webhook-url" 
-                    value={apiSettings.webhookUrl}
-                    onChange={(e) => handleApiSettingChange('webhookUrl', e.target.value)}
-                  />
-                </div>
-                
-                <div className="flex justify-end">
-                  <Button variant="outline" className="gap-2">
-                    <Cloud size={16} />
-                    Test Webhook
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Mobile App</CardTitle>
-                <CardDescription>
-                  Settings for mobile applications
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Push Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Enable push notifications for mobile apps
-                    </p>
-                  </div>
-                  <Switch id="push-notifications" defaultChecked />
-                </div>
-                
-                <div className="grid gap-2">
-                  <Label htmlFor="fcm-server-key">Firebase Cloud Messaging Server Key</Label>
-                  <Input 
-                    id="fcm-server-key" 
-                    defaultValue="••••••••••••••••••••••••••••••••••••" 
-                    type="password"
-                  />
-                </div>
-                
-                <div className="grid gap-2">
-                  <Label htmlFor="ios-cert">iOS Certificate</Label>
-                  <div className="flex gap-2">
-                    <Input id="ios-cert" defaultValue="production_certificate.p12" readOnly />
-                    <Button variant="outline" className="shrink-0 gap-1">
-                      <Smartphone size={16} />
-                      Upload
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="flex justify-end">
-                  <Button variant="outline" className="gap-2">
-                    <BellRing size={16} />
-                    Send Test Notification
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </div>

@@ -2143,6 +2143,63 @@ export type Database = {
           },
         ]
       }
+      system_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          metric_data: Json
+          metric_type: string
+          severity: string | null
+          timestamp: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_data?: Json
+          metric_type: string
+          severity?: string | null
+          timestamp?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_data?: Json
+          metric_type?: string
+          severity?: string | null
+          timestamp?: string
+        }
+        Relationships: []
+      }
+      system_settings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_engagement: {
         Row: {
           conversations: number
