@@ -2552,12 +2552,20 @@ export type Database = {
         Args: { "": unknown }
         Returns: unknown
       }
+      has_role: {
+        Args: { _role: string; _user_id: string }
+        Returns: boolean
+      }
       increment_usage_count: {
         Args: { action_type: string; user_uuid: string }
         Returns: boolean
       }
       is_profile_complete: {
         Args: { profile_id: string }
+        Returns: boolean
+      }
+      is_super_admin: {
+        Args: { _user_id: string }
         Returns: boolean
       }
       is_user_blocked: {
@@ -3873,7 +3881,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       geometry_dump: {
@@ -4008,6 +4016,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "admin", "moderator", "user"],
+    },
   },
 } as const
