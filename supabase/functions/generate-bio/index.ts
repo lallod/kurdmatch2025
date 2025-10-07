@@ -14,9 +14,19 @@ Deno.serve(async (req) => {
   try {
     const { profileId } = await req.json();
 
-    if (!profileId) {
+    // Input validation
+    if (!profileId || typeof profileId !== 'string') {
       return new Response(
-        JSON.stringify({ error: 'Profile ID is required' }),
+        JSON.stringify({ error: 'Valid Profile ID is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(profileId)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid Profile ID format' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

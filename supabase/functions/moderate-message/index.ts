@@ -14,8 +14,21 @@ serve(async (req) => {
   try {
     const { messageText, conversationContext } = await req.json();
     
-    if (!messageText) {
-      throw new Error('Message text is required');
+    // Input validation and sanitization
+    if (!messageText || typeof messageText !== 'string') {
+      throw new Error('Valid message text is required');
+    }
+
+    // Check message length
+    if (messageText.length > 2000) {
+      throw new Error('Message exceeds maximum length of 2000 characters');
+    }
+
+    // Remove null bytes and control characters
+    const sanitizedMessage = messageText.replace(/[\x00-\x1F\x7F]/g, '');
+    
+    if (sanitizedMessage.trim().length === 0) {
+      throw new Error('Message cannot be empty after sanitization');
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -47,7 +60,7 @@ Respond with a JSON object containing:
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Message to moderate: "${messageText}"${contextText}` }
+          { role: 'user', content: `Message to moderate: "${sanitizedMessage}"${contextText}` }
         ],
         tools: [{
           type: 'function',

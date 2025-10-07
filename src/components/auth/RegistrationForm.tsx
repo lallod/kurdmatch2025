@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormControl,
@@ -29,25 +28,28 @@ import {
   Loader2 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { SecureInput } from '@/components/security/SecureInput';
+import { SecureTextArea } from '@/components/security/SecureTextArea';
+import { emailSchema, nameSchema, MAX_LENGTHS } from '@/utils/security/input-validation';
 
 const registrationSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
+  email: emailSchema,
   password: z.string().min(8, { message: 'Password must be at least 8 characters' })
     .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
     .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
     .regex(/[0-9]/, { message: 'Password must contain at least one number' }),
   confirmPassword: z.string(),
-  firstName: z.string().min(2, { message: 'First name must be at least 2 characters' }),
-  lastName: z.string().min(2, { message: 'Last name must be at least 2 characters' }),
+  firstName: nameSchema,
+  lastName: nameSchema,
   dateOfBirth: z.string().refine(value => {
     const date = new Date(value);
     const today = new Date();
     const age = today.getFullYear() - date.getFullYear();
     return age >= 18;
   }, { message: 'You must be at least 18 years old' }),
-  location: z.string().min(2, { message: 'Location is required' }),
-  occupation: z.string().optional(),
-  aboutMe: z.string().max(500, { message: 'Bio must be less than 500 characters' }).optional(),
+  location: z.string().min(2, { message: 'Location is required' }).max(MAX_LENGTHS.LOCATION),
+  occupation: z.string().max(MAX_LENGTHS.OCCUPATION).optional(),
+  aboutMe: z.string().max(MAX_LENGTHS.BIO, { message: `Bio must be less than ${MAX_LENGTHS.BIO} characters` }).optional(),
   termsAccepted: z.boolean().refine(val => val === true, { message: 'You must accept the terms and conditions' }),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -176,19 +178,17 @@ const RegistrationForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input 
-                        placeholder="email@example.com" 
-                        className="pl-10" 
-                        type="email"
-                        {...field} 
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
+                  <SecureInput
+                    label="Email"
+                    value={field.value}
+                    onChange={field.onChange}
+                    type="email"
+                    maxLength={MAX_LENGTHS.EMAIL}
+                    placeholder="email@example.com"
+                    required
+                    showValidation
+                    error={form.formState.errors.email?.message}
+                  />
                 </FormItem>
               )}
             />
@@ -359,18 +359,16 @@ const RegistrationForm = () => {
               name="aboutMe"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>About Me</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Tell us a bit about yourself..." 
-                      className="resize-none min-h-[100px]" 
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    {field.value?.length || 0}/500 characters
-                  </FormDescription>
-                  <FormMessage />
+                  <SecureTextArea
+                    label="About Me"
+                    value={field.value || ''}
+                    onChange={field.onChange}
+                    maxLength={MAX_LENGTHS.BIO}
+                    placeholder="Tell us a bit about yourself..."
+                    sanitizationLevel="basic"
+                    showCharCount
+                    error={form.formState.errors.aboutMe?.message}
+                  />
                 </FormItem>
               )}
             />

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,9 +17,12 @@ import { useToast } from '@/hooks/use-toast';
 import SocialLogin from './components/SocialLogin';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { SecureInput } from '@/components/security/SecureInput';
+import { emailSchema } from '@/utils/security/input-validation';
+import { z } from 'zod';
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
+  email: emailSchema,
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
 });
 
@@ -81,19 +83,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    placeholder="email@example.com" 
-                    className="pl-10" 
-                    type="email"
-                    {...field} 
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
+              <SecureInput
+                label="Email"
+                value={field.value}
+                onChange={field.onChange}
+                type="email"
+                maxLength={255}
+                placeholder="email@example.com"
+                required
+                showValidation
+                error={form.formState.errors.email?.message}
+              />
             </FormItem>
           )}
         />
