@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { useAdminABTests } from '../hooks/useAdminABTests';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Card, 
   CardContent, 
@@ -74,9 +76,8 @@ import {
 const ABTestingPage = () => {
   const [newTestOpen, setNewTestOpen] = useState(false);
   const [selectedTest, setSelectedTest] = useState<any>(null);
-
-  // Mock data for A/B tests
-  const abTests = [
+  const { tests: abTests, loading, createTest, updateTest, deleteTest } = useAdminABTests();
+  const { toast } = useToast();
     {
       id: '1',
       name: 'Homepage Hero Image',
@@ -189,10 +190,17 @@ const ABTestingPage = () => {
     }
   };
 
-  // Mock function for A/B test actions
-  const handleTestAction = (testId: string, action: 'start' | 'stop' | 'delete' | 'duplicate') => {
-    console.log(`Test ${testId} action: ${action}`);
-    // In a real app, this would call an API to perform the action
+  const handleTestAction = async (testId: string, action: 'start' | 'stop' | 'delete' | 'duplicate') => {
+    if (action === 'start') {
+      await updateTest(testId, { status: 'active', start_date: new Date().toISOString() });
+      toast({ title: "Test started successfully" });
+    } else if (action === 'stop') {
+      await updateTest(testId, { status: 'paused' });
+      toast({ title: "Test stopped" });
+    } else if (action === 'delete') {
+      await deleteTest(testId);
+      toast({ title: "Test deleted" });
+    }
   };
 
   const viewTestDetails = (test: any) => {

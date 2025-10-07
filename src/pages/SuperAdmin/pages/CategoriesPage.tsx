@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useAdminCategories } from '../hooks/useAdminCategories';
 import { 
   Table, 
   TableBody, 
@@ -273,8 +274,28 @@ const itemFormSchema = z.object({
 });
 
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
-  const [items, setItems] = useState<Item[]>(initialItems);
+  const { 
+    categories: dbCategories, 
+    items: dbItems, 
+    loading, 
+    createCategory, 
+    updateCategory, 
+    deleteCategory,
+    createItem,
+    updateItem,
+    deleteItem 
+  } = useAdminCategories();
+  const [categories, setCategories] = useState<any[]>([]);
+  const [items, setItems] = useState<any[]>([]);
+  
+  // Sync with database data
+  React.useEffect(() => {
+    setCategories(dbCategories);
+  }, [dbCategories]);
+  
+  React.useEffect(() => {
+    setItems(dbItems);
+  }, [dbItems]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
@@ -422,59 +443,42 @@ const CategoriesPage = () => {
   };
 
   // Add new category
-  const handleAddCategory = (data: z.infer<typeof categoryFormSchema>) => {
-    const newCategory: Category = {
-      id: `cat-${Date.now()}`,
+  const handleAddCategory = async (data: z.infer<typeof categoryFormSchema>) => {
+    await createCategory({
       name: data.name,
       description: data.description || "",
       slug: data.slug,
-      order: categories.length + 1,
+      display_order: categories.length + 1,
       active: data.active,
-      itemCount: 0,
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0],
-    };
+    });
     
-    setCategories([...categories, newCategory]);
     setIsAddCategoryOpen(false);
     categoryForm.reset();
     toast.success("Category added successfully");
   };
 
   // Edit category
-  const handleEditCategory = (data: z.infer<typeof categoryFormSchema>) => {
+  const handleEditCategory = async (data: z.infer<typeof categoryFormSchema>) => {
     if (!selectedCategory) return;
     
-    const updatedCategories = categories.map(cat => 
-      cat.id === selectedCategory.id 
-        ? { 
-            ...cat, 
-            name: data.name, 
-            description: data.description || "", 
-            slug: data.slug,
-            active: data.active,
-            updatedAt: new Date().toISOString().split('T')[0],
-          } 
-        : cat
-    );
+    await updateCategory(selectedCategory.id, {
+      name: data.name,
+      description: data.description || "",
+      slug: data.slug,
+      active: data.active,
+    });
     
-    setCategories(updatedCategories);
     setIsEditCategoryOpen(false);
     setSelectedCategory(null);
     toast.success("Category updated successfully");
   };
 
   // Delete category
-  const handleDeleteCategory = () => {
+  const handleDeleteCategory = async () => {
     if (!selectedCategory) return;
     
-    const updatedCategories = categories.filter(cat => cat.id !== selectedCategory.id);
+    await deleteCategory(selectedCategory.id);
     
-    // Remove items in this category
-    const updatedItems = items.filter(item => item.categoryId !== selectedCategory.id);
-    
-    setCategories(updatedCategories);
-    setItems(updatedItems);
     setIsDeleteCategoryOpen(false);
     setSelectedCategory(null);
     toast.success("Category deleted successfully");

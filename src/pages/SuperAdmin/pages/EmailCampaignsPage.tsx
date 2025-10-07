@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { useAdminEmailCampaigns } from '../hooks/useAdminEmailCampaigns';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Table, 
   TableBody, 
@@ -80,9 +82,8 @@ const EmailCampaignsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
   const [newCampaignOpen, setNewCampaignOpen] = useState(false);
-
-  // Mock data for email campaigns
-  const emailCampaigns = [
+  const { campaigns: emailCampaigns, loading, createCampaign, updateCampaign, deleteCampaign } = useAdminEmailCampaigns();
+  const { toast } = useToast();
     {
       id: '1',
       name: 'Welcome Series',
@@ -241,10 +242,17 @@ const EmailCampaignsPage = () => {
     }
   };
 
-  // Mock function for campaign actions
-  const handleCampaignAction = (campaignId: string, action: 'start' | 'pause' | 'duplicate' | 'delete') => {
-    console.log(`Campaign ${campaignId} action: ${action}`);
-    // In a real app, this would call an API to perform the action
+  const handleCampaignAction = async (campaignId: string, action: 'start' | 'pause' | 'duplicate' | 'delete') => {
+    if (action === 'start') {
+      await updateCampaign(campaignId, { status: 'active' });
+      toast({ title: "Campaign started" });
+    } else if (action === 'pause') {
+      await updateCampaign(campaignId, { status: 'paused' });
+      toast({ title: "Campaign paused" });
+    } else if (action === 'delete') {
+      await deleteCampaign(campaignId);
+      toast({ title: "Campaign deleted" });
+    }
   };
 
   const viewCampaignDetails = (campaign: any) => {

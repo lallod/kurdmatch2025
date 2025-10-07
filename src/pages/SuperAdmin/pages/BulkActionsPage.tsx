@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useAdminBulkActions } from '../hooks/useAdminBulkActions';
 import { 
   Card, 
   CardContent, 
@@ -69,6 +70,7 @@ const BulkActionsPage = () => {
   const [confirmDialog, setConfirmDialog] = useState(false);
   const [bulkImportOpen, setBulkImportOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState('');
+  const { executeBulkAction, loading: bulkActionLoading } = useAdminBulkActions();
 
   // Mock data for bulk action jobs
   const bulkActionJobs = [
@@ -224,12 +226,18 @@ const BulkActionsPage = () => {
     setConfirmDialog(true);
   };
 
-  const handleConfirmBulkAction = () => {
-    console.log(`Starting bulk action of type ${selectedJobType} for ${selectedProfiles.length} users`);
+  const handleConfirmBulkAction = async () => {
+    if (!selectedJobType) return;
+    
+    await executeBulkAction({
+      action: selectedJobType,
+      userIds: selectedProfiles,
+      data: {}
+    });
+    
     setConfirmDialog(false);
     setSelectedJobType(null);
     setSelectedProfiles([]);
-    // In a real app, this would call an API to start the bulk action
   };
 
   return (

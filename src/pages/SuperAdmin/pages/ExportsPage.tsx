@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { useAdminDataExports } from '../hooks/useAdminDataExports';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Table, 
   TableBody, 
@@ -63,9 +65,8 @@ const ExportsPage = () => {
   const [typeFilter, setTypeFilter] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
   const [newExportOpen, setNewExportOpen] = useState(false);
-
-  // Mock data for exports
-  const exportJobs = [
+  const { exports: exportJobs, loading, refetch, createExport } = useAdminDataExports();
+  const { toast } = useToast();
     {
       id: 'EXP-1234',
       name: 'Monthly User Activity',
@@ -132,12 +133,11 @@ const ExportsPage = () => {
   const filteredExports = exportJobs.filter(job => {
     const matchesSearch = 
       job.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.requestedBy.toLowerCase().includes(searchTerm.toLowerCase());
+      job.id.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesType = 
       typeFilter === 'all' || 
-      job.type === typeFilter;
+      job.export_type === typeFilter;
     
     return matchesSearch && matchesType;
   });
@@ -176,16 +176,20 @@ const ExportsPage = () => {
     }
   };
 
-  // Mock functions
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    // Simulate data reload
-    setTimeout(() => setRefreshing(false), 1000);
+    await refetch();
+    setRefreshing(false);
+    toast({ title: "Data refreshed" });
   };
 
   const handleDownload = (exportId: string) => {
-    console.log(`Downloading export ${exportId}`);
-    // In a real app, this would initiate a download
+    const exportJob = exportJobs.find(e => e.id === exportId);
+    if (exportJob?.file_url) {
+      window.open(exportJob.file_url, '_blank');
+    } else {
+      toast({ title: "File not available", variant: "destructive" });
+    }
   };
 
   return (
@@ -274,7 +278,7 @@ const ExportsPage = () => {
                   <TableBody>
                     {filteredExports.length > 0 ? (
                       filteredExports.map((exportJob) => (
-                        <TableRow key={exportJob.id}>
+                         <TableRow key={exportJob.id}>
                           <TableCell>
                             <div className="font-medium">{exportJob.name}</div>
                             <div className="text-xs text-gray-500">{exportJob.id}</div>
@@ -287,13 +291,13 @@ const ExportsPage = () => {
                           </TableCell>
                           <TableCell>{getStatusBadge(exportJob.status)}</TableCell>
                           <TableCell>
-                            <div>{exportJob.dateRequested}</div>
-                            {exportJob.status === 'completed' && (
-                              <div className="text-xs text-gray-500">Completed: {exportJob.dateCompleted}</div>
+                            <div>{new Date(exportJob.created_at).toLocaleString()}</div>
+                            {exportJob.status === 'completed' && exportJob.completed_at && (
+                              <div className="text-xs text-gray-500">Completed: {new Date(exportJob.completed_at).toLocaleString()}</div>
                             )}
                           </TableCell>
-                          <TableCell>{exportJob.records}</TableCell>
-                          <TableCell>{exportJob.size}</TableCell>
+                          <TableCell>{exportJob.row_count || '-'}</TableCell>
+                          <TableCell>{exportJob.file_size ? `${(exportJob.file_size / 1024 / 1024).toFixed(2)} MB` : '-'}</TableCell>
                           <TableCell className="text-right">
                             {exportJob.status === 'completed' ? (
                               <Button 

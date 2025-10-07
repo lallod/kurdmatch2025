@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      ab_tests: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          daily_data: Json | null
+          description: string | null
+          end_date: string | null
+          id: string
+          metrics: Json | null
+          name: string
+          start_date: string | null
+          status: string
+          success_metrics: string[] | null
+          target_audience: string | null
+          test_type: string
+          traffic_split: Json
+          updated_at: string
+          variants: Json
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          daily_data?: Json | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          metrics?: Json | null
+          name: string
+          start_date?: string | null
+          status?: string
+          success_metrics?: string[] | null
+          target_audience?: string | null
+          test_type: string
+          traffic_split?: Json
+          updated_at?: string
+          variants?: Json
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          daily_data?: Json | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          metrics?: Json | null
+          name?: string
+          start_date?: string | null
+          status?: string
+          success_metrics?: string[] | null
+          target_audience?: string | null
+          test_type?: string
+          traffic_split?: Json
+          updated_at?: string
+          variants?: Json
+        }
+        Relationships: []
+      }
       admin_activities: {
         Row: {
           activity_type: string
@@ -127,6 +184,53 @@ export type Database = {
           },
         ]
       }
+      category_items: {
+        Row: {
+          active: boolean
+          category_id: string
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          item_type: string
+          name: string
+          options: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_id: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          item_type: string
+          name: string
+          options?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          item_type?: string
+          name?: string
+          options?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "content_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comment_likes: {
         Row: {
           comment_id: string
@@ -169,6 +273,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      content_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          item_count: number
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          item_count?: number
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          item_count?: number
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       conversation_metadata: {
         Row: {
@@ -281,6 +421,129 @@ export type Database = {
           stat_value?: number
           trend?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      data_exports: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          export_type: string
+          file_size: number | null
+          file_url: string | null
+          filters: Json | null
+          format: string
+          id: string
+          name: string
+          row_count: number | null
+          schedule_frequency: string | null
+          scheduled: boolean | null
+          selected_fields: string[] | null
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          export_type: string
+          file_size?: number | null
+          file_url?: string | null
+          filters?: Json | null
+          format?: string
+          id?: string
+          name: string
+          row_count?: number | null
+          schedule_frequency?: string | null
+          scheduled?: boolean | null
+          selected_fields?: string[] | null
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          export_type?: string
+          file_size?: number | null
+          file_url?: string | null
+          filters?: Json | null
+          format?: string
+          id?: string
+          name?: string
+          row_count?: number | null
+          schedule_frequency?: string | null
+          scheduled?: boolean | null
+          selected_fields?: string[] | null
+          status?: string
+        }
+        Relationships: []
+      }
+      email_campaigns: {
+        Row: {
+          bounced_count: number | null
+          campaign_type: string
+          clicked_count: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          metrics: Json | null
+          name: string
+          opened_count: number | null
+          recipient_count: number | null
+          scheduled_date: string | null
+          sent_count: number | null
+          sent_date: string | null
+          status: string
+          subject: string
+          target_audience: string | null
+          template: string | null
+          unsubscribed_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          bounced_count?: number | null
+          campaign_type: string
+          clicked_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          metrics?: Json | null
+          name: string
+          opened_count?: number | null
+          recipient_count?: number | null
+          scheduled_date?: string | null
+          sent_count?: number | null
+          sent_date?: string | null
+          status?: string
+          subject: string
+          target_audience?: string | null
+          template?: string | null
+          unsubscribed_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bounced_count?: number | null
+          campaign_type?: string
+          clicked_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          metrics?: Json | null
+          name?: string
+          opened_count?: number | null
+          recipient_count?: number | null
+          scheduled_date?: string | null
+          sent_count?: number | null
+          sent_date?: string | null
+          status?: string
+          subject?: string
+          target_audience?: string | null
+          template?: string | null
+          unsubscribed_count?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
