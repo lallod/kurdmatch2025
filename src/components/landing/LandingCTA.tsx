@@ -35,7 +35,27 @@ const LandingCTA = () => {
 
       {/* Content */}
       <div className="relative max-w-4xl mx-auto px-6 text-center">
-        <div className="glass-card p-12 rounded-3xl border border-white/20 shadow-2xl shadow-purple-500/30 backdrop-blur-md bg-white/5">
+        <div 
+          className="glass-card p-12 rounded-3xl border border-white/20 shadow-2xl shadow-purple-500/30 backdrop-blur-md bg-white/5 transform-gpu transition-all duration-500 hover:scale-105 hover:shadow-3xl hover:shadow-purple-500/50"
+          style={{
+            transformStyle: 'preserve-3d',
+          }}
+          onMouseMove={(e) => {
+            const card = e.currentTarget;
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = (y - centerY) / 30;
+            const rotateY = (centerX - x) / 30;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+          }}
+          onMouseLeave={(e) => {
+            const card = e.currentTarget;
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+          }}
+        >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
             Join 10,000+ Kurdish Singles Today
           </h2>

@@ -15,8 +15,27 @@ const CulturalShowcase = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Image Side */}
-          <div className="relative">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20">
+          <div className="relative transform-gpu transition-all duration-500 hover:scale-105">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20 transform-gpu transition-all duration-500 hover:shadow-3xl hover:shadow-purple-500/40"
+              style={{
+                transformStyle: 'preserve-3d',
+              }}
+              onMouseMove={(e) => {
+                const card = e.currentTarget;
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+              }}
+              onMouseLeave={(e) => {
+                const card = e.currentTarget;
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+              }}
+            >
               <img
                 src={kurdishLandscape}
                 alt="Kurdish Heritage"

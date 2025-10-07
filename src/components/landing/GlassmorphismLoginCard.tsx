@@ -6,10 +6,19 @@ import { useNavigate } from 'react-router-dom';
 
 const GlassmorphismLoginCard = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+  const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <div className="glass-card p-8 rounded-2xl border border-white/20 shadow-2xl shadow-purple-500/20 backdrop-blur-md bg-white/10">
+    <div 
+      className="glass-card p-8 rounded-2xl border border-white/20 shadow-2xl shadow-purple-500/20 backdrop-blur-md bg-white/10 transform-gpu transition-all duration-500 hover:scale-105 hover:shadow-3xl hover:shadow-purple-500/40"
+      style={{
+        transform: isHovered ? 'perspective(1000px) rotateY(-5deg) rotateX(5deg)' : 'perspective(1000px) rotateY(0deg) rotateX(0deg)',
+        transition: 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)',
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Tabs */}
       <div className="flex gap-2 mb-6 p-1 bg-white/5 rounded-lg">
         <button

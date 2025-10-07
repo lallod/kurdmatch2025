@@ -380,6 +380,44 @@ html {
   animation: gradient-slow 8s ease infinite;
 }
 
+/* 3D Button Effect */
+.button-3d {
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.button-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.button-3d:hover::before {
+  opacity: 1;
+}
+
+/* Perspective Card */
+.perspective-card {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* 3D Layer Effect */
+.layer-3d {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Parallax Container */
+.parallax-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
 /* Tinder card swipe animations */
 .swipe-overlay {
   @apply absolute inset-0 flex items-center justify-center opacity-0 transition-opacity;

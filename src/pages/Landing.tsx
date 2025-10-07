@@ -9,6 +9,7 @@ import GlassmorphismLoginCard from '@/components/landing/GlassmorphismLoginCard'
 import SocialFeatureCards from '@/components/landing/SocialFeatureCards';
 import CulturalShowcase from '@/components/landing/CulturalShowcase';
 import LandingCTA from '@/components/landing/LandingCTA';
+import Scene3D from '@/components/landing/Scene3D';
 
 const Landing = () => {
   const [content, setContent] = useState<LandingPageContent>(initialContent);
@@ -52,6 +53,9 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 relative overflow-hidden">
+      {/* 3D Scene */}
+      <Scene3D />
+      
       {/* Floating Cultural Elements */}
       <FloatingCulturalElements />
 
@@ -82,7 +86,7 @@ const Landing = () => {
           {/* Left Side - Hero Content */}
           <div className="space-y-8 text-center md:text-left">
             {/* Animated Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full animate-fade-in hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50 cursor-default">
               <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
               <span className="text-purple-200 text-sm font-medium">AI-Powered Kurdish Dating</span>
             </div>
@@ -104,7 +108,7 @@ const Landing = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-12 py-6 text-xl shadow-lg shadow-purple-500/50 animate-pulse-slow"
+                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-12 py-6 text-xl shadow-lg shadow-purple-500/50 animate-pulse-slow transform-gpu transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-purple-500/70 button-3d"
                 onClick={() => navigate('/register')}
               >
                 Join Now – Free
@@ -113,7 +117,7 @@ const Landing = () => {
               <Button 
                 size="lg"
                 variant="outline"
-                className="border-2 border-white/30 bg-white/5 hover:bg-white/10 text-white font-semibold px-12 py-6 text-xl backdrop-blur-sm"
+                className="border-2 border-white/30 bg-white/5 hover:bg-white/10 text-white font-semibold px-12 py-6 text-xl backdrop-blur-sm transform-gpu transition-all duration-300 hover:scale-105 hover:border-purple-400/50 button-3d"
               >
                 Learn More
               </Button>
