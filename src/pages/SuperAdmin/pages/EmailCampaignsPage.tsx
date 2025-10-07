@@ -84,140 +84,12 @@ const EmailCampaignsPage = () => {
   const [newCampaignOpen, setNewCampaignOpen] = useState(false);
   const { campaigns: emailCampaigns, loading, createCampaign, updateCampaign, deleteCampaign } = useAdminEmailCampaigns();
   const { toast } = useToast();
-    {
-      id: '1',
-      name: 'Welcome Series',
-      status: 'active',
-      audience: 'New Users',
-      lastSent: '2023-05-18',
-      nextSend: '2023-05-25',
-      opens: 68.4,
-      clicks: 24.2,
-      unsubscribes: 0.8,
-      metrics: {
-        opens: 1243,
-        clicks: 439,
-        unsubscribes: 15,
-        sent: 1817,
-        bounced: 12
-      },
-      engagementData: [
-        { day: 'Mon', opens: 180, clicks: 65 },
-        { day: 'Tue', opens: 195, clicks: 73 },
-        { day: 'Wed', opens: 210, clicks: 78 },
-        { day: 'Thu', opens: 190, clicks: 68 },
-        { day: 'Fri', opens: 175, clicks: 59 },
-        { day: 'Sat', opens: 160, clicks: 52 },
-        { day: 'Sun', opens: 133, clicks: 44 },
-      ]
-    },
-    {
-      id: '2',
-      name: 'Monthly Newsletter',
-      status: 'scheduled',
-      audience: 'All Subscribers',
-      lastSent: '2023-04-15',
-      nextSend: '2023-05-20',
-      opens: 54.1,
-      clicks: 18.5,
-      unsubscribes: 1.2,
-      metrics: {
-        opens: 4532,
-        clicks: 1532,
-        unsubscribes: 98,
-        sent: 8372,
-        bounced: 43
-      },
-      engagementData: [
-        { day: 'Mon', opens: 580, clicks: 210 },
-        { day: 'Tue', opens: 620, clicks: 230 },
-        { day: 'Wed', opens: 690, clicks: 245 },
-        { day: 'Thu', opens: 710, clicks: 260 },
-        { day: 'Fri', opens: 640, clicks: 235 },
-        { day: 'Sat', opens: 520, clicks: 180 },
-        { day: 'Sun', opens: 430, clicks: 145 },
-      ]
-    },
-    {
-      id: '3',
-      name: 'Re-engagement Campaign',
-      status: 'draft',
-      audience: 'Inactive Users',
-      lastSent: '-',
-      nextSend: '-',
-      opens: 0,
-      clicks: 0,
-      unsubscribes: 0,
-      metrics: {
-        opens: 0,
-        clicks: 0,
-        unsubscribes: 0,
-        sent: 0,
-        bounced: 0
-      },
-      engagementData: []
-    },
-    {
-      id: '4',
-      name: 'Premium Upgrade Promotion',
-      status: 'active',
-      audience: 'Free Users',
-      lastSent: '2023-05-10',
-      nextSend: '2023-05-17',
-      opens: 61.8,
-      clicks: 29.4,
-      unsubscribes: 0.5,
-      metrics: {
-        opens: 3254,
-        clicks: 1547,
-        unsubscribes: 26,
-        sent: 5267,
-        bounced: 31
-      },
-      engagementData: [
-        { day: 'Mon', opens: 480, clicks: 230 },
-        { day: 'Tue', opens: 510, clicks: 245 },
-        { day: 'Wed', opens: 545, clicks: 265 },
-        { day: 'Thu', opens: 520, clicks: 250 },
-        { day: 'Fri', opens: 490, clicks: 235 },
-        { day: 'Sat', opens: 410, clicks: 195 },
-        { day: 'Sun', opens: 380, clicks: 180 },
-      ]
-    },
-    {
-      id: '5',
-      name: 'Feature Announcement',
-      status: 'paused',
-      audience: 'All Users',
-      lastSent: '2023-05-05',
-      nextSend: '-',
-      opens: 72.3,
-      clicks: 35.8,
-      unsubscribes: 0.3,
-      metrics: {
-        opens: 5843,
-        clicks: 2891,
-        unsubscribes: 24,
-        sent: 8083,
-        bounced: 45
-      },
-      engagementData: [
-        { day: 'Mon', opens: 780, clicks: 390 },
-        { day: 'Tue', opens: 820, clicks: 410 },
-        { day: 'Wed', opens: 890, clicks: 440 },
-        { day: 'Thu', opens: 960, clicks: 470 },
-        { day: 'Fri', opens: 840, clicks: 415 },
-        { day: 'Sat', opens: 750, clicks: 370 },
-        { day: 'Sun', opens: 630, clicks: 310 },
-      ]
-    }
-  ];
 
   // Filter campaigns based on search term and status
   const filteredCampaigns = emailCampaigns.filter(campaign => {
     const matchesSearch = 
       campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      campaign.audience.toLowerCase().includes(searchTerm.toLowerCase());
+      (campaign.target_audience || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = 
       statusFilter === 'all' || 
@@ -341,19 +213,19 @@ const EmailCampaignsPage = () => {
                         <TableRow key={campaign.id} onClick={() => viewCampaignDetails(campaign)} className="cursor-pointer">
                           <TableCell className="font-medium">{campaign.name}</TableCell>
                           <TableCell>{getStatusBadge(campaign.status)}</TableCell>
-                          <TableCell>{campaign.audience}</TableCell>
-                          <TableCell>{campaign.lastSent}</TableCell>
-                          <TableCell>{campaign.nextSend}</TableCell>
+                          <TableCell>{campaign.target_audience || 'All users'}</TableCell>
+                          <TableCell>{campaign.sent_date ? new Date(campaign.sent_date).toLocaleDateString() : '-'}</TableCell>
+                          <TableCell>{campaign.scheduled_date ? new Date(campaign.scheduled_date).toLocaleDateString() : '-'}</TableCell>
                           <TableCell>
-                            {campaign.status !== 'draft' ? (
-                              <span className="text-green-600">{campaign.opens}%</span>
+                            {campaign.status !== 'draft' && campaign.sent_count > 0 ? (
+                              <span className="text-green-600">{((campaign.opened_count / campaign.sent_count) * 100).toFixed(1)}%</span>
                             ) : (
                               '-'
                             )}
                           </TableCell>
                           <TableCell>
-                            {campaign.status !== 'draft' ? (
-                              <span className="text-blue-600">{campaign.clicks}%</span>
+                            {campaign.status !== 'draft' && campaign.sent_count > 0 ? (
+                              <span className="text-blue-600">{((campaign.clicked_count / campaign.sent_count) * 100).toFixed(1)}%</span>
                             ) : (
                               '-'
                             )}

@@ -78,103 +78,6 @@ const ABTestingPage = () => {
   const [selectedTest, setSelectedTest] = useState<any>(null);
   const { tests: abTests, loading, createTest, updateTest, deleteTest } = useAdminABTests();
   const { toast } = useToast();
-    {
-      id: '1',
-      name: 'Homepage Hero Image',
-      status: 'active',
-      startDate: '2023-05-01',
-      endDate: '2023-05-30',
-      conversion: {
-        a: 4.2,
-        b: 5.7,
-        improvement: '+35.7%'
-      },
-      target: 'All users',
-      variants: {
-        a: 'Current design',
-        b: 'New design with AI theme'
-      },
-      metrics: [
-        { day: '1', variantA: 4.1, variantB: 5.2 },
-        { day: '2', variantA: 4.0, variantB: 5.5 },
-        { day: '3', variantA: 4.3, variantB: 5.6 },
-        { day: '4', variantA: 4.2, variantB: 5.8 },
-        { day: '5', variantA: 4.1, variantB: 5.9 },
-        { day: '6', variantA: 4.3, variantB: 5.7 },
-        { day: '7', variantA: 4.4, variantB: 5.8 },
-      ]
-    },
-    {
-      id: '2',
-      name: 'Onboarding Flow',
-      status: 'active',
-      startDate: '2023-05-05',
-      endDate: '2023-06-05',
-      conversion: {
-        a: 67.5,
-        b: 72.1,
-        improvement: '+6.8%'
-      },
-      target: 'New users',
-      variants: {
-        a: '5-step flow',
-        b: '3-step simplified flow'
-      },
-      metrics: [
-        { day: '1', variantA: 65.3, variantB: 70.2 },
-        { day: '2', variantA: 66.1, variantB: 71.5 },
-        { day: '3', variantA: 67.2, variantB: 71.8 },
-        { day: '4', variantA: 68.0, variantB: 72.1 },
-        { day: '5', variantA: 67.8, variantB: 72.4 },
-        { day: '6', variantA: 68.3, variantB: 72.7 },
-        { day: '7', variantA: 69.0, variantB: 73.1 },
-      ]
-    },
-    {
-      id: '3',
-      name: 'Premium Upgrade CTA',
-      status: 'completed',
-      startDate: '2023-04-01',
-      endDate: '2023-04-30',
-      conversion: {
-        a: 2.3,
-        b: 3.1,
-        improvement: '+34.8%'
-      },
-      target: 'Free users only',
-      variants: {
-        a: 'Standard button',
-        b: 'Animated button with benefits tooltip'
-      },
-      metrics: [
-        { day: '1', variantA: 2.1, variantB: 2.8 },
-        { day: '2', variantA: 2.2, variantB: 2.9 },
-        { day: '3', variantA: 2.3, variantB: 3.0 },
-        { day: '4', variantA: 2.3, variantB: 3.1 },
-        { day: '5', variantA: 2.4, variantB: 3.2 },
-        { day: '6', variantA: 2.3, variantB: 3.3 },
-        { day: '7', variantA: 2.4, variantB: 3.2 },
-      ]
-    },
-    {
-      id: '4',
-      name: 'Profile Match Algorithm',
-      status: 'draft',
-      startDate: '',
-      endDate: '',
-      conversion: {
-        a: 0,
-        b: 0,
-        improvement: 'N/A'
-      },
-      target: '50% of active users',
-      variants: {
-        a: 'Current algorithm',
-        b: 'AI enhanced algorithm'
-      },
-      metrics: []
-    }
-  ];
 
   // Status badge component
   const getStatusBadge = (status: string) => {
@@ -257,20 +160,20 @@ const ABTestingPage = () => {
                           <div className="text-xs text-gray-500">Variants: A vs B</div>
                         </TableCell>
                         <TableCell>{getStatusBadge(test.status)}</TableCell>
-                        <TableCell>{test.target}</TableCell>
+                        <TableCell>{test.target_audience || 'All users'}</TableCell>
                         <TableCell>
                           {test.status !== 'draft' ? (
-                            <span className={test.conversion.improvement.startsWith('+') ? 'text-green-600' : 'text-red-600'}>
-                              {test.conversion.improvement}
+                            <span className="text-muted-foreground">
+                              View details
                             </span>
                           ) : (
                             'Not started'
                           )}
                         </TableCell>
                         <TableCell>
-                          {test.status !== 'draft' ? (
+                          {test.status !== 'draft' && test.start_date ? (
                             <span>
-                              {test.startDate} to {test.endDate}
+                              {new Date(test.start_date).toLocaleDateString()} to {test.end_date ? new Date(test.end_date).toLocaleDateString() : 'Ongoing'}
                             </span>
                           ) : (
                             'N/A'

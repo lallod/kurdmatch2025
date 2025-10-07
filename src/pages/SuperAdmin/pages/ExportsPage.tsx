@@ -67,67 +67,6 @@ const ExportsPage = () => {
   const [newExportOpen, setNewExportOpen] = useState(false);
   const { exports: exportJobs, loading, refetch, createExport } = useAdminDataExports();
   const { toast } = useToast();
-    {
-      id: 'EXP-1234',
-      name: 'Monthly User Activity',
-      type: 'user-activity',
-      format: 'csv',
-      status: 'completed',
-      dateRequested: '2023-05-15 09:32',
-      dateCompleted: '2023-05-15 09:35',
-      size: '4.2 MB',
-      records: '15,432',
-      requestedBy: 'Admin User'
-    },
-    {
-      id: 'EXP-1235',
-      name: 'Q2 Financial Summary',
-      type: 'financial',
-      format: 'xlsx',
-      status: 'completed',
-      dateRequested: '2023-05-10 14:21',
-      dateCompleted: '2023-05-10 14:25',
-      size: '1.8 MB',
-      records: '1,245',
-      requestedBy: 'Finance Manager'
-    },
-    {
-      id: 'EXP-1236',
-      name: 'User Profiles Backup',
-      type: 'user-profiles',
-      format: 'json',
-      status: 'processing',
-      dateRequested: '2023-05-18 11:45',
-      dateCompleted: '-',
-      size: '-',
-      records: 'Processing...',
-      requestedBy: 'System Admin'
-    },
-    {
-      id: 'EXP-1237',
-      name: 'Message History',
-      type: 'messages',
-      format: 'csv',
-      status: 'failed',
-      dateRequested: '2023-05-17 16:30',
-      dateCompleted: '2023-05-17 16:32',
-      size: '-',
-      records: 'Error',
-      requestedBy: 'Support Team'
-    },
-    {
-      id: 'EXP-1238',
-      name: 'User Registration Data',
-      type: 'user-registrations',
-      format: 'csv',
-      status: 'scheduled',
-      dateRequested: '2023-05-18 08:30',
-      dateCompleted: 'Scheduled for 2023-05-19 00:00',
-      size: '-',
-      records: 'Pending',
-      requestedBy: 'Marketing Team'
-    }
-  ];
 
   // Filter exports based on search term and type
   const filteredExports = exportJobs.filter(job => {
