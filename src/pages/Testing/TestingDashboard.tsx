@@ -588,34 +588,47 @@ const TestingDashboard = () => {
                             ))}
                           </ol>
                         </div>
+                        {test.status === 'running' && (
+                          <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+                            <p className="text-sm font-medium text-primary mb-2">
+                              ✅ Now follow the instructions above manually, then mark the result:
+                            </p>
+                          </div>
+                        )}
+                        
                         <div className="flex gap-2">
-                          <Button 
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateTestStatus(test.id, 'running')}
-                            disabled={test.status === 'running'}
-                          >
-                            <PlayCircle className="w-4 h-4 mr-2" />
-                            Start Test
-                          </Button>
-                          <Button 
-                            size="sm"
-                            variant="default"
-                            onClick={() => updateTestStatus(test.id, 'passed')}
-                            disabled={test.status !== 'running'}
-                          >
-                            <CheckCircle2 className="w-4 h-4 mr-2" />
-                            Mark Passed
-                          </Button>
-                          <Button 
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => updateTestStatus(test.id, 'failed')}
-                            disabled={test.status !== 'running'}
-                          >
-                            <XCircle className="w-4 h-4 mr-2" />
-                            Mark Failed
-                          </Button>
+                          {test.status !== 'running' ? (
+                            <Button 
+                              size="sm"
+                              variant="outline"
+                              onClick={() => updateTestStatus(test.id, 'running')}
+                              className="w-full"
+                            >
+                              <PlayCircle className="w-4 h-4 mr-2" />
+                              Start Manual Test
+                            </Button>
+                          ) : (
+                            <>
+                              <Button 
+                                size="sm"
+                                variant="default"
+                                onClick={() => updateTestStatus(test.id, 'passed')}
+                                className="flex-1"
+                              >
+                                <CheckCircle2 className="w-4 h-4 mr-2" />
+                                ✅ Passed
+                              </Button>
+                              <Button 
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => updateTestStatus(test.id, 'failed')}
+                                className="flex-1"
+                              >
+                                <XCircle className="w-4 h-4 mr-2" />
+                                ❌ Failed
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </CardContent>
