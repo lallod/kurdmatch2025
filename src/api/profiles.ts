@@ -138,8 +138,50 @@ export interface SearchFilters {
   userLongitude?: number;
 }
 
-// Search profiles with advanced filters
+// Search profiles with advanced filters using full-text search
 export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]> => {
+  // If there's a text query, use full-text search function
+  if (filters.query && filters.query.trim().length > 0) {
+    const { data, error } = await supabase
+      .rpc('search_profiles_fts', { search_query: filters.query.trim() });
+
+    if (error) {
+      console.error('Full-text search error:', error);
+      // Fallback to basic search if FTS fails
+      return fallbackSearch(filters);
+    }
+
+    // Apply additional filters to FTS results
+    let results = data || [];
+
+    if (filters.ageMin) {
+      results = results.filter(p => p.age >= filters.ageMin!);
+    }
+    if (filters.ageMax) {
+      results = results.filter(p => p.age <= filters.ageMax!);
+    }
+    if (filters.gender) {
+      results = results.filter(p => p.gender === filters.gender);
+    }
+    if (filters.kurdistan_region) {
+      results = results.filter(p => p.kurdistan_region === filters.kurdistan_region);
+    }
+    if (filters.religion) {
+      results = results.filter(p => p.religion === filters.religion);
+    }
+    if (filters.verified) {
+      results = results.filter(p => p.verified === true);
+    }
+
+    return results.slice(0, 50);
+  }
+
+  // If no text query, use regular filtering
+  return fallbackSearch(filters);
+};
+
+// Fallback search using basic ilike queries
+const fallbackSearch = async (filters: SearchFilters): Promise<Profile[]> => {
   let query = supabase
     .from('profiles')
     .select('*');
