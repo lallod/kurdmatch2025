@@ -31,6 +31,7 @@ import NotFound from '@/pages/NotFound';
 import { CompleteProfile } from '@/pages/CompleteProfile';
 import Subscription from '@/pages/Subscription';
 import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
+import TestingDashboard from '@/pages/Testing/TestingDashboard';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -164,6 +165,12 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/subscription" 
         element={<ProtectedRoute><Subscription /></ProtectedRoute>} 
+      />
+      
+      {/* Testing Dashboard - public access for testing */}
+      <Route 
+        path="/testing" 
+        element={<TestingDashboard />} 
       />
       
       {/* Super Admin routes */}
