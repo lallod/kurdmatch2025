@@ -33,8 +33,8 @@ const LocationStep = ({ form, location, locationLoading }: LocationStepProps) =>
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Location & Travel</h2>
-        <p className="text-purple-200 mt-1">Where are you from and where do you dream to go?</p>
+        <h2 className="text-2xl font-bold text-white">Where Do You Live?</h2>
+        <p className="text-purple-200 mt-1">Share your location to find matches near you</p>
       </div>
       
       <LocationCapture

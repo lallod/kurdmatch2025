@@ -23,7 +23,7 @@ const DateOfBirthField = ({ form }: DateOfBirthFieldProps) => {
       name="dateOfBirth"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-white">Date of Birth</FormLabel>
+          <FormLabel className="text-white">Birthday (Month / Day / Year)</FormLabel>
           <FormControl>
             <div className="relative">
               <Calendar className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
