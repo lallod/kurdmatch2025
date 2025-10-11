@@ -17,7 +17,13 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
       title: 'Create Account',
       description: 'Set up your secure login credentials',
       icon: Mail,
-      questions: questions.filter(q => q.registrationStep === 'Account'),
+      questions: questions.filter(q => 
+        q.registrationStep === 'Account' || 
+        q.profileField === 'email' || 
+        q.profileField === 'password' ||
+        q.id === 'email' ||
+        q.id === 'password'
+      ),
       step: 1
     },
     {
@@ -25,7 +31,15 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
       title: 'Basic Information',
       description: 'Tell us about yourself',
       icon: User,
-      questions: questions.filter(q => q.registrationStep === 'Personal'),
+      questions: questions.filter(q => 
+        q.registrationStep === 'Personal' ||
+        q.profileField === 'name' ||
+        q.profileField === 'age' ||
+        q.profileField === 'gender' ||
+        q.id === 'full_name' ||
+        q.id === 'age' ||
+        q.id === 'gender'
+      ),
       step: 2
     },
     {
@@ -39,7 +53,20 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
         q.profileField === 'religion' ||
         q.profileField === 'political_views' ||
         q.profileField === 'zodiac_sign' ||
-        q.profileField === 'personality_type'
+        q.profileField === 'personality_type' ||
+        q.profileField === 'location' ||
+        q.profileField === 'height' ||
+        q.profileField === 'body_type' ||
+        q.profileField === 'kurdistan_region' ||
+        q.id === 'location' ||
+        q.id === 'height' ||
+        q.id === 'body_type' ||
+        q.id === 'kurdistan_region' ||
+        q.id === 'ethnicity' ||
+        q.id === 'religion' ||
+        q.id === 'political_views' ||
+        q.id === 'zodiac_sign' ||
+        q.id === 'personality_type'
       ),
       step: 3
     },
@@ -73,7 +100,22 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
         q.profileField === 'family_closeness' ||
         q.profileField === 'love_language' ||
         q.profileField === 'communication_style' ||
-        q.profileField === 'ideal_date'
+        q.profileField === 'ideal_date' ||
+        q.profileField === 'relationship_goals' ||
+        q.profileField === 'want_children' ||
+        q.profileField === 'exercise_habits' ||
+        q.id === 'dietary_preferences' ||
+        q.id === 'smoking' ||
+        q.id === 'drinking' ||
+        q.id === 'sleep_schedule' ||
+        q.id === 'have_pets' ||
+        q.id === 'family_closeness' ||
+        q.id === 'love_language' ||
+        q.id === 'communication_style' ||
+        q.id === 'ideal_date' ||
+        q.id === 'relationship_goals' ||
+        q.id === 'want_children' ||
+        q.id === 'exercise_habits'
       ),
       step: 5
     },
@@ -85,7 +127,11 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
       questions: questions.filter(q => 
         q.registrationStep === 'Profile' ||
         q.profileField === 'occupation' ||
-        q.profileField === 'education'
+        q.profileField === 'education' ||
+        q.profileField === 'languages' ||
+        q.id === 'occupation' ||
+        q.id === 'education' ||
+        q.id === 'languages'
       ),
       step: 6
     },
@@ -94,13 +140,29 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
       title: 'Add Photos',
       description: 'Show your best self',
       icon: Camera,
-      questions: questions.filter(q => q.profileField === 'photos'),
+      questions: questions.filter(q => q.profileField === 'photos' || q.id === 'photos' || q.id === 'sys_6'),
       step: 7
     }
   ];
 
-  // Filter out categories with no questions
-  return categories.filter(category => category.questions.length > 0 || category.name === 'Photos');
+  // Remove duplicate questions across categories (keep in first occurrence)
+  const assignedQuestionIds = new Set<string>();
+  categories.forEach(category => {
+    category.questions = category.questions.filter(q => {
+      if (assignedQuestionIds.has(q.id)) {
+        return false;
+      }
+      assignedQuestionIds.add(q.id);
+      return true;
+    });
+  });
+
+  // Filter out categories with no questions (but always keep Account and Photos)
+  return categories.filter(category => 
+    category.questions.length > 0 || 
+    category.name === 'Photos' ||
+    category.name === 'Account'
+  );
 };
 
 // Validation helper to check if a step is complete
