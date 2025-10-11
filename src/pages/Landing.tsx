@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Loader2, Heart, Globe, Sparkles } from 'lucide-react';
+import { Loader2, Heart, Globe, Users, Shield } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { LandingPageContent, initialContent } from '@/pages/SuperAdmin/pages/LandingPageEditor/types';
-import FloatingCulturalElements from '@/components/landing/FloatingCulturalElements';
-import GlassmorphismLoginCard from '@/components/landing/GlassmorphismLoginCard';
-import SocialFeatureCards from '@/components/landing/SocialFeatureCards';
-import LandingCTA from '@/components/landing/LandingCTA';
-import Scene3D from '@/components/landing/Scene3D';
-import MeetTheConnection from '@/components/landing/MeetTheConnection';
-import DynamicCommunity from '@/components/landing/DynamicCommunity';
-import CommunityPhone from '@/components/landing/CommunityPhone';
-import CommunityTestimonials from '@/components/landing/CommunityTestimonials';
-import EnhancedFooter from '@/components/landing/EnhancedFooter';
 
 const Landing = () => {
   const [content, setContent] = useState<LandingPageContent>(initialContent);
@@ -30,6 +20,7 @@ const Landing = () => {
           .maybeSingle();
 
         if (!error && data?.content) {
+          // Validate and set content safely
           if (typeof data.content === 'object' && data.content !== null && !Array.isArray(data.content)) {
             const contentData = data.content as Record<string, any>;
             if (contentData.hero && contentData.features && contentData.kurdistan && contentData.footer) {
@@ -56,153 +47,104 @@ const Landing = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 relative overflow-hidden">
-      {/* 3D Scene */}
-      <Scene3D />
-      
-      {/* Floating Cultural Elements */}
-      <FloatingCulturalElements />
-
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 animate-fade-in">
-        <div className="bg-white/5 backdrop-blur-xl border-b border-white/10">
-          <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-4">
-            {/* Logo Section */}
-            <div className="flex items-center gap-3 group cursor-pointer transition-all duration-300 hover:scale-105">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-md opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <Heart className="w-7 h-7 text-purple-600 group-hover:scale-110 transition-transform" />
-                </div>
-              </div>
-              <div>
-                <h1 className="text-white font-bold text-xl tracking-tight">KurdMatch</h1>
-                <p className="text-purple-200 text-xs font-medium">Connect Kurdish Hearts</p>
-              </div>
+      <header className="absolute top-0 left-0 right-0 z-10 p-6">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+              <Heart className="w-6 h-6 text-purple-600" />
             </div>
-            
-            {/* Right Section */}
-            <div className="flex items-center gap-6">
-              {/* Connecting Worldwide Badge */}
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full hover:bg-white/20 transition-all duration-300 hover:scale-105 cursor-default">
-                <Globe className="w-4 h-4 text-purple-300 animate-pulse" />
-                <span className="text-purple-100 text-sm font-medium">Connecting Kurds Worldwide</span>
-              </div>
-
-              {/* Login/Signup Buttons */}
-              <div className="hidden lg:flex items-center gap-3">
-                <Button 
-                  variant="ghost"
-                  className="text-white hover:bg-white/10 backdrop-blur-sm"
-                  onClick={() => navigate('/auth')}
-                >
-                  Log In
-                </Button>
-                <Button 
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                  onClick={() => navigate('/register')}
-                >
-                  Sign Up
-                </Button>
-              </div>
+            <div>
+              <h1 className="text-white font-bold text-xl">KurdMatch</h1>
+              <p className="text-purple-200 text-sm">Connect Kurdish Hearts</p>
             </div>
+          </div>
+          
+          <div className="hidden md:flex items-center gap-2 text-purple-200 text-sm">
+            <Globe className="w-4 h-4" />
+            <span>Connecting Kurds Worldwide</span>
           </div>
         </div>
       </header>
 
-      {/* Spacer for fixed header */}
-      <div className="h-20"></div>
-
-      {/* Hero Section - Split Layout */}
-      <div className="relative flex min-h-screen items-center justify-center px-6 py-20">
-        <div className="w-full max-w-7xl grid md:grid-cols-2 gap-12 items-center">
+      {/* Main Content */}
+      <div className="flex min-h-screen items-center justify-center px-6 py-20">
+        <div className="w-full max-w-4xl text-center space-y-12">
           
-          {/* Left Side - Hero Content */}
-          <div className="space-y-6 text-left">
-            {/* Animated Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full animate-fade-in">
-              <Sparkles className="w-4 h-4 text-yellow-300" />
-              <span className="text-purple-200 text-sm font-medium">AI-Powered Kurdish Dating</span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight animate-fade-in">
-              Find Your Kurdish{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-pink-300 to-purple-400">
-                Match
-              </span>
+          {/* Hero Content */}
+          <div className="space-y-6">
+            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+              Find Your Kurdish <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Match</span>
             </h1>
             
-            {/* Subtitle */}
-            <p className="text-lg md:text-xl text-purple-200 leading-relaxed max-w-xl animate-fade-in">
-              The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values.
+            <p className="text-xl md:text-2xl text-purple-200 max-w-3xl mx-auto">
+              {content.hero.subtitle || "The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values."}
             </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in pt-2">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-10 py-6 text-lg shadow-lg transition-all duration-300 hover:scale-105 rounded-full"
-                onClick={() => navigate('/register')}
-              >
-                Join Now – Free
-              </Button>
-              
-              <Button 
-                size="lg"
-                className="border-2 border-white/30 bg-transparent hover:bg-white/10 text-white font-semibold px-10 py-6 text-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 rounded-full"
-              >
-                Learn More
-              </Button>
-            </div>
-
-            {/* User Count with Avatar Stack */}
-            <div className="flex items-center gap-3 pt-4 animate-fade-in">
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <div 
-                    key={i} 
-                    className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 border-2 border-purple-900" 
-                  />
-                ))}
-              </div>
-              <span className="text-purple-200 font-medium text-base">
-                <span className="text-white font-bold">10,502</span> Kurdish singles ready to connect
-              </span>
-            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold px-12 py-6 text-xl"
+              onClick={() => navigate('/register')}
+            >
+              Start Your Journey
+            </Button>
           </div>
 
-          {/* Right Side - Glassmorphism Login Card */}
-          <div className="flex justify-center md:justify-end animate-fade-in">
-            <GlassmorphismLoginCard />
+          {/* Stats */}
+          <div className="flex items-center justify-center gap-2 pt-8">
+            <div className="flex -space-x-2">
+              {[1,2,3,4,5].map(i => (
+                <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 border-2 border-white/20" />
+              ))}
+            </div>
+            <span className="text-purple-200 font-medium ml-2">502 Kurdish singles ready to connect</span>
           </div>
         </div>
       </div>
-
-      {/* Social Feature Cards Section */}
-      <div className="relative bg-gradient-to-b from-black/20 via-transparent to-black/20">
-        <SocialFeatureCards />
+      
+      {/* Features Section */}
+      <div className="bg-gradient-to-b from-transparent to-black/20 py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
+            Connecting Kurdish Hearts
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+                <Globe className="w-8 h-8 text-purple-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">Worldwide Connection</h3>
+              <p className="text-purple-200">
+                Connect with Kurdish singles from all regions of Kurdistan and across the global diaspora.
+              </p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+                <Users className="w-8 h-8 text-purple-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">Cultural Understanding</h3>
+              <p className="text-purple-200">
+                Find someone who shares your Kurdish heritage, traditions, and values.
+              </p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+                <Heart className="w-8 h-8 text-purple-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">Meaningful Relationships</h3>
+              <p className="text-purple-200">
+                Build connections based on shared cultural identity and personal compatibility.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Meet The Connection Section */}
-      <MeetTheConnection />
-
-      {/* Dynamic Community Section */}
-      <DynamicCommunity />
-
-      {/* Community Phone Section */}
-      <CommunityPhone />
-
-      {/* Testimonials Section */}
-      <CommunityTestimonials />
-
-      {/* Final CTA Section */}
-      <div className="relative">
-        <LandingCTA />
-      </div>
-
-      {/* Enhanced Footer */}
-      <EnhancedFooter />
     </div>
   );
 };

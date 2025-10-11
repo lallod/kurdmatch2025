@@ -59,75 +59,37 @@ const SocialLogin = ({
   return <div className="space-y-4">
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-white/20"></span>
+          <span className="w-full border-t border-purple-300/30"></span>
         </div>
-        <div className="relative flex justify-center text-xs uppercase tracking-wider">
-          <span className="bg-transparent px-4 text-purple-200 font-medium">
-            OR CONTINUE WITH
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-gradient-to-r from-purple-900 to-pink-900 px-3 text-purple-200">
+            Or continue with
           </span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => handleSocialLogin('Gmail', 'google')} 
-          disabled={isFormLoading || !!loadingProvider} 
-          className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 border-white/20 text-white transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-lg"
-        >
-          {loadingProvider === 'Gmail' ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Mail className="mr-2 h-4 w-4" />
-          )}
+        <Button type="button" variant="outline" onClick={() => handleSocialLogin('Gmail', 'google')} disabled={isFormLoading || !!loadingProvider} className="bg-gradient-to-r from-red-500/10 to-pink-500/10 hover:from-red-500/20 hover:to-pink-500/20 border-red-400/30 text-base text-slate-50 bg-[#451682]">
+          {loadingProvider === 'Gmail' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4 text-red-400" />}
           Gmail
         </Button>
         
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => handleSocialLogin('Facebook', 'facebook')} 
-          disabled={isFormLoading || !!loadingProvider} 
-          className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 border-white/20 text-white transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-lg"
-        >
-          {loadingProvider === 'Facebook' ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <FacebookIcon className="mr-2 h-4 w-4" />
-          )}
+        <Button type="button" variant="outline" onClick={() => handleSocialLogin('Facebook', 'facebook')} disabled={isFormLoading || !!loadingProvider} className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 hover:from-blue-500/20 hover:to-blue-600/20 border-blue-400/30 text-white bg-[#451682]">
+          {loadingProvider === 'Facebook' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FacebookIcon className="mr-2 h-4 w-4 text-blue-400" />}
           Facebook
         </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => handleSocialLogin('Instagram', 'google')}
-          disabled={isFormLoading || !!loadingProvider} 
-          className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 border-white/20 text-white transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-lg"
-        >
-          {loadingProvider === 'Instagram' ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <InstagramIcon className="mr-2 h-4 w-4" />
-          )}
+        <Button type="button" variant="outline" onClick={() => handleSocialLogin('Instagram', 'google')} // Note: Instagram uses OAuth via Google/Facebook
+      disabled={isFormLoading || !!loadingProvider} className="bg-gradient-to-r from-pink-500/10 to-purple-500/10 hover:from-pink-500/20 hover:to-purple-500/20 border-pink-400/30 text-white bg-[#451682]">
+          {loadingProvider === 'Instagram' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <InstagramIcon className="mr-2 h-4 w-4 text-pink-400" />}
           Instagram
         </Button>
         
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => handleSocialLogin('WhatsApp', 'google')}
-          disabled={isFormLoading || !!loadingProvider} 
-          className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 border-white/20 text-white transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-lg"
-        >
-          {loadingProvider === 'WhatsApp' ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <MessageCircle className="mr-2 h-4 w-4" />
-          )}
+        <Button type="button" variant="outline" onClick={() => handleSocialLogin('WhatsApp', 'google')} // Note: WhatsApp uses OAuth via Google/Facebook
+      disabled={isFormLoading || !!loadingProvider} className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 border-green-400/30 text-white bg-[#451682]">
+          {loadingProvider === 'WhatsApp' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MessageCircle className="mr-2 h-4 w-4 text-green-400" />}
           WhatsApp
         </Button>
       </div>

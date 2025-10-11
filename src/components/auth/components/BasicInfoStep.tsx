@@ -15,7 +15,7 @@ import HeightSelector from './enhanced-fields/HeightSelector';
 import SimpleCountrySearchField from './enhanced-fields/SimpleCountrySearchField';
 import SimpleLanguageMultiSelect from './enhanced-fields/SimpleLanguageMultiSelect';
 import SimpleOccupationSelector from './enhanced-fields/SimpleOccupationSelector';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import ErrorBoundary from './ErrorBoundary';
 
 interface BasicInfoStepProps {
   form: UseFormReturn<any>;

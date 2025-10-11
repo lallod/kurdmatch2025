@@ -7,10 +7,10 @@ import EmailVerificationGuard from './EmailVerificationGuard';
 import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
 import Swipe from '@/pages/Swipe';
-
+import Profile from '@/pages/Profile';
+import InstagramProfile from '@/pages/InstagramProfile';
+import Discovery from '@/pages/Discovery';
 import DiscoveryNearby from '@/pages/DiscoveryNearby';
 import DiscoveryFeed from '@/pages/DiscoveryFeed';
 import CreatePost from '@/pages/CreatePost';
@@ -21,6 +21,7 @@ import ViewedMe from '@/pages/ViewedMe';
 import Messages from '@/pages/Messages';
 import MyProfile from '@/pages/MyProfile';
 import UserProfile from '@/pages/UserProfile';
+import ProfilePage from '@/pages/ProfilePage';
 import Admin from '@/pages/Admin';
 import SuperAdmin from '@/pages/SuperAdmin';
 import DataGenerator from '@/pages/DataGenerator';
@@ -31,7 +32,6 @@ import NotFound from '@/pages/NotFound';
 import { CompleteProfile } from '@/pages/CompleteProfile';
 import Subscription from '@/pages/Subscription';
 import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
-import TestingDashboard from '@/pages/Testing/TestingDashboard';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -69,14 +69,6 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/register" 
         element={user ? <Navigate to="/discovery" replace /> : <Register />} 
-      />
-      <Route 
-        path="/forgot-password" 
-        element={user ? <Navigate to="/discovery" replace /> : <ForgotPassword />} 
-      />
-      <Route 
-        path="/reset-password" 
-        element={<ResetPassword />} 
       />
       
       {/* OAuth Callback Route */}
@@ -119,6 +111,10 @@ export const AppRoutes: React.FC = () => {
         element={<ProtectedRoute><DiscoveryFeed /></ProtectedRoute>} 
       />
       <Route 
+        path="/discovery-old" 
+        element={<ProtectedRoute><Discovery /></ProtectedRoute>} 
+      />
+      <Route 
         path="/discovery-nearby" 
         element={<ProtectedRoute><DiscoveryNearby /></ProtectedRoute>} 
       />
@@ -155,6 +151,14 @@ export const AppRoutes: React.FC = () => {
         element={<ProtectedRoute><UserProfile /></ProtectedRoute>} 
       />
       <Route 
+        path="/profile/:id" 
+        element={<ProtectedRoute><InstagramProfile /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/profile" 
+        element={<ProtectedRoute><Profile /></ProtectedRoute>} 
+      />
+      <Route 
         path="/admin" 
         element={<ProtectedRoute><Admin /></ProtectedRoute>} 
       />
@@ -165,12 +169,6 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/subscription" 
         element={<ProtectedRoute><Subscription /></ProtectedRoute>} 
-      />
-      
-      {/* Testing Dashboard - public access for testing */}
-      <Route 
-        path="/testing" 
-        element={<TestingDashboard />} 
       />
       
       {/* Super Admin routes */}
