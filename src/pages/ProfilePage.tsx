@@ -10,6 +10,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Heart, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { useProfileViewTracking } from '@/hooks/useProfileViewTracking';
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -17,6 +18,9 @@ const ProfilePage = () => {
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
+
+  // Track profile view
+  useProfileViewTracking(id);
 
   useEffect(() => {
     if (id) {

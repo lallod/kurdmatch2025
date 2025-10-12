@@ -27,28 +27,63 @@ const ViewedMe = () => {
       try {
         setIsLoading(true);
         
-        // For now, we'll create a mock viewed profiles system
-        // In a real app, you'd track profile views in the database
-        const { data: profiles, error } = await supabase
-          .from('profiles')
-          .select('id, name, age, profile_image, location, verified')
-          .neq('id', user.id)
-          .limit(10);
+        // Fetch real profile views with viewer profile data
+        const { data: profileViews, error } = await supabase
+          .from('profile_views')
+          .select(`
+            id,
+            viewer_id,
+            viewed_at,
+            profiles:viewer_id (
+              id,
+              name,
+              age,
+              profile_image,
+              location,
+              verified
+            )
+          `)
+          .eq('viewed_profile_id', user.id)
+          .order('viewed_at', { ascending: false })
+          .limit(50);
           
         if (error) throw error;
         
-        // Mock viewing data with timestamps
-        const mockViewedProfiles = profiles?.map((profile, index) => ({
-          ...profile,
-          viewedAt: index === 0 ? '10 minutes ago' : 
-                   index === 1 ? '2 hours ago' : 
-                   index === 2 ? 'Yesterday' : 
-                   `${index} days ago`,
-          hasViewed: Math.random() > 0.5,
-          compatibilityScore: Math.floor(Math.random() * 30) + 70
-        })) || [];
+        // Transform data and calculate time ago
+        const transformedProfiles = profileViews?.map((view: any) => {
+          const profile = view.profiles;
+          const viewedAt = new Date(view.viewed_at);
+          const now = new Date();
+          const diffMs = now.getTime() - viewedAt.getTime();
+          const diffMins = Math.floor(diffMs / 60000);
+          const diffHours = Math.floor(diffMs / 3600000);
+          const diffDays = Math.floor(diffMs / 86400000);
+          
+          let timeAgo;
+          if (diffMins < 60) {
+            timeAgo = diffMins <= 1 ? 'Just now' : `${diffMins} minutes ago`;
+          } else if (diffHours < 24) {
+            timeAgo = diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+          } else if (diffDays === 1) {
+            timeAgo = 'Yesterday';
+          } else {
+            timeAgo = `${diffDays} days ago`;
+          }
+          
+          return {
+            id: profile.id,
+            name: profile.name,
+            age: profile.age,
+            profile_image: profile.profile_image,
+            location: profile.location,
+            verified: profile.verified,
+            viewedAt: timeAgo,
+            hasViewed: false, // Could be enhanced with mutual view checking
+            compatibilityScore: Math.floor(Math.random() * 30) + 70 // Placeholder for compatibility algorithm
+          };
+        }) || [];
         
-        setViewedProfiles(mockViewedProfiles);
+        setViewedProfiles(transformedProfiles);
       } catch (error) {
         console.error('Failed to load viewed profiles:', error);
       } finally {
