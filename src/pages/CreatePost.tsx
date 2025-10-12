@@ -6,8 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createPost } from '@/api/posts';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Image, Video, Loader2 } from 'lucide-react';
+import { ArrowLeft, Image, Video, Loader2, Hash, Users } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { extractHashtags, updateHashtagUsage } from '@/api/hashtags';
+import { getUserGroups, addPostToGroup } from '@/api/groups';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -16,6 +19,35 @@ const CreatePost = () => {
   const [mediaUrl, setMediaUrl] = useState('');
   const [mediaType, setMediaType] = useState<'image' | 'video' | undefined>();
   const [loading, setLoading] = useState(false);
+  const [userGroups, setUserGroups] = useState<any[]>([]);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [hashtags, setHashtags] = useState<string[]>([]);
+
+  React.useEffect(() => {
+    loadUserGroups();
+  }, []);
+
+  React.useEffect(() => {
+    const detected = extractHashtags(content);
+    setHashtags(detected);
+  }, [content]);
+
+  const loadUserGroups = async () => {
+    try {
+      const groups = await getUserGroups();
+      setUserGroups(groups);
+    } catch (error) {
+      console.error('Error loading groups:', error);
+    }
+  };
+
+  const toggleGroup = (groupId: string) => {
+    setSelectedGroups(prev =>
+      prev.includes(groupId)
+        ? prev.filter(id => id !== groupId)
+        : [...prev, groupId]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +63,22 @@ const CreatePost = () => {
 
     try {
       setLoading(true);
-      await createPost(content, mediaUrl || undefined, mediaType);
+      
+      // Create the post with hashtags
+      const newPost = await createPost(content, mediaUrl || undefined, mediaType, hashtags);
+      
+      // Update hashtag usage
+      if (hashtags.length > 0) {
+        await updateHashtagUsage(hashtags);
+      }
+
+      // Add post to selected groups
+      if (selectedGroups.length > 0 && newPost) {
+        await Promise.all(
+          selectedGroups.map(groupId => addPostToGroup(newPost.id, groupId))
+        );
+      }
+
       toast({
         title: 'Success',
         description: 'Post created successfully!'
@@ -132,6 +179,55 @@ const CreatePost = () => {
               ) : (
                 <video src={mediaUrl} controls className="w-full h-auto max-h-96" />
               )}
+            </div>
+          )}
+
+          {/* Detected Hashtags */}
+          {hashtags.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-white flex items-center gap-2">
+                <Hash className="w-4 h-4" />
+                Detected Hashtags
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {hashtags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full bg-purple-500/30 border border-purple-500/50 text-purple-200 text-sm"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Groups Selection */}
+          {userGroups.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-white flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Post to Groups (Optional)
+              </Label>
+              <div className="space-y-2 max-h-48 overflow-y-auto bg-white/5 rounded-lg p-3 border border-white/10">
+                {userGroups.map((membership: any) => (
+                  <label
+                    key={membership.group_id}
+                    className="flex items-center gap-3 p-2 rounded hover:bg-white/10 cursor-pointer transition-colors"
+                  >
+                    <Checkbox
+                      checked={selectedGroups.includes(membership.group_id)}
+                      onCheckedChange={() => toggleGroup(membership.group_id)}
+                    />
+                    <div className="flex items-center gap-2">
+                      {membership.groups?.icon && (
+                        <span className="text-lg">{membership.groups.icon}</span>
+                      )}
+                      <span className="text-white text-sm">{membership.groups?.name}</span>
+                    </div>
+                  </label>
+                ))}
+              </div>
             </div>
           )}
 

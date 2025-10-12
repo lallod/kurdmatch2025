@@ -8,12 +8,13 @@ import EventCard from '@/components/discovery/EventCard';
 import EventFilters from '@/components/discovery/EventFilters';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PenSquare, Loader2, Calendar, Plus, Filter, Users } from 'lucide-react';
+import { PenSquare, Loader2, Calendar, Plus, Filter, Users, Hash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNavigation from '@/components/BottomNavigation';
 import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
+import { HashtagSearch } from '@/components/discovery/HashtagSearch';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
@@ -297,6 +298,36 @@ const DiscoveryFeed = () => {
                 />
               </div>
             )}
+
+            {/* Hashtag Search */}
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Hash className="w-5 h-5 text-purple-300" />
+                <h2 className="text-lg font-semibold text-white">Explore Hashtags</h2>
+              </div>
+              <HashtagSearch />
+            </div>
+
+            {/* Groups Quick Access */}
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-purple-300" />
+                  <h2 className="text-lg font-semibold text-white">Groups</h2>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/groups')}
+                  className="text-purple-300 hover:text-purple-200"
+                >
+                  View All
+                </Button>
+              </div>
+              <p className="text-sm text-white/70">
+                Join communities and connect with people who share your interests
+              </p>
+            </div>
 
             {/* Posts Feed */}
             <div className="space-y-4">

@@ -32,6 +32,9 @@ import NotFound from '@/pages/NotFound';
 import { CompleteProfile } from '@/pages/CompleteProfile';
 import Subscription from '@/pages/Subscription';
 import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
+import { HashtagFeed } from '@/pages/HashtagFeed';
+import { GroupsList } from '@/pages/GroupsList';
+import { GroupDetail } from '@/pages/GroupDetail';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -169,6 +172,18 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/subscription" 
         element={<ProtectedRoute><Subscription /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/hashtag/:hashtag" 
+        element={<ProtectedRoute><HashtagFeed /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/groups" 
+        element={<ProtectedRoute><GroupsList /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/groups/:id" 
+        element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} 
       />
       
       {/* Super Admin routes */}

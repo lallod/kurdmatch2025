@@ -5,6 +5,7 @@ import { Story } from '@/api/posts';
 import { supabase } from '@/integrations/supabase/client';
 import StoryReactions from './StoryReactions';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { StoryToolbar } from './StoryToolbar';
 
 interface StoryViewerProps {
   open: boolean;
@@ -23,6 +24,8 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
   const [progress, setProgress] = useState(0);
   const [viewers, setViewers] = useState<any[]>([]);
   const [showViewers, setShowViewers] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const currentStory = stories[currentIndex];
   const duration = currentStory?.duration || 15;
@@ -31,8 +34,14 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
     if (open && currentStory) {
       recordStoryView();
       fetchStoryViewers();
+      getCurrentUser();
     }
   }, [open, currentStory?.id]);
+
+  const getCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setCurrentUserId(user?.id || null);
+  };
 
   const recordStoryView = async () => {
     if (!currentStory) return;
@@ -186,6 +195,21 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
               onReactionAdded={fetchStoryViewers}
             />
           </div>
+
+          {/* Story Toolbar */}
+          {currentUserId && (
+            <StoryToolbar
+              storyId={currentStory.id}
+              userId={currentStory.user_id}
+              currentUserId={currentUserId}
+              onReact={(reaction) => {
+                // Handle toolbar reaction
+                console.log('Toolbar reaction:', reaction);
+              }}
+              isMuted={isMuted}
+              onToggleMute={() => setIsMuted(!isMuted)}
+            />
+          )}
 
           {/* Viewers panel */}
           {showViewers && viewers.length > 0 && (

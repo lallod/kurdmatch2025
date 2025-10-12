@@ -3,6 +3,7 @@ import { Post } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import PostContent from './PostContent';
 import { useNavigate } from 'react-router-dom';
 import { getUserSubscription } from '@/api/usage';
 import { createPremiumCheckout } from '@/api/payments';
@@ -182,7 +183,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
       {/* Content */}
       <div className="space-y-3">
-        <p className="text-white whitespace-pre-wrap">{post.content}</p>
+        <PostContent content={post.content} />
         
         {/* Media */}
         {post.media_url && (

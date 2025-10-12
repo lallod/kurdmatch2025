@@ -769,6 +769,143 @@ export type Database = {
           },
         ]
       }
+      group_members: {
+        Row: {
+          group_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_posts: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_posts_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          category: string
+          cover_image: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          icon: string | null
+          id: string
+          member_count: number
+          name: string
+          post_count: number
+          privacy: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          cover_image?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          member_count?: number
+          name: string
+          post_count?: number
+          privacy?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_image?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          member_count?: number
+          name?: string
+          post_count?: number
+          privacy?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hashtags: {
+        Row: {
+          created_at: string
+          id: string
+          last_used_at: string
+          name: string
+          usage_count: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_used_at?: string
+          name: string
+          usage_count?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_used_at?: string
+          name?: string
+          usage_count?: number
+        }
+        Relationships: []
+      }
       interests: {
         Row: {
           category: string
@@ -1522,6 +1659,7 @@ export type Database = {
           created_at: string
           fire_count: number
           haha_count: number
+          hashtags: string[] | null
           id: string
           likes_count: number
           love_count: number
@@ -1541,6 +1679,7 @@ export type Database = {
           created_at?: string
           fire_count?: number
           haha_count?: number
+          hashtags?: string[] | null
           id?: string
           likes_count?: number
           love_count?: number
@@ -1560,6 +1699,7 @@ export type Database = {
           created_at?: string
           fire_count?: number
           haha_count?: number
+          hashtags?: string[] | null
           id?: string
           likes_count?: number
           love_count?: number

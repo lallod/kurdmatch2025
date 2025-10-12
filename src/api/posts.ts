@@ -106,7 +106,12 @@ export const getStories = async (): Promise<Story[]> => {
   }));
 };
 
-export const createPost = async (content: string, mediaUrl?: string, mediaType?: 'image' | 'video') => {
+export const createPost = async (
+  content: string, 
+  mediaUrl?: string, 
+  mediaType?: 'image' | 'video',
+  hashtags?: string[]
+) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
@@ -116,7 +121,8 @@ export const createPost = async (content: string, mediaUrl?: string, mediaType?:
       user_id: user.id,
       content,
       media_url: mediaUrl,
-      media_type: mediaType
+      media_type: mediaType,
+      hashtags: hashtags || []
     })
     .select()
     .single();
