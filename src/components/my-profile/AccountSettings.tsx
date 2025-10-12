@@ -30,6 +30,8 @@ import DownloadDataDialog from './dialogs/DownloadDataDialog';
 import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
 import ConnectedAccountsDialog from './dialogs/ConnectedAccountsDialog';
 import DeleteAccountDialog from './dialogs/DeleteAccountDialog';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const AccountSettings = () => {
   const navigate = useNavigate();
@@ -149,6 +151,24 @@ const AccountSettings = () => {
                 <p className="text-purple-200 text-sm">Pending review</p>
               </div>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Language Settings */}
+      <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <Globe className="w-5 h-5 mr-2 text-purple-400" />
+            Language Settings
+          </h3>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white">App Language</p>
+              <p className="text-purple-200 text-sm">Choose your preferred language</p>
+            </div>
+            <LanguageSwitcher />
           </div>
         </CardContent>
       </Card>
