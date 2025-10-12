@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, Heart, MessageSquare, Phone, MessageCircle, ArrowRight } from 'lucide-react';
+import { Menu, Heart, Plane, Users, Home, Calendar, Music, UtensilsCrossed, Sparkles, ArrowRight, Globe2, MessageCircle, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileSidebar from '@/components/landing/MobileSidebar';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLandingContent } from '@/hooks/useLandingContent';
+
+// Import generated images
+import heroRomance from '@/assets/landing/hero-romance.jpg';
+import featureLover from '@/assets/landing/feature-lover.jpg';
+import featureTravel from '@/assets/landing/feature-travel.jpg';
+import featureFriends from '@/assets/landing/feature-friends.jpg';
+import featureFamily from '@/assets/landing/feature-family.jpg';
+import featureEvents from '@/assets/landing/feature-events.jpg';
+import featureParties from '@/assets/landing/feature-parties.jpg';
+import featurePicnic from '@/assets/landing/feature-picnic.jpg';
+import featureCultural from '@/assets/landing/feature-cultural.jpg';
+
+// Import user photos
+import user1 from '@/assets/landing/user-1.png';
+import user2 from '@/assets/landing/user-2.png';
+import user3 from '@/assets/landing/user-3.png';
+import user4 from '@/assets/landing/user-4.png';
 
 const LandingV2 = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -122,7 +139,7 @@ const LandingV2 = () => {
               </div>
               
               <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white ${isSorani ? 'font-kurdish-sorani' : ''}`}>
-                Dating in your <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Favorite</span> Instant Messengers!
+                {content.hero.title}
               </h1>
 
               <p className="text-lg text-purple-200 max-w-xl">
@@ -135,81 +152,136 @@ const LandingV2 = () => {
                   onClick={() => navigate('/register')}
                   className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 rounded-full shadow-lg"
                 >
-                  Get Started <ArrowRight className="ml-2 w-4 h-4" />
+                  {content.hero.cta} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </div>
             </motion.div>
 
-            {/* Right Image Area */}
+            {/* Right Hero Image */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative w-full aspect-square bg-white/10 backdrop-blur-lg border border-white/20 rounded-full flex items-center justify-center">
-                <Heart className="w-32 h-32 text-pink-300/30" />
-                {/* Floating decorative elements */}
-                <motion.div
-                  animate={{ y: [0, -20, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="absolute top-10 right-10 w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl"
-                >
-                  <Heart className="w-8 h-8 text-white" />
-                </motion.div>
-                <motion.div
-                  animate={{ y: [0, 20, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                  className="absolute bottom-20 left-10 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-xl"
-                >
-                  <MessageSquare className="w-6 h-6 text-white" />
-                </motion.div>
-              </div>
+              <img 
+                src={heroRomance} 
+                alt="Kurdish Couple Romance" 
+                className="w-full rounded-3xl shadow-2xl"
+              />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* What You Can Find - Main Features Grid */}
       <section id="features" className="py-16 md:py-24 bg-black/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              What You Can <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Find</span>
+            </h2>
+            <p className="text-lg text-purple-200">Connect with Kurdish community worldwide</p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: MessageSquare, title: 'Message', description: 'Connect through instant messaging with Kurdish singles worldwide', color: 'bg-orange-500' },
-              { icon: Phone, title: 'Voice Call', description: 'Make voice calls and hear the voice of your potential match', color: 'bg-red-500' },
-              { icon: MessageCircle, title: 'Chat', description: 'Real-time chat features to build meaningful connections', color: 'bg-yellow-500' }
+              { icon: Heart, title: 'Find Your Kurdish Lover', emoji: '💕', description: 'Connect with singles who share your heritage and values', image: featureLover },
+              { icon: Plane, title: 'Find Your Travel Mate', emoji: '✈️', description: 'Explore Kurdistan and the world with fellow adventurers', image: featureTravel },
+              { icon: Users, title: 'Find New Friends', emoji: '🌍', description: 'Build friendships across all Kurdish regions and diaspora', image: featureFriends },
+              { icon: Home, title: 'Make a Kurdish Family', emoji: '🏡', description: 'Create lasting bonds and build your future together', image: featureFamily },
+              { icon: Calendar, title: 'Find Kurdish Events', emoji: '🎉', description: 'Discover and join cultural gatherings in your area', image: featureEvents },
+              { icon: Music, title: 'Find Kurdish Parties', emoji: '🪩', description: 'Celebrate life with vibrant Kurdish party scenes', image: featureParties },
+              { icon: UtensilsCrossed, title: 'Find Kurdish Picnics', emoji: '🧺', description: 'Enjoy outdoor gatherings with traditional Kurdish cuisine', image: featurePicnic },
+              { icon: Sparkles, title: 'Cultural Events', emoji: '🕊️', description: 'Experience traditional music, dance, and celebrations', image: featureCultural }
             ].map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 text-center space-y-4 hover:bg-white/15 transition-all"
+                transition={{ duration: 0.6, delay: index * 0.05 }}
+                className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all group"
               >
-                <div className={`mx-auto w-16 h-16 ${feature.color} rounded-2xl flex items-center justify-center`}>
-                  <feature.icon className="w-8 h-8 text-white" />
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={feature.image} 
+                    alt={feature.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute top-4 right-4 text-3xl">{feature.emoji}</div>
                 </div>
-                <h3 className="text-xl font-bold text-white">{feature.title}</h3>
-                <p className="text-purple-200">{feature.description}</p>
+                <div className="p-6 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <feature.icon className="w-5 h-5 text-pink-400" />
+                    <h3 className="text-lg font-bold text-white">{feature.title}</h3>
+                  </div>
+                  <p className="text-sm text-purple-200">{feature.description}</p>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Meet The Chosen One Section */}
+      {/* Global Kurdish Community Section */}
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Join the Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Kurdish Community</span>
+            </h2>
+            <p className="text-lg text-purple-200 max-w-2xl mx-auto">
+              Connect with Kurds from all regions of Kurdistan and across the global diaspora. No matter where you are, find your community.
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-12">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              className="space-y-6"
             >
-              <div className="w-full aspect-square bg-white/10 backdrop-blur-lg border border-white/20 rounded-full flex items-center justify-center">
-                <Heart className="w-32 h-32 text-pink-300/30" />
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Globe2 className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">All Kurdish Dialects Welcome</h3>
+                  <p className="text-purple-200">Kurmanji, Sorani, Pehlewani, Zazaki - unite across linguistic boundaries and celebrate our shared heritage.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Kurdistan & Diaspora</h3>
+                  <p className="text-purple-200">From Hewlêr to Europe, North America to Australia - connect with Kurds everywhere in the world.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Cultural Understanding</h3>
+                  <p className="text-purple-200">Find people who understand your traditions, values, and the importance of Kurdish identity.</p>
+                </div>
               </div>
             </motion.div>
 
@@ -217,120 +289,85 @@ const LandingV2 = () => {
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="space-y-6"
+              className="grid grid-cols-2 gap-4"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-white">
-                Meet The <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Chosen One</span>
-              </h2>
-              <p className="text-lg text-purple-200">
-                Find your perfect match among Kurdish singles who share your heritage, values, and vision for the future. Build meaningful connections based on cultural understanding.
-              </p>
-              <Button 
-                onClick={() => navigate('/register')}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-full shadow-lg"
-              >
-                Join Now <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
+              <img src={user1} alt="Kurdish community" className="rounded-2xl shadow-xl" />
+              <img src={user2} alt="Kurdish community" className="rounded-2xl shadow-xl mt-8" />
+              <img src={user3} alt="Kurdish community" className="rounded-2xl shadow-xl" />
+              <img src={user4} alt="Kurdish community" className="rounded-2xl shadow-xl mt-8" />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* How It Works Section */}
       <section className="py-16 md:py-24 bg-black/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="space-y-8"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-white">
-                We are a Dynamic Lover <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Communication</span>
-              </h2>
-              
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <div className="text-5xl font-bold text-pink-400 mb-2">2+</div>
-                  <div className="text-purple-200">Years of service</div>
-                </div>
-                <div>
-                  <div className="text-5xl font-bold text-pink-400 mb-2">502</div>
-                  <div className="text-purple-200">Active Users</div>
-                </div>
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Works</span>
+            </h2>
+            <p className="text-lg text-purple-200">Three simple steps to start your journey</p>
+          </motion.div>
 
-              <Button 
-                onClick={() => navigate('/register')}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-full shadow-lg"
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { step: '01', title: 'Create Your Profile', description: 'Sign up and share your story, interests, and what you\'re looking for in the Kurdish community' },
+              { step: '02', title: 'Discover Connections', description: 'Browse profiles, attend events, and connect with Kurds who share your interests and values' },
+              { step: '03', title: 'Build Relationships', description: 'Start conversations, meet in person at events, and build meaningful connections that last' }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="relative"
               >
-                Get Started
-              </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative grid grid-cols-2 gap-4"
-            >
-              <div className="space-y-4">
-                <div className="aspect-square bg-gradient-to-br from-orange-500 to-pink-600 rounded-3xl flex items-center justify-center shadow-xl">
-                  <MessageCircle className="w-16 h-16 text-white" />
+                <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 space-y-4">
+                  <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
+                    {item.step}
+                  </div>
+                  <h3 className="text-xl font-bold text-white">{item.title}</h3>
+                  <p className="text-purple-200">{item.description}</p>
                 </div>
-              </div>
-              <div className="space-y-4 pt-12">
-                <div className="aspect-square bg-gradient-to-br from-pink-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl">
-                  <Heart className="w-16 h-16 text-white" />
-                </div>
-              </div>
-            </motion.div>
+                {index < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-pink-400 to-purple-400" />
+                )}
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Final CTA Section */}
       <section id="contact" className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative"
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white/5 backdrop-blur-lg border border-white/20 rounded-3xl p-12 text-center space-y-6"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Ready to Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Kurdish Connection?</span>
+            </h2>
+            <p className="text-lg text-purple-200 max-w-2xl mx-auto">
+              Join thousands of Kurds from around the world finding love, friendship, and community on KurdMatch.
+            </p>
+            <Button 
+              size="lg"
+              onClick={() => navigate('/register')}
+              className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-12 rounded-full shadow-xl"
             >
-              <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-square bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl flex items-center justify-center">
-                  <Heart className="w-16 h-16 text-pink-400" />
-                </div>
-                <div className="aspect-square bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl flex items-center justify-center pt-12">
-                  <MessageSquare className="w-16 h-16 text-purple-400" />
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-white">
-                Your Friends Come To Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Phone.</span>
-              </h2>
-              <p className="text-lg text-purple-200">
-                Connect with Kurdish singles from all over the world. Share your culture, traditions, and build meaningful relationships that last.
-              </p>
-              <Button 
-                size="lg"
-                onClick={() => navigate('/register')}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-full shadow-lg"
-              >
-                Get Started
-              </Button>
-            </motion.div>
-          </div>
+              Join KurdMatch Today <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </motion.div>
         </div>
       </section>
 
