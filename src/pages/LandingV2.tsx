@@ -26,6 +26,18 @@ import user2 from '@/assets/landing/user-2.png';
 import user3 from '@/assets/landing/user-3.png';
 import user4 from '@/assets/landing/user-4.png';
 
+// Image mapping for features
+const imageMap: Record<string, string> = {
+  lover: featureLover,
+  travel: featureTravel,
+  friends: featureFriends,
+  family: featureFamily,
+  events: featureEvents,
+  parties: featureParties,
+  picnic: featurePicnic,
+  cultural: featureCultural,
+};
+
 const LandingV2 = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -33,6 +45,7 @@ const LandingV2 = () => {
   const { content, loading } = useLandingV2Content(language);
   const textDir = getTextDirection(language);
   const isRtl = isRTL(language);
+  const isKurdish = language === 'kurdish_sorani' || language === 'kurdish_kurmanci';
 
   if (loading) {
     return (
@@ -147,11 +160,11 @@ const LandingV2 = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6"
             >
-              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white ${isRtl ? 'font-arabic text-right' : ''}`}>
+              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white ${isKurdish ? 'font-kurdistan' : ''} ${isRtl ? 'text-right' : ''}`}>
                 {content.hero_title}
               </h1>
 
-              <p className={`text-lg text-purple-200 max-w-xl ${isRtl ? 'text-right' : ''}`}>
+              <p className={`text-lg text-purple-200 max-w-xl ${isKurdish ? 'font-kurdistan' : ''} ${isRtl ? 'text-right' : ''}`}>
                 {content.hero_subtitle}
               </p>
 
@@ -216,7 +229,7 @@ const LandingV2 = () => {
               >
                 <div className="relative h-48 overflow-hidden">
                   <img 
-                    src={feature.image_url} 
+                    src={imageMap[feature.id] || featureLover} 
                     alt={feature.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
@@ -225,9 +238,9 @@ const LandingV2 = () => {
                 <div className={`p-6 space-y-3 ${isRtl ? 'text-right' : ''}`}>
                   <div className={`flex items-center gap-3 ${isRtl ? 'flex-row-reverse' : ''}`}>
                     <FeatureIcon className="w-5 h-5 text-pink-400" />
-                    <h3 className={`text-lg font-bold text-white ${isRtl ? 'font-arabic' : ''}`}>{feature.title}</h3>
+                    <h3 className={`text-lg font-bold text-white ${isKurdish ? 'font-kurdistan' : ''}`}>{feature.title}</h3>
                   </div>
-                  <p className={`text-sm text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>{feature.description}</p>
+                  <p className={`text-sm text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>{feature.description}</p>
                 </div>
               </motion.div>
             );
@@ -245,10 +258,10 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isRtl ? 'font-arabic' : ''}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.community_title}
             </h2>
-            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isRtl ? 'font-arabic' : ''}`}>
+            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.community_subtitle}
             </p>
           </motion.div>
@@ -265,8 +278,8 @@ const LandingV2 = () => {
                   <Globe2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className={`text-xl font-bold text-white mb-2 ${isRtl ? 'font-arabic' : ''}`}>All Kurdish Dialects Welcome</h3>
-                  <p className={`text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>{content.community_dialects.join(', ')} - {content.community_description}</p>
+                  <h3 className={`text-xl font-bold text-white mb-2 ${isKurdish ? 'font-kurdistan' : ''}`}>All Kurdish Dialects Welcome</h3>
+                  <p className={`text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>{content.community_dialects.join(', ')} - {content.community_description}</p>
                 </div>
               </div>
             </motion.div>
@@ -295,10 +308,10 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isRtl ? 'font-arabic' : ''}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.how_it_works_title}
             </h2>
-            <p className={`text-lg text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>Three simple steps to start your journey</p>
+            <p className={`text-lg text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>Three simple steps to start your journey</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -315,8 +328,8 @@ const LandingV2 = () => {
                   <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
                     {String(item.step).padStart(2, '0')}
                   </div>
-                  <h3 className={`text-xl font-bold text-white ${isRtl ? 'font-arabic' : ''}`}>{item.title}</h3>
-                  <p className={`text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>{item.description}</p>
+                  <h3 className={`text-xl font-bold text-white ${isKurdish ? 'font-kurdistan' : ''}`}>{item.title}</h3>
+                  <p className={`text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>{item.description}</p>
                 </div>
                 {index < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-pink-400 to-purple-400" />
@@ -336,10 +349,10 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="bg-white/5 backdrop-blur-lg border border-white/20 rounded-3xl p-12 text-center space-y-6"
           >
-            <h2 className={`text-3xl md:text-4xl font-bold text-white ${isRtl ? 'font-arabic' : ''}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold text-white ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.cta_title}
             </h2>
-            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isRtl ? 'font-arabic' : ''}`}>
+            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.cta_subtitle || 'Join thousands of Kurds from around the world finding love, friendship, and community on KurdMatch.'}
             </p>
             <Button 
