@@ -161,6 +161,45 @@ export type Database = {
         }
         Relationships: []
       }
+      app_translations: {
+        Row: {
+          auto_translated: boolean | null
+          category: string
+          context: string | null
+          created_at: string | null
+          id: string
+          language_code: string
+          needs_review: boolean | null
+          translation_key: string
+          translation_value: string
+          updated_at: string | null
+        }
+        Insert: {
+          auto_translated?: boolean | null
+          category: string
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          language_code: string
+          needs_review?: boolean | null
+          translation_key: string
+          translation_value: string
+          updated_at?: string | null
+        }
+        Update: {
+          auto_translated?: boolean | null
+          category?: string
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          language_code?: string
+          needs_review?: boolean | null
+          translation_key?: string
+          translation_value?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       blocked_users: {
         Row: {
           blocked_id: string
