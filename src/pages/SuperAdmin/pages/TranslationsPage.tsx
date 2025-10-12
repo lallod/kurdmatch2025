@@ -26,7 +26,7 @@ const TranslationsPage = () => {
   const [translations, setTranslations] = useState<Translation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('english');
+  const [selectedLanguage, setSelectedLanguage] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [filterNeedsReview, setFilterNeedsReview] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -40,7 +40,7 @@ const TranslationsPage = () => {
     { code: 'german', name: 'German' }
   ];
 
-  const categories = ['all', 'common', 'navigation', 'auth', 'settings', 'discovery', 'messages', 'profile', 'notifications', 'validation'];
+  const categories = ['all', 'auth', 'common', 'navigation', 'discovery', 'messages', 'profile', 'swipe', 'settings', 'notifications', 'validation', 'errors', 'filters', 'attributes', 'actions'];
 
   useEffect(() => {
     fetchTranslations();
