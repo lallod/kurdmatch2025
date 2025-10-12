@@ -39,11 +39,19 @@ const Settings = () => {
             </Button>
             <h1 className="text-2xl font-bold">{t('settings.title', 'Settings')}</h1>
           </div>
+          <Button variant="outline" onClick={handleSignOut}>
+            {t('auth.sign_out', 'Sign Out')}
+          </Button>
+        </div>
+
+        {/* Language Settings Section */}
+        <div className="glass rounded-lg p-6 border border-tinder-rose/10">
+          <h2 className="text-lg font-semibold mb-4">{t('settings.language', 'Language')}</h2>
           <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              Choose your preferred language for the app
+            </p>
             <LanguageSwitcher />
-            <Button variant="outline" onClick={handleSignOut}>
-              {t('auth.sign_out', 'Sign Out')}
-            </Button>
           </div>
         </div>
 
