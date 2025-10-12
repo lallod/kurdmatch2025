@@ -23,6 +23,7 @@ import SubscribersPage from './pages/SubscribersPage';
 import PaymentsPage from './pages/PaymentsPage';
 import SocialLoginPage from './pages/SocialLoginPage';
 import LandingPageEditor from './pages/LandingPageEditor';
+import TranslationsPage from './pages/TranslationsPage';
 
 const SuperAdmin = () => {
   return (
@@ -49,6 +50,7 @@ const SuperAdmin = () => {
         <Route path="/payments" element={<PaymentsPage />} />
         <Route path="/social-login" element={<SocialLoginPage />} />
         <Route path="/landing-page" element={<LandingPageEditor />} />
+        <Route path="/translations" element={<TranslationsPage />} />
       </Routes>
     </SuperAdminLayout>
   );
