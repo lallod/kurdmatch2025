@@ -81,7 +81,7 @@ const AccountSettings = () => {
   };
   return <div className="space-y-6">
       {/* Subscription Management */}
-      <Card className="backdrop-blur-md bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20 border border-primary/20">
+      <Card className="backdrop-blur-md bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20 border border-primary/20 bg-[#53073c]">
         <CardContent className="p-6 bg-[#53073c]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
