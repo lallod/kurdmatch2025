@@ -46,6 +46,36 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const { isCheckingRole, hasAdminRole } = useAdminRoleCheck();
   const navigate = useNavigate();
 
+  // Force English and LTR for Super Admin Dashboard
+  React.useEffect(() => {
+    // Save current language settings
+    const savedDirection = document.documentElement.dir;
+    const savedLang = document.documentElement.lang;
+    
+    // Force English and LTR
+    document.documentElement.dir = 'ltr';
+    document.documentElement.lang = 'en';
+    
+    // Restore on unmount (when leaving admin dashboard)
+    return () => {
+      // Restore user's language preference from localStorage
+      const userLanguage = localStorage.getItem('preferred_language') || 'english';
+      const isRTL = userLanguage === 'kurdish_sorani';
+      document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+      
+      // Set appropriate lang attribute
+      if (userLanguage === 'norwegian') {
+        document.documentElement.lang = 'no';
+      } else if (userLanguage === 'german') {
+        document.documentElement.lang = 'de';
+      } else if (userLanguage.startsWith('kurdish')) {
+        document.documentElement.lang = 'ku';
+      } else {
+        document.documentElement.lang = 'en';
+      }
+    };
+  }, []);
+
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
