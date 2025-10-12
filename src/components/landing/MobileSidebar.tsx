@@ -37,6 +37,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
 
   const handleLanguageChange = (code: LanguageCode) => {
     setLanguage(code);
+    onClose();
   };
 
   const overlayVariants = {

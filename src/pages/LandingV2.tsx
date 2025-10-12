@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Menu, Heart, Plane, Users, Home, Calendar, Music, UtensilsCrossed, Sparkles, ArrowRight, Globe2, MessageCircle, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MobileSidebar from '@/components/landing/MobileSidebar';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, LanguageCode } from '@/contexts/LanguageContext';
 import { useLandingV2Content } from '@/hooks/useLandingV2Content';
 import { isRTL, getTextDirection } from '@/utils/rtl';
 
@@ -28,7 +29,7 @@ import user4 from '@/assets/landing/user-4.png';
 const LandingV2 = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const { content, loading } = useLandingV2Content(language);
   const textDir = getTextDirection(language);
   const isRtl = isRTL(language);
@@ -94,8 +95,21 @@ const LandingV2 = () => {
               <a href="#contact" className="text-purple-200 hover:text-pink-300 transition-colors">Contact</a>
             </nav>
 
-            {/* Desktop Auth Buttons */}
+            {/* Desktop Language Switcher & Auth Buttons */}
             <div className="hidden md:flex items-center gap-3">
+              <Select value={language} onValueChange={(value) => setLanguage(value as LanguageCode)}>
+                <SelectTrigger className="w-[180px] bg-white/10 border-white/20 text-white hover:bg-white/15">
+                  <Globe2 className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="english">🇬🇧 English</SelectItem>
+                  <SelectItem value="kurdish_sorani">🟥⚪️🟩 کوردی (سۆرانی)</SelectItem>
+                  <SelectItem value="kurdish_kurmanci">🟨🔴🟩 Kurdî (Kurmancî)</SelectItem>
+                  <SelectItem value="norwegian">🇳🇴 Norsk</SelectItem>
+                  <SelectItem value="german">🇩🇪 Deutsch</SelectItem>
+                </SelectContent>
+              </Select>
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/auth')}
