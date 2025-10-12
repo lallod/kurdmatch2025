@@ -17,6 +17,13 @@ export interface HowItWorksStep {
   icon: string;
 }
 
+export interface GalleryCategory {
+  id: string;
+  name: string;
+  description: string;
+  images: string[];
+}
+
 export interface LandingV2Content {
   hero_title: string;
   hero_subtitle: string;
@@ -35,6 +42,9 @@ export interface LandingV2Content {
   cta_button_text: string;
   footer_text: string;
   footer_links: any[];
+  gallery_title: string;
+  gallery_subtitle: string;
+  gallery_categories: GalleryCategory[];
 }
 
 // Hardcoded fallback content (English)
@@ -68,7 +78,10 @@ const defaultContent: LandingV2Content = {
   cta_subtitle: 'Join thousands of Kurds worldwide who have found meaningful connections',
   cta_button_text: 'Join KurdMatch Today',
   footer_text: '© 2024 KurdMatch. Connecting Kurdish hearts worldwide.',
-  footer_links: []
+  footer_links: [],
+  gallery_title: 'See Our Community in Action',
+  gallery_subtitle: 'Real moments from Kurdish connections worldwide',
+  gallery_categories: []
 };
 
 export const useLandingV2Content = (language: LanguageCode) => {
@@ -103,7 +116,10 @@ export const useLandingV2Content = (language: LanguageCode) => {
             cta_subtitle: data.cta_subtitle,
             cta_button_text: data.cta_button_text,
             footer_text: data.footer_text,
-            footer_links: (data.footer_links as unknown) as any[]
+            footer_links: (data.footer_links as unknown) as any[],
+            gallery_title: data.gallery_title || defaultContent.gallery_title,
+            gallery_subtitle: data.gallery_subtitle || defaultContent.gallery_subtitle,
+            gallery_categories: (data.gallery_categories as unknown) as GalleryCategory[] || []
           });
         }
       } catch (error) {

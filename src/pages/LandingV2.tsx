@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MobileSidebar from '@/components/landing/MobileSidebar';
+import PhotoGallerySection from '@/components/landing/PhotoGallerySection';
 import { useLanguage, LanguageCode } from '@/contexts/LanguageContext';
 import { useLandingV2Content } from '@/hooks/useLandingV2Content';
 import { isRTL, getTextDirection } from '@/utils/rtl';
@@ -339,6 +340,14 @@ const LandingV2 = () => {
           </div>
         </div>
       </section>
+
+      {/* Photo Gallery Section */}
+      <PhotoGallerySection
+        title={content.gallery_title}
+        subtitle={content.gallery_subtitle}
+        categories={content.gallery_categories}
+        isRtl={isRtl}
+      />
 
       {/* Final CTA Section */}
       <section id="contact" className="py-16 md:py-24">

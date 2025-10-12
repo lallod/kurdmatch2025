@@ -873,6 +873,9 @@ export type Database = {
           features: Json
           footer_links: Json | null
           footer_text: string
+          gallery_categories: Json | null
+          gallery_subtitle: string | null
+          gallery_title: string | null
           hero_cta_text: string
           hero_image_url: string
           hero_subtitle: string
@@ -897,6 +900,9 @@ export type Database = {
           features?: Json
           footer_links?: Json | null
           footer_text: string
+          gallery_categories?: Json | null
+          gallery_subtitle?: string | null
+          gallery_title?: string | null
           hero_cta_text?: string
           hero_image_url: string
           hero_subtitle: string
@@ -921,6 +927,9 @@ export type Database = {
           features?: Json
           footer_links?: Json | null
           footer_text?: string
+          gallery_categories?: Json | null
+          gallery_subtitle?: string | null
+          gallery_title?: string | null
           hero_cta_text?: string
           hero_image_url?: string
           hero_subtitle?: string
