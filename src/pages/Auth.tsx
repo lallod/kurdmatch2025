@@ -91,13 +91,13 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg space-y-6 sm:space-y-8 bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-lg">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-tinder-rose to-tinder-orange bg-clip-text text-transparent">
+    <div className="min-h-screen flex items-center justify-center bg-pink-50 p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-sm sm:max-w-md space-y-6 bg-white p-8 sm:p-10 rounded-3xl shadow-xl">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-pink-500">
             Welcome Back
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="text-sm text-gray-500">
             Log in to continue your journey
           </p>
         </div>
@@ -106,7 +106,7 @@ const Auth = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center text-gray-600 hover:text-gray-900"
+            className="flex items-center text-gray-600 hover:text-gray-900 -ml-3"
             onClick={() => navigate('/')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -121,9 +121,9 @@ const Auth = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
             <Input
               id="email"
               type="email"
@@ -132,11 +132,12 @@ const Auth = () => {
               placeholder="your.email@example.com"
               required
               disabled={isLoading}
+              className="bg-gray-50 border-gray-200 h-12"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
             <Input
               id="password"
               type="password"
@@ -145,12 +146,13 @@ const Auth = () => {
               placeholder="••••••••"
               required
               disabled={isLoading}
+              className="bg-gray-50 border-gray-200 h-12"
             />
           </div>
           
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-tinder-rose to-tinder-orange hover:from-tinder-rose/90 hover:to-tinder-orange/90 text-white"
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white h-12 text-base font-medium rounded-full"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -164,12 +166,12 @@ const Auth = () => {
           </Button>
         </form>
         
-        <div className="text-center mt-4">
+        <div className="text-center">
           <Link
             to="/register"
-            className="text-sm text-gray-600 hover:text-gray-900"
+            className="text-sm text-gray-500 hover:text-gray-700"
           >
-            Don't have an account? Sign up
+            Don't have an account? <span className="text-pink-500 font-medium">Sign up</span>
           </Link>
         </div>
 
