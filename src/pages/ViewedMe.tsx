@@ -34,7 +34,7 @@ const ViewedMe = () => {
             id,
             viewer_id,
             viewed_at,
-            profiles:viewer_id (
+            profiles!profile_views_viewer_id_fkey (
               id,
               name,
               age,
