@@ -59,10 +59,10 @@ const SocialLogin = ({
   return <div className="space-y-4">
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-gray-200"></span>
+          <span className="w-full border-t border-white/20"></span>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-3 py-1 text-purple-600 font-semibold">
+          <span className="bg-white/10 backdrop-blur-lg px-3 py-1 text-purple-200 font-semibold">
             OR CONTINUE WITH
           </span>
         </div>
@@ -73,7 +73,7 @@ const SocialLogin = ({
           type="button" 
           onClick={() => handleSocialLogin('Gmail', 'google')} 
           disabled={isFormLoading || !!loadingProvider} 
-          className="bg-purple-700 hover:bg-purple-800 text-white h-12 font-medium border-0"
+          className="bg-white/10 hover:bg-white/20 border border-white/20 text-white h-12 font-medium backdrop-blur-lg"
         >
           {loadingProvider === 'Gmail' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-5 w-5" />}
           Gmail
@@ -83,7 +83,7 @@ const SocialLogin = ({
           type="button" 
           onClick={() => handleSocialLogin('Facebook', 'facebook')} 
           disabled={isFormLoading || !!loadingProvider} 
-          className="bg-purple-700 hover:bg-purple-800 text-white h-12 font-medium border-0"
+          className="bg-white/10 hover:bg-white/20 border border-white/20 text-white h-12 font-medium backdrop-blur-lg"
         >
           {loadingProvider === 'Facebook' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FacebookIcon className="mr-2 h-5 w-5" />}
           Facebook
@@ -95,7 +95,7 @@ const SocialLogin = ({
           type="button" 
           onClick={() => handleSocialLogin('Instagram', 'google')}
           disabled={isFormLoading || !!loadingProvider} 
-          className="bg-purple-700 hover:bg-purple-800 text-white h-12 font-medium border-0"
+          className="bg-white/10 hover:bg-white/20 border border-white/20 text-white h-12 font-medium backdrop-blur-lg"
         >
           {loadingProvider === 'Instagram' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <InstagramIcon className="mr-2 h-5 w-5" />}
           Instagram
@@ -105,7 +105,7 @@ const SocialLogin = ({
           type="button" 
           onClick={() => handleSocialLogin('WhatsApp', 'google')}
           disabled={isFormLoading || !!loadingProvider} 
-          className="bg-purple-700 hover:bg-purple-800 text-white h-12 font-medium border-0"
+          className="bg-white/10 hover:bg-white/20 border border-white/20 text-white h-12 font-medium backdrop-blur-lg"
         >
           {loadingProvider === 'WhatsApp' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MessageCircle className="mr-2 h-5 w-5" />}
           WhatsApp

@@ -91,13 +91,13 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8" style={{ backgroundColor: '#F1F0FB' }}>
-      <div className="w-full max-w-sm sm:max-w-md space-y-6 bg-white p-8 sm:p-10 rounded-3xl shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-sm sm:max-w-md space-y-6 bg-white/10 backdrop-blur-lg border border-white/20 p-8 sm:p-10 rounded-3xl shadow-2xl">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-bold text-pink-500">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white">
             Welcome Back
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-purple-200">
             Log in to continue your journey
           </p>
         </div>
@@ -106,7 +106,7 @@ const Auth = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center text-gray-600 hover:text-gray-900 -ml-3"
+            className="flex items-center text-purple-200 hover:text-white -ml-3"
             onClick={() => navigate('/')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -123,7 +123,7 @@ const Auth = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+            <Label htmlFor="email" className="text-white font-medium">Email</Label>
             <Input
               id="email"
               type="email"
@@ -132,12 +132,12 @@ const Auth = () => {
               placeholder="your.email@example.com"
               required
               disabled={isLoading}
-              className="bg-gray-50 border-gray-200 h-12"
+              className="bg-white/20 border-white/30 text-white placeholder:text-purple-200 h-12"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+            <Label htmlFor="password" className="text-white font-medium">Password</Label>
             <Input
               id="password"
               type="password"
@@ -146,13 +146,13 @@ const Auth = () => {
               placeholder="••••••••"
               required
               disabled={isLoading}
-              className="bg-gray-50 border-gray-200 h-12"
+              className="bg-white/20 border-white/30 text-white placeholder:text-purple-200 h-12"
             />
           </div>
           
           <Button
             type="submit"
-            className="w-full bg-pink-500 hover:bg-pink-600 text-white h-12 text-base font-medium rounded-full"
+            className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white h-12 text-base font-medium rounded-full shadow-lg"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -169,9 +169,9 @@ const Auth = () => {
         <div className="text-center">
           <Link
             to="/register"
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-purple-200 hover:text-white"
           >
-            Don't have an account? <span className="text-pink-500 font-medium">Sign up</span>
+            Don't have an account? <span className="text-pink-400 font-medium">Sign up</span>
           </Link>
         </div>
 
