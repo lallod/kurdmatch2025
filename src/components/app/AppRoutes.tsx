@@ -4,7 +4,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2 } from 'lucide-react';
 import { RegisterProtection } from './RegisterProtection';
 import EmailVerificationGuard from './EmailVerificationGuard';
-import Landing from '@/pages/Landing';
+import LandingV2 from '@/pages/LandingV2';
 import Auth from '@/pages/Auth';
 import Register from '@/pages/Register';
 import Swipe from '@/pages/Swipe';
@@ -60,7 +60,7 @@ export const AppRoutes: React.FC = () => {
     <Routes>
       <Route 
         path="/" 
-        element={user ? <Navigate to="/discovery" replace /> : <Landing />} 
+        element={user ? <Navigate to="/discovery" replace /> : <LandingV2 />} 
       />
       <Route 
         path="/auth" 

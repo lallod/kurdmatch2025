@@ -95,6 +95,36 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_audit_log: {
+        Row: {
+          action_type: string
+          changes: Json | null
+          created_at: string | null
+          id: string
+          record_id: string | null
+          table_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_conversation_insights: {
         Row: {
           communication_style: string | null
@@ -738,6 +768,93 @@ export type Database = {
           content?: Json
           created_at?: string | null
           id?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      landing_page_sections: {
+        Row: {
+          content: Json
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          language_code: string
+          section_order: number
+          section_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          language_code: string
+          section_order: number
+          section_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          language_code?: string
+          section_order?: number
+          section_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      landing_page_snapshots: {
+        Row: {
+          content: Json
+          created_at: string | null
+          created_by: string | null
+          id: string
+          language_code: string
+          version_name: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          language_code: string
+          version_name?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          language_code?: string
+          version_name?: string | null
+        }
+        Relationships: []
+      }
+      landing_page_translations: {
+        Row: {
+          content: Json
+          created_at: string | null
+          id: number
+          is_published: boolean | null
+          language_code: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          id?: number
+          is_published?: boolean | null
+          language_code: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          id?: number
+          is_published?: boolean | null
+          language_code?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -3159,6 +3276,83 @@ export type Database = {
       postgis_wagyu_version: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      search_profiles_fts: {
+        Args: { search_query: string }
+        Returns: {
+          age: number
+          bio: string
+          body_type: string
+          career_ambitions: string | null
+          charity_involvement: string | null
+          children_status: string | null
+          communication_style: string | null
+          company: string | null
+          created_at: string | null
+          creative_pursuits: string[] | null
+          decision_making_style: string | null
+          dietary_preferences: string | null
+          dream_home: string | null
+          dream_vacation: string | null
+          drinking: string | null
+          education: string
+          ethnicity: string
+          evening_routine: string | null
+          exercise_habits: string
+          family_closeness: string | null
+          favorite_books: string[] | null
+          favorite_foods: string[] | null
+          favorite_games: string[] | null
+          favorite_memory: string | null
+          favorite_movies: string[] | null
+          favorite_music: string[] | null
+          favorite_podcasts: string[] | null
+          favorite_quote: string | null
+          favorite_season: string | null
+          financial_habits: string | null
+          friendship_style: string | null
+          gender: string | null
+          geo_location: unknown | null
+          growth_goals: string[] | null
+          have_pets: string | null
+          height: string
+          hidden_talents: string[] | null
+          hobbies: string[] | null
+          id: string
+          ideal_date: string | null
+          ideal_weather: string | null
+          interests: string[] | null
+          kurdistan_region: string
+          languages: string[] | null
+          last_active: string | null
+          latitude: number | null
+          location: string
+          longitude: number | null
+          love_language: string | null
+          morning_routine: string | null
+          music_instruments: string[] | null
+          name: string
+          occupation: string
+          personality_type: string | null
+          pet_peeves: string[] | null
+          political_views: string | null
+          profile_image: string
+          relationship_goals: string
+          religion: string
+          sleep_schedule: string | null
+          smoking: string | null
+          stress_relievers: string[] | null
+          tech_skills: string[] | null
+          transportation_preference: string | null
+          travel_frequency: string | null
+          values: string[] | null
+          verified: boolean | null
+          want_children: string
+          weekend_activities: string[] | null
+          work_environment: string | null
+          work_life_balance: string | null
+          zodiac_sign: string | null
+        }[]
       }
       spheroid_in: {
         Args: { "": unknown }

@@ -28,6 +28,7 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['Inter var', 'sans-serif'],
+				'kurdish-sorani': ['Noto Sans Arabic', 'Arial', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

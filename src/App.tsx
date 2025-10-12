@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from '@/integrations/supabase/auth';
 import { AppRoutes } from "@/components/app/AppRoutes";
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,9 @@ function App() {
           <Toaster />
           <BrowserRouter>
             <AuthProvider>
-              <AppRoutes />
+              <LanguageProvider>
+                <AppRoutes />
+              </LanguageProvider>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
