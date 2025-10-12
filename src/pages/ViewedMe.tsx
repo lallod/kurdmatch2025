@@ -101,9 +101,6 @@ const ViewedMe = () => {
   }, [user]);
 
   const handleProfileClick = (profileId: string) => {
-    if (!isSubscribed) {
-      return;
-    }
     navigate(`/profile/${profileId}`);
   };
 
