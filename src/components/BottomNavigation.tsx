@@ -4,30 +4,37 @@ import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Eye, Heart, MessageCircle, UserRound, Newspaper } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const BottomNavigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const { counts } = useNotifications();
+  const { t } = useTranslations();
   
   const navItems = [{
-    name: 'Discovery',
+    nameKey: 'nav.discover',
+    name: t('nav.discover', 'Discovery'),
     icon: Newspaper,
     path: '/discovery'
   }, {
-    name: 'Swipe',
+    nameKey: 'nav.swipe',
+    name: t('nav.swipe', 'Swipe'),
     icon: Home,
     path: '/swipe'
   }, {
-    name: 'Messages',
+    nameKey: 'nav.messages',
+    name: t('nav.messages', 'Messages'),
     icon: MessageCircle,
     path: '/messages'
   }, {
-    name: 'Views',
+    nameKey: 'nav.views',
+    name: 'Views', // Not translated yet
     icon: Eye,
     path: '/viewed-me'
   }, {
-    name: 'Profile',
+    nameKey: 'nav.profile',
+    name: t('nav.profile', 'Profile'),
     icon: UserRound,
     path: '/my-profile'
   }];

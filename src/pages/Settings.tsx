@@ -5,10 +5,13 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import ComprehensiveProfileSettings from '@/components/settings/ComprehensiveProfileSettings';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Settings = () => {
   const { signOut } = useSupabaseAuth();
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const handleSignOut = async () => {
     try {
@@ -34,11 +37,14 @@ const Settings = () => {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-2xl font-bold">Settings</h1>
+            <h1 className="text-2xl font-bold">{t('settings.title', 'Settings')}</h1>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <Button variant="outline" onClick={handleSignOut}>
+              {t('auth.sign_out', 'Sign Out')}
+            </Button>
+          </div>
         </div>
 
         <ComprehensiveProfileSettings />
