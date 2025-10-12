@@ -42,11 +42,15 @@ const EventCard: React.FC<EventCardProps> = ({ event, onJoin, onLeave }) => {
     >
       {/* Event Image */}
       {event.image_url && (
-        <div className="aspect-video overflow-hidden">
+        <div className="aspect-video overflow-hidden bg-gradient-to-br from-purple-900/50 to-pink-900/50">
           <img 
             src={event.image_url} 
             alt={event.title}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              // Hide image container if it fails to load
+              e.currentTarget.parentElement!.style.display = 'none';
+            }}
           />
         </div>
       )}

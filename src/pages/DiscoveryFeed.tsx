@@ -239,7 +239,7 @@ const DiscoveryFeed = () => {
                 onClick={() => setShowFollowingOnly(!showFollowingOnly)}
                 size="sm"
                 variant={showFollowingOnly ? "default" : "outline"}
-                className={`gap-2 ${showFollowingOnly ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0' : 'border-white/20 text-white hover:bg-white/10'}`}
+                className={`gap-2 ${showFollowingOnly ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0' : 'bg-purple-600/50 backdrop-blur-sm border-white/20 text-white hover:bg-purple-600/70'}`}
               >
                 <Users className="w-4 h-4" />
                 Following
