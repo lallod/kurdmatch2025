@@ -15,6 +15,30 @@
   text-align: right;
 }
 
+/* General RTL support for Kurdish Sorani */
+.font-arabic {
+  font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+}
+
+[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: 0;
+  margin-left: auto;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

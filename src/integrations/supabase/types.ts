@@ -859,6 +859,81 @@ export type Database = {
         }
         Relationships: []
       }
+      landing_page_v2_translations: {
+        Row: {
+          community_description: string
+          community_dialects: Json
+          community_images: Json
+          community_subtitle: string
+          community_title: string
+          created_at: string | null
+          cta_button_text: string
+          cta_subtitle: string | null
+          cta_title: string
+          features: Json
+          footer_links: Json | null
+          footer_text: string
+          hero_cta_text: string
+          hero_image_url: string
+          hero_subtitle: string
+          hero_title: string
+          how_it_works_steps: Json
+          how_it_works_title: string
+          id: string
+          is_published: boolean | null
+          language_code: string
+          updated_at: string | null
+        }
+        Insert: {
+          community_description: string
+          community_dialects?: Json
+          community_images?: Json
+          community_subtitle: string
+          community_title: string
+          created_at?: string | null
+          cta_button_text: string
+          cta_subtitle?: string | null
+          cta_title: string
+          features?: Json
+          footer_links?: Json | null
+          footer_text: string
+          hero_cta_text?: string
+          hero_image_url: string
+          hero_subtitle: string
+          hero_title: string
+          how_it_works_steps?: Json
+          how_it_works_title?: string
+          id?: string
+          is_published?: boolean | null
+          language_code: string
+          updated_at?: string | null
+        }
+        Update: {
+          community_description?: string
+          community_dialects?: Json
+          community_images?: Json
+          community_subtitle?: string
+          community_title?: string
+          created_at?: string | null
+          cta_button_text?: string
+          cta_subtitle?: string | null
+          cta_title?: string
+          features?: Json
+          footer_links?: Json | null
+          footer_text?: string
+          hero_cta_text?: string
+          hero_image_url?: string
+          hero_subtitle?: string
+          hero_title?: string
+          how_it_works_steps?: Json
+          how_it_works_title?: string
+          id?: string
+          is_published?: boolean | null
+          language_code?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string | null

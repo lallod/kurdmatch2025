@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type LanguageCode = 'english' | 'kurdish_sorani' | 'kurdish_kurmanci' | 'norwegian';
+export type LanguageCode = 'english' | 'kurdish_sorani' | 'kurdish_kurmanci' | 'norwegian' | 'german';
 
 interface LanguageContextType {
   language: LanguageCode;
@@ -26,7 +26,8 @@ const languageNames: Record<LanguageCode, string> = {
   english: 'English',
   kurdish_sorani: 'کوردی (سۆرانی)',
   kurdish_kurmanci: 'Kurdî (Kurmancî)',
-  norwegian: 'Norsk'
+  norwegian: 'Norsk',
+  german: 'Deutsch'
 };
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {

@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileSidebar from '@/components/landing/MobileSidebar';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useLandingContent } from '@/hooks/useLandingContent';
+import { useLandingV2Content } from '@/hooks/useLandingV2Content';
+import { isRTL, getTextDirection } from '@/utils/rtl';
 
 // Import generated images
 import heroRomance from '@/assets/landing/hero-romance.jpg';
@@ -28,7 +29,9 @@ const LandingV2 = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const { language } = useLanguage();
-  const { content, loading } = useLandingContent(language);
+  const { content, loading } = useLandingV2Content(language);
+  const textDir = getTextDirection(language);
+  const isRtl = isRTL(language);
 
   if (loading) {
     return (
@@ -43,10 +46,8 @@ const LandingV2 = () => {
     );
   }
 
-  const isSorani = language === 'kurdish_sorani';
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 relative overflow-hidden" dir={textDir}>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
@@ -132,27 +133,21 @@ const LandingV2 = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6"
             >
-              <div className="inline-block">
-                <span className="text-sm text-purple-200 font-medium bg-white/10 backdrop-blur-lg border border-white/20 px-4 py-2 rounded-full">
-                  {content.hero.tagline}
-                </span>
-              </div>
-              
-              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white ${isSorani ? 'font-kurdish-sorani' : ''}`}>
-                {content.hero.title}
+              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white ${isRtl ? 'font-arabic text-right' : ''}`}>
+                {content.hero_title}
               </h1>
 
-              <p className="text-lg text-purple-200 max-w-xl">
-                {content.hero.subtitle}
+              <p className={`text-lg text-purple-200 max-w-xl ${isRtl ? 'text-right' : ''}`}>
+                {content.hero_subtitle}
               </p>
 
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className={`flex flex-wrap gap-4 pt-4 ${isRtl ? 'flex-row-reverse' : ''}`}>
                 <Button 
                   size="lg"
                   onClick={() => navigate('/register')}
                   className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 rounded-full shadow-lg"
                 >
-                  {content.hero.cta} <ArrowRight className="ml-2 w-4 h-4" />
+                  {content.hero_cta_text} <ArrowRight className={`${isRtl ? 'mr-2' : 'ml-2'} w-4 h-4`} />
                 </Button>
               </div>
             </motion.div>
@@ -190,16 +185,13 @@ const LandingV2 = () => {
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Heart, title: 'Find Your Kurdish Lover', emoji: '💕', description: 'Connect with singles who share your heritage and values', image: featureLover },
-              { icon: Plane, title: 'Find Your Travel Mate', emoji: '✈️', description: 'Explore Kurdistan and the world with fellow adventurers', image: featureTravel },
-              { icon: Users, title: 'Find New Friends', emoji: '🌍', description: 'Build friendships across all Kurdish regions and diaspora', image: featureFriends },
-              { icon: Home, title: 'Make a Kurdish Family', emoji: '🏡', description: 'Create lasting bonds and build your future together', image: featureFamily },
-              { icon: Calendar, title: 'Find Kurdish Events', emoji: '🎉', description: 'Discover and join cultural gatherings in your area', image: featureEvents },
-              { icon: Music, title: 'Find Kurdish Parties', emoji: '🪩', description: 'Celebrate life with vibrant Kurdish party scenes', image: featureParties },
-              { icon: UtensilsCrossed, title: 'Find Kurdish Picnics', emoji: '🧺', description: 'Enjoy outdoor gatherings with traditional Kurdish cuisine', image: featurePicnic },
-              { icon: Sparkles, title: 'Cultural Events', emoji: '🕊️', description: 'Experience traditional music, dance, and celebrations', image: featureCultural }
-            ].map((feature, index) => (
+            {content.features.map((feature, index) => {
+              const iconMap: Record<string, any> = {
+                Heart, Plane, Users, Home, Calendar, Music, UtensilsCrossed, Sparkles
+              };
+              const FeatureIcon = iconMap[feature.icon] || Heart;
+              
+              return (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -210,22 +202,22 @@ const LandingV2 = () => {
               >
                 <div className="relative h-48 overflow-hidden">
                   <img 
-                    src={feature.image} 
+                    src={feature.image_url} 
                     alt={feature.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute top-4 right-4 text-3xl">{feature.emoji}</div>
                 </div>
-                <div className="p-6 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <feature.icon className="w-5 h-5 text-pink-400" />
-                    <h3 className="text-lg font-bold text-white">{feature.title}</h3>
+                <div className={`p-6 space-y-3 ${isRtl ? 'text-right' : ''}`}>
+                  <div className={`flex items-center gap-3 ${isRtl ? 'flex-row-reverse' : ''}`}>
+                    <FeatureIcon className="w-5 h-5 text-pink-400" />
+                    <h3 className={`text-lg font-bold text-white ${isRtl ? 'font-arabic' : ''}`}>{feature.title}</h3>
                   </div>
-                  <p className="text-sm text-purple-200">{feature.description}</p>
+                  <p className={`text-sm text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>{feature.description}</p>
                 </div>
               </motion.div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>
@@ -239,11 +231,11 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Join the Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Kurdish Community</span>
+            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isRtl ? 'font-arabic' : ''}`}>
+              {content.community_title}
             </h2>
-            <p className="text-lg text-purple-200 max-w-2xl mx-auto">
-              Connect with Kurds from all regions of Kurdistan and across the global diaspora. No matter where you are, find your community.
+            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isRtl ? 'font-arabic' : ''}`}>
+              {content.community_subtitle}
             </p>
           </motion.div>
 
@@ -254,33 +246,13 @@ const LandingV2 = () => {
               viewport={{ once: true }}
               className="space-y-6"
             >
-              <div className="flex items-start gap-4">
+              <div className={`flex items-start gap-4 ${isRtl ? 'flex-row-reverse text-right' : ''}`}>
                 <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Globe2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">All Kurdish Dialects Welcome</h3>
-                  <p className="text-purple-200">Kurmanji, Sorani, Pehlewani, Zazaki - unite across linguistic boundaries and celebrate our shared heritage.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Users className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Kurdistan & Diaspora</h3>
-                  <p className="text-purple-200">From Hewlêr to Europe, North America to Australia - connect with Kurds everywhere in the world.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Cultural Understanding</h3>
-                  <p className="text-purple-200">Find people who understand your traditions, values, and the importance of Kurdish identity.</p>
+                  <h3 className={`text-xl font-bold text-white mb-2 ${isRtl ? 'font-arabic' : ''}`}>All Kurdish Dialects Welcome</h3>
+                  <p className={`text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>{content.community_dialects.join(', ')} - {content.community_description}</p>
                 </div>
               </div>
             </motion.div>
@@ -309,18 +281,14 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Works</span>
+            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isRtl ? 'font-arabic' : ''}`}>
+              {content.how_it_works_title}
             </h2>
-            <p className="text-lg text-purple-200">Three simple steps to start your journey</p>
+            <p className={`text-lg text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>Three simple steps to start your journey</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: '01', title: 'Create Your Profile', description: 'Sign up and share your story, interests, and what you\'re looking for in the Kurdish community' },
-              { step: '02', title: 'Discover Connections', description: 'Browse profiles, attend events, and connect with Kurds who share your interests and values' },
-              { step: '03', title: 'Build Relationships', description: 'Start conversations, meet in person at events, and build meaningful connections that last' }
-            ].map((item, index) => (
+            {content.how_it_works_steps.map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -329,12 +297,12 @@ const LandingV2 = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="relative"
               >
-                <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 space-y-4">
+                <div className={`bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 space-y-4 ${isRtl ? 'text-right' : ''}`}>
                   <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
-                    {item.step}
+                    {String(item.step).padStart(2, '0')}
                   </div>
-                  <h3 className="text-xl font-bold text-white">{item.title}</h3>
-                  <p className="text-purple-200">{item.description}</p>
+                  <h3 className={`text-xl font-bold text-white ${isRtl ? 'font-arabic' : ''}`}>{item.title}</h3>
+                  <p className={`text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>{item.description}</p>
                 </div>
                 {index < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-pink-400 to-purple-400" />
@@ -354,18 +322,18 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="bg-white/5 backdrop-blur-lg border border-white/20 rounded-3xl p-12 text-center space-y-6"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white">
-              Ready to Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Kurdish Connection?</span>
+            <h2 className={`text-3xl md:text-4xl font-bold text-white ${isRtl ? 'font-arabic' : ''}`}>
+              {content.cta_title}
             </h2>
-            <p className="text-lg text-purple-200 max-w-2xl mx-auto">
-              Join thousands of Kurds from around the world finding love, friendship, and community on KurdMatch.
+            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isRtl ? 'font-arabic' : ''}`}>
+              {content.cta_subtitle || 'Join thousands of Kurds from around the world finding love, friendship, and community on KurdMatch.'}
             </p>
             <Button 
               size="lg"
               onClick={() => navigate('/register')}
               className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-12 rounded-full shadow-xl"
             >
-              Join KurdMatch Today <ArrowRight className="ml-2 w-5 h-5" />
+              {content.cta_button_text} <ArrowRight className={`${isRtl ? 'mr-2' : 'ml-2'} w-5 h-5`} />
             </Button>
           </motion.div>
         </div>
@@ -424,8 +392,8 @@ const LandingV2 = () => {
             </div>
           </div>
 
-          <div className="border-t border-white/20 mt-8 pt-8 text-center text-sm text-purple-200">
-            <p>&copy; 2025 KurdMatch. All rights reserved.</p>
+          <div className={`border-t border-white/20 mt-8 pt-8 text-center text-sm text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>
+            <p>{content.footer_text}</p>
           </div>
         </div>
       </footer>

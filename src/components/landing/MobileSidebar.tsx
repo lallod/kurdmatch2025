@@ -20,6 +20,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
     { code: 'kurdish_sorani', label: 'کوردی (سۆرانی)', flag: '🟥⚪️🟩' },
     { code: 'kurdish_kurmanci', label: 'Kurdî (Kurmancî)', flag: '🟨🔴🟩' },
     { code: 'norwegian', label: 'Norsk', flag: '🇳🇴' },
+    { code: 'german', label: 'Deutsch', flag: '🇩🇪' },
   ];
 
   const menuItems = [
