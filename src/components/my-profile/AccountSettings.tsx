@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,25 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { 
-  Shield, 
-  Bell, 
-  Eye, 
-  Heart, 
-  MessageCircle, 
-  Users, 
-  Lock, 
-  Smartphone,
-  Mail,
-  Globe,
-  Download,
-  Trash2,
-  Settings,
-  CheckCircle2,
-  AlertTriangle,
-  LogOut,
-  Crown
-} from 'lucide-react';
+import { Shield, Bell, Eye, Heart, MessageCircle, Users, Lock, Smartphone, Mail, Globe, Download, Trash2, Settings, CheckCircle2, AlertTriangle, LogOut, Crown } from 'lucide-react';
 import { toast } from 'sonner';
 import DownloadDataDialog from './dialogs/DownloadDataDialog';
 import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
@@ -32,10 +13,11 @@ import ConnectedAccountsDialog from './dialogs/ConnectedAccountsDialog';
 import DeleteAccountDialog from './dialogs/DeleteAccountDialog';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useTranslations } from '@/hooks/useTranslations';
-
 const AccountSettings = () => {
   const navigate = useNavigate();
-  const { signOut } = useSupabaseAuth();
+  const {
+    signOut
+  } = useSupabaseAuth();
   const [notifications, setNotifications] = useState({
     matches: true,
     messages: true,
@@ -46,7 +28,6 @@ const AccountSettings = () => {
     email: true,
     sms: false
   });
-
   const [privacy, setPrivacy] = useState({
     showAge: true,
     showDistance: true,
@@ -62,25 +43,32 @@ const AccountSettings = () => {
     connectedAccounts: false,
     deleteAccount: false
   });
-
   const handleNotificationChange = (key: string, value: boolean) => {
-    setNotifications(prev => ({ ...prev, [key]: value }));
+    setNotifications(prev => ({
+      ...prev,
+      [key]: value
+    }));
     toast.success('Notification settings updated');
   };
-
   const handlePrivacyChange = (key: string, value: boolean) => {
-    setPrivacy(prev => ({ ...prev, [key]: value }));
+    setPrivacy(prev => ({
+      ...prev,
+      [key]: value
+    }));
     toast.success('Privacy settings updated');
   };
-
   const openDialog = (dialogName: keyof typeof dialogStates) => {
-    setDialogStates(prev => ({ ...prev, [dialogName]: true }));
+    setDialogStates(prev => ({
+      ...prev,
+      [dialogName]: true
+    }));
   };
-
   const closeDialog = (dialogName: keyof typeof dialogStates) => {
-    setDialogStates(prev => ({ ...prev, [dialogName]: false }));
+    setDialogStates(prev => ({
+      ...prev,
+      [dialogName]: false
+    }));
   };
-
   const handleLogout = async () => {
     try {
       await signOut();
@@ -91,12 +79,10 @@ const AccountSettings = () => {
       toast.error('Failed to log out. Please try again.');
     }
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Subscription Management */}
       <Card className="backdrop-blur-md bg-gradient-to-r from-tinder-rose/20 to-tinder-orange/20 border border-primary/20">
-        <CardContent className="p-6">
+        <CardContent className="p-6 bg-[#53073c]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-tinder-rose to-tinder-orange rounded-full flex items-center justify-center">
@@ -107,10 +93,7 @@ const AccountSettings = () => {
                 <p className="text-purple-200 text-sm">Unlock all premium features</p>
               </div>
             </div>
-            <Button
-              onClick={() => navigate('/subscription')}
-              className="bg-gradient-to-r from-tinder-rose to-tinder-orange hover:opacity-90"
-            >
+            <Button onClick={() => navigate('/subscription')} className="bg-gradient-to-r from-tinder-rose to-tinder-orange hover:opacity-90">
               Manage Plan
             </Button>
           </div>
@@ -190,10 +173,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified when someone likes you back</p>
                 </div>
               </div>
-              <Switch 
-                checked={notifications.matches}
-                onCheckedChange={(value) => handleNotificationChange('matches', value)}
-              />
+              <Switch checked={notifications.matches} onCheckedChange={value => handleNotificationChange('matches', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -204,10 +184,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified about new messages</p>
                 </div>
               </div>
-              <Switch 
-                checked={notifications.messages}
-                onCheckedChange={(value) => handleNotificationChange('messages', value)}
-              />
+              <Switch checked={notifications.messages} onCheckedChange={value => handleNotificationChange('messages', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -218,10 +195,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified when someone likes your profile</p>
                 </div>
               </div>
-              <Switch 
-                checked={notifications.likes}
-                onCheckedChange={(value) => handleNotificationChange('likes', value)}
-              />
+              <Switch checked={notifications.likes} onCheckedChange={value => handleNotificationChange('likes', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -232,10 +206,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified when someone views your profile</p>
                 </div>
               </div>
-              <Switch 
-                checked={notifications.profileViews}
-                onCheckedChange={(value) => handleNotificationChange('profileViews', value)}
-              />
+              <Switch checked={notifications.profileViews} onCheckedChange={value => handleNotificationChange('profileViews', value)} />
             </div>
           </div>
         </CardContent>
@@ -255,10 +226,7 @@ const AccountSettings = () => {
                 <p className="text-white">Show My Age</p>
                 <p className="text-purple-200 text-sm">Display your age on your profile</p>
               </div>
-              <Switch 
-                checked={privacy.showAge}
-                onCheckedChange={(value) => handlePrivacyChange('showAge', value)}
-              />
+              <Switch checked={privacy.showAge} onCheckedChange={value => handlePrivacyChange('showAge', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -266,10 +234,7 @@ const AccountSettings = () => {
                 <p className="text-white">Show Distance</p>
                 <p className="text-purple-200 text-sm">Show your distance to other users</p>
               </div>
-              <Switch 
-                checked={privacy.showDistance}
-                onCheckedChange={(value) => handlePrivacyChange('showDistance', value)}
-              />
+              <Switch checked={privacy.showDistance} onCheckedChange={value => handlePrivacyChange('showDistance', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -277,10 +242,7 @@ const AccountSettings = () => {
                 <p className="text-white">Show Online Status</p>
                 <p className="text-purple-200 text-sm">Let others see when you're online</p>
               </div>
-              <Switch 
-                checked={privacy.showOnline}
-                onCheckedChange={(value) => handlePrivacyChange('showOnline', value)}
-              />
+              <Switch checked={privacy.showOnline} onCheckedChange={value => handlePrivacyChange('showOnline', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -288,10 +250,7 @@ const AccountSettings = () => {
                 <p className="text-white">Discoverable</p>
                 <p className="text-purple-200 text-sm">Allow others to find your profile</p>
               </div>
-              <Switch 
-                checked={privacy.discoverable}
-                onCheckedChange={(value) => handlePrivacyChange('discoverable', value)}
-              />
+              <Switch checked={privacy.discoverable} onCheckedChange={value => handlePrivacyChange('discoverable', value)} />
             </div>
           </div>
         </CardContent>
@@ -314,10 +273,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Receive notifications on your device</p>
                 </div>
               </div>
-              <Switch 
-                checked={notifications.push}
-                onCheckedChange={(value) => handleNotificationChange('push', value)}
-              />
+              <Switch checked={notifications.push} onCheckedChange={value => handleNotificationChange('push', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -328,10 +284,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Receive updates via email</p>
                 </div>
               </div>
-              <Switch 
-                checked={notifications.email}
-                onCheckedChange={(value) => handleNotificationChange('email', value)}
-              />
+              <Switch checked={notifications.email} onCheckedChange={value => handleNotificationChange('email', value)} />
             </div>
           </div>
         </CardContent>
@@ -346,47 +299,27 @@ const AccountSettings = () => {
           </h3>
           
           <div className="space-y-3">
-            <Button 
-              variant="outline" 
-              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
-              onClick={() => openDialog('downloadData')}
-            >
+            <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => openDialog('downloadData')}>
               <Download className="w-4 h-4 mr-2" />
               Download My Data
             </Button>
             
-            <Button 
-              variant="outline" 
-              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
-              onClick={() => openDialog('changePassword')}
-            >
+            <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => openDialog('changePassword')}>
               <Lock className="w-4 h-4 mr-2" />
               Change Password
             </Button>
             
-            <Button 
-              variant="outline" 
-              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
-              onClick={() => openDialog('connectedAccounts')}
-            >
+            <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => openDialog('connectedAccounts')}>
               <Globe className="w-4 h-4 mr-2" />
               Connected Accounts
             </Button>
             
-            <Button 
-              variant="outline" 
-              className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
-              onClick={handleLogout}
-            >
+            <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
               Logout
             </Button>
             
-            <Button 
-              variant="destructive" 
-              className="w-full justify-start"
-              onClick={() => openDialog('deleteAccount')}
-            >
+            <Button variant="destructive" className="w-full justify-start" onClick={() => openDialog('deleteAccount')}>
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Account
             </Button>
@@ -395,27 +328,13 @@ const AccountSettings = () => {
       </Card>
 
       {/* Dialogs */}
-      <DownloadDataDialog 
-        open={dialogStates.downloadData}
-        onOpenChange={() => closeDialog('downloadData')}
-      />
+      <DownloadDataDialog open={dialogStates.downloadData} onOpenChange={() => closeDialog('downloadData')} />
       
-      <ChangePasswordDialog 
-        open={dialogStates.changePassword}
-        onOpenChange={() => closeDialog('changePassword')}
-      />
+      <ChangePasswordDialog open={dialogStates.changePassword} onOpenChange={() => closeDialog('changePassword')} />
       
-      <ConnectedAccountsDialog 
-        open={dialogStates.connectedAccounts}
-        onOpenChange={() => closeDialog('connectedAccounts')}
-      />
+      <ConnectedAccountsDialog open={dialogStates.connectedAccounts} onOpenChange={() => closeDialog('connectedAccounts')} />
       
-      <DeleteAccountDialog 
-        open={dialogStates.deleteAccount}
-        onOpenChange={() => closeDialog('deleteAccount')}
-      />
-    </div>
-  );
+      <DeleteAccountDialog open={dialogStates.deleteAccount} onOpenChange={() => closeDialog('deleteAccount')} />
+    </div>;
 };
-
 export default AccountSettings;
