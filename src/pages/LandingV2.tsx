@@ -113,15 +113,14 @@ const LandingV2 = () => {
             <div className="hidden md:flex items-center gap-3">
               <Select value={language} onValueChange={(value) => setLanguage(value as LanguageCode)}>
                 <SelectTrigger className="w-[180px] bg-white/10 border-white/20 text-white hover:bg-white/15">
-                  <Globe2 className="w-4 h-4 mr-2" />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="english">🇬🇧 English</SelectItem>
-                  <SelectItem value="kurdish_sorani">🟥⚪️🟩 کوردی (سۆرانی)</SelectItem>
-                  <SelectItem value="kurdish_kurmanci">🟨🔴🟩 Kurdî (Kurmancî)</SelectItem>
-                  <SelectItem value="norwegian">🇳🇴 Norsk</SelectItem>
-                  <SelectItem value="german">🇩🇪 Deutsch</SelectItem>
+                <SelectContent className="bg-background border-border z-50">
+                  <SelectItem value="english">English</SelectItem>
+                  <SelectItem value="kurdish_sorani">کوردی (سۆرانی)</SelectItem>
+                  <SelectItem value="kurdish_kurmanci">Kurdî (Kurmancî)</SelectItem>
+                  <SelectItem value="norwegian">Norsk</SelectItem>
+                  <SelectItem value="german">Deutsch</SelectItem>
                 </SelectContent>
               </Select>
               <Button 
