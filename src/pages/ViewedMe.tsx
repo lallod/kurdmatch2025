@@ -27,31 +27,37 @@ const ViewedMe = () => {
       try {
         setIsLoading(true);
         
-        // Fetch real profile views with viewer profile data
-        const { data: profileViews, error } = await supabase
+        // Fetch profile views
+        const { data: profileViews, error: viewsError } = await supabase
           .from('profile_views')
-          .select(`
-            id,
-            viewer_id,
-            viewed_at,
-            profiles!profile_views_viewer_id_fkey (
-              id,
-              name,
-              age,
-              profile_image,
-              location,
-              verified
-            )
-          `)
+          .select('id, viewer_id, viewed_at')
           .eq('viewed_profile_id', user.id)
           .order('viewed_at', { ascending: false })
           .limit(50);
           
-        if (error) throw error;
+        if (viewsError) throw viewsError;
+        
+        if (!profileViews || profileViews.length === 0) {
+          setViewedProfiles([]);
+          return;
+        }
+        
+        // Fetch viewer profiles separately
+        const viewerIds = profileViews.map(v => v.viewer_id);
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, name, age, profile_image, location, verified')
+          .in('id', viewerIds);
+          
+        if (profilesError) throw profilesError;
+        
+        // Create a map for quick lookup
+        const profilesMap = new Map(profiles?.map(p => [p.id, p]) || []);
         
         // Transform data and calculate time ago
-        const transformedProfiles = profileViews?.map((view: any) => {
-          const profile = view.profiles;
+        const transformedProfiles = profileViews.map((view: any) => {
+          const profile = profilesMap.get(view.viewer_id);
+          if (!profile) return null;
           const viewedAt = new Date(view.viewed_at);
           const now = new Date();
           const diffMs = now.getTime() - viewedAt.getTime();
@@ -81,7 +87,7 @@ const ViewedMe = () => {
             hasViewed: false, // Could be enhanced with mutual view checking
             compatibilityScore: Math.floor(Math.random() * 30) + 70 // Placeholder for compatibility algorithm
           };
-        }) || [];
+        }).filter(Boolean); // Remove any null entries
         
         setViewedProfiles(transformedProfiles);
       } catch (error) {
