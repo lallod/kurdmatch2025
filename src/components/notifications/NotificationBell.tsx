@@ -119,6 +119,17 @@ const NotificationBell = () => {
             )}
             <Button
               variant="ghost"
+              size="sm"
+              onClick={() => {
+                setOpen(false);
+                navigate('/notifications');
+              }}
+              className="text-purple-300 hover:text-white hover:bg-white/10 h-7"
+            >
+              View All
+            </Button>
+            <Button
+              variant="ghost"
               size="icon"
               onClick={() => {
                 setOpen(false);
