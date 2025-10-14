@@ -36,6 +36,7 @@ import { HashtagFeed } from '@/pages/HashtagFeed';
 import { GroupsList } from '@/pages/GroupsList';
 import { GroupDetail } from '@/pages/GroupDetail';
 import NotificationSettings from '@/pages/NotificationSettings';
+import AdvancedSearch from '@/pages/AdvancedSearch';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -125,6 +126,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/create-post" 
         element={<ProtectedRoute><CreatePost /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/search" 
+        element={<ProtectedRoute><AdvancedSearch /></ProtectedRoute>} 
       />
       <Route 
         path="/create-event" 

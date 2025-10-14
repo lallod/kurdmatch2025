@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, X, Loader2 } from 'lucide-react';
+import { Search, X, Loader2, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { searchProfiles, Profile } from '@/api/profiles';
@@ -57,26 +57,37 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
 
   return (
     <div className="relative w-full">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Search by name, location, or interests..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setShowResults(true)}
-          className="pl-10 pr-10 bg-background/50 backdrop-blur border-border"
-        />
-        {query && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleClear}
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        )}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search by name, location, or interests..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setShowResults(true)}
+            className="pl-10 pr-10 bg-background/50 backdrop-blur border-border"
+          />
+          {query && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClear}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate('/search')}
+          className="gap-2"
+        >
+          <Filter className="w-4 h-4" />
+          Advanced
+        </Button>
       </div>
 
       {showResults && (query.length >= 2 || results.length > 0) && (
