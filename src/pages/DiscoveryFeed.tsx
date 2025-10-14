@@ -8,7 +8,7 @@ import EventCard from '@/components/discovery/EventCard';
 import EventFilters from '@/components/discovery/EventFilters';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PenSquare, Loader2, Calendar, Plus, Filter, Users, Hash } from 'lucide-react';
+import { PenSquare, Loader2, Calendar, Plus, Filter, Users as UsersIcon, Hash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNavigation from '@/components/BottomNavigation';
 import StoryViewer from '@/components/stories/StoryViewer';
@@ -253,7 +253,7 @@ const DiscoveryFeed = () => {
                 variant={showFollowingOnly ? "default" : "outline"}
                 className={`gap-2 ${showFollowingOnly ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0' : 'bg-purple-600/50 backdrop-blur-sm border-white/20 text-white hover:bg-purple-600/70'}`}
               >
-                <Users className="w-4 h-4" />
+                <UsersIcon className="w-4 h-4" />
                 Following
               </Button>
             )}
@@ -326,7 +326,7 @@ const DiscoveryFeed = () => {
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-purple-300" />
+                  <UsersIcon className="w-5 h-5 text-purple-300" />
                   <h2 className="text-lg font-semibold text-white">Groups</h2>
                 </div>
                 <Button
