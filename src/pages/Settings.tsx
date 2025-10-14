@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, UserX, Lock, Bell, Globe, ChevronRight } from 'lucide-react';
 import ComprehensiveProfileSettings from '@/components/settings/ComprehensiveProfileSettings';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -44,9 +44,69 @@ const Settings = () => {
           </Button>
         </div>
 
+        {/* Settings Sections */}
+        <div className="space-y-3">
+          {/* Privacy Settings */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/settings/privacy')}
+            className="w-full justify-between h-auto p-4 glass border border-tinder-rose/10"
+          >
+            <div className="flex items-center gap-3">
+              <Lock className="h-5 w-5 text-tinder-rose" />
+              <div className="text-left">
+                <h3 className="font-semibold">Privacy Settings</h3>
+                <p className="text-sm text-muted-foreground">
+                  Control who can see your profile and activity
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </Button>
+
+          {/* Notification Settings */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/notifications/settings')}
+            className="w-full justify-between h-auto p-4 glass border border-tinder-rose/10"
+          >
+            <div className="flex items-center gap-3">
+              <Bell className="h-5 w-5 text-tinder-rose" />
+              <div className="text-left">
+                <h3 className="font-semibold">Notifications</h3>
+                <p className="text-sm text-muted-foreground">
+                  Manage your notification preferences
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </Button>
+
+          {/* Blocked Users */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/settings/blocked')}
+            className="w-full justify-between h-auto p-4 glass border border-tinder-rose/10"
+          >
+            <div className="flex items-center gap-3">
+              <UserX className="h-5 w-5 text-tinder-rose" />
+              <div className="text-left">
+                <h3 className="font-semibold">Blocked Users</h3>
+                <p className="text-sm text-muted-foreground">
+                  View and manage blocked users
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </Button>
+        </div>
+
         {/* Language Settings Section */}
         <div className="glass rounded-lg p-6 border border-tinder-rose/10">
-          <h2 className="text-lg font-semibold mb-4">{t('settings.language', 'Language')}</h2>
+          <div className="flex items-center gap-3 mb-4">
+            <Globe className="h-5 w-5 text-tinder-rose" />
+            <h2 className="text-lg font-semibold">{t('settings.language', 'Language')}</h2>
+          </div>
           <div className="flex items-center gap-3">
             <p className="text-sm text-muted-foreground">
               Choose your preferred language for the app

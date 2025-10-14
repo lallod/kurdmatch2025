@@ -37,6 +37,8 @@ import { GroupsList } from '@/pages/GroupsList';
 import { GroupDetail } from '@/pages/GroupDetail';
 import NotificationSettings from '@/pages/NotificationSettings';
 import AdvancedSearch from '@/pages/AdvancedSearch';
+import BlockedUsers from '@/pages/BlockedUsers';
+import PrivacySettings from '@/pages/PrivacySettings';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -194,6 +196,14 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/notifications/settings" 
         element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/settings/privacy" 
+        element={<ProtectedRoute><PrivacySettings /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/settings/blocked" 
+        element={<ProtectedRoute><BlockedUsers /></ProtectedRoute>} 
       />
       
       {/* Super Admin routes */}
