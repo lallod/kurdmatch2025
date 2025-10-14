@@ -1,13 +1,34 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { Lock, Eye, EyeOff, Shield, CheckCircle2 } from 'lucide-react';
+import { Lock, Shield, CheckCircle2 } from 'lucide-react';
 import { changePassword } from '@/api/accountActions';
 import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+// Password validation schema
+const passwordSchema = z.string()
+  .min(8, { message: 'Password must be at least 8 characters' })
+  .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
+  .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
+  .regex(/\d/, { message: 'Password must contain at least one number' });
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, { message: 'Current password is required' }),
+  newPassword: passwordSchema,
+  confirmPassword: z.string(),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 interface ChangePasswordDialogProps {
   open: boolean;
@@ -15,48 +36,35 @@ interface ChangePasswordDialogProps {
 }
 
 const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpenChange }) => {
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+  const form = useForm<ChangePasswordFormValues>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    },
   });
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false
-  });
-  const [isLoading, setIsLoading] = useState(false);
+
+  const newPassword = form.watch('newPassword') || '';
+  const confirmPassword = form.watch('confirmPassword') || '';
 
   const passwordRequirements = [
-    { text: 'At least 8 characters', met: formData.newPassword.length >= 8 },
-    { text: 'Contains uppercase letter', met: /[A-Z]/.test(formData.newPassword) },
-    { text: 'Contains lowercase letter', met: /[a-z]/.test(formData.newPassword) },
-    { text: 'Contains number', met: /\d/.test(formData.newPassword) },
-    { text: 'Passwords match', met: formData.newPassword === formData.confirmPassword && formData.newPassword.length > 0 }
+    { text: 'At least 8 characters', met: newPassword.length >= 8 },
+    { text: 'Contains uppercase letter', met: /[A-Z]/.test(newPassword) },
+    { text: 'Contains lowercase letter', met: /[a-z]/.test(newPassword) },
+    { text: 'Contains number', met: /\d/.test(newPassword) },
+    { text: 'Passwords match', met: newPassword === confirmPassword && newPassword.length > 0 }
   ];
 
-  const isFormValid = passwordRequirements.every(req => req.met) && formData.currentPassword.length > 0;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isFormValid) return;
-
-    setIsLoading(true);
+  const handleSubmit = async (data: ChangePasswordFormValues) => {
     try {
-      await changePassword(formData.currentPassword, formData.newPassword);
+      await changePassword(data.currentPassword, data.newPassword);
       toast.success('Password changed successfully!');
-      setFormData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      form.reset();
       onOpenChange(false);
     } catch (error: any) {
-      console.error('Password change error:', error);
       toast.error(error.message || 'Failed to change password. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
-  };
-
-  const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
-    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
   return (
@@ -69,117 +77,113 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
           </DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-3">
-            <div>
-              <Label className="text-purple-200">Current Password</Label>
-              <div className="relative">
-                <Input
-                  type={showPasswords.current ? 'text' : 'password'}
-                  value={formData.currentPassword}
-                  onChange={(e) => setFormData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                  className="bg-gray-800 border-gray-600 text-white pr-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
-                  onClick={() => togglePasswordVisibility('current')}
-                >
-                  {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-purple-200">New Password</Label>
-              <div className="relative">
-                <Input
-                  type={showPasswords.new ? 'text' : 'password'}
-                  value={formData.newPassword}
-                  onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
-                  className="bg-gray-800 border-gray-600 text-white pr-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
-                  onClick={() => togglePasswordVisibility('new')}
-                >
-                  {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-purple-200">Confirm New Password</Label>
-              <div className="relative">
-                <Input
-                  type={showPasswords.confirm ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className="bg-gray-800 border-gray-600 text-white pr-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
-                  onClick={() => togglePasswordVisibility('confirm')}
-                >
-                  {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {formData.newPassword && (
-            <Card className="bg-gray-800/50 border-gray-700">
-              <CardContent className="p-4">
-                <h4 className="text-white font-medium mb-3 flex items-center">
-                  <Shield className="w-4 h-4 mr-2 text-green-400" />
-                  Password Requirements
-                </h4>
-                <ul className="space-y-1">
-                  {passwordRequirements.map((req, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 
-                        className={`w-4 h-4 ${req.met ? 'text-green-400' : 'text-gray-500'}`} 
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <div className="space-y-3">
+              <FormField
+                control={form.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-purple-200">Current Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Enter current password"
+                        className="bg-gray-800 border-gray-600 text-white"
+                        autoComplete="current-password"
                       />
-                      <span className={req.met ? 'text-green-300' : 'text-gray-400'}>
-                        {req.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          )}
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <div className="flex gap-3">
-            <Button 
-              type="button"
-              variant="outline" 
-              onClick={() => onOpenChange(false)}
-              className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit"
-              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-              disabled={!isFormValid || isLoading}
-            >
-              {isLoading ? 'Changing...' : 'Change Password'}
-            </Button>
-          </div>
-        </form>
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-purple-200">New Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Enter new password"
+                        className="bg-gray-800 border-gray-600 text-white"
+                        autoComplete="new-password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-purple-200">Confirm New Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Confirm new password"
+                        className="bg-gray-800 border-gray-600 text-white"
+                        autoComplete="new-password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {newPassword && (
+              <Card className="bg-gray-800/50 border-gray-700">
+                <CardContent className="p-4">
+                  <h4 className="text-white font-medium mb-3 flex items-center">
+                    <Shield className="w-4 h-4 mr-2 text-green-400" />
+                    Password Requirements
+                  </h4>
+                  <ul className="space-y-1">
+                    {passwordRequirements.map((req, index) => (
+                      <li key={index} className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 
+                          className={`w-4 h-4 ${req.met ? 'text-green-400' : 'text-gray-500'}`} 
+                        />
+                        <span className={req.met ? 'text-green-300' : 'text-gray-400'}>
+                          {req.text}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="flex gap-3">
+              <Button 
+                type="button"
+                variant="outline" 
+                onClick={() => onOpenChange(false)}
+                className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              >
+                {form.formState.isSubmitting ? 'Changing...' : 'Change Password'}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
