@@ -148,6 +148,39 @@ export const useRegistrationFormLogic = () => {
 
   const nextStep = async () => {
     try {
+      // Check email availability on step 1 before allowing navigation
+      if (step === 1) {
+        const email = form.getValues('email');
+        if (email) {
+          const { data: emailTaken, error } = await supabase.rpc('check_email_exists', {
+            email_to_check: email.toLowerCase().trim()
+          });
+          
+          if (error) {
+            console.error('Error checking email:', error);
+            toast({
+              title: "Unable to verify email",
+              description: "Please check your connection and try again.",
+              variant: "destructive"
+            });
+            return;
+          }
+          
+          if (emailTaken) {
+            form.setError('email', {
+              type: 'manual',
+              message: 'This email is already registered'
+            });
+            toast({
+              title: "Email Already Registered",
+              description: "Please use a different email or sign in to your existing account.",
+              variant: "destructive"
+            });
+            return;
+          }
+        }
+      }
+
       const isValid = await validateStep(step);
       if (isValid && step < registrationSteps.length) {
         setStep(step + 1);

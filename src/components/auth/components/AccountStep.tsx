@@ -1,8 +1,9 @@
-
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useEmailValidation } from '@/hooks/useEmailValidation';
+import { Link } from 'react-router-dom';
 import {
   FormField,
   FormItem,
@@ -17,6 +18,8 @@ interface AccountStepProps {
 }
 
 const AccountStep = ({ form }: AccountStepProps) => {
+  const { isChecking, isEmailTaken, validationMessage, checkEmail } = useEmailValidation();
+
   return (
     <div className="space-y-6">
       <div className="relative">
@@ -45,9 +48,40 @@ const AccountStep = ({ form }: AccountStepProps) => {
                   type="email"
                   autoComplete="email"
                   autoFocus
-                  {...field} 
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    checkEmail(e.target.value);
+                  }}
                 />
               </div>
+              
+              {/* Live validation feedback */}
+              {validationMessage && (
+                <div className="flex items-center gap-2 mt-2 text-xs">
+                  {isChecking && (
+                    <span className="text-yellow-400 flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Checking availability...
+                    </span>
+                  )}
+                  {!isChecking && isEmailTaken && (
+                    <span className="text-red-400 flex items-center gap-1">
+                      <XCircle className="w-3 h-3" />
+                      This email is already registered.{' '}
+                      <Link to="/auth" className="underline hover:text-red-300">
+                        Sign in?
+                      </Link>
+                    </span>
+                  )}
+                  {!isChecking && !isEmailTaken && field.value?.includes('@') && (
+                    <span className="text-green-400 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Email is available
+                    </span>
+                  )}
+                </div>
+              )}
             </FormControl>
             <FormMessage />
           </FormItem>

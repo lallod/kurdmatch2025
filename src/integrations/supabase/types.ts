@@ -3106,6 +3106,10 @@ export type Database = {
           | { action_type: string; user_uuid: string }
         Returns: Record<string, unknown>
       }
+      check_email_exists: {
+        Args: { email_to_check: string }
+        Returns: boolean
+      }
       create_demo_profile: {
         Args: {
           user_age: number
