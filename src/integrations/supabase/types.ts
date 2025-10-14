@@ -2857,54 +2857,6 @@ export type Database = {
         }
         Relationships: []
       }
-      payments_decrypted: {
-        Row: {
-          amount: number | null
-          created_at: string | null
-          currency: string | null
-          description: string | null
-          id: string | null
-          metadata: Json | null
-          payment_method: string | null
-          status: string | null
-          stripe_customer_id: string | null
-          stripe_payment_intent_id: string | null
-          subscription_type: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          amount?: number | null
-          created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string | null
-          metadata?: Json | null
-          payment_method?: never
-          status?: string | null
-          stripe_customer_id?: never
-          stripe_payment_intent_id?: never
-          subscription_type?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          amount?: number | null
-          created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string | null
-          metadata?: Json | null
-          payment_method?: never
-          status?: string | null
-          stripe_customer_id?: never
-          stripe_payment_intent_id?: never
-          subscription_type?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       user_public_view: {
         Row: {
           age: number | null
