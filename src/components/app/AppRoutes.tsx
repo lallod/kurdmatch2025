@@ -36,6 +36,8 @@ import { HashtagFeed } from '@/pages/HashtagFeed';
 import { GroupsList } from '@/pages/GroupsList';
 import NotificationSettings from '@/pages/NotificationSettings';
 import AdvancedSearch from '@/pages/AdvancedSearch';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import UserManagement from '@/pages/admin/UserManagement';
 import SavedPosts from '@/pages/SavedPosts';
 import BlockedUsers from '@/pages/BlockedUsers';
 import PrivacySettings from '@/pages/PrivacySettings';
@@ -230,6 +232,16 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/settings/blocked" 
         element={<ProtectedRoute><BlockedUsers /></ProtectedRoute>} 
+      />
+      
+      {/* Admin Dashboard routes */}
+      <Route 
+        path="/admin/dashboard" 
+        element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/admin/users" 
+        element={<ProtectedRoute><UserManagement /></ProtectedRoute>} 
       />
       
       {/* Super Admin routes */}
