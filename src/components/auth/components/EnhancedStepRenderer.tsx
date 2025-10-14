@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/app/LoadingSpinner';
 import PhotoUploadComponent from './PhotoUploadComponent';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertCircle } from 'lucide-react';
+import AccountStep from './AccountStep';
 
 interface EnhancedStepRendererProps {
   category: StepCategory;
@@ -53,77 +54,7 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
     return (
       <div className="space-y-4">
         {renderStepHeader()}
-        
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel className="text-white flex items-center gap-2">
-                Email
-                {field.value && !fieldState.error && (
-                  <CheckCircle size={16} className="text-green-400" />
-                )}
-              </FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="your.email@example.com" 
-                  {...field}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel className="text-white flex items-center gap-2">
-                Password
-                {field.value && field.value.length >= 8 && !fieldState.error && (
-                  <CheckCircle size={16} className="text-green-400" />
-                )}
-              </FormLabel>
-              <FormControl>
-                <Input 
-                  type="password"
-                  placeholder="••••••••"
-                  {...field}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel className="text-white flex items-center gap-2">
-                Confirm Password
-                {field.value && form.watch('password') === field.value && (
-                  <CheckCircle size={16} className="text-green-400" />
-                )}
-              </FormLabel>
-              <FormControl>
-                <Input 
-                  type="password"
-                  placeholder="••••••••"
-                  {...field}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <AccountStep form={form} />
       </div>
     );
   }
