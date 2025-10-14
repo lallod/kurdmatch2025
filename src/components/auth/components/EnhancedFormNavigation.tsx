@@ -96,8 +96,15 @@ const EnhancedFormNavigation: React.FC<EnhancedFormNavigationProps> = ({
 
       {/* Validation Message */}
       {!isStepComplete && (
-        <div className="mt-3 text-center text-xs md:text-sm text-yellow-400">
-          Complete all required fields to continue
+        <div className="mt-3 p-3 bg-yellow-900/30 border border-yellow-500/30 rounded-lg backdrop-blur-sm">
+          <p className="text-xs md:text-sm text-yellow-400 text-center font-medium">
+            ⚠️ Complete all required fields to continue
+          </p>
+          {currentStep === 4 && (
+            <p className="text-xs text-yellow-300/80 text-center mt-1">
+              Minimum: 3 interests, 2 hobbies, 3 values
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -70,11 +70,22 @@ const ButtonGridSelector = ({
 }: ButtonGridSelectorProps) => {
   const toggleSelection = (option: string) => {
     const currentValues = Array.isArray(selectedValues) ? selectedValues : [];
+    let newValues: string[];
+    
     if (currentValues.includes(option)) {
-      onChange(currentValues.filter(v => v !== option));
+      newValues = currentValues.filter(v => v !== option);
     } else {
-      onChange([...currentValues, option]);
+      newValues = [...currentValues, option];
     }
+    
+    console.log(`${label} selection changed:`, { 
+      option, 
+      previous: currentValues.length, 
+      new: newValues.length,
+      values: newValues 
+    });
+    
+    onChange(newValues);
   };
 
   const selectionCount = Array.isArray(selectedValues) ? selectedValues.length : 0;

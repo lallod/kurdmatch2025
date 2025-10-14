@@ -63,13 +63,71 @@ export const useDynamicRegistrationForm = () => {
   const { formState } = form;
   const isSubmitting = formState.isSubmitting;
 
-  // Step navigation
-  const nextStep = () => {
-    if (step < 4) {
-      setStep(step + 1);
-      if (!completedSteps.includes(step)) {
-        setCompletedSteps([...completedSteps, step]);
+  // Step navigation with validation
+  const nextStep = async () => {
+    try {
+      // Get current step's field names for validation
+      const stepFieldMap: Record<number, string[]> = {
+        1: ['email', 'password', 'confirmPassword'],
+        2: ['full_name', 'age', 'gender'],
+        3: ['location', 'height', 'body_type', 'kurdistan_region', 'ethnicity', 'religion', 'political_views', 'zodiac_sign', 'personality_type'],
+        4: ['interests', 'hobbies', 'values'],
+        5: ['dietary_preferences', 'smoking', 'drinking', 'sleep_schedule', 'have_pets', 'family_closeness', 'love_language', 'communication_style', 'ideal_date', 'relationship_goals', 'want_children', 'exercise_habits'],
+        6: ['occupation', 'education', 'languages'],
+        7: ['photos']
+      };
+
+      const fieldsToValidate = stepFieldMap[step] || [];
+      
+      // Get current step questions to check which fields are required
+      const currentStepQuestions = questions.filter(q => {
+        return fieldsToValidate.includes(q.id);
+      });
+      
+      // Only validate required fields that exist in the current step
+      const requiredFields = currentStepQuestions
+        .filter(q => q.required)
+        .map(q => q.id);
+      
+      // Trigger validation only for required fields in this step
+      const isValid = requiredFields.length > 0 
+        ? await form.trigger(requiredFields as any)
+        : true;
+      
+      console.log('Step validation:', { 
+        step, 
+        isValid, 
+        requiredFields,
+        values: requiredFields.reduce((acc, field) => ({
+          ...acc,
+          [field]: form.getValues(field as any)
+        }), {})
+      });
+      
+      if (isValid) {
+        const maxStep = 7; // Maximum number of steps
+        if (step < maxStep) {
+          setStep(step + 1);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+          if (!completedSteps.includes(step)) {
+            setCompletedSteps([...completedSteps, step]);
+          }
+        }
+      } else {
+        toast({
+          title: "Incomplete Fields",
+          description: "Please complete all required fields before continuing.",
+          variant: "destructive",
+        });
       }
+    } catch (error) {
+      console.error('Error in nextStep:', error);
+      toast({
+        title: "Validation Error",
+        description: "There was an error validating the form. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
