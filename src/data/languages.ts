@@ -1,3 +1,11 @@
+// Kurdish dialects
+const kurdishLanguages = [
+  "Kurdish (Sorani)",
+  "Kurdish (Kurmanji)",
+  "Kurdish (Zazaki)",
+  "Kurdish (Gorani)",
+  "Kurdish (Hawrami)"
+];
 
 // Middle Eastern languages
 const middleEasternLanguages = [
@@ -5,20 +13,20 @@ const middleEasternLanguages = [
   "Hebrew",
   "Persian (Farsi)",
   "Turkish",
-  "Kurdish (Sorani)",
-  "Kurdish (Kurmanji)",
-  "Kurdish (Zazaki)",
-  "Kurdish (Gorani)",
-  "Kurdish (Hawrami)",
   "Aramaic",
   "Armenian",
   "Azerbaijani",
   "Georgian",
   "Urdu",
-  "Pashto"
+  "Pashto",
+  "Balochi",
+  "Luri",
+  "Assyrian",
+  "Turkmen",
+  "Kazakh"
 ];
 
-// European languages (most commonly used)
+// European languages
 const europeanLanguages = [
   "English",
   "French",
@@ -62,21 +70,62 @@ const europeanLanguages = [
   "Bosnian"
 ];
 
+// Asian languages
+const asianLanguages = [
+  "Mandarin Chinese",
+  "Japanese",
+  "Korean",
+  "Hindi",
+  "Bengali",
+  "Vietnamese",
+  "Thai",
+  "Indonesian",
+  "Malay",
+  "Tagalog",
+  "Tamil",
+  "Telugu",
+  "Punjabi",
+  "Nepali",
+  "Sinhala"
+];
+
+// African languages
+const africanLanguages = [
+  "Swahili",
+  "Amharic",
+  "Somali",
+  "Hausa",
+  "Yoruba",
+  "Zulu",
+  "Afrikaans",
+  "Berber"
+];
+
 // All languages combined and sorted alphabetically
 export const allLanguages = [
+  ...kurdishLanguages,
   ...middleEasternLanguages,
-  ...europeanLanguages
+  ...europeanLanguages,
+  ...asianLanguages,
+  ...africanLanguages
 ].sort();
 
 // Language categories for filtering
 export const languageCategories = {
+  kurdish: kurdishLanguages,
   middleEastern: middleEasternLanguages,
   european: europeanLanguages,
-  kurdishDialects: [
-    "Kurdish (Sorani)",
-    "Kurdish (Kurmanji)",
-    "Kurdish (Zazaki)",
-    "Kurdish (Gorani)",
-    "Kurdish (Hawrami)"
-  ]
+  asian: asianLanguages,
+  african: africanLanguages,
+  kurdishDialects: kurdishLanguages // Alias for backwards compatibility
+};
+
+// Get category for a language
+export const getLanguageCategory = (language: string): string => {
+  if (kurdishLanguages.includes(language)) return 'kurdish';
+  if (middleEasternLanguages.includes(language)) return 'middleEastern';
+  if (europeanLanguages.includes(language)) return 'european';
+  if (asianLanguages.includes(language)) return 'asian';
+  if (africanLanguages.includes(language)) return 'african';
+  return 'other';
 };

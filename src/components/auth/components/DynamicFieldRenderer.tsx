@@ -15,6 +15,7 @@ import LocationSearchSelector from './enhanced-fields/LocationSearchSelector';
 import GroupedEthnicitySelector from './enhanced-fields/GroupedEthnicitySelector';
 import PersonalityTypeSelector from './enhanced-fields/PersonalityTypeSelector';
 import ButtonGridSelector from './enhanced-fields/ButtonGridSelector';
+import LanguageButtonGrid from './enhanced-fields/LanguageButtonGrid';
 
 interface DynamicFieldRendererProps {
   question: QuestionItem;
@@ -268,6 +269,56 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
                 minSelections={3}
                 maxSelections={5}
                 maxColumns={3}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  // Languages with visual button grid
+  if (id === 'languages') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <LanguageButtonGrid
+                selectedValues={field.value || []}
+                onChange={field.onChange}
+                minSelections={1}
+                maxSelections={10}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  // Education/Occupation with ButtonGridSelector
+  if (id === 'education') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <ButtonGridSelector
+                label="Your Occupation"
+                icon={Coffee}
+                options={fieldOptions || []}
+                selectedValues={field.value || []}
+                onChange={field.onChange}
+                minSelections={1}
+                maxSelections={3}
+                maxColumns={2}
               />
             </FormControl>
             <FormMessage />
