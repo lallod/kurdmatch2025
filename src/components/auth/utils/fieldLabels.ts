@@ -41,7 +41,7 @@ export const getFieldLabel = (fieldId: string): string => {
     ideal_partner: 'Ideal Partner',
     
     // Career & Education
-    occupation: 'Occupation',
+    occupation: 'What do you do for work?',
     education: 'Education',
     work_life_balance: 'Work-Life Balance',
     career_goals: 'Career Goals',
@@ -72,6 +72,7 @@ export const getFieldRequirement = (question: any): string => {
   if (id === 'interests') return 'Select at least 3 interests';
   if (id === 'hobbies') return 'Select at least 2 hobbies';
   if (id === 'values') return 'Select at least 3 values';
+  if (id === 'languages') return 'Select at least 1 language';
   
   // Multi-select fields
   if (fieldType === 'multi-select' || fieldType === 'multi_select') {

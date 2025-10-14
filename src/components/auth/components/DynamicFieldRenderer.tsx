@@ -15,7 +15,7 @@ import LocationSearchSelector from './enhanced-fields/LocationSearchSelector';
 import GroupedEthnicitySelector from './enhanced-fields/GroupedEthnicitySelector';
 import PersonalityTypeSelector from './enhanced-fields/PersonalityTypeSelector';
 import ButtonGridSelector from './enhanced-fields/ButtonGridSelector';
-import LanguageButtonGrid from './enhanced-fields/LanguageButtonGrid';
+import LanguageCategorySelector from './enhanced-fields/LanguageCategorySelector';
 import OccupationButtonGrid from './enhanced-fields/OccupationButtonGrid';
 import OccupationChoiceButtons from './enhanced-fields/OccupationChoiceButtons';
 
@@ -280,7 +280,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
     );
   }
 
-  // Languages with visual button grid
+  // Languages with categorized selector
   if (id === 'languages') {
     return (
       <FormField
@@ -289,11 +289,10 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <LanguageButtonGrid
-                selectedValues={field.value || []}
+              <LanguageCategorySelector
+                value={field.value || []}
                 onChange={field.onChange}
                 minSelections={1}
-                maxSelections={10}
               />
             </FormControl>
             <FormMessage />

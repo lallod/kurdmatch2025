@@ -91,14 +91,14 @@ export const systemQuestions: QuestionItem[] = [
   },
   {
     id: "sys_10",
-    text: "Occupation",
+    text: "What do you do for work?",
     category: "Basics",
     fieldType: "text",
     required: false,
     enabled: true,
     registrationStep: "Personal",
     displayOrder: 7,
-    placeholder: "What do you do for work?",
+    placeholder: "e.g., Software Engineer, Teacher, Doctor",
     fieldOptions: [],
     profileField: "occupation",
     isSystemField: true
