@@ -2,7 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { Globe, Check, X, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 import { languageCategories, getLanguageCategory } from '@/data/languages';
 
 interface LanguageButtonGridProps {
@@ -24,17 +26,53 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
   // Ensure selectedValues is always an array
   const currentValues = Array.isArray(selectedValues) ? selectedValues : [];
 
-  // Get gradient styles based on category
-  const getCategoryGradient = (category: string) => {
-    const gradients = {
-      kurdish: 'from-amber-500 to-orange-600',
-      middleEastern: 'from-rose-500 to-pink-600',
-      european: 'from-blue-500 to-cyan-600',
-      asian: 'from-emerald-500 to-teal-600',
-      african: 'from-purple-500 to-violet-600',
-      other: 'from-gray-500 to-slate-600'
+  // Get glassmorphism styles matching ButtonGridSelector pattern
+  const getCategoryStyle = (category: string) => {
+    const styles = {
+      kurdish: {
+        gradient: 'from-amber-500 to-orange-600',
+        glass: 'bg-amber-500/10 backdrop-blur-sm',
+        border: 'border-orange-400/30',
+        hover: 'hover:shadow-lg hover:shadow-orange-500/30 hover:border-orange-400/50',
+        selected: 'bg-gradient-to-r from-amber-600 to-orange-600 border-orange-400 shadow-lg shadow-orange-500/50'
+      },
+      middleEastern: {
+        gradient: 'from-rose-500 to-pink-600',
+        glass: 'bg-rose-500/10 backdrop-blur-sm',
+        border: 'border-pink-400/30',
+        hover: 'hover:shadow-lg hover:shadow-pink-500/30 hover:border-pink-400/50',
+        selected: 'bg-gradient-to-r from-rose-600 to-pink-600 border-pink-400 shadow-lg shadow-pink-500/50'
+      },
+      european: {
+        gradient: 'from-blue-500 to-cyan-600',
+        glass: 'bg-blue-500/10 backdrop-blur-sm',
+        border: 'border-cyan-400/30',
+        hover: 'hover:shadow-lg hover:shadow-cyan-500/30 hover:border-cyan-400/50',
+        selected: 'bg-gradient-to-r from-blue-600 to-cyan-600 border-cyan-400 shadow-lg shadow-cyan-500/50'
+      },
+      asian: {
+        gradient: 'from-emerald-500 to-teal-600',
+        glass: 'bg-emerald-500/10 backdrop-blur-sm',
+        border: 'border-teal-400/30',
+        hover: 'hover:shadow-lg hover:shadow-teal-500/30 hover:border-teal-400/50',
+        selected: 'bg-gradient-to-r from-emerald-600 to-teal-600 border-teal-400 shadow-lg shadow-teal-500/50'
+      },
+      african: {
+        gradient: 'from-purple-500 to-violet-600',
+        glass: 'bg-purple-500/10 backdrop-blur-sm',
+        border: 'border-violet-400/30',
+        hover: 'hover:shadow-lg hover:shadow-violet-500/30 hover:border-violet-400/50',
+        selected: 'bg-gradient-to-r from-purple-600 to-violet-600 border-violet-400 shadow-lg shadow-violet-500/50'
+      },
+      other: {
+        gradient: 'from-gray-500 to-slate-600',
+        glass: 'bg-gray-500/10 backdrop-blur-sm',
+        border: 'border-slate-400/30',
+        hover: 'hover:shadow-lg hover:shadow-slate-500/30 hover:border-slate-400/50',
+        selected: 'bg-gradient-to-r from-gray-600 to-slate-600 border-slate-400 shadow-lg shadow-slate-500/50'
+      }
     };
-    return gradients[category as keyof typeof gradients] || gradients.other;
+    return styles[category as keyof typeof styles] || styles.other;
   };
 
   // Filter languages based on search and active tab
@@ -74,29 +112,45 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
   const hasMinimum = selectionCount >= minSelections;
   const atMaximum = selectionCount >= maxSelections;
 
+  const mainCategoryStyle = getCategoryStyle('european');
+
   return (
     <div className="space-y-4">
-      {/* Header with icon */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg">
-          <Globe className="w-5 h-5 text-white" />
+      {/* Header matching ButtonGridSelector */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className={cn(
+            "p-2 rounded-lg backdrop-blur-sm",
+            mainCategoryStyle.glass,
+            "border",
+            mainCategoryStyle.border
+          )}>
+            <Globe className="w-4 h-4" />
+          </div>
+          <Label className="text-white font-semibold">Languages You Speak</Label>
         </div>
-        <div>
-          <h3 className="text-lg font-semibold text-white">Languages You Speak</h3>
-          <p className="text-sm text-purple-200">Select {minSelections}-{maxSelections} languages</p>
+        <div className={cn(
+          "px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm",
+          hasMinimum 
+            ? "bg-green-500/20 text-green-400 border border-green-400/30" 
+            : "bg-yellow-500/20 text-yellow-400 border border-yellow-400/30"
+        )}>
+          {selectionCount}/{maxSelections} {hasMinimum && '✓'}
         </div>
       </div>
 
       {/* Selected languages badges */}
       {currentValues.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-white/5 rounded-lg border border-white/10">
+        <div className="flex flex-wrap gap-2">
           {currentValues.map(language => {
             const category = getLanguageCategory(language);
-            const gradient = getCategoryGradient(category);
+            const style = getCategoryStyle(category);
             return (
               <Badge 
                 key={language}
-                className={`bg-gradient-to-r ${gradient} text-white border-0 pl-3 pr-2 py-1.5 text-sm`}
+                className={cn(
+                  `bg-gradient-to-r ${style.gradient} text-white border-0 pl-3 pr-2 py-1.5 text-sm`
+                )}
               >
                 {language}
                 <button
@@ -135,30 +189,47 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
         </TabsList>
 
         <TabsContent value={activeTab} className="mt-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-96 overflow-y-auto p-2 bg-white/5 rounded-lg border border-white/10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-96 overflow-y-auto p-2">
             {filteredLanguages.map(language => {
               const isSelected = currentValues.includes(language);
               const category = getLanguageCategory(language);
-              const gradient = getCategoryGradient(category);
+              const style = getCategoryStyle(category);
+              const canSelect = isSelected || !atMaximum;
               
               return (
                 <button
                   key={language}
-                  onClick={() => toggleLanguage(language)}
-                  disabled={!isSelected && atMaximum}
-                  className={`
-                    relative p-3 rounded-lg text-sm font-medium transition-all
-                    flex items-center justify-between gap-2
-                    ${isSelected 
-                      ? `bg-gradient-to-br ${gradient} text-white shadow-lg scale-105` 
-                      : 'bg-white/10 text-white/80 hover:bg-white/20 hover:scale-105'
-                    }
-                    ${!isSelected && atMaximum ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
-                  `}
+                  type="button"
+                  onClick={() => canSelect && toggleLanguage(language)}
+                  disabled={!canSelect}
+                  className={cn(
+                    "relative px-3 py-2 rounded-xl border transition-all duration-300",
+                    "text-xs font-medium group",
+                    canSelect && "transform hover:scale-105 active:scale-95",
+                    !canSelect && "opacity-40 cursor-not-allowed",
+                    isSelected
+                      ? cn(style.selected, "text-white")
+                      : cn(
+                          style.glass,
+                          style.border,
+                          "text-white/90",
+                          canSelect && style.hover
+                        )
+                  )}
                 >
-                  <span className="truncate flex-1 text-left">{language}</span>
-                  {isSelected && (
-                    <Check className="w-4 h-4 flex-shrink-0" />
+                  <div className="flex items-center justify-center gap-1.5">
+                    {isSelected && (
+                      <Check className="w-3.5 h-3.5 animate-in zoom-in duration-200" />
+                    )}
+                    <span className="leading-tight">{language}</span>
+                  </div>
+                  {!isSelected && canSelect && (
+                    <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <div className={cn(
+                        "absolute inset-0 rounded-xl blur-md",
+                        `bg-gradient-to-r ${style.gradient} opacity-20`
+                      )} />
+                    </div>
                   )}
                 </button>
               );
@@ -167,16 +238,20 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
         </TabsContent>
       </Tabs>
 
-      {/* Validation message */}
-      <div className="flex items-center justify-between text-sm">
-        <span className={hasMinimum ? "text-green-400" : "text-yellow-400"}>
-          {selectionCount} / {maxSelections} selected
-          {!hasMinimum && ` (minimum ${minSelections} required)`}
-        </span>
-        {atMaximum && (
-          <span className="text-orange-400">Maximum reached</span>
-        )}
-      </div>
+      {/* Validation messages */}
+      {!hasMinimum && (
+        <p className="text-xs text-yellow-400/80 flex items-center gap-2">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+          Select at least {minSelections} language{minSelections > 1 ? 's' : ''}
+        </p>
+      )}
+      
+      {atMaximum && (
+        <p className="text-xs text-green-400/80 flex items-center gap-2">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400" />
+          Maximum {maxSelections} selections reached
+        </p>
+      )}
     </div>
   );
 };

@@ -16,6 +16,7 @@ import GroupedEthnicitySelector from './enhanced-fields/GroupedEthnicitySelector
 import PersonalityTypeSelector from './enhanced-fields/PersonalityTypeSelector';
 import ButtonGridSelector from './enhanced-fields/ButtonGridSelector';
 import LanguageButtonGrid from './enhanced-fields/LanguageButtonGrid';
+import OccupationButtonGrid from './enhanced-fields/OccupationButtonGrid';
 
 interface DynamicFieldRendererProps {
   question: QuestionItem;
@@ -301,7 +302,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
     );
   }
 
-  // Education/Occupation with ButtonGridSelector
+  // Enhanced occupation field with categorized grid
   if (id === 'education') {
     return (
       <FormField
@@ -310,15 +311,11 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <ButtonGridSelector
-                label="Your Occupation"
-                icon={Coffee}
-                options={fieldOptions || []}
+              <OccupationButtonGrid
                 selectedValues={field.value || []}
                 onChange={field.onChange}
                 minSelections={1}
                 maxSelections={3}
-                maxColumns={2}
               />
             </FormControl>
             <FormMessage />
