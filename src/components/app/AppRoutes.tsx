@@ -34,12 +34,14 @@ import Subscription from '@/pages/Subscription';
 import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
 import { HashtagFeed } from '@/pages/HashtagFeed';
 import { GroupsList } from '@/pages/GroupsList';
-import { GroupDetail } from '@/pages/GroupDetail';
 import NotificationSettings from '@/pages/NotificationSettings';
 import AdvancedSearch from '@/pages/AdvancedSearch';
 import SavedPosts from '@/pages/SavedPosts';
 import BlockedUsers from '@/pages/BlockedUsers';
 import PrivacySettings from '@/pages/PrivacySettings';
+import Groups from '@/pages/Groups';
+import CreateGroup from '@/pages/CreateGroup';
+import GroupDetailPage from '@/pages/GroupDetail';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -192,11 +194,15 @@ export const AppRoutes: React.FC = () => {
       />
       <Route 
         path="/groups" 
-        element={<ProtectedRoute><GroupsList /></ProtectedRoute>} 
+        element={<ProtectedRoute><Groups /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/groups/create" 
+        element={<ProtectedRoute><CreateGroup /></ProtectedRoute>} 
       />
       <Route 
         path="/groups/:id" 
-        element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} 
+        element={<ProtectedRoute><GroupDetailPage /></ProtectedRoute>} 
       />
       <Route 
         path="/notifications/settings" 
