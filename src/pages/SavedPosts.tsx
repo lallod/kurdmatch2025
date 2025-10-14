@@ -21,7 +21,8 @@ const SavedPosts = () => {
 
     try {
       setLoading(true);
-      const { count, error } = await supabase
+      // Using type assertion to work around TypeScript until types regenerate
+      const { count, error } = await (supabase as any)
         .from('saved_posts')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id);

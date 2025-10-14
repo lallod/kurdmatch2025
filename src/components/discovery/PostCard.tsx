@@ -94,7 +94,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
     if (!currentUserId) return;
     
     try {
-      const { data, error } = await supabase
+      // Using type assertion to work around TypeScript until types regenerate
+      const { data, error } = await (supabase as any)
         .from('saved_posts')
         .select('id')
         .eq('user_id', currentUserId)
@@ -114,7 +115,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
     try {
       if (isSaved) {
-        const { error } = await supabase
+        // Using type assertion to work around TypeScript until types regenerate
+        const { error } = await (supabase as any)
           .from('saved_posts')
           .delete()
           .eq('user_id', currentUserId)
@@ -124,7 +126,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         setIsSaved(false);
         toast({ description: 'Post unsaved' });
       } else {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('saved_posts')
           .insert({
             user_id: currentUserId,
