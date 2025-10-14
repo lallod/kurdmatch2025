@@ -11,15 +11,10 @@ interface HeightSelectorProps {
 
 const HeightSelector = ({ value, onChange }: HeightSelectorProps) => {
   // Generate height options in CM ONLY (145-210 cm range)
-  const generateHeightOptions = () => {
-    const options = [];
-    for (let i = 145; i <= 210; i++) {
-      options.push({ value: `${i} cm`, label: `${i} cm` });
-    }
-    return options;
-  };
-
-  const heightOptions = generateHeightOptions();
+  const heightOptions = Array.from({ length: 66 }, (_, i) => {
+    const cm = 145 + i;
+    return { value: `${cm} cm`, label: `${cm} cm` };
+  });
 
   return (
     <div className="space-y-3">

@@ -170,12 +170,17 @@ export const isStepComplete = (
   stepQuestions: QuestionItem[], 
   formValues: Record<string, any>
 ): boolean => {
-  return stepQuestions.every(question => {
-    if (!question.required) return true;
-
+  // Filter out only required questions for validation
+  const requiredQuestions = stepQuestions.filter(q => q.required);
+  
+  return requiredQuestions.every(question => {
     const value = formValues[question.id];
     
-    if (question.fieldType === 'multi-select') {
+    // Multi-select fields with specific minimum requirements (check both formats)
+    const isMultiSelect = question.fieldType === 'multi-select' || 
+                          (question.fieldType as string) === 'multi_select';
+    
+    if (isMultiSelect) {
       let minSelections = 1;
       if (question.id === 'interests') minSelections = 3;
       else if (question.id === 'hobbies') minSelections = 2;
@@ -185,16 +190,19 @@ export const isStepComplete = (
       return Array.isArray(value) && value.length >= minSelections;
     }
     
+    // Checkbox fields
     if (question.fieldType === 'checkbox') {
       return value === true;
     }
     
+    // Age validation
     if (question.id === 'age') {
       const numValue = typeof value === 'string' ? parseFloat(value) : value;
       return numValue >= 18;
     }
     
-    return value && value.toString().trim().length > 0;
+    // Standard text/select fields
+    return value !== undefined && value !== null && value.toString().trim().length > 0;
   });
 };
 

@@ -8,7 +8,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
+import { CheckCircle, AlertCircle, Heart, Coffee, Sparkles } from 'lucide-react';
+import HeightSelector from './enhanced-fields/HeightSelector';
+import DateOfBirthSelector from './enhanced-fields/DateOfBirthSelector';
+import LocationSearchSelector from './enhanced-fields/LocationSearchSelector';
+import GroupedEthnicitySelector from './enhanced-fields/GroupedEthnicitySelector';
+import PersonalityTypeSelector from './enhanced-fields/PersonalityTypeSelector';
+import ButtonGridSelector from './enhanced-fields/ButtonGridSelector';
 
 interface DynamicFieldRendererProps {
   question: QuestionItem;
@@ -27,7 +33,10 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
   const isFieldComplete = () => {
     if (!required) return true;
     
-    if (fieldType === 'multi-select') {
+    const isMultiSelect = fieldType === 'multi-select' || 
+                          (fieldType as string) === 'multi_select';
+    
+    if (isMultiSelect) {
       let minSelections = 1;
       if (id === 'interests') minSelections = 3;
       else if (id === 'hobbies') minSelections = 2;
@@ -82,6 +91,193 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
   const commonFieldProps = {
     className: "bg-white/10 border-white/20 text-white placeholder:text-white/60"
   };
+
+  // Enhanced field components for specific fields
+  if (id === 'height') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <HeightSelector value={field.value} onChange={field.onChange} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (id === 'age') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <DateOfBirthSelector
+                day={form.watch('birthDay')}
+                month={form.watch('birthMonth')}
+                year={form.watch('birthYear')}
+                onDateChange={(day, month, year, zodiac) => {
+                  form.setValue('birthDay', day);
+                  form.setValue('birthMonth', month);
+                  form.setValue('birthYear', year);
+                  form.setValue('zodiac_sign', zodiac);
+                  
+                  if (day && month && year) {
+                    const birthDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                      age--;
+                    }
+                    field.onChange(age.toString());
+                  }
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (id === 'location') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <LocationSearchSelector value={field.value} onChange={field.onChange} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (id === 'ethnicity') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <GroupedEthnicitySelector value={field.value} onChange={field.onChange} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (id === 'personality_type') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <PersonalityTypeSelector value={field.value} onChange={field.onChange} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (id === 'interests') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <ButtonGridSelector
+                label="Your Interests"
+                icon={Heart}
+                options={fieldOptions || []}
+                selectedValues={field.value || []}
+                onChange={field.onChange}
+                minSelections={3}
+                maxColumns={3}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (id === 'hobbies') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <ButtonGridSelector
+                label="Your Hobbies"
+                icon={Coffee}
+                options={fieldOptions || []}
+                selectedValues={field.value || []}
+                onChange={field.onChange}
+                minSelections={2}
+                maxColumns={3}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (id === 'values') {
+    return (
+      <FormField
+        control={form.control}
+        name={id}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <ButtonGridSelector
+                label="Your Core Values"
+                icon={Sparkles}
+                options={fieldOptions || []}
+                selectedValues={field.value || []}
+                onChange={field.onChange}
+                minSelections={3}
+                maxColumns={3}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  // Skip zodiac_sign field as it's auto-calculated
+  if (id === 'zodiac_sign') {
+    return null;
+  }
 
   switch (fieldType) {
     case 'text':

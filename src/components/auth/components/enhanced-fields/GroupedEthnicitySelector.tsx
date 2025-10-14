@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Label } from '@/components/ui/label';
 import { Users } from 'lucide-react';
 
-interface GroupedethnicitySelectorProps {
+interface GroupedEthnicitySelectorProps {
   value?: string;
   onChange: (value: string) => void;
 }
