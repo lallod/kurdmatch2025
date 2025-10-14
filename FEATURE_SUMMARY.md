@@ -151,6 +151,23 @@
   - Add admin notes to resolutions
   - Track resolution history
 
+### Phase 11: Content Moderation ✅
+- **Location**: `src/pages/admin/ContentModeration.tsx`
+- Comprehensive content management for admins
+- **Posts Moderation**:
+  - View all platform posts
+  - Search by content or author
+  - Delete inappropriate posts
+  - View post media and engagement stats
+- **Comments Moderation**:
+  - View all comments across platform
+  - Search comments by content or author
+  - Delete inappropriate comments
+  - See comment timestamps and authors
+- Activity logging for all moderation actions
+- Confirmation dialogs for deletions
+- Real-time content updates
+
 ## Database Tables Created
 
 1. **posts** - User posts with media and hashtag support
@@ -199,6 +216,7 @@ All routes configured in `src/components/app/AppRoutes.tsx`:
 - `/admin/dashboard` - Admin dashboard
 - `/admin/users` - User management
 - `/admin/reports` - Reports management
+- `/admin/content` - Content moderation
 
 ## UI Components
 
@@ -255,4 +273,4 @@ All routes configured in `src/components/app/AppRoutes.tsx`:
 ---
 
 **Implementation Status**: Complete ✅
-**Last Updated**: Phase 10 - Admin Dashboard & Analytics
+**Last Updated**: Phase 11 - Content Moderation
