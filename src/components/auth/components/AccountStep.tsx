@@ -55,36 +55,37 @@ const AccountStep = ({ form }: AccountStepProps) => {
                   }}
                 />
               </div>
-              
-              {/* Live validation feedback - always reserve space */}
-              <div className="min-h-[20px] mt-2" data-testid="email-validation-container">
-                {validationMessage && (
-                  <div className="flex items-center gap-2 text-xs transition-all duration-200">
-                    {isChecking && (
-                      <span className="text-yellow-400 flex items-center gap-1 animate-pulse font-medium">
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                        {validationMessage}
-                      </span>
-                    )}
-                    {!isChecking && isEmailTaken && (
-                      <span className="text-red-400 flex items-center gap-1 font-medium">
-                        <XCircle className="w-3 h-3" />
-                        {validationMessage}{' '}
-                        <Link to="/auth" className="underline hover:text-red-300 transition-colors">
-                          Sign in?
-                        </Link>
-                      </span>
-                    )}
-                    {!isChecking && !isEmailTaken && field.value?.includes('@') && (
-                      <span className="text-green-400 flex items-center gap-1 font-medium">
-                        <CheckCircle2 className="w-3 h-3" />
-                        {validationMessage}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
             </FormControl>
+            
+            {/* Live validation feedback - always reserve space */}
+            <div className="min-h-[20px] mt-2" data-testid="email-validation-container">
+              {validationMessage && (
+                <div className="flex items-center gap-2 text-xs transition-all duration-200">
+                  {isChecking && (
+                    <span className="text-yellow-400 flex items-center gap-1 animate-pulse font-medium">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      {validationMessage}
+                    </span>
+                  )}
+                  {!isChecking && isEmailTaken && (
+                    <span className="text-red-400 flex items-center gap-1 font-medium">
+                      <XCircle className="w-3 h-3" />
+                      {validationMessage}{' '}
+                      <Link to="/auth" className="underline hover:text-red-300 transition-colors">
+                        Sign in?
+                      </Link>
+                    </span>
+                  )}
+                  {!isChecking && !isEmailTaken && field.value?.includes('@') && (
+                    <span className="text-green-400 flex items-center gap-1 font-medium">
+                      <CheckCircle2 className="w-3 h-3" />
+                      {validationMessage}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            
             <FormMessage />
           </FormItem>
         )}
