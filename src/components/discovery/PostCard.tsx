@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Post, likePost, unlikePost } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart, Pencil, Trash2 } from 'lucide-react';
+import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart, Pencil, Trash2, Share2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import PostContent from './PostContent';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import ReportDialog from './ReportDialog';
 import BlockUserDialog from './BlockUserDialog';
 import EditPostDialog from './EditPostDialog';
 import DeletePostDialog from './DeletePostDialog';
+import { SharePostDialog } from './SharePostDialog';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
@@ -48,6 +49,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
 
   useEffect(() => {
@@ -201,6 +203,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
           <span className="text-sm">{commentsCount}</span>
         </button>
+
+        <button 
+          onClick={() => setShowShareDialog(true)}
+          className="flex items-center gap-2 text-white/70 hover:text-blue-400 transition-colors group"
+        >
+          <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+        </button>
         
         <button 
           onClick={handleMessageClick}
@@ -326,6 +335,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
             description: 'This user has been blocked successfully',
           });
         }}
+      />
+
+      <SharePostDialog
+        open={showShareDialog}
+        onOpenChange={setShowShareDialog}
+        postId={post.id}
+        postContent={post.content}
       />
     </div>
   );
