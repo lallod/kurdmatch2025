@@ -66,7 +66,6 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
         q.id === 'ethnicity' ||
         q.id === 'religion' ||
         q.id === 'political_views' ||
-        q.id === 'zodiac_sign' ||
         q.id === 'personality_type' ||
         q.id === 'dreamVacation'
       ),
