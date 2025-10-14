@@ -3,8 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getGroupById, getGroupPosts, joinGroup, leaveGroup, isGroupMember } from '@/api/groups';
+import { supabase } from '@/integrations/supabase/client';
 import PostCard from '@/components/discovery/PostCard';
 import BottomNavigation from '@/components/BottomNavigation';
+import { GroupSettingsDialog } from '@/components/groups/GroupSettingsDialog';
+import { MembersDialog } from '@/components/groups/MembersDialog';
 import { toast } from 'sonner';
 import type { Group } from '@/api/groups';
 
@@ -15,6 +18,9 @@ export const GroupDetail = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [isMember, setIsMember] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isCreator, setIsCreator] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [membersOpen, setMembersOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -27,6 +33,8 @@ export const GroupDetail = () => {
     
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const [groupData, postsData, memberStatus] = await Promise.all([
         getGroupById(id),
         getGroupPosts(id),
@@ -36,6 +44,7 @@ export const GroupDetail = () => {
       setGroup(groupData);
       setPosts(postsData.map((gp: any) => gp.posts));
       setIsMember(memberStatus);
+      setIsCreator(user?.id === groupData.created_by);
     } catch (error) {
       console.error('Error loading group:', error);
       toast.error('Failed to load group');
@@ -118,13 +127,16 @@ export const GroupDetail = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           
-          <Button
-            variant="ghost"
-            size="icon"
-            className="glass backdrop-blur-lg hover:bg-background/80 rounded-full"
-          >
-            <Settings className="h-5 w-5" />
-          </Button>
+          {isCreator && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSettingsOpen(true)}
+              className="glass backdrop-blur-lg hover:bg-background/80 rounded-full"
+            >
+              <Settings className="h-5 w-5" />
+            </Button>
+          )}
         </div>
 
         {/* Group Icon */}
@@ -148,11 +160,14 @@ export const GroupDetail = () => {
           </div>
 
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b border-border/50">
-            <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMembersOpen(true)}
+              className="flex items-center gap-2 hover:text-primary transition-colors"
+            >
               <Users className="h-5 w-5 text-primary" />
               <span className="font-medium text-foreground">{group.member_count}</span>
               <span>members</span>
-            </div>
+            </button>
             <span>·</span>
             <div className="flex items-center gap-2">
               <span className="font-medium text-foreground">{group.post_count}</span>
@@ -223,6 +238,23 @@ export const GroupDetail = () => {
           )}
         </div>
       </div>
+
+      {group && isCreator && (
+        <GroupSettingsDialog
+          group={group}
+          open={settingsOpen}
+          onOpenChange={setSettingsOpen}
+          onUpdate={loadGroupData}
+        />
+      )}
+
+      {id && (
+        <MembersDialog
+          groupId={id}
+          open={membersOpen}
+          onOpenChange={setMembersOpen}
+        />
+      )}
 
       <BottomNavigation />
     </div>

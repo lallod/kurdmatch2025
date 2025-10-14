@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getGroups } from '@/api/groups';
 import BottomNavigation from '@/components/BottomNavigation';
+import { CreateGroupDialog } from '@/components/groups/CreateGroupDialog';
 import type { Group } from '@/api/groups';
 
 export const GroupsList = () => {
@@ -13,6 +14,7 @@ export const GroupsList = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const categories = [
     { value: 'professional', label: 'Professional', icon: '💼', color: 'from-blue-500/20 to-blue-600/20' },
@@ -58,7 +60,12 @@ export const GroupsList = () => {
               </h1>
               <p className="text-muted-foreground mt-1">Connect with Kurdish communities</p>
             </div>
-            <Button size="icon" variant="default" className="rounded-full h-12 w-12 shadow-lg">
+            <Button 
+              size="icon" 
+              variant="default" 
+              className="rounded-full h-12 w-12 shadow-lg"
+              onClick={() => setCreateDialogOpen(true)}
+            >
               <Plus className="h-6 w-6" />
             </Button>
           </div>
@@ -120,7 +127,11 @@ export const GroupsList = () => {
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Be the first to create a group and start building your community!
             </p>
-            <Button size="lg" className="rounded-full shadow-lg">
+            <Button 
+              size="lg" 
+              className="rounded-full shadow-lg"
+              onClick={() => setCreateDialogOpen(true)}
+            >
               <Plus className="h-5 w-5 mr-2" />
               Create Group
             </Button>
@@ -188,6 +199,11 @@ export const GroupsList = () => {
           </div>
         )}
       </div>
+
+      <CreateGroupDialog 
+        open={createDialogOpen} 
+        onOpenChange={setCreateDialogOpen}
+      />
 
       <BottomNavigation />
     </div>
