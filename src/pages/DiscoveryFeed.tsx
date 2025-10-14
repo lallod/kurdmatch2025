@@ -122,11 +122,11 @@ const DiscoveryFeed = () => {
   };
 
   const handleStoryClick = (story: Story) => {
-    setSelectedStory(story);
+    navigate(`/stories/${story.user_id}`);
   };
 
   const handleAddStory = () => {
-    setShowCreateStory(true);
+    navigate('/stories/create');
   };
 
   const handleStoryCreated = async () => {
