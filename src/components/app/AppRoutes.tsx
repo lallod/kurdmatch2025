@@ -42,6 +42,8 @@ import PrivacySettings from '@/pages/PrivacySettings';
 import Groups from '@/pages/Groups';
 import CreateGroup from '@/pages/CreateGroup';
 import GroupDetailPage from '@/pages/GroupDetail';
+import CreateStory from '@/pages/CreateStory';
+import StoriesView from '@/pages/StoriesView';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -203,6 +205,14 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/groups/:id" 
         element={<ProtectedRoute><GroupDetailPage /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/stories/create" 
+        element={<ProtectedRoute><CreateStory /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/stories/:userId" 
+        element={<ProtectedRoute><StoriesView /></ProtectedRoute>} 
       />
       <Route 
         path="/notifications/settings" 
