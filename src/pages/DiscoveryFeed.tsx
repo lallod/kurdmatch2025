@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { HashtagSearch } from '@/components/discovery/HashtagSearch';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
+import { TrendingHashtags } from '@/components/discovery/TrendingHashtags';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
@@ -317,6 +318,9 @@ const DiscoveryFeed = () => {
               </div>
               <HashtagSearch />
             </div>
+
+            {/* Trending Hashtags */}
+            <TrendingHashtags />
 
             {/* Groups Quick Access */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">

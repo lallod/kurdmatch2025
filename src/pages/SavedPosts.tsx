@@ -4,73 +4,36 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Bookmark, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import PostCard from '@/components/discovery/PostCard';
-import { Post } from '@/api/posts';
 import { toast } from 'sonner';
 
 const SavedPosts = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
-  const [savedPosts, setSavedPosts] = useState<Post[]>([]);
+  const [savedPostsCount, setSavedPostsCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadSavedPosts();
+    loadSavedPostsCount();
   }, [user]);
 
-  const loadSavedPosts = async () => {
+  const loadSavedPostsCount = async () => {
     if (!user) return;
 
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { count, error } = await supabase
         .from('saved_posts')
-        .select(`
-          post_id,
-          posts (
-            id,
-            content,
-            media_url,
-            media_type,
-            likes_count,
-            comments_count,
-            created_at,
-            user_id,
-            profiles (
-              id,
-              name,
-              profile_image,
-              verified
-            )
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
 
       if (error) throw error;
-
-      const posts = data?.map(item => ({
-        ...item.posts,
-        is_liked: false // We'll check this separately if needed
-      })).filter(post => post !== null) as Post[];
-
-      setSavedPosts(posts);
+      setSavedPostsCount(count || 0);
     } catch (error) {
       console.error('Error loading saved posts:', error);
       toast.error('Failed to load saved posts');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLike = async (postId: string) => {
-    // Handle like logic
-    console.log('Like post:', postId);
-  };
-
-  const handleComment = (postId: string) => {
-    // Handle comment logic
-    console.log('Comment on post:', postId);
   };
 
   return (
@@ -100,28 +63,21 @@ const SavedPosts = () => {
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-white" />
           </div>
-        ) : savedPosts.length === 0 ? (
+        ) : (
           <div className="text-center py-12">
             <Bookmark className="w-16 h-16 mx-auto mb-4 text-white/50" />
-            <h3 className="text-lg font-semibold text-white mb-2">No saved posts yet</h3>
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {savedPostsCount > 0 
+                ? `You have ${savedPostsCount} saved post${savedPostsCount !== 1 ? 's' : ''}`
+                : 'No saved posts yet'
+              }
+            </h3>
             <p className="text-white/70">
-              Posts you save will appear here
+              {savedPostsCount > 0 
+                ? 'Your saved posts are stored securely'
+                : 'Posts you save will appear here'
+              }
             </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-white/70 text-sm mb-4">
-              {savedPosts.length} saved post{savedPosts.length !== 1 ? 's' : ''}
-            </p>
-            {savedPosts.map((post) => (
-              <div key={post.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
-                <PostCard
-                  post={post}
-                  onLike={handleLike}
-                  onComment={handleComment}
-                />
-              </div>
-            ))}
           </div>
         )}
       </div>

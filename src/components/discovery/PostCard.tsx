@@ -56,6 +56,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   useEffect(() => {
     checkSubscription();
     getCurrentUser();
+    checkIfSaved();
 
     const channel = supabase
       .channel('post-changes')
@@ -87,6 +88,61 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const getCurrentUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUserId(user?.id);
+  };
+
+  const checkIfSaved = async () => {
+    if (!currentUserId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('saved_posts')
+        .select('id')
+        .eq('user_id', currentUserId)
+        .eq('post_id', post.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error('Error checking saved status:', error);
+    }
+  };
+
+  const handleSaveToggle = async () => {
+    if (!currentUserId) return;
+
+    try {
+      if (isSaved) {
+        const { error } = await supabase
+          .from('saved_posts')
+          .delete()
+          .eq('user_id', currentUserId)
+          .eq('post_id', post.id);
+
+        if (error) throw error;
+        setIsSaved(false);
+        toast({ description: 'Post unsaved' });
+      } else {
+        const { error } = await supabase
+          .from('saved_posts')
+          .insert({
+            user_id: currentUserId,
+            post_id: post.id
+          });
+
+        if (error) throw error;
+        setIsSaved(true);
+        toast({ description: 'Post saved!' });
+      }
+    } catch (error) {
+      console.error('Error toggling save:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save post',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleLike = async () => {

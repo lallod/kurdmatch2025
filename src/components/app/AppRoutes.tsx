@@ -37,6 +37,7 @@ import { GroupsList } from '@/pages/GroupsList';
 import { GroupDetail } from '@/pages/GroupDetail';
 import NotificationSettings from '@/pages/NotificationSettings';
 import AdvancedSearch from '@/pages/AdvancedSearch';
+import SavedPosts from '@/pages/SavedPosts';
 import BlockedUsers from '@/pages/BlockedUsers';
 import PrivacySettings from '@/pages/PrivacySettings';
 
@@ -132,6 +133,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/search" 
         element={<ProtectedRoute><AdvancedSearch /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/saved" 
+        element={<ProtectedRoute><SavedPosts /></ProtectedRoute>} 
       />
       <Route 
         path="/create-event" 
