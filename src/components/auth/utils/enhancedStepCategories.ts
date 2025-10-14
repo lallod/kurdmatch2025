@@ -58,6 +58,7 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
         q.profileField === 'height' ||
         q.profileField === 'body_type' ||
         q.profileField === 'kurdistan_region' ||
+        q.profileField === 'dream_vacation' ||
         q.id === 'location' ||
         q.id === 'height' ||
         q.id === 'body_type' ||
@@ -66,7 +67,8 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
         q.id === 'religion' ||
         q.id === 'political_views' ||
         q.id === 'zodiac_sign' ||
-        q.id === 'personality_type'
+        q.id === 'personality_type' ||
+        q.id === 'dreamVacation'
       ),
       step: 3
     },
@@ -213,21 +215,37 @@ export const getStepCompletionStatus = (
 ): Record<number, boolean> => {
   const completionStatus: Record<number, boolean> = {};
   
+  console.log('🔍 Checking step completion for all steps');
+  
   categories.forEach(category => {
+    console.log(`\n📋 Step ${category.step} (${category.name}):`, {
+      totalQuestions: category.questions.length,
+      questionIds: category.questions.map(q => q.id),
+      requiredQuestions: category.questions.filter(q => q.required).map(q => q.id)
+    });
     // Special handling for account step (step 1)
     if (category.step === 1) {
       const hasEmail = formValues.email && formValues.email.trim().length > 0;
       const hasPassword = formValues.password && formValues.password.length >= 8;
       const passwordsMatch = formValues.password === formValues.confirmPassword;
       completionStatus[category.step] = hasEmail && hasPassword && passwordsMatch;
+      console.log(`✅ Account step complete: ${completionStatus[category.step]}`);
     }
     // Special handling for photos step
     else if (category.name === 'Photos') {
       completionStatus[category.step] = Array.isArray(formValues.photos) && formValues.photos.length > 0;
+      console.log(`✅ Photos step complete: ${completionStatus[category.step]}`);
     }
     // Regular question validation
     else {
-      completionStatus[category.step] = isStepComplete(category.questions, formValues);
+      const isComplete = isStepComplete(category.questions, formValues);
+      completionStatus[category.step] = isComplete;
+      console.log(`✅ ${category.name} complete: ${isComplete}`);
+      
+      // Log each field value for debugging
+      category.questions.filter(q => q.required).forEach(q => {
+        console.log(`  - ${q.id}: ${formValues[q.id] ? '✓ filled' : '✗ empty'} (value: ${JSON.stringify(formValues[q.id])})`);
+      });
     }
   });
   
