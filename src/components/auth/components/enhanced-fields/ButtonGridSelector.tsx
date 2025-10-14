@@ -2,6 +2,7 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Check, LucideIcon, Sparkles, Heart, Coffee } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getIconForOption } from './iconMappings';
 
 const getCategoryGradient = (label: string) => {
   const lowerLabel = label.toLowerCase();
@@ -53,6 +54,7 @@ interface ButtonGridSelectorProps {
   selectedValues: string[];
   onChange: (values: string[]) => void;
   minSelections: number;
+  maxSelections?: number;
   maxColumns?: number;
 }
 
@@ -63,6 +65,7 @@ const ButtonGridSelector = ({
   selectedValues = [],
   onChange,
   minSelections,
+  maxSelections,
   maxColumns = 3
 }: ButtonGridSelectorProps) => {
   const toggleSelection = (option: string) => {
@@ -76,6 +79,7 @@ const ButtonGridSelector = ({
 
   const selectionCount = Array.isArray(selectedValues) ? selectedValues.length : 0;
   const isValid = selectionCount >= minSelections;
+  const isMaxReached = maxSelections ? selectionCount >= maxSelections : false;
   const categoryStyle = getCategoryGradient(label);
   const CategoryIcon = categoryStyle.icon;
 
@@ -99,7 +103,7 @@ const ButtonGridSelector = ({
             ? "bg-green-500/20 text-green-400 border border-green-400/30" 
             : "bg-yellow-500/20 text-yellow-400 border border-yellow-400/30"
         )}>
-          {selectionCount}/{minSelections} {isValid && '✓'}
+          {selectionCount}/{maxSelections || minSelections} {isValid && '✓'}
         </div>
       </div>
       
@@ -111,32 +115,38 @@ const ButtonGridSelector = ({
       )}>
         {options.map((option) => {
           const isSelected = Array.isArray(selectedValues) && selectedValues.includes(option);
+          const canSelect = isSelected || !isMaxReached;
+          const OptionIcon = getIconForOption(label, option);
+          
           return (
             <button
               key={option}
               type="button"
-              onClick={() => toggleSelection(option)}
+              onClick={() => canSelect && toggleSelection(option)}
+              disabled={!canSelect}
               className={cn(
                 "relative px-3 py-2 rounded-xl border transition-all duration-300",
                 "text-xs font-medium group",
-                "transform hover:scale-105 active:scale-95",
+                canSelect && "transform hover:scale-105 active:scale-95",
+                !canSelect && "opacity-40 cursor-not-allowed",
                 isSelected
                   ? cn(categoryStyle.selected, "text-white")
                   : cn(
                       categoryStyle.glass,
                       categoryStyle.border,
                       "text-white/90",
-                      categoryStyle.hover
+                      canSelect && categoryStyle.hover
                     )
               )}
             >
               <div className="flex items-center justify-center gap-1.5">
+                {OptionIcon && <OptionIcon className="w-3.5 h-3.5" />}
                 {isSelected && (
                   <Check className="w-3.5 h-3.5 animate-in zoom-in duration-200" />
                 )}
                 <span className="leading-tight">{option}</span>
               </div>
-              {!isSelected && (
+              {!isSelected && canSelect && (
                 <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                   <div className={cn(
                     "absolute inset-0 rounded-xl blur-md",
@@ -153,6 +163,13 @@ const ButtonGridSelector = ({
         <p className="text-xs text-yellow-400/80 flex items-center gap-2">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
           Select at least {minSelections} option{minSelections > 1 ? 's' : ''}
+        </p>
+      )}
+      
+      {isMaxReached && (
+        <p className="text-xs text-green-400/80 flex items-center gap-2">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400" />
+          Maximum {maxSelections} selections reached
         </p>
       )}
     </div>

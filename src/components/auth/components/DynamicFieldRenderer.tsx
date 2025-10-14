@@ -214,6 +214,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
                 selectedValues={field.value || []}
                 onChange={field.onChange}
                 minSelections={3}
+                maxSelections={8}
                 maxColumns={3}
               />
             </FormControl>
@@ -239,6 +240,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
                 selectedValues={field.value || []}
                 onChange={field.onChange}
                 minSelections={2}
+                maxSelections={6}
                 maxColumns={3}
               />
             </FormControl>
@@ -264,6 +266,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
                 selectedValues={field.value || []}
                 onChange={field.onChange}
                 minSelections={3}
+                maxSelections={5}
                 maxColumns={3}
               />
             </FormControl>
