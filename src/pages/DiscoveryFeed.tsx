@@ -16,6 +16,7 @@ import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
 import { HashtagSearch } from '@/components/discovery/HashtagSearch';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { useRealtimePosts } from '@/hooks/useRealtimePosts';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
@@ -37,22 +38,6 @@ const DiscoveryFeed = () => {
   const [eventDateFrom, setEventDateFrom] = useState('');
   const [eventDateTo, setEventDateTo] = useState('');
   const [eventSearchQuery, setEventSearchQuery] = useState('');
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    loadPosts();
-  }, [showFollowingOnly]);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || null);
-    };
-    fetchUser();
-  }, []);
 
   const loadData = async () => {
     try {
@@ -85,6 +70,29 @@ const DiscoveryFeed = () => {
       console.error('Error loading posts:', error);
     }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    loadPosts();
+  }, [showFollowingOnly]);
+
+  // Real-time updates for posts
+  useRealtimePosts({
+    onPostInserted: loadPosts,
+    onPostUpdated: loadPosts,
+    onPostDeleted: loadPosts
+  });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    fetchUser();
+  }, []);
 
   const handleLike = async (postId: string) => {
     try {

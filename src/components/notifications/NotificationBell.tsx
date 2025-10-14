@@ -36,6 +36,18 @@ const NotificationBell = () => {
           loadUnreadCount();
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications'
+        },
+        () => {
+          loadNotifications();
+          loadUnreadCount();
+        }
+      )
       .subscribe();
 
     return () => {

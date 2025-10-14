@@ -22,20 +22,11 @@ export const useNotifications = () => {
     if (!user) return;
 
     try {
-      // Get unread messages count - simulated for demo
+      // Simplified: Use simulated counts for now to avoid TypeScript issues
+      // TODO: Replace with actual database queries once TypeScript issue is resolved
       const messagesCount = Math.floor(Math.random() * 3);
-
-      // Get new profile views count (last 24 hours) - simulated for now
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      // Simulate profile views count since profile_views table may not exist
       const viewsCount = Math.floor(Math.random() * 5);
-
-      // Get new likes count (last 24 hours) - simulated for demo
       const likesCount = Math.floor(Math.random() * 8);
-
-      // Get new matches count (last 24 hours) - simulated for demo
       const matchesCount = Math.floor(Math.random() * 2);
 
       setCounts({
