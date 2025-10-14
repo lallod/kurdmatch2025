@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { z } from 'zod';
 
 export interface Post {
   id: string;
@@ -106,12 +107,28 @@ export const getStories = async (): Promise<Story[]> => {
   }));
 };
 
+export const createPostSchema = z.object({
+  content: z.string().min(1, 'Post content cannot be empty').max(5000, 'Post too long'),
+  media_url: z.string().url().optional().or(z.literal('')),
+  media_type: z.enum(['image', 'video']).optional(),
+  hashtags: z.array(z.string()).optional(),
+});
+
+export type CreatePostInput = z.infer<typeof createPostSchema>;
+
 export const createPost = async (
   content: string, 
   mediaUrl?: string, 
   mediaType?: 'image' | 'video',
   hashtags?: string[]
 ) => {
+  const validated = createPostSchema.parse({
+    content,
+    media_url: mediaUrl,
+    media_type: mediaType,
+    hashtags
+  });
+
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
@@ -119,10 +136,10 @@ export const createPost = async (
     .from('posts')
     .insert({
       user_id: user.id,
-      content,
-      media_url: mediaUrl,
-      media_type: mediaType,
-      hashtags: hashtags || []
+      content: validated.content,
+      media_url: validated.media_url || null,
+      media_type: validated.media_type || null,
+      hashtags: validated.hashtags || []
     })
     .select()
     .single();
@@ -140,20 +157,6 @@ export const likePost = async (postId: string) => {
     .insert({ post_id: postId, user_id: user.id });
 
   if (error) throw error;
-
-  // Increment likes count
-  const { data: post } = await supabase
-    .from('posts')
-    .select('likes_count')
-    .eq('id', postId)
-    .single();
-
-  if (post) {
-    await supabase
-      .from('posts')
-      .update({ likes_count: post.likes_count + 1 })
-      .eq('id', postId);
-  }
 };
 
 export const unlikePost = async (postId: string) => {
@@ -167,20 +170,90 @@ export const unlikePost = async (postId: string) => {
     .eq('user_id', user.id);
 
   if (error) throw error;
+};
 
-  // Decrement likes count
-  const { data: post } = await supabase
-    .from('posts')
-    .select('likes_count')
-    .eq('id', postId)
+/**
+ * Check if user has liked a post
+ */
+export const hasLikedPost = async (postId: string) => {
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) return false;
+
+  const { data, error } = await supabase
+    .from('post_likes')
+    .select('id')
+    .eq('post_id', postId)
+    .eq('user_id', user.user.id)
+    .maybeSingle();
+
+  if (error) return false;
+  return !!data;
+};
+
+/**
+ * Add a comment to a post
+ */
+export const createComment = async (postId: string, content: string) => {
+  if (!content.trim()) throw new Error('Comment cannot be empty');
+  if (content.length > 1000) throw new Error('Comment too long');
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await supabase
+    .from('post_comments')
+    .insert({
+      post_id: postId,
+      user_id: user.id,
+      content: content.trim(),
+    })
+    .select(`
+      *,
+      profiles:user_id (
+        id,
+        name,
+        profile_image,
+        verified
+      )
+    `)
     .single();
 
-  if (post) {
-    await supabase
-      .from('posts')
-      .update({ likes_count: Math.max(0, post.likes_count - 1) })
-      .eq('id', postId);
-  }
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Get comments for a post
+ */
+export const getPostComments = async (postId: string) => {
+  const { data, error } = await supabase
+    .from('post_comments')
+    .select(`
+      *,
+      profiles:user_id (
+        id,
+        name,
+        profile_image,
+        verified
+      )
+    `)
+    .eq('post_id', postId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Delete a comment
+ */
+export const deleteComment = async (commentId: string) => {
+  const { error } = await supabase
+    .from('post_comments')
+    .delete()
+    .eq('id', commentId);
+
+  if (error) throw error;
 };
 
 // Get posts by specific user
