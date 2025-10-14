@@ -388,6 +388,44 @@ export const checkIsFollowing = async (userId: string): Promise<boolean> => {
   return !!data;
 };
 
+/**
+ * Update a post
+ */
+export const updatePost = async (postId: string, content: string) => {
+  if (!content.trim()) throw new Error('Post content cannot be empty');
+  if (content.length > 5000) throw new Error('Post too long');
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { error } = await supabase
+    .from('posts')
+    .update({ 
+      content: content.trim(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', postId)
+    .eq('user_id', user.id); // Ensure user owns the post
+
+  if (error) throw error;
+};
+
+/**
+ * Delete a post
+ */
+export const deletePost = async (postId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { error } = await supabase
+    .from('posts')
+    .delete()
+    .eq('id', postId)
+    .eq('user_id', user.id); // Ensure user owns the post
+
+  if (error) throw error;
+};
+
 // Get posts from followed users only
 export const getFollowingPosts = async (): Promise<Post[]> => {
   const { data: { user } } = await supabase.auth.getUser();

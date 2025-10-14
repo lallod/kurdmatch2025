@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Post, likePost, unlikePost } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart } from 'lucide-react';
+import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart, Pencil, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import PostContent from './PostContent';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import CommentSection from './CommentSection';
 import ReportDialog from './ReportDialog';
 import BlockUserDialog from './BlockUserDialog';
+import EditPostDialog from './EditPostDialog';
+import DeletePostDialog from './DeletePostDialog';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
@@ -44,6 +46,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const [showComments, setShowComments] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
 
   useEffect(() => {
@@ -216,16 +220,35 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
               <MoreVertical className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
-              <Flag className="w-4 h-4 mr-2" />
-              Report Post
-            </DropdownMenuItem>
-            {currentUserId !== post.user_id && (
-              <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive">
-                <Ban className="w-4 h-4 mr-2" />
-                Block User
-              </DropdownMenuItem>
+          <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-md border-white/20">
+            {currentUserId === post.user_id ? (
+              <>
+                <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit Post
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Post
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <>
+                <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
+                  <Flag className="w-4 h-4 mr-2" />
+                  Report Post
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setShowBlockDialog(true)} 
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Ban className="w-4 h-4 mr-2" />
+                  Block User
+                </DropdownMenuItem>
+              </>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -268,6 +291,21 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           </DialogHeader>
         </DialogContent>
       </Dialog>
+
+      <EditPostDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        postId={post.id}
+        initialContent={post.content}
+        onSuccess={() => window.location.reload()}
+      />
+
+      <DeletePostDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        postId={post.id}
+        onSuccess={() => window.location.reload()}
+      />
 
       <ReportDialog
         open={showReportDialog}
