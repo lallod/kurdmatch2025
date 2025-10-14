@@ -52,7 +52,6 @@ export const createEnhancedStepCategories = (questions: QuestionItem[]): StepCat
         q.profileField === 'ethnicity' || 
         q.profileField === 'religion' ||
         q.profileField === 'political_views' ||
-        q.profileField === 'zodiac_sign' ||
         q.profileField === 'personality_type' ||
         q.profileField === 'location' ||
         q.profileField === 'height' ||
