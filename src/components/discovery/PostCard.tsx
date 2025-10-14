@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Post } from '@/api/posts';
+import { Post, likePost, unlikePost } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban } from 'lucide-react';
+import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import PostContent from './PostContent';
 import { useNavigate } from 'react-router-dom';
 import { getUserSubscription } from '@/api/usage';
 import { createPremiumCheckout } from '@/api/payments';
 import { useToast } from '@/hooks/use-toast';
-import SuperLikeButton from './SuperLikeButton';
-import ReactionPicker from './ReactionPicker';
-import ReactionsSummary from './ReactionsSummary';
 import CommentSection from './CommentSection';
 import ReportDialog from './ReportDialog';
 import BlockUserDialog from './BlockUserDialog';
-import { addReaction, removeReaction, getUserReaction, ReactionType } from '@/api/reactions';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
@@ -40,17 +36,9 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentReaction, setCurrentReaction] = useState<ReactionType | null>(null);
-  const [reactions, setReactions] = useState({
-    love_count: post.love_count || 0,
-    haha_count: post.haha_count || 0,
-    fire_count: post.fire_count || 0,
-    applause_count: post.applause_count || 0,
-    thoughtful_count: post.thoughtful_count || 0,
-    wow_count: post.wow_count || 0,
-    sad_count: post.sad_count || 0,
-    total_reactions: post.total_reactions || 0,
-  });
+  const [isLiked, setIsLiked] = useState(post.is_liked || false);
+  const [likesCount, setLikesCount] = useState(post.likes_count || 0);
+  const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
   const [isPremium, setIsPremium] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -60,9 +48,29 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
   useEffect(() => {
     checkSubscription();
-    loadUserReaction();
     getCurrentUser();
-  }, []);
+
+    const channel = supabase
+      .channel('post-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'posts',
+          filter: `id=eq.${post.id}`
+        },
+        (payload: any) => {
+          setLikesCount(payload.new.likes_count || 0);
+          setCommentsCount(payload.new.comments_count || 0);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [post.id]);
 
   const checkSubscription = async () => {
     const subscription = await getUserSubscription();
@@ -74,55 +82,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
     setCurrentUserId(user?.id);
   };
 
-  const loadUserReaction = async () => {
-    const reaction = await getUserReaction(post.id);
-    setCurrentReaction(reaction);
-  };
-
-  const handleReaction = async (reactionType: ReactionType) => {
+  const handleLike = async () => {
     try {
-      if (currentReaction === reactionType) {
-        // Remove reaction
-        await removeReaction(post.id);
-        setCurrentReaction(null);
-        setReactions(prev => ({
-          ...prev,
-          [`${reactionType}_count`]: Math.max(0, prev[`${reactionType}_count` as keyof typeof prev] - 1),
-          total_reactions: Math.max(0, prev.total_reactions - 1),
-        }));
+      if (isLiked) {
+        await unlikePost(post.id);
+        setIsLiked(false);
       } else {
-        // Add or change reaction
-        await addReaction(post.id, reactionType);
-        
-        setReactions(prev => {
-          const newReactions = { ...prev };
-          
-          // Decrease old reaction count
-          if (currentReaction) {
-            newReactions[`${currentReaction}_count` as keyof typeof newReactions] = Math.max(
-              0,
-              prev[`${currentReaction}_count` as keyof typeof prev] - 1
-            );
-          }
-          
-          // Increase new reaction count
-          newReactions[`${reactionType}_count` as keyof typeof newReactions] = 
-            prev[`${reactionType}_count` as keyof typeof prev] + 1;
-          
-          // Update total
-          if (!currentReaction) {
-            newReactions.total_reactions = prev.total_reactions + 1;
-          }
-          
-          return newReactions;
-        });
-        
-        setCurrentReaction(reactionType);
+        await likePost(post.id);
+        setIsLiked(true);
       }
+      onLike(post.id);
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to update reaction',
+        description: 'Failed to update like',
         variant: 'destructive',
       });
     }
@@ -207,19 +180,22 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
       {/* Actions */}
       <div className="flex items-center gap-4 pt-2">
-        <ReactionPicker
-          onReactionSelect={handleReaction}
-          currentReaction={currentReaction}
-        />
-        
-        <ReactionsSummary reactions={reactions} />
+        <button
+          onClick={handleLike}
+          className={`flex items-center gap-2 transition-colors group ${
+            isLiked ? 'text-pink-500' : 'text-white/70 hover:text-pink-400'
+          }`}
+        >
+          <Heart className={`w-5 h-5 group-hover:scale-110 transition-transform ${isLiked ? 'fill-pink-500' : ''}`} />
+          <span className="text-sm">{likesCount}</span>
+        </button>
         
         <button
           onClick={() => setShowComments(!showComments)}
           className="flex items-center gap-2 text-white/70 hover:text-purple-400 transition-colors group"
         >
           <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <span className="text-sm">{post.comments_count}</span>
+          <span className="text-sm">{commentsCount}</span>
         </button>
         
         <button 
