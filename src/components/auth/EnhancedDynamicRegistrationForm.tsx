@@ -135,6 +135,8 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
                   onPrevious={prevStep}
                   onNext={handleNext}
                   onSubmit={handleSubmit}
+                  stepQuestions={currentCategory.questions}
+                  formValues={formValues}
                 />
               </div>
             </form>

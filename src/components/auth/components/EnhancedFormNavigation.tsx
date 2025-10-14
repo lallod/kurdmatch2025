@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import MissingFieldsSummary from './MissingFieldsSummary';
+import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 
 interface EnhancedFormNavigationProps {
   currentStep: number;
@@ -10,6 +12,8 @@ interface EnhancedFormNavigationProps {
   onPrevious: () => void;
   onNext: () => void;
   onSubmit: () => void;
+  stepQuestions?: QuestionItem[];
+  formValues?: Record<string, any>;
 }
 
 const EnhancedFormNavigation: React.FC<EnhancedFormNavigationProps> = ({
@@ -19,7 +23,9 @@ const EnhancedFormNavigation: React.FC<EnhancedFormNavigationProps> = ({
   isSubmitting,
   onPrevious,
   onNext,
-  onSubmit
+  onSubmit,
+  stepQuestions = [],
+  formValues = {}
 }) => {
   const isFirstStep = currentStep === 1;
   const isLastStep = currentStep === totalSteps;
@@ -94,18 +100,13 @@ const EnhancedFormNavigation: React.FC<EnhancedFormNavigationProps> = ({
         )}
       </div>
 
-      {/* Validation Message */}
-      {!isStepComplete && (
-        <div className="mt-3 p-3 bg-yellow-900/30 border border-yellow-500/30 rounded-lg backdrop-blur-sm">
-          <p className="text-xs md:text-sm text-yellow-400 text-center font-medium">
-            ⚠️ Complete all required fields to continue
-          </p>
-          {currentStep === 4 && (
-            <p className="text-xs text-yellow-300/80 text-center mt-1">
-              Minimum: 3 interests, 2 hobbies, 3 values
-            </p>
-          )}
-        </div>
+      {/* Missing Fields Summary */}
+      {!isStepComplete && stepQuestions.length > 0 && (
+        <MissingFieldsSummary
+          stepQuestions={stepQuestions}
+          formValues={formValues}
+          currentStep={currentStep}
+        />
       )}
     </div>
   );
