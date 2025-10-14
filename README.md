@@ -1,69 +1,214 @@
-# Welcome to your Lovable project
+# KurdMatch - Kurdish Social Network Platform
 
-## Project info
+A comprehensive social networking platform designed to connect Kurdish people worldwide, built with modern web technologies and real-time features.
 
-**URL**: https://lovable.dev/projects/2c5b97e5-e3ff-4419-8c09-7d90137e1b71
+## 🚀 Features
 
-## How can I edit this code?
+### Core Social Features
+- **User Profiles** - Detailed profiles with photos, bio, interests, and preferences
+- **Discovery Feed** - Personalized content feed with posts, events, and trending topics
+- **Swipe Matching** - Tinder-style profile browsing with like/pass functionality
+- **Messaging** - Real-time chat with other users
+- **Posts & Comments** - Create posts with media, comment threads, and engagement
+- **Stories** - 24-hour ephemeral stories with reactions
+- **Groups** - Create and join community groups
+- **Events** - Create and attend local/virtual events
 
-There are several ways of editing your application.
+### Advanced Features
+- **Advanced Search** - Multi-type search with filters (users, posts, groups, events)
+- **Notifications** - Real-time notification center with activity tracking
+- **Hashtags** - Trending hashtags and hashtag-based navigation
+- **Saved Content** - Bookmark posts for later viewing
+- **Profile Views** - Track who viewed your profile
+- **Verification System** - Verified user badges
 
-**Use Lovable**
+### Admin Dashboard
+- **User Management** - Verify users, manage accounts
+- **Content Moderation** - Review and delete posts/comments
+- **Reports Management** - Handle user reports and violations
+- **Platform Analytics** - Engagement metrics and user growth tracking
+- **System Settings** - Configure platform-wide settings and limits
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2c5b97e5-e3ff-4419-8c09-7d90137e1b71) and start prompting.
+## 🛠 Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+### Frontend
+- **React 18** - Modern React with hooks
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool and dev server
+- **React Router** - Client-side routing
+- **TailwindCSS** - Utility-first CSS framework
+- **Radix UI** - Accessible component primitives
+- **React Query** - Server state management
+- **date-fns** - Date utilities
 
-**Use your preferred IDE**
+### Backend (Supabase)
+- **PostgreSQL** - Primary database
+- **Supabase Auth** - Authentication system
+- **Row Level Security** - Database security policies
+- **Real-time Subscriptions** - Live data updates
+- **Storage** - File uploads and management
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🚦 Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
+- Node.js 18+ or Bun
+- Supabase account
+- Modern web browser
 
-Follow these steps:
+### Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd kurdmatch
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. **Install dependencies**
+```bash
+npm install
+# or
+bun install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. **Configure Supabase**
+   - Project is already connected to Supabase
+   - Project ID: `bqgjfxilcpqosmccextj`
+   - Credentials are configured in `src/integrations/supabase/client.ts`
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. **Start development server**
+```bash
+npm run dev
+# or
+bun dev
+```
+
+5. **Open the app**
+Navigate to `http://localhost:5173`
+
+## 📁 Project Structure
+
+```
+src/
+├── api/                    # API integration modules
+├── components/
+│   ├── app/               # App-level components (routing, navigation)
+│   ├── auth/              # Authentication components
+│   ├── discovery/         # Discovery feed components
+│   ├── notifications/     # Notification components
+│   ├── swipe/            # Swipe interface components
+│   └── ui/               # Reusable UI components (shadcn)
+├── hooks/                 # Custom React hooks
+├── integrations/
+│   └── supabase/         # Supabase client and types
+├── lib/                  # Utility functions
+├── pages/
+│   ├── admin/            # Admin dashboard pages
+│   ├── Auth.tsx          # Authentication page
+│   ├── Register.tsx      # Registration flow
+│   ├── DiscoveryFeed.tsx # Main feed
+│   ├── Messages.tsx      # Chat interface
+│   └── ...               # Other pages
+└── main.tsx              # Application entry point
+```
+
+## 📱 Main Routes
+
+### Public Routes
+- `/` - Landing page
+- `/auth` - Login page
+- `/register` - Registration flow
+
+### Protected Routes
+- `/discovery` - Main feed
+- `/swipe` - Swipe interface
+- `/messages` - Messaging
+- `/my-profile` - User profile
+- `/notifications` - Notification center
+- `/search` - Advanced search
+- `/groups` - Community groups
+- `/events` - Event listings
+
+### Admin Routes (Requires super_admin role)
+- `/admin/dashboard` - Admin overview
+- `/admin/users` - User management
+- `/admin/reports` - Report management
+- `/admin/content` - Content moderation
+- `/admin/analytics` - Platform analytics
+- `/admin/settings` - System settings
+
+## 🔐 Security
+
+### Row Level Security (RLS)
+All tables implement RLS policies to ensure users can only:
+- Read their own data and public content
+- Modify their own content
+- Access appropriate shared content
+
+### Admin Access
+- Separate `user_roles` table for role management
+- Security definer functions to prevent RLS recursion
+- Audit logging for all admin actions
+
+## 📚 Documentation
+
+Additional documentation:
+- **[FEATURE_SUMMARY.md](FEATURE_SUMMARY.md)** - Detailed feature documentation
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment guide
+
+## 🎯 Quick Start Guide
+
+### For Users
+1. Register an account at `/register`
+2. Complete your profile
+3. Start swiping, posting, and connecting!
+
+### For Admins
+1. Register an account
+2. Request super_admin role from database admin
+3. Access admin dashboard at `/admin/dashboard`
+4. Configure system settings at `/admin/settings`
+
+## 🤝 Development
+
+### Running Locally
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Building for Production
+```bash
+npm run build
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Type Checking
+```bash
+npm run type-check
+```
 
-**Use GitHub Codespaces**
+## 📊 Features by Phase
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+✅ **Phase 1-7**: Core social features (posts, comments, events, groups, stories)  
+✅ **Phase 8**: Advanced search and filters  
+✅ **Phase 9**: Notification system  
+✅ **Phase 10-13**: Complete admin dashboard with analytics and settings  
 
-## What technologies are used for this project?
+## 🆘 Support
 
-This project is built with .
+For issues and questions:
+- Review documentation in this repository
+- Check Supabase logs for backend issues
+- Contact the development team
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+**Built with ❤️ for the Kurdish community**
 
-Simply open [Lovable](https://lovable.dev/projects/2c5b97e5-e3ff-4419-8c09-7d90137e1b71) and click on Share -> Publish.
+## Project Info
 
-## I want to use a custom domain - is that possible?
+**Lovable Project URL**: https://lovable.dev/projects/2c5b97e5-e3ff-4419-8c09-7d90137e1b71
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### Edit via Lovable
+Simply visit the [Lovable Project](https://lovable.dev/projects/2c5b97e5-e3ff-4419-8c09-7d90137e1b71) and start prompting. Changes made via Lovable will be committed automatically to this repo.
+
+### Edit via IDE
+Clone this repo and push changes. Pushed changes will also be reflected in Lovable.
