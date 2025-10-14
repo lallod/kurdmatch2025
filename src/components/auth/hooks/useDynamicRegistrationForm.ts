@@ -139,11 +139,18 @@ export const useDynamicRegistrationForm = () => {
 
   // Form submission
   const onSubmit = async (data: DynamicRegistrationFormValues) => {
+    console.log('🚀 Starting registration submission...', { 
+      email: data.email,
+      hasPhotos: data.photos?.length || 0,
+      formData: Object.keys(data)
+    });
+    
     try {
       // Sign up user
       const { error: signUpError, user } = await signUp(data.email, data.password);
       
       if (signUpError) {
+        console.error('❌ Sign up error:', signUpError);
         toast({
           title: "Registration Failed",
           description: signUpError.message,
@@ -153,6 +160,7 @@ export const useDynamicRegistrationForm = () => {
       }
 
       if (!user) {
+        console.error('❌ No user returned from sign up');
         toast({
           title: "Registration Failed", 
           description: "User creation failed. Please try again.",
@@ -161,8 +169,11 @@ export const useDynamicRegistrationForm = () => {
         return;
       }
 
+      console.log('✅ User created successfully:', user.id);
+
       // Map form data to profile
       const profileData = mapFormDataToProfile(data, questions);
+      console.log('📝 Profile data mapped:', profileData);
       
       // Ensure required fields are present
       const completeProfileData = {
@@ -181,7 +192,7 @@ export const useDynamicRegistrationForm = () => {
         });
 
       if (profileError) {
-        console.error('Profile creation error:', profileError);
+        console.error('❌ Profile creation error:', profileError);
         toast({
           title: "Profile Creation Failed",
           description: "Your account was created but profile setup failed. Please complete your profile.",
@@ -191,10 +202,15 @@ export const useDynamicRegistrationForm = () => {
         return;
       }
 
+      console.log('✅ Profile created successfully');
+
       // Handle photo uploads
       if (data.photos && data.photos.length > 0) {
+        console.log(`📸 Uploading ${data.photos.length} photos...`);
         await handlePhotoUploads(data.photos, user.id);
       }
+
+      console.log('🎉 Registration completed successfully!');
 
       toast({
         title: "Registration Successful!",
@@ -203,10 +219,10 @@ export const useDynamicRegistrationForm = () => {
 
       navigate('/discovery');
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('❌ Registration error:', error);
       toast({
         title: "Registration Failed",
-        description: "An unexpected error occurred. Please try again.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     }

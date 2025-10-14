@@ -10,6 +10,7 @@ import PhotoUploadComponent from './PhotoUploadComponent';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertCircle } from 'lucide-react';
 import AccountStep from './AccountStep';
+import LocationStep from './LocationStep';
 
 interface EnhancedStepRendererProps {
   category: StepCategory;
@@ -55,6 +56,20 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
       <div className="space-y-4">
         {renderStepHeader()}
         <AccountStep form={form} />
+      </div>
+    );
+  }
+
+  // Location step (step 3) - Use enhanced LocationStep with worldwide search
+  if (step === 3) {
+    return (
+      <div className="space-y-4">
+        {renderStepHeader()}
+        <LocationStep 
+          form={form} 
+          location={location || ''} 
+          locationLoading={locationLoading || false} 
+        />
       </div>
     );
   }
