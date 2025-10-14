@@ -29,23 +29,37 @@ const CommentThread: React.FC<CommentThreadProps> = ({
 }) => {
   const [isLiked, setIsLiked] = useState(comment.is_liked || false);
   const [likesCount, setLikesCount] = useState(comment.likes_count);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleLike = async () => {
+    if (isUpdating) return;
+    
     try {
+      setIsUpdating(true);
+      const previousLiked = isLiked;
+      const previousCount = likesCount;
+      
+      // Optimistic update
+      setIsLiked(!isLiked);
+      setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+      
       if (isLiked) {
         await unlikeComment(comment.id);
-        setLikesCount(prev => prev - 1);
       } else {
         await likeComment(comment.id);
-        setLikesCount(prev => prev + 1);
       }
-      setIsLiked(!isLiked);
     } catch (error) {
+      // Revert on error
+      setIsLiked(comment.is_liked || false);
+      setLikesCount(comment.likes_count);
+      
       toast({
         title: 'Error',
         description: 'Failed to update like',
         variant: 'destructive',
       });
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -87,8 +101,9 @@ const CommentThread: React.FC<CommentThreadProps> = ({
         <div className="flex items-center gap-4 mt-1 px-2">
           <button
             onClick={handleLike}
+            disabled={isUpdating}
             className={cn(
-              'flex items-center gap-1 text-xs hover:text-primary transition-colors',
+              'flex items-center gap-1 text-xs hover:text-primary transition-colors disabled:opacity-50',
               isLiked && 'text-pink-500'
             )}
           >

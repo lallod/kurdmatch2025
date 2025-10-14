@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import CommentThread from './CommentThread';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CommentSectionProps {
   postId: string;
@@ -20,6 +21,51 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, currentUserId }
 
   useEffect(() => {
     loadComments();
+
+    // Real-time updates for new comments
+    const channel = supabase
+      .channel(`comments-${postId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'post_comments',
+          filter: `post_id=eq.${postId}`
+        },
+        () => {
+          loadComments();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'post_comments',
+          filter: `post_id=eq.${postId}`
+        },
+        () => {
+          loadComments();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'post_comments',
+          filter: `post_id=eq.${postId}`
+        },
+        () => {
+          loadComments();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [postId]);
 
   const loadComments = async () => {

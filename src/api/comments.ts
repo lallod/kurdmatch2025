@@ -101,6 +101,51 @@ export const createComment = async (
     .single();
   
   if (error) throw error;
+
+  // Create notification for post author
+  const { data: post } = await supabase
+    .from('posts')
+    .select('user_id')
+    .eq('id', postId)
+    .single();
+
+  if (post && post.user_id !== user.id) {
+    await supabase
+      .from('notifications')
+      .insert({
+        user_id: post.user_id,
+        type: 'comment',
+        title: 'New comment on your post',
+        message: parentCommentId ? 'Someone replied to a comment' : 'Someone commented on your post',
+        link: `/post/${postId}`,
+        actor_id: user.id,
+        post_id: postId,
+      });
+  }
+
+  // If it's a reply, notify the parent comment author
+  if (parentCommentId) {
+    const { data: parentComment } = await supabase
+      .from('post_comments')
+      .select('user_id')
+      .eq('id', parentCommentId)
+      .single();
+
+    if (parentComment && parentComment.user_id !== user.id) {
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: parentComment.user_id,
+          type: 'comment_reply',
+          title: 'New reply to your comment',
+          message: 'Someone replied to your comment',
+          link: `/post/${postId}`,
+          actor_id: user.id,
+          post_id: postId,
+        });
+    }
+  }
+  
   return data;
 };
 
@@ -116,6 +161,26 @@ export const likeComment = async (commentId: string) => {
     });
   
   if (error) throw error;
+
+  // Create notification for comment author
+  const { data: comment } = await supabase
+    .from('post_comments')
+    .select('user_id, post_id')
+    .eq('id', commentId)
+    .single();
+
+  if (comment && comment.user_id !== user.id) {
+    await supabase
+      .from('notifications')
+      .insert({
+        user_id: comment.user_id,
+        type: 'comment_like',
+        title: 'New like on your comment',
+        message: 'Someone liked your comment',
+        actor_id: user.id,
+        post_id: comment.post_id,
+      });
+  }
 };
 
 export const unlikeComment = async (commentId: string) => {
