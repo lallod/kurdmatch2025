@@ -27,25 +27,21 @@ export const useSetupManager = () => {
   // Run setup on component mount
   useEffect(() => {
     const runSetup = async () => {
-      console.log('Starting admin setup manager...');
       setIsSettingUp(true);
       setSetupMessage(null);
       
       try {
         const result = await setupSuperAdmin();
-        console.log('Setup result:', result);
         
         setIsSettingUp(false);
         setSetupComplete(result.success);
         
         if (result.success) {
-          console.log('Setup successful');
           toast({
             title: "Admin Account Ready",
             description: "Super admin account has been verified successfully.",
           });
         } else {
-          console.log('Setup failed:', result.message);
           const description = result.message || "There was a problem setting up the admin account.";
           setSetupMessage(description);
           
@@ -80,7 +76,6 @@ export const useSetupManager = () => {
   const handleRetrySetup = async () => {
     if (countdown > 0) return;
     
-    console.log('Retrying admin setup...');
     setIsSettingUp(true);
     setSetupMessage(null);
     setRetryAfter(null);
@@ -88,7 +83,6 @@ export const useSetupManager = () => {
     
     try {
       const result = await setupSuperAdmin();
-      console.log('Retry setup result:', result);
       
       setIsSettingUp(false);
       setSetupComplete(result.success);
@@ -128,7 +122,6 @@ export const useSetupManager = () => {
   };
 
   const handleForceClearCache = () => {
-    console.log('Clearing setup cache...');
     setSetupComplete(false);
     setSetupMessage(null);
     setRetryAfter(null);

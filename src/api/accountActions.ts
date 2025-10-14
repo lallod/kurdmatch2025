@@ -62,7 +62,6 @@ export const connectSocialAccount = async (platform: 'instagram' | 'snapchat', u
   
   localStorage.setItem(`social_accounts_${session.user.id}`, JSON.stringify(updatedAccounts));
 
-  console.log('Social account connected:', { platform, username });
   return account;
 };
 
@@ -78,7 +77,6 @@ export const disconnectSocialAccount = async (accountId: string) => {
   
   localStorage.setItem(`social_accounts_${session.user.id}`, JSON.stringify(updatedAccounts));
 
-  console.log('Social account disconnected:', { accountId });
   return { success: true };
 };
 
@@ -115,7 +113,6 @@ export const requestAccountDeletion = async (deletionType: 'deactivate' | 'delet
     
     localStorage.setItem(`account_status_${session.user.id}`, JSON.stringify(accountStatus));
 
-    console.log('Account deactivation requested:', { userId: session.user.id, reason });
     return { type: 'deactivated', success: true };
   } else {
     // Schedule deletion for 30 days
@@ -131,9 +128,8 @@ export const requestAccountDeletion = async (deletionType: 'deactivate' | 'delet
     
     localStorage.setItem(`account_status_${session.user.id}`, JSON.stringify(accountStatus));
 
-    console.log('Account deletion scheduled:', { userId: session.user.id, scheduledDate: scheduledDate.toISOString() });
     return { 
-      type: 'deletion_scheduled', 
+      type: 'deletion_scheduled',
       scheduledDate: scheduledDate.toISOString(),
       success: true 
     };
@@ -153,6 +149,5 @@ export const cancelAccountDeletion = async () => {
   
   localStorage.setItem(`account_status_${session.user.id}`, JSON.stringify(accountStatus));
 
-  console.log('Account deletion cancelled:', { userId: session.user.id });
   return { success: true };
 };

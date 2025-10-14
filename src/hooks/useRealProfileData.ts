@@ -70,7 +70,6 @@ export const useRealProfileData = () => {
 
       // Get real user profile from database
       const profile = await getCurrentUserProfile();
-      console.log('Loaded profile:', profile?.name || 'No profile found');
       
       if (profile) {
         // Convert Profile to DatabaseProfile
@@ -119,69 +118,16 @@ export const useRealProfileData = () => {
         setProfileData(dbProfile);
 
         // Fill empty fields directly with random values FIRST
-        console.log('BEFORE filling - Sample fields:', {
-          exercise_habits: dbProfile.exercise_habits,
-          dietary_preferences: dbProfile.dietary_preferences,
-          smoking: dbProfile.smoking,
-          drinking: dbProfile.drinking,
-          religion: dbProfile.religion,
-          zodiac_sign: dbProfile.zodiac_sign
-        });
-        
         const filledProfile = fillEmptyProfileFields(dbProfile);
-        console.log('AFTER direct filling - Sample fields:', {
-          exercise_habits: filledProfile.exercise_habits,
-          dietary_preferences: filledProfile.dietary_preferences,
-          smoking: filledProfile.smoking,
-          drinking: filledProfile.drinking,
-          religion: filledProfile.religion,
-          zodiac_sign: filledProfile.zodiac_sign
-        });
 
-        console.log('🚀 STARTING AGGRESSIVE PROFILE FILLING');
-        console.log('📋 Input profile keys:', Object.keys(filledProfile));
-        
         // Convert database values to UI values for proper display
         const uiCompatibleProfile = convertDbToUiValues(filledProfile);
-        console.log('✅ AFTER value conversion - Sample fields:', {
-          exercise_habits: uiCompatibleProfile.exercise_habits,
-          dietary_preferences: uiCompatibleProfile.dietary_preferences,
-          smoking: uiCompatibleProfile.smoking,
-          drinking: uiCompatibleProfile.drinking,
-          religion: uiCompatibleProfile.religion,
-          zodiac_sign: uiCompatibleProfile.zodiac_sign,
-          education: uiCompatibleProfile.education,
-          relationship_goals: uiCompatibleProfile.relationship_goals,
-          work_life_balance: uiCompatibleProfile.work_life_balance,
-          have_pets: uiCompatibleProfile.have_pets
-        });
 
         // Convert field names from snake_case to camelCase for UI
         const finalProfile = convertDbToUiProfile(uiCompatibleProfile);
-        console.log('✅ FINAL profile with camelCase fields:', {
-          exerciseHabits: finalProfile.exerciseHabits,
-          dietaryPreferences: finalProfile.dietaryPreferences,
-          smoking: finalProfile.smoking,
-          drinking: finalProfile.drinking,
-          religion: finalProfile.religion,
-          zodiacSign: finalProfile.zodiacSign,
-          education: finalProfile.education,
-          relationshipGoals: finalProfile.relationshipGoals,
-          workLifeBalance: finalProfile.workLifeBalance,
-          havePets: finalProfile.havePets
-        });
-
-        console.log('🔍 CHECKING VALUE MAPPINGS:');
-        console.log('Database education:', filledProfile.education, '→ UI:', finalProfile.education);
-        console.log('Database dietary_preferences:', filledProfile.dietary_preferences, '→ UI:', finalProfile.dietaryPreferences);
-        console.log('Database have_pets:', filledProfile.have_pets, '→ UI:', finalProfile.havePets);
 
         // Apply additional random values using the original system
         const enhanced = assignRandomValues(finalProfile);
-        console.log('Enhanced field sources:', {
-          exerciseHabits: enhanced.fieldSources.exerciseHabits,
-          exercise_habits: enhanced.fieldSources.exercise_habits
-        });
         setEnhancedData(enhanced);
 
         // Get onboarding progress with category breakdown (using enhanced data)
@@ -192,10 +138,6 @@ export const useRealProfileData = () => {
         // Get engagement metrics
         const userEngagement = await getRealUserEngagement(profile.id);
         setEngagement(userEngagement);
-        
-        console.log('Profile completion:', progress.profileCompletion);
-        console.log('Category progress:', progress.categoryProgress);
-        console.log('Profile data loaded successfully for:', profile.name);
       }
     } catch (error) {
       console.error('Error loading real profile data:', error);
@@ -211,12 +153,6 @@ export const useRealProfileData = () => {
         // Convert UI updates to database format before saving
         const dbUpdates = convertUiToDbProfile(updates);
         const dbValueUpdates = convertUiToDbValues(dbUpdates);
-        
-        console.log('Update conversion:', {
-          originalUpdates: updates,
-          dbUpdates: dbUpdates,
-          dbValueUpdates: dbValueUpdates
-        });
         
         const updated = await updateProfile(profileData.id, dbValueUpdates as any);
         setProfileData(updated as any);

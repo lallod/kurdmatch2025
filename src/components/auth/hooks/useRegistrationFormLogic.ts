@@ -66,18 +66,14 @@ export const useRegistrationFormLogic = () => {
   useEffect(() => {
     if (!hasLoadedSavedData) {
       try {
-        console.log('Loading saved data...');
         const savedData = loadSavedData();
         if (savedData) {
-          console.log('Saved data found:', savedData);
           // Ensure languages field is always an array
           const processedData = {
             ...savedData.formData,
             languages: Array.isArray(savedData.formData.languages) ? savedData.formData.languages : [],
             photos: Array.isArray(savedData.formData.photos) ? savedData.formData.photos : []
           };
-          
-          console.log('Processed data:', processedData);
           
           // Reset form with processed data
           form.reset(processedData);
@@ -93,7 +89,6 @@ export const useRegistrationFormLogic = () => {
             });
           }
         } else {
-          console.log('No saved data found, using defaults');
           form.reset(defaultValues);
         }
       } catch (error) {
@@ -135,10 +130,8 @@ export const useRegistrationFormLogic = () => {
   const validateStep = async (stepIndex: number) => {
     try {
       const currentStepFields = registrationSteps[stepIndex - 1].fields;
-      console.log('Validating step', stepIndex, 'with fields:', currentStepFields);
       
       const result = await form.trigger(currentStepFields);
-      console.log('Validation result:', result);
       
       if (result) {
         if (!completedSteps.includes(stepIndex)) {
@@ -172,8 +165,6 @@ export const useRegistrationFormLogic = () => {
 
   const onSubmit = async (data: RegistrationFormValues) => {
     try {
-      console.log('Registration form submitted:', data);
-      
       const { data: signUpData, error: signUpError } = await signUp(data.email, data.password);
       if (signUpError) throw signUpError;
       
@@ -204,8 +195,6 @@ export const useRegistrationFormLogic = () => {
         longitude: data.longitude || null,
         dream_vacation: data.dreamVacation || null,
       };
-      
-      console.log('Creating profile:', profileData);
       
       // Insert profile into database
       const { error: profileError } = await supabase
@@ -266,7 +255,6 @@ export const useRegistrationFormLogic = () => {
               .getPublicUrl(uploadData.path);
             
             photoUrls.push(urlData.publicUrl);
-            console.log(`Photo ${index + 1} uploaded successfully`);
           } catch (error) {
             const errorMsg = `Error processing photo ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`;
             console.error(errorMsg);
@@ -302,8 +290,6 @@ export const useRegistrationFormLogic = () => {
               title: "Photo Storage Error",
               description: "Photos uploaded but failed to save to database",
             });
-          } else {
-            console.log(`${photoUrls.length} photos saved successfully`);
           }
         }
       }

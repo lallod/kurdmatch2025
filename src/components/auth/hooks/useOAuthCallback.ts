@@ -15,8 +15,6 @@ export const useOAuthCallback = () => {
   useEffect(() => {
     const handleOAuthCallback = async () => {
       try {
-        console.log('Processing OAuth callback...');
-        
         // Check if this is an OAuth callback
         const urlParams = new URLSearchParams(window.location.search);
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -29,19 +27,15 @@ export const useOAuthCallback = () => {
         
         // Handle authorization code flow
         if (urlParams.has('code')) {
-          console.log('Processing authorization code...');
           const { data, error: authError } = await supabase.auth.exchangeCodeForSession(window.location.search);
           
           if (authError) {
             console.error('OAuth code exchange error:', authError);
             throw authError;
           }
-
-          console.log('OAuth code exchange successful:', data);
         }
         // Handle implicit flow (fallback)
         else if (hashParams.has('access_token')) {
-          console.log('Processing access token from URL fragment...');
           // For implicit flow, Supabase should automatically handle the session
         }
         else {
@@ -61,8 +55,6 @@ export const useOAuthCallback = () => {
         if (!currentUser) {
           throw new Error('No user found after OAuth callback');
         }
-
-        console.log('User authenticated successfully:', currentUser.email);
         
         // Check if user is super admin first
         const isSuperAdmin = await isUserSuperAdmin(currentUser.id);
@@ -124,7 +116,6 @@ export const useOAuthCallback = () => {
       handleOAuthCallback();
     } else {
       // No OAuth params, redirect to auth
-      console.log('No OAuth parameters found, redirecting to auth');
       navigate('/auth', { replace: true });
       setIsProcessing(false);
     }
