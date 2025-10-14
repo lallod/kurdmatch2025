@@ -40,6 +40,7 @@ import AdminDashboard from '@/pages/admin/AdminDashboard';
 import UserManagement from '@/pages/admin/UserManagement';
 import ReportsManagement from '@/pages/admin/ReportsManagement';
 import ContentModeration from '@/pages/admin/ContentModeration';
+import PlatformAnalytics from '@/pages/admin/PlatformAnalytics';
 import SavedPosts from '@/pages/SavedPosts';
 import BlockedUsers from '@/pages/BlockedUsers';
 import PrivacySettings from '@/pages/PrivacySettings';
@@ -252,6 +253,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/admin/content" 
         element={<ProtectedRoute><ContentModeration /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/admin/analytics" 
+        element={<ProtectedRoute><PlatformAnalytics /></ProtectedRoute>} 
       />
       
       {/* Super Admin routes */}
