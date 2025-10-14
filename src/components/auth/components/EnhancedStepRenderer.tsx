@@ -62,6 +62,11 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
 
   // Location step (step 3) - Use enhanced LocationStep with worldwide search
   if (step === 3) {
+    // Filter out location and dreamVacation as they're handled by LocationStep
+    const remainingQuestions = questions.filter(
+      q => q.profileField !== 'location' && q.id !== 'dreamVacation'
+    );
+
     return (
       <div className="space-y-4">
         {renderStepHeader()}
@@ -70,6 +75,32 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
           location={location || ''} 
           locationLoading={locationLoading || false} 
         />
+        
+        {/* Render remaining Cultural Identity questions */}
+        {remainingQuestions.map(question => (
+          <DynamicFieldRenderer 
+            key={question.id}
+            question={question}
+            form={form}
+          />
+        ))}
+        
+        {/* Step completion summary */}
+        <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
+          <div className="flex items-center gap-2 text-sm">
+            {isStepComplete ? (
+              <>
+                <CheckCircle size={16} className="text-green-400" />
+                <span className="text-green-300">All required fields completed</span>
+              </>
+            ) : (
+              <>
+                <AlertCircle size={16} className="text-yellow-400" />
+                <span className="text-yellow-300">Please complete all required fields to continue</span>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

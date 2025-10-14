@@ -70,7 +70,7 @@ export const useDynamicRegistrationForm = () => {
       const stepFieldMap: Record<number, string[]> = {
         1: ['email', 'password', 'confirmPassword'],
         2: ['full_name', 'age', 'gender'],
-        3: ['location', 'height', 'body_type', 'kurdistan_region', 'ethnicity', 'religion', 'political_views', 'zodiac_sign', 'personality_type'],
+        3: ['location', 'dreamVacation', 'height', 'body_type', 'kurdistan_region', 'ethnicity', 'religion', 'political_views', 'zodiac_sign', 'personality_type'],
         4: ['interests', 'hobbies', 'values'],
         5: ['dietary_preferences', 'smoking', 'drinking', 'sleep_schedule', 'have_pets', 'family_closeness', 'love_language', 'communication_style', 'ideal_date', 'relationship_goals', 'want_children', 'exercise_habits'],
         6: ['occupation', 'education', 'languages'],
