@@ -51,6 +51,7 @@ export const createDynamicRegistrationSchema = (questions: QuestionItem[]) => {
         break;
 
       case 'multi-select':
+      case 'multi_select':
         fieldSchema = z.array(z.string());
         if (required) {
           let minSelections = 1;
@@ -112,7 +113,7 @@ export const createDynamicRegistrationSchema = (questions: QuestionItem[]) => {
     }
 
     // Make optional fields truly optional (except multi-select and photos)
-    if (!required && fieldType !== 'multi-select' && profileField !== 'photos' && id !== 'sys_6' && id !== 'photos') {
+    if (!required && fieldType !== 'multi-select' && fieldType !== 'multi_select' && profileField !== 'photos' && id !== 'sys_6' && id !== 'photos') {
       fieldSchema = fieldSchema.optional();
     }
 
@@ -174,6 +175,7 @@ export const createStepValidationSchema = (questions: QuestionItem[], step: numb
         break;
 
       case 'multi-select':
+      case 'multi_select':
         fieldSchema = z.array(z.string());
         if (required) {
           let minSelections = 1;
@@ -222,7 +224,7 @@ export const createStepValidationSchema = (questions: QuestionItem[], step: numb
       fieldSchema = z.array(z.string()).min(1, { message: 'At least one photo is required' });
     }
 
-    if (!required && fieldType !== 'multi-select' && profileField !== 'photos' && id !== 'photos') {
+    if (!required && fieldType !== 'multi-select' && fieldType !== 'multi_select' && profileField !== 'photos' && id !== 'photos') {
       fieldSchema = fieldSchema.optional();
     }
 

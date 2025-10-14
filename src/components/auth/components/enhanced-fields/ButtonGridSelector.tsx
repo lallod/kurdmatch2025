@@ -1,7 +1,50 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
-import { Check, LucideIcon } from 'lucide-react';
+import { Check, LucideIcon, Sparkles, Heart, Coffee } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const getCategoryGradient = (label: string) => {
+  const lowerLabel = label.toLowerCase();
+  if (lowerLabel.includes('interest')) {
+    return {
+      gradient: 'from-purple-500 to-pink-500',
+      glass: 'bg-purple-500/10 backdrop-blur-sm',
+      border: 'border-purple-400/30',
+      hover: 'hover:shadow-lg hover:shadow-purple-500/30 hover:border-purple-400/50',
+      selected: 'bg-gradient-to-r from-purple-600 to-pink-600 border-purple-400 shadow-lg shadow-purple-500/50',
+      icon: Heart
+    };
+  }
+  if (lowerLabel.includes('hobb')) {
+    return {
+      gradient: 'from-blue-500 to-cyan-500',
+      glass: 'bg-blue-500/10 backdrop-blur-sm',
+      border: 'border-cyan-400/30',
+      hover: 'hover:shadow-lg hover:shadow-cyan-500/30 hover:border-cyan-400/50',
+      selected: 'bg-gradient-to-r from-blue-600 to-cyan-600 border-cyan-400 shadow-lg shadow-cyan-500/50',
+      icon: Coffee
+    };
+  }
+  if (lowerLabel.includes('value')) {
+    return {
+      gradient: 'from-amber-500 to-orange-500',
+      glass: 'bg-amber-500/10 backdrop-blur-sm',
+      border: 'border-amber-400/30',
+      hover: 'hover:shadow-lg hover:shadow-amber-500/30 hover:border-amber-400/50',
+      selected: 'bg-gradient-to-r from-amber-600 to-orange-600 border-amber-400 shadow-lg shadow-amber-500/50',
+      icon: Sparkles
+    };
+  }
+  // Default fallback
+  return {
+    gradient: 'from-purple-500 to-pink-500',
+    glass: 'bg-purple-500/10 backdrop-blur-sm',
+    border: 'border-purple-400/30',
+    hover: 'hover:shadow-lg hover:shadow-purple-500/30 hover:border-purple-400/50',
+    selected: 'bg-gradient-to-r from-purple-600 to-pink-600 border-purple-400 shadow-lg shadow-purple-500/50',
+    icon: Sparkles
+  };
+};
 
 interface ButtonGridSelectorProps {
   label: string;
@@ -33,27 +76,38 @@ const ButtonGridSelector = ({
 
   const selectionCount = Array.isArray(selectedValues) ? selectedValues.length : 0;
   const isValid = selectionCount >= minSelections;
+  const categoryStyle = getCategoryGradient(label);
+  const CategoryIcon = categoryStyle.icon;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Icon className="w-4 h-4 text-purple-400" />
-          <Label className="text-white">{label}</Label>
+          <div className={cn(
+            "p-2 rounded-lg backdrop-blur-sm",
+            categoryStyle.glass,
+            "border",
+            categoryStyle.border
+          )}>
+            <CategoryIcon className="w-4 h-4" />
+          </div>
+          <Label className="text-white font-semibold">{label}</Label>
         </div>
-        <span className={cn(
-          "text-sm font-medium",
-          isValid ? "text-green-400" : "text-yellow-400"
+        <div className={cn(
+          "px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm",
+          isValid 
+            ? "bg-green-500/20 text-green-400 border border-green-400/30" 
+            : "bg-yellow-500/20 text-yellow-400 border border-yellow-400/30"
         )}>
           {selectionCount}/{minSelections} {isValid && '✓'}
-        </span>
+        </div>
       </div>
       
       <div className={cn(
-        "grid gap-2",
+        "grid gap-2.5",
         maxColumns === 2 && "grid-cols-2",
-        maxColumns === 3 && "grid-cols-2 sm:grid-cols-3",
-        maxColumns === 4 && "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+        maxColumns === 3 && "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+        maxColumns === 4 && "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
       )}>
         {options.map((option) => {
           const isSelected = Array.isArray(selectedValues) && selectedValues.includes(option);
@@ -63,24 +117,41 @@ const ButtonGridSelector = ({
               type="button"
               onClick={() => toggleSelection(option)}
               className={cn(
-                "relative px-4 py-3 rounded-full border-2 transition-all duration-200",
-                "hover:scale-105 text-sm font-medium",
+                "relative px-3 py-2 rounded-xl border transition-all duration-300",
+                "text-xs font-medium group",
+                "transform hover:scale-105 active:scale-95",
                 isSelected
-                  ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-500/50"
-                  : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30"
+                  ? cn(categoryStyle.selected, "text-white")
+                  : cn(
+                      categoryStyle.glass,
+                      categoryStyle.border,
+                      "text-white/90",
+                      categoryStyle.hover
+                    )
               )}
             >
-              <div className="flex items-center justify-center gap-2">
-                {isSelected && <Check className="w-4 h-4" />}
-                <span>{option}</span>
+              <div className="flex items-center justify-center gap-1.5">
+                {isSelected && (
+                  <Check className="w-3.5 h-3.5 animate-in zoom-in duration-200" />
+                )}
+                <span className="leading-tight">{option}</span>
               </div>
+              {!isSelected && (
+                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className={cn(
+                    "absolute inset-0 rounded-xl blur-md",
+                    `bg-gradient-to-r ${categoryStyle.gradient} opacity-20`
+                  )} />
+                </div>
+              )}
             </button>
           );
         })}
       </div>
       
       {!isValid && (
-        <p className="text-sm text-yellow-400">
+        <p className="text-xs text-yellow-400/80 flex items-center gap-2">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
           Select at least {minSelections} option{minSelections > 1 ? 's' : ''}
         </p>
       )}

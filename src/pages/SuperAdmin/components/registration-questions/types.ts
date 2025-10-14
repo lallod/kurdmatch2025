@@ -3,7 +3,7 @@ export interface QuestionItem {
   id: string;
   text: string;
   category: string;
-  fieldType: 'text' | 'textarea' | 'select' | 'multi-select' | 'checkbox' | 'radio' | 'date';
+  fieldType: 'text' | 'textarea' | 'select' | 'multi-select' | 'multi_select' | 'checkbox' | 'radio' | 'date';
   required: boolean;
   enabled: boolean;
   registrationStep: 'Account' | 'Personal' | 'Physical' | 'Lifestyle' | 'Beliefs' | 'Preferences' | 'Profile';

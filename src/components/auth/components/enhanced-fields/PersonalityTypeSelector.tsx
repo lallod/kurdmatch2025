@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Brain, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import PersonalityTypeInfoDialog from './PersonalityTypeInfoDialog';
 
 interface PersonalityTypeSelectorProps {
   value?: string;
@@ -31,9 +32,12 @@ const personalityTypes = [
 const PersonalityTypeSelector = ({ value, onChange }: PersonalityTypeSelectorProps) => {
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Brain className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Personality Type</Label>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Brain className="w-4 h-4 text-purple-400" />
+          <Label className="text-white">Personality Type</Label>
+        </div>
+        <PersonalityTypeInfoDialog />
       </div>
       <TooltipProvider>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">

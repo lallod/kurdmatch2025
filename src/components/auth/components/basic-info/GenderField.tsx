@@ -30,19 +30,19 @@ const GenderField = ({ form }: GenderFieldProps) => {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem 
-                  value="male" 
+                  value="Male" 
                   id="male" 
                   className="border-white/20 text-purple-500"
                 />
-                <label htmlFor="male" className="text-white">Male</label>
+                <label htmlFor="male" className="text-white cursor-pointer">Male</label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem 
-                  value="female" 
+                  value="Female" 
                   id="female" 
                   className="border-white/20 text-purple-500"
                 />
-                <label htmlFor="female" className="text-white">Female</label>
+                <label htmlFor="female" className="text-white cursor-pointer">Female</label>
               </div>
             </RadioGroup>
           </FormControl>
