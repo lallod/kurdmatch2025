@@ -12,7 +12,7 @@ export const getFormDefaultValues = (enabledQuestions: QuestionItem[]) => {
     if (q.profileField !== 'bio') {
       // Fix: Handle multi-select field type (also handle database format)
       const fieldTypeLower = q.fieldType.toLowerCase().replace('_', '-');
-      if (fieldTypeLower === 'multi-select') {
+      if (fieldTypeLower === 'multi-select' || q.fieldType === 'multi_select') {
         defaults[q.id] = [];  // ✅ Array for multi-select fields
       } else if (q.fieldType === 'checkbox') {
         defaults[q.id] = false;  // ✅ Boolean for checkbox
