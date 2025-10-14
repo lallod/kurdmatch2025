@@ -1,18 +1,41 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Eye, Heart, MessageCircle, UserRound, Newspaper } from 'lucide-react';
+import { Home, Eye, Heart, MessageCircle, UserRound, Newspaper, Shield } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTranslations } from '@/hooks/useTranslations';
+import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 
 const BottomNavigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const { counts } = useNotifications();
   const { t } = useTranslations();
+  const { user } = useSupabaseAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      checkAdminStatus();
+    }
+  }, [user]);
+
+  const checkAdminStatus = async () => {
+    if (!user) return;
+    
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'super_admin')
+      .maybeSingle();
+    
+    setIsAdmin(!!data);
+  };
   
-  const navItems = [{
+  const baseNavItems = [{
     nameKey: 'nav.discover',
     name: t('nav.discover', 'Discovery'),
     icon: Newspaper,
@@ -38,6 +61,15 @@ const BottomNavigation = () => {
     icon: UserRound,
     path: '/my-profile'
   }];
+
+  const navItems = isAdmin 
+    ? [...baseNavItems.slice(0, 4), {
+        nameKey: 'nav.admin',
+        name: 'Admin',
+        icon: Shield,
+        path: '/admin/dashboard'
+      }]
+    : baseNavItems;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md border-t border-white/20 py-1 bg-black/[0.17] safe-area-inset-bottom">
