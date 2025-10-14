@@ -84,6 +84,54 @@ export const reverseGeocode = async (
 };
 
 /**
+ * Search for locations by query using OpenStreetMap Nominatim
+ */
+export const searchLocations = async (query: string): Promise<LocationResult[]> => {
+  if (!query || query.trim().length < 2) {
+    return [];
+  }
+
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=10`
+    );
+    
+    if (!response.ok) {
+      throw new Error('Search failed');
+    }
+    
+    const data = await response.json();
+    
+    return data.map((item: any) => {
+      const city = item.address?.city || 
+                   item.address?.town || 
+                   item.address?.village || 
+                   item.address?.municipality ||
+                   item.name ||
+                   'Unknown';
+      
+      const state = item.address?.state || item.address?.region || '';
+      const country = item.address?.country || 'Unknown';
+      
+      const displayParts = [city];
+      if (state && state !== city) displayParts.push(state);
+      displayParts.push(country);
+      
+      return {
+        latitude: parseFloat(item.lat),
+        longitude: parseFloat(item.lon),
+        city,
+        country,
+        display_name: displayParts.join(', '),
+      };
+    });
+  } catch (error) {
+    console.error('Location search error:', error);
+    return [];
+  }
+};
+
+/**
  * Calculate distance between two coordinates in kilometers
  */
 export const calculateDistance = (

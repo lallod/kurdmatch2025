@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Loader2, Navigation } from 'lucide-react';
+import { MapPin, Loader2, Navigation, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Coordinates, KURDISH_CITIES } from '@/types/location';
+import { Coordinates, LocationResult } from '@/types/location';
 import {
   getCurrentLocation,
   getLocationFromIP,
   reverseGeocode,
+  searchLocations,
 } from '@/utils/locationUtils';
 
 interface LocationCaptureProps {
@@ -29,7 +24,30 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
   const [isDetecting, setIsDetecting] = useState(false);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [locationName, setLocationName] = useState<string>(initialLocation || '');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<LocationResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
+
+  // Debounced search
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const timer = setTimeout(async () => {
+      const results = await searchLocations(searchQuery);
+      setSearchResults(results);
+      setShowResults(true);
+      setIsSearching(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const handleUseCurrentLocation = async () => {
     setIsDetecting(true);
@@ -74,23 +92,21 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
     }
   };
 
-  const handleCitySelect = async (cityName: string) => {
-    const city = KURDISH_CITIES.find(c => c.name === cityName);
-    if (!city) return;
-    
+  const handleLocationSelect = (location: LocationResult) => {
     const coords = {
-      latitude: city.latitude,
-      longitude: city.longitude,
+      latitude: location.latitude,
+      longitude: location.longitude,
     };
     
     setCoordinates(coords);
-    const displayName = `${city.name}, ${city.country}`;
-    setLocationName(displayName);
-    onLocationCapture(coords, displayName);
+    setLocationName(location.display_name);
+    setSearchQuery(location.display_name);
+    setShowResults(false);
+    onLocationCapture(coords, location.display_name);
     
     toast({
       title: 'Location set',
-      description: displayName,
+      description: location.display_name,
     });
   };
 
@@ -133,25 +149,48 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-background px-2 text-muted-foreground">
-              Or select a city
+              Or search for your city
             </span>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="city-select">Select your city</Label>
-          <Select onValueChange={handleCitySelect}>
-            <SelectTrigger id="city-select">
-              <SelectValue placeholder="Choose a city..." />
-            </SelectTrigger>
-            <SelectContent>
-              {KURDISH_CITIES.map((city) => (
-                <SelectItem key={city.name} value={city.name}>
-                  {city.name}, {city.country}
-                </SelectItem>
+          <Label htmlFor="city-search">Search for any city worldwide</Label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <Input
+              id="city-search"
+              type="text"
+              placeholder="Type city name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => searchResults.length > 0 && setShowResults(true)}
+              className="pl-9"
+            />
+            {isSearching && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+            )}
+          </div>
+          
+          {showResults && searchResults.length > 0 && (
+            <div className="absolute z-50 w-full max-w-md mt-1 bg-background border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              {searchResults.map((location, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleLocationSelect(location)}
+                  className="w-full px-4 py-2 text-left hover:bg-accent transition-colors flex items-center gap-2"
+                >
+                  <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span className="text-sm">{location.display_name}</span>
+                </button>
               ))}
-            </SelectContent>
-          </Select>
+            </div>
+          )}
+          
+          {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
+            <p className="text-sm text-muted-foreground">No locations found. Try a different search.</p>
+          )}
         </div>
 
         {locationName && (
