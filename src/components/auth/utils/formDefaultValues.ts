@@ -9,21 +9,20 @@ export const getFormDefaultValues = (enabledQuestions: QuestionItem[]) => {
   defaults['photos'] = [];
   
   enabledQuestions.forEach(q => {
-    console.log(`Setting default for question ${q.id}: fieldType=${q.fieldType}, profileField=${q.profileField}`);
-    
     if (q.profileField !== 'bio') {
-      if (q.fieldType === 'multi-select') {
-        defaults[q.id] = [];
+      // Fix: Handle multi-select field type (also handle database format)
+      const fieldTypeLower = q.fieldType.toLowerCase().replace('_', '-');
+      if (fieldTypeLower === 'multi-select') {
+        defaults[q.id] = [];  // ✅ Array for multi-select fields
       } else if (q.fieldType === 'checkbox') {
-        defaults[q.id] = 'false';
+        defaults[q.id] = false;  // ✅ Boolean for checkbox
       } else if (q.profileField === 'photos') {
-        defaults[q.id] = [];
+        defaults[q.id] = [];  // ✅ Array for photos
       } else {
-        defaults[q.id] = '';
+        defaults[q.id] = '';  // String for all other fields
       }
     }
   });
   
-  console.log('Form default values:', defaults);
   return defaults;
 };

@@ -3418,6 +3418,14 @@ export type Database = {
         Args: { action_type: string; user_uuid: string }
         Returns: boolean
       }
+      is_group_admin: {
+        Args: { group_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
+      is_group_member: {
+        Args: { group_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
       is_profile_complete: {
         Args: { profile_id: string }
         Returns: boolean
