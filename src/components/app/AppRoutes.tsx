@@ -35,6 +35,7 @@ import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
 import { HashtagFeed } from '@/pages/HashtagFeed';
 import { GroupsList } from '@/pages/GroupsList';
 import { GroupDetail } from '@/pages/GroupDetail';
+import NotificationSettings from '@/pages/NotificationSettings';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -184,6 +185,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/groups/:id" 
         element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/notifications/settings" 
+        element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} 
       />
       
       {/* Super Admin routes */}

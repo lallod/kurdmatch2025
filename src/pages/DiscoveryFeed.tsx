@@ -15,6 +15,7 @@ import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
 import { HashtagSearch } from '@/components/discovery/HashtagSearch';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
@@ -235,6 +236,7 @@ const DiscoveryFeed = () => {
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Discovery</h1>
           <div className="flex items-center gap-2">
+            <NotificationBell />
             {activeTab === 'posts' && (
               <Button 
                 onClick={() => setShowFollowingOnly(!showFollowingOnly)}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -94,16 +94,29 @@ const NotificationBell = () => {
       <PopoverContent className="w-96 p-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20" align="end">
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <h3 className="text-white font-semibold">Notifications</h3>
-          {unreadCount > 0 && (
+          <div className="flex items-center gap-2">
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleMarkAllRead}
+                className="text-purple-300 hover:text-white hover:bg-white/10 h-7"
+              >
+                Mark all read
+              </Button>
+            )}
             <Button
               variant="ghost"
-              size="sm"
-              onClick={handleMarkAllRead}
-              className="text-purple-300 hover:text-white hover:bg-white/10"
+              size="icon"
+              onClick={() => {
+                setOpen(false);
+                navigate('/notifications/settings');
+              }}
+              className="text-purple-300 hover:text-white hover:bg-white/10 h-7 w-7"
             >
-              Mark all read
+              <Settings className="h-4 w-4" />
             </Button>
-          )}
+          </div>
         </div>
 
         <ScrollArea className="h-[400px]">
