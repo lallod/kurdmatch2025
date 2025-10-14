@@ -24,10 +24,10 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   ];
 
   const menuItems = [
-    { icon: LogIn, label: 'Login', path: '/login' },
+    { icon: LogIn, label: 'Login', path: '/auth' },
     { icon: UserPlus, label: 'Registration', path: '/register' },
-    { icon: Info, label: 'About Us', path: '/about' },
-    { icon: Mail, label: 'Contact Us', path: '/contact' },
+    { icon: Info, label: 'About Us', path: '/#about' },
+    { icon: Mail, label: 'Contact Us', path: '/#contact' },
   ];
 
   const handleNavigate = (path: string) => {
