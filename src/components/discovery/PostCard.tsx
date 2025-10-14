@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Post, likePost, unlikePost } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart, Pencil, Trash2, Share2 } from 'lucide-react';
+import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart, Pencil, Trash2, Share2, Bookmark } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import PostContent from './PostContent';
 import { useNavigate } from 'react-router-dom';
@@ -50,6 +50,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
 
   useEffect(() => {
