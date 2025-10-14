@@ -1476,9 +1476,12 @@ export type Database = {
           id: string
           metadata: Json | null
           payment_method: string | null
+          payment_method_encrypted: string | null
           status: string
           stripe_customer_id: string | null
+          stripe_customer_id_encrypted: string | null
           stripe_payment_intent_id: string | null
+          stripe_payment_intent_id_encrypted: string | null
           subscription_type: string | null
           updated_at: string
           user_id: string
@@ -1491,9 +1494,12 @@ export type Database = {
           id?: string
           metadata?: Json | null
           payment_method?: string | null
+          payment_method_encrypted?: string | null
           status: string
           stripe_customer_id?: string | null
+          stripe_customer_id_encrypted?: string | null
           stripe_payment_intent_id?: string | null
+          stripe_payment_intent_id_encrypted?: string | null
           subscription_type?: string | null
           updated_at?: string
           user_id: string
@@ -1506,9 +1512,12 @@ export type Database = {
           id?: string
           metadata?: Json | null
           payment_method?: string | null
+          payment_method_encrypted?: string | null
           status?: string
           stripe_customer_id?: string | null
+          stripe_customer_id_encrypted?: string | null
           stripe_payment_intent_id?: string | null
+          stripe_payment_intent_id_encrypted?: string | null
           subscription_type?: string | null
           updated_at?: string
           user_id?: string
@@ -2848,6 +2857,54 @@ export type Database = {
         }
         Relationships: []
       }
+      payments_decrypted: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string | null
+          metadata: Json | null
+          payment_method: string | null
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          subscription_type: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string | null
+          metadata?: Json | null
+          payment_method?: never
+          status?: string | null
+          stripe_customer_id?: never
+          stripe_payment_intent_id?: never
+          subscription_type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string | null
+          metadata?: Json | null
+          payment_method?: never
+          status?: string | null
+          stripe_customer_id?: never
+          stripe_payment_intent_id?: never
+          subscription_type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_public_view: {
         Row: {
           age: number | null
@@ -3417,6 +3474,21 @@ export type Database = {
       increment_usage_count: {
         Args: { action_type: string; user_uuid: string }
         Returns: boolean
+      }
+      insert_encrypted_payment: {
+        Args: {
+          p_amount: number
+          p_currency: string
+          p_description?: string
+          p_metadata?: Json
+          p_payment_method: string
+          p_status: string
+          p_stripe_customer_id: string
+          p_stripe_payment_intent_id: string
+          p_subscription_type?: string
+          p_user_id: string
+        }
+        Returns: string
       }
       is_group_admin: {
         Args: { group_uuid: string; user_uuid: string }
