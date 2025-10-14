@@ -245,24 +245,26 @@ const OccupationButtonGrid: React.FC<OccupationButtonGridProps> = ({
         />
       </div>
 
-      {/* Category tabs */}
+      {/* Category tabs - horizontal scroll on mobile */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 sm:grid-cols-7 w-full bg-white/5 h-auto gap-1 p-1">
-          <TabsTrigger value="all" className="text-xs px-2 py-1">All</TabsTrigger>
-          <TabsTrigger value="education" className="text-xs px-2 py-1">Education</TabsTrigger>
-          <TabsTrigger value="healthcare" className="text-xs px-2 py-1">Health</TabsTrigger>
-          <TabsTrigger value="technology" className="text-xs px-2 py-1">Tech</TabsTrigger>
-          <TabsTrigger value="creative" className="text-xs px-2 py-1">Creative</TabsTrigger>
-          <TabsTrigger value="media" className="text-xs px-2 py-1">Media</TabsTrigger>
-          <TabsTrigger value="business" className="text-xs px-2 py-1">Business</TabsTrigger>
-          <TabsTrigger value="trades" className="text-xs px-2 py-1">Trades</TabsTrigger>
-          <TabsTrigger value="service" className="text-xs px-2 py-1">Service</TabsTrigger>
-          <TabsTrigger value="public" className="text-xs px-2 py-1">Public</TabsTrigger>
-          <TabsTrigger value="transport" className="text-xs px-2 py-1">Transport</TabsTrigger>
-          <TabsTrigger value="freelance" className="text-xs px-2 py-1">Freelance</TabsTrigger>
-          <TabsTrigger value="kurdish" className="text-xs px-2 py-1">Kurdish</TabsTrigger>
-          <TabsTrigger value="other" className="text-xs px-2 py-1">Other</TabsTrigger>
-        </TabsList>
+        <div className="relative">
+          <TabsList className="flex w-full overflow-x-auto bg-white/5 p-1.5 gap-1.5 scrollbar-hide mobile-tab-scroll">
+            <TabsTrigger value="all" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">All</TabsTrigger>
+            <TabsTrigger value="education" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Education</TabsTrigger>
+            <TabsTrigger value="healthcare" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Health</TabsTrigger>
+            <TabsTrigger value="technology" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Tech</TabsTrigger>
+            <TabsTrigger value="creative" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Creative</TabsTrigger>
+            <TabsTrigger value="media" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Media</TabsTrigger>
+            <TabsTrigger value="business" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Business</TabsTrigger>
+            <TabsTrigger value="trades" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Trades</TabsTrigger>
+            <TabsTrigger value="service" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Service</TabsTrigger>
+            <TabsTrigger value="public" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Public</TabsTrigger>
+            <TabsTrigger value="transport" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Transport</TabsTrigger>
+            <TabsTrigger value="freelance" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Freelance</TabsTrigger>
+            <TabsTrigger value="kurdish" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Kurdish</TabsTrigger>
+            <TabsTrigger value="other" className="text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0">Other</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value={activeTab} className="mt-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-96 overflow-y-auto p-2">
