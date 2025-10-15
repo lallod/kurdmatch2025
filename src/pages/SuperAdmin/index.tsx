@@ -24,6 +24,10 @@ import PaymentsPage from './pages/PaymentsPage';
 import SocialLoginPage from './pages/SocialLoginPage';
 import LandingPageEditor from './pages/LandingPageEditor';
 import TranslationsPage from './pages/TranslationsPage';
+import LikesPage from './pages/LikesPage';
+import MatchesManagementPage from './pages/MatchesManagementPage';
+import CommentsPage from './pages/CommentsPage';
+import GroupsManagementPage from './pages/GroupsManagementPage';
 
 const SuperAdmin = () => {
   return (
@@ -51,6 +55,10 @@ const SuperAdmin = () => {
         <Route path="/social-login" element={<SocialLoginPage />} />
         <Route path="/landing-page" element={<LandingPageEditor />} />
         <Route path="/translations" element={<TranslationsPage />} />
+        <Route path="/likes" element={<LikesPage />} />
+        <Route path="/matches" element={<MatchesManagementPage />} />
+        <Route path="/comments" element={<CommentsPage />} />
+        <Route path="/groups" element={<GroupsManagementPage />} />
       </Routes>
     </SuperAdminLayout>
   );

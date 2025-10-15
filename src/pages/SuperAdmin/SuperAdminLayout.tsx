@@ -30,7 +30,9 @@ import {
   Home,
   Edit,
   Loader2,
-  Globe
+  Globe,
+  Heart,
+  MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminRoleCheck } from '@/hooks/useAdminRoleCheck';
@@ -113,6 +115,10 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
     { path: '/super-admin/users', icon: <Users size={20} />, label: 'Users Management' },
     { path: '/super-admin/subscribers', icon: <Zap size={20} />, label: 'Subscribers' },
     { path: '/super-admin/payments', icon: <CreditCard size={20} />, label: 'Payments' },
+    { path: '/super-admin/likes', icon: <Heart size={20} />, label: 'Likes' },
+    { path: '/super-admin/matches', icon: <Users size={20} />, label: 'Matches' },
+    { path: '/super-admin/comments', icon: <MessageCircle size={20} />, label: 'Comments' },
+    { path: '/super-admin/groups', icon: <Users size={20} />, label: 'Groups' },
     { path: '/super-admin/verification', icon: <UserCheck size={20} />, label: 'User Verification' },
     { path: '/super-admin/moderation', icon: <Flag size={20} />, label: 'Content Moderation' },
     { path: '/super-admin/landing-page', icon: <Edit size={20} />, label: 'Landing Page Editor' },
