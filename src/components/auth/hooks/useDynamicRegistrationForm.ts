@@ -161,8 +161,15 @@ export const useDynamicRegistrationForm = () => {
     console.log('🚀 Starting registration submission...', { 
       email: data.email,
       hasPhotos: data.photos?.length || 0,
-      formData: Object.keys(data)
+      formData: Object.keys(data),
+      allFormValues: data
     });
+    
+    console.log('📋 Enabled questions:', questions.map(q => ({
+      id: q.id,
+      profileField: q.profileField,
+      enabled: q.enabled
+    })));
     
     try {
       // Sign up user
@@ -195,10 +202,14 @@ export const useDynamicRegistrationForm = () => {
       const profileData = mapFormDataToProfile(data, user.id, questions);
       console.log('📝 Profile data mapped:', profileData);
 
-      // Create profile with all mapped data (mapper ensures required fields)
+      // UPSERT profile - update if exists (from trigger), insert if not
+      // This handles the case where handle_new_user() trigger already created a basic profile
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert([profileData as any]);
+        .upsert([profileData as any], { 
+          onConflict: 'id',
+          ignoreDuplicates: false 
+        });
 
       if (profileError) {
         console.error('❌ Profile creation error:', profileError);
