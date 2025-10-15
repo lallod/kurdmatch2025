@@ -52,7 +52,9 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    console.log('🔍 Submit button clicked, checking form validity...');
+    
     // Check ALL steps before allowing submission
     const allStepsComplete = categories.every((cat, index) => {
       const stepNum = index + 1;
@@ -66,13 +68,16 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
         return completionStatus[stepNum] !== true;
       });
       
-      console.error('Cannot submit: Not all steps are complete. First incomplete step:', firstIncompleteStep + 1);
+      console.error('❌ Cannot submit: Not all steps are complete. First incomplete step:', firstIncompleteStep + 1);
       return;
     }
     
-    if (isCurrentStepComplete) {
-      form.handleSubmit(onSubmit)();
-    }
+    console.log('✅ All steps complete, triggering form submission...');
+    
+    // Trigger form validation and submission
+    await form.handleSubmit(onSubmit, (errors) => {
+      console.error('❌ Form validation errors:', errors);
+    })();
   };
 
   if (loading) {
@@ -107,7 +112,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
         {/* Main Form */}
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-3 sm:p-8 border border-white/20 shadow-2xl">
           <Form {...form}>
-            <form onSubmit={(e) => e.preventDefault()} className="space-y-2 sm:space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 sm:space-y-6">
               {/* OAuth Welcome Message */}
               {isOAuthUser && step === 1 && (
                 <div className="text-center mb-2 sm:mb-6 p-2 sm:p-4 bg-green-900/30 rounded-lg border border-green-500/30">

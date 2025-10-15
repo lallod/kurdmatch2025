@@ -226,7 +226,11 @@ export const useDynamicRegistrationForm = () => {
         description: "Welcome to KurdMatch! Your profile has been created.",
       });
 
-      navigate('/discovery');
+      // Wait for auth state to sync before navigation
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Navigate to discovery feed
+      navigate('/discovery', { replace: true });
     } catch (error) {
       console.error('❌ Registration error:', error);
       toast({
