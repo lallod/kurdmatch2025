@@ -28,6 +28,16 @@ import LikesPage from './pages/LikesPage';
 import MatchesManagementPage from './pages/MatchesManagementPage';
 import CommentsPage from './pages/CommentsPage';
 import GroupsManagementPage from './pages/GroupsManagementPage';
+import EventsManagementPage from './pages/EventsManagementPage';
+import FollowersPage from './pages/FollowersPage';
+import NotificationsPage from './pages/NotificationsPage';
+import HashtagsPage from './pages/HashtagsPage';
+import BlockedUsersPage from './pages/BlockedUsersPage';
+import ConversationsPage from './pages/ConversationsPage';
+import RateLimitsPage from './pages/RateLimitsPage';
+import DailyUsagePage from './pages/DailyUsagePage';
+import AIInsightsPage from './pages/AIInsightsPage';
+import InterestsPage from './pages/InterestsPage';
 
 const SuperAdmin = () => {
   return (
@@ -59,6 +69,16 @@ const SuperAdmin = () => {
         <Route path="/matches" element={<MatchesManagementPage />} />
         <Route path="/comments" element={<CommentsPage />} />
         <Route path="/groups" element={<GroupsManagementPage />} />
+        <Route path="/events" element={<EventsManagementPage />} />
+        <Route path="/followers" element={<FollowersPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/hashtags" element={<HashtagsPage />} />
+        <Route path="/blocked-users" element={<BlockedUsersPage />} />
+        <Route path="/conversations" element={<ConversationsPage />} />
+        <Route path="/rate-limits" element={<RateLimitsPage />} />
+        <Route path="/daily-usage" element={<DailyUsagePage />} />
+        <Route path="/ai-insights" element={<AIInsightsPage />} />
+        <Route path="/interests" element={<InterestsPage />} />
       </Routes>
     </SuperAdminLayout>
   );

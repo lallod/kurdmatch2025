@@ -32,7 +32,16 @@ import {
   Loader2,
   Globe,
   Heart,
-  MessageCircle
+  MessageCircle,
+  UserPlus,
+  Bell,
+  Hash,
+  Shield,
+  Archive,
+  Clock,
+  BarChart3,
+  CalendarIcon,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminRoleCheck } from '@/hooks/useAdminRoleCheck';
@@ -119,6 +128,16 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
     { path: '/super-admin/matches', icon: <Users size={20} />, label: 'Matches' },
     { path: '/super-admin/comments', icon: <MessageCircle size={20} />, label: 'Comments' },
     { path: '/super-admin/groups', icon: <Users size={20} />, label: 'Groups' },
+    { path: '/super-admin/events', icon: <CalendarIcon size={20} />, label: 'Events' },
+    { path: '/super-admin/followers', icon: <UserPlus size={20} />, label: 'Followers' },
+    { path: '/super-admin/notifications', icon: <Bell size={20} />, label: 'Notifications' },
+    { path: '/super-admin/hashtags', icon: <Hash size={20} />, label: 'Hashtags' },
+    { path: '/super-admin/blocked-users', icon: <Shield size={20} />, label: 'Blocked Users' },
+    { path: '/super-admin/conversations', icon: <MessageSquare size={20} />, label: 'Conversations' },
+    { path: '/super-admin/rate-limits', icon: <Clock size={20} />, label: 'Rate Limits' },
+    { path: '/super-admin/daily-usage', icon: <BarChart3 size={20} />, label: 'Daily Usage' },
+    { path: '/super-admin/ai-insights', icon: <Brain size={20} />, label: 'AI Insights' },
+    { path: '/super-admin/interests', icon: <Sparkles size={20} />, label: 'Interests' },
     { path: '/super-admin/verification', icon: <UserCheck size={20} />, label: 'User Verification' },
     { path: '/super-admin/moderation', icon: <Flag size={20} />, label: 'Content Moderation' },
     { path: '/super-admin/landing-page', icon: <Edit size={20} />, label: 'Landing Page Editor' },
