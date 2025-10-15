@@ -59,7 +59,7 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
             const IconComponent = category.icon;
             
             return (
-              <React.Fragment key={category.step}>
+              <div key={category.step} className="contents">
                 <div className="flex flex-col items-center">
                   {/* Step Circle */}
                   <div className={`
@@ -117,7 +117,7 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
                     ${category.step < currentStep ? 'bg-green-400' : 'bg-white/20'}
                   `} />
                 )}
-              </React.Fragment>
+              </div>
             );
           })}
         </div>
