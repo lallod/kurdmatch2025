@@ -2,6 +2,7 @@
  * Utility functions for handling profile data display
  */
 
+// Database default placeholder values that should not be displayed
 const PLACEHOLDER_VALUES = [
   'Not specified',
   'not specified',
@@ -9,6 +10,15 @@ const PLACEHOLDER_VALUES = [
   'Tell us about yourself',
   'New User',
   'User',
+  'Prefer not to say',
+  'Looking for something serious',
+  'Open to children',
+  'Sometimes',
+  'Average',
+  '5\'6"',
+  'South-Kurdistan',
+  'https://placehold.co/400',
+  '/placeholder.svg',
   '',
   null,
   undefined
