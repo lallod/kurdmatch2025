@@ -12,6 +12,7 @@ import { createDynamicRegistrationSchema, DynamicRegistrationFormValues } from '
 import { getFormDefaultValues } from '../utils/formDefaultValues';
 import { createEnhancedStepCategories } from '../utils/enhancedStepCategories';
 import { mapFormDataToProfile } from '../utils/profileDataMapper';
+import { generateAIBio } from '../utils/aiBioGenerator';
 
 export const useDynamicRegistrationForm = () => {
   const { toast } = useToast();
@@ -198,8 +199,19 @@ export const useDynamicRegistrationForm = () => {
       const user = signUpData.user;
       console.log('✅ User created successfully:', user.id);
 
+      // Generate AI bio before profile mapping
+      const generatedBio = generateAIBio(data, questions);
+      console.log('🤖 Generated bio:', generatedBio);
+
+      // Add generated bio to form data
+      const bioQuestion = questions.find(q => q.profileField === 'bio');
+      const processedData = {
+        ...data,
+        ...(bioQuestion && { [bioQuestion.id]: generatedBio })
+      };
+
       // Map form data to profile using the comprehensive mapper
-      const profileData = mapFormDataToProfile(data, user.id, questions);
+      const profileData = mapFormDataToProfile(processedData, user.id, questions);
       console.log('📝 Profile data mapped:', profileData);
 
       // UPSERT profile - update if exists (from trigger), insert if not
