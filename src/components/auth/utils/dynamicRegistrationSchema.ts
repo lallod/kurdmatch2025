@@ -40,7 +40,15 @@ export const createDynamicRegistrationSchema = (questions: QuestionItem[]) => {
 
       case 'select':
       case 'radio':
-        if (question.fieldOptions && question.fieldOptions.length > 0) {
+        // Special handling for occupation and education - treat as array even if marked as select
+        if (id === 'occupation' || id === 'education') {
+          fieldSchema = z.array(z.string());
+          if (required) {
+            fieldSchema = z.array(z.string()).min(1, { 
+              message: `Please select at least 1 ${id === 'occupation' ? 'occupation' : 'education level'}` 
+            });
+          }
+        } else if (question.fieldOptions && question.fieldOptions.length > 0) {
           fieldSchema = z.enum(question.fieldOptions as [string, ...string[]]);
         } else {
           fieldSchema = z.string();
@@ -170,7 +178,15 @@ export const createStepValidationSchema = (questions: QuestionItem[], step: numb
 
       case 'select':
       case 'radio':
-        if (question.fieldOptions && question.fieldOptions.length > 0) {
+        // Special handling for occupation and education - treat as array even if marked as select
+        if (id === 'occupation' || id === 'education') {
+          fieldSchema = z.array(z.string());
+          if (required) {
+            fieldSchema = z.array(z.string()).min(1, { 
+              message: `Please select at least 1 ${id === 'occupation' ? 'occupation' : 'education level'}` 
+            });
+          }
+        } else if (question.fieldOptions && question.fieldOptions.length > 0) {
           fieldSchema = z.enum(question.fieldOptions as [string, ...string[]]);
         } else {
           fieldSchema = z.string();
