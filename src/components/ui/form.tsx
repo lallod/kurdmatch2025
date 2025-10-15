@@ -144,8 +144,10 @@ const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message) : children
+  const { error, formMessageId, isTouched, isDirty } = useFormField()
+  // Only show errors for fields that have been touched or modified
+  const shouldShowError = (isTouched || isDirty) && error
+  const body = shouldShowError ? String(error?.message) : children
 
   if (!body) {
     return null
