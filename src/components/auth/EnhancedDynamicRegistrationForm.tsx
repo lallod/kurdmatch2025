@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form } from '@/components/ui/form';
 import { LoadingSpinner } from '@/components/app/LoadingSpinner';
+import { useToast } from '@/hooks/use-toast';
 import { useDynamicRegistrationForm } from './hooks/useDynamicRegistrationForm';
 import { createEnhancedStepCategories, getStepCompletionStatus } from './utils/enhancedStepCategories';
 import EnhancedStepIndicator from './components/EnhancedStepIndicator';
@@ -9,6 +10,7 @@ import EnhancedFormNavigation from './components/EnhancedFormNavigation';
 import SocialLogin from './components/SocialLogin';
 
 const EnhancedDynamicRegistrationForm: React.FC = () => {
+  const { toast } = useToast();
   const {
     form,
     step,
@@ -53,20 +55,49 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log('🔍 Submit button clicked, triggering form submission...');
+    console.log('🔍 Submit button clicked, checking all required fields...');
     
-    // Get current form values
-    const currentValues = form.getValues();
-    console.log('📝 Current form values:', Object.keys(currentValues));
+    // Get all form values
+    const formValues = form.getValues();
+    console.log('📝 Current form values:', formValues);
     
-    // Trigger form validation and submission directly
+    // Check which steps are incomplete
+    const incompleteSteps = categories.filter((cat, index) => {
+      const stepNum = index + 1;
+      return !completionStatus[stepNum];
+    });
+    
+    if (incompleteSteps.length > 0) {
+      const firstIncompleteStep = incompleteSteps[0];
+      console.error('❌ Cannot submit: Incomplete steps:', incompleteSteps.map(s => s.name));
+      
+      toast({
+        title: "Incomplete Registration",
+        description: `Please complete "${firstIncompleteStep.name}" step before submitting. Missing required fields.`,
+        variant: "destructive",
+      });
+      
+      // Navigate to first incomplete step
+      setStep(firstIncompleteStep.step);
+      return;
+    }
+    
+    console.log('✅ All steps complete, submitting form...');
+    
+    // Trigger form validation and submission
     await form.handleSubmit(
       (data) => {
-        console.log('✅ Form validation passed, submitting...');
+        console.log('✅ Form validation passed, calling onSubmit...');
         onSubmit(data);
       }, 
       (errors) => {
         console.error('❌ Form validation errors:', errors);
+        const errorFields = Object.keys(errors);
+        toast({
+          title: "Validation Error",
+          description: `Please fix errors in: ${errorFields.join(', ')}`,
+          variant: "destructive",
+        });
       }
     )();
   };
