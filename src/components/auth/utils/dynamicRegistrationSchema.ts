@@ -21,104 +21,100 @@ export const createDynamicRegistrationSchema = (questions: QuestionItem[]) => {
 
     let fieldSchema: z.ZodTypeAny;
 
-    switch (fieldType) {
-      case 'text':  
-      case 'textarea':
-        fieldSchema = z.string();
-        if (required) {
-          fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
-          // Special validation for bio - minimum 20 characters
-          if (profileField === 'bio') {
-            fieldSchema = (fieldSchema as z.ZodString).min(20, { message: 'Bio must be at least 20 characters' });
-          }
-        }
-        // Special validation for age field when it's text input (convert to number)
-        if (id === 'age') {
-          fieldSchema = z.coerce.number().min(18, { message: 'You must be at least 18 years old' });
-        }
-        break;
-
-      case 'select':
-      case 'radio':
-        // Special handling for occupation and education - treat as array even if marked as select
-        if (id === 'occupation' || id === 'education') {
-          fieldSchema = z.array(z.string());
-          if (required) {
-            fieldSchema = z.array(z.string()).min(1, { 
-              message: `Please select at least 1 ${id === 'occupation' ? 'occupation' : 'education level'}` 
-            });
-          }
-        } else if (question.fieldOptions && question.fieldOptions.length > 0) {
-          fieldSchema = z.enum(question.fieldOptions as [string, ...string[]]);
-        } else {
+    // Force occupation and education to be arrays regardless of their fieldType
+    if (id === 'occupation' || id === 'education') {
+      fieldSchema = z.array(z.string());
+      if (required) {
+        fieldSchema = z.array(z.string()).min(1, { 
+          message: `Please select at least 1 ${id === 'occupation' ? 'occupation' : 'education level'}` 
+        });
+      }
+    } else {
+      switch (fieldType) {
+        case 'text':  
+        case 'textarea':
           fieldSchema = z.string();
           if (required) {
-            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `Please select ${text.toLowerCase().replace(/\?$/, '')}` });
+            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
+            // Special validation for bio - minimum 20 characters
+            if (profileField === 'bio') {
+              fieldSchema = (fieldSchema as z.ZodString).min(20, { message: 'Bio must be at least 20 characters' });
+            }
           }
-        }
-        break;
-
-      case 'multi-select':
-      case 'multi_select':
-        fieldSchema = z.array(z.string());
-        if (required) {
-          let minSelections = 1;
-          let errorMessage = `Please select at least one option`;
-          
-          // Set minimum selections based on field
-          if (id === 'interests') {
-            minSelections = 3;
-            errorMessage = 'Please select at least 3 interests';
-          } else if (id === 'hobbies') {
-            minSelections = 2;
-            errorMessage = 'Please select at least 2 hobbies';
-          } else if (id === 'values') {
-            minSelections = 3;
-            errorMessage = 'Please select at least 3 core values';
-          } else if (id === 'languages') {
-            minSelections = 1;
-            errorMessage = 'Please select at least 1 language';
-          } else if (id === 'occupation') {
-            minSelections = 1;
-            errorMessage = 'Please select at least 1 occupation';
-          } else if (id === 'education') {
-            minSelections = 1;
-            errorMessage = 'Please select at least 1 education level';
+          // Special validation for age field when it's text input (convert to number)
+          if (id === 'age') {
+            fieldSchema = z.coerce.number().min(18, { message: 'You must be at least 18 years old' });
           }
-          
-          fieldSchema = z.array(z.string()).min(minSelections, { message: errorMessage });
-        }
-        break;
+          break;
 
-      case 'checkbox':
-        fieldSchema = z.boolean();
-        if (required) {
-          fieldSchema = z.boolean().refine(val => val === true, { message: `${text} is required` });
-        }
-        break;
+        case 'select':
+        case 'radio':
+          if (question.fieldOptions && question.fieldOptions.length > 0) {
+            fieldSchema = z.enum(question.fieldOptions as [string, ...string[]]);
+          } else {
+            fieldSchema = z.string();
+            if (required) {
+              fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `Please select ${text.toLowerCase().replace(/\?$/, '')}` });
+            }
+          }
+          break;
 
-      case 'date':
-        fieldSchema = z.string();
-        if (required) {
-          fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
-        }
-        // Age validation for date of birth
-        if (profileField === 'dateOfBirth') {
-          fieldSchema = fieldSchema.refine(value => {
-            if (!value) return !required;
-            const date = new Date(value);
-            const today = new Date();
-            const age = today.getFullYear() - date.getFullYear();
-            return age >= 18;
-          }, { message: 'You must be at least 18 years old' });
-        }
-        break;
+        case 'multi-select':
+        case 'multi_select':
+          fieldSchema = z.array(z.string());
+          if (required) {
+            let minSelections = 1;
+            let errorMessage = `Please select at least one option`;
+            
+            // Set minimum selections based on field
+            if (id === 'interests') {
+              minSelections = 3;
+              errorMessage = 'Please select at least 3 interests';
+            } else if (id === 'hobbies') {
+              minSelections = 2;
+              errorMessage = 'Please select at least 2 hobbies';
+            } else if (id === 'values') {
+              minSelections = 3;
+              errorMessage = 'Please select at least 3 core values';
+            } else if (id === 'languages') {
+              minSelections = 1;
+              errorMessage = 'Please select at least 1 language';
+            }
+            
+            fieldSchema = z.array(z.string()).min(minSelections, { message: errorMessage });
+          }
+          break;
 
-      default:
-        fieldSchema = z.string();
-        if (required) {
-          fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
-        }
+        case 'checkbox':
+          fieldSchema = z.boolean();
+          if (required) {
+            fieldSchema = z.boolean().refine(val => val === true, { message: `${text} is required` });
+          }
+          break;
+
+        case 'date':
+          fieldSchema = z.string();
+          if (required) {
+            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
+          }
+          // Age validation for date of birth
+          if (profileField === 'dateOfBirth') {
+            fieldSchema = fieldSchema.refine(value => {
+              if (!value) return !required;
+              const date = new Date(value);
+              const today = new Date();
+              const age = today.getFullYear() - date.getFullYear();
+              return age >= 18;
+            }, { message: 'You must be at least 18 years old' });
+          }
+          break;
+
+        default:
+          fieldSchema = z.string();
+          if (required) {
+            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
+          }
+      }
     }
 
     // Handle photo/file fields separately
@@ -127,7 +123,7 @@ export const createDynamicRegistrationSchema = (questions: QuestionItem[]) => {
     }
 
     // Make optional fields truly optional (except multi-select and photos)
-    if (!required && fieldType !== 'multi-select' && fieldType !== 'multi_select' && profileField !== 'photos' && id !== 'sys_6' && id !== 'photos') {
+    if (!required && fieldType !== 'multi-select' && fieldType !== 'multi_select' && profileField !== 'photos' && id !== 'sys_6' && id !== 'photos' && id !== 'occupation' && id !== 'education') {
       fieldSchema = fieldSchema.optional();
     }
 
@@ -162,97 +158,93 @@ export const createStepValidationSchema = (questions: QuestionItem[], step: numb
     const { id, fieldType, required, profileField, text } = question;
     let fieldSchema: z.ZodTypeAny;
 
-    // Apply same validation logic as main schema
-    switch (fieldType) {
-      case 'text':
-      case 'textarea':
-        fieldSchema = z.string();
-        if (required) {
-          fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
-        }
-        // Special validation for age field when it's text input
-        if (id === 'age') {
-          fieldSchema = z.coerce.number().min(18, { message: 'You must be at least 18 years old' });
-        }
-        break;
-
-      case 'select':
-      case 'radio':
-        // Special handling for occupation and education - treat as array even if marked as select
-        if (id === 'occupation' || id === 'education') {
-          fieldSchema = z.array(z.string());
-          if (required) {
-            fieldSchema = z.array(z.string()).min(1, { 
-              message: `Please select at least 1 ${id === 'occupation' ? 'occupation' : 'education level'}` 
-            });
-          }
-        } else if (question.fieldOptions && question.fieldOptions.length > 0) {
-          fieldSchema = z.enum(question.fieldOptions as [string, ...string[]]);
-        } else {
+    // Force occupation and education to be arrays regardless of their fieldType
+    if (id === 'occupation' || id === 'education') {
+      fieldSchema = z.array(z.string());
+      if (required) {
+        fieldSchema = z.array(z.string()).min(1, { 
+          message: `Please select at least 1 ${id === 'occupation' ? 'occupation' : 'education level'}` 
+        });
+      }
+    } else {
+      // Apply same validation logic as main schema
+      switch (fieldType) {
+        case 'text':
+        case 'textarea':
           fieldSchema = z.string();
           if (required) {
-            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `Please select ${text.toLowerCase().replace(/\?$/, '')}` });
+            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
           }
-        }
-        break;
-
-      case 'multi-select':
-      case 'multi_select':
-        fieldSchema = z.array(z.string());
-        if (required) {
-          let minSelections = 1;
-          let errorMessage = `Please select at least one option`;
-          
-          if (id === 'interests') {
-            minSelections = 3;
-            errorMessage = 'Please select at least 3 interests';
-          } else if (id === 'hobbies') {
-            minSelections = 2;
-            errorMessage = 'Please select at least 2 hobbies';
-          } else if (id === 'values') {
-            minSelections = 3;
-            errorMessage = 'Please select at least 3 core values';
-          } else if (id === 'languages') {
-            minSelections = 1;
-            errorMessage = 'Please select at least 1 language';
-          } else if (id === 'occupation') {
-            minSelections = 1;
-            errorMessage = 'Please select at least 1 occupation';
-          } else if (id === 'education') {
-            minSelections = 1;
-            errorMessage = 'Please select at least 1 education level';
+          // Special validation for age field when it's text input
+          if (id === 'age') {
+            fieldSchema = z.coerce.number().min(18, { message: 'You must be at least 18 years old' });
           }
-          
-          fieldSchema = z.array(z.string()).min(minSelections, { message: errorMessage });
-        }
-        break;
+          break;
 
-      case 'checkbox':
-        fieldSchema = z.boolean();
-        if (required) {
-          fieldSchema = z.boolean().refine(val => val === true, { message: `${text} is required` });
-        }
-        break;
+        case 'select':
+        case 'radio':
+          if (question.fieldOptions && question.fieldOptions.length > 0) {
+            fieldSchema = z.enum(question.fieldOptions as [string, ...string[]]);
+          } else {
+            fieldSchema = z.string();
+            if (required) {
+              fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `Please select ${text.toLowerCase().replace(/\?$/, '')}` });
+            }
+          }
+          break;
 
-      case 'date':
-        fieldSchema = z.string();
-        if (required) {
-          fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
-        }
-        break;
+        case 'multi-select':
+        case 'multi_select':
+          fieldSchema = z.array(z.string());
+          if (required) {
+            let minSelections = 1;
+            let errorMessage = `Please select at least one option`;
+            
+            if (id === 'interests') {
+              minSelections = 3;
+              errorMessage = 'Please select at least 3 interests';
+            } else if (id === 'hobbies') {
+              minSelections = 2;
+              errorMessage = 'Please select at least 2 hobbies';
+            } else if (id === 'values') {
+              minSelections = 3;
+              errorMessage = 'Please select at least 3 core values';
+            } else if (id === 'languages') {
+              minSelections = 1;
+              errorMessage = 'Please select at least 1 language';
+            }
+            
+            fieldSchema = z.array(z.string()).min(minSelections, { message: errorMessage });
+          }
+          break;
 
-      default:
-        fieldSchema = z.string();
-        if (required) {
-          fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
-        }
+        case 'checkbox':
+          fieldSchema = z.boolean();
+          if (required) {
+            fieldSchema = z.boolean().refine(val => val === true, { message: `${text} is required` });
+          }
+          break;
+
+        case 'date':
+          fieldSchema = z.string();
+          if (required) {
+            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
+          }
+          break;
+
+        default:
+          fieldSchema = z.string();
+          if (required) {
+            fieldSchema = (fieldSchema as z.ZodString).min(1, { message: `${text} is required` });
+          }
+      }
     }
 
     if (profileField === 'photos' || id === 'photos') {
       fieldSchema = z.array(z.string()).min(1, { message: 'At least one photo is required' });
     }
 
-    if (!required && fieldType !== 'multi-select' && fieldType !== 'multi_select' && profileField !== 'photos' && id !== 'photos') {
+    if (!required && fieldType !== 'multi-select' && fieldType !== 'multi_select' && profileField !== 'photos' && id !== 'photos' && id !== 'occupation' && id !== 'education') {
       fieldSchema = fieldSchema.optional();
     }
 
