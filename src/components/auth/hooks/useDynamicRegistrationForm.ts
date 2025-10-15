@@ -108,7 +108,11 @@ export const useDynamicRegistrationForm = () => {
         const maxStep = 7; // Maximum number of steps
         if (step < maxStep) {
           setStep(step + 1);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+          // Scroll to top immediately without smooth behavior to prevent auto-scroll issues
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }, 0);
           
           if (!completedSteps.includes(step)) {
             setCompletedSteps([...completedSteps, step]);
@@ -134,6 +138,11 @@ export const useDynamicRegistrationForm = () => {
   const prevStep = () => {
     if (step > 1) {
       setStep(step - 1);
+      
+      // Scroll to top immediately
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 0);
     }
   };
 

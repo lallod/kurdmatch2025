@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Languages, Search, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Languages, Search, Check } from 'lucide-react';
 import { languageCategories } from '@/data/languages';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface LanguageCategorySelectorProps {
   value?: string[];
@@ -25,10 +22,6 @@ const LanguageCategorySelector = ({ value = [], onChange, minSelections = 1 }: L
     }
   };
 
-  const removeLanguage = (language: string) => {
-    onChange(value.filter(l => l !== language));
-  };
-
   const filterLanguages = (languages: string[]) => {
     if (!searchTerm) return languages;
     return languages.filter(lang => 
@@ -41,11 +34,11 @@ const LanguageCategorySelector = ({ value = [], onChange, minSelections = 1 }: L
   };
 
   const categories = [
-    { key: 'kurdish', label: '🟣 Kurdish Dialects', color: 'text-purple-300', languages: languageCategories.kurdish },
-    { key: 'middleEastern', label: '🟢 Middle Eastern', color: 'text-green-300', languages: languageCategories.middleEastern },
-    { key: 'european', label: '🔵 European', color: 'text-blue-300', languages: languageCategories.european },
-    { key: 'asian', label: '🟠 Asian', color: 'text-orange-300', languages: languageCategories.asian },
-    { key: 'african', label: '🟡 African', color: 'text-yellow-300', languages: languageCategories.african }
+    { key: 'kurdish', label: 'Kurdish Dialects', emoji: '🟣', languages: languageCategories.kurdish },
+    { key: 'middleEastern', label: 'Middle Eastern', emoji: '🟢', languages: languageCategories.middleEastern },
+    { key: 'european', label: 'European', emoji: '🔵', languages: languageCategories.european },
+    { key: 'asian', label: 'Asian', emoji: '🟠', languages: languageCategories.asian },
+    { key: 'african', label: 'African', emoji: '🟡', languages: languageCategories.african }
   ];
 
   return (
@@ -60,25 +53,12 @@ const LanguageCategorySelector = ({ value = [], onChange, minSelections = 1 }: L
         )}
       </div>
 
-      {/* Selected Languages */}
+      {/* Selected Count */}
       {value.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-white/5 backdrop-blur border border-white/10">
-          {value.map((language) => (
-            <Badge
-              key={language}
-              variant="secondary"
-              className="bg-purple-500/20 text-white border-purple-400/30 hover:bg-purple-500/30"
-            >
-              {language}
-              <button
-                type="button"
-                onClick={() => removeLanguage(language)}
-                className="ml-1 hover:text-red-400"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </Badge>
-          ))}
+        <div className="text-center p-2 rounded-lg bg-green-900/30 border border-green-500/30">
+          <p className="text-green-300 text-sm font-medium">
+            ✓ {value.length} language{value.length !== 1 ? 's' : ''} selected
+          </p>
         </div>
       )}
 
@@ -94,40 +74,48 @@ const LanguageCategorySelector = ({ value = [], onChange, minSelections = 1 }: L
         />
       </div>
 
-      {/* Language Categories */}
-      <ScrollArea className="h-[400px] rounded-lg border border-white/20 bg-white/5 backdrop-blur">
-        <Accordion type="multiple" className="w-full">
-          {categories.map((category) => {
-            const filteredLanguages = filterLanguages(category.languages);
-            if (!hasFilteredResults(category.languages) && searchTerm) return null;
+      {/* Language Categories with Simple Buttons */}
+      <div className="space-y-4 max-h-[500px] overflow-y-auto rounded-lg border border-white/20 bg-white/5 backdrop-blur p-4">
+        {categories.map((category) => {
+          const filteredLanguages = filterLanguages(category.languages);
+          if (!hasFilteredResults(category.languages) && searchTerm) return null;
 
-            return (
-              <AccordionItem key={category.key} value={category.key} className="border-white/10">
-                <AccordionTrigger className={`px-4 hover:bg-white/5 ${category.color} font-semibold`}>
-                  {category.label} ({filteredLanguages.length})
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <div className="space-y-2">
-                    {filteredLanguages.map((language) => (
-                      <label
-                        key={language}
-                        className="flex items-center gap-2 p-2 rounded hover:bg-white/5 cursor-pointer"
-                      >
-                        <Checkbox
-                          checked={value.includes(language)}
-                          onCheckedChange={() => toggleLanguage(language)}
-                          className="border-white/30"
-                        />
-                        <span className="text-white text-sm">{language}</span>
-                      </label>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
-      </ScrollArea>
+          return (
+            <div key={category.key} className="space-y-2">
+              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                <span>{category.emoji}</span>
+                <span>{category.label}</span>
+                <span className="text-purple-300">({filteredLanguages.length})</span>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {filteredLanguages.map((language) => {
+                  const isSelected = value.includes(language);
+                  return (
+                    <Button
+                      key={language}
+                      type="button"
+                      onClick={() => toggleLanguage(language)}
+                      variant={isSelected ? "default" : "outline"}
+                      className={`
+                        h-auto py-3 px-3 text-sm font-medium transition-all
+                        ${isSelected 
+                          ? 'bg-purple-600 hover:bg-purple-700 text-white border-purple-500' 
+                          : 'bg-white/5 hover:bg-white/10 text-white border-white/20'
+                        }
+                      `}
+                    >
+                      <span className="flex items-center gap-2 w-full justify-center">
+                        {isSelected && <Check className="w-4 h-4 flex-shrink-0" />}
+                        <span className="truncate">{language}</span>
+                      </span>
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       {/* Validation Message */}
       {value.length < minSelections && (
