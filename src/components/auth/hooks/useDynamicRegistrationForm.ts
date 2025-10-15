@@ -166,7 +166,7 @@ export const useDynamicRegistrationForm = () => {
     
     try {
       // Sign up user
-      const { error: signUpError, user } = await signUp(data.email, data.password);
+      const { data: signUpData, error: signUpError } = await signUp(data.email, data.password);
       
       if (signUpError) {
         console.error('❌ Sign up error:', signUpError);
@@ -178,7 +178,7 @@ export const useDynamicRegistrationForm = () => {
         return;
       }
 
-      if (!user) {
+      if (!signUpData?.user) {
         console.error('❌ No user returned from sign up');
         toast({
           title: "Registration Failed", 
@@ -188,6 +188,7 @@ export const useDynamicRegistrationForm = () => {
         return;
       }
 
+      const user = signUpData.user;
       console.log('✅ User created successfully:', user.id);
 
       // Map form data to profile using the comprehensive mapper
@@ -229,10 +230,10 @@ export const useDynamicRegistrationForm = () => {
       });
 
       // Wait for auth state to sync before navigation
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Navigate to discovery feed
-      navigate('/discovery', { replace: true });
+      // Navigate to home or discovery feed
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('❌ Registration error:', error);
       toast({
