@@ -10,6 +10,7 @@ import { getRegistrationQuestions } from '@/api/admin';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { createDynamicRegistrationSchema, DynamicRegistrationFormValues } from '../utils/dynamicRegistrationSchema';
 import { getFormDefaultValues } from '../utils/formDefaultValues';
+import { createEnhancedStepCategories } from '../utils/enhancedStepCategories';
 
 export const useDynamicRegistrationForm = () => {
   const { toast } = useToast();
@@ -72,50 +73,51 @@ export const useDynamicRegistrationForm = () => {
   // Step navigation with validation
   const nextStep = async () => {
     try {
-      // Get current step's field names for validation
-      const stepFieldMap: Record<number, string[]> = {
-        1: ['email', 'password', 'confirmPassword'],
-        2: ['full_name', 'age', 'gender'],
-        3: ['location', 'dreamVacation', 'height', 'body_type', 'kurdistan_region', 'ethnicity', 'religion', 'political_views', 'personality_type'],
-        4: ['interests', 'hobbies', 'values'],
-        5: ['dietary_preferences', 'smoking', 'drinking', 'sleep_schedule', 'have_pets', 'family_closeness', 'love_language', 'communication_style', 'ideal_date', 'relationship_goals', 'want_children', 'exercise_habits'],
-        6: ['occupation', 'education', 'languages'],
-        7: ['photos']
-      };
-
-      const fieldsToValidate = stepFieldMap[step] || [];
+      // Create dynamic step categories to get current step's questions
+      const categories = createEnhancedStepCategories(questions);
+      const currentCategory = categories.find(cat => cat.step === step);
       
-      // Get current step questions to check which fields are required
-      const currentStepQuestions = questions.filter(q => {
-        return fieldsToValidate.includes(q.id);
-      });
+      if (!currentCategory) {
+        console.error('No category found for step:', step);
+        return;
+      }
       
-      // Only validate required fields that exist in the current step
-      const requiredFields = currentStepQuestions
+      // Get all required field IDs from current step
+      const requiredFields = currentCategory.questions
         .filter(q => q.required)
         .map(q => q.id);
       
-      // Trigger validation only for required fields in this step
+      console.log('Step validation check:', { 
+        step, 
+        stepName: currentCategory.name,
+        requiredFields,
+        totalQuestions: currentCategory.questions.length
+      });
+      
+      // Trigger validation for required fields
       const isValid = requiredFields.length > 0 
         ? await form.trigger(requiredFields as any)
         : true;
       
-      console.log('Step validation:', { 
-        step, 
+      // Get form values for required fields to log
+      const fieldValues = requiredFields.reduce((acc, field) => ({
+        ...acc,
+        [field]: form.getValues(field as any)
+      }), {});
+      
+      console.log('Validation result:', { 
         isValid, 
-        requiredFields,
-        values: requiredFields.reduce((acc, field) => ({
-          ...acc,
-          [field]: form.getValues(field as any)
-        }), {})
+        fieldValues,
+        errors: form.formState.errors
       });
       
       if (isValid) {
-        const maxStep = 7; // Maximum number of steps
+        // Calculate max step dynamically
+        const maxStep = categories.length;
         if (step < maxStep) {
           setStep(step + 1);
           
-          // Scroll to top immediately without smooth behavior to prevent auto-scroll issues
+          // Scroll to top immediately
           setTimeout(() => {
             window.scrollTo({ top: 0, behavior: 'instant' });
           }, 0);
@@ -125,9 +127,10 @@ export const useDynamicRegistrationForm = () => {
           }
         }
       } else {
+        const errorFields = Object.keys(form.formState.errors);
         toast({
           title: "Incomplete Fields",
-          description: "Please complete all required fields before continuing.",
+          description: `Please complete all required fields: ${errorFields.join(', ')}`,
           variant: "destructive",
         });
       }
