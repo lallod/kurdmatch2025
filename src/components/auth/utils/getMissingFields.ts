@@ -77,7 +77,18 @@ export const getMissingFields = (
       }
       // Standard field validation (text, select, etc.)
       else {
-        if (!value || (typeof value === 'string' && value.trim() === '')) {
+        // Handle both string and array values (some fields might be stored as arrays)
+        let hasValue = false;
+        
+        if (Array.isArray(value)) {
+          hasValue = value.length > 0 && value.some(v => v && v.toString().trim() !== '');
+        } else if (typeof value === 'string') {
+          hasValue = value.trim() !== '';
+        } else {
+          hasValue = value !== null && value !== undefined;
+        }
+        
+        if (!hasValue) {
           isIncomplete = true;
           reason = getFieldRequirement(question);
         }
