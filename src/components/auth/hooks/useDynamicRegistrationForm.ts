@@ -242,7 +242,14 @@ export const useDynamicRegistrationForm = () => {
     
     questions.forEach(question => {
       if (question.profileField && data[question.id] !== undefined) {
-        profile[question.profileField] = data[question.id];
+        let value = data[question.id];
+        
+        // Convert single-selection arrays to strings for database
+        if (Array.isArray(value) && (question.id === 'occupation' || question.id === 'education')) {
+          value = value.length > 0 ? value[0] : null;
+        }
+        
+        profile[question.profileField] = value;
       }
     });
 
