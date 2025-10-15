@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
@@ -23,7 +23,24 @@ export const useDynamicRegistrationForm = () => {
   // Location management for step 3
   const { location, handleLocationDetection, isLoading: locationLoading } = useLocationManager('');
 
-  // Load questions and create form
+  // Create form schema and values dynamically based on questions
+  const schema = React.useMemo(() => 
+    createDynamicRegistrationSchema(questions), 
+    [questions]
+  );
+  
+  const defaultValues = React.useMemo(() => 
+    getFormDefaultValues(questions), 
+    [questions]
+  );
+  
+  const form = useForm<DynamicRegistrationFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues,
+    mode: 'onChange',
+  });
+
+  // Load questions on mount
   useEffect(() => {
     const loadQuestions = async () => {
       try {
@@ -31,11 +48,10 @@ export const useDynamicRegistrationForm = () => {
         const filteredQuestions = enabledQuestions.filter(q => q.enabled);
         setQuestions(filteredQuestions);
         
-        // Create dynamic schema and form
-        const schema = createDynamicRegistrationSchema(filteredQuestions);
-        const defaultValues = getFormDefaultValues(filteredQuestions);
+        // Reset form with new default values once questions are loaded
+        const newDefaultValues = getFormDefaultValues(filteredQuestions);
+        form.reset(newDefaultValues);
         
-        form.reset(defaultValues);
         setLoading(false);
       } catch (error) {
         console.error('Error loading registration questions:', error);
@@ -49,16 +65,6 @@ export const useDynamicRegistrationForm = () => {
 
     loadQuestions();
   }, []);
-
-  // Create form with dynamic schema
-  const schema = createDynamicRegistrationSchema(questions);
-  const defaultValues = getFormDefaultValues(questions);
-  
-  const form = useForm<DynamicRegistrationFormValues>({
-    resolver: zodResolver(schema),
-    defaultValues,
-    mode: 'onChange',
-  });
 
   const { formState } = form;
   const isSubmitting = formState.isSubmitting;
