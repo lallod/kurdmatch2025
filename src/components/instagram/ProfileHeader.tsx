@@ -84,7 +84,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
   };
 
   const handleEditProfile = () => {
-    navigate('/edit-profile');
+    navigate('/settings');
   };
 
   return (

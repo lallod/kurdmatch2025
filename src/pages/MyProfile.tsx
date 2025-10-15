@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ import { useRealProfileData } from '@/hooks/useRealProfileData';
 import { toast } from 'sonner';
 import { uploadProfilePhoto } from '@/api/profiles';
 const MyProfile = () => {
+  const navigate = useNavigate();
   const [isEditingSections, setIsEditingSections] = useState(false);
   const [profileBgColor, setProfileBgColor] = useState("#F1F0FB");
   
@@ -461,6 +463,7 @@ const MyProfile = () => {
                       <Button 
                         variant="outline" 
                         className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 md:h-auto px-6 md:px-4"
+                        onClick={() => navigate('/settings')}
                       >
                         <Pencil className="h-4 w-4 mr-2" />
                         Edit Profile
