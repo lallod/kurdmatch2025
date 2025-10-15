@@ -70,6 +70,12 @@ export const createDynamicRegistrationSchema = (questions: QuestionItem[]) => {
           } else if (id === 'languages') {
             minSelections = 1;
             errorMessage = 'Please select at least 1 language';
+          } else if (id === 'occupation') {
+            minSelections = 1;
+            errorMessage = 'Please select at least 1 occupation';
+          } else if (id === 'education') {
+            minSelections = 1;
+            errorMessage = 'Please select at least 1 education level';
           }
           
           fieldSchema = z.array(z.string()).min(minSelections, { message: errorMessage });
@@ -193,6 +199,12 @@ export const createStepValidationSchema = (questions: QuestionItem[], step: numb
           } else if (id === 'languages') {
             minSelections = 1;
             errorMessage = 'Please select at least 1 language';
+          } else if (id === 'occupation') {
+            minSelections = 1;
+            errorMessage = 'Please select at least 1 occupation';
+          } else if (id === 'education') {
+            minSelections = 1;
+            errorMessage = 'Please select at least 1 education level';
           }
           
           fieldSchema = z.array(z.string()).min(minSelections, { message: errorMessage });

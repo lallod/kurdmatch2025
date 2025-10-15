@@ -1,6 +1,7 @@
-import React from 'react';
-import { Briefcase, Check } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Briefcase, Check, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 interface OccupationChoiceButtonsProps {
   value?: string[];
@@ -23,11 +24,25 @@ const occupationCategories = [
   { value: 'Other', label: 'Other' }
 ];
 
+const TOP_10_CATEGORIES = occupationCategories.slice(0, 10);
+
 const OccupationChoiceButtons: React.FC<OccupationChoiceButtonsProps> = ({
   value = [],
   onChange,
-  maxSelections = 2
+  maxSelections = 1
 }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filter categories based on search
+  const displayedCategories = useMemo(() => {
+    if (searchTerm) {
+      return occupationCategories.filter(cat => 
+        cat.label.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    return TOP_10_CATEGORIES;
+  }, [searchTerm]);
+
   const handleToggle = (occupation: string) => {
     const currentValues = value || [];
     
@@ -35,8 +50,10 @@ const OccupationChoiceButtons: React.FC<OccupationChoiceButtonsProps> = ({
       // Remove if already selected
       onChange(currentValues.filter(v => v !== occupation));
     } else {
-      // Add if not at max selections
-      if (currentValues.length < maxSelections) {
+      // Replace with new selection if at max (single selection)
+      if (maxSelections === 1) {
+        onChange([occupation]);
+      } else if (currentValues.length < maxSelections) {
         onChange([...currentValues, occupation]);
       }
     }
@@ -49,13 +66,34 @@ const OccupationChoiceButtons: React.FC<OccupationChoiceButtonsProps> = ({
           <Briefcase className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h3 className="text-white font-semibold text-balance">What do you do for work?</h3>
-          <p className="text-purple-200 text-sm">Select up to {maxSelections} options</p>
+          <h3 className="text-white font-semibold text-balance">Your Occupation</h3>
+          <p className="text-purple-200 text-sm">(Select at least {maxSelections})</p>
+        </div>
+        <div className="ml-auto px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 border border-purple-400/30 text-purple-300">
+          {value.length}/{maxSelections} Selected
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-2">
-        {occupationCategories.map((category) => {
+      {/* Search bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300" />
+        <Input
+          type="text"
+          placeholder="Search occupations..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-purple-300"
+        />
+      </div>
+
+      {!searchTerm && (
+        <p className="text-xs text-purple-300">
+          Showing top 10 most common. Use search to see all options.
+        </p>
+      )}
+
+      <div className="grid grid-cols-2 gap-2">
+        {displayedCategories.map((category) => {
           const isSelected = value?.includes(category.value);
           const isDisabled = !isSelected && (value?.length || 0) >= maxSelections;
           
@@ -89,11 +127,18 @@ const OccupationChoiceButtons: React.FC<OccupationChoiceButtonsProps> = ({
       </div>
 
       {value && value.length > 0 && (
-        <div className="mt-3 p-3 bg-green-900/20 border border-green-500/30 rounded-lg">
+        <div className="p-3 bg-green-900/20 border border-green-500/30 rounded-lg">
           <p className="text-green-300 text-sm">
-            ✓ Selected {value.length} of {maxSelections}
+            ✓ {value.length} occupation selected
           </p>
         </div>
+      )}
+      
+      {value.length < maxSelections && (
+        <p className="text-sm text-yellow-400 flex items-center gap-1">
+          <span>⚠️</span>
+          Please select at least {maxSelections} occupation
+        </p>
       )}
     </div>
   );

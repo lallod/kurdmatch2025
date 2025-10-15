@@ -13,32 +13,39 @@ interface OccupationButtonGridProps {
   maxSelections?: number;
 }
 
+// Top 10 most common occupations
+const TOP_10_OCCUPATIONS = allOccupations.slice(0, 10);
+
 const OccupationButtonGrid: React.FC<OccupationButtonGridProps> = ({
   selectedValues = [],
   onChange,
   minSelections = 1,
-  maxSelections = 3
+  maxSelections = 1
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const currentValues = Array.isArray(selectedValues) ? selectedValues : [];
 
-
-  // Filter occupations based on search term
+  // Show top 10 by default, all on search
   const filteredOccupations = useMemo(() => {
     if (searchTerm) {
       return allOccupations.filter(occ => 
         occ.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    return allOccupations;
+    return TOP_10_OCCUPATIONS;
   }, [searchTerm]);
 
   const toggleOccupation = (occupation: string) => {
     if (currentValues.includes(occupation)) {
       onChange(currentValues.filter(v => v !== occupation));
-    } else if (currentValues.length < maxSelections) {
-      onChange([...currentValues, occupation]);
+    } else {
+      // If maxSelections is 1, replace the current selection
+      if (maxSelections === 1) {
+        onChange([occupation]);
+      } else if (currentValues.length < maxSelections) {
+        onChange([...currentValues, occupation]);
+      }
     }
   };
 
@@ -100,8 +107,14 @@ const OccupationButtonGrid: React.FC<OccupationButtonGridProps> = ({
         />
       </div>
 
-      {/* Occupation Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-96 overflow-y-auto p-2 rounded-lg bg-white/5 backdrop-blur-sm">
+      {!searchTerm && (
+        <p className="text-xs text-green-300">
+          Showing top 10 most common. Use search to see all options.
+        </p>
+      )}
+
+      {/* Occupation Grid - No scrolling */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 p-2 rounded-lg bg-white/5 backdrop-blur-sm">
         {filteredOccupations.map((occupation) => {
           const isSelected = currentValues.includes(occupation);
           const isDisabled = !isSelected && currentValues.length >= maxSelections;

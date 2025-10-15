@@ -34,6 +34,8 @@ export const getMissingFields = (
         else if (id === 'hobbies') minRequired = 2;
         else if (id === 'values') minRequired = 3;
         else if (id === 'languages') minRequired = 1;
+        else if (id === 'occupation') minRequired = 1;
+        else if (id === 'education') minRequired = 1;
         
         const arrayValue = Array.isArray(value) ? value : [];
         if (arrayValue.length < minRequired) {

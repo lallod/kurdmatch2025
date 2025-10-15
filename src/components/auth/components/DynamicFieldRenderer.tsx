@@ -304,7 +304,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
     );
   }
 
-  // Occupation field with max 2 selections
+  // Occupation field with max 1 selection
   if (id === 'occupation') {
     return (
       <FormField
@@ -316,7 +316,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
               <OccupationChoiceButtons
                 value={field.value || []}
                 onChange={field.onChange}
-                maxSelections={2}
+                maxSelections={1}
               />
             </FormControl>
             <FormMessage />
@@ -326,7 +326,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
     );
   }
 
-  // Enhanced education field with categorized grid
+  // Enhanced education field with categorized grid (max 1 selection)
   if (id === 'education') {
     return (
       <FormField
@@ -339,7 +339,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
                 selectedValues={field.value || []}
                 onChange={field.onChange}
                 minSelections={1}
-                maxSelections={3}
+                maxSelections={1}
               />
             </FormControl>
             <FormMessage />
