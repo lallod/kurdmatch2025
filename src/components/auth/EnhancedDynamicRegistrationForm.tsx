@@ -53,6 +53,23 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    // Check ALL steps before allowing submission
+    const allStepsComplete = categories.every((cat, index) => {
+      const stepNum = index + 1;
+      return completionStatus[stepNum] === true;
+    });
+    
+    if (!allStepsComplete) {
+      // Find first incomplete step
+      const firstIncompleteStep = categories.findIndex((cat, index) => {
+        const stepNum = index + 1;
+        return completionStatus[stepNum] !== true;
+      });
+      
+      console.error('Cannot submit: Not all steps are complete. First incomplete step:', firstIncompleteStep + 1);
+      return;
+    }
+    
     if (isCurrentStepComplete) {
       form.handleSubmit(onSubmit)();
     }
