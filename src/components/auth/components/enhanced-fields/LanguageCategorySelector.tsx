@@ -109,10 +109,9 @@ const LanguageCategorySelector = ({ value = [], onChange, minSelections = 1 }: L
                 <AccordionContent className="px-4 pb-4">
                   <div className="space-y-2">
                     {filteredLanguages.map((language) => (
-                      <div
+                      <label
                         key={language}
                         className="flex items-center gap-2 p-2 rounded hover:bg-white/5 cursor-pointer"
-                        onClick={() => toggleLanguage(language)}
                       >
                         <Checkbox
                           checked={value.includes(language)}
@@ -120,7 +119,7 @@ const LanguageCategorySelector = ({ value = [], onChange, minSelections = 1 }: L
                           className="border-white/30"
                         />
                         <span className="text-white text-sm">{language}</span>
-                      </div>
+                      </label>
                     ))}
                   </div>
                 </AccordionContent>
