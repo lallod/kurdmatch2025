@@ -9,6 +9,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import ProfileSwipeActions from '@/components/swipe/ProfileSwipeActions';
 import ProfileActionButtons from '@/components/profile/ProfileActionButtons';
 import { toast } from 'sonner';
+import { getDisplayValue, hasRealArrayValues } from '@/utils/profileHelpers';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -159,10 +160,12 @@ const Profile = () => {
               )}
 
               <div className="text-white/90 text-sm mb-2">
-                Looking for: {profile.relationship_goals || 'Not specified'}
+                {getDisplayValue(profile.relationship_goals) && (
+                  <>Looking for: {profile.relationship_goals}</>
+                )}
               </div>
 
-              {profile.occupation && (
+              {getDisplayValue(profile.occupation) && (
                 <Badge className="bg-pink-500/80 text-white text-sm">
                   {profile.occupation}
                 </Badge>
@@ -171,7 +174,7 @@ const Profile = () => {
           </div>
 
           {/* About Section */}
-          {profile.bio && (
+          {getDisplayValue(profile.bio) && (
             <div className="p-6 bg-black/20 border-b border-white/10">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-8 h-8 bg-pink-500/20 rounded-full flex items-center justify-center">
@@ -180,10 +183,6 @@ const Profile = () => {
                 <h3 className="text-lg font-semibold text-white">About {profile.name.split(' ')[0]}</h3>
               </div>
               <p className="text-white/90 text-sm leading-relaxed mb-3">{profile.bio}</p>
-              
-              {(!profile.interests || profile.interests.length === 0) && (
-                <p className="text-white/60 text-sm">No common interests found</p>
-              )}
             </div>
           )}
 
@@ -200,12 +199,12 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <div className="space-y-2 text-sm text-white/90">
-                    {profile.height && <div><span className="text-white/70">Height:</span> {profile.height}</div>}
-                    {profile.body_type && <div><span className="text-white/70">Body Type:</span> {profile.body_type}</div>}
-                    {profile.ethnicity && <div><span className="text-white/70">Ethnicity:</span> {profile.ethnicity}</div>}
-                    {profile.religion && <div><span className="text-white/70">Religion:</span> {profile.religion}</div>}
-                    {profile.zodiac_sign && <div><span className="text-white/70">Zodiac:</span> {profile.zodiac_sign}</div>}
-                    {profile.personality_type && <div><span className="text-white/70">Personality:</span> {profile.personality_type}</div>}
+                    {getDisplayValue(profile.height) && <div><span className="text-white/70">Height:</span> {profile.height}</div>}
+                    {getDisplayValue(profile.body_type) && <div><span className="text-white/70">Body Type:</span> {profile.body_type}</div>}
+                    {getDisplayValue(profile.ethnicity) && <div><span className="text-white/70">Ethnicity:</span> {profile.ethnicity}</div>}
+                    {getDisplayValue(profile.religion) && <div><span className="text-white/70">Religion:</span> {profile.religion}</div>}
+                    {getDisplayValue(profile.zodiac_sign) && <div><span className="text-white/70">Zodiac:</span> {profile.zodiac_sign}</div>}
+                    {getDisplayValue(profile.personality_type) && <div><span className="text-white/70">Personality:</span> {profile.personality_type}</div>}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -220,11 +219,11 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <div className="space-y-2 text-sm text-white/90">
-                    {profile.occupation && <div><span className="text-white/70">Occupation:</span> {profile.occupation}</div>}
-                    {profile.education && <div><span className="text-white/70">Education:</span> {profile.education}</div>}
-                    {profile.company && <div><span className="text-white/70">Company:</span> {profile.company}</div>}
-                    {profile.career_ambitions && <div><span className="text-white/70">Goals:</span> {profile.career_ambitions}</div>}
-                    {profile.work_environment && <div><span className="text-white/70">Work Style:</span> {profile.work_environment}</div>}
+                    {getDisplayValue(profile.occupation) && <div><span className="text-white/70">Occupation:</span> {profile.occupation}</div>}
+                    {getDisplayValue(profile.education) && <div><span className="text-white/70">Education:</span> {profile.education}</div>}
+                    {getDisplayValue(profile.company) && <div><span className="text-white/70">Company:</span> {profile.company}</div>}
+                    {getDisplayValue(profile.career_ambitions) && <div><span className="text-white/70">Goals:</span> {profile.career_ambitions}</div>}
+                    {getDisplayValue(profile.work_environment) && <div><span className="text-white/70">Work Style:</span> {profile.work_environment}</div>}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -239,14 +238,14 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <div className="space-y-2 text-sm text-white/90">
-                    {profile.exercise_habits && <div><span className="text-white/70">Exercise:</span> {profile.exercise_habits}</div>}
-                    {profile.dietary_preferences && <div><span className="text-white/70">Diet:</span> {profile.dietary_preferences}</div>}
-                    {profile.smoking && <div><span className="text-white/70">Smoking:</span> {profile.smoking}</div>}
-                    {profile.drinking && <div><span className="text-white/70">Drinking:</span> {profile.drinking}</div>}
-                    {profile.sleep_schedule && <div><span className="text-white/70">Sleep:</span> {profile.sleep_schedule}</div>}
-                    {profile.have_pets && <div><span className="text-white/70">Pets:</span> {profile.have_pets}</div>}
+                    {getDisplayValue(profile.exercise_habits) && <div><span className="text-white/70">Exercise:</span> {profile.exercise_habits}</div>}
+                    {getDisplayValue(profile.dietary_preferences) && <div><span className="text-white/70">Diet:</span> {profile.dietary_preferences}</div>}
+                    {getDisplayValue(profile.smoking) && <div><span className="text-white/70">Smoking:</span> {profile.smoking}</div>}
+                    {getDisplayValue(profile.drinking) && <div><span className="text-white/70">Drinking:</span> {profile.drinking}</div>}
+                    {getDisplayValue(profile.sleep_schedule) && <div><span className="text-white/70">Sleep:</span> {profile.sleep_schedule}</div>}
+                    {getDisplayValue(profile.have_pets) && <div><span className="text-white/70">Pets:</span> {profile.have_pets}</div>}
                     
-                    {profile.hobbies && profile.hobbies.length > 0 && (
+                    {hasRealArrayValues(profile.hobbies) && (
                       <div>
                         <span className="text-white/70">Hobbies:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -272,9 +271,9 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <div className="space-y-2 text-sm text-white/90">
-                    {profile.political_views && <div><span className="text-white/70">Political Views:</span> {profile.political_views}</div>}
+                    {getDisplayValue(profile.political_views) && <div><span className="text-white/70">Political Views:</span> {profile.political_views}</div>}
                     
-                    {profile.values && profile.values.length > 0 && (
+                    {hasRealArrayValues(profile.values) && (
                       <div>
                         <span className="text-white/70">Values:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -287,7 +286,7 @@ const Profile = () => {
                       </div>
                     )}
                     
-                    {profile.interests && profile.interests.length > 0 && (
+                    {hasRealArrayValues(profile.interests) && (
                       <div>
                         <span className="text-white/70">Interests:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -313,14 +312,14 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <div className="space-y-2 text-sm text-white/90">
-                    {profile.relationship_goals && <div><span className="text-white/70">Looking for:</span> {profile.relationship_goals}</div>}
-                    {profile.want_children && <div><span className="text-white/70">Children:</span> {profile.want_children}</div>}
-                    {profile.love_language && <div><span className="text-white/70">Love Language:</span> {profile.love_language}</div>}
-                    {profile.communication_style && <div><span className="text-white/70">Communication:</span> {profile.communication_style}</div>}
-                    {profile.ideal_date && <div><span className="text-white/70">Ideal Date:</span> {profile.ideal_date}</div>}
-                    {profile.family_closeness && <div><span className="text-white/70">Family:</span> {profile.family_closeness}</div>}
+                    {getDisplayValue(profile.relationship_goals) && <div><span className="text-white/70">Looking for:</span> {profile.relationship_goals}</div>}
+                    {getDisplayValue(profile.want_children) && <div><span className="text-white/70">Children:</span> {profile.want_children}</div>}
+                    {getDisplayValue(profile.love_language) && <div><span className="text-white/70">Love Language:</span> {profile.love_language}</div>}
+                    {getDisplayValue(profile.communication_style) && <div><span className="text-white/70">Communication:</span> {profile.communication_style}</div>}
+                    {getDisplayValue(profile.ideal_date) && <div><span className="text-white/70">Ideal Date:</span> {profile.ideal_date}</div>}
+                    {getDisplayValue(profile.family_closeness) && <div><span className="text-white/70">Family:</span> {profile.family_closeness}</div>}
                     
-                    {profile.languages && profile.languages.length > 0 && (
+                    {hasRealArrayValues(profile.languages) && (
                       <div>
                         <span className="text-white/70">Languages:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
