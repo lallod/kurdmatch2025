@@ -11,6 +11,7 @@ import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questio
 import { createDynamicRegistrationSchema, DynamicRegistrationFormValues } from '../utils/dynamicRegistrationSchema';
 import { getFormDefaultValues } from '../utils/formDefaultValues';
 import { createEnhancedStepCategories } from '../utils/enhancedStepCategories';
+import { mapFormDataToProfile } from '../utils/profileDataMapper';
 
 export const useDynamicRegistrationForm = () => {
   const { toast } = useToast();
@@ -189,25 +190,14 @@ export const useDynamicRegistrationForm = () => {
 
       console.log('✅ User created successfully:', user.id);
 
-      // Map form data to profile
-      const profileData = mapFormDataToProfile(data, questions);
+      // Map form data to profile using the comprehensive mapper
+      const profileData = mapFormDataToProfile(data, user.id, questions);
       console.log('📝 Profile data mapped:', profileData);
-      
-      // Ensure required fields are present
-      const completeProfileData = {
-        ...profileData,
-        age: profileData.age || 18,
-        name: profileData.name || 'User',
-        location: profileData.location || 'Unknown'
-      };
 
-      // Create profile
+      // Create profile with all mapped data (mapper ensures required fields)
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert({
-          id: user.id,
-          ...completeProfileData
-        });
+        .insert([profileData as any]);
 
       if (profileError) {
         console.error('❌ Profile creation error:', profileError);
@@ -230,6 +220,9 @@ export const useDynamicRegistrationForm = () => {
 
       console.log('🎉 Registration completed successfully!');
 
+      // Clear OAuth registration flow flag if present
+      sessionStorage.removeItem('oauth_registration_flow');
+
       toast({
         title: "Registration Successful!",
         description: "Welcome to KurdMatch! Your profile has been created.",
@@ -250,35 +243,6 @@ export const useDynamicRegistrationForm = () => {
     }
   };
 
-  const mapFormDataToProfile = (data: DynamicRegistrationFormValues, questions: QuestionItem[]) => {
-    const profile: Record<string, any> = {};
-    
-    questions.forEach(question => {
-      if (question.profileField && data[question.id] !== undefined) {
-        let value = data[question.id];
-        
-        // Convert single-selection arrays to strings for database
-        if (Array.isArray(value) && (question.id === 'occupation' || question.id === 'education')) {
-          value = value.length > 0 ? value[0] : null;
-        }
-        
-        profile[question.profileField] = value;
-      }
-    });
-
-    // Ensure required fields have values
-    if (!profile.name && (data.firstName || data.lastName)) {
-      profile.name = `${data.firstName || ''} ${data.lastName || ''}`.trim();
-    }
-    
-    if (!profile.age && data.dateOfBirth) {
-      const birthDate = new Date(data.dateOfBirth);
-      const today = new Date();
-      profile.age = today.getFullYear() - birthDate.getFullYear();
-    }
-
-    return profile;
-  };
 
   const handlePhotoUploads = async (photoDataUrls: string[], userId: string) => {
     try {
