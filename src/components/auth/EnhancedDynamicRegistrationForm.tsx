@@ -78,7 +78,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-2 sm:py-8 px-2 sm:px-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-1 sm:py-8 px-1 sm:px-4">
       <div className="max-w-2xl mx-auto">
         {/* Enhanced Step Indicator */}
         <EnhancedStepIndicator
@@ -88,12 +88,12 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
         />
 
         {/* Main Form */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-3 sm:p-8 border border-white/20 shadow-2xl">
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-2 sm:p-8 border border-white/20 shadow-2xl">
           <Form {...form}>
-            <form onSubmit={(e) => e.preventDefault()} className="space-y-4 sm:space-y-6">
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-3 sm:space-y-6">
               {/* OAuth Welcome Message */}
               {isOAuthUser && step === 1 && (
-                <div className="text-center mb-4 sm:mb-6 p-3 sm:p-4 bg-green-900/30 rounded-lg border border-green-500/30">
+                <div className="text-center mb-3 sm:mb-6 p-2 sm:p-4 bg-green-900/30 rounded-lg border border-green-500/30">
                   <h3 className="text-lg font-semibold text-green-300 mb-2">Welcome!</h3>
                   <p className="text-green-200 text-sm">
                     Your social account has been connected. Please complete the registration to finish setting up your profile.
@@ -103,9 +103,9 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
 
               {/* Social Login for Step 1 */}
               {step === 1 && !isOAuthUser && (
-                <div className="mb-4 sm:mb-6">
+                <div className="mb-3 sm:mb-6">
                   <SocialLogin />
-                  <div className="relative my-4 sm:my-6">
+                  <div className="relative my-3 sm:my-6">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-white/20"></div>
                     </div>
@@ -144,7 +144,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
         </div>
 
         {/* Progress Summary */}
-        <div className="mt-4 sm:mt-6 text-center text-sm text-white/60">
+        <div className="mt-2 sm:mt-6 text-center text-sm text-white/60 px-2">
           <p>
             Complete all required information to create your perfect profile. 
             Your data is secure and only visible to potential matches.
