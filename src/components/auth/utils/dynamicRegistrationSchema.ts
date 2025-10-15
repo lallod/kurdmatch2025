@@ -16,6 +16,9 @@ export const createDynamicRegistrationSchema = (questions: QuestionItem[]) => {
   // Add dynamic fields based on questions with enhanced validation
   questions.forEach(question => {
     if (!question.enabled) return;
+    
+    // Skip bio field - it's auto-generated and not filled by users
+    if (question.profileField === 'bio' || question.id === 'bio') return;
 
     const { id, fieldType, required, profileField, text } = question;
 
@@ -154,6 +157,9 @@ export const createStepValidationSchema = (questions: QuestionItem[], step: numb
   
   stepQuestions.forEach(question => {
     if (!question.enabled) return;
+    
+    // Skip bio field - it's auto-generated and not filled by users
+    if (question.profileField === 'bio' || question.id === 'bio') return;
 
     const { id, fieldType, required, profileField, text } = question;
     let fieldSchema: z.ZodTypeAny;

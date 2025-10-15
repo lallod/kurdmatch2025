@@ -170,8 +170,12 @@ export const isStepComplete = (
   stepQuestions: QuestionItem[], 
   formValues: Record<string, any>
 ): boolean => {
-  // Filter out only required questions for validation
-  const requiredQuestions = stepQuestions.filter(q => q.required);
+  // Filter out only required questions for validation, excluding bio (auto-generated)
+  const requiredQuestions = stepQuestions.filter(q => 
+    q.required && 
+    q.profileField !== 'bio' && 
+    q.id !== 'bio'
+  );
   
   return requiredQuestions.every(question => {
     const value = formValues[question.id];

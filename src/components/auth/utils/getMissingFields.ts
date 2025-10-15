@@ -18,8 +18,8 @@ export const getMissingFields = (
     const { id, fieldType, required } = question;
     const value = formValues[id];
 
-    // Skip zodiac_sign as it's auto-calculated
-    if (id === 'zodiac_sign') return;
+    // Skip zodiac_sign as it's auto-calculated and bio as it's auto-generated
+    if (id === 'zodiac_sign' || id === 'bio' || question.profileField === 'bio') return;
 
     // Check if field is incomplete
     let isIncomplete = false;
