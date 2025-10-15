@@ -53,31 +53,22 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log('🔍 Submit button clicked, checking form validity...');
+    console.log('🔍 Submit button clicked, triggering form submission...');
     
-    // Check ALL steps before allowing submission
-    const allStepsComplete = categories.every((cat, index) => {
-      const stepNum = index + 1;
-      return completionStatus[stepNum] === true;
-    });
+    // Get current form values
+    const currentValues = form.getValues();
+    console.log('📝 Current form values:', Object.keys(currentValues));
     
-    if (!allStepsComplete) {
-      // Find first incomplete step
-      const firstIncompleteStep = categories.findIndex((cat, index) => {
-        const stepNum = index + 1;
-        return completionStatus[stepNum] !== true;
-      });
-      
-      console.error('❌ Cannot submit: Not all steps are complete. First incomplete step:', firstIncompleteStep + 1);
-      return;
-    }
-    
-    console.log('✅ All steps complete, triggering form submission...');
-    
-    // Trigger form validation and submission
-    await form.handleSubmit(onSubmit, (errors) => {
-      console.error('❌ Form validation errors:', errors);
-    })();
+    // Trigger form validation and submission directly
+    await form.handleSubmit(
+      (data) => {
+        console.log('✅ Form validation passed, submitting...');
+        onSubmit(data);
+      }, 
+      (errors) => {
+        console.error('❌ Form validation errors:', errors);
+      }
+    )();
   };
 
   if (loading) {
