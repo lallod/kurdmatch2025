@@ -56,7 +56,7 @@ const DateOfBirthSelector = ({ day, month, year, onDateChange }: DateOfBirthSele
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Calendar className="w-4 h-4 text-purple-400" />
+        <Calendar className="w-4 h-4 text-purple-400 flex-shrink-0" />
         <Label className="text-white">Date of Birth</Label>
       </div>
       <div className="grid grid-cols-3 gap-2">

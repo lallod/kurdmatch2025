@@ -50,11 +50,11 @@ const LanguageCategorySelector = ({ value = [], onChange, minSelections = 1 }: L
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Languages className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Languages You Speak</Label>
+      <div className="flex items-center gap-2 flex-wrap">
+        <Languages className="w-4 h-4 text-purple-400 flex-shrink-0" />
+        <Label className="text-white text-balance">Languages You Speak</Label>
         {minSelections > 0 && (
-          <span className="text-sm text-purple-300">
+          <span className="text-sm text-purple-300 whitespace-nowrap">
             (Select at least {minSelections})
           </span>
         )}

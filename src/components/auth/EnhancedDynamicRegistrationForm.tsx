@@ -78,7 +78,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-4 sm:py-8 px-3 sm:px-4">
       <div className="max-w-2xl mx-auto">
         {/* Enhanced Step Indicator */}
         <EnhancedStepIndicator
@@ -88,7 +88,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
         />
 
         {/* Main Form */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl">
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-4 sm:p-8 border border-white/20 shadow-2xl">
           <Form {...form}>
             <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
               {/* OAuth Welcome Message */}

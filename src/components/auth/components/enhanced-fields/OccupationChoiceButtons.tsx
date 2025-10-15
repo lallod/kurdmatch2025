@@ -44,12 +44,12 @@ const OccupationChoiceButtons: React.FC<OccupationChoiceButtonsProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500">
+      <div className="flex items-start gap-2 mb-3">
+        <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex-shrink-0">
           <Briefcase className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h3 className="text-white font-semibold">What do you do for work?</h3>
+          <h3 className="text-white font-semibold text-balance">What do you do for work?</h3>
           <p className="text-purple-200 text-sm">Select up to {maxSelections} options</p>
         </div>
       </div>

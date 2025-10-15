@@ -12,8 +12,8 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Users className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Ethnicity</Label>
+        <Users className="w-4 h-4 text-purple-400 flex-shrink-0" />
+        <Label className="text-white text-balance">Ethnicity</Label>
       </div>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">

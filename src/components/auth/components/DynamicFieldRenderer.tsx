@@ -81,13 +81,15 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
 
   // Render field label with completion indicator
   const renderLabel = () => (
-    <FormLabel className="text-white flex items-center justify-between">
-      <span className="flex items-center gap-2">
+    <FormLabel className="text-white flex items-start sm:items-center justify-between gap-2 flex-wrap">
+      <span className="flex items-center gap-2 text-balance">
         {text}
-        {isComplete && <CheckCircle size={16} className="text-green-400" />}
-        {required && !isComplete && <AlertCircle size={16} className="text-yellow-400" />}
+        {isComplete && <CheckCircle size={16} className="text-green-400 flex-shrink-0" />}
+        {required && !isComplete && <AlertCircle size={16} className="text-yellow-400 flex-shrink-0" />}
       </span>
-      {renderBadges()}
+      <div className="flex-shrink-0">
+        {renderBadges()}
+      </div>
     </FormLabel>
   );
 

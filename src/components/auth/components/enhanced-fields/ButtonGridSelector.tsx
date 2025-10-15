@@ -96,7 +96,7 @@ const ButtonGridSelector = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <div className={cn(
             "p-2 rounded-lg backdrop-blur-sm",
@@ -104,12 +104,12 @@ const ButtonGridSelector = ({
             "border",
             categoryStyle.border
           )}>
-            <CategoryIcon className="w-4 h-4" />
+            <CategoryIcon className="w-4 h-4 flex-shrink-0" />
           </div>
-          <Label className="text-white font-semibold">{label}</Label>
+          <Label className="text-white font-semibold text-balance">{label}</Label>
         </div>
         <div className={cn(
-          "px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm",
+          "px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm flex-shrink-0",
           isValid 
             ? "bg-green-500/20 text-green-400 border border-green-400/30" 
             : "bg-yellow-500/20 text-yellow-400 border border-yellow-400/30"

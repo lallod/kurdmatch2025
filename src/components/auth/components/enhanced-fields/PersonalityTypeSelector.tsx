@@ -32,9 +32,9 @@ const personalityTypes = [
 const PersonalityTypeSelector = ({ value, onChange }: PersonalityTypeSelectorProps) => {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
-          <Brain className="w-4 h-4 text-purple-400" />
+          <Brain className="w-4 h-4 text-purple-400 flex-shrink-0" />
           <Label className="text-white">Personality Type</Label>
         </div>
         <PersonalityTypeInfoDialog />

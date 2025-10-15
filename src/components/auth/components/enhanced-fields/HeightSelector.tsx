@@ -19,7 +19,7 @@ const HeightSelector = ({ value, onChange }: HeightSelectorProps) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Ruler className="w-4 h-4 text-purple-400" />
+        <Ruler className="w-4 h-4 text-purple-400 flex-shrink-0" />
         <Label className="text-white">Height</Label>
       </div>
       <Select value={value} onValueChange={onChange}>

@@ -31,22 +31,22 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
 
   // Render step header with completion status
   const renderStepHeader = () => (
-    <div className="text-center mb-6">
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <h2 className="text-2xl font-bold text-white">{title}</h2>
+    <div className="text-center mb-4 sm:mb-6">
+      <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">{title}</h2>
         {isStepComplete ? (
-          <Badge variant="outline" className="bg-green-900/30 text-green-300 border-green-500/30">
+          <Badge variant="outline" className="bg-green-900/30 text-green-300 border-green-500/30 flex-shrink-0">
             <CheckCircle size={12} className="mr-1" />
             Complete
           </Badge>
         ) : (
-          <Badge variant="outline" className="bg-yellow-900/30 text-yellow-300 border-yellow-500/30">
+          <Badge variant="outline" className="bg-yellow-900/30 text-yellow-300 border-yellow-500/30 flex-shrink-0">
             <AlertCircle size={12} className="mr-1" />
             Incomplete
           </Badge>
         )}
       </div>
-      <p className="text-purple-200 mt-1">{description}</p>
+      <p className="text-purple-200 mt-1 text-sm sm:text-base px-2">{description}</p>
     </div>
   );
 
