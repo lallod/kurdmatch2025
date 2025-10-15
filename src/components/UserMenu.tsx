@@ -100,10 +100,6 @@ const UserMenu = () => {
             <UserIcon className="mr-2 h-4 w-4" />
             <span>My Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate('/settings')}>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleReport}>
             <Flag className="mr-2 h-4 w-4" />
             <span>Report an Issue</span>

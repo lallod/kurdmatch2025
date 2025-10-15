@@ -463,7 +463,7 @@ const MyProfile = () => {
                       <Button 
                         variant="outline" 
                         className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 md:h-auto px-6 md:px-4"
-                        onClick={() => navigate('/settings')}
+                        onClick={() => navigate('/my-profile')}
                       >
                         <Pencil className="h-4 w-4 mr-2" />
                         Edit Profile

@@ -17,7 +17,7 @@ export const PostContent = ({ content }: PostContentProps) => {
     return (
       <>
         {parts.map((part, index) => (
-          <React.Fragment key={index}>
+          <span key={index}>
             {part}
             {hashtags[index] && (
               <button
@@ -30,7 +30,7 @@ export const PostContent = ({ content }: PostContentProps) => {
                 {hashtags[index]}
               </button>
             )}
-          </React.Fragment>
+          </span>
         ))}
       </>
     );
