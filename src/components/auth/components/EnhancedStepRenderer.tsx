@@ -31,7 +31,7 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
 
   // Render step header with completion status
   const renderStepHeader = () => (
-    <div className="text-center mb-2 sm:mb-6">
+    <div className="text-center mb-3 sm:mb-6">
       <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
         <h2 className="text-xl sm:text-2xl font-bold text-white">{title}</h2>
         {isStepComplete ? (
@@ -86,7 +86,7 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
         ))}
       
       {/* Step completion summary */}
-      <div className="mt-3 sm:mt-6 p-2 sm:p-4 bg-white/5 rounded-lg border border-white/10">
+      <div className="mt-2 sm:mt-6 p-2 sm:p-4 bg-white/5 rounded-lg border border-white/10">
           <div className="flex items-center gap-2 text-sm">
             {isStepComplete ? (
               <>
@@ -164,7 +164,7 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
       ))}
       
       {/* Step completion summary */}
-      <div className="mt-3 sm:mt-6 p-2 sm:p-4 bg-white/5 rounded-lg border border-white/10">
+      <div className="mt-2 sm:mt-6 p-2 sm:p-4 bg-white/5 rounded-lg border border-white/10">
         <div className="flex items-center gap-2 text-sm">
           {isStepComplete ? (
             <>
