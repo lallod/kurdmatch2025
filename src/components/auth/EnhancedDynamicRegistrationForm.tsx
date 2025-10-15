@@ -46,6 +46,37 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
   // Get current category and check if current step is complete
   const currentCategory = categories.find(cat => cat.step === step);
   const isCurrentStepComplete = completionStatus[step] || false;
+  
+  // Debug: Log form values when they change
+  React.useEffect(() => {
+    console.log('📝 Form values changed:', {
+      step,
+      values: formValues,
+      fields: Object.keys(formValues),
+      categories: categories.map(c => ({
+        step: c.step,
+        name: c.name,
+        questions: c.questions.map(q => q.id)
+      }))
+    });
+  }, [formValues, step, categories]);
+  
+  // Debug: Log completion status
+  React.useEffect(() => {
+    console.log('✅ Step completion status:', {
+      step,
+      isComplete: completionStatus[step],
+      allStatus: completionStatus,
+      currentCategory: currentCategory?.name,
+      requiredQuestions: currentCategory?.questions.filter(q => q.required).map(q => ({
+        id: q.id,
+        text: q.text,
+        value: formValues[q.id],
+        hasValue: !!formValues[q.id],
+        valueType: typeof formValues[q.id]
+      }))
+    });
+  }, [completionStatus, step, currentCategory, formValues]);
 
   // Enhanced navigation handlers with validation
   const handleNext = () => {
