@@ -143,7 +143,7 @@ const RegistrationForm = () => {
     return (
       <div className="flex justify-between items-center mb-6">
         {steps.map((s, idx) => (
-          <React.Fragment key={idx}>
+          <div key={idx} className="contents">
             <div 
               className={`flex flex-col items-center cursor-pointer`} 
               onClick={() => completedSteps.includes(idx + 1) && setStep(idx + 1)}
@@ -153,7 +153,7 @@ const RegistrationForm = () => {
                 ${step === idx + 1 ? 'bg-primary text-primary-foreground' : 
                   completedSteps.includes(idx + 1) ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}
               `}>
-                {completedSteps.includes(idx + 1) ? <CheckCircle size={16} /> : idx + 1}
+                {idx + 1}
               </div>
               <span className={`text-xs mt-1 ${step === idx + 1 ? 'font-medium' : 'text-muted-foreground'}`}>
                 {s.title}
@@ -162,7 +162,7 @@ const RegistrationForm = () => {
             {idx < steps.length - 1 && (
               <div className={`w-full h-1 max-w-16 ${completedSteps.includes(idx + 2) ? 'bg-primary/60' : 'bg-muted'}`} />
             )}
-          </React.Fragment>
+          </div>
         ))}
       </div>
     );

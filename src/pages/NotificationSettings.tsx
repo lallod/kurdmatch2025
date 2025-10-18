@@ -178,7 +178,7 @@ const NotificationSettings = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {notificationTypes.map((type, index) => (
-              <React.Fragment key={type.key}>
+              <div key={type.key} className="contents">
                 <div className="flex items-center justify-between">
                   <div className="flex items-start gap-3 flex-1">
                     <type.icon className="w-5 h-5 text-purple-300 mt-0.5" />
@@ -200,7 +200,7 @@ const NotificationSettings = () => {
                 {index < notificationTypes.length - 1 && (
                   <Separator className="bg-white/10" />
                 )}
-              </React.Fragment>
+              </div>
             ))}
           </CardContent>
         </Card>

@@ -21,7 +21,7 @@ const StepIndicator = ({ currentStep, completedSteps, steps }: StepIndicatorProp
       {steps.map((s, idx) => {
         const StepIcon = s.icon;
         return (
-          <React.Fragment key={idx}>
+          <div key={idx} className="contents">
             <div className="flex flex-col items-center">
               <div className={`
                 w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-300
@@ -30,7 +30,7 @@ const StepIndicator = ({ currentStep, completedSteps, steps }: StepIndicatorProp
               `}>
                 {completedSteps.includes(idx + 1) ? <CheckCircle size={20} /> : <StepIcon size={20} />}
               </div>
-              <span className={`text-xs text-center max-w-20 transition-colors ${currentStep === idx + 1 ? 'font-medium text-white' : 'text-gray-300'}`}>
+              <span className={`text-xs font-medium transition-colors ${currentStep === idx + 1 ? 'text-white' : completedSteps.includes(idx + 1) ? 'text-green-400' : 'text-gray-400'}`}>
                 {s.title}
               </span>
             </div>
@@ -40,7 +40,7 @@ const StepIndicator = ({ currentStep, completedSteps, steps }: StepIndicatorProp
                 currentStep > idx + 1 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-white/20'
               }`} />
             )}
-          </React.Fragment>
+          </div>
         );
       })}
     </div>

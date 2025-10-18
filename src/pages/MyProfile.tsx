@@ -463,7 +463,10 @@ const MyProfile = () => {
                       <Button 
                         variant="outline" 
                         className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 md:h-auto px-6 md:px-4"
-                        onClick={() => navigate('/my-profile')}
+                        onClick={() => {
+                          const sectionsElement = document.getElementById('profile-sections');
+                          sectionsElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }}
                       >
                         <Pencil className="h-4 w-4 mr-2" />
                         Edit Profile
@@ -523,12 +526,14 @@ const MyProfile = () => {
                 />
 
                 {/* Comprehensive Profile Editor */}
-                <ComprehensiveProfileEditor
-                  profileData={profileData}
-                  categoryProgress={categoryProgress}
-                  fieldSources={fieldSources}
-                  onUpdateProfile={handleProfileUpdate}
-                />
+                <div id="profile-sections">
+                  <ComprehensiveProfileEditor
+                    profileData={profileData}
+                    categoryProgress={categoryProgress}
+                    fieldSources={fieldSources}
+                    onUpdateProfile={handleProfileUpdate}
+                  />
+                </div>
               </TabsContent>
               
               <TabsContent value="photos" className="space-y-6">
