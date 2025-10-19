@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search as SearchIcon, Sparkles } from 'lucide-react';
+import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search as SearchIcon } from 'lucide-react';
 import SearchBar from '@/components/discovery/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,9 @@ import StoryBubbles from '@/components/discovery/StoryBubbles';
 import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
+import { useDiscoveryProfiles, DiscoveryProfile } from '@/hooks/useDiscoveryProfiles';
+import { CompactGroups } from '@/components/discovery/CompactGroups';
+import { CompactTrendingHashtags } from '@/components/discovery/CompactTrendingHashtags';
 import { 
   Select, 
   SelectContent, 
@@ -38,7 +41,6 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Switch } from "@/components/ui/switch";
-import { KurdistanRegion } from '@/types/profile';
 import { Input } from '@/components/ui/input';
 import BottomNavigation from '@/components/BottomNavigation';
 import SwipeActions from '@/components/swipe/SwipeActions';
@@ -91,25 +93,6 @@ const languageOptions = [
   { value: "german", name: "German" }
 ];
 
-interface Profile {
-  id: number;
-  name: string;
-  age: number;
-  location: string;
-  avatar: string;
-  distance: number;
-  compatibilityScore: number;
-  kurdistanRegion?: KurdistanRegion;
-  area: string;
-  interests?: string[];
-  occupation?: string;
-  religion?: string;
-  bodyType?: string;
-  languages?: string[];
-  dietaryPreferences?: string;
-  height?: string;
-}
-
 interface FilterFormValues {
   area: string;
   ageRange: [number, number];
@@ -130,26 +113,12 @@ const Discovery = () => {
   const [selectedArea, setSelectedArea] = useState("all");
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [activeFilters, setActiveFilters] = useState(0);
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<DiscoveryProfile | null>(null);
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadStories = async () => {
-      const storiesData = await getStories();
-      setStories(storiesData);
-    };
-    loadStories();
-
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || null);
-    };
-    fetchUser();
-  }, []);
-  
   const form = useForm<FilterFormValues>({
     defaultValues: {
       area: "all",
@@ -166,154 +135,36 @@ const Discovery = () => {
       dietaryPreference: ""
     }
   });
-  
-  const allProfiles: Profile[] = [
-    {
-      id: 1,
-      name: "Noah Williams",
-      age: 29,
-      location: "Seattle, WA",
-      avatar: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=150&q=80",
-      distance: 5,
-      compatibilityScore: 92,
-      area: "us",
-      interests: ["Photography", "Hiking", "Coding"],
-      occupation: "Software Engineer",
-      religion: "agnostic",
-      bodyType: "athletic",
-      languages: ["english", "spanish"],
-      height: "185",
-      dietaryPreferences: "Vegetarian"
-    },
-    {
-      id: 2,
-      name: "Mia Garcia",
-      age: 27,
-      location: "Erbil, Kurdistan",
-      avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=150&q=80",
-      distance: 12,
-      compatibilityScore: 88,
-      kurdistanRegion: "South-Kurdistan",
-      area: "South-Kurdistan",
-      interests: ["Cooking", "Reading", "Travel"],
-      occupation: "Teacher",
-      religion: "muslim",
-      bodyType: "average",
-      languages: ["kurdish", "english", "arabic"],
-      height: "165",
-      dietaryPreferences: "No restrictions"
-    },
-    {
-      id: 3,
-      name: "Liam Wilson",
-      age: 32,
-      location: "Qamishli, Kurdistan",
-      avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=150&q=80",
-      distance: 8,
-      compatibilityScore: 76,
-      kurdistanRegion: "West-Kurdistan",
-      area: "West-Kurdistan",
-      interests: ["Music", "Politics", "History"],
-      occupation: "Journalist",
-      religion: "christian",
-      bodyType: "slim",
-      languages: ["kurdish", "english", "arabic", "turkish"],
-      height: "178",
-      dietaryPreferences: "No restrictions"
-    },
-    {
-      id: 4,
-      name: "Sophia Brown",
-      age: 25,
-      location: "New York, NY",
-      avatar: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=150&q=80",
-      distance: 3,
-      compatibilityScore: 85,
-      area: "us",
-      interests: ["Fashion", "Art", "Film"],
-      occupation: "Designer",
-      religion: "spiritual",
-      bodyType: "slim",
-      languages: ["english", "french"],
-      height: "170",
-      dietaryPreferences: "Pescatarian"
-    },
-    {
-      id: 5,
-      name: "Lucas Davis",
-      age: 30,
-      location: "Mahabad, Kurdistan",
-      avatar: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=150&q=80",
-      distance: 15,
-      compatibilityScore: 91,
-      kurdistanRegion: "East-Kurdistan",
-      area: "East-Kurdistan",
-      interests: ["Technology", "Sports", "Reading"],
-      occupation: "IT Consultant",
-      religion: "muslim",
-      bodyType: "muscular",
-      languages: ["kurdish", "persian", "english"],
-      height: "182",
-      dietaryPreferences: "No restrictions"
-    },
-    {
-      id: 6,
-      name: "Emma Johnson",
-      age: 26,
-      location: "Diyarbakır, Kurdistan",
-      avatar: "https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?auto=format&fit=crop&w=150&q=80",
-      distance: 7,
-      compatibilityScore: 95,
-      kurdistanRegion: "North-Kurdistan",
-      area: "North-Kurdistan",
-      interests: ["Language", "Culture", "Education"],
-      occupation: "Linguist",
-      religion: "muslim",
-      bodyType: "average",
-      languages: ["kurdish", "turkish", "english"],
-      height: "163",
-      dietaryPreferences: "No restrictions"
-    },
-    {
-      id: 7,
-      name: "Oliver Smith",
-      age: 31,
-      location: "Berlin, Germany",
-      avatar: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=150&q=80",
-      distance: 20,
-      compatibilityScore: 87,
-      area: "eu",
-      interests: ["Travel", "Music", "Food"],
-      occupation: "Chef",
-      religion: "atheist",
-      bodyType: "average",
-      languages: ["english", "german"],
-      height: "180",
-      dietaryPreferences: "No restrictions"
-    },
-    {
-      id: 8,
-      name: "Ava Martin",
-      age: 24,
-      location: "Paris, France",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
-      distance: 25,
-      compatibilityScore: 90,
-      area: "eu",
-      interests: ["Fashion", "Art", "Photography"],
-      occupation: "Photographer",
-      religion: "catholic",
-      bodyType: "slim",
-      languages: ["english", "french"],
-      height: "168",
-      dietaryPreferences: "Vegan"
-    }
-  ];
 
+  // Fetch real profiles from database
+  const { profiles: dbProfiles, loading: profilesLoading } = useDiscoveryProfiles({
+    limit: 50,
+    filters: {
+      area: selectedArea !== 'all' ? selectedArea : undefined,
+      ageRange: form.watch('ageRange'),
+      religion: form.watch('religion'),
+      bodyType: form.watch('bodyType'),
+      language: form.watch('language')
+    }
+  });
+
+  useEffect(() => {
+    const loadStories = async () => {
+      const storiesData = await getStories();
+      setStories(storiesData);
+    };
+    loadStories();
+
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    fetchUser();
+  }, []);
+  
   const applyFilters = (formValues: FilterFormValues) => {
     const { 
       area, 
-      ageRange, 
       distance, 
       minCompatibility, 
       hasInterests, 
@@ -323,7 +174,8 @@ const Discovery = () => {
       bodyType,
       language,
       heightRange,
-      dietaryPreference
+      dietaryPreference,
+      ageRange
     } = formValues;
     
     let count = 0;
@@ -346,43 +198,27 @@ const Discovery = () => {
     setIsFilterExpanded(false);
   };
 
-  const filteredProfiles = allProfiles.filter(profile => {
+  // Apply additional client-side filters
+  const filteredProfiles = dbProfiles.filter(profile => {
     const values = form.getValues();
-    
-    const matchesArea = selectedArea === "all" || profile.area === selectedArea;
-    
-    const matchesAge = profile.age >= values.ageRange[0] && profile.age <= values.ageRange[1];
-    
-    const matchesDistance = profile.distance <= values.distance;
-    
-    const matchesCompatibility = profile.compatibilityScore >= values.minCompatibility;
     
     const matchesOccupation = !values.occupationFilter || 
       (profile.occupation && profile.occupation.toLowerCase().includes(values.occupationFilter.toLowerCase()));
     
     const matchesInterests = !values.hasInterests || (profile.interests && profile.interests.length > 0);
     
-    const matchesReligion = values.religion === "all" || 
-      (profile.religion && profile.religion === values.religion);
-    
-    const matchesBodyType = values.bodyType === "all" || 
-      (profile.bodyType && profile.bodyType === values.bodyType);
-    
-    const matchesLanguage = values.language === "all" || 
-      (profile.languages && profile.languages.includes(values.language));
+    const matchesVerified = !values.showVerifiedOnly || profile.verified;
     
     const height = profile.height ? parseInt(profile.height) : 0;
-    const matchesHeight = height >= values.heightRange[0] && height <= values.heightRange[1];
+    const matchesHeight = !height || (height >= values.heightRange[0] && height <= values.heightRange[1]);
     
     const matchesDietary = !values.dietaryPreference || 
-      (profile.dietaryPreferences && profile.dietaryPreferences.toLowerCase().includes(values.dietaryPreference.toLowerCase()));
+      (profile.dietary_preferences && profile.dietary_preferences.toLowerCase().includes(values.dietaryPreference.toLowerCase()));
     
-    return matchesArea && matchesAge && matchesDistance && matchesCompatibility && 
-           matchesOccupation && matchesInterests && matchesReligion && 
-           matchesBodyType && matchesLanguage && matchesHeight && matchesDietary;
+    return matchesOccupation && matchesInterests && matchesVerified && matchesHeight && matchesDietary;
   });
 
-  const handleProfileClick = (profile: Profile) => {
+  const handleProfileClick = (profile: DiscoveryProfile) => {
     setSelectedProfile(profile);
   };
 
@@ -487,6 +323,12 @@ const Discovery = () => {
             />
           </div>
         )}
+
+        {/* Groups and Hashtags Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <CompactGroups />
+          <CompactTrendingHashtags />
+        </div>
 
         <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
           {/* Animated background gradient */}
@@ -700,93 +542,105 @@ const Discovery = () => {
 
             {/* Profile Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProfiles.map((profile) => (
-                <Card 
-                  key={profile.id} 
-                  className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
-                  onClick={() => handleProfileClick(profile)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Avatar className="h-16 w-16 ring-2 ring-purple-400/30">
-                        <AvatarImage src={profile.avatar} alt={profile.name} />
-                        <AvatarFallback className="bg-purple-500 text-white">{profile.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium text-white">{profile.name}</span>
-                          <span className="text-purple-200">{profile.age}</span>
+              {profilesLoading ? (
+                <>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Card key={i} className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 animate-pulse">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="h-16 w-16 rounded-full bg-white/20"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-5 bg-white/20 rounded w-3/4"></div>
+                            <div className="h-4 bg-white/20 rounded w-1/2"></div>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-purple-300 mt-1">
-                          <MapPin className="h-3.5 w-3.5" />
-                          <span>{profile.location}</span>
+                        <div className="h-6 bg-white/20 rounded mb-2"></div>
+                        <div className="h-16 bg-white/20 rounded"></div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {filteredProfiles.map((profile) => (
+                    <Card 
+                      key={profile.id} 
+                      className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-1"
+                      onClick={() => handleProfileClick(profile)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-3 mb-3">
+                          <Avatar className="h-16 w-16 ring-2 ring-purple-400/30">
+                            <AvatarImage src={profile.profile_image} alt={profile.name} />
+                            <AvatarFallback className="bg-purple-500 text-white">{profile.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="flex items-center gap-1">
+                              <span className="font-medium text-white">{profile.name}</span>
+                              <span className="text-purple-200">{profile.age}</span>
+                              {profile.verified && (
+                                <span className="text-blue-400">✓</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1 text-sm text-purple-300 mt-1">
+                              <MapPin className="h-3.5 w-3.5" />
+                              <span className="truncate">{profile.location}</span>
+                            </div>
+                            {profile.occupation && profile.occupation !== 'Not specified' && (
+                              <div className="text-sm text-purple-300 flex items-center gap-1 truncate">
+                                <Briefcase className="h-3.5 w-3.5" />
+                                {profile.occupation}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        {profile.occupation && (
-                          <div className="text-sm text-purple-300 flex items-center gap-1">
-                            <Briefcase className="h-3.5 w-3.5" />
-                            {profile.occupation}
+                        
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {profile.kurdistan_region && (
+                            <Badge variant="outline" className="px-2 py-1 text-xs bg-purple-500/20 text-purple-200 border-purple-400/30">
+                              {profile.kurdistan_region}
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-1 mt-3">
+                          {profile.religion && (
+                            <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-white/10 text-purple-200">
+                              <Book className="h-3 w-3" />
+                              {profile.religion}
+                            </Badge>
+                          )}
+                          
+                          {profile.languages && profile.languages.length > 0 && (
+                            <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-white/10 text-purple-200">
+                              <Languages className="h-3 w-3" />
+                              {profile.languages[0]}{profile.languages.length > 1 ? ` +${profile.languages.length - 1}` : ''}
+                            </Badge>
+                          )}
+                          
+                          {profile.dietary_preferences && (
+                            <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-white/10 text-purple-200">
+                              <UtensilsCrossed className="h-3 w-3" />
+                              {profile.dietary_preferences}
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        {profile.interests && profile.interests.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {profile.interests.slice(0, 3).map((interest, index) => (
+                              <Badge key={index} variant="outline" className="text-xs flex items-center gap-1 border-pink-400/30 text-pink-300">
+                                <Heart className="h-3 w-3" />
+                                {interest}
+                              </Badge>
+                            ))}
                           </div>
                         )}
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge className={`${
-                        profile.compatibilityScore > 90 
-                          ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
-                          : profile.compatibilityScore > 80 
-                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                            : 'bg-gradient-to-r from-orange-500 to-amber-500 text-white'
-                      }`}>
-                        <Sparkles className="h-3 w-3 mr-1" />
-                        {profile.compatibilityScore}% match
-                      </Badge>
-                      <Badge variant="outline" className="px-2 py-1 text-xs border-purple-300/30 text-purple-200">
-                        {profile.distance} miles away
-                      </Badge>
-                      {profile.kurdistanRegion && (
-                        <Badge variant="outline" className="px-2 py-1 text-xs bg-purple-500/20 text-purple-200 border-purple-400/30">
-                          {profile.kurdistanRegion}
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-1 mt-3">
-                      {profile.religion && (
-                        <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-white/10 text-purple-200">
-                          <Book className="h-3 w-3" />
-                          {profile.religion}
-                        </Badge>
-                      )}
-                      
-                      {profile.languages && profile.languages.length > 0 && (
-                        <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-white/10 text-purple-200">
-                          <Languages className="h-3 w-3" />
-                          {profile.languages[0]}{profile.languages.length > 1 ? ` +${profile.languages.length - 1}` : ''}
-                        </Badge>
-                      )}
-                      
-                      {profile.dietaryPreferences && (
-                        <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-white/10 text-purple-200">
-                          <UtensilsCrossed className="h-3 w-3" />
-                          {profile.dietaryPreferences}
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    {profile.interests && profile.interests.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {profile.interests.slice(0, 3).map((interest, index) => (
-                          <Badge key={index} variant="outline" className="text-xs flex items-center gap-1 border-pink-400/30 text-pink-300">
-                            <Heart className="h-3 w-3" />
-                            {interest}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </>
+              )}
             </div>
 
             {/* Empty State */}
@@ -815,7 +669,7 @@ const Discovery = () => {
             {/* Profile Info */}
             <div className="aspect-[3/4] relative overflow-hidden">
               <img
-                src={selectedProfile.avatar}
+                src={selectedProfile.profile_image}
                 alt={selectedProfile.name}
                 className="w-full h-full object-cover"
               />
@@ -824,18 +678,16 @@ const Discovery = () => {
                   <div className="flex items-center gap-3">
                     <h1 className="text-2xl font-bold text-white">{selectedProfile.name}</h1>
                     <span className="text-xl text-white/90">{selectedProfile.age}</span>
+                    {selectedProfile.verified && (
+                      <span className="text-blue-400 text-xl">✓</span>
+                    )}
                   </div>
-                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-3 py-1">
-                    ⚡ {selectedProfile.compatibilityScore}%
-                  </Badge>
                 </div>
                 <div className="flex items-center gap-2 text-white/90 mb-3">
                   <MapPin className="w-4 h-4" />
                   <span>{selectedProfile.location}</span>
-                  <span className="text-white/70">•</span>
-                  <span>{selectedProfile.distance}km away</span>
                 </div>
-                {selectedProfile.occupation && (
+                {selectedProfile.occupation && selectedProfile.occupation !== 'Not specified' && (
                   <Badge className="bg-pink-500/80 text-white text-sm">
                     {selectedProfile.occupation}
                   </Badge>
