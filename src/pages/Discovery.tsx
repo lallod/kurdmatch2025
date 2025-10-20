@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useDiscoveryProfiles, DiscoveryProfile } from '@/hooks/useDiscoveryProfiles';
 import { CompactGroups } from '@/components/discovery/CompactGroups';
 import { CompactTrendingHashtags } from '@/components/discovery/CompactTrendingHashtags';
+import { CompactExploreHashtags } from '@/components/discovery/CompactExploreHashtags';
 import { 
   Select, 
   SelectContent, 
@@ -325,9 +326,10 @@ const Discovery = () => {
         )}
 
         {/* Groups and Hashtags Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <CompactGroups />
           <CompactTrendingHashtags />
+          <CompactExploreHashtags />
         </div>
 
         <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
