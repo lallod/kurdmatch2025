@@ -14,10 +14,11 @@ import BottomNavigation from '@/components/BottomNavigation';
 import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
-import { HashtagSearch } from '@/components/discovery/HashtagSearch';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
-import { TrendingHashtags } from '@/components/discovery/TrendingHashtags';
+import { CompactTrendingHashtags } from '@/components/discovery/CompactTrendingHashtags';
+import { CompactExploreHashtags } from '@/components/discovery/CompactExploreHashtags';
+import { CompactGroups } from '@/components/discovery/CompactGroups';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
@@ -310,37 +311,11 @@ const DiscoveryFeed = () => {
               </div>
             )}
 
-            {/* Hashtag Search */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Hash className="w-5 h-5 text-purple-300" />
-                <h2 className="text-lg font-semibold text-white">Explore Hashtags</h2>
-              </div>
-              <HashtagSearch />
-            </div>
-
-            {/* Trending Hashtags */}
-            <TrendingHashtags />
-
-            {/* Groups Quick Access */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <UsersIcon className="w-5 h-5 text-purple-300" />
-                  <h2 className="text-lg font-semibold text-white">Groups</h2>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/groups')}
-                  className="text-purple-300 hover:text-purple-200"
-                >
-                  View All
-                </Button>
-              </div>
-              <p className="text-sm text-white/70">
-                Join communities and connect with people who share your interests
-              </p>
+            {/* Compact Sections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <CompactExploreHashtags />
+              <CompactTrendingHashtags />
+              <CompactGroups />
             </div>
 
             {/* Posts Feed */}
