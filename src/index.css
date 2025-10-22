@@ -60,6 +60,8 @@
 
     --primary: 346 82% 66%;
     --primary-foreground: 0 0% 98%;
+    --primary-dark: 280 60% 40%;
+    --primary-light: 280 60% 60%;
 
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -73,15 +75,68 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 98%;
+
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 346 82% 66%;
 
     --radius: 1rem;
+
+    /* Gradient backgrounds */
+    --gradient-primary: linear-gradient(135deg, hsl(280 60% 60%), hsl(350 82% 66%));
+    --gradient-bg: linear-gradient(135deg, hsl(280 60% 25%), hsl(280 60% 20%) 50%, hsl(350 82% 30%));
   }
 
   .dark {
-    /* ... keep existing code (dark mode variables) */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 346 82% 66%;
+    --primary-foreground: 0 0% 98%;
+    --primary-dark: 280 60% 30%;
+    --primary-light: 280 60% 50%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 350 82% 75%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 346 82% 66%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(280 60% 50%), hsl(350 82% 66%));
+    --gradient-bg: linear-gradient(135deg, hsl(280 60% 18%), hsl(280 60% 15%) 50%, hsl(350 82% 25%));
   }
 }
 

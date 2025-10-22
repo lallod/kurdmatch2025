@@ -26,10 +26,10 @@ const DateOfBirthField = ({ form }: DateOfBirthFieldProps) => {
           <FormLabel className="text-white">Birthday (Month / Day / Year)</FormLabel>
           <FormControl>
             <div className="relative">
-              <Calendar className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
+              <Calendar className="absolute left-3 top-3 h-4 w-4 text-primary" />
               <Input 
                 type="date" 
-                className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white focus:border-purple-500 focus:ring-purple-500/20" 
+                className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white focus:border-primary focus:ring-primary/20" 
                 autoComplete="bday"
                 {...field} 
               />

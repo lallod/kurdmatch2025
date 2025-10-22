@@ -18,14 +18,14 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       "flex flex-col items-center justify-center gap-4",
       className
     )}>
-      <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
-      <p className="text-sm text-purple-200">{message}</p>
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-dark via-primary-dark/80 to-primary">
         {content}
       </div>
     );

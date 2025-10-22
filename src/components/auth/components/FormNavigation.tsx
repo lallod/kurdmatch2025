@@ -32,7 +32,7 @@ const FormNavigation = ({ currentStep, totalSteps, onPrevStep, onNextStep, isSub
         <Button 
           type="button" 
           onClick={onNextStep}
-          className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
+          className="gap-2 bg-gradient-to-r from-primary-dark to-primary hover:from-primary-dark/80 hover:to-primary/80 text-primary-foreground shadow-lg"
         >
           Continue
           <ChevronRight size={16} />
@@ -41,7 +41,7 @@ const FormNavigation = ({ currentStep, totalSteps, onPrevStep, onNextStep, isSub
         <Button 
           type="submit" 
           disabled={isSubmitting}
-          className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
+          className="gap-2 bg-gradient-to-r from-primary-dark to-primary hover:from-primary-dark/80 hover:to-primary/80 text-primary-foreground shadow-lg"
         >
           {isSubmitting ? (
             <>

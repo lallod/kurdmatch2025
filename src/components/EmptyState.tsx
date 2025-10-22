@@ -26,15 +26,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       "flex flex-col items-center justify-center p-8 text-center",
       className
     )}>
-      <div className="mb-4 rounded-full bg-purple-500/20 p-6">
-        <Icon className="h-12 w-12 text-purple-300" />
+      <div className="mb-4 rounded-full bg-primary/20 p-6">
+        <Icon className="h-12 w-12 text-primary-light" />
       </div>
-      <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-      <p className="text-sm text-purple-200 mb-6 max-w-md">{description}</p>
+      <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground mb-6 max-w-md">{description}</p>
       {action && (
         <Button
           onClick={action.onClick}
-          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+          className="bg-gradient-to-r from-primary-dark to-primary hover:from-primary-dark/80 hover:to-primary/80"
         >
           {action.label}
         </Button>

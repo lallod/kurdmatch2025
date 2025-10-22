@@ -32,7 +32,7 @@ const GenderField = ({ form }: GenderFieldProps) => {
                 <RadioGroupItem 
                   value="Male" 
                   id="male" 
-                  className="border-white/20 text-purple-500"
+                  className="border-white/20 text-primary"
                 />
                 <label htmlFor="male" className="text-white cursor-pointer">Male</label>
               </div>
@@ -40,7 +40,7 @@ const GenderField = ({ form }: GenderFieldProps) => {
                 <RadioGroupItem 
                   value="Female" 
                   id="female" 
-                  className="border-white/20 text-purple-500"
+                  className="border-white/20 text-primary"
                 />
                 <label htmlFor="female" className="text-white cursor-pointer">Female</label>
               </div>

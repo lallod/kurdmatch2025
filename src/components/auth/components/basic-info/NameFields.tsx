@@ -26,10 +26,10 @@ const NameFields = ({ form }: NameFieldsProps) => {
             <FormLabel className="text-white">First Name</FormLabel>
             <FormControl>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
+                <User className="absolute left-3 top-3 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="John" 
-                  className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
+                  className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20" 
                   autoComplete="given-name"
                   {...field} 
                 />
@@ -49,7 +49,7 @@ const NameFields = ({ form }: NameFieldsProps) => {
             <FormControl>
               <Input 
                 placeholder="Doe" 
-                className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500/20" 
+                className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20" 
                 autoComplete="family-name"
                 {...field} 
               />
