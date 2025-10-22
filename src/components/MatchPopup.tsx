@@ -13,9 +13,10 @@ interface MatchPopupProps {
     name: string;
     profileImage: string;
   } | null;
+  currentUserImage?: string;
 }
 
-const MatchPopup = ({ isOpen, onClose, matchedProfile }: MatchPopupProps) => {
+const MatchPopup = ({ isOpen, onClose, matchedProfile, currentUserImage }: MatchPopupProps) => {
   const navigate = useNavigate();
 
   const handleStartChat = () => {
@@ -61,7 +62,7 @@ const MatchPopup = ({ isOpen, onClose, matchedProfile }: MatchPopupProps) => {
             <div className="relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 blur opacity-75 animate-pulse"></div>
               <img 
-                src="/placeholder.svg" // This would be your user's profile image in a real app
+                src={currentUserImage || '/placeholder.svg'}
                 alt="Your profile" 
                 className="h-24 w-24 rounded-full border-4 border-white object-cover relative z-10"
               />
