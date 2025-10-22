@@ -36,7 +36,15 @@ export const useNearbyUsers = (options: UseNearbyUsersOptions = {}) => {
 
       if (rpcError) throw rpcError;
 
-      setUsers(data || []);
+      // Filter out profiles with placeholder images
+      const filteredData = (data || []).filter((user: any) => 
+        user.profile_image && 
+        user.profile_image !== 'https://placehold.co/400' &&
+        user.profile_image !== '/placeholder.svg' &&
+        user.profile_image !== ''
+      );
+
+      setUsers(filteredData);
       setUserLocation(coords);
     } catch (err) {
       const error = err as Error;

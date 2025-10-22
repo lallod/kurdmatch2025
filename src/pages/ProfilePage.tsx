@@ -37,6 +37,9 @@ const ProfilePage = () => {
         .from('profiles')
         .select('*')
         .eq('id', userId)
+        .neq('profile_image', 'https://placehold.co/400')
+        .not('profile_image', 'is', null)
+        .neq('profile_image', '')
         .single();
 
       if (profileError) throw profileError;

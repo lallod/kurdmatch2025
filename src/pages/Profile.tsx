@@ -49,6 +49,9 @@ const Profile = () => {
         .from('profiles')
         .select('*')
         .eq('id', profileId)
+        .neq('profile_image', 'https://placehold.co/400')
+        .not('profile_image', 'is', null)
+        .neq('profile_image', '')
         .maybeSingle();
 
       console.log('Supabase query result:', { data, error });
@@ -125,7 +128,7 @@ const Profile = () => {
           {/* Profile Image */}
           <div className="aspect-[3/4] relative overflow-hidden">
             <img
-              src={profile.profile_image || '/placeholder.svg'}
+              src={profile.profile_image}
               alt={profile.name}
               className="w-full h-full object-cover"
             />
@@ -351,7 +354,7 @@ const Profile = () => {
           <ProfileSwipeActions
             profileId={profileId}
             profileName={profile.name}
-            profileImage={profile.profile_image || '/placeholder.svg'}
+            profileImage={profile.profile_image}
           />
         </div>
       </div>

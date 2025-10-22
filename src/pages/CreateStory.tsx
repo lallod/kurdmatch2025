@@ -157,7 +157,7 @@ const CreateStory = () => {
                       alt="Story preview"
                       className="w-full h-64 object-cover rounded-lg"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/400x600?text=Invalid+URL';
+                        (e.target as HTMLImageElement).style.display = 'none';
                       }}
                     />
                   ) : (
