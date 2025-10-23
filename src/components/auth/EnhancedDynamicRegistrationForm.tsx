@@ -135,7 +135,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-dark/80 to-primary flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -143,17 +143,17 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
 
   if (!currentCategory) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 flex items-center justify-center">
-        <div className="text-white text-center">
+      <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-dark/80 to-primary flex items-center justify-center">
+        <div className="text-primary-foreground text-center">
           <h2 className="text-2xl font-bold mb-2">Registration Error</h2>
-          <p className="text-purple-200">Unable to load registration form. Please refresh the page.</p>
+          <p className="text-primary-foreground/80">Unable to load registration form. Please refresh the page.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-4 sm:py-8 px-0 sm:px-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-dark/80 to-primary py-4 sm:py-8 px-0 sm:px-4">
       <div className="max-w-2xl mx-auto">
         {/* Enhanced Step Indicator */}
         <EnhancedStepIndicator
@@ -168,9 +168,9 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 sm:space-y-6">
               {/* OAuth Welcome Message */}
               {isOAuthUser && step === 1 && (
-                <div className="text-center mb-2 sm:mb-6 p-2 sm:p-4 bg-green-900/30 rounded-lg border border-green-500/30">
-                  <h3 className="text-lg font-semibold text-green-300 mb-2">Welcome!</h3>
-                  <p className="text-green-200 text-sm">
+                <div className="text-center mb-2 sm:mb-6 p-2 sm:p-4 bg-success/20 rounded-lg border border-success/30">
+                  <h3 className="text-lg font-semibold text-success-foreground mb-2">Welcome!</h3>
+                  <p className="text-success-foreground/90 text-sm">
                     Your social account has been connected. Please complete the registration to finish setting up your profile.
                   </p>
                 </div>
@@ -185,7 +185,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
                       <div className="w-full border-t border-white/20"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-purple-800 text-purple-200">or continue with email</span>
+                      <span className="px-2 bg-primary-dark text-primary-foreground/80">or continue with email</span>
                     </div>
                   </div>
                 </div>
@@ -219,7 +219,7 @@ const EnhancedDynamicRegistrationForm: React.FC = () => {
         </div>
 
         {/* Progress Summary */}
-        <div className="mt-3 sm:mt-6 text-center text-sm text-white/60 px-3">
+        <div className="mt-3 sm:mt-6 text-center text-sm text-primary-foreground/60 px-3">
           <p>
             Complete all required information to create your perfect profile. 
             Your data is secure and only visible to potential matches.

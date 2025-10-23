@@ -56,7 +56,7 @@ export const HashtagFeed = () => {
           </Button>
           
           <div className="flex items-center gap-2 flex-1">
-            <Hash className="h-6 w-6 text-purple-400" />
+            <Hash className="h-6 w-6 text-primary" />
             <h1 className="text-2xl font-bold">{hashtag}</h1>
           </div>
         </div>

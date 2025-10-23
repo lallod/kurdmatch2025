@@ -24,10 +24,10 @@ const AccountStep = ({ form }: AccountStepProps) => {
     <div className="space-y-6">
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-purple-300/30"></span>
+          <span className="w-full border-t border-white/30"></span>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-gradient-to-r from-purple-900 to-pink-900 px-3 text-purple-200">
+          <span className="bg-gradient-to-r from-primary-dark to-primary px-3 text-primary-foreground/80">
             Or sign up with email
           </span>
         </div>
@@ -41,10 +41,10 @@ const AccountStep = ({ form }: AccountStepProps) => {
             <FormLabel className="text-white">Email Address</FormLabel>
             <FormControl>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-pink-400" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="your@email.com" 
-                  className="pl-10 bg-white/10 backdrop-blur border-purple-300/30 text-white placeholder:text-purple-300 focus:border-pink-400 focus:ring-pink-400/20" 
+                  className="pl-10 bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20" 
                   type="email"
                   autoComplete="email"
                   autoFocus
@@ -62,22 +62,22 @@ const AccountStep = ({ form }: AccountStepProps) => {
               {validationMessage && (
                 <div className="flex items-center gap-2 text-xs transition-all duration-200">
                   {isChecking && (
-                    <span className="text-yellow-400 flex items-center gap-1 animate-pulse font-medium">
+                    <span className="text-warning flex items-center gap-1 animate-pulse font-medium">
                       <Loader2 className="w-3 h-3 animate-spin" />
                       {validationMessage}
                     </span>
                   )}
                   {!isChecking && isEmailTaken && (
-                    <span className="text-red-400 flex items-center gap-1 font-medium">
+                    <span className="text-destructive flex items-center gap-1 font-medium">
                       <XCircle className="w-3 h-3" />
                       {validationMessage}{' '}
-                      <Link to="/auth" className="underline hover:text-red-300 transition-colors">
+                      <Link to="/auth" className="underline hover:text-destructive/80 transition-colors">
                         Sign in?
                       </Link>
                     </span>
                   )}
                   {!isChecking && !isEmailTaken && field.value?.includes('@') && (
-                    <span className="text-green-400 flex items-center gap-1 font-medium">
+                    <span className="text-success flex items-center gap-1 font-medium">
                       <CheckCircle2 className="w-3 h-3" />
                       {validationMessage}
                     </span>
@@ -99,17 +99,17 @@ const AccountStep = ({ form }: AccountStepProps) => {
             <FormLabel className="text-white">Password</FormLabel>
             <FormControl>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-pink-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="Create a strong password" 
-                  className="pl-10 bg-white/10 backdrop-blur border-purple-300/30 text-white placeholder:text-purple-300 focus:border-pink-400 focus:ring-pink-400/20" 
+                  className="pl-10 bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20" 
                   type="password"
                   autoComplete="new-password"
                   {...field} 
                 />
               </div>
             </FormControl>
-            <FormDescription className="text-xs text-purple-300">
+            <FormDescription className="text-xs text-primary-foreground/70">
               Must be 8+ characters with uppercase, lowercase, and number
             </FormDescription>
             <FormMessage />
@@ -125,10 +125,10 @@ const AccountStep = ({ form }: AccountStepProps) => {
             <FormLabel className="text-white">Confirm Password</FormLabel>
             <FormControl>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-pink-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="Confirm your password" 
-                  className="pl-10 bg-white/10 backdrop-blur border-purple-300/30 text-white placeholder:text-purple-300 focus:border-pink-400 focus:ring-pink-400/20" 
+                  className="pl-10 bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20" 
                   type="password"
                   autoComplete="new-password"
                   {...field} 

@@ -49,7 +49,7 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
         <div className="space-y-4">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-white">Create Account</h2>
-            <p className="text-purple-200 mt-1">Set up your secure login credentials</p>
+            <p className="text-primary-foreground/80 mt-1">Set up your secure login credentials</p>
           </div>
           
           <FormField
@@ -115,7 +115,7 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
         <div className="space-y-4">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-white">Tell us about yourself</h2>
-            <p className="text-purple-200 mt-1">Basic information to create your profile</p>
+            <p className="text-primary-foreground/80 mt-1">Basic information to create your profile</p>
           </div>
           {stepQuestions.map(question => (
             <DynamicFieldRenderer 
@@ -132,7 +132,7 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
         <div className="space-y-4">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-white">Location</h2>
-            <p className="text-purple-200 mt-1">Where are you from?</p>
+            <p className="text-primary-foreground/80 mt-1">Where are you from?</p>
           </div>
           
           <FormField
@@ -176,7 +176,7 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
         <div className="space-y-4">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-white">Add Photos</h2>
-            <p className="text-purple-200 mt-1">Show your best self</p>
+            <p className="text-primary-foreground/80 mt-1">Show your best self</p>
           </div>
           
           <PhotoUploadComponent form={form} />

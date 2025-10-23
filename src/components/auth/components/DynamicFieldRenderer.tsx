@@ -66,12 +66,12 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
   const renderBadges = () => (
     <div className="flex gap-2">
       {required && (
-        <Badge variant="outline" className="bg-pink-900/30 text-pink-300 border-pink-500/30 text-xs">
+        <Badge variant="outline" className="bg-destructive/20 text-destructive-foreground border-destructive/30 text-xs">
           Required
         </Badge>
       )}
       {isComplete && (
-        <Badge variant="outline" className="bg-green-900/30 text-green-300 border-green-500/30 text-xs">
+        <Badge variant="outline" className="bg-success/20 text-success-foreground border-success/30 text-xs">
           <CheckCircle size={10} className="mr-1" />
           Complete
         </Badge>
@@ -84,8 +84,8 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
     <FormLabel className="text-white flex items-start sm:items-center justify-between gap-2 flex-wrap">
       <span className="flex items-center gap-2 text-balance">
         {text}
-        {isComplete && <CheckCircle size={16} className="text-green-400 flex-shrink-0" />}
-        {required && !isComplete && <AlertCircle size={16} className="text-yellow-400 flex-shrink-0" />}
+        {isComplete && <CheckCircle size={16} className="text-success flex-shrink-0" />}
+        {required && !isComplete && <AlertCircle size={16} className="text-warning flex-shrink-0" />}
       </span>
       <div className="flex-shrink-0">
         {renderBadges()}
@@ -434,7 +434,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
           render={({ field }) => (
             <FormItem>
               {renderLabel()}
-              <FormDescription className="text-purple-200 text-sm">
+              <FormDescription className="text-primary-foreground/80 text-sm">
                 {id === 'interests' && 'Select at least 3 interests'}
                 {id === 'hobbies' && 'Select at least 2 hobbies'}
                 {id === 'values' && 'Select at least 3 core values'}
