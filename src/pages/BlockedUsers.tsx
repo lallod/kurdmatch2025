@@ -103,9 +103,9 @@ const BlockedUsers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary to-accent pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-10 glass border-b border-border">
+      <div className="sticky top-0 z-10 bg-black/20 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Button
@@ -117,8 +117,8 @@ const BlockedUsers = () => {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="flex items-center gap-2">
-              <UserX className="h-5 w-5" />
-              <h1 className="text-2xl font-bold">Blocked Users</h1>
+              <UserX className="h-5 w-5 text-white" />
+              <h1 className="text-2xl font-bold text-white">Blocked Users</h1>
             </div>
           </div>
         </div>
@@ -127,25 +127,25 @@ const BlockedUsers = () => {
       <div className="max-w-4xl mx-auto px-4 py-6">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <Loader2 className="w-8 h-8 animate-spin text-white" />
           </div>
         ) : blockedUsers.length === 0 ? (
           <div className="text-center py-12">
-            <Shield className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No blocked users</h3>
-            <p className="text-muted-foreground">
+            <Shield className="w-16 h-16 mx-auto mb-4 text-white/50" />
+            <h3 className="text-lg font-semibold mb-2 text-white">No blocked users</h3>
+            <p className="text-purple-200">
               You haven't blocked anyone yet
             </p>
           </div>
         ) : (
           <div className="space-y-3">
-            <p className="text-muted-foreground text-sm mb-4">
+            <p className="text-purple-200 text-sm mb-4">
               {blockedUsers.length} user{blockedUsers.length !== 1 ? 's' : ''} blocked
             </p>
             {blockedUsers.map((blockedUser) => (
               <div
                 key={blockedUser.id}
-                className="glass rounded-lg p-4 border border-border"
+                className="bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -162,15 +162,15 @@ const BlockedUsers = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-semibold">
+                      <h3 className="font-semibold text-white">
                         {blockedUser.blocked_profile.name}, {blockedUser.blocked_profile.age}
                       </h3>
                       {blockedUser.reason && (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-purple-200">
                           Reason: {blockedUser.reason}
                         </p>
                       )}
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-purple-200">
                         Blocked {new Date(blockedUser.created_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -180,6 +180,7 @@ const BlockedUsers = () => {
                     size="sm"
                     onClick={() => confirmUnblock(blockedUser)}
                     disabled={unblockingId === blockedUser.id}
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                   >
                     {unblockingId === blockedUser.id ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
