@@ -58,7 +58,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
   }, []);
 
   return (
-    <div className="rounded-md overflow-hidden border border-gray-200 shadow-sm">
+    <div className="rounded-md overflow-hidden border border-white/20 shadow-sm">
       <MapContainer
         style={{ height, width }}
         // Instead of directly setting center and zoom on MapContainer,

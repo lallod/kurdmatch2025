@@ -34,10 +34,25 @@ const LocationTabs: React.FC<LocationTabsProps> = ({
   return (
     <div className="space-y-4">
       <Tabs defaultValue="current" value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="w-full grid grid-cols-3">
-          <TabsTrigger value="current">Current</TabsTrigger>
-          <TabsTrigger value="manual">Manual</TabsTrigger>
-          <TabsTrigger value="passport">Passport</TabsTrigger>
+        <TabsList className="w-full grid grid-cols-3 bg-white/10 backdrop-blur-sm border border-white/20">
+          <TabsTrigger 
+            value="current" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary-dark data-[state=active]:to-primary data-[state=active]:text-white text-white/70"
+          >
+            Current
+          </TabsTrigger>
+          <TabsTrigger 
+            value="manual"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary-dark data-[state=active]:to-primary data-[state=active]:text-white text-white/70"
+          >
+            Manual
+          </TabsTrigger>
+          <TabsTrigger 
+            value="passport"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary-dark data-[state=active]:to-primary data-[state=active]:text-white text-white/70"
+          >
+            Passport
+          </TabsTrigger>
         </TabsList>
         
         {/* Current Location Tab */}

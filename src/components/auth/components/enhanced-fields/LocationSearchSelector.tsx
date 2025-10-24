@@ -38,16 +38,16 @@ const LocationSearchSelector = ({ value, onChange }: LocationSearchSelectorProps
             <MapPin className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 bg-gray-900 border-gray-700" align="start">
-          <Command className="bg-gray-900">
+        <PopoverContent className="w-full p-0 bg-background/95 border-border backdrop-blur" align="start">
+          <Command className="bg-transparent">
             <CommandInput 
               placeholder="Search city..." 
               value={searchQuery}
               onValueChange={setSearchQuery}
-              className="text-white"
+              className="text-foreground"
             />
             <CommandList>
-              <CommandEmpty className="text-white/60 py-6 text-center">No location found.</CommandEmpty>
+              <CommandEmpty className="text-muted-foreground py-6 text-center">No location found.</CommandEmpty>
               <CommandGroup>
                 {filteredLocations.map((location) => (
                   <CommandItem
@@ -57,7 +57,7 @@ const LocationSearchSelector = ({ value, onChange }: LocationSearchSelectorProps
                       onChange(location);
                       setOpen(false);
                     }}
-                    className="text-white hover:bg-gray-800 cursor-pointer"
+                    className="text-foreground hover:bg-accent cursor-pointer"
                   >
                     <MapPin className="mr-2 h-4 w-4" />
                     {location}

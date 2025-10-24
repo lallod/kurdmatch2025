@@ -45,12 +45,12 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 p-2 rounded-md border border-blue-200 mb-3">
+      <div className="bg-primary/10 p-2 rounded-md border border-primary/20 mb-3">
         <div className="flex items-start gap-2">
-          <MapPin size={18} className="text-blue-500 mt-0.5 flex-shrink-0" />
+          <MapPin size={18} className="text-primary mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-medium text-blue-800">Manual Location</p>
-            <p className="text-xs text-blue-700">
+            <p className="text-sm font-medium text-white">Manual Location</p>
+            <p className="text-xs text-purple-200">
               Choose your location by clicking on the map or searching for a city.
             </p>
           </div>

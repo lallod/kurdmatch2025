@@ -64,10 +64,10 @@ const PassportLocationTab: React.FC<PassportLocationTabProps> = ({
         icon={<Globe />}
         title="Travel Mode"
         description="Set your location anywhere in the world to match with people from different cities or countries."
-        bgColor="bg-amber-50"
-        borderColor="border border-amber-200"
-        textColor="text-amber-700"
-        iconColor="text-amber-500"
+        bgColor="bg-accent/10"
+        borderColor="border border-accent/20"
+        textColor="text-white"
+        iconColor="text-accent"
       />
       
       <div className="space-y-2">
