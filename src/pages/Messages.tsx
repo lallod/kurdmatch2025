@@ -213,9 +213,9 @@ const Messages = () => {
       case 'new_message':
         return <MessageCircle className="w-3 h-3" />;
       case 'online':
-        return <div className="w-2 h-2 rounded-full bg-green-500" />;
+        return <div className="w-2 h-2 rounded-full bg-success" />;
       case 'typing':
-        return <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />;
+        return <div className="w-2 h-2 rounded-full bg-info animate-pulse" />;
       case 'viewed_profile':
         return <Eye className="w-3 h-3" />;
       case 'liked_photo':
@@ -329,7 +329,7 @@ const Messages = () => {
                 <AvatarImage src={conversation.avatar} alt={conversation.name} />
                 <AvatarFallback className="bg-purple-500 text-white">{conversation.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              {conversation.online && <span className="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-white ring-1 ring-green-400/50"></span>}
+              {conversation.online && <span className="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-success border-2 border-white ring-1 ring-success/50"></span>}
             </div>
             <div className="flex-1">
               <h2 className="font-semibold text-white">{conversation.name}</h2>
@@ -350,10 +350,10 @@ const Messages = () => {
             </div>
             {/* Notification indicators in header */}
             <div className="flex items-center gap-2">
-              {conversation.notifications?.includes('online') && <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+              {conversation.notifications?.includes('online') && <Badge className="bg-success/20 text-success border-success/30">
                   Online
                 </Badge>}
-              {conversation.notifications?.includes('viewed_profile') && <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+              {conversation.notifications?.includes('viewed_profile') && <Badge className="bg-info/20 text-info border-info/30">
                   <Eye className="w-3 h-3 mr-1" />
                   Viewed
                 </Badge>}

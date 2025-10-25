@@ -191,7 +191,7 @@ const AdvancedSearch = () => {
                           {profile.name}, {profile.age}
                         </h3>
                         {profile.verified && (
-                          <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+                          <Badge variant="secondary" className="bg-info/20 text-info border-info/30">
                             ✓ Verified
                           </Badge>
                         )}

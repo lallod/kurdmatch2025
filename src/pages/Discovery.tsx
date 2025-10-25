@@ -344,9 +344,9 @@ const Discovery = () => {
                   <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">
                     <SelectValue placeholder="All Regions" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700">
+                  <SelectContent className="bg-background/95 backdrop-blur border-border">
                     {areas.map((area) => (
-                      <SelectItem key={area.value} value={area.value} className="text-white hover:bg-gray-800">
+                      <SelectItem key={area.value} value={area.value} className="text-foreground hover:bg-accent">
                         {area.name}
                       </SelectItem>
                     ))}
@@ -366,11 +366,11 @@ const Discovery = () => {
                     )}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-80 p-4 max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700">
+                <DropdownMenuContent className="w-80 p-4 max-h-[80vh] overflow-y-auto bg-background/95 backdrop-blur border-border">
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(applyFilters)} className="space-y-4">
-                      <DropdownMenuLabel className="font-bold text-white">Filter Profiles</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-gray-700" />
+                      <DropdownMenuLabel className="font-bold text-foreground">Filter Profiles</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-border" />
 
                       {/* Age Range */}
                       <DropdownMenuGroup>
@@ -395,7 +395,7 @@ const Discovery = () => {
                         />
                       </DropdownMenuGroup>
 
-                      <DropdownMenuSeparator className="bg-gray-700" />
+                      <DropdownMenuSeparator className="bg-border" />
                       
                       {/* Distance */}
                       <DropdownMenuGroup>
@@ -420,7 +420,7 @@ const Discovery = () => {
                         />
                       </DropdownMenuGroup>
 
-                      <DropdownMenuSeparator className="bg-gray-700" />
+                      <DropdownMenuSeparator className="bg-border" />
                       
                       {/* Compatibility */}
                       <DropdownMenuGroup>
@@ -445,7 +445,7 @@ const Discovery = () => {
                         />
                       </DropdownMenuGroup>
                       
-                      <DropdownMenuSeparator className="bg-gray-700" />
+                      <DropdownMenuSeparator className="bg-border" />
                       
                       {/* Religion */}
                       <DropdownMenuGroup>
@@ -459,12 +459,12 @@ const Discovery = () => {
                                 value={field.value} 
                                 onValueChange={field.onChange}
                               >
-                                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                                <SelectTrigger className="bg-background/95 backdrop-blur border-border text-foreground">
                                   <SelectValue placeholder="All Religions" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-gray-800 border-gray-600">
+                                <SelectContent className="bg-background/95 backdrop-blur border-border">
                                   {religions.map((option) => (
-                                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-gray-700">
+                                    <SelectItem key={option.value} value={option.value} className="text-foreground hover:bg-accent">
                                       {option.name}
                                     </SelectItem>
                                   ))}
@@ -476,7 +476,7 @@ const Discovery = () => {
                       </DropdownMenuGroup>
 
                       {/* Continue with other form fields but update their styling... */}
-                      <DropdownMenuSeparator className="bg-gray-700" />
+                      <DropdownMenuSeparator className="bg-border" />
                       
                       {/* Body Type */}
                       <DropdownMenuGroup>
@@ -490,12 +490,12 @@ const Discovery = () => {
                                 value={field.value} 
                                 onValueChange={field.onChange}
                               >
-                                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                                <SelectTrigger className="bg-background/95 backdrop-blur border-border text-foreground">
                                   <SelectValue placeholder="All Body Types" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-gray-800 border-gray-600">
+                                <SelectContent className="bg-background/95 backdrop-blur border-border">
                                   {bodyTypes.map((option) => (
-                                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-gray-700">
+                                    <SelectItem key={option.value} value={option.value} className="text-foreground hover:bg-accent">
                                       {option.name}
                                     </SelectItem>
                                   ))}
@@ -509,7 +509,7 @@ const Discovery = () => {
                       {/* Continue with remaining form fields with similar styling updates... */}
 
                       <div className="flex justify-between pt-2">
-                        <Button type="button" variant="outline" size="sm" onClick={resetFilters} className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700">
+                        <Button type="button" variant="outline" size="sm" onClick={resetFilters} className="bg-background/95 backdrop-blur border-border text-foreground hover:bg-accent">
                           Reset
                         </Button>
                         <Button type="submit" size="sm" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">

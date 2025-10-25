@@ -222,7 +222,7 @@ const LikedMe = () => {
                           <span className="font-semibold text-white text-lg">{profile.name}</span>
                           <span className="text-purple-200">{profile.age}</span>
                           {profile.verified && (
-                            <Badge className="bg-blue-500/20 text-blue-300 border-blue-400/30 text-xs">
+                            <Badge className="bg-info/20 text-info border-info/30 text-xs">
                               ✓
                             </Badge>
                           )}
@@ -283,7 +283,7 @@ const LikedMe = () => {
                         </>
                       ) : (
                         <div className="flex flex-col items-center gap-1">
-                          <Badge className="bg-green-500/20 text-green-300 border-green-400/30 text-xs">
+                          <Badge className="bg-success/20 text-success border-success/30 text-xs">
                             Mutual Like
                           </Badge>
                           <TooltipProvider>
@@ -291,7 +291,7 @@ const LikedMe = () => {
                               <TooltipTrigger asChild>
                                 <Button 
                                   size="sm"
-                                  className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 h-8 w-8 p-0"
+                                  className="bg-info/20 text-info hover:bg-info/30 h-8 w-8 p-0"
                                 >
                                   <MessageCircle className="h-4 w-4" />
                                 </Button>

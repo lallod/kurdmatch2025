@@ -103,7 +103,7 @@ export const CompleteProfile: React.FC = () => {
         <Card className="mb-6 border-0 bg-white/10 backdrop-blur-md">
           <CardHeader className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <AlertCircle className="h-8 w-8 text-yellow-400" />
+              <AlertCircle className="h-8 w-8 text-warning" />
               <h1 className="text-3xl font-bold text-white">Complete Your Profile</h1>
             </div>
             <p className="text-white/80 text-lg">
@@ -122,9 +122,9 @@ export const CompleteProfile: React.FC = () => {
         </Card>
 
         {/* Alert */}
-        <Alert className="mb-6 border-yellow-400/20 bg-yellow-400/10">
-          <AlertCircle className="h-4 w-4 text-yellow-400" />
-          <AlertDescription className="text-yellow-100">
+        <Alert className="mb-6 border-warning/20 bg-warning/10">
+          <AlertCircle className="h-4 w-4 text-warning" />
+          <AlertDescription className="text-white">
             <strong>Profile Incomplete:</strong> Please complete all requirements below to access the app.
           </AlertDescription>
         </Alert>
@@ -139,11 +139,11 @@ export const CompleteProfile: React.FC = () => {
               {requirements.map((req, index) => (
                 <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
                   {req.met ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-400 flex-shrink-0" />
+                    <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
                   ) : (
-                    <AlertCircle className="h-5 w-5 text-yellow-400 flex-shrink-0" />
+                    <AlertCircle className="h-5 w-5 text-warning flex-shrink-0" />
                   )}
-                  <span className={`text-sm ${req.met ? 'text-green-100' : 'text-yellow-100'}`}>
+                  <span className={`text-sm ${req.met ? 'text-white' : 'text-white/80'}`}>
                     {req.label}
                   </span>
                 </div>
@@ -171,9 +171,9 @@ export const CompleteProfile: React.FC = () => {
 
         {/* Completion Status */}
         {completionPercent === 100 && (
-          <Alert className="mt-6 border-green-400/20 bg-green-400/10">
-            <CheckCircle2 className="h-4 w-4 text-green-400" />
-            <AlertDescription className="text-green-100">
+          <Alert className="mt-6 border-success/20 bg-success/10">
+            <CheckCircle2 className="h-4 w-4 text-success" />
+            <AlertDescription className="text-white">
               <strong>Profile Complete!</strong> Redirecting to the app...
             </AlertDescription>
           </Alert>
