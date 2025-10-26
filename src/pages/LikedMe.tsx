@@ -14,6 +14,7 @@ import { likeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import SwipeActions from '@/components/swipe/SwipeActions';
 import { toast } from 'sonner';
+import SectionViewStats from '@/components/profile/SectionViewStats';
 
 const LikedMe = () => {
   const { toast: toastHook } = useToast();
@@ -234,6 +235,13 @@ const LikedMe = () => {
                             {profile.bio}
                           </p>
                         )}
+                        <div className="mt-2">
+                          <SectionViewStats 
+                            viewerId={profile.id}
+                            viewedProfileId={user?.id || ''}
+                            compact={true}
+                          />
+                        </div>
                       </div>
                     </div>
                     

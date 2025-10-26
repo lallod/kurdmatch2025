@@ -12,6 +12,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
 import SwipeActions from '@/components/swipe/SwipeActions';
 import { likeProfile } from '@/api/likes';
+import SectionViewStats from '@/components/profile/SectionViewStats';
 
 interface Match {
   id: string;
@@ -258,6 +259,13 @@ const Matches = () => {
                             <p className="text-purple-300 text-sm mt-1">
                               Matched {formatMatchTime(match.matchedAt)}
                             </p>
+                            <div className="mt-2">
+                              <SectionViewStats 
+                                viewerId={match.profileId}
+                                viewedProfileId={user?.id || ''}
+                                compact={true}
+                              />
+                            </div>
                           </div>
                           
                           <div className="flex flex-col gap-2">
