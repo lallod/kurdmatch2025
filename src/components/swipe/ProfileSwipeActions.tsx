@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Heart } from 'lucide-react';
+import { X, Heart, Sparkles } from 'lucide-react';
 import { SWIPE_CONFIG } from '@/config/swipe';
 import { checkActionLimit, performAction } from '@/api/usage';
 import { likeProfile } from '@/api/likes';
@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import LimitReachedModal from '@/components/modals/LimitReachedModal';
 import MatchModal from '@/components/modals/MatchModal';
+import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 
 interface ProfileSwipeActionsProps {
   profileId: string;
@@ -20,8 +22,10 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
   profileImage
 }) => {
   const navigate = useNavigate();
+  const { user } = useSupabaseAuth();
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showMatchModal, setShowMatchModal] = useState(false);
+  const [showSuperLikeModal, setShowSuperLikeModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePass = () => {
@@ -55,10 +59,8 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
 
       if (likeResult.success) {
         if (likeResult.match) {
-          // Show match popup
           setShowMatchModal(true);
         } else {
-          // No match, go back to swipe page
           toast.success("Liked!");
           navigate('/swipe');
         }
@@ -73,9 +75,40 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
     }
   };
 
+  const handleSuperLike = async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      // Using type assertion for newly created RPC function
+      const { data: limitCheck } = await (supabase as any).rpc('check_action_limit', {
+        p_user_id: user?.id,
+        p_action_type: 'super_likes'
+      });
+
+      if (!limitCheck) {
+        setShowSuperLikeModal(true);
+        return;
+      }
+
+      const { error } = await (supabase as any).rpc('perform_super_like', {
+        p_liker_id: user?.id,
+        p_likee_id: profileId
+      });
+
+      if (error) throw error;
+
+      toast.success('Super Like sent! ⭐');
+      navigate('/swipe');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send Super Like');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleViewFullProfile = () => {
     setShowMatchModal(false);
-    // Navigate to a more detailed profile view if available, or close modal
     navigate('/matches');
   };
 
@@ -86,27 +119,35 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
 
   return (
     <>
-      <div className={`flex items-center justify-center gap-8 ${SWIPE_CONFIG.actions.container.padding}`}>
+      <div className="flex items-center justify-center gap-4 py-6">
         {/* Pass */}
         <button
           onClick={handlePass}
           disabled={isProcessing}
-          className={`${SWIPE_CONFIG.actions.buttons.large} bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
+          className="h-16 w-16 bg-destructive/10 hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 border-2 border-destructive/30"
         >
-          <X className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} strokeWidth={3} />
+          <X className="h-8 w-8 text-destructive" strokeWidth={3} />
+        </button>
+
+        {/* Super Like */}
+        <button
+          onClick={handleSuperLike}
+          disabled={isProcessing}
+          className="h-16 w-16 bg-accent/10 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 border-2 border-accent/30"
+        >
+          <Sparkles className="h-8 w-8 text-accent" />
         </button>
 
         {/* Like */}
         <button
           onClick={handleLike}
           disabled={isProcessing}
-          className={`${SWIPE_CONFIG.actions.buttons.large} bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
+          className="h-20 w-20 bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center shadow-glow transform hover:scale-110 transition-all duration-200 active:scale-95"
         >
-          <Heart className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} fill="currentColor" />
+          <Heart className="h-10 w-10 text-white" fill="currentColor" />
         </button>
       </div>
 
-      {/* Limit Reached Modal */}
       <LimitReachedModal
         isOpen={showLimitModal}
         onClose={() => setShowLimitModal(false)}
@@ -115,7 +156,14 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
         isPremium={false}
       />
 
-      {/* Match Modal */}
+      <LimitReachedModal
+        isOpen={showSuperLikeModal}
+        onClose={() => setShowSuperLikeModal(false)}
+        actionType="like"
+        remaining={0}
+        isPremium={false}
+      />
+
       <MatchModal
         isOpen={showMatchModal}
         onClose={handleContinueSwiping}

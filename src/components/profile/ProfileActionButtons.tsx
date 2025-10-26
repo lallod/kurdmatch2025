@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, UserPlus, UserCheck, Sparkles } from 'lucide-react';
+import { MessageCircle, UserPlus, UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { getUserSubscription } from '@/api/usage';
 import { createPremiumCheckout } from '@/api/payments';
-import SuperLikeButton from '@/components/discovery/SuperLikeButton';
 import {
   Dialog,
   DialogContent,
@@ -75,59 +74,53 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
 
   return (
     <>
-      <div className="flex gap-1.5 md:gap-2 items-center justify-center">
-        {/* Follow/Following Button */}
+      <div className="flex items-center justify-center gap-4 py-6">
         <Button
+          size="lg"
+          variant="outline"
           onClick={handleFollow}
-          variant={isFollowing ? 'outline' : 'default'}
-          size="sm"
-          className="flex-1 gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-4"
+          className="flex-1 max-w-[180px]"
         >
           {isFollowing ? (
             <>
-              <UserCheck className="w-3 h-3 md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Following</span>
+              <UserCheck className="h-5 w-5 mr-2" />
+              Following
             </>
           ) : (
             <>
-              <UserPlus className="w-3 h-3 md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Follow</span>
+              <UserPlus className="h-5 w-5 mr-2" />
+              Follow
             </>
           )}
         </Button>
 
-        {/* Message Button - Premium Only */}
         <Button
+          size="lg"
           onClick={handleMessage}
-          variant="outline"
-          size="sm"
-          className="flex-1 gap-1 md:gap-2 relative text-xs md:text-sm px-2 md:px-4 border-yellow-500/30"
+          className="flex-1 max-w-[180px] bg-gradient-to-r from-primary to-primary-glow relative"
         >
-          <MessageCircle className="w-3 h-3 md:w-4 md:h-4" />
-          <span className="hidden sm:inline">PM</span>
+          <MessageCircle className="h-5 w-5 mr-2" />
+          Message
           {!isPremium && (
-            <span className="absolute -top-0.5 -right-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[8px] px-1 py-0 rounded-full leading-tight font-bold">
+            <span className="absolute -top-1 -right-1 bg-accent text-white text-xs px-1.5 py-0.5 rounded-full">
               PRO
             </span>
           )}
         </Button>
-
-        {/* Super Like Button - Premium Only */}
-        <SuperLikeButton postId={userId} userId={userId} />
       </div>
 
       {/* Message Upgrade Dialog */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
+        <DialogContent className="bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-white text-2xl flex items-center gap-2">
-              <MessageCircle className="w-6 h-6 text-pink-400" />
+            <DialogTitle className="text-foreground text-2xl flex items-center gap-2">
+              <MessageCircle className="w-6 h-6 text-primary" />
               PM - Premium Feature
             </DialogTitle>
-            <DialogDescription className="text-white/70 space-y-4">
+            <DialogDescription className="text-muted-foreground space-y-4">
               <p>Send unlimited messages to Premium and Gold members!</p>
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 space-y-2">
-                <p className="font-semibold text-white">Premium Benefits:</p>
+              <div className="bg-accent/10 backdrop-blur-md rounded-lg p-4 space-y-2">
+                <p className="font-semibold text-foreground">Premium Benefits:</p>
                 <ul className="space-y-1 text-sm">
                   <li>✓ Send messages to anyone</li>
                   <li>✓ 10 Super Likes per day</li>
@@ -138,9 +131,8 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
               </div>
               <Button
                 onClick={handleUpgrade}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+                className="w-full bg-gradient-to-r from-primary to-primary-glow text-white"
               >
-                <Sparkles className="w-4 h-4 mr-2" />
                 Upgrade to Premium
               </Button>
             </DialogDescription>
@@ -152,3 +144,4 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
 };
 
 export default ProfileActionButtons;
+

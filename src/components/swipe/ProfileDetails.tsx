@@ -6,6 +6,7 @@ import AccordionSectionItem from './profile/AccordionSectionItem';
 import ProfileDetailItem from './profile/ProfileDetailItem';
 import ProfileQuickBadges from './profile/ProfileQuickBadges';
 import ProfileInterestsBadges from './profile/ProfileInterestsBadges';
+import { useProfileSectionTracking } from '@/hooks/useProfileSectionTracking';
 interface ProfileDetailsProps {
   profile: Profile;
   isExpanded: boolean;
@@ -16,8 +17,13 @@ const ProfileDetails = ({
   isExpanded,
   onToggleExpanded
 }: ProfileDetailsProps) => {
+  const { trackSectionView } = useProfileSectionTracking(profile.id);
+
   // Track which sections have been opened for viewing percentage calculation
   const handleAccordionChange = (openSections: string[]) => {
+    // Track newly opened sections in database
+    openSections.forEach(sectionId => trackSectionView(sectionId));
+
     const totalSections = 8; // Total number of accordion sections
     const viewedPercentage = Math.round(openSections.length / totalSections * 100);
 

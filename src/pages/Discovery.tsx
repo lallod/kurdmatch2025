@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search as SearchIcon } from 'lucide-react';
+import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search as SearchIcon, Hash, TrendingUp } from 'lucide-react';
 import SearchBar from '@/components/discovery/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,7 @@ import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useDiscoveryProfiles, DiscoveryProfile } from '@/hooks/useDiscoveryProfiles';
-import { CompactGroups } from '@/components/discovery/CompactGroups';
-import { CompactTrendingHashtags } from '@/components/discovery/CompactTrendingHashtags';
-import { CompactExploreHashtags } from '@/components/discovery/CompactExploreHashtags';
+import { CompactSection } from '@/components/discovery/CompactSection';
 import { 
   Select, 
   SelectContent, 
@@ -325,11 +323,28 @@ const Discovery = () => {
           </div>
         )}
 
-        {/* Groups and Hashtags Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          <CompactGroups />
-          <CompactTrendingHashtags />
-          <CompactExploreHashtags />
+        {/* Compact Navigation Sections */}
+        <div className="space-y-2 mb-6">
+          <CompactSection
+            icon={<Hash className="h-5 w-5" />}
+            title="Explore Hashtags"
+            count={0}
+            onClick={() => navigate('/discovery/hashtags')}
+          />
+          
+          <CompactSection
+            icon={<TrendingUp className="h-5 w-5" />}
+            title="Trending Topics"
+            count={0}
+            onClick={() => navigate('/discovery/trending')}
+          />
+          
+          <CompactSection
+            icon={<Users className="h-5 w-5" />}
+            title="Community Groups"
+            count={0}
+            onClick={() => navigate('/discovery/groups')}
+          />
         </div>
 
         <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
