@@ -39,8 +39,15 @@ const UserProfileTab: React.FC = () => {
         inactiveUsers={userStats.inactiveUsers}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="lg:hidden">
+          <UserDetailPanel 
+            user={selectedUser}
+            onUserUpdate={handleRefresh}
+          />
+        </div>
+
+        <div>
           <Card>
             <CardHeader>
               <CardTitle>User Management</CardTitle>
@@ -71,7 +78,7 @@ const UserProfileTab: React.FC = () => {
           </Card>
         </div>
 
-        <div className="lg:col-span-1">
+        <div className="hidden lg:block">
           <UserDetailPanel 
             user={selectedUser}
             onUserUpdate={handleRefresh}

@@ -18,6 +18,7 @@ import { useMessageModeration } from '@/hooks/useMessageModeration';
 import { useConversationInsights } from '@/hooks/useConversationInsights';
 import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
 import { ConversationInsights } from '@/components/chat/ConversationInsights';
+import MessageTranslation from '@/components/chat/MessageTranslation';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { messageSchema } from '@/utils/validation/messageValidation';
@@ -436,7 +437,15 @@ const Messages = () => {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}
-                  <p>{message.text}</p>
+                  <p className="mb-2">{message.text}</p>
+                  
+                  {/* Translation Component */}
+                  {message.sender !== 'me' && (
+                    <div className="mt-2 pt-2 border-t border-white/10">
+                      <MessageTranslation originalText={message.text} compact={false} />
+                    </div>
+                  )}
+                  
                   <span className="text-xs opacity-70 block text-right mt-1">
                     {message.time}
                   </span>

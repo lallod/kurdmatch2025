@@ -32,3 +32,6 @@ verify_jwt = true
 
 [functions.customer-portal]
 verify_jwt = true
+
+[functions.translate-message]
+verify_jwt = true

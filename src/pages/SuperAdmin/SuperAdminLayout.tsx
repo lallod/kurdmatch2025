@@ -54,6 +54,7 @@ interface SuperAdminLayoutProps {
 
 const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const [collapsed, setCollapsed] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const { isCheckingRole, hasAdminRole } = useAdminRoleCheck();
   const navigate = useNavigate();
 
@@ -160,11 +161,19 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
+      {/* Mobile Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside 
         className={`fixed top-0 left-0 z-40 h-screen bg-[#0f0f0f] border-r border-white/5 transition-all duration-300 ${
-          collapsed ? 'w-16' : 'w-64'
-        }`}
+          collapsed ? 'lg:w-16' : 'lg:w-64'
+        } ${mobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'}`}
       >
         <div className="flex flex-col h-full">
           {/* Logo Header */}
@@ -181,9 +190,17 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
               variant="ghost" 
               size="icon" 
               onClick={toggleSidebar} 
-              className="ml-auto text-white/60 hover:text-white hover:bg-white/5"
+              className="ml-auto text-white/60 hover:text-white hover:bg-white/5 hidden lg:flex"
             >
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setMobileMenuOpen(false)} 
+              className="ml-auto text-white/60 hover:text-white hover:bg-white/5 lg:hidden"
+            >
+              <ChevronLeft size={18} />
             </Button>
           </div>
           
@@ -195,18 +212,19 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                   <NavLink
                     to={item.path}
                     end={item.path === '/super-admin'}
+                    onClick={() => setMobileMenuOpen(false)}
                     className={({ isActive }) => 
                       `flex items-center p-3 rounded-lg transition-all duration-200 group ${
                         isActive 
                           ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-500' 
                           : 'hover:bg-white/5 text-white/60 hover:text-white'
-                      } ${collapsed ? 'justify-center' : ''}`
+                      } ${collapsed ? 'lg:justify-center' : ''}`
                     }
                   >
-                    <span className="transition-colors duration-200">
+                    <span className="transition-colors duration-200 flex-shrink-0">
                       {item.icon}
                     </span>
-                    {!collapsed && <span className="ml-3 text-sm">{item.label}</span>}
+                    <span className={`ml-3 text-sm ${collapsed ? 'hidden lg:inline' : ''}`}>{item.label}</span>
                   </NavLink>
                 </li>
               ))}
@@ -220,16 +238,35 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
               variant="ghost"
               className="flex items-center p-3 text-red-500 rounded-lg hover:bg-red-500/10 w-full justify-start"
             >
-              <LogOut size={20} />
-              {!collapsed && <span className="ml-3 text-sm">Sign Out</span>}
+              <LogOut size={20} className="flex-shrink-0" />
+              <span className={`ml-3 text-sm ${collapsed ? 'hidden lg:inline' : ''}`}>Sign Out</span>
             </Button>
           </div>
         </div>
       </aside>
       
       {/* Main Content */}
-      <main className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-16' : 'ml-64'}`}>
-        <div className="p-8">
+      <main className={`flex-1 transition-all duration-300 w-full ${collapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
+        {/* Mobile Header */}
+        <div className="lg:hidden sticky top-0 z-20 bg-[#0f0f0f] border-b border-white/5 p-4 flex items-center justify-between">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setMobileMenuOpen(true)}
+            className="text-white/60 hover:text-white hover:bg-white/5"
+          >
+            <ChevronRight size={20} />
+          </Button>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">L</span>
+            </div>
+            <span className="text-white font-semibold text-sm">Admin</span>
+          </div>
+          <div className="w-10" />
+        </div>
+
+        <div className="p-4 md:p-8">
           {children}
         </div>
       </main>

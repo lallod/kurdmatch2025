@@ -14,36 +14,38 @@ const UserManagementTabs: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Advanced User Management</h1>
-          <p className="text-gray-600 mt-1">Comprehensive user profile management and analytics</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Advanced User Management</h1>
+          <p className="text-white/60 mt-1 text-sm md:text-base">Comprehensive user profile management and analytics</p>
         </div>
       </div>
 
       <Tabs defaultValue="profiles" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="profiles" className="flex items-center gap-2">
-            <Users size={16} />
-            User Profiles
+        <TabsList className="w-full grid grid-cols-3 md:grid-cols-6 gap-1 h-auto bg-white/5 p-1">
+          <TabsTrigger value="profiles" className="flex items-center gap-2 text-xs md:text-sm whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500/20 data-[state=active]:to-orange-500/20 data-[state=active]:text-red-500 text-white/80">
+            <Users size={16} className="hidden md:inline" />
+            <span className="md:hidden">Users</span>
+            <span className="hidden md:inline">User Profiles</span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart size={16} />
-            Analytics
+          <TabsTrigger value="analytics" className="flex items-center gap-2 text-xs md:text-sm whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500/20 data-[state=active]:to-orange-500/20 data-[state=active]:text-red-500 text-white/80">
+            <BarChart size={16} className="hidden md:inline" />
+            <span>Analytics</span>
           </TabsTrigger>
-          <TabsTrigger value="bulk" className="flex items-center gap-2">
-            <Settings size={16} />
-            Bulk Actions
+          <TabsTrigger value="bulk" className="flex items-center gap-2 text-xs md:text-sm whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500/20 data-[state=active]:to-orange-500/20 data-[state=active]:text-red-500 text-white/80">
+            <Settings size={16} className="hidden md:inline" />
+            <span>Bulk</span>
+            <span className="hidden md:inline">Actions</span>
           </TabsTrigger>
-          <TabsTrigger value="moderation" className="flex items-center gap-2">
-            <Shield size={16} />
-            Moderation
+          <TabsTrigger value="moderation" className="flex items-center gap-2 text-xs md:text-sm whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500/20 data-[state=active]:to-orange-500/20 data-[state=active]:text-red-500 text-white/80">
+            <Shield size={16} className="hidden md:inline" />
+            <span>Moderation</span>
           </TabsTrigger>
-          <TabsTrigger value="journey" className="flex items-center gap-2">
-            <Search size={16} />
-            User Journey
+          <TabsTrigger value="journey" className="flex items-center gap-2 text-xs md:text-sm whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500/20 data-[state=active]:to-orange-500/20 data-[state=active]:text-red-500 text-white/80">
+            <Search size={16} className="hidden md:inline" />
+            <span>Journey</span>
           </TabsTrigger>
-          <TabsTrigger value="export" className="flex items-center gap-2">
-            <FileText size={16} />
-            Export
+          <TabsTrigger value="export" className="flex items-center gap-2 text-xs md:text-sm whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500/20 data-[state=active]:to-orange-500/20 data-[state=active]:text-red-500 text-white/80">
+            <FileText size={16} className="hidden md:inline" />
+            <span>Export</span>
           </TabsTrigger>
         </TabsList>
 
