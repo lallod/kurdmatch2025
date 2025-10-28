@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ArrowLeft, Bell, BellOff, MessageCircle, Heart, UserPlus, AtSign, Users, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,77 +9,16 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNavigation from '@/components/BottomNavigation';
-
-interface NotificationPreferences {
-  likes: boolean;
-  comments: boolean;
-  follows: boolean;
-  mentions: boolean;
-  messages: boolean;
-  groups: boolean;
-  events: boolean;
-}
+import { useUserSettings } from '@/hooks/useUserSettings';
 
 const NotificationSettings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [preferences, setPreferences] = useState<NotificationPreferences>({
-    likes: true,
-    comments: true,
-    follows: true,
-    mentions: true,
-    messages: true,
-    groups: true,
-    events: true,
-  });
+  const { settings, loading, updateSettings } = useUserSettings();
 
-  useEffect(() => {
-    loadPreferences();
-  }, []);
-
-  const loadPreferences = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Load from localStorage for now (can be moved to database later)
-      const saved = localStorage.getItem(`notification_prefs_${user.id}`);
-      if (saved) {
-        setPreferences(JSON.parse(saved));
-      }
-    } catch (error) {
-      console.error('Error loading preferences:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const savePreferences = async (newPreferences: NotificationPreferences) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      localStorage.setItem(`notification_prefs_${user.id}`, JSON.stringify(newPreferences));
-      setPreferences(newPreferences);
-      
-      toast({
-        title: 'Settings saved',
-        description: 'Your notification preferences have been updated',
-      });
-    } catch (error) {
-      console.error('Error saving preferences:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to save preferences',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const togglePreference = (key: keyof NotificationPreferences) => {
-    const newPreferences = { ...preferences, [key]: !preferences[key] };
-    savePreferences(newPreferences);
+  const togglePreference = async (field: string) => {
+    if (!settings) return;
+    await updateSettings({ [field]: !(settings as any)[field] } as any);
   };
 
   const handleClearAll = async () => {
@@ -107,48 +46,56 @@ const NotificationSettings = () => {
 
   const notificationTypes = [
     {
-      key: 'likes' as keyof NotificationPreferences,
+      key: 'notifications_likes',
       icon: Heart,
       title: 'Likes',
       description: 'When someone likes your posts or comments',
     },
     {
-      key: 'comments' as keyof NotificationPreferences,
+      key: 'notifications_comments',
       icon: MessageCircle,
       title: 'Comments',
       description: 'When someone comments on your posts',
     },
     {
-      key: 'follows' as keyof NotificationPreferences,
+      key: 'notifications_follows',
       icon: UserPlus,
       title: 'Follows',
       description: 'When someone follows you',
     },
     {
-      key: 'mentions' as keyof NotificationPreferences,
+      key: 'notifications_mentions',
       icon: AtSign,
       title: 'Mentions',
       description: 'When someone mentions you in a post or comment',
     },
     {
-      key: 'messages' as keyof NotificationPreferences,
+      key: 'notifications_messages',
       icon: MessageCircle,
       title: 'Messages',
       description: 'New direct messages',
     },
     {
-      key: 'groups' as keyof NotificationPreferences,
+      key: 'notifications_groups',
       icon: Users,
       title: 'Groups',
       description: 'Activity in groups you\'re a member of',
     },
     {
-      key: 'events' as keyof NotificationPreferences,
+      key: 'notifications_events',
       icon: Bell,
       title: 'Events',
       description: 'Updates about events you\'re attending',
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center pb-24">
+        <div className="text-white">Loading settings...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-24">
@@ -193,7 +140,7 @@ const NotificationSettings = () => {
                   </div>
                   <Switch
                     id={type.key}
-                    checked={preferences[type.key]}
+                    checked={(settings as any)?.[type.key] ?? true}
                     onCheckedChange={() => togglePreference(type.key)}
                   />
                 </div>

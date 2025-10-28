@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Lock } from 'lucide-react';
@@ -11,20 +11,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { toast } from 'sonner';
+import { useUserSettings } from '@/hooks/useUserSettings';
 
 const PrivacySettings = () => {
   const navigate = useNavigate();
-  const [showOnlineStatus, setShowOnlineStatus] = useState(true);
-  const [showLastActive, setShowLastActive] = useState(true);
-  const [showProfileViews, setShowProfileViews] = useState(true);
-  const [profileVisibility, setProfileVisibility] = useState('everyone');
-  const [messagePrivacy, setMessagePrivacy] = useState('everyone');
-  const [locationSharing, setLocationSharing] = useState('approximate');
+  const { settings, loading, updateSettings } = useUserSettings();
 
-  const handleSave = () => {
-    // Save privacy settings
-    toast.success('Privacy settings updated');
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary to-accent flex items-center justify-center">
+        <div className="text-white">Loading settings...</div>
+      </div>
+    );
+  }
+
+  const handleUpdate = async (field: string, value: any) => {
+    await updateSettings({ [field]: value } as any);
   };
 
   return (
@@ -63,8 +65,8 @@ const PrivacySettings = () => {
               </div>
               <Switch
                 id="online-status"
-                checked={showOnlineStatus}
-                onCheckedChange={setShowOnlineStatus}
+                checked={settings?.privacy_show_online_status ?? true}
+                onCheckedChange={(checked) => handleUpdate('privacy_show_online_status', checked)}
               />
             </div>
 
@@ -77,8 +79,8 @@ const PrivacySettings = () => {
               </div>
               <Switch
                 id="last-active"
-                checked={showLastActive}
-                onCheckedChange={setShowLastActive}
+                checked={settings?.privacy_show_last_active ?? true}
+                onCheckedChange={(checked) => handleUpdate('privacy_show_last_active', checked)}
               />
             </div>
           </div>
@@ -90,7 +92,10 @@ const PrivacySettings = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-white">Who can see your profile</Label>
-              <Select value={profileVisibility} onValueChange={setProfileVisibility}>
+              <Select 
+                value={settings?.privacy_profile_visibility ?? 'everyone'} 
+                onValueChange={(value) => handleUpdate('privacy_profile_visibility', value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -111,8 +116,8 @@ const PrivacySettings = () => {
               </div>
               <Switch
                 id="profile-views"
-                checked={showProfileViews}
-                onCheckedChange={setShowProfileViews}
+                checked={settings?.privacy_show_profile_views ?? true}
+                onCheckedChange={(checked) => handleUpdate('privacy_show_profile_views', checked)}
               />
             </div>
           </div>
@@ -123,7 +128,10 @@ const PrivacySettings = () => {
           <h2 className="text-lg font-semibold mb-4 text-white">Message Privacy</h2>
           <div className="space-y-2">
             <Label className="text-white">Who can message you</Label>
-            <Select value={messagePrivacy} onValueChange={setMessagePrivacy}>
+            <Select 
+              value={settings?.privacy_message_privacy ?? 'everyone'} 
+              onValueChange={(value) => handleUpdate('privacy_message_privacy', value)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -141,7 +149,10 @@ const PrivacySettings = () => {
           <h2 className="text-lg font-semibold mb-4 text-white">Location Privacy</h2>
           <div className="space-y-2">
             <Label className="text-white">Location sharing</Label>
-            <Select value={locationSharing} onValueChange={setLocationSharing}>
+            <Select 
+              value={settings?.privacy_location_sharing ?? 'approximate'} 
+              onValueChange={(value) => handleUpdate('privacy_location_sharing', value)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -157,14 +168,6 @@ const PrivacySettings = () => {
             </p>
           </div>
         </div>
-
-        {/* Save Button */}
-        <Button
-          onClick={handleSave}
-          className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-        >
-          Save Privacy Settings
-        </Button>
       </div>
     </div>
   );

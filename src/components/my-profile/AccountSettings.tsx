@@ -12,29 +12,12 @@ import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
 import ConnectedAccountsDialog from './dialogs/ConnectedAccountsDialog';
 import DeleteAccountDialog from './dialogs/DeleteAccountDialog';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { useTranslations } from '@/hooks/useTranslations';
+import { useUserSettings } from '@/hooks/useUserSettings';
+
 const AccountSettings = () => {
   const navigate = useNavigate();
-  const {
-    signOut
-  } = useSupabaseAuth();
-  const [notifications, setNotifications] = useState({
-    matches: true,
-    messages: true,
-    likes: false,
-    profileViews: true,
-    marketing: false,
-    push: true,
-    email: true,
-    sms: false
-  });
-  const [privacy, setPrivacy] = useState({
-    showAge: true,
-    showDistance: true,
-    showOnline: true,
-    discoverable: true,
-    readReceipts: false
-  });
+  const { signOut } = useSupabaseAuth();
+  const { settings, loading, updateSettings } = useUserSettings();
 
   // Dialog states
   const [dialogStates, setDialogStates] = useState({
@@ -43,19 +26,13 @@ const AccountSettings = () => {
     connectedAccounts: false,
     deleteAccount: false
   });
-  const handleNotificationChange = (key: string, value: boolean) => {
-    setNotifications(prev => ({
-      ...prev,
-      [key]: value
-    }));
-    toast.success('Notification settings updated');
+
+  const handleNotificationChange = async (key: string, value: boolean) => {
+    await updateSettings({ [key]: value } as any);
   };
-  const handlePrivacyChange = (key: string, value: boolean) => {
-    setPrivacy(prev => ({
-      ...prev,
-      [key]: value
-    }));
-    toast.success('Privacy settings updated');
+
+  const handlePrivacyChange = async (key: string, value: boolean) => {
+    await updateSettings({ [key]: value } as any);
   };
   const openDialog = (dialogName: keyof typeof dialogStates) => {
     setDialogStates(prev => ({
@@ -173,7 +150,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified when someone likes you back</p>
                 </div>
               </div>
-              <Switch checked={notifications.matches} onCheckedChange={value => handleNotificationChange('matches', value)} />
+              <Switch checked={settings?.notifications_matches ?? true} onCheckedChange={value => handleNotificationChange('notifications_matches', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -184,7 +161,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified about new messages</p>
                 </div>
               </div>
-              <Switch checked={notifications.messages} onCheckedChange={value => handleNotificationChange('messages', value)} />
+              <Switch checked={settings?.notifications_messages ?? true} onCheckedChange={value => handleNotificationChange('notifications_messages', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -195,7 +172,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified when someone likes your profile</p>
                 </div>
               </div>
-              <Switch checked={notifications.likes} onCheckedChange={value => handleNotificationChange('likes', value)} />
+              <Switch checked={settings?.notifications_likes ?? false} onCheckedChange={value => handleNotificationChange('notifications_likes', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -206,7 +183,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Get notified when someone views your profile</p>
                 </div>
               </div>
-              <Switch checked={notifications.profileViews} onCheckedChange={value => handleNotificationChange('profileViews', value)} />
+              <Switch checked={settings?.notifications_profile_views ?? true} onCheckedChange={value => handleNotificationChange('notifications_profile_views', value)} />
             </div>
           </div>
         </CardContent>
@@ -226,7 +203,7 @@ const AccountSettings = () => {
                 <p className="text-white">Show My Age</p>
                 <p className="text-purple-200 text-sm">Display your age on your profile</p>
               </div>
-              <Switch checked={privacy.showAge} onCheckedChange={value => handlePrivacyChange('showAge', value)} />
+              <Switch checked={settings?.privacy_show_age ?? true} onCheckedChange={value => handlePrivacyChange('privacy_show_age', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -234,7 +211,7 @@ const AccountSettings = () => {
                 <p className="text-white">Show Distance</p>
                 <p className="text-purple-200 text-sm">Show your distance to other users</p>
               </div>
-              <Switch checked={privacy.showDistance} onCheckedChange={value => handlePrivacyChange('showDistance', value)} />
+              <Switch checked={settings?.privacy_show_distance ?? true} onCheckedChange={value => handlePrivacyChange('privacy_show_distance', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -242,7 +219,7 @@ const AccountSettings = () => {
                 <p className="text-white">Show Online Status</p>
                 <p className="text-purple-200 text-sm">Let others see when you're online</p>
               </div>
-              <Switch checked={privacy.showOnline} onCheckedChange={value => handlePrivacyChange('showOnline', value)} />
+              <Switch checked={settings?.privacy_show_online ?? true} onCheckedChange={value => handlePrivacyChange('privacy_show_online', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -250,7 +227,7 @@ const AccountSettings = () => {
                 <p className="text-white">Discoverable</p>
                 <p className="text-purple-200 text-sm">Allow others to find your profile</p>
               </div>
-              <Switch checked={privacy.discoverable} onCheckedChange={value => handlePrivacyChange('discoverable', value)} />
+              <Switch checked={settings?.privacy_discoverable ?? true} onCheckedChange={value => handlePrivacyChange('privacy_discoverable', value)} />
             </div>
           </div>
         </CardContent>
@@ -273,7 +250,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Receive notifications on your device</p>
                 </div>
               </div>
-              <Switch checked={notifications.push} onCheckedChange={value => handleNotificationChange('push', value)} />
+              <Switch checked={settings?.notifications_push ?? true} onCheckedChange={value => handleNotificationChange('notifications_push', value)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -284,7 +261,7 @@ const AccountSettings = () => {
                   <p className="text-purple-200 text-sm">Receive updates via email</p>
                 </div>
               </div>
-              <Switch checked={notifications.email} onCheckedChange={value => handleNotificationChange('email', value)} />
+              <Switch checked={settings?.notifications_email ?? true} onCheckedChange={value => handleNotificationChange('notifications_email', value)} />
             </div>
           </div>
         </CardContent>
