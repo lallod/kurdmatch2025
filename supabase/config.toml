@@ -35,3 +35,6 @@ verify_jwt = true
 
 [functions.translate-message]
 verify_jwt = true
+
+[functions.extract-texts]
+verify_jwt = true

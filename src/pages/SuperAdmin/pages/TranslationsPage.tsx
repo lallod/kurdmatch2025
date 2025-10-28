@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Search, Edit2, Save, X, Plus, Download, Upload, AlertCircle, CheckCircle } from 'lucide-react';
+import { Search, Edit2, Save, X, Plus, Download, Upload, AlertCircle, CheckCircle, ScanSearch, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Translation {
@@ -31,6 +31,7 @@ const TranslationsPage = () => {
   const [filterNeedsReview, setFilterNeedsReview] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [extracting, setExtracting] = useState(false);
 
   const languages = [
     { code: 'english', name: 'English' },
@@ -122,6 +123,29 @@ const TranslationsPage = () => {
     }
   };
 
+  const handleExtractTexts = async () => {
+    setExtracting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('extract-texts', {
+        body: {}
+      });
+
+      if (error) throw error;
+
+      toast.success(
+        data.message || `Extracted ${data.extracted} texts and created ${data.inserted} translations`,
+        { duration: 5000 }
+      );
+      
+      fetchTranslations();
+    } catch (error) {
+      console.error('Error extracting texts:', error);
+      toast.error('Failed to extract texts from system');
+    } finally {
+      setExtracting(false);
+    }
+  };
+
   const filteredTranslations = translations.filter(t => 
     t.translation_key.toLowerCase().includes(searchQuery.toLowerCase()) ||
     t.translation_value.toLowerCase().includes(searchQuery.toLowerCase())
@@ -136,13 +160,31 @@ const TranslationsPage = () => {
           <h1 className="text-3xl font-bold">Translation Management</h1>
           <p className="text-muted-foreground">Manage app translations across all languages</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {needsReviewCount > 0 && (
             <Badge variant="destructive" className="gap-1">
               <AlertCircle className="w-3 h-3" />
               {needsReviewCount} Need Review
             </Badge>
           )}
+          <Button 
+            variant="default" 
+            size="sm"
+            onClick={handleExtractTexts}
+            disabled={extracting}
+          >
+            {extracting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Extracting...
+              </>
+            ) : (
+              <>
+                <ScanSearch className="w-4 h-4 mr-2" />
+                Extract All Texts
+              </>
+            )}
+          </Button>
           <Button variant="outline" size="sm">
             <Download className="w-4 h-4 mr-2" />
             Export CSV
