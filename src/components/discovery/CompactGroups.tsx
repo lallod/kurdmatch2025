@@ -17,7 +17,7 @@ export const CompactGroups = () => {
   const loadGroups = async () => {
     try {
       const data = await getGroups({});
-      setGroups(data.slice(0, 4));
+      setGroups(data.slice(0, 2));
     } catch (error) {
       console.error('Error loading groups:', error);
     } finally {
@@ -27,11 +27,11 @@ export const CompactGroups = () => {
 
   if (loading) {
     return (
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 animate-pulse">
-        <div className="h-6 bg-white/10 rounded mb-3"></div>
-        <div className="space-y-2">
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3 animate-pulse">
+        <div className="h-4 bg-white/10 rounded w-16 mb-2"></div>
+        <div className="space-y-1.5">
           {[1, 2].map((i) => (
-            <div key={i} className="h-12 bg-white/10 rounded"></div>
+            <div key={i} className="h-8 bg-white/10 rounded"></div>
           ))}
         </div>
       </div>
@@ -41,38 +41,38 @@ export const CompactGroups = () => {
   if (groups.length === 0) return null;
 
   return (
-    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 hover-scale">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-purple-400" />
-          <h3 className="text-base font-semibold text-white">Groups</h3>
+    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/20 rounded-lg p-3 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1.5">
+          <Users className="w-4 h-4 text-purple-400" />
+          <h3 className="text-sm font-semibold text-white">Groups</h3>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate('/groups')}
-          className="text-xs text-purple-300 hover:text-white h-7 px-2"
+          className="text-xs text-purple-300 hover:text-white h-6 px-1.5"
         >
-          See all
+          All
         </Button>
       </div>
 
-      <div className="space-y-2">
-        {groups.slice(0, 3).map((group) => (
+      <div className="space-y-1.5">
+        {groups.slice(0, 2).map((group) => (
           <button
             key={group.id}
             onClick={() => navigate(`/groups/${group.id}`)}
-            className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-all group text-left"
+            className="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-purple-500/20 transition-all group text-left"
           >
             {group.icon && (
-              <span className="text-2xl flex-shrink-0">{group.icon}</span>
+              <span className="text-lg flex-shrink-0">{group.icon}</span>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate group-hover:text-purple-300 transition-colors">
+              <p className="text-xs font-medium text-white truncate group-hover:text-purple-300 transition-colors">
                 {group.name}
               </p>
-              <p className="text-xs text-white/60 truncate">
-                {group.member_count} members
+              <p className="text-xs text-white/50 truncate">
+                {group.member_count}
               </p>
             </div>
           </button>

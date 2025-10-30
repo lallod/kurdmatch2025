@@ -21,7 +21,7 @@ export const CompactTrendingHashtags = () => {
 
   const loadHashtags = async () => {
     try {
-      const data = await getTrendingHashtags(6);
+      const data = await getTrendingHashtags(4);
       setHashtags(data);
     } catch (error) {
       console.error('Error loading trending hashtags:', error);
@@ -32,11 +32,11 @@ export const CompactTrendingHashtags = () => {
 
   if (loading) {
     return (
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 animate-pulse">
-        <div className="h-6 bg-white/10 rounded mb-3"></div>
-        <div className="flex flex-wrap gap-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-8 w-20 bg-white/10 rounded-full"></div>
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3 animate-pulse">
+        <div className="h-4 bg-white/10 rounded w-20 mb-2"></div>
+        <div className="flex flex-wrap gap-1.5">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-6 w-16 bg-white/10 rounded-full"></div>
           ))}
         </div>
       </div>
@@ -46,22 +46,21 @@ export const CompactTrendingHashtags = () => {
   if (hashtags.length === 0) return null;
 
   return (
-    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 hover-scale">
-      <div className="flex items-center gap-2 mb-3">
-        <TrendingUp className="w-5 h-5 text-pink-400" />
-        <h3 className="text-base font-semibold text-white">Trending</h3>
+    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/20 rounded-lg p-3 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
+      <div className="flex items-center gap-1.5 mb-2">
+        <TrendingUp className="w-4 h-4 text-pink-400" />
+        <h3 className="text-sm font-semibold text-white">Trending</h3>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {hashtags.map((hashtag) => (
+      <div className="flex flex-wrap gap-1.5">
+        {hashtags.slice(0, 4).map((hashtag) => (
           <button
             key={hashtag.id}
             onClick={() => navigate(`/hashtag/${hashtag.name}`)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/20"
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/30 backdrop-blur-sm transition-all hover:scale-105"
           >
             <Hash className="w-3 h-3 text-purple-300" />
             <span className="text-xs font-medium text-white">{hashtag.name}</span>
-            <span className="text-xs text-white/50">{hashtag.usage_count}</span>
           </button>
         ))}
       </div>
