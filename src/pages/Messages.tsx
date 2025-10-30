@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban, Globe } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -35,6 +35,10 @@ const Messages = () => {
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [showInsights, setShowInsights] = useState(false);
+  
+  // Translation state
+  const [translatedMessages, setTranslatedMessages] = useState<Record<string, string>>({});
+  const [translatingMessages, setTranslatingMessages] = useState<Set<string>>(new Set());
   
   const { moderateMessage, isChecking } = useMessageModeration();
   const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
@@ -314,6 +318,40 @@ const Messages = () => {
       handleSendMessage();
     }
   };
+
+  const handleTranslate = async (messageId: string, text: string, targetLanguage: string) => {
+    setTranslatingMessages(prev => new Set(prev).add(messageId));
+    try {
+      const { data, error } = await supabase.functions.invoke('translate-message', {
+        body: { text, targetLanguage },
+      });
+
+      if (error) {
+        if (error.message?.includes('429')) {
+          toast.error("Rate limit reached. Please wait a moment before translating again.");
+        } else if (error.message?.includes('402')) {
+          toast.error("Service unavailable. Translation credits need to be added.");
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      if (data?.translatedText) {
+        setTranslatedMessages(prev => ({ ...prev, [messageId]: data.translatedText }));
+        toast.success("Translation complete");
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+      toast.error("Unable to translate message. Please try again.");
+    } finally {
+      setTranslatingMessages(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(messageId);
+        return newSet;
+      });
+    }
+  };
   if (selectedConversation !== null) {
     const conversation = conversations.find(c => c.id === selectedConversation);
     if (!conversation) return null;
@@ -434,15 +472,30 @@ const Messages = () => {
                           <Flag className="h-4 w-4 mr-2" />
                           Report Message
                         </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleTranslate(message.id, message.text, 'en')}
+                          disabled={translatingMessages.has(message.id)}
+                        >
+                          <Globe className="h-4 w-4 mr-2" />
+                          {translatingMessages.has(message.id) ? 'Translating...' : 'Translate to English'}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleTranslate(message.id, message.text, 'no')}
+                          disabled={translatingMessages.has(message.id)}
+                        >
+                          <Globe className="h-4 w-4 mr-2" />
+                          Translate to Norwegian
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}
                   <p className="mb-2">{message.text}</p>
                   
-                  {/* Translation Component */}
-                  {message.sender !== 'me' && (
+                  {/* Translation Result */}
+                  {translatedMessages[message.id] && (
                     <div className="mt-2 pt-2 border-t border-white/10">
-                      <MessageTranslation originalText={message.text} compact={false} />
+                      <span className="text-xs font-medium opacity-70">Translation:</span>
+                      <p className="text-sm mt-1">{translatedMessages[message.id]}</p>
                     </div>
                   )}
                   
