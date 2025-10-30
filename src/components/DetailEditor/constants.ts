@@ -43,20 +43,19 @@ export const OPTIONS = {
   sportsActivities: ['Running', 'Cycling', 'Swimming', 'Hiking', 'Yoga', 'Weight training', 'Rock climbing', 'Tennis', 'Soccer', 'Basketball', 'Football', 'Volleyball', 'Golf', 'Skiing', 'Skateboarding', 'Martial arts'],
 };
 
+/**
+ * Ensures height is in cm format
+ * All heights are stored in CM only
+ */
 export function convertHeightToCm(height: string): string {
+  if (!height) return '';
+  
+  // If already contains "cm", return as is
   if (height.toLowerCase().includes("cm")) {
     return height;
   }
   
-  if (height.includes("'")) {
-    const parts = height.split("'");
-    const feet = parseInt(parts[0], 10);
-    const inches = parts[1] ? parseInt(parts[1].replace('"', ''), 10) : 0;
-    
-    const cm = Math.round(feet * 30.48 + inches * 2.54);
-    return `${cm} cm`;
-  }
-  
+  // If it's just a number, add " cm"
   if (!isNaN(Number(height))) {
     return `${height} cm`;
   }

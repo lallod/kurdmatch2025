@@ -17,7 +17,7 @@ const ProfileQuickBadges = ({ profile }: ProfileQuickBadgesProps) => {
       )}
       {profile.height && (
         <Badge variant="secondary" className="text-xs bg-white/10 text-purple-200 px-1.5 py-0.5">
-          {profile.height}cm
+          {profile.height?.includes('cm') ? profile.height : `${profile.height} cm`}
         </Badge>
       )}
       {profile.languages && (

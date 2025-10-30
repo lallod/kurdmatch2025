@@ -71,10 +71,8 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
     'South-Kurdistan', 'West-Kurdistan', 'East-Kurdistan', 'North-Kurdistan'
   ];
 
-  const heights = [
-    "5'0\"", "5'1\"", "5'2\"", "5'3\"", "5'4\"", "5'5\"", "5'6\"", "5'7\"", 
-    "5'8\"", "5'9\"", "5'10\"", "5'11\"", "6'0\"", "6'1\"", "6'2\"", "6'3\"", "6'4\""
-  ];
+  // Generate height options in CM (145-210 cm range)
+  const heights = Array.from({ length: 66 }, (_, i) => `${145 + i} cm`);
 
   const ethnicities = [
     'Kurdish', 'Middle Eastern', 'European', 'Asian', 'African', 

@@ -27,35 +27,8 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
   formatList,
   isMobile
 }) => {
-  // Function to convert height from feet/inches to cm
-  const convertHeightToCm = (height: string): string => {
-    // If already contains "cm", return as is
-    if (height.toLowerCase().includes("cm")) {
-      return height;
-    }
-    
-    // If in format like "5'7"" or similar feet/inches format
-    if (height.includes("'")) {
-      const parts = height.split("'");
-      const feet = parseInt(parts[0], 10);
-      const inches = parts[1] ? parseInt(parts[1], 10) : 0;
-      
-      // Convert to cm: 1 foot = 30.48 cm, 1 inch = 2.54 cm
-      const cm = Math.round(feet * 30.48 + inches * 2.54);
-      return `${cm} cm`;
-    }
-    
-    // If it's already a number (assuming in cm)
-    if (!isNaN(Number(height))) {
-      return `${height} cm`;
-    }
-    
-    // Return original if format is not recognized
-    return height;
-  };
-
-  // Get the height in cm format
-  const heightInCm = convertHeightToCm(details.height);
+  // Ensure height is displayed in cm format
+  const heightDisplay = details.height?.includes('cm') ? details.height : `${details.height} cm`;
 
   return (
     <div className="space-y-1 py-4">
@@ -64,7 +37,7 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
         label="Basics" 
         value={
           <div className="flex flex-wrap gap-2 mt-1">
-            <Badge variant="outline" className={tinderBadgeStyle}>{heightInCm}</Badge>
+            <Badge variant="outline" className={tinderBadgeStyle}>{heightDisplay}</Badge>
             <Badge variant="outline" className={tinderBadgeStyle}>{details.bodyType}</Badge>
             <Badge variant="outline" className={tinderBadgeStyle}>{details.ethnicity}</Badge>
           </div>

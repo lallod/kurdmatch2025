@@ -3,7 +3,8 @@ export const occupations = ['Student', 'Teacher', 'Engineer', 'Doctor', 'Busines
   'Farmer', 'Shopkeeper', 'Craftsman', 'Photographer', 'Chef', 'Driver', 'Translator', 'Activist', 'Social Worker', 'Nurse',
   'Designer', 'Software Engineer', 'Data Scientist', 'Accountant', 'Lawyer', 'Marketing Specialist', 'UX Designer', 'Professor'];
 
-export const heights = ['5\'2"', '5\'3"', '5\'4"', '5\'5"', '5\'6"', '5\'7"', '5\'8"', '5\'9"', '5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"'];
+// Heights in CM only (145-210 cm range)
+export const heights = Array.from({ length: 66 }, (_, i) => `${145 + i} cm`);
 export const bodyTypes = ['Athletic', 'Average', 'Slim', 'Muscular', 'Curvy', 'Full figured'];
 export const ethnicities = ['Kurdish', 'Kurdish-Persian', 'Kurdish-Turkish', 'Kurdish-Arab', 'Kurdish-Armenian', 'Asian', 'African', 'European', 'Hispanic', 'Middle Eastern', 'Mixed'];
 export const religions = ['Islam', 'Yarsanism', 'Yazidism', 'Zoroastrianism', 'Christianity', 'Spiritual', 'Non-religious', 'Buddhism', 'Hinduism', 'Judaism', 'Sikhism'];
