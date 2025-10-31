@@ -112,7 +112,7 @@ export const CompactDiscoveryDropdowns = () => {
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-400/30 hover:bg-blue-500/30 text-white"
+            className="gap-1.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 hover:bg-purple-500/30 text-white"
           >
             <Compass className="w-3.5 h-3.5" />
             <span className="text-xs font-medium">Explore</span>
@@ -129,7 +129,7 @@ export const CompactDiscoveryDropdowns = () => {
                   onClick={() => navigate(`/hashtag/${hashtag.name}`)}
                   className="cursor-pointer"
                 >
-                  <Hash className="w-3 h-3 mr-2 text-blue-400" />
+                  <Hash className="w-3 h-3 mr-2 text-purple-400" />
                   <span className="text-sm">{hashtag.name}</span>
                 </DropdownMenuItem>
               ))}
@@ -137,7 +137,7 @@ export const CompactDiscoveryDropdowns = () => {
                 onClick={() => navigate('/hashtags')}
                 className="cursor-pointer border-t border-border mt-1"
               >
-                <span className="text-xs text-blue-400 font-medium">View All →</span>
+                <span className="text-xs text-purple-400 font-medium">View All →</span>
               </DropdownMenuItem>
             </>
           )}
@@ -150,7 +150,7 @@ export const CompactDiscoveryDropdowns = () => {
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-emerald-400/30 hover:bg-emerald-500/30 text-white"
+            className="gap-1.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 hover:bg-purple-500/30 text-white"
           >
             <Users className="w-3.5 h-3.5" />
             <span className="text-xs font-medium">Groups</span>
@@ -182,7 +182,7 @@ export const CompactDiscoveryDropdowns = () => {
                 onClick={() => navigate('/groups')}
                 className="cursor-pointer border-t border-border mt-1"
               >
-                <span className="text-xs text-emerald-400 font-medium">View All →</span>
+                <span className="text-xs text-purple-400 font-medium">View All →</span>
               </DropdownMenuItem>
             </>
           )}
