@@ -16,9 +16,7 @@ import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
-import { CompactTrendingHashtags } from '@/components/discovery/CompactTrendingHashtags';
-import { CompactExploreHashtags } from '@/components/discovery/CompactExploreHashtags';
-import { CompactGroups } from '@/components/discovery/CompactGroups';
+import { CompactDiscoveryDropdowns } from '@/components/discovery/CompactDiscoveryDropdowns';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
@@ -311,12 +309,8 @@ const DiscoveryFeed = () => {
               </div>
             )}
 
-            {/* Compact Sections */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <CompactExploreHashtags />
-              <CompactTrendingHashtags />
-              <CompactGroups />
-            </div>
+            {/* Compact Discovery Dropdowns */}
+            <CompactDiscoveryDropdowns />
 
             {/* Posts Feed */}
             <div className="space-y-4">
