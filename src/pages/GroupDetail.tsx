@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Users, Settings } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import PostCard from '@/components/discovery/PostCard';
+import { LoadingState } from '@/components/LoadingState';
+import { getGroupById, getGroupPosts, isGroupMember, joinGroup, leaveGroup } from '@/api/groups';
 
 interface Group {
   id: string;
@@ -34,24 +35,27 @@ const GroupDetail = () => {
 
   useEffect(() => {
     if (id) {
-      fetchGroup();
-      fetchGroupPosts();
-      checkMembership();
+      loadAllData();
     }
-  }, [id]);
+  }, [id, user]);
 
-  const fetchGroup = async () => {
+  const loadAllData = async () => {
+    if (!id) return;
+    
+    setLoading(true);
     try {
-      const { data, error } = await (supabase as any)
-        .from('groups')
-        .select('*')
-        .eq('id', id)
-        .single();
+      // Load all data in parallel for faster loading
+      const [groupData, postsData, membershipStatus] = await Promise.all([
+        getGroupById(id),
+        getGroupPosts(id),
+        user ? isGroupMember(id) : Promise.resolve(false)
+      ]);
 
-      if (error) throw error;
-      setGroup(data);
+      setGroup(groupData);
+      setPosts(postsData?.map((item: any) => item.posts).filter(Boolean) || []);
+      setIsMember(membershipStatus);
     } catch (error) {
-      console.error('Error fetching group:', error);
+      console.error('Error loading group data:', error);
       toast({
         title: 'Error',
         description: 'Failed to load group',
@@ -63,52 +67,12 @@ const GroupDetail = () => {
   };
 
   const fetchGroupPosts = async () => {
+    if (!id) return;
     try {
-      const { data, error } = await (supabase as any)
-        .from('group_posts')
-        .select(`
-          post_id,
-          posts (
-            id,
-            user_id,
-            content,
-            media_url,
-            media_type,
-            likes_count,
-            comments_count,
-            created_at,
-            profiles (
-              id,
-              name,
-              profile_image,
-              verified
-            )
-          )
-        `)
-        .eq('group_id', id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await getGroupPosts(id);
       setPosts(data?.map((item: any) => item.posts).filter(Boolean) || []);
     } catch (error) {
       console.error('Error fetching group posts:', error);
-    }
-  };
-
-  const checkMembership = async () => {
-    if (!user || !id) return;
-
-    try {
-      const { data, error } = await (supabase as any)
-        .from('group_members')
-        .select('id')
-        .eq('group_id', id)
-        .eq('user_id', user.id)
-        .single();
-
-      setIsMember(!!data);
-    } catch (error) {
-      setIsMember(false);
     }
   };
 
@@ -117,28 +81,17 @@ const GroupDetail = () => {
 
     try {
       if (isMember) {
-        const { error } = await (supabase as any)
-          .from('group_members')
-          .delete()
-          .eq('group_id', id)
-          .eq('user_id', user.id);
-
-        if (error) throw error;
+        await leaveGroup(id);
         setIsMember(false);
         toast({ description: 'Left group' });
       } else {
-        const { error } = await (supabase as any)
-          .from('group_members')
-          .insert({
-            group_id: id,
-            user_id: user.id,
-          });
-
-        if (error) throw error;
+        await joinGroup(id);
         setIsMember(true);
         toast({ description: 'Joined group' });
       }
-      fetchGroup();
+      // Refresh group data to update member count
+      const updatedGroup = await getGroupById(id);
+      setGroup(updatedGroup);
     } catch (error) {
       console.error('Error joining/leaving group:', error);
       toast({
@@ -150,11 +103,7 @@ const GroupDetail = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background p-4 flex items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
-    );
+    return <LoadingState message="Loading group..." fullScreen />;
   }
 
   if (!group) {
