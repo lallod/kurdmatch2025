@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Hash, TrendingUp, Users, Compass } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { getTrendingHashtags } from '@/api/hashtags';
@@ -19,8 +20,19 @@ interface Hashtag {
   usage_count: number;
 }
 
-export const CompactDiscoveryDropdowns = () => {
-  const navigate = useNavigate();
+interface CompactDiscoveryDropdownsProps {
+  onHashtagFilter: (hashtag: string | null) => void;
+  onGroupFilter: (groupId: string | null) => void;
+  activeHashtag: string | null;
+  activeGroup: string | null;
+}
+
+export const CompactDiscoveryDropdowns = ({ 
+  onHashtagFilter, 
+  onGroupFilter,
+  activeHashtag,
+  activeGroup 
+}: CompactDiscoveryDropdownsProps) => {
   const [trending, setTrending] = useState<Hashtag[]>([]);
   const [explore, setExplore] = useState<Hashtag[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
@@ -65,81 +77,94 @@ export const CompactDiscoveryDropdowns = () => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {/* Trending Hashtags Dropdown */}
+      {/* Explore Hashtags Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
+          <Button 
+            variant="outline" 
             size="sm"
-            className="gap-1.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 hover:bg-purple-500/30 text-white"
+            className={`gap-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 text-purple-300 hover:from-purple-500/30 hover:to-pink-500/30 hover:text-purple-200 ${
+              activeHashtag && explore.some(h => h.name === activeHashtag) ? 'ring-2 ring-purple-400' : ''
+            }`}
           >
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span className="text-xs font-medium">Trending</span>
+            <Hash className="w-4 h-4" />
+            {activeHashtag && explore.some(h => h.name === activeHashtag) ? `#${activeHashtag}` : 'Explore'}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-border">
-          {trending.length === 0 ? (
-            <DropdownMenuItem disabled>No trending hashtags</DropdownMenuItem>
-          ) : (
+        <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-purple-400/30">
+          <DropdownMenuLabel className="text-purple-400">Explore Hashtags</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {explore.length > 0 ? (
             <>
-              {trending.map((hashtag) => (
+              <DropdownMenuItem
+                onClick={() => onHashtagFilter(null)}
+                className="cursor-pointer"
+              >
+                <span className="text-muted-foreground">All Posts</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {explore.map((hashtag) => (
                 <DropdownMenuItem
                   key={hashtag.id}
-                  onClick={() => navigate(`/hashtag/${hashtag.name}`)}
-                  className="cursor-pointer"
+                  onClick={() => onHashtagFilter(hashtag.name)}
+                  className={`cursor-pointer ${activeHashtag === hashtag.name ? 'bg-purple-500/20' : ''}`}
                 >
-                  <Hash className="w-3 h-3 mr-2 text-purple-400" />
-                  <span className="text-sm">{hashtag.name}</span>
+                  <Hash className="w-4 h-4 mr-2 text-purple-400" />
+                  {hashtag.name}
                   <span className="ml-auto text-xs text-muted-foreground">
                     {hashtag.usage_count}
                   </span>
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuItem
-                onClick={() => navigate('/hashtags')}
-                className="cursor-pointer border-t border-border mt-1"
-              >
-                <span className="text-xs text-purple-400 font-medium">View All →</span>
-              </DropdownMenuItem>
             </>
+          ) : (
+            <DropdownMenuItem disabled>No data available</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Explore Hashtags Dropdown */}
+      {/* Trending Hashtags Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
+          <Button 
+            variant="outline" 
             size="sm"
-            className="gap-1.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 hover:bg-purple-500/30 text-white"
+            className={`gap-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 text-purple-300 hover:from-purple-500/30 hover:to-pink-500/30 hover:text-purple-200 ${
+              activeHashtag && trending.some(h => h.name === activeHashtag) ? 'ring-2 ring-purple-400' : ''
+            }`}
           >
-            <Compass className="w-3.5 h-3.5" />
-            <span className="text-xs font-medium">Explore</span>
+            <TrendingUp className="w-4 h-4" />
+            {activeHashtag && trending.some(h => h.name === activeHashtag) ? `#${activeHashtag}` : 'Trending'}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-border">
-          {explore.length === 0 ? (
-            <DropdownMenuItem disabled>No hashtags to explore</DropdownMenuItem>
-          ) : (
+        <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-purple-400/30">
+          <DropdownMenuLabel className="text-purple-400">Trending Hashtags</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {trending.length > 0 ? (
             <>
-              {explore.map((hashtag) => (
+              <DropdownMenuItem
+                onClick={() => onHashtagFilter(null)}
+                className="cursor-pointer"
+              >
+                <span className="text-muted-foreground">All Posts</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {trending.map((hashtag) => (
                 <DropdownMenuItem
                   key={hashtag.id}
-                  onClick={() => navigate(`/hashtag/${hashtag.name}`)}
-                  className="cursor-pointer"
+                  onClick={() => onHashtagFilter(hashtag.name)}
+                  className={`cursor-pointer ${activeHashtag === hashtag.name ? 'bg-purple-500/20' : ''}`}
                 >
-                  <Hash className="w-3 h-3 mr-2 text-purple-400" />
-                  <span className="text-sm">{hashtag.name}</span>
+                  <TrendingUp className="w-4 h-4 mr-2 text-purple-400" />
+                  {hashtag.name}
+                  <span className="ml-auto text-xs text-muted-foreground">
+                    {hashtag.usage_count}
+                  </span>
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuItem
-                onClick={() => navigate('/hashtags')}
-                className="cursor-pointer border-t border-border mt-1"
-              >
-                <span className="text-xs text-purple-400 font-medium">View All →</span>
-              </DropdownMenuItem>
             </>
+          ) : (
+            <DropdownMenuItem disabled>No data available</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -147,44 +172,47 @@ export const CompactDiscoveryDropdowns = () => {
       {/* Groups Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
+          <Button 
+            variant="outline" 
             size="sm"
-            className="gap-1.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 hover:bg-purple-500/30 text-white"
+            className={`gap-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 text-purple-300 hover:from-purple-500/30 hover:to-pink-500/30 hover:text-purple-200 ${
+              activeGroup ? 'ring-2 ring-purple-400' : ''
+            }`}
           >
-            <Users className="w-3.5 h-3.5" />
-            <span className="text-xs font-medium">Groups</span>
+            <Users className="w-4 h-4" />
+            {activeGroup && groups.find(g => g.id === activeGroup) 
+              ? groups.find(g => g.id === activeGroup)?.name 
+              : 'Groups'}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-border">
-          {groups.length === 0 ? (
-            <DropdownMenuItem disabled>No groups available</DropdownMenuItem>
-          ) : (
+        <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-purple-400/30">
+          <DropdownMenuLabel className="text-purple-400">Groups</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {groups.length > 0 ? (
             <>
+              <DropdownMenuItem
+                onClick={() => onGroupFilter(null)}
+                className="cursor-pointer"
+              >
+                <span className="text-muted-foreground">All Posts</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               {groups.map((group) => (
                 <DropdownMenuItem
                   key={group.id}
-                  onClick={() => navigate(`/groups/${group.id}`)}
-                  className="cursor-pointer"
+                  onClick={() => onGroupFilter(group.id)}
+                  className={`cursor-pointer ${activeGroup === group.id ? 'bg-purple-500/20' : ''}`}
                 >
-                  {group.icon && (
-                    <span className="mr-2 text-base">{group.icon}</span>
-                  )}
-                  <div className="flex flex-col flex-1">
-                    <span className="text-sm font-medium">{group.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {group.member_count}
-                    </span>
-                  </div>
+                  <Users className="w-4 h-4 mr-2 text-purple-400" />
+                  {group.name}
+                  <span className="ml-auto text-xs text-muted-foreground">
+                    {group.member_count} members
+                  </span>
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuItem
-                onClick={() => navigate('/groups')}
-                className="cursor-pointer border-t border-border mt-1"
-              >
-                <span className="text-xs text-purple-400 font-medium">View All →</span>
-              </DropdownMenuItem>
             </>
+          ) : (
+            <DropdownMenuItem disabled>No data available</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

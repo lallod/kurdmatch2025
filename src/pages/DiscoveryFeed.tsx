@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPosts, getStories, likePost, unlikePost, Post, Story, getFollowingPosts } from '@/api/posts';
 import { getEvents, joinEvent, leaveEvent, Event } from '@/api/events';
+import { getPostsByHashtag } from '@/api/hashtags';
+import { getGroupPosts } from '@/api/groups';
 import StoryBubbles from '@/components/discovery/StoryBubbles';
 import PostCard from '@/components/discovery/PostCard';
 import EventCard from '@/components/discovery/EventCard';
 import EventFilters from '@/components/discovery/EventFilters';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PenSquare, Loader2, Calendar, Plus, Filter, Users as UsersIcon, Hash } from 'lucide-react';
+import { PenSquare, Loader2, Calendar, Plus, Filter, Users as UsersIcon, Hash, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNavigation from '@/components/BottomNavigation';
 import StoryViewer from '@/components/stories/StoryViewer';
@@ -31,6 +33,10 @@ const DiscoveryFeed = () => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showCreateStory, setShowCreateStory] = useState(false);
+  
+  // Discovery filters
+  const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
+  const [activeGroup, setActiveGroup] = useState<string | null>(null);
   
   // Event filters
   const [eventCategory, setEventCategory] = useState('all');
@@ -64,7 +70,17 @@ const DiscoveryFeed = () => {
 
   const loadPosts = async () => {
     try {
-      const postsData = showFollowingOnly ? await getFollowingPosts() : await getPosts();
+      let postsData: Post[];
+      
+      if (activeHashtag) {
+        postsData = await getPostsByHashtag(activeHashtag) as Post[];
+      } else if (activeGroup) {
+        const groupPostsData = await getGroupPosts(activeGroup);
+        postsData = groupPostsData?.map((item: any) => item.posts).filter(Boolean) || [];
+      } else {
+        postsData = showFollowingOnly ? await getFollowingPosts() : await getPosts();
+      }
+      
       setPosts(postsData);
     } catch (error) {
       console.error('Error loading posts:', error);
@@ -77,7 +93,7 @@ const DiscoveryFeed = () => {
 
   useEffect(() => {
     loadPosts();
-  }, [showFollowingOnly]);
+  }, [showFollowingOnly, activeHashtag, activeGroup]);
 
   // Real-time updates for posts
   useRealtimePosts({
@@ -183,6 +199,21 @@ const DiscoveryFeed = () => {
         variant: 'destructive'
       });
     }
+  };
+
+  const handleHashtagFilter = (hashtag: string | null) => {
+    setActiveHashtag(hashtag);
+    setActiveGroup(null); // Clear group filter
+  };
+
+  const handleGroupFilter = (groupId: string | null) => {
+    setActiveGroup(groupId);
+    setActiveHashtag(null); // Clear hashtag filter
+  };
+
+  const clearDiscoveryFilters = () => {
+    setActiveHashtag(null);
+    setActiveGroup(null);
   };
 
   const handleClearEventFilters = () => {
@@ -310,7 +341,42 @@ const DiscoveryFeed = () => {
             )}
 
             {/* Compact Discovery Dropdowns */}
-            <CompactDiscoveryDropdowns />
+            <div className="space-y-3">
+              <CompactDiscoveryDropdowns 
+                onHashtagFilter={handleHashtagFilter}
+                onGroupFilter={handleGroupFilter}
+                activeHashtag={activeHashtag}
+                activeGroup={activeGroup}
+              />
+              
+              {/* Active Filter Display */}
+              {(activeHashtag || activeGroup) && (
+                <div className="bg-purple-500/20 border border-purple-400/30 rounded-xl p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {activeHashtag && (
+                      <>
+                        <Hash className="w-4 h-4 text-purple-400" />
+                        <span className="text-white font-medium">#{activeHashtag}</span>
+                      </>
+                    )}
+                    {activeGroup && (
+                      <>
+                        <UsersIcon className="w-4 h-4 text-purple-400" />
+                        <span className="text-white font-medium">Group Posts</span>
+                      </>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={clearDiscoveryFilters}
+                    className="text-white hover:text-white hover:bg-purple-500/20"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
 
             {/* Posts Feed */}
             <div className="space-y-4">
