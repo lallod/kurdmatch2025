@@ -36,44 +36,65 @@ export const CompactDiscoveryDropdowns = ({
   const [trending, setTrending] = useState<Hashtag[]>([]);
   const [explore, setExplore] = useState<Hashtag[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Separate loading states for each dropdown
+  const [trendingLoading, setTrendingLoading] = useState(false);
+  const [exploreLoading, setExploreLoading] = useState(false);
+  const [groupsLoading, setGroupsLoading] = useState(false);
+  
+  // Track if data has been loaded
+  const [trendingLoaded, setTrendingLoaded] = useState(false);
+  const [exploreLoaded, setExploreLoaded] = useState(false);
+  const [groupsLoaded, setGroupsLoaded] = useState(false);
 
-  useEffect(() => {
-    loadAllData();
-  }, []);
-
-  const loadAllData = async () => {
+  const loadTrending = async () => {
+    if (trendingLoaded) return; // Don't reload if already loaded
+    
+    setTrendingLoading(true);
     try {
-      // Load all data in parallel for faster loading
-      const [trendingData, exploreData, groupsData] = await Promise.all([
-        getTrendingHashtags(5),
-        supabase
-          .from('hashtags')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(5),
-        getGroups({})
-      ]);
-
-      setTrending(trendingData);
-      setExplore(exploreData.data || []);
-      setGroups((groupsData || []).slice(0, 3));
+      const data = await getTrendingHashtags(5);
+      setTrending(data);
+      setTrendingLoaded(true);
     } catch (error) {
-      console.error('Error loading discovery data:', error);
+      console.error('Error loading trending hashtags:', error);
     } finally {
-      setLoading(false);
+      setTrendingLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex gap-2 animate-pulse">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-8 w-24 bg-white/10 rounded-lg"></div>
-        ))}
-      </div>
-    );
-  }
+  const loadExplore = async () => {
+    if (exploreLoaded) return;
+    
+    setExploreLoading(true);
+    try {
+      const { data } = await supabase
+        .from('hashtags')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      setExplore(data || []);
+      setExploreLoaded(true);
+    } catch (error) {
+      console.error('Error loading explore hashtags:', error);
+    } finally {
+      setExploreLoading(false);
+    }
+  };
+
+  const loadGroups = async () => {
+    if (groupsLoaded) return;
+    
+    setGroupsLoading(true);
+    try {
+      const data = await getGroups({});
+      setGroups((data || []).slice(0, 3));
+      setGroupsLoaded(true);
+    } catch (error) {
+      console.error('Error loading groups:', error);
+    } finally {
+      setGroupsLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -94,7 +115,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-purple-400/30">
           <DropdownMenuLabel className="text-purple-400">Explore Hashtags</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {explore.length > 0 ? (
+          {exploreLoading ? (
+            <div className="p-4 text-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400 mx-auto"></div>
+            </div>
+          ) : explore.length > 0 ? (
             <>
               <DropdownMenuItem
                 onClick={() => onHashtagFilter(null)}
@@ -124,7 +149,7 @@ export const CompactDiscoveryDropdowns = ({
       </DropdownMenu>
 
       {/* Trending Hashtags Dropdown */}
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={(open) => open && loadTrending()}>
         <DropdownMenuTrigger asChild>
           <Button 
             variant="outline" 
@@ -140,7 +165,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-purple-400/30">
           <DropdownMenuLabel className="text-purple-400">Trending Hashtags</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {trending.length > 0 ? (
+          {trendingLoading ? (
+            <div className="p-4 text-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400 mx-auto"></div>
+            </div>
+          ) : trending.length > 0 ? (
             <>
               <DropdownMenuItem
                 onClick={() => onHashtagFilter(null)}
@@ -170,7 +199,7 @@ export const CompactDiscoveryDropdowns = ({
       </DropdownMenu>
 
       {/* Groups Dropdown */}
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={(open) => open && loadGroups()}>
         <DropdownMenuTrigger asChild>
           <Button 
             variant="outline" 
@@ -188,7 +217,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuContent className="w-56 bg-background/95 backdrop-blur-sm border-purple-400/30">
           <DropdownMenuLabel className="text-purple-400">Groups</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {groups.length > 0 ? (
+          {groupsLoading ? (
+            <div className="p-4 text-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400 mx-auto"></div>
+            </div>
+          ) : groups.length > 0 ? (
             <>
               <DropdownMenuItem
                 onClick={() => onGroupFilter(null)}
