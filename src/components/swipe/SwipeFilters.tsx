@@ -67,12 +67,10 @@ export const SwipeFilters: React.FC<SwipeFiltersProps> = ({ onApplyFilters, curr
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          size="sm"
-          className="gap-2 text-white hover:bg-white/10 border border-white/20"
+          size="icon"
+          className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10"
         >
-          <SlidersHorizontal className="w-4 h-4" />
-          <span className="hidden sm:inline">Filters</span>
-          {!isSubscribed && <Lock className="w-3 h-3" />}
+          <SlidersHorizontal className="w-5 h-5" />
         </Button>
       </SheetTrigger>
       

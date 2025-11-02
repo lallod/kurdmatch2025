@@ -208,26 +208,9 @@ const Swipe = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
-        <div className={`${SWIPE_CONFIG.header.maxWidth} mx-auto ${SWIPE_CONFIG.header.padding} ${SWIPE_CONFIG.header.height}`}>
-          <div className="flex items-center justify-between">
-            <div className={`flex-1 text-center ${SWIPE_CONFIG.header.title.spacing}`}>
-              <div className={`${SWIPE_CONFIG.header.icon.size} bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin}`}>
-                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </div>
-              <h1 className={`${SWIPE_CONFIG.header.title.size} font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent`}>
-                Discover Love
-              </h1>
-              <p className="text-purple-200 text-sm sm:text-base">Swipe to find your perfect match</p>
-            </div>
-            <div className="absolute right-4 top-4">
-              <SwipeFilters onApplyFilters={handleApplyFilters} currentFilters={filters} />
-            </div>
-          </div>
-        </div>
+      {/* Filter Icon */}
+      <div className="absolute top-4 right-4 z-20">
+        <SwipeFilters onApplyFilters={handleApplyFilters} currentFilters={filters} />
       </div>
 
       {/* Main Content */}
