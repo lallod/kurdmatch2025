@@ -85,7 +85,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
 
   return (
     <>
-      <div className={`flex items-center justify-center ${SWIPE_CONFIG.actions.buttons.gap} ${SWIPE_CONFIG.actions.container.padding}`}>
+      <div className={`flex items-center justify-center ${SWIPE_CONFIG.actions.buttons.gap} ${SWIPE_CONFIG.actions.container.padding} py-4`}>
         {/* Rewind */}
         <button
           onClick={() => handleActionWithLimit('rewind', onRewind)}

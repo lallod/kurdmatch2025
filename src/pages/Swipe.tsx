@@ -4,12 +4,15 @@ import { toast } from 'sonner';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import SwipeActions from '@/components/swipe/SwipeActions';
 import BottomNavigation from '@/components/BottomNavigation';
-import { SwipeFilters } from '@/components/swipe/SwipeFilters';
+import { SwipeFilterSidebar } from '@/components/swipe/SwipeFilters';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth as useAuth } from '@/integrations/supabase/auth';
 import { SWIPE_CONFIG } from '@/config/swipe';
+import Logo from '@/components/landing/Logo';
+import { SlidersHorizontal } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Swipe = () => {
   const navigate = useNavigate();
@@ -18,6 +21,7 @@ const Swipe = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<{
     ageMin?: number;
     ageMax?: number;
@@ -208,10 +212,26 @@ const Swipe = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col overflow-hidden">
-      {/* Filter Icon */}
-      <div className="absolute top-4 right-4 z-20">
-        <SwipeFilters onApplyFilters={handleApplyFilters} currentFilters={filters} />
+      {/* Header with Logo and Filter */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
+        <Logo size="small" withText={true} />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setFilterOpen(true)}
+          className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10"
+        >
+          <SlidersHorizontal className="w-5 h-5" />
+        </Button>
       </div>
+
+      {/* Filter Sidebar */}
+      <SwipeFilterSidebar 
+        onApplyFilters={handleApplyFilters} 
+        currentFilters={filters}
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+      />
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center pb-24">
@@ -255,7 +275,7 @@ const Swipe = () => {
       </div>
         
       {/* Action Buttons Section - Fixed above navigation */}
-      <div className="fixed bottom-16 left-0 right-0 bg-black/10 backdrop-blur-sm border-t border-white/10 z-40">
+      <div className="fixed bottom-16 left-0 right-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent backdrop-blur-md z-40 pb-2">
         <SwipeActions
           onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
           onPass={() => handleSwipeAction('pass', currentProfile.id)}
