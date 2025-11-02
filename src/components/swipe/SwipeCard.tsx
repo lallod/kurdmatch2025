@@ -88,6 +88,52 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
     document.addEventListener('mouseup', handleMouseUp);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isBackground) return;
+    setIsDragging(true);
+    const touch = e.touches[0];
+    const startX = touch.clientX;
+    const startY = touch.clientY;
+
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      const touch = moveEvent.touches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+      
+      setDragPosition({ x: deltaX, y: deltaY });
+      
+      // Determine swipe direction
+      if (Math.abs(deltaX) > 50) {
+        setSwipeDirection(deltaX > 0 ? 'right' : 'left');
+      } else {
+        setSwipeDirection(null);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+      const threshold = SWIPE_CONFIG.animations.threshold;
+      
+      if (Math.abs(dragPosition.x) > threshold) {
+        if (dragPosition.x > 0) {
+          onSwipeRight();
+        } else {
+          onSwipeLeft();
+        }
+      }
+      
+      // Reset position
+      setDragPosition({ x: 0, y: 0 });
+      setSwipeDirection(null);
+      
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+  };
+
   const cardRotation = dragPosition.x * SWIPE_CONFIG.animations.dragRotation;
   const cardOpacity = Math.max(SWIPE_CONFIG.animations.minOpacity, 1 - Math.abs(dragPosition.x) * SWIPE_CONFIG.animations.opacityMultiplier);
 
@@ -101,6 +147,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
         ...style
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
       {/* Swipe Overlay */}
       {swipeDirection && !isBackground && (
