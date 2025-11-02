@@ -76,11 +76,8 @@ export interface Profile {
 }
 
 // Get match recommendations for current user
-export const getMatchRecommendations = async (
-  limit?: number, 
-  filters?: { ageMin?: number; ageMax?: number; location?: string; religion?: string }
-): Promise<Profile[]> => {
-  const profiles = await getProfileSuggestions(filters);
+export const getMatchRecommendations = async (limit?: number): Promise<Profile[]> => {
+  const profiles = await getProfileSuggestions();
   return limit ? profiles.slice(0, limit) : profiles;
 };
 
@@ -276,48 +273,28 @@ function toRad(degrees: number): number {
   return degrees * (Math.PI / 180);
 }
 
-// Get profile suggestions based on current user's profile with gender filtering
-export const getProfileSuggestions = async (filters?: { ageMin?: number; ageMax?: number; location?: string; religion?: string }): Promise<Profile[]> => {
+// Get profile suggestions based on current user's profile
+export const getProfileSuggestions = async (): Promise<Profile[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
   const { data: currentProfile } = await supabase
     .from('profiles')
-    .select('gender, interests, values, hobbies, kurdistan_region')
+    .select('interests, values, hobbies, kurdistan_region')
     .eq('id', user.id)
     .maybeSingle();
 
   if (!currentProfile) return [];
 
-  // Determine opposite gender
-  const oppositeGender = currentProfile.gender === 'male' ? 'female' : 'male';
-
-  // Build query with opposite gender filter
-  let query = supabase
+  // Get profiles with similar interests/values
+  const { data, error } = await supabase
     .from('profiles')
     .select('*')
     .neq('id', user.id)
-    .eq('gender', oppositeGender);
-
-  // Apply additional filters if provided (premium feature)
-  if (filters?.ageMin) {
-    query = query.gte('age', filters.ageMin);
-  }
-  if (filters?.ageMax) {
-    query = query.lte('age', filters.ageMax);
-  }
-  if (filters?.location) {
-    query = query.ilike('location', `%${filters.location}%`);
-  }
-  if (filters?.religion) {
-    query = query.eq('religion', filters.religion);
-  }
-
-  const { data, error } = await query.limit(100);
+    .or(`interests.ov.{${currentProfile.interests?.join(',') || ''}},values.ov.{${currentProfile.values?.join(',') || ''}}`)
+    .order('last_active', { ascending: false })
+    .limit(20);
 
   if (error) throw error;
-  
-  // Randomize the results
-  const shuffled = (data || []).sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 50);
+  return data || [];
 };
