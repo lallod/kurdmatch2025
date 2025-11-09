@@ -292,15 +292,15 @@ const Discovery = () => {
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
       {/* Header */}
       <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <SearchIcon className="w-8 h-8 text-white" />
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          <div className="text-center space-y-3 sm:space-y-4">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <SearchIcon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
               Discover People
             </h1>
-            <p className="text-purple-200">Find your perfect match in our community</p>
+            <p className="text-sm sm:text-base text-purple-200">Find your perfect match in our community</p>
             
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
@@ -311,10 +311,10 @@ const Discovery = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Stories Section */}
         {stories.length > 0 && (
-          <div className="mb-6 backdrop-blur-md bg-white/10 rounded-2xl border border-white/20 p-4">
+          <div className="mb-4 sm:mb-6 backdrop-blur-md bg-white/10 rounded-2xl border border-white/20 p-3 sm:p-4">
             <StoryBubbles
               stories={stories}
               onStoryClick={handleStoryClick}
@@ -324,7 +324,7 @@ const Discovery = () => {
         )}
 
         {/* Compact Navigation Sections */}
-        <div className="space-y-2 mb-6">
+        <div className="space-y-1.5 sm:space-y-2 mb-4 sm:mb-6">
           <CompactSection
             icon={<Hash className="h-5 w-5" />}
             title="Explore Hashtags"
@@ -347,13 +347,13 @@ const Discovery = () => {
           />
         </div>
 
-        <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
+        <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-4 sm:p-6 relative overflow-hidden">
           {/* Animated background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 animate-pulse"></div>
           
           <div className="relative z-10">
             {/* Filters Section */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6">
               <div className="w-full">
                 <Select value={selectedArea} onValueChange={setSelectedArea}>
                   <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">

@@ -127,48 +127,48 @@ const PersonalityTypeInfoDialog = () => {
           type="button"
           variant="outline" 
           size="sm"
-          className="mb-4 bg-white/10 border-purple-400/30 text-white hover:bg-white/20"
+          className="mb-3 sm:mb-4 bg-white/10 border-purple-400/30 text-white hover:bg-white/20 text-xs sm:text-sm h-9"
         >
-          <Info className="w-4 h-4 mr-2" />
+          <Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
           Learn About Personality Types
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[85vh] bg-gray-900 border-gray-700 text-white">
+      <DialogContent className="max-w-4xl max-h-[90vh] sm:max-h-[85vh] bg-gray-900 border-gray-700 text-white mx-3 sm:mx-4">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-white">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-white">
             Myers-Briggs Personality Types
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-[70vh] pr-4">
-          <div className="space-y-6">
+        <ScrollArea className="h-[75vh] sm:h-[70vh] pr-2 sm:pr-4">
+          <div className="space-y-4 sm:space-y-6">
             {personalityData.map((personality) => (
               <div 
                 key={personality.type}
-                className="p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                className="p-3 sm:p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
               >
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="px-3 py-1 rounded-md bg-purple-600 font-bold text-sm">
+                <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+                  <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-md bg-purple-600 font-bold text-xs sm:text-sm">
                     {personality.type}
                   </div>
-                  <h3 className="text-xl font-semibold text-purple-300">
+                  <h3 className="text-lg sm:text-xl font-semibold text-purple-300">
                     {personality.name}
                   </h3>
                 </div>
                 
-                <p className="text-gray-300 mb-4 leading-relaxed">
+                <p className="text-sm sm:text-base text-gray-300 mb-3 sm:mb-4 leading-relaxed">
                   {personality.description}
                 </p>
                 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <div className="flex items-center gap-2 mb-2 text-purple-400">
-                      <Lightbulb className="w-4 h-4" />
-                      <span className="font-semibold text-sm">Key Traits</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 text-purple-400">
+                      <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="font-semibold text-xs sm:text-sm">Key Traits</span>
                     </div>
-                    <ul className="space-y-1">
+                    <ul className="space-y-0.5 sm:space-y-1">
                       {personality.traits.map((trait, idx) => (
-                        <li key={idx} className="text-sm text-gray-400 flex items-start gap-2">
-                          <span className="text-purple-400 mt-1">•</span>
+                        <li key={idx} className="text-xs sm:text-sm text-gray-400 flex items-start gap-1.5 sm:gap-2">
+                          <span className="text-purple-400 mt-0.5 sm:mt-1">•</span>
                           <span>{trait}</span>
                         </li>
                       ))}
@@ -176,11 +176,11 @@ const PersonalityTypeInfoDialog = () => {
                   </div>
                   
                   <div>
-                    <div className="flex items-center gap-2 mb-2 text-pink-400">
-                      <Heart className="w-4 h-4" />
-                      <span className="font-semibold text-sm">In Relationships</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 text-pink-400">
+                      <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="font-semibold text-xs sm:text-sm">In Relationships</span>
                     </div>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-400">
                       {personality.compatibility}
                     </p>
                   </div>

@@ -359,19 +359,19 @@ const Messages = () => {
         <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
         {/* Header */}
         <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
-          <div className="flex items-center p-4">
-            <Button variant="ghost" size="icon" onClick={() => setSelectedConversation(null)} className="mr-2 text-white hover:bg-white/10">
-              <ArrowLeft className="h-5 w-5" />
+          <div className="flex items-center p-3 sm:p-4">
+            <Button variant="ghost" size="icon" onClick={() => setSelectedConversation(null)} className="mr-1.5 sm:mr-2 text-white hover:bg-white/10 h-9 w-9 sm:h-10 sm:w-10">
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <div className="relative">
-              <Avatar className="h-10 w-10 mr-3 ring-2 ring-purple-400/30">
+              <Avatar className="h-9 w-9 sm:h-10 sm:w-10 mr-2 sm:mr-3 ring-2 ring-purple-400/30">
                 <AvatarImage src={conversation.avatar} alt={conversation.name} />
-                <AvatarFallback className="bg-purple-500 text-white">{conversation.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="bg-purple-500 text-white text-sm">{conversation.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              {conversation.online && <span className="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-success border-2 border-white ring-1 ring-success/50"></span>}
+              {conversation.online && <span className="absolute bottom-0 right-1 sm:right-2 h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-success border-2 border-white ring-1 ring-success/50"></span>}
             </div>
             <div className="flex-1">
-              <h2 className="font-semibold text-white">{conversation.name}</h2>
+              <h2 className="text-sm sm:text-base font-semibold text-white">{conversation.name}</h2>
               <p className="text-xs text-purple-200">
                 {conversation.isTyping ? <span className="flex items-center gap-1">
                     <div className="flex space-x-1">

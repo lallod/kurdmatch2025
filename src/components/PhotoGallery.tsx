@@ -280,44 +280,44 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
           <DialogDescription className="sr-only">
             View full-size photos
           </DialogDescription>
-          <DialogClose className="absolute right-4 top-4 z-50 bg-black/50 p-2 rounded-full text-white hover:bg-black/70">
-            <X size={20} />
+          <DialogClose className="absolute right-2 sm:right-4 top-2 sm:top-4 z-50 bg-black/50 p-1.5 sm:p-2 rounded-full text-white hover:bg-black/70">
+            <X size={18} className="sm:w-5 sm:h-5" />
           </DialogClose>
           
           <div className="relative w-full h-full flex items-center justify-center">
             <button 
-              className="absolute left-4 p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors z-20"
+              className="absolute left-2 sm:left-4 p-2 sm:p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors z-20"
               onClick={() => navigatePhoto('prev')}
             >
-              <ChevronLeft size={30} />
+              <ChevronLeft size={24} className="sm:w-[30px] sm:h-[30px]" />
             </button>
             
             <button 
-              className="absolute right-4 p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors z-20"
+              className="absolute right-2 sm:right-4 p-2 sm:p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors z-20"
               onClick={() => navigatePhoto('next')}
             >
-              <ChevronRight size={30} />
+              <ChevronRight size={24} className="sm:w-[30px] sm:h-[30px]" />
             </button>
             
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center px-2 sm:px-0">
               <img 
                 src={photos[selectedPhotoIndex]} 
                 alt={`Full size photo ${selectedPhotoIndex + 1}`}
-                className="h-full w-auto max-h-[calc(100vh-80px)] object-contain" 
+                className="h-full w-auto max-h-[calc(100vh-60px)] sm:max-h-[calc(100vh-80px)] object-contain" 
               />
             </div>
             
-            <div className="absolute bottom-16 left-0 right-0 flex justify-center gap-2 z-20">
+            <div className="absolute bottom-12 sm:bottom-16 left-0 right-0 flex justify-center gap-1.5 sm:gap-2 z-20">
               {photos.map((_, index) => (
                 <button
                   key={index}
-                  className={`w-2 h-2 rounded-full ${selectedPhotoIndex === index ? 'bg-white' : 'bg-white/50'}`}
+                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${selectedPhotoIndex === index ? 'bg-white' : 'bg-white/50'}`}
                   onClick={() => setSelectedPhotoIndex(index)}
                 />
               ))}
             </div>
             
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm">
               {selectedPhotoIndex + 1} / {photos.length}
             </div>
           </div>

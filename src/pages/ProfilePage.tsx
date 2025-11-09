@@ -154,14 +154,14 @@ const ProfilePage = () => {
     <div className="flex flex-col min-h-screen bg-background">
       {/* Back Button */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-3">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="gap-2"
+            className="gap-1.5 sm:gap-2 h-9 text-sm"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Back
           </Button>
         </div>
@@ -183,7 +183,7 @@ const ProfilePage = () => {
         
         {/* Photo Gallery */}
         <div className="flex-1 flex items-center justify-center w-full">
-          <div className="w-full max-w-4xl px-4 py-6">
+          <div className="w-full max-w-4xl px-3 sm:px-4 py-4 sm:py-6">
             <PhotoGallery 
               photos={profile.photos} 
               name={profile.name} 
@@ -193,7 +193,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="w-full max-w-4xl mx-auto px-4 py-6">
+        <div className="w-full max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
           <ProfileActionButtons
             userId={profile.id}
             userName={profile.name}
