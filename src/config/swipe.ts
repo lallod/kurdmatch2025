@@ -3,18 +3,18 @@ export const SWIPE_CONFIG = {
   // Card Dimensions (responsive)
   card: {
     maxWidth: {
-      mobile: 'w-[95vw]',
+      mobile: 'w-[96vw]',
       tablet: 'w-[85vw] max-w-[450px]',
       desktop: 'w-[80vw] max-w-[480px]'
     },
     height: {
-      mobile: 'h-[calc(100vh-240px)]',
-      tablet: 'h-[calc(100vh-260px)]',
-      desktop: 'h-[calc(100vh-280px)]'
+      mobile: 'h-[calc(100vh-200px)]',
+      tablet: 'h-[calc(100vh-240px)]',
+      desktop: 'h-[calc(100vh-260px)]'
     },
-    minHeight: 'min-h-[600px]',
-    maxHeight: 'max-h-[calc(100vh-140px)]',
-    borderRadius: 'rounded-3xl'
+    minHeight: 'min-h-[500px]',
+    maxHeight: 'max-h-[calc(100vh-120px)]',
+    borderRadius: 'rounded-2xl sm:rounded-3xl'
   },
 
   // Header Configuration
@@ -49,16 +49,16 @@ export const SWIPE_CONFIG = {
   // Actions Configuration
   actions: {
     container: {
-      bottom: 'bottom-16 sm:bottom-20',
-      padding: 'px-4 sm:px-8'
+      bottom: 'bottom-14 sm:bottom-16',
+      padding: 'px-3 sm:px-6'
     },
     buttons: {
-      small: 'w-12 h-12 sm:w-14 sm:h-14',
-      large: 'w-14 h-14 sm:w-16 sm:h-16',
-      gap: 'gap-3 sm:gap-4',
+      small: 'w-14 h-14 sm:w-14 sm:h-14',
+      large: 'w-16 h-16 sm:w-16 sm:h-16',
+      gap: 'gap-2 sm:gap-3',
       iconSize: {
-        small: 'w-5 h-5 sm:w-6 sm:h-6',
-        large: 'w-6 h-6 sm:w-8 sm:h-8'
+        small: 'w-6 h-6 sm:w-6 sm:h-6',
+        large: 'w-7 h-7 sm:w-8 sm:h-8'
       }
     }
   },
@@ -66,35 +66,35 @@ export const SWIPE_CONFIG = {
   // Photo Gallery Configuration
   gallery: {
     indicators: {
-      top: 'top-4 sm:top-6',
-      size: 'h-0.5 sm:h-1',
-      active: 'w-6 sm:w-8',
-      inactive: 'w-1 sm:w-1.5',
+      top: 'top-3 sm:top-4',
+      size: 'h-1 sm:h-1',
+      active: 'w-8 sm:w-8',
+      inactive: 'w-1.5 sm:w-1.5',
       gap: 'gap-1 sm:gap-1.5',
-      padding: 'px-2 sm:px-3 py-1.5 sm:py-2'
+      padding: 'px-3 sm:px-3 py-2 sm:py-2'
     }
   },
 
   // Profile Info Configuration
   info: {
     overlay: {
-      height: 'h-32 sm:h-40',
-      padding: 'bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6'
+      height: 'h-36 sm:h-40',
+      padding: 'bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4'
     },
     name: {
-      size: 'text-2xl sm:text-3xl'
-    },
-    age: {
       size: 'text-xl sm:text-2xl'
     },
+    age: {
+      size: 'text-lg sm:text-xl'
+    },
     location: {
-      gap: 'gap-2 sm:gap-3',
-      iconSize: 'w-4 h-4'
+      gap: 'gap-1.5 sm:gap-2',
+      iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4'
     },
     interests: {
-      gap: 'gap-1.5 sm:gap-2',
-      padding: 'px-2.5 sm:px-3 py-1',
-      textSize: 'text-xs sm:text-sm'
+      gap: 'gap-1 sm:gap-1.5',
+      padding: 'px-2 sm:px-2.5 py-0.5 sm:py-1',
+      textSize: 'text-xs'
     }
   },
 

@@ -16,7 +16,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false }) =
   const kurdistanRegion = getKurdistanRegionDisplay(profile.kurdistanRegion || '');
 
   return (
-    <div className={`text-white ${SWIPE_CONFIG.info.name.size === 'text-2xl sm:text-3xl' ? 'space-y-2 sm:space-y-3' : 'space-y-3'}`}>
+    <div className="text-white space-y-1.5 sm:space-y-2">
       {/* Name and Age */}
       <div className={`flex items-center ${SWIPE_CONFIG.info.location.gap}`}>
         <h2 className={`${SWIPE_CONFIG.info.name.size} font-bold`}>{profile.name}</h2>
@@ -24,7 +24,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false }) =
       </div>
       
       {/* Location */}
-      <div className={`flex items-center gap-2 text-white/90 text-sm sm:text-base`}>
+      <div className={`flex items-center gap-1.5 sm:gap-2 text-white/90 text-xs sm:text-sm`}>
         <svg className={`${SWIPE_CONFIG.info.location.iconSize}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>

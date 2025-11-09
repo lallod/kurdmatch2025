@@ -213,13 +213,13 @@ const Swipe = () => {
   return (
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col overflow-hidden">
       {/* Header with Logo and Filter */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 z-20">
         <Logo size="small" withText={true} />
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setFilterOpen(true)}
-          className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10"
+          className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11"
         >
           <SlidersHorizontal className="w-5 h-5" />
         </Button>
@@ -234,9 +234,9 @@ const Swipe = () => {
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center pb-24">
+      <div className="flex-1 flex items-center justify-center pb-20 sm:pb-24">
         {/* Card Stack Container */}
-        <div className={`relative flex items-center justify-center w-full h-[90%] ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
+        <div className={`relative flex items-center justify-center w-full h-[92%] sm:h-[90%] ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
           {/* Background Cards (stacked behind) */}
           {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
             <div
@@ -275,7 +275,7 @@ const Swipe = () => {
       </div>
         
       {/* Action Buttons Section - Fixed above navigation */}
-      <div className="fixed bottom-16 left-0 right-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent backdrop-blur-md z-40 pb-2">
+      <div className="fixed bottom-14 sm:bottom-16 left-0 right-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent backdrop-blur-md z-40 pb-1 sm:pb-2">
         <SwipeActions
           onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
           onPass={() => handleSwipeAction('pass', currentProfile.id)}
