@@ -25,7 +25,7 @@ const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
   // BasicInfoStep rendering
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <BasicInfoHeader />
       
       <ErrorBoundary>

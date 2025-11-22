@@ -21,13 +21,13 @@ const AccountStep = ({ form }: AccountStepProps) => {
   const { isChecking, isEmailTaken, validationMessage, checkEmail } = useEmailValidation();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t border-white/30"></span>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-gradient-to-r from-primary-dark to-primary px-3 text-primary-foreground/80">
+          <span className="bg-gradient-to-r from-primary-dark to-primary px-2 sm:px-3 text-primary-foreground/80 text-xs sm:text-sm">
             Or sign up with email
           </span>
         </div>
@@ -38,13 +38,13 @@ const AccountStep = ({ form }: AccountStepProps) => {
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">Email Address</FormLabel>
+            <FormLabel className="text-white text-sm">Email Address</FormLabel>
             <FormControl>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-primary" />
+                <Mail className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="your@email.com" 
-                  className="pl-10 bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20" 
+                  className="pl-9 sm:pl-10 h-9 sm:h-10 text-sm bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20"
                   type="email"
                   autoComplete="email"
                   autoFocus
@@ -96,13 +96,13 @@ const AccountStep = ({ form }: AccountStepProps) => {
         name="password"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">Password</FormLabel>
+            <FormLabel className="text-white text-sm">Password</FormLabel>
             <FormControl>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-primary" />
+                <Lock className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="Create a strong password" 
-                  className="pl-10 bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20" 
+                  className="pl-9 sm:pl-10 h-9 sm:h-10 text-sm bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20"
                   type="password"
                   autoComplete="new-password"
                   {...field} 
@@ -122,13 +122,13 @@ const AccountStep = ({ form }: AccountStepProps) => {
         name="confirmPassword"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">Confirm Password</FormLabel>
+            <FormLabel className="text-white text-sm">Confirm Password</FormLabel>
             <FormControl>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-primary" />
+                <Lock className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="Confirm your password" 
-                  className="pl-10 bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20" 
+                  className="pl-9 sm:pl-10 h-9 sm:h-10 text-sm bg-white/10 backdrop-blur border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20"
                   type="password"
                   autoComplete="new-password"
                   {...field} 

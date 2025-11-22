@@ -31,10 +31,10 @@ const LocationStep = ({ form, location, locationLoading }: LocationStepProps) =>
   };
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Where Do You Live?</h2>
-        <p className="text-purple-200 mt-1">Share your location to find matches near you</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">Where Do You Live?</h2>
+        <p className="text-purple-200 mt-1 text-sm sm:text-base">Share your location to find matches near you</p>
       </div>
       
       <LocationCapture
