@@ -107,24 +107,24 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
       {/* Header */}
-      <div className="relative z-10 p-4">
+      <div className="relative z-10 p-3 sm:p-4">
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/80 hover:text-white transition-colors"
+          className="absolute top-3 sm:top-4 left-3 sm:left-4 p-1.5 sm:p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/80 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
         
-        <div className="absolute top-4 right-4 p-2 rounded-full bg-black/20 backdrop-blur-sm">
-          <div className="w-6 h-6 border border-white/60 rounded text-white/80 flex items-center justify-center text-xs">
+        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 p-1.5 sm:p-2 rounded-full bg-black/20 backdrop-blur-sm">
+          <div className="w-5 h-5 sm:w-6 sm:h-6 border border-white/60 rounded text-white/80 flex items-center justify-center text-xs">
             P
           </div>
         </div>
       </div>
 
       {/* Profile Card */}
-      <div className="max-w-md mx-auto px-4 pb-20">
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl overflow-hidden shadow-2xl">
+      <div className="max-w-md mx-auto px-3 sm:px-4 pb-20">
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
           {/* Profile Image */}
           <div className="aspect-[3/4] relative overflow-hidden">
             <img
@@ -135,41 +135,41 @@ const Profile = () => {
             
 
             {/* Profile Info Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 sm:p-6">
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold text-white">{profile.name}</h1>
-                  <span className="text-xl text-white/90">{profile.age}</span>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <h1 className="text-xl sm:text-2xl font-bold text-white">{profile.name}</h1>
+                  <span className="text-lg sm:text-xl text-white/90">{profile.age}</span>
                 </div>
-                <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-3 py-1">
+                <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm">
                   ⚡ {matchPercentage}%
                 </Badge>
               </div>
 
-              <div className="flex items-center gap-2 text-white/90 mb-3">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2 text-white/90 mb-2 sm:mb-3 text-sm">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                <span>{profile.location}</span>
+                <span className="text-xs sm:text-sm">{profile.location}</span>
                 <span className="text-white/70">•</span>
-                <span>{calculateDistance()}km away</span>
+                <span className="text-xs sm:text-sm">{calculateDistance()}km away</span>
               </div>
 
               {profile.kurdistan_region && (
-                <Badge className="bg-purple-500/80 text-white mb-3 mr-2">
+                <Badge className="bg-purple-500/80 text-white mb-2 sm:mb-3 mr-2 text-xs">
                   {profile.kurdistan_region}
                 </Badge>
               )}
 
-              <div className="text-white/90 text-sm mb-2">
+              <div className="text-white/90 text-xs sm:text-sm mb-2">
                 {getDisplayValue(profile.relationship_goals) && (
                   <>Looking for: {profile.relationship_goals}</>
                 )}
               </div>
 
               {getDisplayValue(profile.occupation) && (
-                <Badge className="bg-pink-500/80 text-white text-sm">
+                <Badge className="bg-pink-500/80 text-white text-xs sm:text-sm">
                   {profile.occupation}
                 </Badge>
               )}
@@ -178,14 +178,14 @@ const Profile = () => {
 
           {/* About Section */}
           {getDisplayValue(profile.bio) && (
-            <div className="p-6 bg-black/20 border-b border-white/10">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 bg-pink-500/20 rounded-full flex items-center justify-center">
+            <div className="p-4 sm:p-6 bg-black/20 border-b border-white/10">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-pink-500/20 rounded-full flex items-center justify-center text-sm">
                   ⚡
                 </div>
-                <h3 className="text-lg font-semibold text-white">About {profile.name.split(' ')[0]}</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-white">About {profile.name.split(' ')[0]}</h3>
               </div>
-              <p className="text-white/90 text-sm leading-relaxed mb-3">{profile.bio}</p>
+              <p className="text-white/90 text-xs sm:text-sm leading-relaxed mb-2 sm:mb-3">{profile.bio}</p>
             </div>
           )}
 
@@ -194,14 +194,14 @@ const Profile = () => {
             <Accordion type="multiple" className="w-full">
               {/* Basic Info */}
               <AccordionItem value="basic" className="border-b border-white/10">
-                <AccordionTrigger className="px-6 py-4 text-white hover:text-white/80 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <User className="w-5 h-5 text-white/70" />
-                    <span className="font-medium">Basic Info</span>
+                <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-white hover:text-white/80 hover:no-underline">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-white/70" />
+                    <span className="font-medium text-sm sm:text-base">Basic Info</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4">
-                  <div className="space-y-2 text-sm text-white/90">
+                <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-white/90">
                     {getDisplayValue(profile.height) && <div><span className="text-white/70">Height:</span> {profile.height}</div>}
                     {getDisplayValue(profile.body_type) && <div><span className="text-white/70">Body Type:</span> {profile.body_type}</div>}
                     {getDisplayValue(profile.ethnicity) && <div><span className="text-white/70">Ethnicity:</span> {profile.ethnicity}</div>}
@@ -214,14 +214,14 @@ const Profile = () => {
 
               {/* Career & Education */}
               <AccordionItem value="career" className="border-b border-white/10">
-                <AccordionTrigger className="px-6 py-4 text-white hover:text-white/80 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="w-5 h-5 text-white/70" />
-                    <span className="font-medium">Career & Education</span>
+                <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-white hover:text-white/80 hover:no-underline">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Briefcase className="w-4 h-4 sm:w-5 sm:h-5 text-white/70" />
+                    <span className="font-medium text-sm sm:text-base">Career & Education</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4">
-                  <div className="space-y-2 text-sm text-white/90">
+                <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-white/90">
                     {getDisplayValue(profile.occupation) && <div><span className="text-white/70">Occupation:</span> {profile.occupation}</div>}
                     {getDisplayValue(profile.education) && <div><span className="text-white/70">Education:</span> {profile.education}</div>}
                     {getDisplayValue(profile.company) && <div><span className="text-white/70">Company:</span> {profile.company}</div>}
@@ -233,14 +233,14 @@ const Profile = () => {
 
               {/* Lifestyle */}
               <AccordionItem value="lifestyle" className="border-b border-white/10">
-                <AccordionTrigger className="px-6 py-4 text-white hover:text-white/80 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Home className="w-5 h-5 text-white/70" />
-                    <span className="font-medium">Lifestyle</span>
+                <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-white hover:text-white/80 hover:no-underline">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Home className="w-4 h-4 sm:w-5 sm:h-5 text-white/70" />
+                    <span className="font-medium text-sm sm:text-base">Lifestyle</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4">
-                  <div className="space-y-2 text-sm text-white/90">
+                <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-white/90">
                     {getDisplayValue(profile.exercise_habits) && <div><span className="text-white/70">Exercise:</span> {profile.exercise_habits}</div>}
                     {getDisplayValue(profile.dietary_preferences) && <div><span className="text-white/70">Diet:</span> {profile.dietary_preferences}</div>}
                     {getDisplayValue(profile.smoking) && <div><span className="text-white/70">Smoking:</span> {profile.smoking}</div>}
@@ -266,14 +266,14 @@ const Profile = () => {
 
               {/* Beliefs & Values */}
               <AccordionItem value="beliefs" className="border-b border-white/10">
-                <AccordionTrigger className="px-6 py-4 text-white hover:text-white/80 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Sparkles className="w-5 h-5 text-white/70" />
-                    <span className="font-medium">Beliefs & Values</span>
+                <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-white hover:text-white/80 hover:no-underline">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white/70" />
+                    <span className="font-medium text-sm sm:text-base">Beliefs & Values</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4">
-                  <div className="space-y-2 text-sm text-white/90">
+                <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-white/90">
                     {getDisplayValue(profile.political_views) && <div><span className="text-white/70">Political Views:</span> {profile.political_views}</div>}
                     
                     {hasRealArrayValues(profile.values) && (
@@ -307,14 +307,14 @@ const Profile = () => {
 
               {/* Relationships */}
               <AccordionItem value="relationships" className="border-b-0">
-                <AccordionTrigger className="px-6 py-4 text-white hover:text-white/80 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-white/70" />
-                    <span className="font-medium">Relationships</span>
+                <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-white hover:text-white/80 hover:no-underline">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5 text-white/70" />
+                    <span className="font-medium text-sm sm:text-base">Relationships</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4">
-                  <div className="space-y-2 text-sm text-white/90">
+                <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-white/90">
                     {getDisplayValue(profile.relationship_goals) && <div><span className="text-white/70">Looking for:</span> {profile.relationship_goals}</div>}
                     {getDisplayValue(profile.want_children) && <div><span className="text-white/70">Children:</span> {profile.want_children}</div>}
                     {getDisplayValue(profile.love_language) && <div><span className="text-white/70">Love Language:</span> {profile.love_language}</div>}
@@ -342,7 +342,7 @@ const Profile = () => {
         </div>
         
         {/* Profile Action Buttons */}
-        <div className="mt-6">
+        <div className="mt-4 sm:mt-6">
           <ProfileActionButtons
             userId={profileId}
             userName={profile.name}

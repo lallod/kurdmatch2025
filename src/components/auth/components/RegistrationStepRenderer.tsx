@@ -25,10 +25,10 @@ const RegistrationStepRenderer = ({
   switch (step) {
     case 1:
       return (
-        <div className="space-y-6">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white">{registrationSteps[0].title}</h2>
-            <p className="text-purple-200 mt-1">{registrationSteps[0].description}</p>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="text-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{registrationSteps[0].title}</h2>
+            <p className="text-purple-200 mt-1 text-sm sm:text-base">{registrationSteps[0].description}</p>
           </div>
           
           <SocialLogin />
@@ -42,10 +42,10 @@ const RegistrationStepRenderer = ({
       return <LocationStep form={form} location={location} locationLoading={locationLoading} />;
     case 4:
       return (
-        <div className="space-y-6">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white">{registrationSteps[3].title}</h2>
-            <p className="text-purple-200 mt-1">{registrationSteps[3].description}</p>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="text-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{registrationSteps[3].title}</h2>
+            <p className="text-purple-200 mt-1 text-sm sm:text-base">{registrationSteps[3].description}</p>
           </div>
           
           <PhotoUploadStep 
