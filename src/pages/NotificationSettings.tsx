@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useUserSettings } from '@/hooks/useUserSettings';
+import { PushNotificationSettings } from '@/components/settings/PushNotificationSettings';
 
 const NotificationSettings = () => {
   const navigate = useNavigate();
@@ -172,22 +173,8 @@ const NotificationSettings = () => {
           </CardContent>
         </Card>
 
-        {/* Info Card */}
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <BellOff className="w-5 h-5 text-purple-300 mt-0.5" />
-              <div>
-                <p className="text-sm text-white/90 font-medium mb-1">
-                  Push Notifications
-                </p>
-                <p className="text-sm text-white/60">
-                  Browser push notifications are not yet supported. You'll still receive in-app notifications.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Push Notifications */}
+        <PushNotificationSettings />
       </div>
 
       <BottomNavigation />

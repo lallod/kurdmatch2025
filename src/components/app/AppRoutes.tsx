@@ -31,6 +31,7 @@ import AuthCallback from '@/components/auth/AuthCallback';
 import NotFound from '@/pages/NotFound';
 import { CompleteProfile } from '@/pages/CompleteProfile';
 import Subscription from '@/pages/Subscription';
+import Verification from '@/pages/Verification';
 import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
 import { HashtagFeed } from '@/pages/HashtagFeed';
 import { GroupsList } from '@/pages/GroupsList';
@@ -198,6 +199,10 @@ export const AppRoutes: React.FC = () => {
         element={<ProtectedRoute><Subscription /></ProtectedRoute>} 
       />
       <Route 
+        path="/verification" 
+        element={<ProtectedRoute><Verification /></ProtectedRoute>} 
+      />
+      <Route
         path="/hashtag/:hashtag" 
         element={<ProtectedRoute><HashtagFeed /></ProtectedRoute>} 
       />
