@@ -16,6 +16,7 @@ import { getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useMessageModeration } from '@/hooks/useMessageModeration';
 import { useConversationInsights } from '@/hooks/useConversationInsights';
+import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
 import { ConversationInsights } from '@/components/chat/ConversationInsights';
 import MessageTranslation from '@/components/chat/MessageTranslation';
@@ -42,6 +43,14 @@ const Messages = () => {
   
   const { moderateMessage, isChecking } = useMessageModeration();
   const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
+  
+  // Typing indicator for the selected conversation
+  const conversationId = selectedConversation && user ? 
+    [user.id, selectedConversation].sort().join('_') : '';
+  const { isOtherUserTyping, startTyping, stopTyping } = useTypingIndicator(
+    conversationId,
+    user?.id || ''
+  );
 
   // Load conversations and subscribe to updates
   useEffect(() => {
@@ -508,15 +517,31 @@ const Messages = () => {
           </div>
         </div>
 
-        <div className="backdrop-blur-md bg-white/10 border-t border-white/20 p-3 flex items-end gap-2 max-w-4xl mx-auto">
-          <Textarea 
-            value={newMessage} 
-            onChange={e => setNewMessage(e.target.value)} 
-            onKeyDown={handleKeyPress} 
-            placeholder="Type a message..." 
-            disabled={isChecking}
-            className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" 
-          />
+        <div className="backdrop-blur-md bg-white/10 border-t border-white/20 p-3 max-w-4xl mx-auto">
+          {/* Typing Indicator */}
+          {isOtherUserTyping && (
+            <div className="px-3 py-2 text-sm text-purple-200 animate-pulse">
+              {conversation?.name} is typing...
+            </div>
+          )}
+          
+          <div className="flex items-end gap-2">
+            <Textarea 
+              value={newMessage} 
+              onChange={(e) => {
+                setNewMessage(e.target.value);
+                if (e.target.value.length > 0) {
+                  startTyping();
+                } else {
+                  stopTyping();
+                }
+              }}
+              onKeyDown={handleKeyPress} 
+              onBlur={stopTyping}
+              placeholder="Type a message..." 
+              disabled={isChecking}
+              className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" 
+            />
           <div className="flex flex-col gap-2">
             <Button variant="ghost" size="icon" className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10">
               <Mic className="h-5 w-5" />
@@ -530,6 +555,7 @@ const Messages = () => {
             >
               <Send className="h-5 w-5" />
             </Button>
+            </div>
           </div>
         </div>
         </div>
