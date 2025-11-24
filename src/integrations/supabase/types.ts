@@ -1247,6 +1247,9 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          media_duration: number | null
+          media_type: string | null
+          media_url: string | null
           read: boolean | null
           recipient_id: string | null
           sender_id: string | null
@@ -1255,6 +1258,9 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          media_duration?: number | null
+          media_type?: string | null
+          media_url?: string | null
           read?: boolean | null
           recipient_id?: string | null
           sender_id?: string | null
@@ -1263,6 +1269,9 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          media_duration?: number | null
+          media_type?: string | null
+          media_url?: string | null
           read?: boolean | null
           recipient_id?: string | null
           sender_id?: string | null

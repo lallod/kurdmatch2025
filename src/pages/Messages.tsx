@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban, Globe } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban, Globe, Image as ImageIcon, Smile } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,6 +19,10 @@ import { useConversationInsights } from '@/hooks/useConversationInsights';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
 import { ConversationInsights } from '@/components/chat/ConversationInsights';
+import { GifPicker } from '@/components/chat/GifPicker';
+import { VoiceRecorder } from '@/components/chat/VoiceRecorder';
+import { VoicePlayer } from '@/components/chat/VoicePlayer';
+import { ImageUploader, ImagePreview } from '@/components/chat/ImageUploader';
 import MessageTranslation from '@/components/chat/MessageTranslation';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -40,6 +44,12 @@ const Messages = () => {
   // Translation state
   const [translatedMessages, setTranslatedMessages] = useState<Record<string, string>>({});
   const [translatingMessages, setTranslatingMessages] = useState<Set<string>>(new Set());
+  
+  // Media state
+  const [showGifPicker, setShowGifPicker] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   
   const { moderateMessage, isChecking } = useMessageModeration();
   const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
@@ -280,6 +290,123 @@ const Messages = () => {
     }
   };
   
+  const handleSendGif = async (gifUrl: string) => {
+    if (!selectedConversation) return;
+    
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          sender_id: user?.id,
+          recipient_id: selectedConversation,
+          text: 'Sent a GIF',
+          media_type: 'gif',
+          media_url: gifUrl,
+        });
+
+      if (error) throw error;
+
+      const messages = await getMessagesByConversation(selectedConversation);
+      setConversationMessages(messages);
+      setShowGifPicker(false);
+      toast.success('GIF sent!');
+    } catch (error) {
+      console.error('Error sending GIF:', error);
+      toast.error('Failed to send GIF');
+    }
+  };
+
+  const handleSendVoice = async (audioBlob: Blob, duration: number) => {
+    if (!selectedConversation || !user) return;
+
+    try {
+      // Upload voice message to storage
+      const fileName = `${user.id}/${Date.now()}.webm`;
+      const { error: uploadError } = await supabase.storage
+        .from('voice-messages')
+        .upload(fileName, audioBlob);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('voice-messages')
+        .getPublicUrl(fileName);
+
+      // Save message
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          sender_id: user.id,
+          recipient_id: selectedConversation,
+          text: 'Sent a voice message',
+          media_type: 'voice',
+          media_url: publicUrl,
+          media_duration: duration,
+        });
+
+      if (error) throw error;
+
+      const messages = await getMessagesByConversation(selectedConversation);
+      setConversationMessages(messages);
+      setShowVoiceRecorder(false);
+      toast.success('Voice message sent!');
+    } catch (error) {
+      console.error('Error sending voice message:', error);
+      toast.error('Failed to send voice message');
+    }
+  };
+
+  const handleImageSelect = (file: File) => {
+    setSelectedImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreviewUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSendImage = async () => {
+    if (!selectedImage || !selectedConversation || !user) return;
+
+    try {
+      // Upload image to storage
+      const fileName = `${user.id}/${Date.now()}_${selectedImage.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from('chat-images')
+        .upload(fileName, selectedImage);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('chat-images')
+        .getPublicUrl(fileName);
+
+      // Save message
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          sender_id: user.id,
+          recipient_id: selectedConversation,
+          text: 'Sent an image',
+          media_type: 'image',
+          media_url: publicUrl,
+        });
+
+      if (error) throw error;
+
+      const messages = await getMessagesByConversation(selectedConversation);
+      setConversationMessages(messages);
+      setSelectedImage(null);
+      setImagePreviewUrl(null);
+      toast.success('Image sent!');
+    } catch (error) {
+      console.error('Error sending image:', error);
+      toast.error('Failed to send image');
+    }
+  };
+  
   const handleBlockUser = async () => {
     if (!selectedConversation || !user) return;
     
@@ -497,8 +624,35 @@ const Messages = () => {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  )}
-                  <p className="mb-2">{message.text}</p>
+                   )}
+                   
+                   {/* Media Content */}
+                   {message.media_type === 'gif' && message.media_url && (
+                     <img
+                       src={message.media_url}
+                       alt="GIF"
+                       className="rounded-lg max-w-full mb-2"
+                     />
+                   )}
+                   
+                   {message.media_type === 'image' && message.media_url && (
+                     <img
+                       src={message.media_url}
+                       alt="Image"
+                       className="rounded-lg max-w-full mb-2"
+                     />
+                   )}
+                   
+                   {message.media_type === 'voice' && message.media_url && (
+                     <div className="mb-2">
+                       <VoicePlayer
+                         audioUrl={message.media_url}
+                         duration={message.media_duration || 0}
+                       />
+                     </div>
+                   )}
+                   
+                   <p className="mb-2">{message.text}</p>
                   
                   {/* Translation Result */}
                   {translatedMessages[message.id] && (
@@ -525,40 +679,101 @@ const Messages = () => {
             </div>
           )}
           
-          <div className="flex items-end gap-2">
-            <Textarea 
-              value={newMessage} 
-              onChange={(e) => {
-                setNewMessage(e.target.value);
-                if (e.target.value.length > 0) {
-                  startTyping();
-                } else {
-                  stopTyping();
-                }
-              }}
-              onKeyDown={handleKeyPress} 
-              onBlur={stopTyping}
-              placeholder="Type a message..." 
-              disabled={isChecking}
-              className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" 
+          {/* Voice Recorder */}
+          {showVoiceRecorder ? (
+            <VoiceRecorder
+              onSendVoice={handleSendVoice}
+              onCancel={() => setShowVoiceRecorder(false)}
             />
-          <div className="flex flex-col gap-2">
-            <Button variant="ghost" size="icon" className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10">
-              <Mic className="h-5 w-5" />
-            </Button>
-            <Button 
-              variant="default" 
-              size="icon" 
-              onClick={handleSendMessage} 
-              disabled={!newMessage.trim() || isChecking} 
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0"
-            >
-              <Send className="h-5 w-5" />
-            </Button>
-            </div>
-          </div>
+          ) : (
+            <>
+              {/* Image Preview */}
+              {imagePreviewUrl && (
+                <div className="mb-2">
+                  <ImagePreview
+                    imageUrl={imagePreviewUrl}
+                    onRemove={() => {
+                      setSelectedImage(null);
+                      setImagePreviewUrl(null);
+                    }}
+                  />
+                </div>
+              )}
+              
+              <div className="flex items-end gap-2">
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowGifPicker(true)}
+                    className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10"
+                  >
+                    <Smile className="h-5 w-5" />
+                  </Button>
+                  
+                  <ImageUploader onImageSelect={handleImageSelect} />
+                  
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowVoiceRecorder(true)}
+                    className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10"
+                  >
+                    <Mic className="h-5 w-5" />
+                  </Button>
+                </div>
+                
+                <Textarea 
+                  value={newMessage} 
+                  onChange={(e) => {
+                    setNewMessage(e.target.value);
+                    if (e.target.value.length > 0) {
+                      startTyping();
+                    } else {
+                      stopTyping();
+                    }
+                  }}
+                  onKeyDown={handleKeyPress} 
+                  onBlur={stopTyping}
+                  placeholder="Type a message..." 
+                  disabled={isChecking}
+                  className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" 
+                />
+                
+                <div className="flex flex-col gap-2">
+                  {selectedImage ? (
+                    <Button 
+                      variant="default" 
+                      size="icon" 
+                      onClick={handleSendImage}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0"
+                    >
+                      <Send className="h-5 w-5" />
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="default" 
+                      size="icon" 
+                      onClick={handleSendMessage} 
+                      disabled={!newMessage.trim() || isChecking} 
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0"
+                    >
+                      <Send className="h-5 w-5" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
         </div>
+        
+        {/* GIF Picker Dialog */}
+        <GifPicker
+          open={showGifPicker}
+          onOpenChange={setShowGifPicker}
+          onSelectGif={handleSendGif}
+        />
         
         {/* Report Dialog */}
         <ReportMessageDialog
