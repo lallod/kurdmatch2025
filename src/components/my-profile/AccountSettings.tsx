@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Shield, Bell, Eye, Heart, MessageCircle, Users, Lock, Smartphone, Mail, Globe, Download, Trash2, Settings, CheckCircle2, AlertTriangle, LogOut, Crown } from 'lucide-react';
+import { Shield, Bell, Eye, Heart, MessageCircle, Users, Lock, Smartphone, Mail, Globe, Download, Trash2, Settings, CheckCircle2, AlertTriangle, LogOut, Crown, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import DownloadDataDialog from './dialogs/DownloadDataDialog';
 import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
@@ -289,6 +289,11 @@ const AccountSettings = () => {
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => openDialog('connectedAccounts')}>
               <Globe className="w-4 h-4 mr-2" />
               Connected Accounts
+            </Button>
+            
+            <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => navigate('/settings/phone-verification')}>
+              <Phone className="w-4 h-4 mr-2" />
+              Phone Verification
             </Button>
             
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={handleLogout}>

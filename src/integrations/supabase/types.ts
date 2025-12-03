@@ -1533,6 +1533,39 @@ export type Database = {
         }
         Relationships: []
       }
+      phone_verifications: {
+        Row: {
+          attempts: number | null
+          created_at: string
+          expires_at: string
+          id: string
+          phone_number: string
+          user_id: string | null
+          verification_code: string
+          verified: boolean | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone_number: string
+          user_id?: string | null
+          verification_code: string
+          verified?: boolean | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone_number?: string
+          user_id?: string | null
+          verification_code?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       photos: {
         Row: {
           created_at: string | null
@@ -2150,6 +2183,8 @@ export type Database = {
           occupation: string
           personality_type: string | null
           pet_peeves: string[] | null
+          phone_number: string | null
+          phone_verified: boolean | null
           political_views: string | null
           profile_image: string
           relationship_goals: string
@@ -2224,6 +2259,8 @@ export type Database = {
           occupation?: string
           personality_type?: string | null
           pet_peeves?: string[] | null
+          phone_number?: string | null
+          phone_verified?: boolean | null
           political_views?: string | null
           profile_image?: string
           relationship_goals?: string
@@ -2298,6 +2335,8 @@ export type Database = {
           occupation?: string
           personality_type?: string | null
           pet_peeves?: string[] | null
+          phone_number?: string | null
+          phone_verified?: boolean | null
           political_views?: string | null
           profile_image?: string
           relationship_goals?: string
@@ -3598,6 +3637,8 @@ export type Database = {
           occupation: string
           personality_type: string | null
           pet_peeves: string[] | null
+          phone_number: string | null
+          phone_verified: boolean | null
           political_views: string | null
           profile_image: string
           relationship_goals: string

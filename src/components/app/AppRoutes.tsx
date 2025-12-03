@@ -52,6 +52,7 @@ import GroupDetailPage from '@/pages/GroupDetail';
 import CreateStory from '@/pages/CreateStory';
 import StoriesView from '@/pages/StoriesView';
 import Notifications from '@/pages/Notifications';
+import PhoneVerification from '@/pages/PhoneVerification';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -241,6 +242,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/settings/blocked" 
         element={<ProtectedRoute><BlockedUsers /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/settings/phone-verification" 
+        element={<ProtectedRoute><PhoneVerification /></ProtectedRoute>} 
       />
       
       {/* Admin Dashboard routes */}
