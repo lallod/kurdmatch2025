@@ -38,3 +38,9 @@ verify_jwt = true
 
 [functions.extract-texts]
 verify_jwt = true
+
+[functions.send-sms-verification]
+verify_jwt = true
+
+[functions.verify-phone-code]
+verify_jwt = true
