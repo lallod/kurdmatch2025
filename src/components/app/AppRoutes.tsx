@@ -38,11 +38,11 @@ import { GroupsList } from '@/pages/GroupsList';
 import NotificationSettings from '@/pages/NotificationSettings';
 import AdvancedSearch from '@/pages/AdvancedSearch';
 import AdminDashboard from '@/pages/Admin/AdminDashboard';
-import UserManagement from '@/pages/admin/UserManagement';
-import ReportsManagement from '@/pages/admin/ReportsManagement';
-import ContentModeration from '@/pages/admin/ContentModeration';
-import PlatformAnalytics from '@/pages/admin/PlatformAnalytics';
-import SystemSettings from '@/pages/admin/SystemSettings';
+import UserManagement from '@/pages/Admin/UserManagement';
+import ReportsManagement from '@/pages/Admin/ReportsManagement';
+import ContentModeration from '@/pages/Admin/ContentModeration';
+import PlatformAnalytics from '@/pages/Admin/PlatformAnalytics';
+import SystemSettings from '@/pages/Admin/SystemSettings';
 import SavedPosts from '@/pages/SavedPosts';
 import BlockedUsers from '@/pages/BlockedUsers';
 import PrivacySettings from '@/pages/PrivacySettings';
@@ -53,6 +53,10 @@ import CreateStory from '@/pages/CreateStory';
 import StoriesView from '@/pages/StoriesView';
 import Notifications from '@/pages/Notifications';
 import PhoneVerification from '@/pages/PhoneVerification';
+import HelpSupport from '@/pages/HelpSupport';
+import CommunityGuidelines from '@/pages/CommunityGuidelines';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -246,6 +250,22 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/settings/phone-verification" 
         element={<ProtectedRoute><PhoneVerification /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/help" 
+        element={<HelpSupport />} 
+      />
+      <Route 
+        path="/community-guidelines" 
+        element={<CommunityGuidelines />} 
+      />
+      <Route 
+        path="/privacy-policy" 
+        element={<PrivacyPolicy />} 
+      />
+      <Route 
+        path="/terms" 
+        element={<TermsOfService />} 
       />
       
       {/* Admin Dashboard routes */}
