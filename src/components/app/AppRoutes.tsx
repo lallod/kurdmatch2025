@@ -37,7 +37,7 @@ import { HashtagFeed } from '@/pages/HashtagFeed';
 import { GroupsList } from '@/pages/GroupsList';
 import NotificationSettings from '@/pages/NotificationSettings';
 import AdvancedSearch from '@/pages/AdvancedSearch';
-import AdminDashboard from '@/pages/admin/AdminDashboard';
+import AdminDashboard from '@/pages/Admin/AdminDashboard';
 import UserManagement from '@/pages/admin/UserManagement';
 import ReportsManagement from '@/pages/admin/ReportsManagement';
 import ContentModeration from '@/pages/admin/ContentModeration';
