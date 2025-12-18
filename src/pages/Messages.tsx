@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban, Globe, Image as ImageIcon, Smile } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban, Globe, Image as ImageIcon, Smile, UserX } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -29,6 +29,7 @@ import { toast } from 'sonner';
 import { messageSchema } from '@/utils/validation/messageValidation';
 import LoadingState from '@/components/LoadingState';
 import EmptyState from '@/components/EmptyState';
+import UnmatchDialog from '@/components/messages/UnmatchDialog';
 const Messages = () => {
   const { user } = useSupabaseAuth();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
@@ -50,6 +51,10 @@ const Messages = () => {
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  
+  // Unmatch state
+  const [unmatchDialogOpen, setUnmatchDialogOpen] = useState(false);
+  const [currentMatchId, setCurrentMatchId] = useState<string | null>(null);
   
   const { moderateMessage, isChecking } = useMessageModeration();
   const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
@@ -433,6 +438,40 @@ const Messages = () => {
     }
   };
   
+  const handleUnmatch = async () => {
+    if (!selectedConversation || !user) return;
+    
+    try {
+      // Find the match between current user and selected conversation user
+      const { data: match, error } = await supabase
+        .from('matches')
+        .select('id')
+        .or(`and(user1_id.eq.${user.id},user2_id.eq.${selectedConversation}),and(user1_id.eq.${selectedConversation},user2_id.eq.${user.id})`)
+        .single();
+      
+      if (error) {
+        toast.error('Could not find match');
+        return;
+      }
+      
+      setCurrentMatchId(match.id);
+      setUnmatchDialogOpen(true);
+    } catch (error) {
+      console.error('Error finding match:', error);
+      toast.error('Failed to find match');
+    }
+  };
+  
+  const handleUnmatchSuccess = async () => {
+    setSelectedConversation(null);
+    // Refresh conversations
+    const conversationsData = await getConversations();
+    setConversations(conversationsData);
+    // Refresh matches
+    const matchesData = await getNewMatches(5);
+    setNewMatches(matchesData);
+  };
+  
   const handleGenerateInsights = async () => {
     if (!selectedConversation || !user) return;
     
@@ -552,6 +591,10 @@ const Messages = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
+                  <DropdownMenuItem onClick={handleUnmatch}>
+                    <UserX className="h-4 w-4 mr-2" />
+                    Unmatch
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
                     <Flag className="h-4 w-4 mr-2" />
                     Report Conversation
@@ -783,6 +826,17 @@ const Messages = () => {
           reportedUserId={selectedConversation || ''}
           conversationId={selectedConversation || ''}
         />
+        
+        {/* Unmatch Dialog */}
+        {currentMatchId && (
+          <UnmatchDialog
+            open={unmatchDialogOpen}
+            onOpenChange={setUnmatchDialogOpen}
+            matchId={currentMatchId}
+            userName={conversations.find(c => c.id === selectedConversation)?.name || 'this user'}
+            onUnmatchSuccess={handleUnmatchSuccess}
+          />
+        )}
 
         <BottomNavigation />
       </div>;
