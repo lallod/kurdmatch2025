@@ -2756,6 +2756,51 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          admin_notes: string | null
+          category: string
+          created_at: string
+          email: string | null
+          id: string
+          message: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          category: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          message: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       system_metrics: {
         Row: {
           created_at: string
