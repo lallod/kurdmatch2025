@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
 
 interface ContactSupportDialogProps {
   open: boolean;
@@ -24,10 +25,25 @@ const supportCategories = [
   { value: 'other', label: 'Other' }
 ];
 
+// Zod validation schema
+const supportTicketSchema = z.object({
+  category: z.string().min(1, 'Please select a category'),
+  subject: z.string()
+    .trim()
+    .min(5, 'Subject must be at least 5 characters')
+    .max(100, 'Subject must be less than 100 characters'),
+  message: z.string()
+    .trim()
+    .min(20, 'Message must be at least 20 characters')
+    .max(2000, 'Message must be less than 2000 characters'),
+  email: z.string().email('Please enter a valid email').max(255).optional().or(z.literal(''))
+});
+
 const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     category: '',
     subject: '',
@@ -35,27 +51,55 @@ const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps)
     email: ''
   });
 
+  const validateForm = () => {
+    try {
+      const dataToValidate = {
+        ...formData,
+        email: !user ? formData.email : undefined
+      };
+      supportTicketSchema.parse(dataToValidate);
+      setErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {};
+        error.errors.forEach(err => {
+          if (err.path[0]) {
+            newErrors[err.path[0] as string] = err.message;
+          }
+        });
+        setErrors(newErrors);
+      }
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.category || !formData.subject || !formData.message) {
+    if (!validateForm()) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
+        title: "Validation Error",
+        description: "Please fix the errors in the form",
         variant: "destructive"
       });
       return;
     }
 
+    // Additional check for email when not logged in
+    if (!user && !formData.email) {
+      setErrors(prev => ({ ...prev, email: 'Email is required' }));
+      return;
+    }
+
     setLoading(true);
     try {
-      // Store support ticket in database
       const { error } = await supabase.from('support_tickets').insert({
         user_id: user?.id || null,
-        category: formData.category,
-        subject: formData.subject,
-        message: formData.message,
-        email: formData.email || user?.email || null,
+        category: formData.category.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+        email: formData.email.trim() || user?.email || null,
         status: 'open'
       });
 
@@ -67,6 +111,7 @@ const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps)
       });
 
       setFormData({ category: '', subject: '', message: '', email: '' });
+      setErrors({});
       onOpenChange(false);
     } catch (error) {
       console.error('Error submitting support ticket:', error);
@@ -80,8 +125,16 @@ const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps)
     }
   };
 
+  const handleReset = () => {
+    setFormData({ category: '', subject: '', message: '', email: '' });
+    setErrors({});
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) handleReset();
+      onOpenChange(isOpen);
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Contact Support</DialogTitle>
@@ -95,9 +148,12 @@ const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps)
             <Label htmlFor="category">Category *</Label>
             <Select
               value={formData.category}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+              onValueChange={(value) => {
+                setFormData(prev => ({ ...prev, category: value }));
+                if (errors.category) setErrors(prev => ({ ...prev, category: '' }));
+              }}
             >
-              <SelectTrigger>
+              <SelectTrigger className={errors.category ? 'border-destructive' : ''}>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
@@ -108,6 +164,9 @@ const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps)
                 ))}
               </SelectContent>
             </Select>
+            {errors.category && (
+              <p className="text-xs text-destructive">{errors.category}</p>
+            )}
           </div>
 
           {!user && (
@@ -118,33 +177,64 @@ const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps)
                 type="email"
                 placeholder="your@email.com"
                 value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                required={!user}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, email: e.target.value }));
+                  if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
+                }}
+                className={errors.email ? 'border-destructive' : ''}
+                maxLength={255}
               />
+              {errors.email && (
+                <p className="text-xs text-destructive">{errors.email}</p>
+              )}
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="subject">Subject *</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="subject">Subject *</Label>
+              <span className={`text-xs ${formData.subject.length > 100 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                {formData.subject.length}/100
+              </span>
+            </div>
             <Input
               id="subject"
               placeholder="Brief description of your issue"
               value={formData.subject}
-              onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
-              required
+              onChange={(e) => {
+                setFormData(prev => ({ ...prev, subject: e.target.value }));
+                if (errors.subject) setErrors(prev => ({ ...prev, subject: '' }));
+              }}
+              className={errors.subject ? 'border-destructive' : ''}
+              maxLength={100}
             />
+            {errors.subject && (
+              <p className="text-xs text-destructive">{errors.subject}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Message *</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="message">Message *</Label>
+              <span className={`text-xs ${formData.message.length > 2000 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                {formData.message.length}/2000
+              </span>
+            </div>
             <Textarea
               id="message"
-              placeholder="Please describe your issue in detail..."
+              placeholder="Please describe your issue in detail (minimum 20 characters)..."
               value={formData.message}
-              onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+              onChange={(e) => {
+                setFormData(prev => ({ ...prev, message: e.target.value }));
+                if (errors.message) setErrors(prev => ({ ...prev, message: '' }));
+              }}
               rows={5}
-              required
+              className={errors.message ? 'border-destructive' : ''}
+              maxLength={2000}
             />
+            {errors.message && (
+              <p className="text-xs text-destructive">{errors.message}</p>
+            )}
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

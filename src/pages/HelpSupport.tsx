@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, ChevronDown, ChevronRight, Mail, MessageCircle, Shield, Heart, Users, CreditCard, Settings, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Search, ChevronDown, ChevronRight, Mail, MessageCircle, Shield, Heart, Users, CreditCard, Settings, HelpCircle, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ContactSupportDialog from '@/components/support/ContactSupportDialog';
+import MyTickets from '@/components/support/MyTickets';
+import { useAuth } from '@/integrations/supabase/auth';
 
 const faqCategories = [
   {
@@ -133,8 +135,10 @@ const faqCategories = [
 
 const HelpSupport = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [showMyTickets, setShowMyTickets] = useState(false);
 
   const filteredCategories = faqCategories.map(category => ({
     ...category,
@@ -204,6 +208,25 @@ const HelpSupport = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* My Tickets Section - Only for logged in users */}
+        {user && (
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => setShowMyTickets(!showMyTickets)}
+            >
+              <div className="flex items-center gap-2">
+                <Ticket className="h-4 w-4" />
+                <span>My Support Tickets</span>
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${showMyTickets ? 'rotate-180' : ''}`} />
+            </Button>
+            
+            {showMyTickets && <MyTickets />}
+          </div>
+        )}
 
         {/* FAQ Categories */}
         <Tabs defaultValue="all" className="w-full">
