@@ -41,7 +41,8 @@ import {
   Clock,
   BarChart3,
   CalendarIcon,
-  Sparkles
+  Sparkles,
+  Ticket
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminRoleCheck } from '@/hooks/useAdminRoleCheck';
@@ -139,6 +140,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
     { path: '/super-admin/daily-usage', icon: <BarChart3 size={20} />, label: 'Daily Usage' },
     { path: '/super-admin/ai-insights', icon: <Brain size={20} />, label: 'AI Insights' },
     { path: '/super-admin/interests', icon: <Sparkles size={20} />, label: 'Interests' },
+    { path: '/super-admin/support-tickets', icon: <Ticket size={20} />, label: 'Support Tickets' },
     { path: '/super-admin/verification', icon: <UserCheck size={20} />, label: 'User Verification' },
     { path: '/super-admin/moderation', icon: <Flag size={20} />, label: 'Content Moderation' },
     { path: '/super-admin/landing-page', icon: <Edit size={20} />, label: 'Landing Page Editor' },

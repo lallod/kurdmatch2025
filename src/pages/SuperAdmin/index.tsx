@@ -38,6 +38,7 @@ import RateLimitsPage from './pages/RateLimitsPage';
 import DailyUsagePage from './pages/DailyUsagePage';
 import AIInsightsPage from './pages/AIInsightsPage';
 import InterestsPage from './pages/InterestsPage';
+import SupportTicketsPage from './pages/SupportTicketsPage';
 
 const SuperAdmin = () => {
   return (
@@ -79,6 +80,7 @@ const SuperAdmin = () => {
         <Route path="/daily-usage" element={<DailyUsagePage />} />
         <Route path="/ai-insights" element={<AIInsightsPage />} />
         <Route path="/interests" element={<InterestsPage />} />
+        <Route path="/support-tickets" element={<SupportTicketsPage />} />
       </Routes>
     </SuperAdminLayout>
   );
