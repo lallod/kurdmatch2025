@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, ChevronDown, ChevronRight, Mail, MessageCircle, Shield, Heart, Users, CreditCard, Settings, HelpCircle, Ticket } from 'lucide-react';
+import { ArrowLeft, Search, ChevronDown, Mail, MessageCircle, Shield, Heart, Users, CreditCard, Settings, HelpCircle, Ticket, TrendingUp, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import ContactSupportDialog from '@/components/support/ContactSupportDialog';
 import MyTickets from '@/components/support/MyTickets';
 import { useAuth } from '@/integrations/supabase/auth';
@@ -19,19 +20,23 @@ const faqCategories = [
     faqs: [
       {
         question: 'How do I create an account?',
-        answer: 'Download the app or visit our website, tap "Sign Up", and follow the registration process. You\'ll need to provide basic information, upload photos, and verify your email.'
+        answer: 'Download the app or visit our website, tap "Sign Up", and follow the registration process. You\'ll need to provide basic information, upload photos, and verify your email.',
+        popular: true
       },
       {
         question: 'How does matching work?',
-        answer: 'When you like someone and they like you back, it\'s a match! You can then start chatting with each other. Swipe right to like, left to pass.'
+        answer: 'When you like someone and they like you back, it\'s a match! You can then start chatting with each other. Swipe right to like, left to pass.',
+        popular: true
       },
       {
         question: 'Can I change my profile information?',
-        answer: 'Yes! Go to your profile, tap "Edit Profile" and you can update your photos, bio, and other details at any time.'
+        answer: 'Yes! Go to your profile, tap "Edit Profile" and you can update your photos, bio, and other details at any time.',
+        popular: false
       },
       {
         question: 'How do I verify my profile?',
-        answer: 'Go to Settings > Verification and follow the selfie verification process. A verified badge increases trust and match rates.'
+        answer: 'Go to Settings > Verification and follow the selfie verification process. A verified badge increases trust and match rates.',
+        popular: true
       }
     ]
   },
@@ -43,19 +48,23 @@ const faqCategories = [
     faqs: [
       {
         question: 'How do I report someone?',
-        answer: 'Open the user\'s profile, tap the three dots menu, and select "Report". Choose a reason and provide details. We review all reports within 24 hours.'
+        answer: 'Open the user\'s profile, tap the three dots menu, and select "Report". Choose a reason and provide details. We review all reports within 24 hours.',
+        popular: true
       },
       {
         question: 'How do I block someone?',
-        answer: 'Open their profile, tap the three dots menu, and select "Block". They won\'t be able to see your profile or contact you.'
+        answer: 'Open their profile, tap the three dots menu, and select "Block". They won\'t be able to see your profile or contact you.',
+        popular: true
       },
       {
         question: 'Is my personal information safe?',
-        answer: 'Yes, we use industry-standard encryption and never share your personal data with third parties. Your location is approximate and you control what\'s visible on your profile.'
+        answer: 'Yes, we use industry-standard encryption and never share your personal data with third parties. Your location is approximate and you control what\'s visible on your profile.',
+        popular: false
       },
       {
         question: 'What safety tips should I follow?',
-        answer: 'Never share financial information, meet in public places for first dates, tell a friend where you\'re going, and trust your instincts. Report any suspicious behavior.'
+        answer: 'Never share financial information, meet in public places for first dates, tell a friend where you\'re going, and trust your instincts. Report any suspicious behavior.',
+        popular: false
       }
     ]
   },
@@ -67,19 +76,23 @@ const faqCategories = [
     faqs: [
       {
         question: 'Why am I not getting matches?',
-        answer: 'Try adding more photos, completing your profile, and being active daily. Verified profiles get more matches. Consider upgrading to Premium for more visibility.'
+        answer: 'Try adding more photos, completing your profile, and being active daily. Verified profiles get more matches. Consider upgrading to Premium for more visibility.',
+        popular: true
       },
       {
         question: 'Can I unmatch someone?',
-        answer: 'Yes, open the conversation, tap the profile icon, then select "Unmatch". This removes the match and deletes the conversation for both users.'
+        answer: 'Yes, open the conversation, tap the profile icon, then select "Unmatch". This removes the match and deletes the conversation for both users.',
+        popular: false
       },
       {
         question: 'How do I start a conversation?',
-        answer: 'After matching, open the chat and send a message. Personalized openers based on their profile work best!'
+        answer: 'After matching, open the chat and send a message. Personalized openers based on their profile work best!',
+        popular: false
       },
       {
         question: 'Can I see who liked me?',
-        answer: 'Premium members can see everyone who liked them. Free users see blurred previews and can match by swiping.'
+        answer: 'Premium members can see everyone who liked them. Free users see blurred previews and can match by swiping.',
+        popular: true
       }
     ]
   },
@@ -91,19 +104,23 @@ const faqCategories = [
     faqs: [
       {
         question: 'What are the Premium benefits?',
-        answer: 'Premium includes unlimited likes, see who liked you, advanced filters, profile boost, super likes, rewind last swipe, and ad-free experience.'
+        answer: 'Premium includes unlimited likes, see who liked you, advanced filters, profile boost, super likes, rewind last swipe, and ad-free experience.',
+        popular: true
       },
       {
         question: 'How do I cancel my subscription?',
-        answer: 'Go to Settings > Subscription > Manage Subscription. You can cancel anytime and keep Premium benefits until the end of your billing period.'
+        answer: 'Go to Settings > Subscription > Manage Subscription. You can cancel anytime and keep Premium benefits until the end of your billing period.',
+        popular: true
       },
       {
         question: 'Can I get a refund?',
-        answer: 'Refunds are handled through your app store (Apple/Google) for in-app purchases. Contact us for web purchases within 14 days of subscription.'
+        answer: 'Refunds are handled through your app store (Apple/Google) for in-app purchases. Contact us for web purchases within 14 days of subscription.',
+        popular: false
       },
       {
         question: 'How do I upgrade to Premium?',
-        answer: 'Tap the Premium icon or go to Settings > Subscription. Choose your plan (monthly, quarterly, or yearly) and complete the payment.'
+        answer: 'Tap the Premium icon or go to Settings > Subscription. Choose your plan (monthly, quarterly, or yearly) and complete the payment.',
+        popular: false
       }
     ]
   },
@@ -115,19 +132,23 @@ const faqCategories = [
     faqs: [
       {
         question: 'How do I delete my account?',
-        answer: 'Go to Settings > Account > Delete Account. Note: This is permanent and all your data, matches, and messages will be deleted.'
+        answer: 'Go to Settings > Account > Delete Account. Note: This is permanent and all your data, matches, and messages will be deleted.',
+        popular: true
       },
       {
         question: 'Can I pause my account?',
-        answer: 'Yes, go to Settings > Discovery and toggle "Pause Account". Your profile will be hidden but you keep your matches and messages.'
+        answer: 'Yes, go to Settings > Discovery and toggle "Pause Account". Your profile will be hidden but you keep your matches and messages.',
+        popular: false
       },
       {
         question: 'How do I change my email/phone?',
-        answer: 'Go to Settings > Account to update your email or phone number. You\'ll need to verify the new contact information.'
+        answer: 'Go to Settings > Account to update your email or phone number. You\'ll need to verify the new contact information.',
+        popular: false
       },
       {
         question: 'I forgot my password',
-        answer: 'On the login screen, tap "Forgot Password" and enter your email. We\'ll send you a reset link valid for 24 hours.'
+        answer: 'On the login screen, tap "Forgot Password" and enter your email. We\'ll send you a reset link valid for 24 hours.',
+        popular: true
       }
     ]
   }
@@ -139,6 +160,29 @@ const HelpSupport = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [showMyTickets, setShowMyTickets] = useState(false);
+
+  // Get all popular FAQs
+  const popularFaqs = useMemo(() => {
+    return faqCategories.flatMap(category => 
+      category.faqs
+        .filter(faq => faq.popular)
+        .map(faq => ({ ...faq, categoryId: category.id, categoryTitle: category.title, icon: category.icon }))
+    ).slice(0, 5);
+  }, []);
+
+  // Search results
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const query = searchQuery.toLowerCase();
+    return faqCategories.flatMap(category =>
+      category.faqs
+        .filter(faq =>
+          faq.question.toLowerCase().includes(query) ||
+          faq.answer.toLowerCase().includes(query)
+        )
+        .map(faq => ({ ...faq, categoryId: category.id, categoryTitle: category.title, icon: category.icon }))
+    );
+  }, [searchQuery]);
 
   const filteredCategories = faqCategories.map(category => ({
     ...category,
@@ -225,6 +269,92 @@ const HelpSupport = () => {
             </Button>
             
             {showMyTickets && <MyTickets />}
+          </div>
+        )}
+
+        {/* Search Results */}
+        {searchQuery.trim() && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-medium flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Search Results ({searchResults.length})
+              </h2>
+              <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')}>
+                <X className="h-4 w-4 mr-1" />
+                Clear
+              </Button>
+            </div>
+            {searchResults.length > 0 ? (
+              <Card>
+                <CardContent className="p-0">
+                  <Accordion type="single" collapsible className="w-full">
+                    {searchResults.map((result, index) => (
+                      <AccordionItem key={`search-${index}`} value={`search-${index}`}>
+                        <AccordionTrigger className="px-4 text-left text-sm hover:no-underline">
+                          <div className="flex items-start gap-3">
+                            <result.icon className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <span>{result.question}</span>
+                              <Badge variant="secondary" className="ml-2 text-xs">
+                                {result.categoryTitle}
+                              </Badge>
+                            </div>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="px-4 pb-4 text-muted-foreground text-sm pl-11">
+                          {result.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <HelpCircle className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
+                  <Button variant="link" size="sm" onClick={() => setContactDialogOpen(true)}>
+                    Contact support instead
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+
+        {/* Popular Questions - only show when not searching */}
+        {!searchQuery.trim() && (
+          <div className="space-y-3">
+            <h2 className="text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              Popular Questions
+            </h2>
+            <Card>
+              <CardContent className="p-0">
+                <Accordion type="single" collapsible className="w-full">
+                  {popularFaqs.map((faq, index) => (
+                    <AccordionItem key={`popular-${index}`} value={`popular-${index}`}>
+                      <AccordionTrigger className="px-4 text-left text-sm hover:no-underline">
+                        <div className="flex items-start gap-3">
+                          <Sparkles className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <span>{faq.question}</span>
+                            <Badge variant="outline" className="ml-2 text-xs">
+                              {faq.categoryTitle}
+                            </Badge>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 text-muted-foreground text-sm pl-11">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
           </div>
         )}
 
