@@ -154,6 +154,9 @@ const SupportTicketsPage = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
+      // Get ticket info for notification
+      const ticket = tickets.find(t => t.id === ticketId);
+      
       const updateData: Record<string, unknown> = {
         status: newStatus,
         updated_at: new Date().toISOString(),
@@ -170,6 +173,23 @@ const SupportTicketsPage = () => {
         .eq('id', ticketId);
 
       if (error) throw error;
+
+      // Send notification to user if ticket has user_id
+      if (ticket?.user_id) {
+        const statusMessages: Record<string, string> = {
+          resolved: 'Your support ticket has been resolved.',
+          closed: 'Your support ticket has been closed.',
+          pending: 'Your support ticket is being reviewed.',
+        };
+        
+        await supabase.from('notifications').insert({
+          user_id: ticket.user_id,
+          type: 'support_status',
+          title: `Ticket ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
+          message: statusMessages[newStatus] || `Your ticket status has been updated to ${newStatus}.`,
+          link: '/help-support',
+        });
+      }
 
       toast({
         title: 'Success',
@@ -214,9 +234,20 @@ const SupportTicketsPage = () => {
 
       if (error) throw error;
 
+      // Send notification to user if they have a user_id
+      if (selectedTicket.user_id) {
+        await supabase.from('notifications').insert({
+          user_id: selectedTicket.user_id,
+          type: 'support_response',
+          title: 'Support Team Responded',
+          message: `Your support ticket "${selectedTicket.subject}" has received a response.`,
+          link: '/help-support',
+        });
+      }
+
       toast({
         title: 'Response sent',
-        description: 'Your response has been added to the ticket',
+        description: 'Your response has been added to the ticket and user notified',
       });
 
       setAdminResponse('');
