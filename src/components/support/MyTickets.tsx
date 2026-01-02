@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Clock, CheckCircle2, AlertCircle, MessageSquare, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
+import { Clock, CheckCircle2, AlertCircle, MessageSquare, ChevronDown, ChevronUp, RefreshCw, Star } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
@@ -18,6 +20,8 @@ interface SupportTicket {
   created_at: string;
   updated_at: string;
   resolved_at: string | null;
+  user_rating?: number | null;
+  user_feedback?: string | null;
 }
 
 const statusConfig = {
@@ -38,10 +42,15 @@ const categoryLabels: Record<string, string> = {
 
 const MyTickets = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [ratingTicket, setRatingTicket] = useState<string | null>(null);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [submittingRating, setSubmittingRating] = useState(false);
 
   const fetchTickets = async () => {
     if (!user) return;
@@ -89,6 +98,43 @@ const MyTickets = () => {
     }
   }, [user]);
 
+  const handleSubmitRating = async (ticketId: string) => {
+    if (selectedRating === 0) return;
+    
+    setSubmittingRating(true);
+    try {
+      const { error } = await supabase
+        .from('support_tickets')
+        .update({
+          user_rating: selectedRating,
+          user_feedback: feedbackText.trim() || null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', ticketId);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Thank you!',
+        description: 'Your feedback helps us improve our support.',
+      });
+      
+      setRatingTicket(null);
+      setSelectedRating(0);
+      setFeedbackText('');
+      fetchTickets();
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to submit feedback. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setSubmittingRating(false);
+    }
+  };
+
   const filteredTickets = tickets.filter(ticket => {
     if (activeFilter === 'all') return true;
     if (activeFilter === 'active') return ['open', 'pending'].includes(ticket.status);
@@ -105,6 +151,24 @@ const MyTickets = () => {
       </Badge>
     );
   };
+
+  const StarRating = ({ rating, onRate, interactive = false }: { rating: number; onRate?: (r: number) => void; interactive?: boolean }) => (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={!interactive}
+          onClick={() => onRate?.(star)}
+          className={`${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform`}
+        >
+          <Star
+            className={`h-5 w-5 ${star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`}
+          />
+        </button>
+      ))}
+    </div>
+  );
 
   if (!user) {
     return (
@@ -198,6 +262,14 @@ const MyTickets = () => {
                               <span className="text-xs text-primary">Has response</span>
                             </>
                           )}
+                          {ticket.user_rating && (
+                            <>
+                              <span className="text-xs text-muted-foreground">•</span>
+                              <span className="text-xs text-yellow-500 flex items-center gap-1">
+                                <Star className="h-3 w-3 fill-yellow-400" /> {ticket.user_rating}
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -226,6 +298,63 @@ const MyTickets = () => {
                           <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
                             <p className="text-xs font-medium text-primary mb-1">Support Response:</p>
                             <p className="text-sm whitespace-pre-wrap">{ticket.admin_response}</p>
+                          </div>
+                        )}
+
+                        {/* Rating section for resolved tickets */}
+                        {ticket.status === 'resolved' && !ticket.user_rating && (
+                          <div className="bg-accent/50 border rounded-lg p-4">
+                            {ratingTicket === ticket.id ? (
+                              <div className="space-y-3">
+                                <p className="text-sm font-medium">How was your support experience?</p>
+                                <StarRating rating={selectedRating} onRate={setSelectedRating} interactive />
+                                <Textarea
+                                  placeholder="Share additional feedback (optional)"
+                                  value={feedbackText}
+                                  onChange={(e) => setFeedbackText(e.target.value)}
+                                  className="min-h-[60px]"
+                                />
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleSubmitRating(ticket.id)}
+                                    disabled={selectedRating === 0 || submittingRating}
+                                  >
+                                    {submittingRating ? 'Submitting...' : 'Submit Feedback'}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      setRatingTicket(null);
+                                      setSelectedRating(0);
+                                      setFeedbackText('');
+                                    }}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm text-muted-foreground">Was this helpful?</p>
+                                <Button size="sm" variant="outline" onClick={() => setRatingTicket(ticket.id)}>
+                                  <Star className="h-4 w-4 mr-2" />
+                                  Rate Support
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Show existing rating */}
+                        {ticket.user_rating && (
+                          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                            <p className="text-xs font-medium text-green-600 mb-2">Your Rating:</p>
+                            <StarRating rating={ticket.user_rating} />
+                            {ticket.user_feedback && (
+                              <p className="text-sm mt-2 text-muted-foreground">{ticket.user_feedback}</p>
+                            )}
                           </div>
                         )}
 
