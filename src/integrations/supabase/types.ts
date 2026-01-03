@@ -2769,7 +2769,9 @@ export type Database = {
           status: string
           subject: string
           updated_at: string
+          user_feedback: string | null
           user_id: string | null
+          user_rating: number | null
         }
         Insert: {
           admin_notes?: string | null
@@ -2783,7 +2785,9 @@ export type Database = {
           status?: string
           subject: string
           updated_at?: string
+          user_feedback?: string | null
           user_id?: string | null
+          user_rating?: number | null
         }
         Update: {
           admin_notes?: string | null
@@ -2797,7 +2801,9 @@ export type Database = {
           status?: string
           subject?: string
           updated_at?: string
+          user_feedback?: string | null
           user_id?: string | null
+          user_rating?: number | null
         }
         Relationships: []
       }
