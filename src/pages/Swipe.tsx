@@ -13,10 +13,12 @@ import { SWIPE_CONFIG } from '@/config/swipe';
 import Logo from '@/components/landing/Logo';
 import { SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useCompatibility } from '@/hooks/useCompatibility';
 
 const Swipe = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { getCompatibilityForProfiles } = useCompatibility();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
@@ -38,16 +40,25 @@ const Swipe = () => {
       setIsLoading(true);
       const profilesData = await getMatchRecommendations(50, appliedFilters);
 
-        // Transform database profiles to match Profile interface
-        const transformedProfiles = profilesData?.map(profile => ({
-          id: profile.id,
-          name: profile.name,
-          age: profile.age,
-          location: profile.location,
-          avatar: profile.profile_image || profile.photos?.[0]?.url || '',
-          distance: Math.floor(Math.random() * 20) + 1,
-          compatibilityScore: Math.floor(Math.random() * 30) + 70,
-          kurdistanRegion: profile.kurdistan_region || 'South-Kurdistan',
+      if (!profilesData || profilesData.length === 0) {
+        setProfiles([]);
+        return;
+      }
+
+      // Get compatibility scores for all profiles
+      const profileIds = profilesData.map(p => p.id);
+      const compatibilityScores = await getCompatibilityForProfiles(profileIds);
+
+      // Transform database profiles to match Profile interface
+      const transformedProfiles = profilesData?.map(profile => ({
+        id: profile.id,
+        name: profile.name,
+        age: profile.age,
+        location: profile.location,
+        avatar: profile.profile_image || profile.photos?.[0]?.url || '',
+        distance: Math.floor(Math.random() * 20) + 1,
+        compatibilityScore: compatibilityScores.get(profile.id) || 50,
+        kurdistanRegion: profile.kurdistan_region || 'South-Kurdistan',
           area: profile.kurdistan_region || 'South-Kurdistan',
           interests: profile.interests || [],
           occupation: profile.occupation || '',

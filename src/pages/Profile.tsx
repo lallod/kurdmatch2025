@@ -10,14 +10,18 @@ import ProfileSwipeActions from '@/components/swipe/ProfileSwipeActions';
 import ProfileActionButtons from '@/components/profile/ProfileActionButtons';
 import { toast } from 'sonner';
 import { getDisplayValue, hasRealArrayValues } from '@/utils/profileHelpers';
+import { useCompatibility } from '@/hooks/useCompatibility';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 
 const Profile = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useSupabaseAuth();
+  const { calculateCompatibility } = useCompatibility();
   const profileId = location.state?.profileId;
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [matchPercentage] = useState(Math.floor(Math.random() * 20) + 75); // Mock match percentage
+  const [matchPercentage, setMatchPercentage] = useState(50);
 
   useEffect(() => {
     console.log('Location state:', location.state);
@@ -25,11 +29,17 @@ const Profile = () => {
     
     if (profileId) {
       fetchProfile();
+      // Calculate compatibility score
+      if (user) {
+        calculateCompatibility(profileId).then(score => {
+          setMatchPercentage(score);
+        });
+      }
     } else {
       console.log('No profile ID provided - location.state:', location.state);
       setLoading(false);
     }
-  }, [profileId]);
+  }, [profileId, user]);
 
   const fetchProfile = async () => {
     try {

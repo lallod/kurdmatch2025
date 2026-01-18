@@ -3361,6 +3361,10 @@ export type Database = {
             }
             Returns: string
           }
+      calculate_compatibility: {
+        Args: { user1_uuid: string; user2_uuid: string }
+        Returns: number
+      }
       can_perform_action:
         | { Args: { action_type: string }; Returns: Record<string, unknown> }
         | {
@@ -3368,6 +3372,7 @@ export type Database = {
             Returns: Record<string, unknown>
           }
       check_email_exists: { Args: { email_to_check: string }; Returns: boolean }
+      cleanup_dead_push_subscriptions: { Args: never; Returns: number }
       cleanup_old_typing_status: { Args: never; Returns: undefined }
       create_demo_profile: {
         Args: {
@@ -3519,6 +3524,15 @@ export type Database = {
         Returns: boolean
       }
       geomfromewkt: { Args: { "": string }; Returns: unknown }
+      get_notification_counts: {
+        Args: { user_uuid: string }
+        Returns: {
+          new_likes: number
+          new_matches: number
+          new_views: number
+          unread_messages: number
+        }[]
+      }
       get_or_create_daily_usage: {
         Args: { user_uuid: string }
         Returns: {

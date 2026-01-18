@@ -17,6 +17,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useMessageModeration } from '@/hooks/useMessageModeration';
 import { useConversationInsights } from '@/hooks/useConversationInsights';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { useImageCompression } from '@/hooks/useImageCompression';
 import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
 import { ConversationInsights } from '@/components/chat/ConversationInsights';
 import { GifPicker } from '@/components/chat/GifPicker';
@@ -32,6 +33,7 @@ import EmptyState from '@/components/EmptyState';
 import UnmatchDialog from '@/components/messages/UnmatchDialog';
 const Messages = () => {
   const { user } = useSupabaseAuth();
+  const { compressImageForChat } = useImageCompression();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [conversations, setConversations] = useState<any[]>([]);
@@ -375,11 +377,15 @@ const Messages = () => {
     if (!selectedImage || !selectedConversation || !user) return;
 
     try {
-      // Upload image to storage
-      const fileName = `${user.id}/${Date.now()}_${selectedImage.name}`;
+      // Compress image before uploading
+      toast.info('Compressing image...');
+      const compressedImage = await compressImageForChat(selectedImage);
+      
+      // Upload compressed image to storage
+      const fileName = `${user.id}/${Date.now()}_${compressedImage.name}`;
       const { error: uploadError } = await supabase.storage
         .from('chat-images')
-        .upload(fileName, selectedImage);
+        .upload(fileName, compressedImage);
 
       if (uploadError) throw uploadError;
 
