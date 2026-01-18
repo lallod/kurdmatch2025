@@ -9,10 +9,12 @@ import BottomNavigation from '@/components/BottomNavigation';
 import PremiumPlansDialog from '@/components/subscription/PremiumPlansDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useCompatibility } from '@/hooks/useCompatibility';
 
 const ViewedMe = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { getCompatibilityForProfiles } = useCompatibility();
   const [viewedProfiles, setViewedProfiles] = useState([]);
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +56,9 @@ const ViewedMe = () => {
         // Create a map for quick lookup
         const profilesMap = new Map(profiles?.map(p => [p.id, p]) || []);
         
+        // Get compatibility scores for all viewer profiles
+        const compatibilityScores = await getCompatibilityForProfiles(viewerIds);
+        
         // Transform data and calculate time ago
         const transformedProfiles = profileViews.map((view: any) => {
           const profile = profilesMap.get(view.viewer_id);
@@ -85,7 +90,7 @@ const ViewedMe = () => {
             verified: profile.verified,
             viewedAt: timeAgo,
             hasViewed: false, // Could be enhanced with mutual view checking
-            compatibilityScore: Math.floor(Math.random() * 30) + 70 // Placeholder for compatibility algorithm
+            compatibilityScore: compatibilityScores.get(profile.id) || 50
           };
         }).filter(Boolean); // Remove any null entries
         
