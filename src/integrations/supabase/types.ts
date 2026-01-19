@@ -1243,6 +1243,81 @@ export type Database = {
         }
         Relationships: []
       }
+      message_safety_flags: {
+        Row: {
+          action_taken: string | null
+          ai_detected: boolean | null
+          created_at: string
+          flag_type: string
+          id: string
+          message_id: string | null
+          recipient_id: string
+          reviewed: boolean | null
+          sender_id: string
+          severity: string
+        }
+        Insert: {
+          action_taken?: string | null
+          ai_detected?: boolean | null
+          created_at?: string
+          flag_type: string
+          id?: string
+          message_id?: string | null
+          recipient_id: string
+          reviewed?: boolean | null
+          sender_id: string
+          severity?: string
+        }
+        Update: {
+          action_taken?: string | null
+          ai_detected?: boolean | null
+          created_at?: string
+          flag_type?: string
+          id?: string
+          message_id?: string | null
+          recipient_id?: string
+          reviewed?: boolean | null
+          sender_id?: string
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_safety_flags_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_safety_flags_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_safety_flags_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_safety_flags_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_safety_flags_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           created_at: string | null
@@ -2197,6 +2272,8 @@ export type Database = {
           travel_frequency: string | null
           values: string[] | null
           verified: boolean | null
+          video_verified: boolean | null
+          video_verified_at: string | null
           want_children: string
           weekend_activities: string[] | null
           work_environment: string | null
@@ -2273,6 +2350,8 @@ export type Database = {
           travel_frequency?: string | null
           values?: string[] | null
           verified?: boolean | null
+          video_verified?: boolean | null
+          video_verified_at?: string | null
           want_children?: string
           weekend_activities?: string[] | null
           work_environment?: string | null
@@ -2349,6 +2428,8 @@ export type Database = {
           travel_frequency?: string | null
           values?: string[] | null
           verified?: boolean | null
+          video_verified?: boolean | null
+          video_verified_at?: string | null
           want_children?: string
           weekend_activities?: string[] | null
           work_environment?: string | null
@@ -3140,6 +3221,80 @@ export type Database = {
         }
         Relationships: []
       }
+      video_verifications: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          rejection_reason: string | null
+          status: string
+          thumbnail_url: string | null
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+          verified_by: string | null
+          video_url: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          rejection_reason?: string | null
+          status?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+          video_url: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          rejection_reason?: string | null
+          status?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          video_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_verifications_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_verifications_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       geography_columns: {
@@ -3373,6 +3528,7 @@ export type Database = {
           }
       check_email_exists: { Args: { email_to_check: string }; Returns: boolean }
       cleanup_dead_push_subscriptions: { Args: never; Returns: number }
+      cleanup_expired_video_verifications: { Args: never; Returns: number }
       cleanup_old_typing_status: { Args: never; Returns: undefined }
       create_demo_profile: {
         Args: {
@@ -3553,6 +3709,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_user_trust_score: {
+        Args: { target_user_id: string }
+        Returns: {
+          is_verified: boolean
+          is_video_verified: boolean
+          severe_flags: number
+          total_flags: number
+          trust_score: number
+        }[]
+      }
       gettransactionid: { Args: never; Returns: unknown }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
       increment_usage_count: {
@@ -3716,6 +3882,8 @@ export type Database = {
           travel_frequency: string | null
           values: string[] | null
           verified: boolean | null
+          video_verified: boolean | null
+          video_verified_at: string | null
           want_children: string
           weekend_activities: string[] | null
           work_environment: string | null
