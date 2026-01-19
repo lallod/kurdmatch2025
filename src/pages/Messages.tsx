@@ -31,6 +31,7 @@ import { messageSchema } from '@/utils/validation/messageValidation';
 import LoadingState from '@/components/LoadingState';
 import EmptyState from '@/components/EmptyState';
 import UnmatchDialog from '@/components/messages/UnmatchDialog';
+import { AIWingmanPanel } from '@/components/chat/AIWingmanPanel';
 const Messages = () => {
   const { user } = useSupabaseAuth();
   const { compressImageForChat } = useImageCompression();
@@ -748,6 +749,23 @@ const Messages = () => {
                   />
                 </div>
               )}
+              
+              {/* AI Wingman Panel */}
+              <div className="px-3 pb-2">
+                <AIWingmanPanel
+                  matchedUserId={selectedConversation}
+                  conversationContext={conversationMessages.slice(-10).map(m => 
+                    `${m.sender_id === user?.id ? 'You' : 'Them'}: ${m.text}`
+                  )}
+                  lastReceivedMessage={
+                    conversationMessages
+                      .filter(m => m.sender_id !== user?.id)
+                      .slice(-1)[0]?.text
+                  }
+                  onSelectSuggestion={(message) => setNewMessage(message)}
+                  isNewConversation={conversationMessages.length === 0}
+                />
+              </div>
               
               <div className="flex items-end gap-2">
                 <div className="flex gap-1">
