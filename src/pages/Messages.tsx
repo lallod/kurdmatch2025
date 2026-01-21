@@ -32,6 +32,8 @@ import LoadingState from '@/components/LoadingState';
 import EmptyState from '@/components/EmptyState';
 import UnmatchDialog from '@/components/messages/UnmatchDialog';
 import { AIWingmanPanel } from '@/components/chat/AIWingmanPanel';
+import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
+
 const Messages = () => {
   const { user } = useSupabaseAuth();
   const { compressImageForChat } = useImageCompression();
@@ -553,7 +555,12 @@ const Messages = () => {
               {conversation.online && <span className="absolute bottom-0 right-1 sm:right-2 h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-success border-2 border-white ring-1 ring-success/50"></span>}
             </div>
             <div className="flex-1">
-              <h2 className="text-sm sm:text-base font-semibold text-white">{conversation.name}</h2>
+              <div className="flex items-center gap-1.5">
+                <h2 className="text-sm sm:text-base font-semibold text-white">{conversation.name}</h2>
+                {conversation.video_verified && (
+                  <VideoVerifiedBadge isVerified={true} size="sm" />
+                )}
+              </div>
               <p className="text-xs text-purple-200">
                 {conversation.isTyping ? <span className="flex items-center gap-1">
                     <div className="flex space-x-1">
@@ -1021,9 +1028,14 @@ const Messages = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center">
-                          <h3 className={`font-semibold truncate ${conversation.unread ? 'text-white' : 'text-purple-100'}`}>
-                            {conversation.name}
-                          </h3>
+                          <div className="flex items-center gap-1.5">
+                            <h3 className={`font-semibold truncate ${conversation.unread ? 'text-white' : 'text-purple-100'}`}>
+                              {conversation.name}
+                            </h3>
+                            {conversation.video_verified && (
+                              <VideoVerifiedBadge isVerified={true} size="sm" />
+                            )}
+                          </div>
                           <span className="text-xs text-purple-200">{conversation.time}</span>
                         </div>
                         <div className="flex items-center justify-between">

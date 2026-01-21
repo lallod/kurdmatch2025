@@ -9,6 +9,7 @@ export interface Profile {
   profile_image: string;
   bio: string;
   verified: boolean;
+  video_verified?: boolean;
   occupation?: string;
   interests?: string[];
   hobbies?: string[];

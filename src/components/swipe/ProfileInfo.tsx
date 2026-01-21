@@ -5,6 +5,7 @@ import { Profile } from '@/types/swipe';
 import { SWIPE_CONFIG } from '@/config/swipe';
 import { convertAndFormatHeight } from '@/utils/heightConverter';
 import { getKurdistanRegionDisplay } from '@/utils/profileDataNormalizer';
+import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
 
 interface ProfileInfoProps {
   profile: Profile;
@@ -17,10 +18,13 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false }) =
 
   return (
     <div className="text-white space-y-1.5 sm:space-y-2">
-      {/* Name and Age */}
+      {/* Name, Age, and Verification Badge */}
       <div className={`flex items-center ${SWIPE_CONFIG.info.location.gap}`}>
         <h2 className={`${SWIPE_CONFIG.info.name.size} font-bold`}>{profile.name}</h2>
         <span className={`${SWIPE_CONFIG.info.age.size} font-light`}>{profile.age}</span>
+        {profile.video_verified && (
+          <VideoVerifiedBadge isVerified={true} size="md" />
+        )}
       </div>
       
       {/* Location */}

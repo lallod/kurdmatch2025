@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { Shield, Bell, Eye, Heart, MessageCircle, Users, Lock, Smartphone, Mail, Globe, Download, Trash2, Settings, CheckCircle2, AlertTriangle, LogOut, Crown, Phone, HelpCircle, FileText } from 'lucide-react';
+import { Shield, Bell, Eye, Heart, MessageCircle, Users, Lock, Smartphone, Mail, Globe, Download, Trash2, Settings, CheckCircle2, AlertTriangle, LogOut, Crown, Phone, HelpCircle, FileText, Video, ShieldCheck, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import DownloadDataDialog from './dialogs/DownloadDataDialog';
 import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
@@ -13,11 +13,22 @@ import ConnectedAccountsDialog from './dialogs/ConnectedAccountsDialog';
 import DeleteAccountDialog from './dialogs/DeleteAccountDialog';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useUserSettings } from '@/hooks/useUserSettings';
+import { useVideoVerification } from '@/hooks/useVideoVerification';
+import { VideoVerificationDialog } from '@/components/verification/VideoVerificationDialog';
 
 const AccountSettings = () => {
   const navigate = useNavigate();
   const { signOut } = useSupabaseAuth();
   const { settings, loading, updateSettings } = useUserSettings();
+  const { verification, isLoading: verificationLoading, fetchVerification, getVerificationStatus } = useVideoVerification();
+  const [isVideoVerificationOpen, setIsVideoVerificationOpen] = useState(false);
+
+  // Fetch verification status on mount
+  useEffect(() => {
+    fetchVerification();
+  }, []);
+
+  const verificationStatus = getVerificationStatus();
 
   // Dialog states
   const [dialogStates, setDialogStates] = useState({
@@ -81,7 +92,7 @@ const AccountSettings = () => {
       <Card className="backdrop-blur-md bg-white/10 border border-white/20">
         <CardContent className="p-6">
           <h2 className="text-xl font-semibold text-white mb-4">Account Status</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
                 <CheckCircle2 className="w-5 h-5 text-white" />
@@ -102,14 +113,52 @@ const AccountSettings = () => {
               </div>
             </div>
             
+            {/* Video Verification Status */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-white" />
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                verificationStatus.status === 'Verified' 
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-500' 
+                  : verificationStatus.status === 'Pending'
+                  ? 'bg-gradient-to-r from-yellow-500 to-orange-500'
+                  : 'bg-gradient-to-r from-gray-500 to-gray-600'
+              }`}>
+                {verificationStatus.status === 'Verified' ? (
+                  <ShieldCheck className="w-5 h-5 text-white" />
+                ) : verificationStatus.status === 'Pending' ? (
+                  <Clock className="w-5 h-5 text-white" />
+                ) : (
+                  <Video className="w-5 h-5 text-white" />
+                )}
               </div>
               <div>
-                <p className="text-white font-medium">Photo Verification</p>
-                <p className="text-purple-200 text-sm">Pending review</p>
+                <p className="text-white font-medium">Video Verification</p>
+                <p className={`text-sm ${verificationStatus.color}`}>{verificationStatus.message}</p>
               </div>
+            </div>
+
+            {/* Action Button for Video Verification */}
+            <div className="flex items-center">
+              {verificationStatus.status !== 'Verified' && verificationStatus.status !== 'Pending' && (
+                <Button 
+                  onClick={() => setIsVideoVerificationOpen(true)}
+                  className="bg-gradient-to-r from-tinder-rose to-tinder-orange hover:opacity-90"
+                  size="sm"
+                >
+                  <Video className="w-4 h-4 mr-2" />
+                  Verify Now
+                </Button>
+              )}
+              {verificationStatus.status === 'Pending' && (
+                <Badge variant="outline" className="border-yellow-500 text-yellow-400">
+                  Under Review
+                </Badge>
+              )}
+              {verificationStatus.status === 'Verified' && (
+                <Badge variant="outline" className="border-green-500 text-green-400">
+                  <ShieldCheck className="w-3 h-3 mr-1" />
+                  Verified
+                </Badge>
+              )}
             </div>
           </div>
         </CardContent>
@@ -327,6 +376,18 @@ const AccountSettings = () => {
       <ConnectedAccountsDialog open={dialogStates.connectedAccounts} onOpenChange={() => closeDialog('connectedAccounts')} />
       
       <DeleteAccountDialog open={dialogStates.deleteAccount} onOpenChange={() => closeDialog('deleteAccount')} />
+
+      {/* Video Verification Dialog */}
+      <VideoVerificationDialog 
+        open={isVideoVerificationOpen} 
+        onOpenChange={(open) => {
+          setIsVideoVerificationOpen(open);
+          if (!open) {
+            // Refresh verification status when dialog closes
+            fetchVerification();
+          }
+        }} 
+      />
     </div>;
 };
 export default AccountSettings;

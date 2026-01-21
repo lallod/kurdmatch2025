@@ -21,6 +21,7 @@ export interface Profile {
   bio?: string;
   relationshipGoals?: string;
   verified?: boolean;
+  video_verified?: boolean;
   
   // Personal Information
   gender?: string;
