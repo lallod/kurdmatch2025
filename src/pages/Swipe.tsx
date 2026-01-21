@@ -71,6 +71,7 @@ const Swipe = () => {
           bio: profile.bio || '',
           relationshipGoals: profile.relationship_goals || 'Long-term relationship',
           verified: profile.verified || false,
+          video_verified: profile.video_verified || false,
           gender: profile.gender || 'female',
           ethnicity: profile.ethnicity || '',
           education: profile.education || '',
