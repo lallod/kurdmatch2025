@@ -33,6 +33,7 @@ import EmptyState from '@/components/EmptyState';
 import UnmatchDialog from '@/components/messages/UnmatchDialog';
 import { AIWingmanPanel } from '@/components/chat/AIWingmanPanel';
 import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
+import { MatchInsightsHeader } from '@/components/chat/MatchInsightsHeader';
 
 const Messages = () => {
   const { user } = useSupabaseAuth();
@@ -622,6 +623,12 @@ const Messages = () => {
             </div>
           </div>
         </div>
+
+        {/* Match Insights Header */}
+        <MatchInsightsHeader 
+          matchedUserId={conversation.id}
+          matchedUserName={conversation.name}
+        />
 
         <div className="flex-1 p-4 overflow-y-auto space-y-4">
           <div className="space-y-4 max-w-4xl mx-auto">
