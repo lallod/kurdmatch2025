@@ -6,6 +6,7 @@ import { SWIPE_CONFIG } from '@/config/swipe';
 import { convertAndFormatHeight } from '@/utils/heightConverter';
 import { getKurdistanRegionDisplay } from '@/utils/profileDataNormalizer';
 import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
+import { CompatibilityBadge } from '@/components/compatibility/CompatibilityBadge';
 
 interface ProfileInfoProps {
   profile: Profile;
@@ -26,6 +27,17 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false }) =
           <VideoVerifiedBadge isVerified={true} size="md" />
         )}
       </div>
+      
+      {/* Compatibility Score */}
+      {profile.compatibilityScore > 0 && (
+        <div className="flex items-center gap-2">
+          <CompatibilityBadge 
+            targetUserId={profile.id} 
+            initialScore={profile.compatibilityScore}
+            size="sm"
+          />
+        </div>
+      )}
       
       {/* Location */}
       <div className={`flex items-center gap-1.5 sm:gap-2 text-white/90 text-xs sm:text-sm`}>
