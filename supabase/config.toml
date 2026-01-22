@@ -44,3 +44,9 @@ verify_jwt = true
 
 [functions.verify-phone-code]
 verify_jwt = true
+
+[functions.ai-wingman]
+verify_jwt = true
+
+[functions.calculate-compatibility]
+verify_jwt = true
