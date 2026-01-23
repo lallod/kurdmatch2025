@@ -34,6 +34,7 @@ import UnmatchDialog from '@/components/messages/UnmatchDialog';
 import { AIWingmanPanel } from '@/components/chat/AIWingmanPanel';
 import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
 import { MatchInsightsHeader } from '@/components/chat/MatchInsightsHeader';
+import { IcebreakerSuggestions } from '@/components/chat/IcebreakerSuggestions';
 
 const Messages = () => {
   const { user } = useSupabaseAuth();
@@ -641,6 +642,15 @@ const Messages = () => {
                 communicationStyle={insights.communicationStyle}
                 onRefresh={handleGenerateInsights}
                 isLoading={isGenerating}
+              />
+            )}
+
+            {/* Icebreaker Suggestions for new conversations */}
+            {conversationMessages.length === 0 && selectedConversation && (
+              <IcebreakerSuggestions
+                matchedUserId={selectedConversation}
+                onSelectIcebreaker={(text) => setNewMessage(text)}
+                hasMessages={conversationMessages.length > 0}
               />
             )}
             
