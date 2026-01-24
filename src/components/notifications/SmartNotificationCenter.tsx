@@ -33,13 +33,29 @@ interface Notification {
   };
 }
 
-export const SmartNotificationCenter = () => {
+interface SmartNotificationCenterProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export const SmartNotificationCenter = ({ open, onOpenChange }: SmartNotificationCenterProps) => {
   const { user } = useSupabaseAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+
+  // Use controlled or uncontrolled state
+  const isControlled = open !== undefined;
+  const sheetOpen = isControlled ? open : isOpen;
+  const setSheetOpen = (value: boolean) => {
+    if (isControlled && onOpenChange) {
+      onOpenChange(value);
+    } else {
+      setIsOpen(value);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -126,7 +142,7 @@ export const SmartNotificationCenter = () => {
     }
     if (notification.link) {
       navigate(notification.link);
-      setIsOpen(false);
+      setSheetOpen(false);
     }
   };
 
@@ -152,7 +168,7 @@ export const SmartNotificationCenter = () => {
   });
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
