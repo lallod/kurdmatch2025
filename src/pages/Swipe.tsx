@@ -11,9 +11,11 @@ import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth as useAuth } from '@/integrations/supabase/auth';
 import { SWIPE_CONFIG } from '@/config/swipe';
 import Logo from '@/components/landing/Logo';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, Bell, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCompatibility } from '@/hooks/useCompatibility';
+import { SmartNotificationCenter } from '@/components/notifications/SmartNotificationCenter';
+import { ProfileBoostCard } from '@/components/boost/ProfileBoostCard';
 
 const Swipe = () => {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ const Swipe = () => {
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [boostOpen, setBoostOpen] = useState(false);
   const [filters, setFilters] = useState<{
     ageMin?: number;
     ageMax?: number;
@@ -224,17 +228,35 @@ const Swipe = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col overflow-hidden">
-      {/* Header with Logo and Filter */}
+      {/* Header with Logo and Actions */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 z-20">
         <Logo size="small" withText={true} />
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setFilterOpen(true)}
-          className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11"
-        >
-          <SlidersHorizontal className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setBoostOpen(true)}
+            className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11"
+          >
+            <Zap className="w-5 h-5 text-yellow-400" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setNotificationsOpen(true)}
+            className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11 relative"
+          >
+            <Bell className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setFilterOpen(true)}
+            className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11"
+          >
+            <SlidersHorizontal className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Filter Sidebar */}
@@ -244,6 +266,21 @@ const Swipe = () => {
         open={filterOpen}
         onOpenChange={setFilterOpen}
       />
+
+      {/* Notifications Panel */}
+      <SmartNotificationCenter 
+        open={notificationsOpen} 
+        onOpenChange={setNotificationsOpen} 
+      />
+
+      {/* Boost Modal */}
+      {boostOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setBoostOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md">
+            <ProfileBoostCard onClose={() => setBoostOpen(false)} />
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center pb-20 sm:pb-24">

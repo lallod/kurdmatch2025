@@ -15,7 +15,11 @@ interface BoostStats {
   matchesIncrease: number;
 }
 
-export const ProfileBoostCard = () => {
+interface ProfileBoostCardProps {
+  onClose?: () => void;
+}
+
+export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
   const { user } = useSupabaseAuth();
   const [isBoostActive, setIsBoostActive] = useState(false);
   const [boostTimeRemaining, setBoostTimeRemaining] = useState(0);
