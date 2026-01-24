@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, Users, Filter, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search as SearchIcon, Hash, TrendingUp } from 'lucide-react';
+import { MapPin, Users, X, Briefcase, Book, Heart, Languages, UtensilsCrossed, Search as SearchIcon, Hash, TrendingUp, Bell, Zap, Filter } from 'lucide-react';
 import SearchBar from '@/components/discovery/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -20,31 +20,13 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuLabel
-} from "@/components/ui/dropdown-menu";
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel 
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { Switch } from "@/components/ui/switch";
-import { Input } from '@/components/ui/input';
 import BottomNavigation from '@/components/BottomNavigation';
 import SwipeActions from '@/components/swipe/SwipeActions';
 import { likeProfile } from '@/api/likes';
 import { toast } from 'sonner';
+import { SmartFilters } from '@/components/discovery/SmartFilters';
+import { SmartNotificationCenter } from '@/components/notifications/SmartNotificationCenter';
+import { ProfileBoostCard } from '@/components/boost/ProfileBoostCard';
 
 const areas = [
   { value: "all", name: "All Regions" },
@@ -56,83 +38,43 @@ const areas = [
   { value: "West-Kurdistan", name: "West Kurdistan" }
 ];
 
-const religions = [
-  { value: "all", name: "All Religions" },
-  { value: "muslim", name: "Muslim" },
-  { value: "christian", name: "Christian" },
-  { value: "jewish", name: "Jewish" },
-  { value: "hindu", name: "Hindu" },
-  { value: "buddhist", name: "Buddhist" },
-  { value: "sikh", name: "Sikh" },
-  { value: "spiritual", name: "Spiritual" },
-  { value: "agnostic", name: "Agnostic" },
-  { value: "atheist", name: "Atheist" },
-  { value: "other", name: "Other" }
-];
-
-const bodyTypes = [
-  { value: "all", name: "All Body Types" },
-  { value: "slim", name: "Slim" },
-  { value: "average", name: "Average" },
-  { value: "athletic", name: "Athletic" },
-  { value: "muscular", name: "Muscular" },
-  { value: "curvy", name: "Curvy" },
-  { value: "full", name: "Full Figured" }
-];
-
-const languageOptions = [
-  { value: "all", name: "All Languages" },
-  { value: "english", name: "English" },
-  { value: "kurdish", name: "Kurdish" },
-  { value: "arabic", name: "Arabic" },
-  { value: "turkish", name: "Turkish" },
-  { value: "persian", name: "Persian" },
-  { value: "spanish", name: "Spanish" },
-  { value: "french", name: "French" },
-  { value: "german", name: "German" }
-];
-
-interface FilterFormValues {
-  area: string;
+interface SmartFilterState {
   ageRange: [number, number];
   distance: number;
-  minCompatibility: number;
-  hasInterests: boolean;
-  occupationFilter: string;
-  showVerifiedOnly: boolean;
-  religion: string;
-  bodyType: string;
-  language: string;
-  heightRange: [number, number];
-  dietaryPreference: string;
+  verifiedOnly: boolean;
+  videoVerifiedOnly: boolean;
+  hasPhotos: boolean;
+  relationshipGoals: string[];
+  education: string[];
+  occupation: string;
+  region: string;
+  recentlyActive: boolean;
+  compatibilityMin: number;
 }
 
 const Discovery = () => {
   const navigate = useNavigate();
   const [selectedArea, setSelectedArea] = useState("all");
-  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [activeFilters, setActiveFilters] = useState(0);
   const [selectedProfile, setSelectedProfile] = useState<DiscoveryProfile | null>(null);
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-  const form = useForm<FilterFormValues>({
-    defaultValues: {
-      area: "all",
-      ageRange: [18, 50],
-      distance: 50,
-      minCompatibility: 70,
-      hasInterests: false,
-      occupationFilter: "",
-      showVerifiedOnly: false,
-      religion: "all",
-      bodyType: "all",
-      language: "all",
-      heightRange: [150, 200],
-      dietaryPreference: ""
-    }
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [boostOpen, setBoostOpen] = useState(false);
+  const [smartFilters, setSmartFilters] = useState<SmartFilterState>({
+    ageRange: [18, 50],
+    distance: 100,
+    verifiedOnly: false,
+    videoVerifiedOnly: false,
+    hasPhotos: true,
+    relationshipGoals: [],
+    education: [],
+    occupation: '',
+    region: '',
+    recentlyActive: false,
+    compatibilityMin: 0,
   });
 
   // Fetch real profiles from database
@@ -140,10 +82,7 @@ const Discovery = () => {
     limit: 50,
     filters: {
       area: selectedArea !== 'all' ? selectedArea : undefined,
-      ageRange: form.watch('ageRange'),
-      religion: form.watch('religion'),
-      bodyType: form.watch('bodyType'),
-      language: form.watch('language')
+      ageRange: smartFilters.ageRange,
     }
   });
 
@@ -161,60 +100,53 @@ const Discovery = () => {
     fetchUser();
   }, []);
   
-  const applyFilters = (formValues: FilterFormValues) => {
-    const { 
-      area, 
-      distance, 
-      minCompatibility, 
-      hasInterests, 
-      occupationFilter, 
-      showVerifiedOnly,
-      religion,
-      bodyType,
-      language,
-      heightRange,
-      dietaryPreference,
-      ageRange
-    } = formValues;
-    
+  const handleSmartFiltersChange = (filters: SmartFilterState) => {
+    setSmartFilters(filters);
+    // Count active filters
     let count = 0;
-    
-    if (area !== "all") count++;
-    if (distance < 50) count++;
-    if (minCompatibility > 70) count++;
-    if (hasInterests) count++;
-    if (occupationFilter) count++;
-    if (showVerifiedOnly) count++;
-    if (ageRange[0] > 18 || ageRange[1] < 50) count++;
-    if (religion !== "all") count++;
-    if (bodyType !== "all") count++;
-    if (language !== "all") count++;
-    if (heightRange[0] > 150 || heightRange[1] < 200) count++;
-    if (dietaryPreference) count++;
-    
+    if (filters.ageRange[0] !== 18 || filters.ageRange[1] !== 50) count++;
+    if (filters.distance !== 100) count++;
+    if (filters.verifiedOnly) count++;
+    if (filters.videoVerifiedOnly) count++;
+    if (filters.relationshipGoals.length > 0) count++;
+    if (filters.education.length > 0) count++;
+    if (filters.occupation) count++;
+    if (filters.region) count++;
+    if (filters.recentlyActive) count++;
+    if (filters.compatibilityMin > 0) count++;
     setActiveFilters(count);
-    setSelectedArea(area);
-    setIsFilterExpanded(false);
+    
+    if (filters.region) {
+      setSelectedArea(filters.region);
+    }
   };
 
-  // Apply additional client-side filters
+  const resetFilters = () => {
+    setSmartFilters({
+      ageRange: [18, 50],
+      distance: 100,
+      verifiedOnly: false,
+      videoVerifiedOnly: false,
+      hasPhotos: true,
+      relationshipGoals: [],
+      education: [],
+      occupation: '',
+      region: '',
+      recentlyActive: false,
+      compatibilityMin: 0,
+    });
+    setActiveFilters(0);
+    setSelectedArea("all");
+  };
+
+  // Apply client-side filters
   const filteredProfiles = dbProfiles.filter(profile => {
-    const values = form.getValues();
+    const matchesOccupation = !smartFilters.occupation || 
+      (profile.occupation && profile.occupation.toLowerCase().includes(smartFilters.occupation.toLowerCase()));
     
-    const matchesOccupation = !values.occupationFilter || 
-      (profile.occupation && profile.occupation.toLowerCase().includes(values.occupationFilter.toLowerCase()));
+    const matchesVerified = !smartFilters.verifiedOnly || profile.verified;
     
-    const matchesInterests = !values.hasInterests || (profile.interests && profile.interests.length > 0);
-    
-    const matchesVerified = !values.showVerifiedOnly || profile.verified;
-    
-    const height = profile.height ? parseInt(profile.height) : 0;
-    const matchesHeight = !height || (height >= values.heightRange[0] && height <= values.heightRange[1]);
-    
-    const matchesDietary = !values.dietaryPreference || 
-      (profile.dietary_preferences && profile.dietary_preferences.toLowerCase().includes(values.dietaryPreference.toLowerCase()));
-    
-    return matchesOccupation && matchesInterests && matchesVerified && matchesHeight && matchesDietary;
+    return matchesOccupation && matchesVerified;
   });
 
   const handleProfileClick = (profile: DiscoveryProfile) => {
@@ -268,31 +200,32 @@ const Discovery = () => {
     setStories(storiesData);
   };
 
-  const resetFilters = () => {
-    form.reset({
-      area: "all",
-      ageRange: [18, 50],
-      distance: 50,
-      minCompatibility: 70,
-      hasInterests: false,
-      occupationFilter: "",
-      showVerifiedOnly: false,
-      religion: "all",
-      bodyType: "all",
-      language: "all",
-      heightRange: [150, 200],
-      dietaryPreference: ""
-    });
-    setSelectedArea("all");
-    setActiveFilters(0);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
       {/* Header */}
       <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          {/* Top Actions Row */}
+          <div className="flex justify-end gap-2 mb-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setBoostOpen(true)}
+              className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10"
+            >
+              <Zap className="w-5 h-5 text-yellow-400" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setNotificationsOpen(true)}
+              className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10"
+            >
+              <Bell className="w-5 h-5" />
+            </Button>
+          </div>
+          
           <div className="text-center space-y-3 sm:space-y-4">
             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
               <SearchIcon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -309,6 +242,21 @@ const Discovery = () => {
           </div>
         </div>
       </div>
+
+      {/* Notifications Panel */}
+      <SmartNotificationCenter 
+        open={notificationsOpen} 
+        onOpenChange={setNotificationsOpen} 
+      />
+
+      {/* Boost Modal */}
+      {boostOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setBoostOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md">
+            <ProfileBoostCard onClose={() => setBoostOpen(false)} />
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
@@ -354,7 +302,7 @@ const Discovery = () => {
           <div className="relative z-10">
             {/* Filters Section */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <div className="w-full">
+              <div className="flex-1">
                 <Select value={selectedArea} onValueChange={setSelectedArea}>
                   <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">
                     <SelectValue placeholder="All Regions" />
@@ -369,172 +317,10 @@ const Discovery = () => {
                 </Select>
               </div>
               
-              <DropdownMenu open={isFilterExpanded} onOpenChange={setIsFilterExpanded}>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2 whitespace-nowrap bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20">
-                    <Filter className="h-4 w-4" />
-                    <span>Filters</span>
-                    {activeFilters > 0 && (
-                      <Badge className="ml-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white h-5 w-5 flex items-center justify-center p-0 text-xs rounded-full">
-                        {activeFilters}
-                      </Badge>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-80 p-4 max-h-[80vh] overflow-y-auto bg-background/95 backdrop-blur border-border">
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(applyFilters)} className="space-y-4">
-                      <DropdownMenuLabel className="font-bold text-foreground">Filter Profiles</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-border" />
-
-                      {/* Age Range */}
-                      <DropdownMenuGroup>
-                        <FormField
-                          control={form.control}
-                          name="ageRange"
-                          render={({ field }) => (
-                            <FormItem className="space-y-2">
-                              <FormLabel className="text-white">Age Range: {field.value[0]} - {field.value[1]}</FormLabel>
-                              <FormControl>
-                                <Slider 
-                                  defaultValue={field.value} 
-                                  min={18} 
-                                  max={70} 
-                                  step={1} 
-                                  onValueChange={field.onChange}
-                                  className="mt-2" 
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </DropdownMenuGroup>
-
-                      <DropdownMenuSeparator className="bg-border" />
-                      
-                      {/* Distance */}
-                      <DropdownMenuGroup>
-                        <FormField
-                          control={form.control}
-                          name="distance"
-                          render={({ field }) => (
-                            <FormItem className="space-y-2">
-                              <FormLabel className="text-white">Distance: {field.value} miles</FormLabel>
-                              <FormControl>
-                                <Slider 
-                                  defaultValue={[field.value]} 
-                                  min={1} 
-                                  max={100} 
-                                  step={1} 
-                                  onValueChange={(value) => field.onChange(value[0])}
-                                  className="mt-2" 
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </DropdownMenuGroup>
-
-                      <DropdownMenuSeparator className="bg-border" />
-                      
-                      {/* Compatibility */}
-                      <DropdownMenuGroup>
-                        <FormField
-                          control={form.control}
-                          name="minCompatibility"
-                          render={({ field }) => (
-                            <FormItem className="space-y-2">
-                              <FormLabel className="text-white">Minimum Compatibility: {field.value}%</FormLabel>
-                              <FormControl>
-                                <Slider 
-                                  defaultValue={[field.value]} 
-                                  min={50} 
-                                  max={100} 
-                                  step={5} 
-                                  onValueChange={(value) => field.onChange(value[0])}
-                                  className="mt-2" 
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </DropdownMenuGroup>
-                      
-                      <DropdownMenuSeparator className="bg-border" />
-                      
-                      {/* Religion */}
-                      <DropdownMenuGroup>
-                        <FormField
-                          control={form.control}
-                          name="religion"
-                          render={({ field }) => (
-                            <FormItem className="space-y-2">
-                              <FormLabel className="text-white">Religion</FormLabel>
-                              <Select 
-                                value={field.value} 
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="bg-background/95 backdrop-blur border-border text-foreground">
-                                  <SelectValue placeholder="All Religions" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-background/95 backdrop-blur border-border">
-                                  {religions.map((option) => (
-                                    <SelectItem key={option.value} value={option.value} className="text-foreground hover:bg-accent">
-                                      {option.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormItem>
-                          )}
-                        />
-                      </DropdownMenuGroup>
-
-                      {/* Continue with other form fields but update their styling... */}
-                      <DropdownMenuSeparator className="bg-border" />
-                      
-                      {/* Body Type */}
-                      <DropdownMenuGroup>
-                        <FormField
-                          control={form.control}
-                          name="bodyType"
-                          render={({ field }) => (
-                            <FormItem className="space-y-2">
-                              <FormLabel className="text-white">Body Type</FormLabel>
-                              <Select 
-                                value={field.value} 
-                                onValueChange={field.onChange}
-                              >
-                                <SelectTrigger className="bg-background/95 backdrop-blur border-border text-foreground">
-                                  <SelectValue placeholder="All Body Types" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-background/95 backdrop-blur border-border">
-                                  {bodyTypes.map((option) => (
-                                    <SelectItem key={option.value} value={option.value} className="text-foreground hover:bg-accent">
-                                      {option.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormItem>
-                          )}
-                        />
-                      </DropdownMenuGroup>
-
-                      {/* Continue with remaining form fields with similar styling updates... */}
-
-                      <div className="flex justify-between pt-2">
-                        <Button type="button" variant="outline" size="sm" onClick={resetFilters} className="bg-background/95 backdrop-blur border-border text-foreground hover:bg-accent">
-                          Reset
-                        </Button>
-                        <Button type="submit" size="sm" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                          Apply Filters
-                        </Button>
-                      </div>
-                    </form>
-                  </Form>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <SmartFilters 
+                onFiltersChange={handleSmartFiltersChange}
+                activeFilterCount={activeFilters}
+              />
             </div>
             
             {/* Results Info */}
