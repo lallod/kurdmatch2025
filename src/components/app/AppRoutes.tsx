@@ -57,6 +57,7 @@ import HelpSupport from '@/pages/HelpSupport';
 import CommunityGuidelines from '@/pages/CommunityGuidelines';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
+import CompatibilityInsights from '@/pages/CompatibilityInsights';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -211,7 +212,11 @@ export const AppRoutes: React.FC = () => {
         path="/hashtag/:hashtag" 
         element={<ProtectedRoute><HashtagFeed /></ProtectedRoute>} 
       />
-      <Route 
+      <Route
+        path="/compatibility/:userId" 
+        element={<ProtectedRoute><CompatibilityInsights /></ProtectedRoute>} 
+      />
+      <Route
         path="/groups" 
         element={<ProtectedRoute><Groups /></ProtectedRoute>} 
       />

@@ -18,6 +18,7 @@ import { useMessageModeration } from '@/hooks/useMessageModeration';
 import { useConversationInsights } from '@/hooks/useConversationInsights';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { useImageCompression } from '@/hooks/useImageCompression';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
 import { ConversationInsights } from '@/components/chat/ConversationInsights';
 import { GifPicker } from '@/components/chat/GifPicker';
@@ -25,6 +26,7 @@ import { VoiceRecorder } from '@/components/chat/VoiceRecorder';
 import { VoicePlayer } from '@/components/chat/VoicePlayer';
 import { ImageUploader, ImagePreview } from '@/components/chat/ImageUploader';
 import MessageTranslation from '@/components/chat/MessageTranslation';
+import { OnlineStatusBadge, OnlineStatusDot } from '@/components/shared/OnlineStatusBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { messageSchema } from '@/utils/validation/messageValidation';
@@ -554,7 +556,7 @@ const Messages = () => {
                 <AvatarImage src={conversation.avatar} alt={conversation.name} />
                 <AvatarFallback className="bg-purple-500 text-white text-sm">{conversation.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              {conversation.online && <span className="absolute bottom-0 right-1 sm:right-2 h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-success border-2 border-white ring-1 ring-success/50"></span>}
+              <OnlineStatusDot userId={conversation.id} size="md" position="bottom-right" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-1.5">
