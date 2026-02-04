@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 import { SmartFilters } from '@/components/discovery/SmartFilters';
 import { SmartNotificationCenter } from '@/components/notifications/SmartNotificationCenter';
 import { ProfileBoostCard } from '@/components/boost/ProfileBoostCard';
+import { ActivityFeed } from '@/components/discovery/ActivityFeed';
 
 const areas = [
   { value: "all", name: "All Regions" },
@@ -270,6 +271,11 @@ const Discovery = () => {
             />
           </div>
         )}
+
+        {/* Activity Feed */}
+        <div className="mb-4 sm:mb-6">
+          <ActivityFeed compact maxItems={5} />
+        </div>
 
         {/* Compact Navigation Sections */}
         <div className="space-y-1.5 sm:space-y-2 mb-4 sm:mb-6">
