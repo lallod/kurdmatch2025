@@ -2255,6 +2255,7 @@ export type Database = {
           morning_routine: string | null
           music_instruments: string[] | null
           name: string
+          notification_preferences: Json | null
           occupation: string
           personality_type: string | null
           pet_peeves: string[] | null
@@ -2333,6 +2334,7 @@ export type Database = {
           morning_routine?: string | null
           music_instruments?: string[] | null
           name: string
+          notification_preferences?: Json | null
           occupation?: string
           personality_type?: string | null
           pet_peeves?: string[] | null
@@ -2411,6 +2413,7 @@ export type Database = {
           morning_routine?: string | null
           music_instruments?: string[] | null
           name?: string
+          notification_preferences?: Json | null
           occupation?: string
           personality_type?: string | null
           pet_peeves?: string[] | null
@@ -3865,6 +3868,7 @@ export type Database = {
           morning_routine: string | null
           music_instruments: string[] | null
           name: string
+          notification_preferences: Json | null
           occupation: string
           personality_type: string | null
           pet_peeves: string[] | null

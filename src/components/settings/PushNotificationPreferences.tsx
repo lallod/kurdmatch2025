@@ -34,14 +34,16 @@ export const PushNotificationPreferences: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('notification_preferences')
+          .select('*')
           .eq('id', user.id)
           .single();
 
         if (error) throw error;
 
-        if (data?.notification_preferences) {
-          const prefs = data.notification_preferences as Record<string, boolean>;
+        // Use type assertion since the column is newly added
+        const profileData = data as Record<string, unknown>;
+        if (profileData?.notification_preferences) {
+          const prefs = profileData.notification_preferences as Record<string, boolean>;
           setPreferences({
             push_new_messages: prefs.push_new_messages ?? true,
             push_new_matches: prefs.push_new_matches ?? true,
@@ -67,9 +69,10 @@ export const PushNotificationPreferences: React.FC = () => {
     setPreferences(newPreferences);
 
     try {
+      // Use raw update with type assertion for newly added column
       const { error } = await supabase
         .from('profiles')
-        .update({ notification_preferences: newPreferences })
+        .update({ notification_preferences: newPreferences } as Record<string, unknown>)
         .eq('id', user.id);
 
       if (error) throw error;
