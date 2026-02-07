@@ -2,7 +2,7 @@
 # Plan: Online Status System og Ytterligere Moderniseringer
 
 ## Oversikt
-2026-moderniseringen er fullført med fokus på sanntids online-status, utvidede AI-funksjoner og forbedret brukeropplevelse.
+2026-moderniseringen er fullført med fokus på sanntids online-status, utvidede AI-funksjoner, forbedret brukeropplevelse og Premium Subscription-system.
 
 ## ✅ ALLE FASER IMPLEMENTERT
 
@@ -87,6 +87,37 @@
 
 ---
 
+### ✅ Fase 5: Premium Subscription System - FERDIG
+
+**Edge Functions:**
+- `supabase/functions/create-checkout/index.ts` - Stripe Checkout session
+- `supabase/functions/check-subscription/index.ts` - Verifiser abonnement
+- `supabase/functions/customer-portal/index.ts` - Stripe Customer Portal
+- `supabase/functions/stripe-webhook/index.ts` - Webhook handler
+
+**Database:**
+- ✅ `user_subscriptions` tabell med tier-tracking
+
+**Frontend:**
+- `src/hooks/useSubscription.ts` - Hook for subscription state
+- `src/pages/Subscription.tsx` - Pricing page
+- `src/components/subscription/SubscriptionCard.tsx` - Plan cards
+- `src/types/subscription.ts` - Tier types og Stripe IDs
+
+**Tiers:**
+| Tier | Pris | Features |
+|------|------|----------|
+| Free | 0 NOK | Basic swipe, limited features |
+| Basic | 199 NOK/mnd | Unlimited swipes, see likes, advanced filters |
+| Premium | 299 NOK/mnd | AI insights, smart icebreakers, read receipts |
+| Gold | 499 NOK/mnd | Boost, super likes, travel mode, VIP support |
+
+**Feature Gates:**
+- ✅ SwipeFilters - Premium-only
+- ✅ AccountSettings - Link til /subscription
+
+---
+
 ## Teknisk Arkitektur
 
 ```
@@ -107,6 +138,15 @@
 +------------------+     +------------------+
 | Realtime Channels|     | Web Push API     |
 +------------------+     +------------------+
+
++------------------+     +------------------+
+| useSubscription  |---> | Stripe API       |
++------------------+     +------------------+
+       |                        |
+       v                        v
++------------------+     +------------------+
+| user_subscriptions|   | Checkout/Portal  |
++------------------+     +------------------+
 ```
 
 ---
@@ -119,5 +159,6 @@
 | 2 | Activity Feed | ✅ Komplett |
 | 3 | Compatibility Insights | ✅ Komplett |
 | 4 | Push Notifications | ✅ Komplett |
+| 5 | Premium Subscription | ✅ Komplett |
 
-**Sist oppdatert:** 2026-02-06
+**Sist oppdatert:** 2026-02-07
