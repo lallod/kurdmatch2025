@@ -1,164 +1,210 @@
 
-# Plan: Online Status System og Ytterligere Moderniseringer
 
-## Oversikt
-2026-moderniseringen er fullført med fokus på sanntids online-status, utvidede AI-funksjoner, forbedret brukeropplevelse og Premium Subscription-system.
+# Implementation Roadmap: Next Features for KurdMatch
 
-## ✅ ALLE FASER IMPLEMENTERT
+## Overview
 
----
-
-### ✅ Fase 1: Real-time Online Status System - FERDIG
-
-**Implementerte filer:**
-- `src/hooks/useOnlinePresence.ts` - Hook som bruker Supabase Realtime Presence API
-- `src/components/shared/OnlineStatusBadge.tsx` - Universell komponent med 3 varianter:
-  - `OnlineStatusBadge` - Standard badge med valgfri tekst
-  - `OnlineStatusDot` - Absolutt posisjonert prikk for avatarer
-  - `StaticOnlineStatusBadge` - Statisk versjon for ytelsesoptimalisering
-
-**Integrasjon:**
-- ✅ Messages-siden - `OnlineStatusDot` på samtale-avatarer
-- ✅ ProfileInfo (Swipe) - `OnlineStatusBadge` på profilkort
-- ✅ Database - Bruker eksisterende `last_active` kolonne i profiles
-
-**Hvordan det fungerer:**
-- Supabase Realtime Presence API sporer brukere i sanntid
-- `last_active` oppdateres hvert minutt
-- Viser "Online nå" eller "Sist aktiv X timer siden"
+This plan outlines the next set of features to implement, prioritized by user value and competitive parity with Tinder/Muzmatch. All five phases of the original modernization plan are complete, so we're now expanding functionality.
 
 ---
 
-### ✅ Fase 2: Activity Feed Component - FERDIG
+## Phase 6: Premium Feature Completion (Priority: High)
 
-**Implementerte filer:**
-- `src/components/discovery/ActivityFeed.tsx` - Komplett aktivitetsfeed
+### 6.1 Rewind/Undo Last Swipe
 
-**Funksjoner:**
-- Sanntids feed av likes og matcher
-- Compact mode for mindre plass
-- Utvidbar til full visning
-- Realtime-oppdateringer via Supabase
+**Current State**: Button shows "Rewind is a premium feature" toast but does nothing.
 
-**Integrasjon:**
-- ✅ Discovery-siden - Plassert under Stories-seksjonen
-- ✅ Norsk formattering med date-fns
+**Implementation**:
+- Store last swiped profile in state/database before moving to next
+- Create `swipe_history` table to track recent swipes
+- On rewind: restore previous profile, delete the like/pass action
+- Respect daily limits (3 for Basic, 10 for Premium, unlimited for Gold)
 
----
-
-### ✅ Fase 3: Compatibility Insights Page - FERDIG
-
-**Implementerte filer:**
-- `src/pages/CompatibilityInsights.tsx` - Dedikert side for kompatibilitetsinnsikt
-- Rute: `/compatibility/:userId` i AppRoutes.tsx
-
-**Funksjoner:**
-- Full `MatchScoreCard` med detaljert breakdown
-- Interessesammenligning side-ved-side
-- AI-genererte tips for bedre forbindelse
-- Direkte lenker til meldinger og full profil
-
-**Tilgang via:**
-- ✅ URL-parameter fra chat eller profil
-- ✅ Compatibility badge-klikk
+**Files to Create/Modify**:
+- `src/hooks/useSwipeHistory.ts` - Track and restore swipes
+- `src/api/swipes.ts` - Database operations for swipe history
+- `src/pages/Swipe.tsx` - Integrate rewind functionality
 
 ---
 
-### ✅ Fase 4: Push Notification System - FERDIG
+### 6.2 Travel Mode (Gold Feature)
 
-**Implementerte filer:**
-- `supabase/functions/send-push-notification/index.ts` - Edge function for sending
-- `src/hooks/usePushNotifications.ts` - Subscription management
-- `src/hooks/usePushNotificationTriggers.ts` - Realtime triggere
-- `src/components/settings/PushNotificationSettings.tsx` - UI-innstillinger
-- `src/components/settings/PushNotificationPreferences.tsx` - Preferanser per type
-- `public/service-worker.js` - Service Worker for Web Push
+**What It Does**: Users can set their location to a different city/country to see profiles from that area before traveling.
 
-**Database:**
-- ✅ `push_subscriptions` tabell eksisterer
-- ✅ `notification_preferences` JSONB-kolonne i profiles
+**Implementation**:
+- Add `travel_location` and `travel_mode_active` columns to profiles
+- UI in settings to enable travel mode and select destination
+- Modify `getMatchRecommendations` to use travel location when active
+- Show "Traveling to X" badge on profile
 
-**Varsler implementert for:**
-- ✅ Nye matcher
-- ✅ Nye meldinger
-- ✅ Nye likes
-- ✅ Profilvisninger (konfigurerbar)
-- ✅ Kompatibilitetsoppdateringer (konfigurerbar)
+**Files to Create/Modify**:
+- `src/components/settings/TravelModeSettings.tsx`
+- `src/api/profiles.ts` - Add travel mode filter logic
+- Database migration for travel columns
 
 ---
 
-### ✅ Fase 5: Premium Subscription System - FERDIG
+### 6.3 Read Receipts (Premium Feature)
 
-**Edge Functions:**
-- `supabase/functions/create-checkout/index.ts` - Stripe Checkout session
-- `supabase/functions/check-subscription/index.ts` - Verifiser abonnement
-- `supabase/functions/customer-portal/index.ts` - Stripe Customer Portal
-- `supabase/functions/stripe-webhook/index.ts` - Webhook handler
+**What It Does**: Show blue checkmarks when messages are read.
 
-**Database:**
-- ✅ `user_subscriptions` tabell med tier-tracking
+**Implementation**:
+- Messages table already has `read` column
+- Add UI indicator (double checkmark) for read status
+- Real-time updates when recipient reads message
+- Toggle in settings (Premium only)
 
-**Frontend:**
-- `src/hooks/useSubscription.ts` - Hook for subscription state
-- `src/pages/Subscription.tsx` - Pricing page
-- `src/components/subscription/SubscriptionCard.tsx` - Plan cards
-- `src/types/subscription.ts` - Tier types og Stripe IDs
-
-**Tiers:**
-| Tier | Pris | Features |
-|------|------|----------|
-| Free | 0 NOK | Basic swipe, limited features |
-| Basic | 199 NOK/mnd | Unlimited swipes, see likes, advanced filters |
-| Premium | 299 NOK/mnd | AI insights, smart icebreakers, read receipts |
-| Gold | 499 NOK/mnd | Boost, super likes, travel mode, VIP support |
-
-**Feature Gates:**
-- ✅ SwipeFilters - Premium-only
-- ✅ AccountSettings - Link til /subscription
+**Files to Modify**:
+- `src/pages/Messages.tsx` - Add read receipt indicators
+- `src/components/settings/PrivacySettings.tsx` - Toggle
 
 ---
 
-## Teknisk Arkitektur
+## Phase 7: Video & Voice Calls (Priority: High)
 
-```
-+------------------+     +------------------+
-|  useOnlinePresence |---> | Supabase Presence |
-+------------------+     +------------------+
-       |                        |
-       v                        v
-+------------------+     +------------------+
-|  OnlineStatusBadge |   | profiles.last_active |
-+------------------+     +------------------+
+### 7.1 WebRTC Integration
 
-+------------------+     +------------------+
-| usePushTriggers  |---> | Edge Function    |
-+------------------+     +------------------+
-       |                        |
-       v                        v
-+------------------+     +------------------+
-| Realtime Channels|     | Web Push API     |
-+------------------+     +------------------+
+**Why**: Major competitive feature missing vs Tinder/Muzmatch.
 
-+------------------+     +------------------+
-| useSubscription  |---> | Stripe API       |
-+------------------+     +------------------+
-       |                        |
-       v                        v
-+------------------+     +------------------+
-| user_subscriptions|   | Checkout/Portal  |
-+------------------+     +------------------+
+**Architecture**:
+```text
++----------------+     +------------------+     +----------------+
+|   User A       |<--->| Supabase Realtime|<--->|   User B       |
+|   (Browser)    |     | (Signaling)      |     |   (Browser)    |
++----------------+     +------------------+     +----------------+
+        |                                              |
+        +---------- WebRTC Peer Connection ------------+
 ```
 
+**Implementation**:
+- Create `calls` table (caller_id, callee_id, status, type, started_at)
+- Supabase Realtime for signaling (offer/answer/ICE candidates)
+- STUN/TURN server configuration (can use free Google STUN)
+- Call UI components (incoming call modal, active call overlay)
+
+**Files to Create**:
+- `src/hooks/useWebRTC.ts` - WebRTC connection management
+- `src/hooks/useCallSignaling.ts` - Supabase realtime signaling
+- `src/components/calls/IncomingCallModal.tsx`
+- `src/components/calls/ActiveCallOverlay.tsx`
+- `src/components/calls/CallButton.tsx` (add to Messages)
+
+**Premium Gating**: Free users get 5 min/day, Premium unlimited.
+
 ---
 
-## Oppsummering
+## Phase 8: Cultural Features (Priority: Medium)
 
-| Fase | Komponent | Status |
-|------|-----------|--------|
-| 1 | Online Presence | ✅ Komplett |
-| 2 | Activity Feed | ✅ Komplett |
-| 3 | Compatibility Insights | ✅ Komplett |
-| 4 | Push Notifications | ✅ Komplett |
-| 5 | Premium Subscription | ✅ Komplett |
+### 8.1 Chaperone Mode (Muzmatch-Inspired)
 
-**Sist oppdatert:** 2026-02-07
+**What It Does**: Allow a trusted third party (family member/friend) to observe chat conversations for cultural/religious reasons.
+
+**Implementation**:
+- Add `chaperone_id` column to profiles
+- Invite system for chaperone (email/link)
+- Chaperone gets read-only access to specified conversations
+- UI toggle in privacy settings
+- Badge showing "Chaperone Active" on profile
+
+**Files to Create**:
+- `src/pages/ChaperoneSettings.tsx`
+- `src/components/chat/ChaperoneBadge.tsx`
+- `src/api/chaperone.ts`
+
+---
+
+### 8.2 Marriage Intentions Tracker
+
+**What It Does**: Detailed tracking of marriage timeline expectations (3-6 months, 1-2 years, etc.)
+
+**Implementation**:
+- Add `marriage_timeline` field to profiles
+- Display prominently on profile cards
+- Filter option in discovery
+
+---
+
+## Phase 9: Engagement Features (Priority: Medium)
+
+### 9.1 Virtual Gifts System
+
+**What It Does**: Send virtual gifts (roses, hearts, custom Kurdish symbols) to matches.
+
+**Implementation**:
+- `virtual_gifts` table (sender, recipient, gift_type, message)
+- Gift shop UI with Kurdish-themed items
+- Notification when gift received
+- Premium users get free gifts, others purchase
+
+**Files to Create**:
+- `src/pages/GiftShop.tsx`
+- `src/components/chat/SendGiftButton.tsx`
+- `src/components/notifications/GiftNotification.tsx`
+
+---
+
+### 9.2 Date Scheduler
+
+**What It Does**: Propose and manage date invitations within the app.
+
+**Implementation**:
+- `date_proposals` table (proposer, recipient, location, time, status)
+- Integration with device calendar
+- Location suggestions based on both users' areas
+- Reminder notifications
+
+---
+
+## Phase 10: Admin & Analytics (Priority: Low)
+
+### 10.1 Advanced User Analytics
+
+**Current State**: Basic stats in admin dashboard.
+
+**Enhancement**:
+- User retention charts
+- Match success rates by region/age
+- Message response times
+- Feature usage heatmaps
+
+---
+
+### 10.2 A/B Testing Framework
+
+**What It Does**: Test different UI variations and features.
+
+**Implementation**:
+- Feature flags system
+- User cohort assignment
+- Metrics tracking per variation
+
+---
+
+## Summary Table
+
+| Phase | Feature | Tier Gate | Effort |
+|-------|---------|-----------|--------|
+| 6.1 | Rewind/Undo Swipe | Basic+ | Medium |
+| 6.2 | Travel Mode | Gold | Medium |
+| 6.3 | Read Receipts | Premium+ | Low |
+| 7.1 | Video/Voice Calls | Premium+ | High |
+| 8.1 | Chaperone Mode | All | Medium |
+| 8.2 | Marriage Timeline | All | Low |
+| 9.1 | Virtual Gifts | All (paid) | Medium |
+| 9.2 | Date Scheduler | Premium+ | Medium |
+| 10.1 | Admin Analytics | Admin | Medium |
+| 10.2 | A/B Testing | Admin | High |
+
+---
+
+## Recommended Implementation Order
+
+1. **Rewind/Undo** - Quick win, already has UI
+2. **Read Receipts** - Low effort, high perceived value
+3. **Travel Mode** - Gold tier differentiator
+4. **Video/Voice Calls** - Major competitive feature
+5. **Chaperone Mode** - Cultural differentiator for Kurdish audience
+6. **Virtual Gifts** - Monetization opportunity
+7. **Date Scheduler** - Nice-to-have engagement feature
+8. **Admin Analytics** - Internal improvement
+
