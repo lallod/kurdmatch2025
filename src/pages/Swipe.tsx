@@ -16,11 +16,13 @@ import { Button } from '@/components/ui/button';
 import { useCompatibility } from '@/hooks/useCompatibility';
 import { SmartNotificationCenter } from '@/components/notifications/SmartNotificationCenter';
 import { ProfileBoostCard } from '@/components/boost/ProfileBoostCard';
+import { useSwipeHistory } from '@/hooks/useSwipeHistory';
 
 const Swipe = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { getCompatibilityForProfiles } = useCompatibility();
+  const { recordSwipeAction, rewind, isRewinding, remainingRewinds } = useSwipeHistory();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
@@ -152,6 +154,9 @@ const Swipe = () => {
     setLastAction({ type: action, profileId });
     
     try {
+      // Record the swipe in history first
+      await recordSwipeAction(profileId, action);
+      
       switch (action) {
         case 'pass':
           await unlikeProfile(profileId);
@@ -180,6 +185,21 @@ const Swipe = () => {
       setCurrentIndex(currentIndex + 1);
     } else {
       toast("No more profiles to show", { icon: "🔄" });
+    }
+  };
+
+  const handleRewind = async () => {
+    if (isRewinding) return;
+    
+    const rewoundProfile = await rewind();
+    
+    if (rewoundProfile) {
+      // Insert the rewound profile at the current position
+      setProfiles(prev => {
+        const newProfiles = [...prev];
+        newProfiles.splice(currentIndex, 0, rewoundProfile);
+        return newProfiles;
+      });
     }
   };
 
@@ -326,11 +346,13 @@ const Swipe = () => {
       {/* Action Buttons Section - Fixed above navigation */}
       <div className="fixed bottom-14 sm:bottom-16 left-0 right-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent backdrop-blur-md z-40 pb-1 sm:pb-2">
         <SwipeActions
-          onRewind={() => toast("Rewind is a premium feature", { icon: "⭐" })}
+          onRewind={handleRewind}
           onPass={() => handleSwipeAction('pass', currentProfile.id)}
           onLike={() => handleSwipeAction('like', currentProfile.id)}
           onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
           onBoost={() => toast("Boost is a premium feature", { icon: "⚡" })}
+          isRewinding={isRewinding}
+          remainingRewinds={remainingRewinds}
         />
       </div>
 

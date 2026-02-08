@@ -12,6 +12,8 @@ interface SwipeActionsProps {
   onLike: () => void;
   onSuperLike: () => void;
   onBoost: () => void;
+  isRewinding?: boolean;
+  remainingRewinds?: number | null;
 }
 
 const SwipeActions: React.FC<SwipeActionsProps> = ({
@@ -19,7 +21,9 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
   onPass,
   onLike,
   onSuperLike,
-  onBoost
+  onBoost,
+  isRewinding = false,
+  remainingRewinds
 }) => {
   const [showPremiumModal, setShowPremiumModal] = useState<'super_like' | 'rewind' | 'boost' | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -89,16 +93,22 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Rewind */}
         <button
           onClick={() => handleActionWithLimit('rewind', onRewind)}
+          disabled={isRewinding}
           className={`${SWIPE_CONFIG.actions.buttons.small} ${
-            userLimits.rewinds.canPerform 
+            userLimits.rewinds.canPerform && !isRewinding
               ? 'bg-yellow-500 hover:bg-yellow-600' 
               : 'bg-gray-500 hover:bg-gray-600'
-          } rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 relative`}
+          } rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 relative disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          <RotateCcw className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-white`} />
-          {!userLimits.rewinds.isPremium && (
+          <RotateCcw className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-white ${isRewinding ? 'animate-spin' : ''}`} />
+          {!userLimits.rewinds.isPremium && !isRewinding && (
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
               <span className="text-white text-xs">P</span>
+            </div>
+          )}
+          {remainingRewinds !== null && remainingRewinds !== undefined && userLimits.rewinds.isPremium && (
+            <div className="absolute -top-2 -right-2 bg-yellow-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {remainingRewinds}
             </div>
           )}
         </button>
