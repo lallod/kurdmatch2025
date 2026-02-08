@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import BottomNavigation from '@/components/BottomNavigation';
-import { getConversations, getMessagesByConversation, sendMessage } from '@/api/messages';
+import { getConversations, getMessagesByConversation, sendMessage, markMessagesAsRead } from '@/api/messages';
 import { getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useMessageModeration } from '@/hooks/useMessageModeration';
@@ -37,6 +37,7 @@ import { AIWingmanPanel } from '@/components/chat/AIWingmanPanel';
 import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
 import { MatchInsightsHeader } from '@/components/chat/MatchInsightsHeader';
 import { IcebreakerSuggestions } from '@/components/chat/IcebreakerSuggestions';
+import { ReadReceiptIndicator } from '@/components/chat/ReadReceiptIndicator';
 
 const Messages = () => {
   const { user } = useSupabaseAuth();
@@ -141,6 +142,9 @@ const Messages = () => {
       try {
         const messages = await getMessagesByConversation(selectedConversation);
         setConversationMessages(messages);
+        
+        // Mark messages as read when opening conversation
+        await markMessagesAsRead(selectedConversation);
       } catch (error) {
         toast.error('Failed to load conversation');
       }
@@ -738,8 +742,11 @@ const Messages = () => {
                     </div>
                   )}
                   
-                  <span className="text-xs opacity-70 block text-right mt-1">
+                  <span className="text-xs opacity-70 flex items-center justify-end gap-1 mt-1">
                     {message.time}
+                    {message.sender === 'me' && (
+                      <ReadReceiptIndicator sent={true} read={message.read} />
+                    )}
                   </span>
                 </div>
               </div>
