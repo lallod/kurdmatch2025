@@ -2891,6 +2891,48 @@ export type Database = {
         }
         Relationships: []
       }
+      swipe_history: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          rewound: boolean
+          swiped_profile_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          rewound?: boolean
+          swiped_profile_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          rewound?: boolean
+          swiped_profile_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swipe_history_swiped_profile_id_fkey"
+            columns: ["swiped_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "swipe_history_swiped_profile_id_fkey"
+            columns: ["swiped_profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_metrics: {
         Row: {
           created_at: string
