@@ -2271,6 +2271,8 @@ export type Database = {
           tech_skills: string[] | null
           transportation_preference: string | null
           travel_frequency: string | null
+          travel_location: string | null
+          travel_mode_active: boolean
           values: string[] | null
           verified: boolean | null
           video_verified: boolean | null
@@ -2350,6 +2352,8 @@ export type Database = {
           tech_skills?: string[] | null
           transportation_preference?: string | null
           travel_frequency?: string | null
+          travel_location?: string | null
+          travel_mode_active?: boolean
           values?: string[] | null
           verified?: boolean | null
           video_verified?: boolean | null
@@ -2429,6 +2433,8 @@ export type Database = {
           tech_skills?: string[] | null
           transportation_preference?: string | null
           travel_frequency?: string | null
+          travel_location?: string | null
+          travel_mode_active?: boolean
           values?: string[] | null
           verified?: boolean | null
           video_verified?: boolean | null
@@ -3926,6 +3932,8 @@ export type Database = {
           tech_skills: string[] | null
           transportation_preference: string | null
           travel_frequency: string | null
+          travel_location: string | null
+          travel_mode_active: boolean
           values: string[] | null
           verified: boolean | null
           video_verified: boolean | null
