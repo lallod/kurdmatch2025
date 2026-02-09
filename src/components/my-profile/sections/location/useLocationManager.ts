@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { updateTravelMode } from '@/api/profiles';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useLocationManager = (initialLocation: string) => {
   const [location, setLocation] = useState(initialLocation);
@@ -10,6 +12,27 @@ export const useLocationManager = (initialLocation: string) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('current');
   const [passportLocation, setPassportLocation] = useState("");
+
+  // Load travel mode from database on mount
+  useEffect(() => {
+    const loadTravelMode = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('travel_location, travel_mode_active')
+        .eq('id', user.id)
+        .single();
+      if (data?.travel_mode_active && data?.travel_location) {
+        setPassportLocation(data.travel_location);
+        setLocation(data.travel_location);
+        setLocationMode('passport');
+        setActiveTab('passport');
+        setIsUsingCurrentLocation(false);
+      }
+    };
+    loadTravelMode();
+  }, []);
 
   // Function to handle real geolocation detection
   const handleLocationDetection = () => {
@@ -143,16 +166,24 @@ export const useLocationManager = (initialLocation: string) => {
     });
   };
 
-  const handlePassportLocationSelect = (selectedLocation: any) => {
+  const handlePassportLocationSelect = async (selectedLocation: any) => {
     const formattedLocation = formatLocationResult(selectedLocation);
     setPassportLocation(formattedLocation);
-    setLocation(formattedLocation); // Also update the main location
+    setLocation(formattedLocation);
     setLocationMode('passport');
     setIsUsingCurrentLocation(false);
+
+    // Persist to database
+    try {
+      const isClearing = !formattedLocation;
+      await updateTravelMode(isClearing ? null : formattedLocation, !isClearing);
+    } catch (error) {
+      console.error('Failed to save travel mode:', error);
+    }
     
     toast({
-      title: "Passport location set",
-      description: "You're now browsing from " + formattedLocation,
+      title: formattedLocation ? "Passport location set" : "Passport location cleared",
+      description: formattedLocation ? "You're now browsing from " + formattedLocation : "Travel mode deactivated",
       variant: "default"
     });
   };
@@ -164,9 +195,13 @@ export const useLocationManager = (initialLocation: string) => {
       setLocationMode('current');
       setIsUsingCurrentLocation(true);
       handleLocationDetection();
+      // Deactivate travel mode
+      updateTravelMode(null, false).catch(console.error);
     } else if (value === 'manual') {
       setLocationMode('manual');
       setIsUsingCurrentLocation(false);
+      // Deactivate travel mode
+      updateTravelMode(null, false).catch(console.error);
     } else if (value === 'passport') {
       setLocationMode('passport');
       setIsUsingCurrentLocation(false);

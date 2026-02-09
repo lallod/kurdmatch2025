@@ -74,7 +74,25 @@ export interface Profile {
   dream_vacation?: string;
   dream_home?: string;
   ideal_weather?: string;
+  travel_location?: string;
+  travel_mode_active?: boolean;
 }
+
+// Update travel mode on profile
+export const updateTravelMode = async (travelLocation: string | null, active: boolean): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      travel_location: travelLocation,
+      travel_mode_active: active,
+    })
+    .eq('id', user.id);
+
+  if (error) throw error;
+};
 
 // Get match recommendations for current user
 export const getMatchRecommendations = async (
