@@ -126,49 +126,51 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
   return (
     <div className="animate-fade-in">
-      {/* Header: avatar + name + more menu */}
-      <div className="flex items-center px-4 py-3">
+      {/* Header */}
+      <div className="flex items-center px-3 py-2.5">
         <Avatar 
-          className="w-9 h-9 cursor-pointer ring-1 ring-border/50"
+          className="w-8 h-8 cursor-pointer"
           onClick={handleUsernameClick}
         >
           <AvatarImage src={post.profiles.profile_image} alt={post.profiles.name} />
-          <AvatarFallback className="text-xs bg-muted text-muted-foreground">{post.profiles.name[0]}</AvatarFallback>
+          <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">{post.profiles.name[0]}</AvatarFallback>
         </Avatar>
-        <div className="flex-1 ml-3">
-          <button onClick={handleUsernameClick} className="font-semibold text-sm text-foreground hover:opacity-70">
-            {post.profiles.name}
-          </button>
-          {post.profiles.verified && (
-            <CheckCircle className="w-3.5 h-3.5 text-primary fill-primary inline ml-1" />
-          )}
-          <p className="text-xs text-muted-foreground">
+        <div className="flex-1 ml-2.5">
+          <div className="flex items-center gap-1">
+            <button onClick={handleUsernameClick} className="font-semibold text-sm text-foreground hover:opacity-70">
+              {post.profiles.name}
+            </button>
+            {post.profiles.verified && (
+              <CheckCircle className="w-3 h-3 text-primary fill-primary" />
+            )}
+          </div>
+          <p className="text-[10px] text-muted-foreground leading-tight">
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
           </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-muted-foreground h-10 w-10 rounded-full">
-              <MoreVertical className="w-5 h-5" />
-            </Button>
+            <button className="text-muted-foreground h-8 w-8 flex items-center justify-center rounded-full">
+              <MoreVertical className="w-4 h-4" />
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-card border-border rounded-2xl">
+          <DropdownMenuContent align="end" className="bg-card border-border rounded-xl">
             {currentUserId === post.user_id ? (
               <>
-                <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-                  <Pencil className="w-4 h-4 mr-2" />Edit Post
+                <DropdownMenuItem onClick={() => setShowEditDialog(true)} className="text-xs">
+                  <Pencil className="w-3.5 h-3.5 mr-2" />Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive focus:text-destructive">
-                  <Trash2 className="w-4 h-4 mr-2" />Delete Post
+                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive focus:text-destructive text-xs">
+                  <Trash2 className="w-3.5 h-3.5 mr-2" />Delete
                 </DropdownMenuItem>
               </>
             ) : (
               <>
-                <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
-                  <Flag className="w-4 h-4 mr-2" />Report Post
+                <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-xs">
+                  <Flag className="w-3.5 h-3.5 mr-2" />Report
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive focus:text-destructive">
-                  <Ban className="w-4 h-4 mr-2" />Block User
+                <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive focus:text-destructive text-xs">
+                  <Ban className="w-3.5 h-3.5 mr-2" />Block
                 </DropdownMenuItem>
               </>
             )}
@@ -176,87 +178,83 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         </DropdownMenu>
       </div>
 
-      {/* Edge-to-edge media within card */}
+      {/* Media */}
       {post.media_url && (
         <div className="w-full">
           {post.media_type === 'image' ? (
-            <img src={post.media_url} alt="Post media" className="w-full h-auto max-h-[480px] object-cover" />
+            <img src={post.media_url} alt="Post media" className="w-full h-auto max-h-[420px] object-cover" />
           ) : (
-            <video src={post.media_url} controls className="w-full h-auto max-h-[480px]" />
+            <video src={post.media_url} controls className="w-full h-auto max-h-[420px]" />
           )}
         </div>
       )}
 
-      {/* Action row — 28px icons, 48px touch targets */}
-      <div className="px-4 pt-3 pb-1.5">
+      {/* Actions */}
+      <div className="px-3 pt-2 pb-1">
         <div className="flex items-center">
-          <div className="flex items-center gap-1">
-            <button onClick={handleLike} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <Heart className={`w-7 h-7 transition-all ${isLiked ? 'fill-primary text-primary scale-110' : 'text-foreground'}`} />
+          <div className="flex items-center gap-0">
+            <button onClick={handleLike} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <Heart className={`w-5 h-5 transition-all ${isLiked ? 'fill-primary text-primary scale-110' : 'text-foreground'}`} />
             </button>
-            <button onClick={() => setShowComments(!showComments)} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <MessageCircle className="w-7 h-7 text-foreground" />
+            <button onClick={() => setShowComments(!showComments)} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <MessageCircle className="w-5 h-5 text-foreground" />
             </button>
-            <button onClick={() => setShowShareDialog(true)} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <Share2 className="w-7 h-7 text-foreground" />
+            <button onClick={() => setShowShareDialog(true)} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <Share2 className="w-5 h-5 text-foreground" />
             </button>
           </div>
           <div className="ml-auto">
-            <button onClick={handleSaveToggle} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <Bookmark className={`w-7 h-7 transition-all ${isSaved ? 'fill-foreground text-foreground' : 'text-foreground'}`} />
+            <button onClick={handleSaveToggle} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <Bookmark className={`w-5 h-5 transition-all ${isSaved ? 'fill-foreground text-foreground' : 'text-foreground'}`} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Likes count */}
-      <div className="px-4 pb-1">
-        <span className="text-sm font-bold text-foreground">{likesCount} likes</span>
+      {/* Likes */}
+      <div className="px-3 pb-0.5">
+        <span className="text-xs font-bold text-foreground">{likesCount} likes</span>
       </div>
 
       {/* Caption */}
-      <div className="px-4 pb-1.5">
+      <div className="px-3 pb-1">
         <PostContent content={post.content} />
       </div>
 
       {/* Comments count */}
       {commentsCount > 0 && !showComments && (
-        <button onClick={() => setShowComments(true)} className="px-4 pb-1.5">
-          <span className="text-sm text-muted-foreground">View all {commentsCount} comments</span>
+        <button onClick={() => setShowComments(true)} className="px-3 pb-1">
+          <span className="text-xs text-muted-foreground">View all {commentsCount} comments</span>
         </button>
       )}
 
-      {/* Bottom padding */}
-      <div className="h-3" />
+      <div className="h-2" />
 
-      {/* Comment Section */}
       {showComments && (
-        <div className="px-4 pb-4 border-t border-border/10 pt-3">
+        <div className="px-3 pb-3 border-t border-border/10 pt-2">
           <CommentSection postId={post.id} currentUserId={currentUserId} />
         </div>
       )}
 
       {/* Dialogs */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent className="bg-card border-border rounded-3xl">
+        <DialogContent className="bg-card border-border rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-foreground text-xl flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-primary" />
-              Messaging - Premium Feature
+            <DialogTitle className="text-foreground text-lg flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-primary" />
+              Premium Feature
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground space-y-4">
-              <p>Messaging is available to Premium and Gold members!</p>
-              <div className="bg-muted rounded-2xl p-4 space-y-2">
-                <p className="font-semibold text-foreground">Premium Benefits:</p>
-                <ul className="space-y-1 text-sm">
-                  <li>✓ Send unlimited messages</li>
+            <DialogDescription className="text-muted-foreground space-y-3">
+              <p className="text-sm">Messaging is available to Premium members!</p>
+              <div className="bg-muted rounded-xl p-3 space-y-1.5">
+                <p className="font-semibold text-foreground text-sm">Benefits:</p>
+                <ul className="space-y-0.5 text-xs">
+                  <li>✓ Unlimited messages</li>
                   <li>✓ 10 Super Likes per day</li>
-                  <li>✓ Unlimited regular likes</li>
                   <li>✓ See who liked you</li>
-                  <li>✓ 5 Rewinds per day</li>
                 </ul>
               </div>
-              <Button onClick={handleUpgrade} className="w-full rounded-2xl h-11">
+              <Button onClick={handleUpgrade} className="w-full rounded-xl h-10 text-sm">
                 Upgrade to Premium
               </Button>
             </DialogDescription>
