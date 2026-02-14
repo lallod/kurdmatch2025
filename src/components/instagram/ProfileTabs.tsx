@@ -25,28 +25,26 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ profile, posts, onRefreshPost
 
   return (
     <div>
-      {/* Tabs */}
-      <div className="border-t border-white/10">
-        <div className="flex">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 transition-colors ${
-                activeTab === tab.id
-                  ? 'text-white border-t-2 border-pink-400'
-                  : 'text-white/50 hover:text-white/70'
-              }`}
-            >
-              <tab.icon className="w-5 h-5" />
-              <span className="hidden sm:inline text-sm font-medium">{tab.label}</span>
-            </button>
-          ))}
-        </div>
+      {/* Pill-style tabs */}
+      <div className="bg-muted/50 rounded-xl p-1 flex mb-4">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all ${
+              activeTab === tab.id
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
 
       {/* Tab Content */}
-      <div className="mt-6">
+      <div>
         {activeTab === 'posts' && (
           <PostsGrid posts={posts} onRefresh={onRefreshPosts} />
         )}
