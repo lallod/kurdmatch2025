@@ -3,7 +3,7 @@ import { Calendar, Plus, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getEvents, getUserEvents, Event } from '@/api/events';
 import EventCard from '@/components/events/EventCard';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import CreateEventModal from '@/components/events/CreateEventModal';
 
 export default function Events() {
@@ -79,7 +79,7 @@ export default function Events() {
         </div>
       </div>
 
-      <BottomNavigation />
+      
       
       {showCreateModal && (
         <CreateEventModal

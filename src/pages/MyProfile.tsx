@@ -17,7 +17,7 @@ import ValuesPersonalityEditor from '@/components/my-profile/sections/editors/Va
 import InterestsHobbiesEditor from '@/components/my-profile/sections/editors/InterestsHobbiesEditor';
 import EducationCareerEditor from '@/components/my-profile/sections/editors/EducationCareerEditor';
 import RelationshipPreferencesEditor from '@/components/my-profile/sections/editors/RelationshipPreferencesEditor';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { useRealProfileData } from '@/hooks/useRealProfileData';
 import { toast } from 'sonner';
 import { uploadProfilePhoto } from '@/api/profiles';
@@ -405,8 +405,6 @@ const MyProfile = () => {
           </Sheet>
         );
       })}
-
-      <BottomNavigation />
     </div>
   );
 };

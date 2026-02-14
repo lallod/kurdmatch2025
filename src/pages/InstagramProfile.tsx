@@ -9,7 +9,7 @@ import ProfileHeader from '@/components/instagram/ProfileHeader';
 import StoryHighlights from '@/components/instagram/StoryHighlights';
 import ProfileTabs from '@/components/instagram/ProfileTabs';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import ProfileFans from '@/components/instagram/ProfileFans';
 
 const InstagramProfile = () => {
@@ -137,7 +137,7 @@ const InstagramProfile = () => {
         />
       )}
 
-      <BottomNavigation />
+      
     </div>
   );
 };

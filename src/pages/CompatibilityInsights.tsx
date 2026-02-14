@@ -11,7 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { MatchScoreCard } from '@/components/compatibility/MatchScoreCard';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { cn } from '@/lib/utils';
 
 interface ProfileData {
@@ -343,8 +343,6 @@ const CompatibilityInsights = () => {
           </motion.div>
         </div>
       </ScrollArea>
-
-      <BottomNavigation />
     </div>
   );
 };

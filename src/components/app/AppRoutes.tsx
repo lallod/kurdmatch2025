@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import AppLayout from './AppLayout';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2 } from 'lucide-react';
 import { RegisterProtection } from './RegisterProtection';
@@ -84,6 +85,7 @@ export const AppRoutes: React.FC = () => {
   };
 
   return (
+    <AppLayout>
     <Routes>
       <Route 
         path="/" 
@@ -323,5 +325,6 @@ export const AppRoutes: React.FC = () => {
       
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </AppLayout>
   );
 };

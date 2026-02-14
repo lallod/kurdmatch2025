@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Post, likePost, unlikePost } from '@/api/posts';
 import PostCard from '@/components/discovery/PostCard';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { toast } from 'sonner';
 
 const PostDetail = () => {
@@ -115,8 +115,6 @@ const PostDetail = () => {
       <div className="max-w-md mx-auto">
         <PostCard post={post} onLike={handleLike} onComment={handleComment} />
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import SwipeActions from '@/components/swipe/SwipeActions';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { SwipeFilterSidebar } from '@/components/swipe/SwipeFilters';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
@@ -241,7 +241,6 @@ const Swipe = () => {
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base">Check back later for new matches!</p>
         </div>
-        <BottomNavigation />
       </div>
     );
   }
@@ -357,7 +356,7 @@ const Swipe = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation />
+      
     </div>
   );
 };

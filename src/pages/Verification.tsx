@@ -2,7 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { VerificationForm } from '@/components/verification/VerificationForm';
-import BottomNavigation from '@/components/BottomNavigation';
+
 
 const Verification = () => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Verification = () => {
         </div>
       </div>
 
-      <BottomNavigation />
+      
     </div>
   );
 };

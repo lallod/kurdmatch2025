@@ -5,7 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Eye, Clock, ArrowRight, Crown, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import BottomNavigation from '@/components/BottomNavigation';
+
 import PremiumPlansDialog from '@/components/subscription/PremiumPlansDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -213,7 +213,7 @@ const ViewedMe = () => {
         onSelectPlan={handleSelectPlan}
       />
       
-      <BottomNavigation />
+      
     </div>
   );
 };

@@ -9,9 +9,9 @@ import PostCard from '@/components/discovery/PostCard';
 import EventCard from '@/components/discovery/EventCard';
 import EventFilters from '@/components/discovery/EventFilters';
 import { Button } from '@/components/ui/button';
-import { PenSquare, Loader2, Calendar, Plus, Filter, Users as UsersIcon, Hash, X } from 'lucide-react';
+import { PenSquare, Loader2, Calendar, Plus, Filter, Users as UsersIcon, Hash, X, Sparkles, Search, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -223,37 +223,52 @@ const DiscoveryFeed = () => {
     );
   }
 
-  const tabs: { key: FeedTab; label: string }[] = [
-    { key: 'posts', label: 'Posts' },
-    { key: 'events', label: 'Events' },
-    { key: 'groups', label: 'Groups' },
+  const tabs: { key: FeedTab; label: string; icon: React.ReactNode }[] = [
+    { key: 'posts', label: 'Posts', icon: <Sparkles className="w-3.5 h-3.5" /> },
+    { key: 'events', label: 'Events', icon: <Calendar className="w-3.5 h-3.5" /> },
+    { key: 'groups', label: 'Groups', icon: <UsersIcon className="w-3.5 h-3.5" /> },
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-28">
-      {/* Frosted glass header */}
-      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl">
-        <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>
-            KurdMatch
-          </h1>
-          <div className="flex items-center gap-1">
-            <NotificationBell />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={getCreateAction()}
-              className="text-foreground h-10 w-10 rounded-full hover:bg-muted/50"
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
+    <div className="min-h-screen bg-background pb-24">
+      {/* Native app header */}
+      <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-2xl border-b border-border/10">
+        <div className="max-w-md mx-auto px-4" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+          <div className="h-12 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
+                <Heart className="w-3.5 h-3.5 text-primary-foreground fill-primary-foreground" />
+              </div>
+              <h1 className="text-lg font-bold text-foreground tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>
+                KurdMatch
+              </h1>
+            </div>
+            <div className="flex items-center gap-0.5">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/search')}
+                className="text-muted-foreground h-9 w-9 rounded-full"
+              >
+                <Search className="w-[18px] h-[18px]" />
+              </Button>
+              <NotificationBell />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={getCreateAction()}
+                className="text-foreground h-9 w-9 rounded-full"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-md mx-auto">
-        {/* Stories Row — always visible */}
-        <div className="px-3 pt-2 pb-1">
+        {/* Stories Row */}
+        <div className="px-3 pt-3 pb-2">
           <StoryBubbles
             stories={stories}
             onStoryClick={handleStoryClick}
@@ -261,19 +276,20 @@ const DiscoveryFeed = () => {
           />
         </div>
 
-        {/* Scrollable tab row */}
+        {/* Segmented tab control — native iOS style */}
         <div className="px-4 py-2">
-          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+          <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-1 flex gap-0.5 border border-border/10">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-200 ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-[11px] font-semibold rounded-xl whitespace-nowrap transition-all duration-300 ${
                   activeTab === tab.key
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'bg-card/60 text-muted-foreground'
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                    : 'text-muted-foreground'
                 }`}
               >
+                {tab.icon}
                 {tab.label}
               </button>
             ))}
@@ -286,10 +302,10 @@ const DiscoveryFeed = () => {
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
               <button
                 onClick={() => setShowFollowingOnly(!showFollowingOnly)}
-                className={`text-[11px] font-medium px-3 py-1 rounded-full whitespace-nowrap transition-all ${
+                className={`text-[11px] font-medium px-3 py-1.5 rounded-xl whitespace-nowrap transition-all ${
                   showFollowingOnly
-                    ? 'bg-primary/20 text-primary border border-primary/30'
-                    : 'bg-card/50 text-muted-foreground border border-border/20'
+                    ? 'bg-primary/15 text-primary border border-primary/25'
+                    : 'bg-card/60 text-muted-foreground border border-border/15'
                 }`}
               >
                 Following
@@ -308,7 +324,7 @@ const DiscoveryFeed = () => {
           <div className="px-4 pb-2 flex items-center justify-end">
             <button
               onClick={() => setShowEventFilters(!showEventFilters)}
-              className="text-[11px] font-medium px-3 py-1 rounded-full bg-card/50 text-muted-foreground border border-border/20 flex items-center gap-1"
+              className="text-[11px] font-medium px-3 py-1.5 rounded-xl bg-card/60 text-muted-foreground border border-border/15 flex items-center gap-1"
             >
               <Filter className="w-3 h-3" />
               Filters
@@ -318,12 +334,12 @@ const DiscoveryFeed = () => {
 
         {/* Active filter banner */}
         {(activeHashtag || activeGroup) && (
-          <div className="mx-4 mb-2 px-3 py-2 flex items-center justify-between bg-primary/10 rounded-xl">
-            <div className="flex items-center gap-1.5 text-xs text-foreground">
+          <div className="mx-4 mb-2 px-3 py-2 flex items-center justify-between bg-primary/10 rounded-xl border border-primary/15">
+            <div className="flex items-center gap-1.5 text-xs text-foreground font-medium">
               {activeHashtag && <><Hash className="w-3 h-3 text-primary" /><span>#{activeHashtag}</span></>}
               {activeGroup && <><UsersIcon className="w-3 h-3 text-primary" /><span>Group</span></>}
             </div>
-            <button onClick={clearDiscoveryFilters} className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted/50">
+            <button onClick={clearDiscoveryFilters} className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted/50 active:scale-90 transition-transform">
               <X className="w-3 h-3 text-muted-foreground" />
             </button>
           </div>
@@ -333,16 +349,20 @@ const DiscoveryFeed = () => {
         {activeTab === 'posts' && (
           <div className="space-y-3 px-4 pt-1">
             {posts.length === 0 ? (
-              <div className="text-center py-16">
-                <p className="text-muted-foreground text-sm mb-4">No posts yet</p>
-                <Button onClick={handleCreatePost} size="sm" className="gap-2 rounded-full h-9 text-xs">
+              <div className="text-center py-20">
+                <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <PenSquare className="w-7 h-7 text-muted-foreground/40" />
+                </div>
+                <h3 className="text-sm font-semibold text-foreground mb-1">No posts yet</h3>
+                <p className="text-xs text-muted-foreground mb-5">Be the first to share something</p>
+                <Button onClick={handleCreatePost} size="sm" className="gap-2 rounded-xl h-10 text-xs px-6 shadow-lg shadow-primary/20">
                   <PenSquare className="w-3.5 h-3.5" />
-                  Create First Post
+                  Create Post
                 </Button>
               </div>
             ) : (
               posts.map((post) => (
-                <div key={post.id} className="bg-card rounded-2xl overflow-hidden shadow-md">
+                <div key={post.id} className="bg-card rounded-2xl overflow-hidden shadow-lg shadow-black/10 border border-border/10">
                   <PostCard
                     post={post}
                     onLike={handleLike}
@@ -374,13 +394,18 @@ const DiscoveryFeed = () => {
             )}
 
             {filteredEvents.length === 0 ? (
-              <div className="text-center py-16">
-                <Calendar className="w-10 h-10 mx-auto mb-3 text-muted-foreground/30" />
-                <p className="text-muted-foreground text-sm mb-4">
-                  {events.length === 0 ? 'No upcoming events' : 'No events match your filters'}
+              <div className="text-center py-20">
+                <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Calendar className="w-7 h-7 text-muted-foreground/40" />
+                </div>
+                <h3 className="text-sm font-semibold text-foreground mb-1">
+                  {events.length === 0 ? 'No upcoming events' : 'No events match'}
+                </h3>
+                <p className="text-xs text-muted-foreground mb-5">
+                  {events.length === 0 ? 'Create the first one' : 'Try different filters'}
                 </p>
-                <Button onClick={events.length === 0 ? handleCreateEvent : handleClearEventFilters} size="sm" className="rounded-full h-9 text-xs">
-                  {events.length === 0 ? 'Create First Event' : 'Clear Filters'}
+                <Button onClick={events.length === 0 ? handleCreateEvent : handleClearEventFilters} size="sm" className="rounded-xl h-10 text-xs px-6 shadow-lg shadow-primary/20">
+                  {events.length === 0 ? 'Create Event' : 'Clear Filters'}
                 </Button>
               </div>
             ) : (
@@ -394,18 +419,19 @@ const DiscoveryFeed = () => {
         {/* Groups Tab */}
         {activeTab === 'groups' && (
           <div className="px-4 pt-1">
-            <div className="text-center py-16">
-              <UsersIcon className="w-10 h-10 mx-auto mb-3 text-muted-foreground/30" />
-              <p className="text-muted-foreground text-sm mb-4">Explore community groups</p>
-              <Button onClick={() => navigate('/groups')} size="sm" className="rounded-full h-9 text-xs">
+            <div className="text-center py-20">
+              <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <UsersIcon className="w-7 h-7 text-muted-foreground/40" />
+              </div>
+              <h3 className="text-sm font-semibold text-foreground mb-1">Community Groups</h3>
+              <p className="text-xs text-muted-foreground mb-5">Find your people</p>
+              <Button onClick={() => navigate('/groups')} size="sm" className="rounded-xl h-10 text-xs px-6 shadow-lg shadow-primary/20">
                 Browse Groups
               </Button>
             </div>
           </div>
         )}
       </div>
-
-      <BottomNavigation />
 
       {selectedStory && (
         <StoryViewer
