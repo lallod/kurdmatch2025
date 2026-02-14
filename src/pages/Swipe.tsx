@@ -215,13 +215,13 @@ const Swipe = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-surface-secondary">
         <div className="text-center">
-          <div className={`${SWIPE_CONFIG.header.icon.size} bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin} animate-pulse`}>
+          <div className={`${SWIPE_CONFIG.header.icon.size} bg-primary rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin} animate-pulse`}>
             <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
           </div>
-          <div className="text-white text-lg sm:text-xl font-semibold">Loading profiles...</div>
-          <div className="text-purple-200 mt-1 sm:mt-2 text-sm sm:text-base">Finding your perfect matches</div>
+          <div className="text-foreground text-lg sm:text-xl font-semibold">Loading profiles...</div>
+          <div className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">Finding your perfect matches</div>
         </div>
       </div>
     );
@@ -230,16 +230,16 @@ const Swipe = () => {
   if (!currentProfile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-surface-secondary">
-        <div className="text-center text-white">
-          <div className={`${SWIPE_CONFIG.header.icon.size} bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin}`}>
+        <div className="text-center text-foreground">
+          <div className={`${SWIPE_CONFIG.header.icon.size} bg-primary rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin}`}>
             <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
           </div>
-          <h2 className={`${SWIPE_CONFIG.header.title.size} font-bold mb-2 bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent`}>
+          <h2 className={`${SWIPE_CONFIG.header.title.size} font-bold mb-2 text-foreground`}>
             No more profiles
           </h2>
-          <p className="text-purple-200 text-sm sm:text-base">Check back later for new matches!</p>
+          <p className="text-muted-foreground text-sm sm:text-base">Check back later for new matches!</p>
         </div>
         <BottomNavigation />
       </div>
@@ -256,15 +256,15 @@ const Swipe = () => {
             variant="ghost"
             size="icon"
             onClick={() => setBoostOpen(true)}
-            className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11"
+            className="text-foreground hover:bg-muted border border-border/30 rounded-full w-10 h-10 sm:w-11 sm:h-11"
           >
-            <Zap className="w-5 h-5 text-yellow-400" />
+            <Zap className="w-5 h-5 text-warning" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setNotificationsOpen(true)}
-            className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11 relative"
+            className="text-foreground hover:bg-muted border border-border/30 rounded-full w-10 h-10 sm:w-11 sm:h-11 relative"
           >
             <Bell className="w-5 h-5" />
           </Button>
@@ -272,7 +272,7 @@ const Swipe = () => {
             variant="ghost"
             size="icon"
             onClick={() => setFilterOpen(true)}
-            className="text-white hover:bg-white/10 border border-white/20 rounded-full w-10 h-10 sm:w-11 sm:h-11"
+            className="text-foreground hover:bg-muted border border-border/30 rounded-full w-10 h-10 sm:w-11 sm:h-11"
           >
             <SlidersHorizontal className="w-5 h-5" />
           </Button>

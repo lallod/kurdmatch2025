@@ -278,34 +278,34 @@ const MyProfile = () => {
       <div className="bg-surface-secondary/80 backdrop-blur-xl shadow-sm border-b border-border/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
           <div className="text-center space-y-3">
-            <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3 relative">
-              <Settings className="w-6 h-6 md:w-8 md:h-8 text-white" />
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3 relative">
+              <Settings className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               {profileCompletion < 100 && (
-                <div className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs rounded-full h-5 w-5 md:h-6 md:w-6 flex items-center justify-center font-bold animate-pulse">
+                <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 md:h-6 md:w-6 flex items-center justify-center font-bold animate-pulse">
                   !
                 </div>
               )}
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
               My Profile
             </h1>
-            <p className="text-purple-200 text-sm md:text-base">Manage your profile and settings</p>
+            <p className="text-muted-foreground text-sm md:text-base">Manage your profile and settings</p>
             
             {/* Enhanced Mobile Profile Stats */}
             <div className="grid grid-cols-2 md:flex md:justify-center gap-2 md:gap-4 mt-4">
-              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 px-3 text-xs md:text-sm">
+              <Badge className="bg-primary/20 text-primary border-primary/30 py-2 px-3 text-xs md:text-sm">
                 <Eye className="w-3 h-3 mr-1" />
                 {profileStats.views}
               </Badge>
-              <Badge className="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-2 px-3 text-xs md:text-sm">
+              <Badge className="bg-accent/20 text-accent border-accent/30 py-2 px-3 text-xs md:text-sm">
                 <Heart className="w-3 h-3 mr-1" />
                 {profileStats.likes}
               </Badge>
-              <Badge className="bg-green-500/20 text-green-300 border-green-500/30 py-2 px-3 text-xs md:text-sm">
+              <Badge className="bg-success/20 text-success border-success/30 py-2 px-3 text-xs md:text-sm">
                 <Users className="w-3 h-3 mr-1" />
                 {profileStats.matches}
               </Badge>
-              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 py-2 px-3 text-xs md:text-sm">
+              <Badge className="bg-info/20 text-info border-info/30 py-2 px-3 text-xs md:text-sm">
                 <Sparkles className="w-3 h-3 mr-1" />
                 New
               </Badge>
@@ -314,14 +314,14 @@ const MyProfile = () => {
             {/* Enhanced Mobile Profile Completion */}
             <div className="max-w-sm md:max-w-md mx-auto mt-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-purple-200">Profile Completion</span>
-                <span className="text-sm font-bold text-white bg-white/10 px-2 py-1 rounded-full">
+                <span className="text-sm text-muted-foreground">Profile Completion</span>
+                <span className="text-sm font-bold text-foreground bg-muted px-2 py-1 rounded-full">
                   {profileCompletion}%
                 </span>
               </div>
-              <Progress value={profileCompletion} className="h-3 bg-white/10 rounded-full">
+              <Progress value={profileCompletion} className="h-3 bg-muted rounded-full">
                 <div 
-                  className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
+                  className="h-full bg-primary rounded-full transition-all duration-500"
                   style={{ width: `${profileCompletion}%` }}
                 />
               </Progress>
@@ -341,7 +341,7 @@ const MyProfile = () => {
               {/* Enhanced Mobile-Friendly TabsList */}
               <TabsList className="
                 w-full h-auto p-2 mb-4 md:mb-6
-                bg-white/10 backdrop-blur border border-white/20 
+                bg-muted backdrop-blur border border-border/20 
                 rounded-xl shadow-lg
                 grid grid-cols-3 gap-2
               ">
@@ -349,16 +349,14 @@ const MyProfile = () => {
                   value="profile" 
                   className="
                     h-16 md:h-12
-                    data-[state=active]:bg-gradient-to-r 
-                    data-[state=active]:from-purple-500 
-                    data-[state=active]:to-pink-500 
-                    data-[state=active]:text-white 
+                    data-[state=active]:bg-primary 
+                    data-[state=active]:text-primary-foreground 
                     data-[state=active]:shadow-lg
-                    text-white/80 hover:text-white
+                    text-muted-foreground hover:text-foreground
                     flex flex-col items-center justify-center 
                     gap-1 p-2
                     rounded-lg transition-all duration-300
-                    hover:bg-white/10
+                    hover:bg-muted
                     text-xs md:text-sm font-medium
                   "
                 >
@@ -370,16 +368,14 @@ const MyProfile = () => {
                   value="photos" 
                   className="
                     h-16 md:h-12
-                    data-[state=active]:bg-gradient-to-r 
-                    data-[state=active]:from-purple-500 
-                    data-[state=active]:to-pink-500 
-                    data-[state=active]:text-white 
+                    data-[state=active]:bg-primary 
+                    data-[state=active]:text-primary-foreground 
                     data-[state=active]:shadow-lg
-                    text-white/80 hover:text-white
+                    text-muted-foreground hover:text-foreground
                     flex flex-col items-center justify-center 
                     gap-1 p-2
                     rounded-lg transition-all duration-300
-                    hover:bg-white/10
+                    hover:bg-muted
                     text-xs md:text-sm font-medium
                   "
                 >
@@ -391,16 +387,14 @@ const MyProfile = () => {
                   value="settings" 
                   className="
                     h-16 md:h-12
-                    data-[state=active]:bg-gradient-to-r 
-                    data-[state=active]:from-purple-500 
-                    data-[state=active]:to-pink-500 
-                    data-[state=active]:text-white 
+                    data-[state=active]:bg-primary 
+                    data-[state=active]:text-primary-foreground 
                     data-[state=active]:shadow-lg
-                    text-white/80 hover:text-white
+                    text-muted-foreground hover:text-foreground
                     flex flex-col items-center justify-center 
                     gap-1 p-2
                     rounded-lg transition-all duration-300
-                    hover:bg-white/10
+                    hover:bg-muted
                     text-xs md:text-sm font-medium
                   "
                 >
@@ -416,45 +410,45 @@ const MyProfile = () => {
                     {/* Mobile: Stack vertically, Desktop: Keep horizontal */}
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
                       <div className="relative flex-shrink-0">
-                        <Avatar className="h-20 w-20 md:h-24 md:w-24 ring-4 ring-purple-400/30">
+                        <Avatar className="h-20 w-20 md:h-24 md:w-24 ring-4 ring-border">
                           <AvatarImage src={galleryImages[0]} alt={profileData.name} />
-                          <AvatarFallback className="bg-purple-500 text-white text-xl md:text-2xl">
+                          <AvatarFallback className="bg-primary text-primary-foreground text-xl md:text-2xl">
                             {profileData.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                         <Button 
                           size="icon" 
-                          className="absolute -bottom-1 -right-1 h-7 w-7 md:h-8 md:w-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                          className="absolute -bottom-1 -right-1 h-7 w-7 md:h-8 md:w-8 rounded-full bg-primary hover:bg-primary/90"
                         >
                           <Camera className="h-3 w-3 md:h-4 md:w-4" />
                         </Button>
                         {profileData.verified && (
-                          <div className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full p-1">
-                            <CheckCircle2 className="h-3 w-3 md:h-4 md:w-4 text-white" />
+                          <div className="absolute -top-1 -right-1 bg-info rounded-full p-1">
+                            <CheckCircle2 className="h-3 w-3 md:h-4 md:w-4 text-info-foreground" />
                           </div>
                         )}
                       </div>
                       
                       <div className="flex-1 text-center md:text-left">
                         <div className="flex flex-col md:flex-row items-center md:items-start gap-2 mb-2">
-                          <h2 className="text-xl md:text-2xl font-bold text-white">{profileData.name}</h2>
-                          <span className="text-lg text-purple-200">{profileData.age}</span>
+                          <h2 className="text-xl md:text-2xl font-bold text-foreground">{profileData.name}</h2>
+                          <span className="text-lg text-muted-foreground">{profileData.age}</span>
                           {profileData.verified && (
-                            <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+                            <Badge className="bg-info/20 text-info border-info/30">
                               <Shield className="w-3 h-3 mr-1" />
                               Verified
                             </Badge>
                           )}
                         </div>
-                        <p className="text-purple-200 mb-2 text-sm md:text-base">{profileData.occupation}</p>
-                        <p className="text-sm text-purple-300 mb-3">{profileData.location}</p>
+                        <p className="text-muted-foreground mb-2 text-sm md:text-base">{profileData.occupation}</p>
+                        <p className="text-sm text-muted-foreground mb-3">{profileData.location}</p>
                         
                         <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                          <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
-                            <div className="w-2 h-2 rounded-full bg-white mr-1"></div>
+                          <Badge className="bg-success text-success-foreground">
+                            <div className="w-2 h-2 rounded-full bg-success-foreground mr-1"></div>
                             Online now
                           </Badge>
-                          <Badge className="bg-purple-500/20 text-purple-200 border-purple-400/30">
+                          <Badge className="bg-primary/20 text-primary border-primary/30">
                             {profileData.kurdistanRegion}
                           </Badge>
                         </div>
@@ -462,7 +456,7 @@ const MyProfile = () => {
                       
                       <Button 
                         variant="outline" 
-                        className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 md:h-auto px-6 md:px-4"
+                        className="bg-muted border-border text-foreground hover:bg-muted/80 h-10 md:h-auto px-6 md:px-4"
                         onClick={() => {
                           const sectionsElement = document.getElementById('profile-sections');
                           sectionsElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -477,43 +471,43 @@ const MyProfile = () => {
 
                 {/* Enhanced Mobile Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                  <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+                  <Card className="backdrop-blur-md bg-card/80 border border-border/20">
                     <CardContent className="p-3 md:p-4 text-center">
-                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <Eye className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Eye className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                       </div>
-                      <div className="text-xl md:text-2xl font-bold text-white">{profileStats.views}</div>
-                      <div className="text-xs md:text-sm text-purple-200">Profile Views</div>
+                      <div className="text-xl md:text-2xl font-bold text-foreground">{profileStats.views}</div>
+                      <div className="text-xs md:text-sm text-muted-foreground">Profile Views</div>
                     </CardContent>
                   </Card>
                   
-                  <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+                  <Card className="backdrop-blur-md bg-card/80 border border-border/20">
                     <CardContent className="p-3 md:p-4 text-center">
-                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Heart className="h-5 w-5 md:h-6 md:w-6 text-accent" />
                       </div>
-                      <div className="text-xl md:text-2xl font-bold text-white">{profileStats.likes}</div>
-                      <div className="text-xs md:text-sm text-purple-200">Likes Received</div>
+                      <div className="text-xl md:text-2xl font-bold text-foreground">{profileStats.likes}</div>
+                      <div className="text-xs md:text-sm text-muted-foreground">Likes Received</div>
                     </CardContent>
                   </Card>
                   
-                  <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+                  <Card className="backdrop-blur-md bg-card/80 border border-border/20">
                     <CardContent className="p-3 md:p-4 text-center">
-                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-success" />
                       </div>
-                      <div className="text-xl md:text-2xl font-bold text-white">{profileStats.matches}</div>
-                      <div className="text-xs md:text-sm text-purple-200">Total Matches</div>
+                      <div className="text-xl md:text-2xl font-bold text-foreground">{profileStats.matches}</div>
+                      <div className="text-xs md:text-sm text-muted-foreground">Total Matches</div>
                     </CardContent>
                   </Card>
                   
-                  <Card className="backdrop-blur-md bg-white/10 border border-white/20">
+                  <Card className="backdrop-blur-md bg-card/80 border border-border/20">
                     <CardContent className="p-3 md:p-4 text-center">
-                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-warning" />
                       </div>
-                      <div className="text-xl md:text-2xl font-bold text-white">{profileCompletion}%</div>
-                      <div className="text-xs md:text-sm text-purple-200">Profile Score</div>
+                      <div className="text-xl md:text-2xl font-bold text-foreground">{profileCompletion}%</div>
+                      <div className="text-xs md:text-sm text-muted-foreground">Profile Score</div>
                     </CardContent>
                   </Card>
                 </div>
@@ -555,12 +549,12 @@ const MyProfile = () => {
 
       {/* Dialog */}
       <Dialog open={isEditingSections} onOpenChange={setIsEditingSections}>
-        <DialogContent className="sm:max-w-md bg-gray-900 border-gray-700">
+        <DialogContent className="sm:max-w-md bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-white">Edit Profile Sections</DialogTitle>
+            <DialogTitle className="text-foreground">Edit Profile Sections</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-muted-foreground">
               Choose which sections to display on your profile
             </p>
             {/* Section toggles would be implemented here */}
