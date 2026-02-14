@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface EditPostDialogProps {
   open: boolean;
@@ -20,50 +20,30 @@ const EditPostDialog: React.FC<EditPostDialogProps> = ({
   initialContent,
   onSuccess
 }) => {
-  const { toast } = useToast();
   const [content, setContent] = useState(initialContent);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     if (!content.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Post content cannot be empty',
-        variant: 'destructive'
-      });
+      toast.error('Post content cannot be empty');
       return;
     }
 
     if (content.length > 5000) {
-      toast({
-        title: 'Error',
-        description: 'Post is too long (max 5000 characters)',
-        variant: 'destructive'
-      });
+      toast.error('Post is too long (max 5000 characters)');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      
-      // Import dynamically to avoid circular dependencies
       const { updatePost } = await import('@/api/posts');
       await updatePost(postId, content);
-      
-      toast({
-        title: 'Success',
-        description: 'Post updated successfully'
-      });
-      
+      toast.success('Post updated successfully');
       onSuccess();
       onOpenChange(false);
     } catch (error) {
       console.error('Error updating post:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update post',
-        variant: 'destructive'
-      });
+      toast.error('Failed to update post');
     } finally {
       setIsSubmitting(false);
     }
@@ -71,10 +51,10 @@ const EditPostDialog: React.FC<EditPostDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
+      <DialogContent className="bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-white">Edit Post</DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogTitle className="text-foreground">Edit Post</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Make changes to your post content
           </DialogDescription>
         </DialogHeader>
@@ -84,11 +64,11 @@ const EditPostDialog: React.FC<EditPostDialogProps> = ({
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="What's on your mind?"
-            className="min-h-[150px] bg-white/10 border-white/20 text-white placeholder:text-white/50 resize-none"
+            className="min-h-[150px] bg-muted/50 border-border text-foreground placeholder:text-muted-foreground resize-none"
             maxLength={5000}
           />
           
-          <div className="flex items-center justify-between text-sm text-white/60">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>{content.length}/5000 characters</span>
           </div>
 
@@ -97,14 +77,14 @@ const EditPostDialog: React.FC<EditPostDialogProps> = ({
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+              className="bg-muted/50 border-border text-foreground hover:bg-muted"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !content.trim()}
-              className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+              className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600 text-primary-foreground"
             >
               {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Save Changes

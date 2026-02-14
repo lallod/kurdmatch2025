@@ -5,13 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createEvent } from '@/api/events';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { ArrowLeft, Loader2, Calendar, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   
   const [title, setTitle] = useState('');
@@ -27,11 +26,7 @@ const CreateEvent = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: 'Error',
-          description: 'Image must be less than 5MB',
-          variant: 'destructive'
-        });
+        toast.error('Image must be less than 5MB');
         return;
       }
       
@@ -76,11 +71,7 @@ const CreateEvent = () => {
     e.preventDefault();
     
     if (!title.trim() || !description.trim() || !eventDate || !location.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please fill in all required fields',
-        variant: 'destructive'
-      });
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -98,95 +89,84 @@ const CreateEvent = () => {
         maxAttendees ? parseInt(maxAttendees) : undefined,
         imageUrl
       );
-      toast({
-        title: 'Success',
-        description: 'Event created successfully!'
-      });
+      toast.success('Event created successfully!');
       navigate('/discovery');
     } catch (error) {
       console.error('Error creating event:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to create event',
-        variant: 'destructive'
-      });
+      toast.error('Failed to create event');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/10">
+        <div className="max-w-2xl mx-auto px-4 h-12 flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="gap-2 text-white hover:bg-white/10"
+            className="gap-2 text-foreground hover:bg-muted"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <h1 className="text-xl font-bold text-white">Create Event</h1>
+          <h1 className="text-xl font-bold text-foreground">Create Event</h1>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-white">Event Title *</Label>
+            <Label htmlFor="title" className="text-foreground">Event Title *</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Kurdish Music Night"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-white">Description *</Label>
+            <Label htmlFor="description" className="text-foreground">Description *</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe your event..."
               rows={4}
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 resize-none"
+              className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground resize-none"
             />
           </div>
 
-          {/* Date & Time */}
           <div className="space-y-2">
-            <Label htmlFor="eventDate" className="text-white">Date & Time *</Label>
+            <Label htmlFor="eventDate" className="text-foreground">Date & Time *</Label>
             <Input
               id="eventDate"
               type="datetime-local"
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
-              className="bg-white/10 border-white/20 text-white"
+              className="bg-muted/50 border-border text-foreground"
             />
           </div>
 
-          {/* Location */}
           <div className="space-y-2">
-            <Label htmlFor="location" className="text-white">Location *</Label>
+            <Label htmlFor="location" className="text-foreground">Location *</Label>
             <Input
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Erbil Cultural Center"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-white">Event Image (optional)</Label>
+            <Label htmlFor="image" className="text-foreground">Event Image (optional)</Label>
             
             {imagePreview ? (
               <div className="relative">
@@ -206,7 +186,7 @@ const CreateEvent = () => {
                 </Button>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center hover:border-white/40 transition-colors">
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/40 transition-colors">
                 <Input
                   id="image"
                   type="file"
@@ -218,43 +198,40 @@ const CreateEvent = () => {
                   htmlFor="image" 
                   className="cursor-pointer flex flex-col items-center gap-2"
                 >
-                  <Upload className="w-8 h-8 text-white/50" />
-                  <p className="text-white/70 text-sm">Click to upload event image</p>
-                  <p className="text-white/50 text-xs">Max 5MB</p>
+                  <Upload className="w-8 h-8 text-muted-foreground" />
+                  <p className="text-muted-foreground text-sm">Click to upload event image</p>
+                  <p className="text-muted-foreground/50 text-xs">Max 5MB</p>
                 </label>
               </div>
             )}
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-white">Category (optional)</Label>
+            <Label htmlFor="category" className="text-foreground">Category (optional)</Label>
             <Input
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Music, Culture, Food, etc."
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
-          {/* Max Attendees */}
           <div className="space-y-2">
-            <Label htmlFor="maxAttendees" className="text-white">Max Attendees (optional)</Label>
+            <Label htmlFor="maxAttendees" className="text-foreground">Max Attendees (optional)</Label>
             <Input
               id="maxAttendees"
               type="number"
               value={maxAttendees}
               onChange={(e) => setMaxAttendees(e.target.value)}
               placeholder="50"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
-          {/* Submit */}
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+            className="w-full bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600 text-primary-foreground"
             disabled={loading}
           >
             {loading ? (
