@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MoreHorizontal, Share2, Plus } from 'lucide-react';
+import { ArrowLeft, MoreHorizontal, Share2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/api/profiles';
 import { Post, Story } from '@/api/posts';
@@ -77,8 +77,8 @@ const InstagramProfile = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Frosted glass header */}
-      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl">
+      {/* Frosted header */}
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/10">
         <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
@@ -86,22 +86,27 @@ const InstagramProfile = () => {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-base font-bold text-foreground tracking-tight">{profile.name}</h1>
-          <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors active:scale-95">
-            <MoreHorizontal className="w-5 h-5 text-foreground" />
-          </button>
+          <h1 className="text-sm font-bold text-foreground tracking-tight">{profile.name}</h1>
+          <div className="flex items-center gap-0.5">
+            <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors active:scale-95">
+              <Share2 className="w-4 h-4 text-foreground" />
+            </button>
+            <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors active:scale-95">
+              <MoreHorizontal className="w-5 h-5 text-foreground" />
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="max-w-md mx-auto">
-        {/* Profile Header Card */}
-        <div className="px-4 pt-4 pb-2">
+        {/* Profile Header */}
+        <div className="px-4 pt-4 pb-1">
           <ProfileHeader profile={profile} stats={stats} isOwnProfile={isOwnProfile} />
         </div>
 
-        {/* Stories Row */}
+        {/* Story Highlights */}
         {(stories.length > 0 || isOwnProfile) && (
-          <div className="px-4 py-3">
+          <div className="px-4 py-2">
             <StoryHighlights
               stories={stories}
               isOwnProfile={isOwnProfile}
@@ -113,8 +118,8 @@ const InstagramProfile = () => {
         {/* Fans Section */}
         {id && <ProfileFans userId={id} />}
 
-        {/* Content Tabs */}
-        <div className="px-4 mt-2">
+        {/* Full-width Content Tabs */}
+        <div className="mt-1">
           <ProfileTabs
             profile={profile}
             posts={posts}
