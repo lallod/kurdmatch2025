@@ -57,7 +57,6 @@ const LikedMe = () => {
         toast.success("Liked back!");
       }
       
-      // Update the profile to show it's been liked back
       setLikedProfiles(profiles => 
         profiles.map(profile => 
           profile.id === profileId 
@@ -72,11 +71,9 @@ const LikedMe = () => {
   };
 
   const handlePass = (profileId: string) => {
-    // Remove profile from the list
     setLikedProfiles(profiles => 
       profiles.filter(profile => profile.id !== profileId)
     );
-    
     toast.info("Profile passed");
   };
 
@@ -101,9 +98,9 @@ const LikedMe = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+      <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="text-white text-xl">Loading profiles who liked you...</div>
+          <div className="text-foreground text-xl">Loading profiles who liked you...</div>
         </div>
       </div>
     );
@@ -111,13 +108,13 @@ const LikedMe = () => {
 
   if (showFullProfile && selectedProfile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
-        <div className="flex items-center gap-4 p-4 text-white">
+      <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary">
+        <div className="flex items-center gap-4 p-4 text-foreground">
           <Button 
             variant="ghost" 
             size="sm"
             onClick={() => setShowFullProfile(false)}
-            className="text-white hover:bg-white/10"
+            className="text-foreground hover:bg-muted"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -168,72 +165,66 @@ const LikedMe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
-      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 pt-8 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary flex flex-col">
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 pt-6 pb-24">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-              <Heart className="h-5 w-5 text-white" />
+            <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+              <Heart className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Liked You</h1>
-              <p className="text-purple-200 text-sm">People who liked your profile</p>
+              <h1 className="text-xl font-bold text-foreground">Liked You</h1>
+              <p className="text-muted-foreground text-sm">People who liked your profile</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
-            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-              {likedProfiles.length} likes
-            </Badge>
-          </div>
+          <Badge className="bg-muted text-muted-foreground border-border">
+            {likedProfiles.length} likes
+          </Badge>
         </div>
 
         {likedProfiles.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-            <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mb-6">
-              <Heart className="h-10 w-10 text-purple-300" />
+            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+              <Heart className="h-10 w-10 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No likes yet</h3>
-            <p className="text-purple-200 max-w-sm">
+            <h3 className="text-xl font-semibold text-foreground mb-2">No likes yet</h3>
+            <p className="text-muted-foreground max-w-sm">
               When someone likes your profile, they'll appear here. Keep your profile active to get more likes!
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-3">
             {likedProfiles.map((profile) => (
               <Card 
                 key={profile.id} 
-                className="overflow-hidden bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-200 cursor-pointer transform hover:scale-[1.02]"
+                className="overflow-hidden hover:bg-card/80 transition-all duration-200 cursor-pointer"
                 onClick={() => handleProfileClick(profile)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-16 w-16 ring-2 ring-white/30">
+                      <Avatar className="h-14 w-14 ring-2 ring-border">
                         <AvatarImage 
                           src={profile.profile_image || profile.photos?.[0]?.url} 
                           alt={profile.name} 
                         />
-                        <AvatarFallback className="bg-purple-600 text-white">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
                           {profile.name?.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-white text-lg">{profile.name}</span>
-                          <span className="text-purple-200">{profile.age}</span>
+                          <span className="font-semibold text-foreground text-base">{profile.name}</span>
+                          <span className="text-muted-foreground">{profile.age}</span>
                           {profile.verified && (
-                            <Badge className="bg-info/20 text-info border-info/30 text-xs">
-                              ✓
-                            </Badge>
+                            <Badge className="bg-info/20 text-info border-info/30 text-xs">✓</Badge>
                           )}
                         </div>
-                        <p className="text-purple-200 text-sm">{profile.location}</p>
-                        <p className="text-purple-300 text-sm">{profile.occupation}</p>
+                        <p className="text-muted-foreground text-sm">{profile.location}</p>
+                        <p className="text-muted-foreground text-sm">{profile.occupation}</p>
                         {profile.bio && (
-                          <p className="text-purple-200 text-sm mt-1 line-clamp-2">
-                            {profile.bio}
-                          </p>
+                          <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{profile.bio}</p>
                         )}
                         <div className="mt-2">
                           <SectionViewStats 
@@ -245,7 +236,7 @@ const LikedMe = () => {
                       </div>
                     </div>
                     
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 flex-shrink-0">
                       {!profile.isLikedBack ? (
                         <>
                           <TooltipProvider>
@@ -253,18 +244,13 @@ const LikedMe = () => {
                               <TooltipTrigger asChild>
                                 <Button 
                                   size="sm"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleLikeBack(profile.id);
-                                  }}
-                                  className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white h-8 w-8 p-0"
+                                  onClick={(e) => { e.stopPropagation(); handleLikeBack(profile.id); }}
+                                  className="bg-primary hover:bg-primary/90 text-primary-foreground h-8 w-8 p-0"
                                 >
                                   <Heart className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Like back</p>
-                              </TooltipContent>
+                              <TooltipContent><p>Like back</p></TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                           
@@ -274,39 +260,27 @@ const LikedMe = () => {
                                 <Button 
                                   size="sm"
                                   variant="outline"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handlePass(profile.id);
-                                  }}
-                                  className="border-white/30 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                  onClick={(e) => { e.stopPropagation(); handlePass(profile.id); }}
+                                  className="border-border text-foreground hover:bg-muted h-8 w-8 p-0"
                                 >
                                   <X className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Pass</p>
-                              </TooltipContent>
+                              <TooltipContent><p>Pass</p></TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         </>
                       ) : (
                         <div className="flex flex-col items-center gap-1">
-                          <Badge className="bg-success/20 text-success border-success/30 text-xs">
-                            Mutual Like
-                          </Badge>
+                          <Badge className="bg-success/20 text-success border-success/30 text-xs">Mutual Like</Badge>
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button 
-                                  size="sm"
-                                  className="bg-info/20 text-info hover:bg-info/30 h-8 w-8 p-0"
-                                >
+                                <Button size="sm" className="bg-info/20 text-info hover:bg-info/30 h-8 w-8 p-0">
                                   <MessageCircle className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Send message</p>
-                              </TooltipContent>
+                              <TooltipContent><p>Send message</p></TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         </div>
@@ -317,15 +291,12 @@ const LikedMe = () => {
                   {profile.interests && profile.interests.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-3">
                       {profile.interests.slice(0, 3).map((interest, index) => (
-                        <Badge 
-                          key={index}
-                          className="bg-purple-500/20 text-purple-300 border-purple-400/30 text-xs"
-                        >
+                        <Badge key={index} className="bg-primary/10 text-primary border-primary/20 text-xs">
                           {interest}
                         </Badge>
                       ))}
                       {profile.interests.length > 3 && (
-                        <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/30 text-xs">
+                        <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
                           +{profile.interests.length - 3} more
                         </Badge>
                       )}
@@ -340,53 +311,42 @@ const LikedMe = () => {
       
       {/* Profile Modal with Swipe Actions */}
       {showSwipeActions && selectedProfile && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-purple-900/90 via-purple-800/90 to-pink-900/90 backdrop-blur-md rounded-3xl max-w-sm w-full max-h-[80vh] overflow-hidden shadow-2xl border border-white/20">
-            {/* Profile Info */}
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card backdrop-blur-md rounded-3xl max-w-sm w-full max-h-[80vh] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.3)] border border-border/20">
             <div className="aspect-[3/4] relative overflow-hidden">
               <img
                 src={selectedProfile.profile_image}
                 alt={selectedProfile.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-2xl font-bold text-white">{selectedProfile.name}</h1>
-                    <span className="text-xl text-white/90">{selectedProfile.age}</span>
-                  </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent p-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-2xl font-bold text-foreground">{selectedProfile.name}</h1>
+                  <span className="text-xl text-foreground/80">{selectedProfile.age}</span>
                 </div>
-                <div className="flex items-center gap-2 text-white/90 mb-3">
+                <div className="flex items-center gap-2 text-foreground/80 mb-3">
                   <span>{selectedProfile.location}</span>
                 </div>
                 {selectedProfile.occupation && (
-                  <Badge className="bg-pink-500/80 text-white text-sm">
+                  <Badge className="bg-primary/80 text-primary-foreground text-sm">
                     {selectedProfile.occupation}
                   </Badge>
                 )}
               </div>
             </div>
             
-            {/* Close Button */}
             <button
               onClick={() => setShowSwipeActions(false)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/80 hover:text-white transition-colors"
+              className="absolute top-4 right-4 p-2 rounded-full bg-background/30 backdrop-blur-sm text-foreground/80 hover:text-foreground transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
             
-            {/* Swipe Actions */}
             <div className="p-4">
               <SwipeActions
                 onRewind={handleRewind}
-                onPass={() => {
-                  handlePass(selectedProfile.id);
-                  setShowSwipeActions(false);
-                }}
-                onLike={() => {
-                  handleLikeBack(selectedProfile.id);
-                  setShowSwipeActions(false);
-                }}
+                onPass={() => { handlePass(selectedProfile.id); setShowSwipeActions(false); }}
+                onLike={() => { handleLikeBack(selectedProfile.id); setShowSwipeActions(false); }}
                 onSuperLike={handleSuperLike}
                 onBoost={handleBoost}
               />
