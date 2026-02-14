@@ -15,15 +15,15 @@ interface PremiumBenefitsListProps {
 }
 
 const PremiumBenefitsList: React.FC<PremiumBenefitsListProps> = ({ title = 'Why Upgrade?' }) => (
-  <div className="space-y-3">
-    <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
-      <Sparkles className="w-5 h-5 text-warning" />
+  <div className="space-y-2">
+    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+      <Sparkles className="w-4 h-4 text-warning" />
       {title}
     </h4>
-    <ul className="space-y-2 text-muted-foreground">
+    <ul className="space-y-1.5 text-muted-foreground text-sm">
       {benefits.map((benefit) => (
         <li key={benefit} className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-primary rounded-full" />
+          <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
           {benefit}
         </li>
       ))}
