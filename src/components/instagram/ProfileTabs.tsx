@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid3x3, User, Image as ImageIcon } from 'lucide-react';
+import { Grid3x3, Heart, Image as ImageIcon, User } from 'lucide-react';
 import { Profile } from '@/api/profiles';
 import { Post } from '@/api/posts';
 import PostsGrid from './PostsGrid';
@@ -17,42 +17,47 @@ type TabType = 'posts' | 'about' | 'photos';
 const ProfileTabs: React.FC<ProfileTabsProps> = ({ profile, posts, onRefreshPosts }) => {
   const [activeTab, setActiveTab] = useState<TabType>('posts');
 
-  const tabs = [
-    { id: 'posts' as TabType, label: 'Posts', icon: Grid3x3 },
-    { id: 'about' as TabType, label: 'About', icon: User },
-    { id: 'photos' as TabType, label: 'Photos', icon: ImageIcon },
+  const tabs: { id: TabType; icon: React.ElementType; label: string }[] = [
+    { id: 'posts', icon: Grid3x3, label: 'Posts' },
+    { id: 'photos', icon: ImageIcon, label: 'Photos' },
+    { id: 'about', icon: User, label: 'About' },
   ];
 
   return (
     <div>
-      {/* Pill-style tabs */}
-      <div className="bg-muted/50 rounded-xl p-1 flex mb-4">
+      {/* Instagram-style icon tabs — full width, border indicator */}
+      <div className="flex border-b border-border/20">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all ${
+            className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-all relative ${
               activeTab === tab.id
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'text-foreground'
+                : 'text-muted-foreground'
             }`}
           >
-            <tab.icon className="w-3.5 h-3.5" />
-            <span>{tab.label}</span>
+            <tab.icon className="w-5 h-5" />
+            <span className="text-[10px] font-medium">{tab.label}</span>
+            {activeTab === tab.id && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+            )}
           </button>
         ))}
       </div>
 
-      {/* Tab Content */}
-      <div>
+      {/* Tab Content — edge to edge */}
+      <div className="min-h-[40vh]">
         {activeTab === 'posts' && (
           <PostsGrid posts={posts} onRefresh={onRefreshPosts} />
         )}
-        {activeTab === 'about' && (
-          <ProfileAbout profile={profile} />
-        )}
         {activeTab === 'photos' && (
           <ProfilePhotos profile={profile} />
+        )}
+        {activeTab === 'about' && (
+          <div className="px-4 pt-3">
+            <ProfileAbout profile={profile} />
+          </div>
         )}
       </div>
     </div>
