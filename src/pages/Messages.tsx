@@ -901,49 +901,20 @@ const Messages = () => {
   return <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
       {/* Header with Enhanced Notifications */}
-      <div className="bg-surface-secondary/80 backdrop-blur-xl shadow-sm border-b border-border/20 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="text-center space-y-2">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 relative">
-              <MessageCircle className="w-8 h-8 text-white" />
-              {totalUnreadMessages > 0 && <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-pulse">
-                  {totalUnreadMessages}
-                </div>}
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-              Messages
-            </h1>
-            <p className="text-purple-200">Connect with your matches</p>
-            
-            {/* Notification Summary */}
-            <div className="flex justify-center gap-4 mt-4">
-              {newMatchesCount > 0 && <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  {newMatchesCount} New Match{newMatchesCount > 1 ? 'es' : ''}
-                </Badge>}
-              {totalUnreadMessages > 0 && <Badge className={`bg-gradient-to-r ${getUrgencyColor(sortedConversations.find(c => c.unread)?.lastMessageTime || new Date())} text-white`}>
-                  <MessageCircle className="w-3 h-3 mr-1" />
-                  {totalUnreadMessages} New Message{totalUnreadMessages > 1 ? 's' : ''}
-                </Badge>}
-              {onlineCount > 0 && <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
-                  <div className="w-2 h-2 rounded-full bg-green-500 mr-1"></div>
-                  {onlineCount} Online
-                </Badge>}
-              {typingCount > 0 && <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 animate-pulse">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 mr-1 animate-pulse"></div>
-                  {typingCount} Typing
-                </Badge>}
-            </div>
+      <div className="bg-background border-b border-border/30 sticky top-0 z-10">
+        <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
+          <h1 className="text-base font-semibold text-foreground">Messages</h1>
+          <div className="flex items-center gap-2">
+            {totalUnreadMessages > 0 && <Badge className="bg-primary/15 text-primary text-xs">{totalUnreadMessages} new</Badge>}
+            {onlineCount > 0 && <Badge className="bg-muted text-muted-foreground text-xs">{onlineCount} online</Badge>}
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="backdrop-blur-md bg-card/80 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.3)] border border-border/20 p-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 animate-midnight-pulse"></div>
-          
-          <div className="relative z-10">
+      <div className="max-w-lg mx-auto">
+        <div>
+          <div>
             {/* New Matches Section with Enhanced Notifications */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">

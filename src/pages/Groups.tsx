@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Search, Users } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -61,66 +60,70 @@ const Groups = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Groups</h1>
-          <Button onClick={() => navigate('/groups/create')}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Group
+    <div className="min-h-screen bg-background pb-24">
+      {/* Slim header */}
+      <div className="sticky top-0 z-10 bg-background border-b border-border/30">
+        <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
+          <h1 className="text-base font-semibold text-foreground">Groups</h1>
+          <Button onClick={() => navigate('/groups/create')} size="sm" variant="ghost" className="gap-1 text-sm">
+            <Plus className="w-4 h-4" />
+            Create
           </Button>
         </div>
+      </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      <div className="max-w-lg mx-auto px-4 py-3">
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Search groups..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 bg-muted border-border/30 h-9"
           />
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-muted-foreground">Loading groups...</div>
+          <div className="text-center py-12 text-muted-foreground text-sm">Loading groups...</div>
         ) : filteredGroups.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              {searchTerm ? 'No groups found matching your search' : 'No groups available yet'}
-            </CardContent>
-          </Card>
+          <div className="text-center py-16">
+            <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
+            <p className="text-muted-foreground text-sm">
+              {searchTerm ? 'No groups found' : 'No groups available yet'}
+            </p>
+          </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-3">
             {filteredGroups.map((group) => (
-              <Card
+              <div
                 key={group.id}
-                className="cursor-pointer hover:shadow-lg transition-shadow"
+                className="rounded-xl overflow-hidden bg-card border border-border/20 cursor-pointer hover:bg-card/80 transition-colors"
                 onClick={() => navigate(`/groups/${group.id}`)}
               >
                 {group.cover_image && (
                   <img
                     src={group.cover_image}
                     alt={group.name}
-                    className="w-full h-32 object-cover rounded-t-lg"
+                    className="w-full h-28 object-cover"
                   />
                 )}
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <div className="p-3">
+                  <h3 className="font-semibold text-foreground text-sm flex items-center gap-1.5">
                     {group.icon && <span>{group.icon}</span>}
                     {group.name}
-                  </CardTitle>
-                  <CardDescription>{group.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
+                  </h3>
+                  {group.description && (
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{group.description}</p>
+                  )}
+                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
                       {group.member_count} members
-                    </div>
-                    <div>{group.post_count} posts</div>
+                    </span>
+                    <span>{group.post_count} posts</span>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         )}

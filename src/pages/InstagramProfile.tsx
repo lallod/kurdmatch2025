@@ -26,65 +26,35 @@ const InstagramProfile = () => {
   useEffect(() => {
     const loadData = async () => {
       if (!id) return;
-      
       setLoading(true);
       try {
-        // Get current user
         const { data: { user } } = await supabase.auth.getUser();
         setCurrentUserId(user?.id || null);
-
-        // Fetch profile
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select(`
-            *,
-            photos (id, url, is_primary)
-          `)
-          .eq('id', id)
-          .single();
-
+        const { data: profileData, error: profileError } = await supabase.from('profiles').select(`*, photos (id, url, is_primary)`).eq('id', id).single();
         if (profileError) throw profileError;
         setProfile(profileData);
-
-        // Fetch posts, stories, and stats in parallel
-        const [postsData, storiesData, statsData] = await Promise.all([
-          getPostsByUserId(id),
-          getStoriesByUserId(id),
-          getUserStats(id)
-        ]);
-
-        setPosts(postsData);
-        setStories(storiesData);
-        setStats(statsData);
-      } catch (error) {
-        console.error('Error loading profile:', error);
-      } finally {
-        setLoading(false);
-      }
+        const [postsData, storiesData, statsData] = await Promise.all([getPostsByUserId(id), getStoriesByUserId(id), getUserStats(id)]);
+        setPosts(postsData); setStories(storiesData); setStats(statsData);
+      } catch (error) { console.error('Error loading profile:', error); }
+      finally { setLoading(false); }
     };
-
     loadData();
   }, [id]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="w-8 h-8 border-2 border-purple-300 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-purple-200">Loading profile...</p>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-2">Profile not found</h2>
-          <button onClick={() => navigate(-1)} className="text-purple-300 hover:text-purple-200">
-            Go back
-          </button>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-lg font-semibold text-foreground mb-2">Profile not found</h2>
+          <button onClick={() => navigate(-1)} className="text-primary text-sm">Go back</button>
         </div>
       </div>
     );
@@ -93,68 +63,35 @@ const InstagramProfile = () => {
   const isOwnProfile = currentUserId === id;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-20">
-      {/* Header with back button */}
-      <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-900/95 via-purple-800/95 to-pink-900/95 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-background pb-20">
+      {/* Slim header */}
+      <div className="sticky top-0 z-50 bg-background border-b border-border/30">
+        <div className="max-w-lg mx-auto px-4 h-11 flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="p-1 hover:bg-muted rounded-full transition-colors">
+            <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-lg font-semibold text-white">{profile.name}</h1>
+          <h1 className="text-base font-semibold text-foreground">{profile.name}</h1>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        {/* Profile Header */}
-        <ProfileHeader 
-          profile={profile} 
-          stats={stats}
-          isOwnProfile={isOwnProfile}
-        />
+      <div className="max-w-lg mx-auto px-4 py-4">
+        <ProfileHeader profile={profile} stats={stats} isOwnProfile={isOwnProfile} />
 
-        {/* Story creation button for own profile */}
         {isOwnProfile && (
           <div className="mb-4">
-            <Button
-              onClick={() => setShowCreateStory(true)}
-              variant="outline"
-              className="w-full gap-2 bg-white/10 hover:bg-white/20 text-white border-white/20"
-            >
-              <Plus className="w-4 h-4" />
-              Create Story
+            <Button onClick={() => setShowCreateStory(true)} variant="outline" size="sm" className="w-full gap-1.5">
+              <Plus className="w-3.5 h-3.5" />Create Story
             </Button>
           </div>
         )}
 
-        {/* Story Highlights */}
-        {stories.length > 0 && (
-          <StoryHighlights 
-            stories={stories}
-            isOwnProfile={isOwnProfile}
-          />
-        )}
-
-        {/* Content Tabs */}
-        <ProfileTabs 
-          profile={profile}
-          posts={posts}
-          onRefreshPosts={() => getPostsByUserId(id!).then(setPosts)}
-        />
+        {stories.length > 0 && <StoryHighlights stories={stories} isOwnProfile={isOwnProfile} />}
+        <ProfileTabs profile={profile} posts={posts} onRefreshPosts={() => getPostsByUserId(id!).then(setPosts)} />
       </div>
 
-      {/* Create Story Modal */}
       {id && (
-        <CreateStoryModal
-          open={showCreateStory}
-          onOpenChange={setShowCreateStory}
-          onStoryCreated={() => {
-            getStoriesByUserId(id).then(setStories);
-          }}
-          userId={id}
-        />
+        <CreateStoryModal open={showCreateStory} onOpenChange={setShowCreateStory}
+          onStoryCreated={() => getStoriesByUserId(id).then(setStories)} userId={id} />
       )}
 
       <BottomNavigation />
