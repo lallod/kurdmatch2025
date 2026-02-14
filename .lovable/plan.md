@@ -1,172 +1,101 @@
 
 
-# Native Mobile Redesign: Home + Profile + Global Polish
+# Separating Social Profile from Dating Profile -- Architecture Plan
 
-## Overview
+## The Problem
 
-Complete visual overhaul of the Home (DiscoveryFeed) and Profile (MyProfile) pages to feel like a native iOS/Android dating app. Move "Complete Profile" functionality into Settings. Apply global mobile-native optimizations across all pages.
+Right now, KurdMatch has two profile views that share the same data:
+1. **Instagram-style profile** (`/profile/:id`) -- social feed with posts, stories, fans
+2. **Dating profile** (`/profile` via Swipe) -- detailed dating card with compatibility scores
 
----
+Both pull from the same `profiles` table, and both are equally accessible. There is no distinction between "social browsing" and "dating discovery," making it too easy for free users to find and browse people without going through the dating/matching flow.
 
-## 1. Home Page (DiscoveryFeed.tsx) -- Full Redesign
+## Proposed Solution
 
-### Header
-- Replace flat sticky header with a translucent frosted-glass header: `bg-background/80 backdrop-blur-xl`
-- "KurdMatch" in a bold serif/display font weight, slightly larger (text-2xl)
-- Icons (notification bell, create) as 40x40 touch targets with subtle circular backgrounds
+Introduce a **dual-layer visibility system** where the social profile is the public-facing "Instagram" layer, and the dating profile details are gated behind the Swipe/Discovery matching flow with premium filters.
 
-### Stories Row (StoryBubbles.tsx)
-- Increase story bubble size from 64px to 72px
-- Add gradient ring animation for unseen stories
-- "Your Story" bubble with profile image + small "+" overlay (not a plain gradient circle)
-- Add 16px horizontal padding, 12px vertical breathing room
-- Remove bottom border -- use spacing instead
+### How It Works
 
-### Tab Bar (Posts | Events)
-- Replace underline tabs with pill-style segmented control: `rounded-full bg-card p-1`
-- Active pill: `bg-primary text-white rounded-full`
-- Inactive: transparent, `text-muted-foreground`
-- Centered, with 16px horizontal margin
+**Layer 1 -- Social Profile (public to all logged-in users)**
+- Visible at `/profile/:id`
+- Shows: name, avatar, posts, stories, fans, basic bio
+- Does NOT show: age, location, occupation, religion, body type, compatibility score, relationship goals
+- Accessible via feed interactions (liking posts, following, stories)
 
-### Filter Row
-- "Following" chip + hashtag/group filters: slightly larger touch targets (36px height), `rounded-full`
-- Remove border-bottom, use 8px spacing gap instead
+**Layer 2 -- Dating Profile (gated)**
+- Only accessible through the Swipe page or Discovery "People" tab
+- Shows full dating details: age, location, compatibility %, relationship goals, lifestyle, values
+- Free users: can only find people via random Swipe cards (no search by name, no filters)
+- Premium users: unlock advanced filters (age, region, religion, body type) on both Swipe and Discovery People tab
 
-### Post Cards (PostCard.tsx)
-- Add 12px vertical spacing between posts (instead of thin border dividers)
-- Wrap each post in a `bg-card rounded-3xl mx-4 mb-3 overflow-hidden shadow-lg` floating card
-- Avatar row inside card: 12px padding
-- Media: edge-to-edge within card (no page-edge bleed)
-- Action icons: increase to 28px, 48px touch target areas
-- Double-tap to like animation hint
+### Key Rules
+- The Discovery Feed (`/discovery`) shows posts/stories only -- no ability to search for people by name or browse profiles directly
+- The Discovery People tab (`/discovery-old`) and Swipe page are the only ways to discover new dating profiles
+- Free users get randomized profiles with no filters
+- Premium users get filters + ability to see who liked/viewed them
 
-### Event Cards (EventCard.tsx)
-- Replace `bg-white/10 border border-white/20` with `bg-card rounded-3xl shadow-lg border-0`
-- Cover image: `rounded-t-3xl`
-- Content padding: 16px
-- Join button: full-width at bottom of card, `rounded-2xl`
+## Technical Changes
 
-### Bottom Padding
-- Increase `pb-24` to `pb-28` for comfortable scroll-past of floating nav
+### 1. Create a `profile_visibility` settings column
+Add a `dating_profile_visible` boolean to the `profiles` table (default `true`). This lets users opt out of appearing in dating discovery while keeping their social profile active.
 
----
+### 2. Modify InstagramProfile (Social Profile)
+- Hide sensitive dating fields (age, exact location, relationship goals, compatibility) from the public social view
+- Show only: name, bio, posts, stories, photos, fans count
+- Add a "See Dating Profile" button that only appears when viewing through Swipe/Discovery context (via navigation state)
 
-## 2. Profile Page (MyProfile.tsx) -- Full Redesign
+### 3. Gate Discovery People Tab
+- Remove name/text search from the People tab for free users
+- Free users see a randomized grid with no filter controls
+- Premium users see the full filter panel (SmartFilters)
+- When a free user taps a profile card in Discovery, show a blurred preview with a "Subscribe to see more" prompt instead of full details
 
-### Hero Section (top of page)
-- Large profile image: 96px (from 80px), centered above name
-- Subtle purple gradient header background behind the image area (`h-32 bg-gradient-to-b from-primary/20 to-background`)
-- Name, age, verified badge centered below photo
-- Occupation + location as secondary text, centered
-- Remove the left-aligned Instagram-style avatar+stats row
+### 4. Modify Profile Navigation Flow
+- From Swipe card tap: navigate to full dating profile (`/profile` with `profileId` state) -- shows everything
+- From feed/post/story tap: navigate to social profile (`/profile/:id`) -- shows limited info
+- From Discovery People grid: navigate based on subscription tier
 
-### Stats Row
-- Horizontal row of 3 stats (Views, Likes, Matches) in floating card: `bg-card rounded-2xl mx-4 p-4 shadow-md`
-- Each stat as bold number + label, evenly spaced
-- Subtle divider lines between stats
+### 5. Subscription Gating Logic
+Create a `useProfileAccess` hook that checks:
+- Is the viewer a premium subscriber?
+- Did they arrive from the Swipe/matching flow?
+- Are they already matched with this person?
 
-### Bio Section
-- Floating card: `bg-card rounded-2xl mx-4 p-4`
-- "About" header + bio text
-- Edit pencil icon inline
+Based on this, return which fields to show/hide.
 
-### Quick Info Cards
-- Replace the ComprehensiveProfileEditor inline tabs with visual card sections
-- Each category (Basic Info, Lifestyle, Interests, Relationship) as a tappable floating card
-- Card shows: icon + title + completion badge + chevron-right
-- Tapping opens a bottom sheet (Sheet component) for editing that section
-- Cards stacked vertically with 12px spacing
+## Technical Details
 
-### Photo Grid
-- 3-column grid of rounded-2xl photos inside a floating card
-- "+" placeholder for empty slots
-- Primary photo has a small star badge
+### Files to Create
+- `src/hooks/useProfileAccess.ts` -- centralized access control hook
+- `src/components/profile/BlurredProfileOverlay.tsx` -- premium upsell overlay for locked profiles
 
-### Action Buttons
-- "Edit Profile" and "Share Profile" as full-width stacked buttons inside a card
-- Primary: filled pink, Secondary: outlined
+### Files to Modify
+- `src/pages/InstagramProfile.tsx` -- hide dating-specific fields, add conditional rendering
+- `src/pages/Discovery.tsx` -- gate filters behind premium, disable name search for free users
+- `src/pages/DiscoveryFeed.tsx` -- ensure no people-search capability, feed-only
+- `src/components/instagram/ProfileHeader.tsx` -- conditionally show/hide age, location
+- `src/components/instagram/ProfileAbout.tsx` -- conditionally show/hide dating details
+- `src/pages/Profile.tsx` -- keep as full dating profile, only accessible via swipe context
+- `src/hooks/useDiscoveryProfiles.ts` -- add subscription-based query limits (free = 10 profiles, premium = unlimited)
 
-### Remove Inline Settings Tab
-- Remove the Settings tab from the profile tabs
-- Settings is already accessible via the gear icon in the header
-- Profile page becomes view-focused with edit sheets
+### Database Migration
+```sql
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS dating_profile_visible boolean DEFAULT true;
+```
 
----
+### Access Control Matrix
 
-## 3. Complete Profile Page -- Move to Settings
+| Feature | Free | Basic | Premium | Gold |
+|---|---|---|---|---|
+| View social profiles | Yes | Yes | Yes | Yes |
+| See posts/stories in feed | Yes | Yes | Yes | Yes |
+| Swipe (random, no filters) | Yes | Yes | Yes | Yes |
+| Discovery People grid | Limited (10) | Unlimited | Unlimited | Unlimited |
+| Search by name | No | No | No | No |
+| Advanced filters | No | Yes | Yes | Yes |
+| See who liked/viewed you | No | Yes | Yes | Yes |
+| View full dating profile from Discovery | No | Blurred | Full | Full |
+| Compatibility scores | No | Basic | Full | Full |
 
-### Remove standalone /complete-profile page redirect
-- Keep the route and guard logic (ProfileCompletionGuard) but redirect to MyProfile instead of a separate page
-- On MyProfile, show a prominent completion banner at top when profile < 100%
-
-### Completion Banner (MyProfile)
-- Floating card at top: `bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl mx-4 p-4`
-- Circular progress ring (not a bar) showing percentage
-- "Complete your profile" text + "Continue" button
-- Tapping opens the first incomplete section as a bottom sheet
-
-### Settings Page
-- Move the detailed requirements checklist into Settings > "Profile Completion" section
-- Shows which fields are missing with check/warning icons
-
----
-
-## 4. Bottom Navigation (BottomNavigation.tsx)
-
-- Add safe area padding: `pb-[env(safe-area-inset-bottom)]`
-- Increase icon size to 24px, label to 11px
-- Active tab: filled icon style + pink dot indicator above icon (instead of just color change)
-- Background: `bg-card/95 backdrop-blur-xl` for depth
-- Subtle top shadow instead of border: `shadow-[0_-2px_20px_rgba(0,0,0,0.15)]`
-- Height: increase to 56px content area + safe area
-
----
-
-## 5. Global Mobile Optimizations
-
-### All Pages
-- Ensure `pb-28` on all pages with bottom nav (consistent scroll clearance)
-- All headers: `h-12` with `pt-[env(safe-area-inset-top)]` for notch safety
-- Replace all `max-w-lg mx-auto` containers with `max-w-md mx-auto` for tighter mobile feel
-
-### Card System
-- All cards: `rounded-2xl` or `rounded-3xl`, no visible borders, `shadow-md`
-- Card internal padding: 16px consistently
-- Card spacing: 12px between cards
-
-### Touch Targets
-- All interactive elements: minimum 44px height
-- All icon buttons: 40x40 minimum
-- Chips/badges: 36px height, `rounded-full`
-
-### Typography
-- Headers: `text-lg font-bold` (not oversized)
-- Body: `text-sm` or `text-base`
-- Captions: `text-xs text-muted-foreground`
-
-### Modals and Sheets
-- All edit dialogs become bottom sheets (Sheet component with `side="bottom"`)
-- Sheet content: `rounded-t-3xl` with drag handle indicator
-- No desktop-style centered modals on mobile
-
----
-
-## Technical: Files Modified
-
-| File | Changes |
-|------|---------|
-| `src/pages/DiscoveryFeed.tsx` | Header, tab bar, spacing, card wrapping |
-| `src/components/discovery/PostCard.tsx` | Card wrapper, icon sizes, spacing |
-| `src/components/discovery/StoryBubbles.tsx` | Bubble size, "Your Story" style |
-| `src/components/discovery/EventCard.tsx` | Card style, border removal |
-| `src/pages/MyProfile.tsx` | Full layout restructure -- hero, stats card, section cards |
-| `src/components/my-profile/sections/ComprehensiveProfileEditor.tsx` | Convert to card-list with sheet editors |
-| `src/components/my-profile/sections/EditableAboutMeSection.tsx` | Floating card style |
-| `src/components/my-profile/PhotoManagement.tsx` | 3-col grid in card |
-| `src/components/BottomNavigation.tsx` | Safe area, sizing, active indicator |
-| `src/pages/CompleteProfile.tsx` | Redirect to /my-profile instead of standalone page |
-| `src/components/app/ProfileCompletionGuard.tsx` | Update redirect target |
-| `src/components/my-profile/AccountSettings.tsx` | Add profile completion section |
-
-No functionality removed. All editing, stories, events, filters, save/bookmark, report/block, comments preserved.
+This approach keeps both profiles useful but makes the dating side the premium experience, encouraging subscriptions while the social side drives engagement and retention.
 
