@@ -58,6 +58,7 @@ import CommunityGuidelines from '@/pages/CommunityGuidelines';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
 import CompatibilityInsights from '@/pages/CompatibilityInsights';
+import PostDetail from '@/pages/PostDetail';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -163,6 +164,10 @@ export const AppRoutes: React.FC = () => {
       <Route 
         path="/event/:id" 
         element={<ProtectedRoute><EventDetail /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/post/:id" 
+        element={<ProtectedRoute><PostDetail /></ProtectedRoute>} 
       />
       <Route
         path="/liked-me"
