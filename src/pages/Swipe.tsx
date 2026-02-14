@@ -10,7 +10,7 @@ import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth as useAuth } from '@/integrations/supabase/auth';
 import { SWIPE_CONFIG } from '@/config/swipe';
-import Logo from '@/components/landing/Logo';
+
 import { SlidersHorizontal, Bell, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCompatibility } from '@/hooks/useCompatibility';
@@ -247,9 +247,8 @@ const Swipe = () => {
 
   return (
     <div className="h-screen bg-gradient-to-b from-background to-surface-secondary flex flex-col overflow-hidden">
-      {/* Header with Logo and Actions */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 z-20">
-        <Logo size="small" withText={true} />
+      {/* Header Actions - floating over card */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-end px-3 py-2 sm:px-4 sm:py-3 z-30" style={{ paddingTop: 'max(env(safe-area-inset-top, 8px), 8px)' }}>
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -301,10 +300,10 @@ const Swipe = () => {
         </div>
       )}
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center pb-24">
+      {/* Main Content - card fills from top to above actions */}
+      <div className="flex-1 flex items-stretch" style={{ paddingBottom: '76px' }}>
         {/* Card Stack Container */}
-        <div className={`relative flex items-center justify-center w-full h-[92%] sm:h-[90%] ${SWIPE_CONFIG.stack.container.padding} ${SWIPE_CONFIG.stack.container.spacing}`}>
+        <div className={`relative flex items-center justify-center w-full h-full ${SWIPE_CONFIG.stack.container.spacing}`}>
           {/* Background Cards (stacked behind) */}
           {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
             <div
@@ -343,7 +342,7 @@ const Swipe = () => {
       </div>
         
       {/* Action Buttons Section - Fixed above navigation */}
-      <div className="fixed bottom-14 sm:bottom-16 left-0 right-0 bg-gradient-to-t from-background/60 via-background/30 to-transparent backdrop-blur-md z-40 pb-1 sm:pb-2">
+      <div className="fixed left-0 right-0 bg-gradient-to-t from-background/80 via-background/40 to-transparent backdrop-blur-sm z-40 pb-0" style={{ bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))' }}>
         <SwipeActions
           onRewind={handleRewind}
           onPass={() => handleSwipeAction('pass', currentProfile.id)}

@@ -139,7 +139,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
 
   return (
     <div 
-      className={`relative mx-auto bg-card ${SWIPE_CONFIG.card.borderRadius} shadow-[0_4px_24px_rgba(0,0,0,0.3)] overflow-hidden cursor-grab active:cursor-grabbing select-none ${SWIPE_CONFIG.card.maxWidth.mobile} sm:${SWIPE_CONFIG.card.maxWidth.tablet} lg:${SWIPE_CONFIG.card.maxWidth.desktop} ${SWIPE_CONFIG.card.height.mobile} sm:${SWIPE_CONFIG.card.height.tablet} lg:${SWIPE_CONFIG.card.height.desktop} ${SWIPE_CONFIG.card.minHeight} ${SWIPE_CONFIG.card.maxHeight}`}
+      className={`relative bg-card ${SWIPE_CONFIG.card.borderRadius} shadow-[0_4px_24px_rgba(0,0,0,0.3)] overflow-hidden cursor-grab active:cursor-grabbing select-none w-full h-full`}
       style={{
         transform: `translateX(${dragPosition.x}px) translateY(${dragPosition.y}px) rotate(${cardRotation}deg)`,
         opacity: cardOpacity,
