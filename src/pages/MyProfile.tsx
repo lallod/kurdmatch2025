@@ -181,7 +181,7 @@ const MyProfile = () => {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary flex items-center justify-center">
         <div className="text-white text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p>Loading your profile...</p>
@@ -272,10 +272,10 @@ const MyProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
       {/* Enhanced Mobile-Friendly Header */}
-      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+      <div className="bg-surface-secondary/80 backdrop-blur-xl shadow-sm border-b border-border/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 md:py-6">
           <div className="text-center space-y-3">
             <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3 relative">
@@ -332,9 +332,9 @@ const MyProfile = () => {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-3 md:px-4 py-4 md:py-8">
-        <div className="backdrop-blur-md bg-white/10 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-3 md:p-6 relative overflow-hidden">
+        <div className="backdrop-blur-md bg-card/80 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.3)] border border-border/20 p-3 md:p-6 relative overflow-hidden">
           {/* Animated background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 animate-midnight-pulse"></div>
           
           <div className="relative z-10">
             <Tabs defaultValue="profile" className="w-full">
@@ -411,7 +411,7 @@ const MyProfile = () => {
               
               <TabsContent value="profile" className="space-y-4 md:space-y-6">
                 {/* Enhanced Mobile Profile Header Card */}
-                <Card className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20">
+                <Card className="overflow-hidden backdrop-blur-md bg-card/80 border border-border/20">
                   <CardContent className="p-4 md:p-6">
                     {/* Mobile: Stack vertically, Desktop: Keep horizontal */}
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">

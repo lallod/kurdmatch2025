@@ -33,7 +33,7 @@ const MatchPopup = ({ isOpen, onClose, matchedProfile, currentUserImage }: Match
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-gradient-to-b from-primary to-accent border-none text-primary-foreground max-w-md mx-4 sm:mx-auto">
+      <DialogContent className="bg-gradient-to-b from-[#2A1E45] to-primary border-none text-primary-foreground max-w-md mx-4 sm:mx-auto">
         <div className="flex flex-col items-center py-4 sm:py-6 px-3 sm:px-4 text-center">
           {/* Animated elements */}
           <div className="absolute top-2 sm:top-4 left-2 sm:left-4">

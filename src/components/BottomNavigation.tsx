@@ -52,7 +52,7 @@ const BottomNavigation = () => {
     path: '/messages'
   }, {
     nameKey: 'nav.views',
-    name: 'Views', // Not translated yet
+    name: 'Views',
     icon: Eye,
     path: '/viewed-me'
   }, {
@@ -72,8 +72,8 @@ const BottomNavigation = () => {
     : baseNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md border-t border-white/20 py-1 bg-black/[0.17] safe-area-inset-bottom">
-      <div className="flex items-center justify-around w-full max-w-md mx-auto px-4 sm:px-6">
+    <nav className="fixed bottom-0 left-0 right-0 z-[100] mx-4 mb-4 safe-area-inset-bottom">
+      <div className="flex items-center justify-around w-full max-w-md mx-auto px-4 sm:px-6 py-2 rounded-[28px] bg-surface-secondary/80 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
         {navItems.map(item => {
           const isActive = currentPath === item.path;
           return (
@@ -82,11 +82,21 @@ const BottomNavigation = () => {
               to={item.path} 
               className={cn(
                 "flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 relative",
-                isActive ? "bg-gradient-to-r from-primary-dark to-primary text-primary-foreground shadow-lg transform scale-105" : "text-muted-foreground hover:text-foreground hover:bg-white/10"
+                isActive 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
               )} 
               aria-label={item.name}
             >
-              <item.icon size={20} className={cn("transition-all mb-0.5", isActive ? "stroke-primary-foreground" : "stroke-muted-foreground")} />
+              <item.icon 
+                size={20} 
+                className={cn(
+                  "transition-all mb-0.5", 
+                  isActive 
+                    ? "stroke-primary drop-shadow-[0_0_8px_hsl(336_90%_60%/0.6)]" 
+                    : "stroke-muted-foreground"
+                )} 
+              />
               {/* Notification badges */}
               {item.path === '/messages' && counts.messages > 0 && (
                 <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">

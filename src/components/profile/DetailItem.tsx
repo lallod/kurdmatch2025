@@ -14,7 +14,7 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value }) => {
   
   return (
     <div className="flex items-start gap-3 py-3 group">
-      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-tinder-rose/20 to-tinder-orange/20 text-tinder-rose transition-all hover:shadow-lg hover:from-tinder-rose/30 hover:to-tinder-orange/30">
+      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20 text-primary transition-all hover:shadow-lg hover:from-primary/30 hover:to-accent/30">
         {icon}
       </div>
       <div className="flex-1">

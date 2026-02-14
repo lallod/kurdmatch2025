@@ -202,10 +202,10 @@ const Discovery = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
       {/* Header */}
-      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+      <div className="bg-surface-secondary/80 backdrop-blur-xl shadow-sm border-b border-border/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
           {/* Top Actions Row */}
           <div className="flex justify-end gap-2 mb-4">
@@ -263,7 +263,7 @@ const Discovery = () => {
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Stories Section */}
         {stories.length > 0 && (
-          <div className="mb-4 sm:mb-6 backdrop-blur-md bg-white/10 rounded-2xl border border-white/20 p-3 sm:p-4">
+          <div className="mb-4 sm:mb-6 backdrop-blur-md bg-card/80 rounded-3xl border border-border/20 p-3 sm:p-4">
             <StoryBubbles
               stories={stories}
               onStoryClick={handleStoryClick}
@@ -301,9 +301,9 @@ const Discovery = () => {
           />
         </div>
 
-        <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-4 sm:p-6 relative overflow-hidden">
+        <div className="backdrop-blur-md bg-card/80 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.3)] border border-border/20 p-4 sm:p-6 relative overflow-hidden">
           {/* Animated background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 animate-midnight-pulse"></div>
           
           <div className="relative z-10">
             {/* Filters Section */}
@@ -354,7 +354,7 @@ const Discovery = () => {
               {profilesLoading ? (
                 <>
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <Card key={i} className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 animate-pulse">
+                    <Card key={i} className="overflow-hidden backdrop-blur-md bg-card/80 border border-border/20 animate-pulse">
                       <CardContent className="p-4">
                         <div className="flex items-center gap-3 mb-3">
                           <div className="h-16 w-16 rounded-full bg-white/20"></div>
@@ -374,7 +374,7 @@ const Discovery = () => {
                   {filteredProfiles.map((profile) => (
                     <Card 
                       key={profile.id} 
-                      className="overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-1"
+                      className="overflow-hidden backdrop-blur-md bg-card/80 border border-border/20 hover:bg-card transition-all duration-300 cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:-translate-y-1"
                       onClick={() => handleProfileClick(profile)}
                     >
                       <CardContent className="p-4">
