@@ -19,6 +19,8 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
 import { CompactDiscoveryDropdowns } from '@/components/discovery/CompactDiscoveryDropdowns';
 
+type FeedTab = 'posts' | 'events' | 'groups';
+
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -26,18 +28,16 @@ const DiscoveryFeed = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'posts' | 'events'>('posts');
+  const [activeTab, setActiveTab] = useState<FeedTab>('posts');
   const [showEventFilters, setShowEventFilters] = useState(false);
   const [showFollowingOnly, setShowFollowingOnly] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showCreateStory, setShowCreateStory] = useState(false);
   
-  // Discovery filters
   const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   
-  // Event filters
   const [eventCategory, setEventCategory] = useState('all');
   const [eventLocation, setEventLocation] = useState('');
   const [eventDateFrom, setEventDateFrom] = useState('');
@@ -207,6 +207,14 @@ const DiscoveryFeed = () => {
     return true;
   });
 
+  const getCreateAction = () => {
+    switch (activeTab) {
+      case 'events': return handleCreateEvent;
+      case 'groups': return () => navigate('/groups');
+      default: return handleCreatePost;
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -215,129 +223,126 @@ const DiscoveryFeed = () => {
     );
   }
 
+  const tabs: { key: FeedTab; label: string }[] = [
+    { key: 'posts', label: 'Posts' },
+    { key: 'events', label: 'Events' },
+    { key: 'groups', label: 'Groups' },
+  ];
+
   return (
     <div className="min-h-screen bg-background pb-28">
       {/* Frosted glass header */}
-      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border/10">
-        <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>
+      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>
             KurdMatch
           </h1>
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1">
             <NotificationBell />
             <Button
               variant="ghost"
               size="icon"
-              onClick={activeTab === 'posts' ? handleCreatePost : handleCreateEvent}
-              className="text-foreground h-10 w-10 rounded-full hover:bg-muted"
+              onClick={getCreateAction()}
+              className="text-foreground h-10 w-10 rounded-full hover:bg-muted/50"
             >
-              <Plus className="w-6 h-6" />
+              <Plus className="w-5 h-5" />
             </Button>
           </div>
         </div>
       </div>
 
       <div className="max-w-md mx-auto">
-        {/* Stories Row — breathing room, no border */}
-        {stories.length > 0 && (
-          <div className="px-4 py-3">
-            <StoryBubbles
-              stories={stories}
-              onStoryClick={handleStoryClick}
-              onAddStory={handleAddStory}
-            />
-          </div>
-        )}
+        {/* Stories Row — always visible */}
+        <div className="px-3 pt-2 pb-1">
+          <StoryBubbles
+            stories={stories}
+            onStoryClick={handleStoryClick}
+            onAddStory={handleAddStory}
+          />
+        </div>
 
-        {/* Pill-style segmented control */}
+        {/* Scrollable tab row */}
         <div className="px-4 py-2">
-          <div className="flex bg-card rounded-full p-1 shadow-sm">
-            <button
-              onClick={() => setActiveTab('posts')}
-              className={`flex-1 py-2 text-sm font-semibold rounded-full text-center transition-all duration-200 ${
-                activeTab === 'posts' 
-                  ? 'bg-primary text-primary-foreground shadow-md' 
-                  : 'text-muted-foreground'
-              }`}
-            >
-              Posts
-            </button>
-            <button
-              onClick={() => setActiveTab('events')}
-              className={`flex-1 py-2 text-sm font-semibold rounded-full text-center transition-all duration-200 ${
-                activeTab === 'events' 
-                  ? 'bg-primary text-primary-foreground shadow-md' 
-                  : 'text-muted-foreground'
-              }`}
-            >
-              Events
-            </button>
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-200 ${
+                  activeTab === tab.key
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'bg-card/60 text-muted-foreground'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Following + filters row */}
+        {/* Compact filter chips for posts */}
         {activeTab === 'posts' && (
-          <div className="px-4 py-2 flex items-center gap-2">
-            <button
-              onClick={() => setShowFollowingOnly(!showFollowingOnly)}
-              className={`text-xs font-medium px-4 h-9 rounded-full transition-all duration-200 ${
-                showFollowingOnly 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'bg-card text-muted-foreground shadow-sm'
-              }`}
-            >
-              Following
-            </button>
-            <CompactDiscoveryDropdowns 
-              onHashtagFilter={handleHashtagFilter}
-              onGroupFilter={handleGroupFilter}
-              activeHashtag={activeHashtag}
-              activeGroup={activeGroup}
-            />
+          <div className="px-4 pb-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+              <button
+                onClick={() => setShowFollowingOnly(!showFollowingOnly)}
+                className={`text-[11px] font-medium px-3 py-1 rounded-full whitespace-nowrap transition-all ${
+                  showFollowingOnly
+                    ? 'bg-primary/20 text-primary border border-primary/30'
+                    : 'bg-card/50 text-muted-foreground border border-border/20'
+                }`}
+              >
+                Following
+              </button>
+              <CompactDiscoveryDropdowns 
+                onHashtagFilter={handleHashtagFilter}
+                onGroupFilter={handleGroupFilter}
+                activeHashtag={activeHashtag}
+                activeGroup={activeGroup}
+              />
+            </div>
           </div>
         )}
 
         {activeTab === 'events' && (
-          <div className="px-4 py-2 flex items-center justify-end">
-            <Button 
+          <div className="px-4 pb-2 flex items-center justify-end">
+            <button
               onClick={() => setShowEventFilters(!showEventFilters)}
-              size="sm"
-              variant="ghost"
-              className="gap-1.5 text-muted-foreground text-xs h-9 rounded-full"
+              className="text-[11px] font-medium px-3 py-1 rounded-full bg-card/50 text-muted-foreground border border-border/20 flex items-center gap-1"
             >
-              <Filter className="w-4 h-4" />
+              <Filter className="w-3 h-3" />
               Filters
-            </Button>
+            </button>
           </div>
         )}
 
         {/* Active filter banner */}
         {(activeHashtag || activeGroup) && (
-          <div className="mx-4 mb-2 px-4 py-2.5 flex items-center justify-between bg-card rounded-2xl shadow-sm">
-            <div className="flex items-center gap-2 text-sm text-foreground">
-              {activeHashtag && <><Hash className="w-4 h-4 text-primary" /><span>#{activeHashtag}</span></>}
-              {activeGroup && <><UsersIcon className="w-4 h-4 text-primary" /><span>Group Posts</span></>}
+          <div className="mx-4 mb-2 px-3 py-2 flex items-center justify-between bg-primary/10 rounded-xl">
+            <div className="flex items-center gap-1.5 text-xs text-foreground">
+              {activeHashtag && <><Hash className="w-3 h-3 text-primary" /><span>#{activeHashtag}</span></>}
+              {activeGroup && <><UsersIcon className="w-3 h-3 text-primary" /><span>Group</span></>}
             </div>
-            <Button size="sm" variant="ghost" onClick={clearDiscoveryFilters} className="h-8 w-8 p-0 rounded-full">
-              <X className="w-4 h-4" />
-            </Button>
+            <button onClick={clearDiscoveryFilters} className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted/50">
+              <X className="w-3 h-3 text-muted-foreground" />
+            </button>
           </div>
         )}
 
-        {/* Posts Feed — floating cards */}
+        {/* Posts Feed */}
         {activeTab === 'posts' && (
-          <div className="space-y-3 pt-2">
+          <div className="space-y-3 px-4 pt-1">
             {posts.length === 0 ? (
-              <div className="text-center py-16 px-4">
-                <p className="text-muted-foreground mb-4">No posts yet</p>
-                <Button onClick={handleCreatePost} className="gap-2 rounded-2xl h-11">
-                  <PenSquare className="w-4 h-4" />
+              <div className="text-center py-16">
+                <p className="text-muted-foreground text-sm mb-4">No posts yet</p>
+                <Button onClick={handleCreatePost} size="sm" className="gap-2 rounded-full h-9 text-xs">
+                  <PenSquare className="w-3.5 h-3.5" />
                   Create First Post
                 </Button>
               </div>
             ) : (
               posts.map((post) => (
-                <div key={post.id} className="mx-4 bg-card rounded-3xl overflow-hidden shadow-lg">
+                <div key={post.id} className="bg-card rounded-2xl overflow-hidden shadow-md">
                   <PostCard
                     post={post}
                     onLike={handleLike}
@@ -349,9 +354,9 @@ const DiscoveryFeed = () => {
           </div>
         )}
 
-        {/* Events Feed — floating cards */}
+        {/* Events Feed */}
         {activeTab === 'events' && (
-          <div className="px-4 pt-2 space-y-3">
+          <div className="px-4 pt-1 space-y-3">
             {showEventFilters && (
               <EventFilters
                 category={eventCategory}
@@ -370,11 +375,11 @@ const DiscoveryFeed = () => {
 
             {filteredEvents.length === 0 ? (
               <div className="text-center py-16">
-                <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
-                <p className="text-muted-foreground mb-4">
+                <Calendar className="w-10 h-10 mx-auto mb-3 text-muted-foreground/30" />
+                <p className="text-muted-foreground text-sm mb-4">
                   {events.length === 0 ? 'No upcoming events' : 'No events match your filters'}
                 </p>
-                <Button onClick={events.length === 0 ? handleCreateEvent : handleClearEventFilters} className="rounded-2xl h-11">
+                <Button onClick={events.length === 0 ? handleCreateEvent : handleClearEventFilters} size="sm" className="rounded-full h-9 text-xs">
                   {events.length === 0 ? 'Create First Event' : 'Clear Filters'}
                 </Button>
               </div>
@@ -383,6 +388,19 @@ const DiscoveryFeed = () => {
                 <EventCard key={event.id} event={event} onJoin={handleJoinEvent} onLeave={handleLeaveEvent} />
               ))
             )}
+          </div>
+        )}
+
+        {/* Groups Tab */}
+        {activeTab === 'groups' && (
+          <div className="px-4 pt-1">
+            <div className="text-center py-16">
+              <UsersIcon className="w-10 h-10 mx-auto mb-3 text-muted-foreground/30" />
+              <p className="text-muted-foreground text-sm mb-4">Explore community groups</p>
+              <Button onClick={() => navigate('/groups')} size="sm" className="rounded-full h-9 text-xs">
+                Browse Groups
+              </Button>
+            </div>
           </div>
         )}
       </div>
