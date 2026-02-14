@@ -4,7 +4,7 @@ import { ArrowLeft, Hash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getPostsByHashtag } from '@/api/hashtags';
 import PostCard from '@/components/discovery/PostCard';
-import BottomNavigation from '@/components/BottomNavigation';
+
 
 export const HashtagFeed = () => {
   const { hashtag } = useParams<{ hashtag: string }>();
@@ -95,7 +95,7 @@ export const HashtagFeed = () => {
         )}
       </div>
 
-      <BottomNavigation />
+      
     </div>
   );
 };

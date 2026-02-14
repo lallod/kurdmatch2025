@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { PushNotificationSettings } from '@/components/settings/PushNotificationSettings';
 
@@ -176,8 +176,6 @@ const NotificationSettings = () => {
         {/* Push Notifications */}
         <PushNotificationSettings />
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };

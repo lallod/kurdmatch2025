@@ -18,7 +18,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import BottomNavigation from '@/components/BottomNavigation';
+
 import SwipeActions from '@/components/swipe/SwipeActions';
 import { likeProfile } from '@/api/likes';
 import { toast } from 'sonner';
@@ -430,8 +430,6 @@ const Discovery = () => {
       {currentUserId && (
         <CreateStoryModal open={showCreateStory} onOpenChange={setShowCreateStory} onStoryCreated={handleStoryCreated} userId={currentUserId} />
       )}
-      
-      <BottomNavigation />
     </div>
   );
 };

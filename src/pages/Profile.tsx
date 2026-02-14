@@ -5,7 +5,7 @@ import { Profile as ProfileType } from '@/types/swipe';
 import { supabase } from '@/integrations/supabase/client';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import ProfileSwipeActions from '@/components/swipe/ProfileSwipeActions';
 import ProfileActionButtons from '@/components/profile/ProfileActionButtons';
 import { toast } from 'sonner';
@@ -368,8 +368,6 @@ const Profile = () => {
           />
         </div>
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };

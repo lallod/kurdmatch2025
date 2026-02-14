@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { getConversations, getMessagesByConversation, sendMessage, markMessagesAsRead } from '@/api/messages';
 import { getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -895,7 +895,6 @@ const Messages = () => {
           />
         )}
 
-        <BottomNavigation />
       </div>;
   }
   return <div className="min-h-screen bg-background flex flex-col">
@@ -1077,7 +1076,7 @@ const Messages = () => {
       </div>
       </div>
 
-      <BottomNavigation />
+      
     </div>;
 };
 export default Messages;

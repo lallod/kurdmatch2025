@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Heart, Sparkles, MapPin, X } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { getMatches, getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
@@ -169,8 +169,6 @@ const Matches = () => {
           </div>
         </div>
       )}
-
-      <BottomNavigation />
     </div>
   );
 };

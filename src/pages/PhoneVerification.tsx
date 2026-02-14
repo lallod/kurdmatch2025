@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { usePhoneVerification } from '@/hooks/usePhoneVerification';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -259,7 +259,7 @@ const PhoneVerification = () => {
         </div>
       </div>
 
-      <BottomNavigation />
+      
     </div>
   );
 };

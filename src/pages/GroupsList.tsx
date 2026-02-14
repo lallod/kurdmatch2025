@@ -4,7 +4,7 @@ import { Users, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getGroups } from '@/api/groups';
-import BottomNavigation from '@/components/BottomNavigation';
+
 import { CreateGroupDialog } from '@/components/groups/CreateGroupDialog';
 import type { Group } from '@/api/groups';
 
@@ -204,8 +204,6 @@ export const GroupsList = () => {
         open={createDialogOpen} 
         onOpenChange={setCreateDialogOpen}
       />
-
-      <BottomNavigation />
     </div>
   );
 };

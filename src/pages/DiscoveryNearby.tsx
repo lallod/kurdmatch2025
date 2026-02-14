@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import BottomNavigation from '@/components/BottomNavigation';
+
 import DistanceBadge from '@/components/location/DistanceBadge';
 import { useNearbyUsers } from '@/hooks/useNearbyUsers';
 import { getCurrentLocation, getCachedLocation, cacheLocation } from '@/utils/locationUtils';
@@ -237,8 +237,6 @@ const DiscoveryNearby = () => {
           </Button>
         </div>
       )}
-
-      <BottomNavigation />
     </div>
   );
 };

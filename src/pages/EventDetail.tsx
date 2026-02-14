@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { MapPin, Calendar, Users, CheckCircle, ArrowLeft, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
-import BottomNavigation from '@/components/BottomNavigation';
+
 
 interface EventDetail {
   id: string;
@@ -355,8 +355,6 @@ const EventDetail = () => {
           )}
         </Card>
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };
