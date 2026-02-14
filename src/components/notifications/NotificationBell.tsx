@@ -103,16 +103,16 @@ const NotificationBell = () => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20" align="end">
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <h3 className="text-white font-semibold">Notifications</h3>
+      <PopoverContent className="w-96 p-0 bg-card border-border" align="end">
+        <div className="flex items-center justify-between p-4 border-b border-border/10">
+          <h3 className="text-foreground font-semibold">Notifications</h3>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleMarkAllRead}
-                className="text-purple-300 hover:text-white hover:bg-white/10 h-7"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent/10 h-7"
               >
                 Mark all read
               </Button>
@@ -124,7 +124,7 @@ const NotificationBell = () => {
                 setOpen(false);
                 navigate('/notifications');
               }}
-              className="text-purple-300 hover:text-white hover:bg-white/10 h-7"
+              className="text-muted-foreground hover:text-foreground hover:bg-accent/10 h-7"
             >
               View All
             </Button>
@@ -135,7 +135,7 @@ const NotificationBell = () => {
                 setOpen(false);
                 navigate('/notifications/settings');
               }}
-              className="text-purple-300 hover:text-white hover:bg-white/10 h-7 w-7"
+              className="text-muted-foreground hover:text-foreground hover:bg-accent/10 h-7 w-7"
             >
               <Settings className="h-4 w-4" />
             </Button>
@@ -144,29 +144,29 @@ const NotificationBell = () => {
 
         <ScrollArea className="h-[400px]">
           {notifications.length === 0 ? (
-            <div className="p-8 text-center text-white/70">
+            <div className="p-8 text-center text-muted-foreground">
               <Bell className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>No notifications yet</p>
             </div>
           ) : (
-            <div className="divide-y divide-white/10">
+            <div className="divide-y divide-border/10">
               {notifications.map((notification) => (
                 <button
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
-                  className={`w-full p-4 text-left hover:bg-white/5 transition-colors ${
-                    !notification.read ? 'bg-white/10' : ''
+                  className={`w-full p-4 text-left hover:bg-accent/5 transition-colors ${
+                    !notification.read ? 'bg-accent/10' : ''
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-medium text-sm mb-1">
+                      <p className="text-foreground font-medium text-sm mb-1">
                         {notification.title}
                       </p>
-                      <p className="text-white/70 text-sm mb-1">
+                      <p className="text-muted-foreground text-sm mb-1">
                         {notification.message}
                       </p>
-                      <p className="text-white/50 text-xs">
+                      <p className="text-muted-foreground/50 text-xs">
                         {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                       </p>
                     </div>

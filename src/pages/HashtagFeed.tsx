@@ -43,7 +43,7 @@ export const HashtagFeed = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">

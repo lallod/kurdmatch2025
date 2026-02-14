@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, AlertCircle, CheckCircle, Clock, Shield } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Report {
@@ -61,11 +61,7 @@ const ReportsManagement = () => {
       .maybeSingle();
 
     if (!data) {
-      toast({
-        title: 'Access Denied',
-        description: 'You do not have admin privileges',
-        variant: 'destructive',
-      });
+      toast.error('You do not have admin privileges');
       navigate('/discovery');
       return;
     }
@@ -91,11 +87,7 @@ const ReportsManagement = () => {
       setReports(data || []);
     } catch (error) {
       console.error('Error fetching reports:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load reports',
-        variant: 'destructive',
-      });
+      toast.error('Failed to load reports');
     } finally {
       setLoading(false);
     }
@@ -122,21 +114,14 @@ const ReportsManagement = () => {
         description: `${newStatus === 'resolved' ? 'Resolved' : 'Dismissed'} report: ${reportId}`,
       });
 
-      toast({
-        title: 'Success',
-        description: `Report ${newStatus}`,
-      });
+      toast.success(`Report ${newStatus}`);
 
       setSelectedReport(null);
       setAdminNotes('');
       fetchReports();
     } catch (error) {
       console.error('Error resolving report:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update report',
-        variant: 'destructive',
-      });
+      toast.error('Failed to update report');
     }
   };
 
@@ -184,7 +169,7 @@ const ReportsManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-24">
+    <div className="min-h-screen bg-background pb-24">
       <div className="max-w-7xl mx-auto p-4 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -192,24 +177,24 @@ const ReportsManagement = () => {
             <Button
               variant="ghost"
               onClick={() => navigate('/admin/dashboard')}
-              className="text-white hover:bg-white/10"
+              className="text-foreground hover:bg-accent/10"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-white">Reports Management</h1>
-              <p className="text-white/70 text-sm">{reports.length} reports</p>
+              <h1 className="text-2xl font-bold text-foreground">Reports Management</h1>
+              <p className="text-muted-foreground text-sm">{reports.length} reports</p>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
+        <Card className="bg-card backdrop-blur-md border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <span className="text-white text-sm">Status:</span>
+              <span className="text-foreground text-sm">Status:</span>
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-48 bg-white/10 border-white/20 text-white">
+                <SelectTrigger className="w-48 bg-accent/10 border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -225,22 +210,22 @@ const ReportsManagement = () => {
 
         {/* Reports List */}
         {loading ? (
-          <Card className="bg-white/10 backdrop-blur-md border-white/20">
-            <CardContent className="py-12 text-center text-white">
+          <Card className="bg-card backdrop-blur-md border-border">
+            <CardContent className="py-12 text-center text-foreground">
               Loading reports...
             </CardContent>
           </Card>
         ) : reports.length === 0 ? (
-          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+          <Card className="bg-card backdrop-blur-md border-border">
             <CardContent className="py-12 text-center">
-              <AlertCircle className="w-12 h-12 text-white/30 mx-auto mb-3" />
-              <p className="text-white/70">No reports found</p>
+              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground">No reports found</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4">
             {reports.map((report) => (
-              <Card key={report.id} className="bg-white/10 backdrop-blur-md border-white/20">
+              <Card key={report.id} className="bg-card backdrop-blur-md border-border">
                 <CardContent className="p-4">
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-4">
@@ -249,13 +234,13 @@ const ReportsManagement = () => {
                           {getStatusBadge(report.status)}
                           {getReasonBadge(report.reason)}
                         </div>
-                        <p className="text-white text-sm">
+                        <p className="text-foreground text-sm">
                           <strong>Content Type:</strong> {report.content_type || 'User Profile'}
                         </p>
                         {report.details && (
-                          <p className="text-white/70 text-sm mt-1">{report.details}</p>
+                          <p className="text-muted-foreground text-sm mt-1">{report.details}</p>
                         )}
-                        <p className="text-white/50 text-xs mt-2">
+                        <p className="text-muted-foreground/50 text-xs mt-2">
                           Reported {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
                         </p>
                       </div>
@@ -265,7 +250,7 @@ const ReportsManagement = () => {
                             size="sm"
                             variant="outline"
                             onClick={() => setSelectedReport(report)}
-                            className="text-white border-white/20 hover:bg-white/10"
+                            className="text-foreground border-border hover:bg-accent/10"
                           >
                             Review
                           </Button>
@@ -274,14 +259,14 @@ const ReportsManagement = () => {
                     </div>
 
                     {selectedReport?.id === report.id && (
-                      <div className="border-t border-white/10 pt-3 mt-3 space-y-3">
+                      <div className="border-t border-border/10 pt-3 mt-3 space-y-3">
                         <div>
-                          <label className="text-white text-sm mb-2 block">Admin Notes</label>
+                          <label className="text-foreground text-sm mb-2 block">Admin Notes</label>
                           <Textarea
                             value={adminNotes}
                             onChange={(e) => setAdminNotes(e.target.value)}
                             placeholder="Add notes about this resolution..."
-                            className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                            className="bg-accent/10 border-border text-foreground placeholder:text-muted-foreground"
                           />
                         </div>
                         <div className="flex gap-2">
@@ -297,7 +282,7 @@ const ReportsManagement = () => {
                             size="sm"
                             variant="outline"
                             onClick={() => handleResolveReport(report.id, 'dismissed')}
-                            className="text-white border-white/20 hover:bg-white/10"
+                            className="text-foreground border-border hover:bg-accent/10"
                           >
                             Dismiss
                           </Button>
@@ -308,7 +293,7 @@ const ReportsManagement = () => {
                               setSelectedReport(null);
                               setAdminNotes('');
                             }}
-                            className="text-white hover:bg-white/10"
+                            className="text-foreground hover:bg-accent/10"
                           >
                             Cancel
                           </Button>
@@ -317,9 +302,9 @@ const ReportsManagement = () => {
                     )}
 
                     {report.admin_notes && report.status !== 'pending' && (
-                      <div className="border-t border-white/10 pt-3 mt-3">
-                        <p className="text-white/50 text-xs mb-1">Admin Notes:</p>
-                        <p className="text-white/70 text-sm">{report.admin_notes}</p>
+                      <div className="border-t border-border/10 pt-3 mt-3">
+                        <p className="text-muted-foreground/50 text-xs mb-1">Admin Notes:</p>
+                        <p className="text-muted-foreground text-sm">{report.admin_notes}</p>
                       </div>
                     )}
                   </div>

@@ -48,7 +48,7 @@ export const GroupsList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pb-20">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="sticky top-0 z-10 glass backdrop-blur-lg border-b border-border/50">
         <div className="container mx-auto px-4 py-6">

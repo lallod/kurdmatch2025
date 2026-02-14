@@ -62,7 +62,7 @@ const LandingV2 = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 relative overflow-hidden" dir={textDir}>
+    <div className="min-h-screen bg-background relative overflow-hidden" dir={textDir}>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
@@ -90,7 +90,7 @@ const LandingV2 = () => {
       <MobileSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/10 backdrop-blur-lg border-b border-white/20">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
@@ -98,21 +98,21 @@ const LandingV2 = () => {
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
                 <Heart className="w-6 h-6 text-primary" />
               </div>
-              <span className="text-xl font-bold text-white hidden sm:block">KurdMatch</span>
+              <span className="text-xl font-bold text-foreground hidden sm:block">KurdMatch</span>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#home" className="text-white hover:text-pink-300 transition-colors font-medium">Home</a>
-              <a href="#about" className="text-purple-200 hover:text-pink-300 transition-colors">About</a>
-              <a href="#features" className="text-purple-200 hover:text-pink-300 transition-colors">Features</a>
-              <a href="#contact" className="text-purple-200 hover:text-pink-300 transition-colors">Contact</a>
+              <a href="#home" className="text-foreground hover:text-primary transition-colors font-medium">Home</a>
+              <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
+              <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
+              <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">Contact</a>
             </nav>
 
             {/* Desktop Language Switcher & Auth Buttons */}
             <div className="hidden md:flex items-center gap-3">
               <Select value={language} onValueChange={(value) => setLanguage(value as LanguageCode)}>
-                <SelectTrigger className="w-[180px] bg-white/10 border-white/20 text-white hover:bg-white/15">
+                <SelectTrigger className="w-[180px] bg-accent/10 border-border text-foreground hover:bg-accent/15">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-background border-border z-50">
@@ -126,13 +126,13 @@ const LandingV2 = () => {
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/auth')}
-                className="text-white hover:bg-white/10"
+                className="text-foreground hover:bg-accent/10"
               >
                 Login
               </Button>
               <Button 
                 onClick={() => navigate('/register')}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600"
               >
                 REGISTER
               </Button>
@@ -160,11 +160,11 @@ const LandingV2 = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6"
             >
-              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white ${isKurdish ? 'font-kurdistan' : ''} ${isRtl ? 'text-right' : ''}`}>
+              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-foreground ${isKurdish ? 'font-kurdistan' : ''} ${isRtl ? 'text-right' : ''}`}>
                 {content.hero_title}
               </h1>
 
-              <p className={`text-lg text-purple-200 max-w-xl ${isKurdish ? 'font-kurdistan' : ''} ${isRtl ? 'text-right' : ''}`}>
+              <p className={`text-lg text-muted-foreground max-w-xl ${isKurdish ? 'font-kurdistan' : ''} ${isRtl ? 'text-right' : ''}`}>
                 {content.hero_subtitle}
               </p>
 
@@ -172,7 +172,7 @@ const LandingV2 = () => {
                 <Button 
                   size="lg"
                   onClick={() => navigate('/register')}
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 rounded-full shadow-lg"
+                  className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600 text-primary-foreground px-8 rounded-full shadow-lg"
                 >
                   {content.hero_cta_text} <ArrowRight className={`${isRtl ? 'mr-2' : 'ml-2'} w-4 h-4`} />
                 </Button>
@@ -197,7 +197,7 @@ const LandingV2 = () => {
       </section>
 
       {/* What You Can Find - Main Features Grid */}
-      <section id="features" className="py-16 md:py-24 bg-black/20">
+      <section id="features" className="py-16 md:py-24 bg-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -205,10 +205,10 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              What You Can <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Find</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              What You Can <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-400">Find</span>
             </h2>
-            <p className="text-lg text-purple-200">Connect with Kurdish community worldwide</p>
+            <p className="text-lg text-muted-foreground">Connect with Kurdish community worldwide</p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -225,7 +225,7 @@ const LandingV2 = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.05 }}
-                className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all group"
+                className="bg-card backdrop-blur-lg border border-border rounded-2xl overflow-hidden hover:bg-card/80 transition-all group"
               >
                 <div className="relative h-48 overflow-hidden">
                   <img 
@@ -237,10 +237,10 @@ const LandingV2 = () => {
                 </div>
                 <div className={`p-6 space-y-3 ${isRtl ? 'text-right' : ''}`}>
                   <div className={`flex items-center gap-3 ${isRtl ? 'flex-row-reverse' : ''}`}>
-                    <FeatureIcon className="w-5 h-5 text-pink-400" />
-                    <h3 className={`text-lg font-bold text-white ${isKurdish ? 'font-kurdistan' : ''}`}>{feature.title}</h3>
+                    <FeatureIcon className="w-5 h-5 text-primary" />
+                    <h3 className={`text-lg font-bold text-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>{feature.title}</h3>
                   </div>
-                  <p className={`text-sm text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>{feature.description}</p>
+                  <p className={`text-sm text-muted-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>{feature.description}</p>
                 </div>
               </motion.div>
             );
@@ -258,10 +258,10 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isKurdish ? 'font-kurdistan' : ''}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold text-foreground mb-4 ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.community_title}
             </h2>
-            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isKurdish ? 'font-kurdistan' : ''}`}>
+            <p className={`text-lg text-muted-foreground max-w-2xl mx-auto ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.community_subtitle}
             </p>
           </motion.div>
@@ -278,8 +278,8 @@ const LandingV2 = () => {
                   <Globe2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className={`text-xl font-bold text-white mb-2 ${isKurdish ? 'font-kurdistan' : ''}`}>All Kurdish Dialects Welcome</h3>
-                  <p className={`text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>{content.community_dialects.join(', ')} - {content.community_description}</p>
+                  <h3 className={`text-xl font-bold text-foreground mb-2 ${isKurdish ? 'font-kurdistan' : ''}`}>All Kurdish Dialects Welcome</h3>
+                  <p className={`text-muted-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>{content.community_dialects.join(', ')} - {content.community_description}</p>
                 </div>
               </div>
             </motion.div>
@@ -300,7 +300,7 @@ const LandingV2 = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 md:py-24 bg-black/20">
+      <section className="py-16 md:py-24 bg-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -308,10 +308,10 @@ const LandingV2 = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${isKurdish ? 'font-kurdistan' : ''}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold text-foreground mb-4 ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.how_it_works_title}
             </h2>
-            <p className={`text-lg text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>Three simple steps to start your journey</p>
+            <p className={`text-lg text-muted-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>Three simple steps to start your journey</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -324,12 +324,12 @@ const LandingV2 = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="relative"
               >
-                <div className={`bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 space-y-4 ${isRtl ? 'text-right' : ''}`}>
-                  <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
+                <div className={`bg-card backdrop-blur-lg border border-border rounded-2xl p-8 space-y-4 ${isRtl ? 'text-right' : ''}`}>
+                  <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-400">
                     {String(item.step).padStart(2, '0')}
                   </div>
-                  <h3 className={`text-xl font-bold text-white ${isKurdish ? 'font-kurdistan' : ''}`}>{item.title}</h3>
-                  <p className={`text-purple-200 ${isKurdish ? 'font-kurdistan' : ''}`}>{item.description}</p>
+                  <h3 className={`text-xl font-bold text-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>{item.title}</h3>
+                  <p className={`text-muted-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>{item.description}</p>
                 </div>
                 {index < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-pink-400 to-purple-400" />
@@ -355,18 +355,18 @@ const LandingV2 = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white/5 backdrop-blur-lg border border-white/20 rounded-3xl p-12 text-center space-y-6"
+            className="bg-card/50 backdrop-blur-lg border border-border rounded-3xl p-12 text-center space-y-6"
           >
-            <h2 className={`text-3xl md:text-4xl font-bold text-white ${isKurdish ? 'font-kurdistan' : ''}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold text-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.cta_title}
             </h2>
-            <p className={`text-lg text-purple-200 max-w-2xl mx-auto ${isKurdish ? 'font-kurdistan' : ''}`}>
+            <p className={`text-lg text-muted-foreground max-w-2xl mx-auto ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.cta_subtitle || 'Join thousands of Kurds from around the world finding love, friendship, and community on KurdMatch.'}
             </p>
             <Button 
               size="lg"
               onClick={() => navigate('/register')}
-              className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-12 rounded-full shadow-xl"
+              className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600 text-primary-foreground px-12 rounded-full shadow-xl"
             >
               {content.cta_button_text} <ArrowRight className={`${isRtl ? 'mr-2' : 'ml-2'} w-5 h-5`} />
             </Button>
@@ -375,7 +375,7 @@ const LandingV2 = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black/30 backdrop-blur-lg border-t border-white/20 py-12">
+      <footer className="bg-card/30 backdrop-blur-lg border-t border-border py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
@@ -383,9 +383,9 @@ const LandingV2 = () => {
                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
                   <Heart className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-xl font-bold text-white">KurdMatch</span>
+                <span className="text-xl font-bold text-foreground">KurdMatch</span>
               </div>
-              <p className="text-sm text-purple-200">
+              <p className="text-sm text-muted-foreground">
                 Connecting Kurdish hearts worldwide
               </p>
             </div>

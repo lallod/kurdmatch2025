@@ -9,7 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { createPost } from '@/api/posts';
 import { extractHashtags, updateHashtagUsage } from '@/api/hashtags';
 import { getUserGroups, addPostToGroup } from '@/api/groups';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Image, Video, Hash, Users, Loader2 } from 'lucide-react';
 
 interface CreatePostDialogProps {
@@ -19,7 +19,6 @@ interface CreatePostDialogProps {
 }
 
 const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange, onPostCreated }) => {
-  const { toast } = useToast();
   const [content, setContent] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [mediaType, setMediaType] = useState<'image' | 'video' | undefined>();
@@ -60,11 +59,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
     e.preventDefault();
     
     if (!content.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please enter some content',
-        variant: 'destructive'
-      });
+      toast.error('Please enter some content');
       return;
     }
 
@@ -83,10 +78,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
         );
       }
 
-      toast({
-        title: 'Success',
-        description: 'Post created successfully!'
-      });
+      toast.success('Post created successfully!');
       
       setContent('');
       setMediaUrl('');
@@ -95,11 +87,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
       onOpenChange(false);
       onPostCreated?.();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to create post',
-        variant: 'destructive'
-      });
+      toast.error('Failed to create post');
     } finally {
       setLoading(false);
     }
@@ -107,44 +95,44 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20 max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-card border-border max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-white text-2xl">Create Post</DialogTitle>
+          <DialogTitle className="text-foreground text-2xl">Create Post</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="content" className="text-white">What's on your mind?</Label>
+            <Label htmlFor="content" className="text-foreground">What's on your mind?</Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Share your thoughts..."
               rows={4}
-              className="resize-none bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              className="resize-none bg-accent/10 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="mediaUrl" className="text-white">Media URL (optional)</Label>
+            <Label htmlFor="mediaUrl" className="text-foreground">Media URL (optional)</Label>
             <Input
               id="mediaUrl"
               type="url"
               value={mediaUrl}
               onChange={(e) => setMediaUrl(e.target.value)}
               placeholder="https://example.com/image.jpg"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              className="bg-accent/10 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           {mediaUrl && (
             <div className="space-y-2">
-              <Label htmlFor="mediaType" className="text-white">Media Type</Label>
+              <Label htmlFor="mediaType" className="text-foreground">Media Type</Label>
               <Select
                 value={mediaType}
                 onValueChange={(value: 'image' | 'video') => setMediaType(value)}
               >
-                <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                <SelectTrigger className="bg-accent/10 border-border text-foreground">
                   <SelectValue placeholder="Select media type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -166,7 +154,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
           )}
 
           {mediaUrl && mediaType && (
-            <div className="rounded-lg overflow-hidden border border-white/20">
+            <div className="rounded-lg overflow-hidden border border-border">
               {mediaType === 'image' ? (
                 <img src={mediaUrl} alt="Preview" className="w-full h-auto max-h-64 object-cover" />
               ) : (
@@ -177,7 +165,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
 
           {hashtags.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
+              <Label className="text-foreground flex items-center gap-2">
                 <Hash className="w-4 h-4" />
                 Detected Hashtags
               </Label>
@@ -185,7 +173,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
                 {hashtags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 rounded-full bg-purple-500/30 border border-purple-500/50 text-purple-200 text-sm"
+                    className="px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-muted-foreground text-sm"
                   >
                     #{tag}
                   </span>
@@ -196,15 +184,15 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
 
           {userGroups.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
+              <Label className="text-foreground flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Post to Groups (Optional)
               </Label>
-              <div className="space-y-2 max-h-32 overflow-y-auto bg-white/5 rounded-lg p-3 border border-white/10">
+              <div className="space-y-2 max-h-32 overflow-y-auto bg-accent/5 rounded-lg p-3 border border-border/10">
                 {userGroups.map((membership: any) => (
                   <label
                     key={membership.group_id}
-                    className="flex items-center gap-3 p-2 rounded hover:bg-white/10 cursor-pointer transition-colors"
+                    className="flex items-center gap-3 p-2 rounded hover:bg-accent/10 cursor-pointer transition-colors"
                   >
                     <Checkbox
                       checked={selectedGroups.includes(membership.group_id)}
@@ -214,7 +202,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
                       {membership.groups?.icon && (
                         <span className="text-lg">{membership.groups.icon}</span>
                       )}
-                      <span className="text-white text-sm">{membership.groups?.name}</span>
+                      <span className="text-foreground text-sm">{membership.groups?.name}</span>
                     </div>
                   </label>
                 ))}

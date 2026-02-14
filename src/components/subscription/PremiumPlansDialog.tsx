@@ -67,15 +67,15 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20 text-white mx-3 sm:mx-4">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-card border-border text-foreground mx-3 sm:mx-4">
         <DialogHeader className="text-center">
-          <div className="mx-auto mb-3 sm:mb-4 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-            <Crown className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
+          <div className="mx-auto mb-3 sm:mb-4 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-primary to-pink-400 rounded-full flex items-center justify-center">
+            <Crown className="h-7 w-7 sm:h-8 sm:w-8 text-primary-foreground" />
           </div>
-          <DialogTitle className="text-2xl sm:text-3xl font-bold text-white">
+          <DialogTitle className="text-2xl sm:text-3xl font-bold text-foreground">
             Choose Your Premium Plan
           </DialogTitle>
-          <DialogDescription className="text-purple-200 text-base sm:text-lg">
+          <DialogDescription className="text-muted-foreground text-base sm:text-lg">
             Unlock premium features and boost your dating success
           </DialogDescription>
         </DialogHeader>
@@ -86,9 +86,9 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
               key={plan.id} 
               className={`relative overflow-hidden ${
                 plan.popular 
-                  ? 'bg-white/20 border-2 border-pink-400' 
-                  : 'bg-white/10 border border-white/20'
-              } backdrop-blur-sm hover:bg-white/25 transition-all duration-200`}
+                  ? 'bg-accent/20 border-2 border-primary' 
+                  : 'bg-accent/10 border border-border'
+              } backdrop-blur-sm hover:bg-accent/25 transition-all duration-200`}
             >
               {plan.popular && (
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -100,19 +100,19 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
               )}
               
               <CardHeader className="text-center pb-3 sm:pb-4">
-                <CardTitle className="text-xl sm:text-2xl font-bold text-white">
+                <CardTitle className="text-xl sm:text-2xl font-bold text-foreground">
                   {plan.name}
                 </CardTitle>
                 <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-3xl sm:text-4xl font-bold text-white">{plan.price}</span>
-                  <span className="text-sm sm:text-base text-purple-200">{plan.period}</span>
+                  <span className="text-3xl sm:text-4xl font-bold text-foreground">{plan.price}</span>
+                  <span className="text-sm sm:text-base text-muted-foreground">{plan.period}</span>
                 </div>
               </CardHeader>
 
               <CardContent className="space-y-3 sm:space-y-4">
                 <ul className="space-y-3">
                   {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2 text-purple-100">
+                    <li key={index} className="flex items-center gap-2 text-muted-foreground">
                       <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
                       <span className="text-sm">{feature}</span>
                     </li>
@@ -123,8 +123,8 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
                   onClick={() => onSelectPlan(plan.id)}
                   className={`w-full h-10 sm:h-11 font-semibold text-sm sm:text-base rounded-full transition-all duration-200 ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white'
-                      : 'bg-white/20 hover:bg-white/30 text-white border border-white/30'
+                      ? 'bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600 text-primary-foreground'
+                      : 'bg-accent/20 hover:bg-accent/30 text-foreground border border-border'
                   }`}
                 >
                   {plan.popular ? (
@@ -144,19 +144,19 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
         <div className="mt-6 sm:mt-8 text-center">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex items-center gap-2 sm:gap-3 justify-center">
-              <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-purple-300" />
-              <span className="text-purple-200 text-xs sm:text-sm">Profile View Insights</span>
+              <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+              <span className="text-muted-foreground text-xs sm:text-sm">Profile View Insights</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 justify-center">
-              <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-pink-300" />
-              <span className="text-purple-200 text-xs sm:text-sm">See Who Likes You</span>
+              <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              <span className="text-muted-foreground text-xs sm:text-sm">See Who Likes You</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 justify-center">
               <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-blue-300" />
-              <span className="text-purple-200 text-xs sm:text-sm">Priority Matching</span>
+              <span className="text-muted-foreground text-xs sm:text-sm">Priority Matching</span>
             </div>
           </div>
-          <p className="text-purple-300 text-xs sm:text-sm">
+          <p className="text-muted-foreground text-xs sm:text-sm">
             Cancel anytime • Secure payment • 30-day money-back guarantee
           </p>
         </div>

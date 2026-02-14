@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface DeletePostDialogProps {
   open: boolean;
@@ -25,7 +25,7 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
   postId,
   onSuccess
 }) => {
-  const { toast } = useToast();
+  
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -36,20 +36,13 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
       const { deletePost } = await import('@/api/posts');
       await deletePost(postId);
       
-      toast({
-        title: 'Success',
-        description: 'Post deleted successfully'
-      });
+      toast.success('Post deleted successfully');
       
       onSuccess();
       onOpenChange(false);
     } catch (error) {
       console.error('Error deleting post:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete post',
-        variant: 'destructive'
-      });
+      toast.error('Failed to delete post');
     } finally {
       setIsDeleting(false);
     }
@@ -57,17 +50,17 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
+      <AlertDialogContent className="bg-card border-border">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-white">Delete Post</AlertDialogTitle>
-          <AlertDialogDescription className="text-white/70">
+          <AlertDialogTitle className="text-foreground">Delete Post</AlertDialogTitle>
+          <AlertDialogDescription className="text-muted-foreground">
             Are you sure you want to delete this post? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel 
             disabled={isDeleting}
-            className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+            className="bg-accent/10 border-border text-foreground hover:bg-accent/20"
           >
             Cancel
           </AlertDialogCancel>

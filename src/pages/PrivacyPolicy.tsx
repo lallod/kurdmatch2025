@@ -6,24 +6,24 @@ const PrivacyPolicy = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Button 
           variant="ghost" 
-          className="text-white mb-6"
+          className="text-foreground mb-6"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
 
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20">
-          <h1 className="text-3xl font-bold text-white mb-6">Privacy Policy</h1>
-          <p className="text-purple-200 mb-8">Last updated: December 2024</p>
+        <div className="bg-card backdrop-blur-md rounded-xl p-8 border border-border">
+          <h1 className="text-3xl font-bold text-foreground mb-6">Privacy Policy</h1>
+          <p className="text-muted-foreground mb-8">Last updated: December 2024</p>
 
-          <div className="space-y-8 text-purple-100">
+          <div className="space-y-8 text-muted-foreground">
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">1. Introduction</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">1. Introduction</h2>
               <p>
                 Welcome to KurdMatch. We respect your privacy and are committed to protecting your personal data. 
                 This privacy policy explains how we collect, use, and safeguard your information when you use our dating platform.
@@ -31,7 +31,7 @@ const PrivacyPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">2. Information We Collect</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">2. Information We Collect</h2>
               <p className="mb-3">We collect information you provide directly to us, including:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Account information (name, email, phone number, date of birth)</li>
@@ -43,7 +43,7 @@ const PrivacyPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">3. How We Use Your Information</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">3. How We Use Your Information</h2>
               <p className="mb-3">We use the information we collect to:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Provide, maintain, and improve our services</li>
@@ -55,7 +55,7 @@ const PrivacyPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">4. Information Sharing</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">4. Information Sharing</h2>
               <p>
                 We do not sell your personal information. We may share your information with:
               </p>
@@ -67,7 +67,7 @@ const PrivacyPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">5. Data Security</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">5. Data Security</h2>
               <p>
                 We implement appropriate technical and organizational measures to protect your personal data 
                 against unauthorized access, alteration, disclosure, or destruction.
@@ -75,7 +75,7 @@ const PrivacyPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">6. Your Rights</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">6. Your Rights</h2>
               <p className="mb-3">You have the right to:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Access your personal data</li>
@@ -87,7 +87,7 @@ const PrivacyPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">7. Cookies</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">7. Cookies</h2>
               <p>
                 We use cookies and similar technologies to enhance your experience, 
                 analyze usage, and assist in our marketing efforts.
@@ -95,7 +95,7 @@ const PrivacyPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-white mb-3">8. Contact Us</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-3">8. Contact Us</h2>
               <p>
                 If you have any questions about this Privacy Policy, please contact us through our 
                 Help & Support center or email us at privacy@kurdmatch.com.
