@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Search, Eye, Trash2, Mail, MailOpen, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAdminMessages } from '../hooks/useAdminMessages';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const MessagesPage = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -17,7 +17,7 @@ const MessagesPage = () => {
   const [filterStatus, setFilterStatus] = React.useState<'all' | 'read' | 'unread'>('all');
   const [currentPage, setCurrentPage] = React.useState(1);
   const { messages, loading, totalCount, fetchMessages, deleteMessage } = useAdminMessages();
-  const { toast } = useToast();
+  
 
   React.useEffect(() => {
     fetchMessages(currentPage, 10, searchTerm, filterStatus);
@@ -31,16 +31,9 @@ const MessagesPage = () => {
   const handleDelete = async (messageId: string) => {
     const success = await deleteMessage(messageId);
     if (success) {
-      toast({
-        title: "Message deleted",
-        description: "The message has been successfully deleted.",
-      });
+      toast.success("Message deleted successfully");
     } else {
-      toast({
-        title: "Error",
-        description: "Failed to delete message.",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete message");
     }
   };
 

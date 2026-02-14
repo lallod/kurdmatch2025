@@ -66,25 +66,25 @@ const RolesPage = () => {
         </TabsContent>
 
         <TabsContent value="system">
-          <Card>
+          <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle>System Roles</CardTitle>
-              <CardDescription>Built-in roles with predefined permissions</CardDescription>
+              <CardTitle className="text-white">System Roles</CardTitle>
+              <CardDescription className="text-white/60">Built-in roles with predefined permissions</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>System roles content will appear here.</p>
+              <p className="text-white/60">System roles content will appear here.</p>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="custom">
-          <Card>
+          <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle>Custom Roles</CardTitle>
-              <CardDescription>User-defined roles with custom permissions</CardDescription>
+              <CardTitle className="text-white">Custom Roles</CardTitle>
+              <CardDescription className="text-white/60">User-defined roles with custom permissions</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Custom roles content will appear here.</p>
+              <p className="text-white/60">Custom roles content will appear here.</p>
             </CardContent>
           </Card>
         </TabsContent>

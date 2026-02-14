@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAdminDataExports } from '../hooks/useAdminDataExports';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { 
   Table, 
   TableBody, 
@@ -66,7 +66,7 @@ const ExportsPage = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [newExportOpen, setNewExportOpen] = useState(false);
   const { exports: exportJobs, loading, refetch, createExport } = useAdminDataExports();
-  const { toast } = useToast();
+  
 
   // Filter exports based on search term and type
   const filteredExports = exportJobs.filter(job => {
@@ -119,7 +119,7 @@ const ExportsPage = () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
-    toast({ title: "Data refreshed" });
+    toast.success("Data refreshed");
   };
 
   const handleDownload = (exportId: string) => {
@@ -127,7 +127,7 @@ const ExportsPage = () => {
     if (exportJob?.file_url) {
       window.open(exportJob.file_url, '_blank');
     } else {
-      toast({ title: "File not available", variant: "destructive" });
+      toast.error("File not available");
     }
   };
 

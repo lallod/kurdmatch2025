@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Users, MessageSquare, ImageIcon, Activity } from 'lucide-react';
 import StatCard from './StatCard';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface StatsOverviewProps {
   timeRange: string;
@@ -59,7 +59,7 @@ const getDefaultStats = (): DashboardStat[] => [
 const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
   const [stats, setStats] = useState<DashboardStat[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  
 
   useEffect(() => {
     const loadStats = async () => {

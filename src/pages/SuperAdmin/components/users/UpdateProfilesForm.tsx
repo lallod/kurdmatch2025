@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, Users, AlertTriangle } from 'lucide-react';
 import { DialogFooter } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface UpdateProfilesFormProps {
@@ -13,26 +13,18 @@ interface UpdateProfilesFormProps {
 
 const UpdateProfilesForm: React.FC<UpdateProfilesFormProps> = ({ onSuccess, onClose }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { toast } = useToast();
+  
 
   const handleUpdateProfiles = async () => {
     setIsLoading(true);
 
     try {
       // This feature is no longer available - show message to user
-      toast({
-        title: "Feature Disabled",
-        description: "Profile updating has been disabled. This system now only works with real user data.",
-        variant: "default",
-      });
+      toast.info("Profile updating has been disabled. This system now only works with real user data.");
       onClose();
     } catch (error) {
       console.error('Error:', error);
-      toast({
-        title: "Information",
-        description: "Profile updating is no longer available in real data mode.",
-        variant: "default",
-      });
+      toast.info("Profile updating is no longer available in real data mode.");
     } finally {
       setIsLoading(false);
     }

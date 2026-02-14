@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 import { QuestionItem } from './types';
 import { initialQuestions } from './data/sampleQuestions';
 import { systemQuestions } from './data/systemQuestions';
@@ -13,7 +13,7 @@ import {
 } from './utils/questionOperations';
 
 export const useQuestions = () => {
-  const { toast } = useToast();
+  
   // Combine system questions with initial questions
   const allQuestions = [...systemQuestions, ...initialQuestions];
   const [questions, setQuestions] = useState<QuestionItem[]>(allQuestions);
@@ -31,11 +31,7 @@ export const useQuestions = () => {
     // Don't allow selecting system fields
     const question = questions.find(q => q.id === id);
     if (question?.isSystemField) {
-      toast({
-        title: "Cannot select system field",
-        description: "System fields cannot be modified in bulk operations",
-        variant: "destructive"
-      });
+      toast.error("System fields cannot be modified in bulk operations");
       return;
     }
     
@@ -65,10 +61,7 @@ export const useQuestions = () => {
     setSelectedQuestions([]);
     setIsSelectAll(false);
     
-    toast({
-      title: "Success",
-      description: `${selectedQuestions.length} questions deleted successfully`,
-    });
+    toast.success(`${selectedQuestions.length} questions deleted successfully`);
   };
 
   const handleBulkToggleEnabled = (enable: boolean) => {
@@ -76,10 +69,7 @@ export const useQuestions = () => {
     
     setQuestions(prev => toggleQuestionsEnabled(prev, selectedQuestions, enable));
     
-    toast({
-      title: "Success",
-      description: `${selectedQuestions.length} questions ${enable ? 'enabled' : 'disabled'} successfully`,
-    });
+    toast.success(`${selectedQuestions.length} questions ${enable ? 'enabled' : 'disabled'} successfully`);
   };
 
   // Individual operations
@@ -87,11 +77,7 @@ export const useQuestions = () => {
     // Don't allow deleting system fields
     const question = questions.find(q => q.id === id);
     if (question?.isSystemField) {
-      toast({
-        title: "Cannot delete system field",
-        description: "System fields are required for user registration",
-        variant: "destructive"
-      });
+      toast.error("System fields are required for user registration");
       return;
     }
     
@@ -100,10 +86,7 @@ export const useQuestions = () => {
     // Also remove from selected if it was selected
     setSelectedQuestions(prev => prev.filter(qId => qId !== id));
     
-    toast({
-      title: "Success",
-      description: "Question deleted successfully",
-    });
+    toast.success("Question deleted successfully");
   };
 
   const handleUpdateQuestion = (updatedQuestion: QuestionItem) => {
@@ -121,10 +104,7 @@ export const useQuestions = () => {
       setPreviewQuestion(updatedQuestion);
     }
     
-    toast({
-      title: "Success",
-      description: "Question updated successfully",
-    });
+    toast.success("Question updated successfully");
   };
 
   const handleAddQuestion = (newQuestionData: Partial<QuestionItem>) => {
@@ -135,18 +115,11 @@ export const useQuestions = () => {
       // Set the new question as the preview
       setPreviewQuestion(newQuestion);
       
-      toast({
-        title: "Success",
-        description: "New question added successfully",
-      });
+      toast.success("New question added successfully");
       
       return true;
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add question",
-        variant: "destructive"
-      });
+      toast.error(error instanceof Error ? error.message : "Failed to add question");
       return false;
     }
   };

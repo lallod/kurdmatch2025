@@ -47,7 +47,6 @@ const SettingsPage = () => {
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [localSettings, setLocalSettings] = useState<Record<string, any>>({});
 
-  // Initialize local settings from database
   useEffect(() => {
     if (settings) {
       const settingsMap: Record<string, any> = {};
@@ -89,24 +88,24 @@ const SettingsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">System Settings</h1>
+        <h1 className="text-3xl font-bold text-white">System Settings</h1>
         <div className="flex gap-2">
           <Dialog open={isResetConfirmOpen} onOpenChange={setIsResetConfirmOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2" disabled={resetToDefaults.isPending}>
+              <Button variant="outline" className="gap-2 border-white/10 text-white hover:bg-white/5" disabled={resetToDefaults.isPending}>
                 <RefreshCw size={16} className={resetToDefaults.isPending ? 'animate-spin' : ''} />
                 Reset to Defaults
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-[#141414] border-white/10 text-white">
               <DialogHeader>
-                <DialogTitle>Reset Settings</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-white">Reset Settings</DialogTitle>
+                <DialogDescription className="text-white/60">
                   This will reset all settings to their default values. This action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsResetConfirmOpen(false)}>
+                <Button variant="outline" onClick={() => setIsResetConfirmOpen(false)} className="border-white/10 text-white hover:bg-white/5">
                   Cancel
                 </Button>
                 <Button variant="destructive" onClick={handleResetConfirm} disabled={resetToDefaults.isPending}>
@@ -124,7 +123,7 @@ const SettingsPage = () => {
       </div>
 
       <Tabs defaultValue="general">
-        <TabsList className="grid grid-cols-4 w-[600px]">
+        <TabsList className="grid grid-cols-4 w-full max-w-[600px]">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="email">Email</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
@@ -134,24 +133,24 @@ const SettingsPage = () => {
         {/* General Settings Tab */}
         <TabsContent value="general">
           <div className="grid gap-6">
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>System Status</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-white">System Status</CardTitle>
+                <CardDescription className="text-white/60">
                   Control the overall behavior of the application
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="maintenance-mode">Maintenance Mode</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <Label htmlFor="maintenance-mode" className="text-white">Maintenance Mode</Label>
+                    <p className="text-sm text-white/60">
                       When enabled, only admins can access the site
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
                     {localSettings.maintenance_mode?.enabled && (
-                      <Badge variant="outline" className="text-yellow-500 border-yellow-200 bg-yellow-50">
+                      <Badge variant="outline" className="text-yellow-400 border-yellow-500/30 bg-yellow-500/10">
                         <AlertTriangle size={12} className="mr-1" />
                         Enabled
                       </Badge>
@@ -166,10 +165,8 @@ const SettingsPage = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="user-registration">User Registration</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Allow new users to register
-                    </p>
+                    <Label htmlFor="user-registration" className="text-white">User Registration</Label>
+                    <p className="text-sm text-white/60">Allow new users to register</p>
                   </div>
                   <Switch
                     id="user-registration"
@@ -180,10 +177,8 @@ const SettingsPage = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="photo-uploads">Photo Uploads</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Allow users to upload new photos
-                    </p>
+                    <Label htmlFor="photo-uploads" className="text-white">Photo Uploads</Label>
+                    <p className="text-sm text-white/60">Allow users to upload new photos</p>
                   </div>
                   <Switch
                     id="photo-uploads"
@@ -194,10 +189,8 @@ const SettingsPage = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="message-system">Messaging System</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Enable messaging between users
-                    </p>
+                    <Label htmlFor="message-system" className="text-white">Messaging System</Label>
+                    <p className="text-sm text-white/60">Enable messaging between users</p>
                   </div>
                   <Switch
                     id="message-system"
@@ -208,37 +201,37 @@ const SettingsPage = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>App Configuration</CardTitle>
-                <CardDescription>
-                  Basic application settings
-                </CardDescription>
+                <CardTitle className="text-white">App Configuration</CardTitle>
+                <CardDescription className="text-white/60">Basic application settings</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="app-name">Application Name</Label>
+                  <Label htmlFor="app-name" className="text-white">Application Name</Label>
                   <Input 
                     id="app-name" 
                     value={localSettings.app_name?.value || ''} 
                     onChange={(e) => handleSettingChange('app_name', { value: e.target.value })}
+                    className="bg-white/5 border-white/10 text-white"
                   />
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="support-email">Support Email</Label>
+                  <Label htmlFor="support-email" className="text-white">Support Email</Label>
                   <Input 
                     id="support-email" 
                     type="email" 
                     value={localSettings.support_email?.value || ''} 
                     onChange={(e) => handleSettingChange('support_email', { value: e.target.value })}
+                    className="bg-white/5 border-white/10 text-white"
                   />
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="date-format">Date Format</Label>
+                  <Label htmlFor="date-format" className="text-white">Date Format</Label>
                   <Select defaultValue="mm/dd/yyyy">
-                    <SelectTrigger id="date-format">
+                    <SelectTrigger id="date-format" className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select date format" />
                     </SelectTrigger>
                     <SelectContent>
@@ -250,9 +243,9 @@ const SettingsPage = () => {
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="timezone">Default Timezone</Label>
+                  <Label htmlFor="timezone" className="text-white">Default Timezone</Label>
                   <Select defaultValue="utc">
-                    <SelectTrigger id="timezone">
+                    <SelectTrigger id="timezone" className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select timezone" />
                     </SelectTrigger>
                     <SelectContent>
@@ -271,75 +264,46 @@ const SettingsPage = () => {
         {/* Email Settings Tab */}
         <TabsContent value="email">
           <div className="grid gap-6">
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>Email Configuration</CardTitle>
-                <CardDescription>
-                  Configure your email server settings
-                </CardDescription>
+                <CardTitle className="text-white">Email Configuration</CardTitle>
+                <CardDescription className="text-white/60">Configure your email server settings</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="smtp-host">SMTP Host</Label>
-                    <Input 
-                      id="smtp-host" 
-                      value={localSettings.smtp_host?.value || ''} 
-                      onChange={(e) => handleSettingChange('smtp_host', { value: e.target.value })}
-                    />
+                    <Label htmlFor="smtp-host" className="text-white">SMTP Host</Label>
+                    <Input id="smtp-host" value={localSettings.smtp_host?.value || ''} onChange={(e) => handleSettingChange('smtp_host', { value: e.target.value })} className="bg-white/5 border-white/10 text-white" />
                   </div>
-                  
                   <div className="grid gap-2">
-                    <Label htmlFor="smtp-port">SMTP Port</Label>
-                    <Input 
-                      id="smtp-port" 
-                      value={localSettings.smtp_port?.value || ''} 
-                      onChange={(e) => handleSettingChange('smtp_port', { value: e.target.value })}
-                    />
+                    <Label htmlFor="smtp-port" className="text-white">SMTP Port</Label>
+                    <Input id="smtp-port" value={localSettings.smtp_port?.value || ''} onChange={(e) => handleSettingChange('smtp_port', { value: e.target.value })} className="bg-white/5 border-white/10 text-white" />
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="smtp-username">SMTP Username</Label>
-                    <Input 
-                      id="smtp-username" 
-                      value={localSettings.smtp_username?.value || ''} 
-                      onChange={(e) => handleSettingChange('smtp_username', { value: e.target.value })}
-                    />
+                    <Label htmlFor="smtp-username" className="text-white">SMTP Username</Label>
+                    <Input id="smtp-username" value={localSettings.smtp_username?.value || ''} onChange={(e) => handleSettingChange('smtp_username', { value: e.target.value })} className="bg-white/5 border-white/10 text-white" />
                   </div>
-                  
                   <div className="grid gap-2">
-                    <Label htmlFor="smtp-password">SMTP Password</Label>
-                    <Input 
-                      id="smtp-password" 
-                      type="password" 
-                      placeholder="••••••••••••"
-                      value={localSettings.smtp_password?.value || ''} 
-                      onChange={(e) => handleSettingChange('smtp_password', { value: e.target.value })}
-                    />
+                    <Label htmlFor="smtp-password" className="text-white">SMTP Password</Label>
+                    <Input id="smtp-password" type="password" placeholder="••••••••••••" value={localSettings.smtp_password?.value || ''} onChange={(e) => handleSettingChange('smtp_password', { value: e.target.value })} className="bg-white/5 border-white/10 text-white" />
                   </div>
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="from-email">From Email Address</Label>
-                  <Input 
-                    id="from-email" 
-                    value={localSettings.from_email?.value || ''} 
-                    onChange={(e) => handleSettingChange('from_email', { value: e.target.value })}
-                  />
+                  <Label htmlFor="from-email" className="text-white">From Email Address</Label>
+                  <Input id="from-email" value={localSettings.from_email?.value || ''} onChange={(e) => handleSettingChange('from_email', { value: e.target.value })} className="bg-white/5 border-white/10 text-white" />
                 </div>
                 
                 <div className="flex items-center space-x-2">
-                  <Switch
-                    id="smtp-encryption"
-                    defaultChecked
-                  />
-                  <Label htmlFor="smtp-encryption">Use SSL/TLS Encryption</Label>
+                  <Switch id="smtp-encryption" defaultChecked />
+                  <Label htmlFor="smtp-encryption" className="text-white">Use SSL/TLS Encryption</Label>
                 </div>
                 
                 <div className="flex justify-end">
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="gap-2 border-white/10 text-white hover:bg-white/5">
                     <Mail size={16} />
                     Test Email Configuration
                   </Button>
@@ -347,54 +311,34 @@ const SettingsPage = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>Notification Preferences</CardTitle>
-                <CardDescription>
-                  Configure what system notifications to send
-                </CardDescription>
+                <CardTitle className="text-white">Notification Preferences</CardTitle>
+                <CardDescription className="text-white/60">Configure what system notifications to send</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="daily-digest">Daily Digest</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Send daily summary of site activity
-                    </p>
+                    <Label htmlFor="daily-digest" className="text-white">Daily Digest</Label>
+                    <p className="text-sm text-white/60">Send daily summary of site activity</p>
                   </div>
-                  <Switch
-                    id="daily-digest"
-                    checked={localSettings.daily_digest?.enabled || false}
-                    onCheckedChange={(checked) => handleSettingChange('daily_digest', { enabled: checked })}
-                  />
+                  <Switch id="daily-digest" checked={localSettings.daily_digest?.enabled || false} onCheckedChange={(checked) => handleSettingChange('daily_digest', { enabled: checked })} />
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="new-user-notifications">New User Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive notifications for new registrations
-                    </p>
+                    <Label htmlFor="new-user-notifications" className="text-white">New User Notifications</Label>
+                    <p className="text-sm text-white/60">Receive notifications for new registrations</p>
                   </div>
-                  <Switch
-                    id="new-user-notifications"
-                    checked={localSettings.new_user_notifications?.enabled || false}
-                    onCheckedChange={(checked) => handleSettingChange('new_user_notifications', { enabled: checked })}
-                  />
+                  <Switch id="new-user-notifications" checked={localSettings.new_user_notifications?.enabled || false} onCheckedChange={(checked) => handleSettingChange('new_user_notifications', { enabled: checked })} />
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="report-alerts">Report Alerts</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Get notified when content is reported
-                    </p>
+                    <Label htmlFor="report-alerts" className="text-white">Report Alerts</Label>
+                    <p className="text-sm text-white/60">Get notified when content is reported</p>
                   </div>
-                  <Switch
-                    id="report-alerts"
-                    checked={localSettings.report_alerts?.enabled || false}
-                    onCheckedChange={(checked) => handleSettingChange('report_alerts', { enabled: checked })}
-                  />
+                  <Switch id="report-alerts" checked={localSettings.report_alerts?.enabled || false} onCheckedChange={(checked) => handleSettingChange('report_alerts', { enabled: checked })} />
                 </div>
               </CardContent>
             </Card>
@@ -404,58 +348,37 @@ const SettingsPage = () => {
         {/* Security Settings Tab */}
         <TabsContent value="security">
           <div className="grid gap-6">
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>Security Controls</CardTitle>
-                <CardDescription>
-                  Configure security settings for the application
-                </CardDescription>
+                <CardTitle className="text-white">Security Controls</CardTitle>
+                <CardDescription className="text-white/60">Configure security settings for the application</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="two-factor-auth">Two-Factor Authentication</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Require 2FA for admin accounts
-                    </p>
+                    <Label htmlFor="two-factor-auth" className="text-white">Two-Factor Authentication</Label>
+                    <p className="text-sm text-white/60">Require 2FA for admin accounts</p>
                   </div>
-                  <Switch
-                    id="two-factor-auth"
-                    checked={localSettings.two_factor_auth?.enabled || false}
-                    onCheckedChange={(checked) => handleSettingChange('two_factor_auth', { enabled: checked })}
-                  />
+                  <Switch id="two-factor-auth" checked={localSettings.two_factor_auth?.enabled || false} onCheckedChange={(checked) => handleSettingChange('two_factor_auth', { enabled: checked })} />
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="ip-restriction">IP Restriction</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Limit admin access to specific IP addresses
-                    </p>
+                    <Label htmlFor="ip-restriction" className="text-white">IP Restriction</Label>
+                    <p className="text-sm text-white/60">Limit admin access to specific IP addresses</p>
                   </div>
-                  <Switch
-                    id="ip-restriction"
-                    checked={localSettings.ip_restriction?.enabled || false}
-                    onCheckedChange={(checked) => handleSettingChange('ip_restriction', { enabled: checked })}
-                  />
+                  <Switch id="ip-restriction" checked={localSettings.ip_restriction?.enabled || false} onCheckedChange={(checked) => handleSettingChange('ip_restriction', { enabled: checked })} />
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="password-expiry">Password Expiry (days)</Label>
-                  <Input 
-                    id="password-expiry" 
-                    value={localSettings.password_expiry?.days || '90'}
-                    onChange={(e) => handleSettingChange('password_expiry', { days: parseInt(e.target.value) })}
-                  />
+                  <Label htmlFor="password-expiry" className="text-white">Password Expiry (days)</Label>
+                  <Input id="password-expiry" value={localSettings.password_expiry?.days || '90'} onChange={(e) => handleSettingChange('password_expiry', { days: parseInt(e.target.value) })} className="bg-white/5 border-white/10 text-white" />
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="session-timeout">Session Timeout (minutes)</Label>
-                  <Select 
-                    value={localSettings.session_timeout?.minutes?.toString() || '30'}
-                    onValueChange={(value) => handleSettingChange('session_timeout', { minutes: parseInt(value) })}
-                  >
-                    <SelectTrigger id="session-timeout">
+                  <Label htmlFor="session-timeout" className="text-white">Session Timeout (minutes)</Label>
+                  <Select value={localSettings.session_timeout?.minutes?.toString() || '30'} onValueChange={(value) => handleSettingChange('session_timeout', { minutes: parseInt(value) })}>
+                    <SelectTrigger id="session-timeout" className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select timeout period" />
                     </SelectTrigger>
                     <SelectContent>
@@ -469,23 +392,19 @@ const SettingsPage = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>Account Security</CardTitle>
-                <CardDescription>
-                  Additional security settings for user accounts
-                </CardDescription>
+                <CardTitle className="text-white">Account Security</CardTitle>
+                <CardDescription className="text-white/60">Additional security settings for user accounts</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Minimum Password Length</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Require at least this many characters
-                    </p>
+                    <Label className="text-white">Minimum Password Length</Label>
+                    <p className="text-sm text-white/60">Require at least this many characters</p>
                   </div>
                   <Select defaultValue="8">
-                    <SelectTrigger className="w-[100px]">
+                    <SelectTrigger className="w-[100px] bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -499,13 +418,11 @@ const SettingsPage = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Failed Login Attempts</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Number of attempts before account lockout
-                    </p>
+                    <Label className="text-white">Failed Login Attempts</Label>
+                    <p className="text-sm text-white/60">Number of attempts before account lockout</p>
                   </div>
                   <Select defaultValue="5">
-                    <SelectTrigger className="w-[100px]">
+                    <SelectTrigger className="w-[100px] bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -518,13 +435,11 @@ const SettingsPage = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Account Lockout Duration</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Time before allowing login attempts again
-                    </p>
+                    <Label className="text-white">Account Lockout Duration</Label>
+                    <p className="text-sm text-white/60">Time before allowing login attempts again</p>
                   </div>
                   <Select defaultValue="30">
-                    <SelectTrigger className="w-[100px]">
+                    <SelectTrigger className="w-[100px] bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -538,7 +453,7 @@ const SettingsPage = () => {
                 
                 <div className="flex items-center space-x-2">
                   <Switch id="enforce-complexity" defaultChecked />
-                  <Label htmlFor="enforce-complexity">Enforce Password Complexity</Label>
+                  <Label htmlFor="enforce-complexity" className="text-white">Enforce Password Complexity</Label>
                 </div>
               </CardContent>
             </Card>
@@ -548,37 +463,24 @@ const SettingsPage = () => {
         {/* API Settings Tab */}
         <TabsContent value="api">
           <div className="grid gap-6">
-            <Card>
+            <Card className="bg-[#141414] border-white/5">
               <CardHeader>
-                <CardTitle>API Configuration</CardTitle>
-                <CardDescription>
-                  Manage API access and settings
-                </CardDescription>
+                <CardTitle className="text-white">API Configuration</CardTitle>
+                <CardDescription className="text-white/60">Manage API access and settings</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="rate-limiting">Rate Limiting</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Limit number of API requests per minute
-                    </p>
+                    <Label htmlFor="rate-limiting" className="text-white">Rate Limiting</Label>
+                    <p className="text-sm text-white/60">Limit number of API requests per minute</p>
                   </div>
-                  <Switch
-                    id="rate-limiting"
-                    checked={localSettings.rate_limiting?.enabled || false}
-                    onCheckedChange={(checked) => handleSettingChange('rate_limiting', { enabled: checked })}
-                  />
+                  <Switch id="rate-limiting" checked={localSettings.rate_limiting?.enabled || false} onCheckedChange={(checked) => handleSettingChange('rate_limiting', { enabled: checked })} />
                 </div>
                 
                 {(localSettings.rate_limiting?.enabled || false) && (
                   <div className="grid gap-2">
-                    <Label htmlFor="requests-per-minute">Requests Per Minute</Label>
-                    <Input 
-                      id="requests-per-minute" 
-                      type="number"
-                      value={localSettings.requests_per_minute?.value || '100'}
-                      onChange={(e) => handleSettingChange('requests_per_minute', { value: parseInt(e.target.value) })}
-                    />
+                    <Label htmlFor="requests-per-minute" className="text-white">Requests Per Minute</Label>
+                    <Input id="requests-per-minute" type="number" value={localSettings.requests_per_minute?.value || '100'} onChange={(e) => handleSettingChange('requests_per_minute', { value: parseInt(e.target.value) })} className="bg-white/5 border-white/10 text-white" />
                   </div>
                 )}
               </CardContent>

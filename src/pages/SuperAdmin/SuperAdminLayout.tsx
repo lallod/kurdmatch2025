@@ -183,9 +183,9 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
             {!collapsed && (
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">L</span>
+                  <span className="text-white text-sm font-bold">K</span>
                 </div>
-                <span className="text-white font-semibold">LoveAffection</span>
+                <span className="text-white font-semibold">KurdMatch</span>
               </div>
             )}
             <Button 
@@ -261,7 +261,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
           </Button>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">L</span>
+              <span className="text-white text-xs font-bold">K</span>
             </div>
             <span className="text-white font-semibold text-sm">Admin</span>
           </div>

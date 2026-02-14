@@ -6,12 +6,12 @@ import EngagementChart from './EngagementChart';
 import UserDistributionChart from './UserDistributionChart';
 import { EngagementData } from '@/api/dashboard';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const ActivityTabs = () => {
   const [engagementData, setEngagementData] = useState<EngagementData[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  
 
   useEffect(() => {
     const loadEngagementData = async () => {
@@ -35,11 +35,7 @@ const ActivityTabs = () => {
         if (!data || data.length === 0) {
           console.log('No engagement data found in the database');
           setEngagementData([]);
-          toast({
-            title: 'No engagement data',
-            description: 'There is no user engagement data available in the database.',
-            variant: 'default',
-          });
+          toast.info('No user engagement data available');
           return;
         }
         
@@ -56,11 +52,7 @@ const ActivityTabs = () => {
         setEngagementData(formattedData);
       } catch (error) {
         console.error('Failed to load engagement data:', error);
-        toast({
-          title: 'Error loading engagement data',
-          description: 'Could not load user engagement data. Please try again.',
-          variant: 'destructive',
-        });
+        toast.error('Could not load user engagement data');
         setEngagementData([]);
       } finally {
         setLoading(false);
@@ -68,7 +60,7 @@ const ActivityTabs = () => {
     };
 
     loadEngagementData();
-  }, [toast]);
+  }, []);
 
   return (
     <Tabs defaultValue="users" className="w-full">

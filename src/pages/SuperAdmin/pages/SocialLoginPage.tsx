@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, AlertTriangle, Facebook, Mail } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface Provider {
   id: string;
@@ -20,7 +20,7 @@ interface Provider {
 
 const ProviderCard = ({ provider }: { provider: Provider }) => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  
   const [clientId, setClientId] = useState(provider.client_id || '');
   const [clientSecret, setClientSecret] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -29,12 +29,12 @@ const ProviderCard = ({ provider }: { provider: Provider }) => {
     mutationFn: (updates: Partial<Provider>) => updateSocialLoginProvider(provider.id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['socialLoginProviders'] });
-      toast({ title: 'Success', description: `${provider.id} provider updated.` });
+      toast.success(`${provider.id} provider updated`);
       setIsEditing(false);
       setClientSecret('');
     },
     onError: (error: Error) => {
-      toast({ title: 'Error', description: `Failed to update provider: ${error.message}`, variant: 'destructive' });
+      toast.error(`Failed to update provider: ${error.message}`);
     }
   });
 

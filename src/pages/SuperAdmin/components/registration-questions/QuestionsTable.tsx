@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { QuestionItem } from './types';
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface QuestionsTableProps {
@@ -37,7 +37,7 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
   onDelete,
   onPreview
 }) => {
-  const { toast } = useToast();
+  
 
   return (
     <div className="border border-white/5 rounded-lg overflow-hidden">
@@ -144,10 +144,7 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
                       size="icon"
                       onClick={() => {
                         onPreview(question);
-                        toast({
-                          title: "Preview",
-                          description: `Previewing: ${question.text}`,
-                        });
+                        toast.info(`Previewing: ${question.text}`);
                       }}
                     >
                       <Eye className="h-4 w-4" />
