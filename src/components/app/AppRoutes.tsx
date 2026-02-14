@@ -23,7 +23,7 @@ import Messages from '@/pages/Messages';
 import MyProfile from '@/pages/MyProfile';
 import UserProfile from '@/pages/UserProfile';
 import ProfilePage from '@/pages/ProfilePage';
-import Admin from '@/pages/Admin';
+
 import SuperAdmin from '@/pages/SuperAdmin';
 import DataGenerator from '@/pages/DataGenerator';
 import SuperAdminLogin from '@/components/auth/SuperAdminLogin';
@@ -195,7 +195,7 @@ export const AppRoutes: React.FC = () => {
       />
       <Route 
         path="/admin" 
-        element={<ProtectedRoute><Admin /></ProtectedRoute>} 
+        element={<Navigate to="/super-admin" replace />} 
       />
       <Route 
         path="/data-generator" 
