@@ -1,101 +1,149 @@
 
+# KurdMatch Design & Consistency Audit -- Full Fix Plan
 
-# Separating Social Profile from Dating Profile -- Architecture Plan
+## Summary of Issues Found
 
-## The Problem
+After a deep scan of the entire codebase, I identified **6 major categories** of problems that need fixing.
 
-Right now, KurdMatch has two profile views that share the same data:
-1. **Instagram-style profile** (`/profile/:id`) -- social feed with posts, stories, fans
-2. **Dating profile** (`/profile` via Swipe) -- detailed dating card with compatibility scores
+---
 
-Both pull from the same `profiles` table, and both are equally accessible. There is no distinction between "social browsing" and "dating discovery," making it too easy for free users to find and browse people without going through the dating/matching flow.
+## 1. CRITICAL: Two Competing Color Themes (23+ pages affected)
 
-## Proposed Solution
+The app has a **Midnight Rose** theme defined in CSS variables (`--background`, `--foreground`, etc.) but **23 pages** still use the OLD hardcoded purple gradient:
 
-Introduce a **dual-layer visibility system** where the social profile is the public-facing "Instagram" layer, and the dating profile details are gated behind the Swipe/Discovery matching flow with premium filters.
-
-### How It Works
-
-**Layer 1 -- Social Profile (public to all logged-in users)**
-- Visible at `/profile/:id`
-- Shows: name, avatar, posts, stories, fans, basic bio
-- Does NOT show: age, location, occupation, religion, body type, compatibility score, relationship goals
-- Accessible via feed interactions (liking posts, following, stories)
-
-**Layer 2 -- Dating Profile (gated)**
-- Only accessible through the Swipe page or Discovery "People" tab
-- Shows full dating details: age, location, compatibility %, relationship goals, lifestyle, values
-- Free users: can only find people via random Swipe cards (no search by name, no filters)
-- Premium users: unlock advanced filters (age, region, religion, body type) on both Swipe and Discovery People tab
-
-### Key Rules
-- The Discovery Feed (`/discovery`) shows posts/stories only -- no ability to search for people by name or browse profiles directly
-- The Discovery People tab (`/discovery-old`) and Swipe page are the only ways to discover new dating profiles
-- Free users get randomized profiles with no filters
-- Premium users get filters + ability to see who liked/viewed them
-
-## Technical Changes
-
-### 1. Create a `profile_visibility` settings column
-Add a `dating_profile_visible` boolean to the `profiles` table (default `true`). This lets users opt out of appearing in dating discovery while keeping their social profile active.
-
-### 2. Modify InstagramProfile (Social Profile)
-- Hide sensitive dating fields (age, exact location, relationship goals, compatibility) from the public social view
-- Show only: name, bio, posts, stories, photos, fans count
-- Add a "See Dating Profile" button that only appears when viewing through Swipe/Discovery context (via navigation state)
-
-### 3. Gate Discovery People Tab
-- Remove name/text search from the People tab for free users
-- Free users see a randomized grid with no filter controls
-- Premium users see the full filter panel (SmartFilters)
-- When a free user taps a profile card in Discovery, show a blurred preview with a "Subscribe to see more" prompt instead of full details
-
-### 4. Modify Profile Navigation Flow
-- From Swipe card tap: navigate to full dating profile (`/profile` with `profileId` state) -- shows everything
-- From feed/post/story tap: navigate to social profile (`/profile/:id`) -- shows limited info
-- From Discovery People grid: navigate based on subscription tier
-
-### 5. Subscription Gating Logic
-Create a `useProfileAccess` hook that checks:
-- Is the viewer a premium subscriber?
-- Did they arrive from the Swipe/matching flow?
-- Are they already matched with this person?
-
-Based on this, return which fields to show/hide.
-
-## Technical Details
-
-### Files to Create
-- `src/hooks/useProfileAccess.ts` -- centralized access control hook
-- `src/components/profile/BlurredProfileOverlay.tsx` -- premium upsell overlay for locked profiles
-
-### Files to Modify
-- `src/pages/InstagramProfile.tsx` -- hide dating-specific fields, add conditional rendering
-- `src/pages/Discovery.tsx` -- gate filters behind premium, disable name search for free users
-- `src/pages/DiscoveryFeed.tsx` -- ensure no people-search capability, feed-only
-- `src/components/instagram/ProfileHeader.tsx` -- conditionally show/hide age, location
-- `src/components/instagram/ProfileAbout.tsx` -- conditionally show/hide dating details
-- `src/pages/Profile.tsx` -- keep as full dating profile, only accessible via swipe context
-- `src/hooks/useDiscoveryProfiles.ts` -- add subscription-based query limits (free = 10 profiles, premium = unlimited)
-
-### Database Migration
-```sql
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS dating_profile_visible boolean DEFAULT true;
+```
+bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900
 ```
 
-### Access Control Matrix
+These pages look completely different from the modern pages (Discovery, MyProfile, DiscoveryFeed, Matches, Notifications) that correctly use `bg-background`.
 
-| Feature | Free | Basic | Premium | Gold |
-|---|---|---|---|---|
-| View social profiles | Yes | Yes | Yes | Yes |
-| See posts/stories in feed | Yes | Yes | Yes | Yes |
-| Swipe (random, no filters) | Yes | Yes | Yes | Yes |
-| Discovery People grid | Limited (10) | Unlimited | Unlimited | Unlimited |
-| Search by name | No | No | No | No |
-| Advanced filters | No | Yes | Yes | Yes |
-| See who liked/viewed you | No | Yes | Yes | Yes |
-| View full dating profile from Discovery | No | Blurred | Full | Full |
-| Compatibility scores | No | Basic | Full | Full |
+**Pages using the WRONG old theme:**
+- Profile.tsx (dating profile)
+- AdvancedSearch.tsx
+- NotificationSettings.tsx
+- PrivacySettings.tsx
+- CompatibilityInsights.tsx
+- PhoneVerification.tsx
+- Subscription.tsx (partially)
+- TermsOfService.tsx
+- CommunityGuidelines.tsx (partially)
+- Landing.tsx
+- LandingV2.tsx
+- CreateSuperAdmin.tsx
+- Register.tsx
+- Admin/UserManagement.tsx
+- Admin/PlatformAnalytics.tsx
+- Admin/SystemSettings.tsx
+- All modals (LimitReachedModal, PremiumFeatureModal, MatchModal)
+- MatchPopup.tsx
+- AIWingmanPanel.tsx
+- TrendingHashtags.tsx
 
-This approach keeps both profiles useful but makes the dating side the premium experience, encouraging subscriptions while the social side drives engagement and retention.
+**Fix:** Replace all hardcoded `from-purple-900 via-purple-800 to-pink-900` backgrounds with `bg-background` and replace `text-white` with `text-foreground`, `bg-black/20` headers with `bg-background/80 backdrop-blur-xl`, and `border-white/20` with `border-border/10`. This makes every page use the same Midnight Rose CSS variables.
 
+---
+
+## 2. Inconsistent Popups and Dialogs
+
+The Dialog component (`dialog.tsx`) does NOT have mobile-optimized styling. It uses centered positioning which can look bad on small screens.
+
+**Problems:**
+- Dialogs use `max-w-lg` which is too wide for mobile
+- No rounded corners matching the app theme (rounded-3xl)
+- Modals use old purple gradients instead of `bg-card`
+- MatchPopup uses its own custom Dialog styling separate from other modals
+- The Boost modal in Swipe.tsx is a raw `div` overlay, not using any shared component
+
+**Fix:**
+- Update `DialogContent` base class to include `rounded-3xl max-w-[calc(100vw-2rem)] sm:max-w-lg` for mobile fit
+- Convert all modal backgrounds from hardcoded purple gradients to `bg-card border-border`
+- Standardize all popups to use the same component pattern
+
+---
+
+## 3. Inconsistent Bottom Padding (pb-XX values)
+
+Different pages use different bottom padding to account for the BottomNavigation bar, making content get cut off on some pages:
+
+| Page | Padding |
+|------|---------|
+| Discovery.tsx | pb-28 |
+| DiscoveryFeed.tsx | pb-24 |
+| InstagramProfile.tsx | pb-28 |
+| MyProfile.tsx | pb-28 |
+| Matches.tsx | pb-24 |
+| Notifications.tsx | pb-24 |
+| Events.tsx | pb-24 |
+| GroupsList.tsx | pb-20 |
+| DiscoveryNearby.tsx | pb-20 |
+
+**Fix:** Standardize ALL pages to `pb-24` (96px) which cleanly clears the 56px nav bar plus comfortable spacing. Apply this consistently.
+
+---
+
+## 4. Inconsistent Header Styles
+
+Headers across pages vary wildly:
+
+| Page | Header Height | Blur | Border | Max Width |
+|------|-------------|------|--------|-----------|
+| DiscoveryFeed | h-12 | backdrop-blur-2xl | border-b border-border/10 | max-w-md |
+| Discovery | h-14 | backdrop-blur-xl | none | max-w-md |
+| Matches | h-11 | none | border-b border-border/30 | max-w-lg |
+| Notifications | h-11 | none | border-b border-border/30 | max-w-lg |
+| MyProfile | h-12 | backdrop-blur-xl | border-b border-border/10 | max-w-md |
+| Old pages | py-4 | bg-black/20 | border-white/10 | max-w-4xl |
+
+**Fix:** Standardize all headers to: `h-12 bg-background/80 backdrop-blur-xl border-b border-border/10` with `max-w-md mx-auto px-4`.
+
+---
+
+## 5. Mixed Toast Libraries
+
+The app uses TWO toast systems simultaneously:
+- `sonner` (used via `toast()` from `sonner` in Swipe.tsx, Matches.tsx, Discovery.tsx, etc.)
+- `@/hooks/use-toast` (used via `useToast()` in Notifications.tsx, DiscoveryFeed.tsx, admin pages, etc.)
+
+This means toasts appear in different positions and with different styling depending on which page you are on.
+
+**Fix:** Standardize on `sonner` (the newer one) across all pages. Replace all `useToast()` imports with `toast` from `sonner`.
+
+---
+
+## 6. Image Display & Scrolling Issues
+
+- The `Swipe.tsx` page uses `overflow-hidden` on the main container, which can prevent scrolling on desktop browsers
+- Profile cards in Discovery use `aspect-[3/4]` which is good for mobile but images may appear cropped on wider screens
+- No `object-position` is set on profile images, so faces can be cut off
+
+**Fix:**
+- Add `object-position: center top` to all profile images (faces are usually at the top)
+- Ensure Swipe page allows vertical scroll on desktop while maintaining card behavior on mobile
+- Add `will-change-transform` to card animations for smoother performance
+
+---
+
+## Technical Implementation
+
+### Files to modify (theme fix -- largest batch):
+All 23+ pages listed in section 1, converting from hardcoded purple gradients to theme variables.
+
+### Files to modify (dialog/popup fix):
+- `src/components/ui/dialog.tsx` -- mobile-friendly base styles
+- `src/components/modals/LimitReachedModal.tsx` -- theme colors
+- `src/components/modals/PremiumFeatureModal.tsx` -- theme colors
+- `src/components/modals/MatchModal.tsx` -- theme colors
+- `src/components/MatchPopup.tsx` -- theme colors
+
+### Files to modify (consistency fixes):
+- All page files for standardized `pb-24` and header styles
+- Toast migration across ~15 files from `useToast` to `sonner`
+
+### Estimated scope:
+- ~40 files need color/theme corrections
+- ~15 files need toast standardization
+- ~10 files need header/padding normalization
+- 4 modal/dialog files need mobile optimization
+- 1 base UI component update (dialog.tsx)
+
+This will make the entire app feel like one cohesive, native mobile experience with the Midnight Rose theme applied everywhere, minimal popups, and smooth scrolling on all devices.
