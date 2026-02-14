@@ -1,210 +1,196 @@
 
 
-# Implementation Roadmap: Next Features for KurdMatch
+# Midnight Rose Theme: Dark Purple x Pink
 
 ## Overview
 
-This plan outlines the next set of features to implement, prioritized by user value and competitive parity with Tinder/Muzmatch. All five phases of the original modernization plan are complete, so we're now expanding functionality.
+A comprehensive visual refresh applying the "Midnight Rose" design system across the entire app. No functionality changes -- only colors, surfaces, spacing, elevation, and component styling.
 
 ---
 
-## Phase 6: Premium Feature Completion (Priority: High)
+## 1. Core CSS Variables (src/index.css)
 
-### 6.1 Rewind/Undo Last Swipe
+Replace the existing `:root` and `.dark` CSS variable blocks with the Midnight Rose palette:
 
-**Current State**: Button shows "Rewind is a premium feature" toast but does nothing.
+| Token | Current | New (Midnight Rose) |
+|-------|---------|-------------------|
+| `--background` | white / dark gray | `#140F1F` (271 33% 9%) |
+| `--card` | white / dark gray | `#281C3D` (268 37% 17%) |
+| `--popover` | white / dark gray | `#1E1630` (265 35% 14%) |
+| `--primary` | 346 82% 66% | `#F43F8E` (336 90% 60%) |
+| `--primary-foreground` | white | white |
+| `--secondary` | light gray | `#1E1630` surface |
+| `--muted` | light gray | `#1E1630` surface |
+| `--muted-foreground` | gray | lavender `#9B8BB4` |
+| `--accent` | pink 85% | `#FB6FA9` soft pink |
+| `--border` | gray | `#3A2D52` subtle purple |
+| `--input` | gray | `#3A2D52` |
+| `--ring` | pink | `#F43F8E` |
 
-**Implementation**:
-- Store last swiped profile in state/database before moving to next
-- Create `swipe_history` table to track recent swipes
-- On rewind: restore previous profile, delete the like/pass action
-- Respect daily limits (3 for Basic, 10 for Premium, unlimited for Gold)
+Dark mode becomes the **default** (move dark values to `:root`). Light mode kept as secondary in `.light` class.
 
-**Files to Create/Modify**:
-- `src/hooks/useSwipeHistory.ts` - Track and restore swipes
-- `src/api/swipes.ts` - Database operations for swipe history
-- `src/pages/Swipe.tsx` - Integrate rewind functionality
-
----
-
-### 6.2 Travel Mode (Gold Feature)
-
-**What It Does**: Users can set their location to a different city/country to see profiles from that area before traveling.
-
-**Implementation**:
-- Add `travel_location` and `travel_mode_active` columns to profiles
-- UI in settings to enable travel mode and select destination
-- Modify `getMatchRecommendations` to use travel location when active
-- Show "Traveling to X" badge on profile
-
-**Files to Create/Modify**:
-- `src/components/settings/TravelModeSettings.tsx`
-- `src/api/profiles.ts` - Add travel mode filter logic
-- Database migration for travel columns
-
----
-
-### 6.3 Read Receipts (Premium Feature)
-
-**What It Does**: Show blue checkmarks when messages are read.
-
-**Implementation**:
-- Messages table already has `read` column
-- Add UI indicator (double checkmark) for read status
-- Real-time updates when recipient reads message
-- Toggle in settings (Premium only)
-
-**Files to Modify**:
-- `src/pages/Messages.tsx` - Add read receipt indicators
-- `src/components/settings/PrivacySettings.tsx` - Toggle
-
----
-
-## Phase 7: Video & Voice Calls (Priority: High)
-
-### 7.1 WebRTC Integration
-
-**Why**: Major competitive feature missing vs Tinder/Muzmatch.
-
-**Architecture**:
-```text
-+----------------+     +------------------+     +----------------+
-|   User A       |<--->| Supabase Realtime|<--->|   User B       |
-|   (Browser)    |     | (Signaling)      |     |   (Browser)    |
-+----------------+     +------------------+     +----------------+
-        |                                              |
-        +---------- WebRTC Peer Connection ------------+
+Add new custom properties:
+```
+--surface: 268 37% 17%;
+--surface-secondary: 265 35% 14%;
+--gradient-brand: linear-gradient(135deg, #2A1E45, #F43F8E);
 ```
 
-**Implementation**:
-- Create `calls` table (caller_id, callee_id, status, type, started_at)
-- Supabase Realtime for signaling (offer/answer/ICE candidates)
-- STUN/TURN server configuration (can use free Google STUN)
-- Call UI components (incoming call modal, active call overlay)
+---
 
-**Files to Create**:
-- `src/hooks/useWebRTC.ts` - WebRTC connection management
-- `src/hooks/useCallSignaling.ts` - Supabase realtime signaling
-- `src/components/calls/IncomingCallModal.tsx`
-- `src/components/calls/ActiveCallOverlay.tsx`
-- `src/components/calls/CallButton.tsx` (add to Messages)
+## 2. Tailwind Config (tailwind.config.ts)
 
-**Premium Gating**: Free users get 5 min/day, Premium unlimited.
+- Add `surface` and `surface-secondary` color tokens
+- Update tinder color palette to use Midnight Rose pinks (`#F43F8E`, `#FB6FA9`)
+- Update gradient utilities to use brand gradient
+- Set default dark mode
 
 ---
 
-## Phase 8: Cultural Features (Priority: Medium)
+## 3. Bottom Tab Bar (src/components/BottomNavigation.tsx)
 
-### 8.1 Chaperone Mode (Muzmatch-Inspired)
+Current: `bg-black/[0.17] backdrop-blur-md border-t border-white/20`
 
-**What It Does**: Allow a trusted third party (family member/friend) to observe chat conversations for cultural/religious reasons.
-
-**Implementation**:
-- Add `chaperone_id` column to profiles
-- Invite system for chaperone (email/link)
-- Chaperone gets read-only access to specified conversations
-- UI toggle in privacy settings
-- Badge showing "Chaperone Active" on profile
-
-**Files to Create**:
-- `src/pages/ChaperoneSettings.tsx`
-- `src/components/chat/ChaperoneBadge.tsx`
-- `src/api/chaperone.ts`
+New:
+- Floating bar with `rounded-[28px]` corners, `mx-4 mb-4`
+- Background: `bg-[#1E1630]/80 backdrop-blur-xl`
+- No top border line
+- Active icon: pink glow (`text-[#F43F8E]` + `drop-shadow`)
+- Inactive icon: muted lavender (`text-[#9B8BB4]`)
 
 ---
 
-### 8.2 Marriage Intentions Tracker
+## 4. Card System (src/components/ui/card.tsx)
 
-**What It Does**: Detailed tracking of marriage timeline expectations (3-6 months, 1-2 years, etc.)
+Current: `rounded-lg border bg-card shadow-sm`
 
-**Implementation**:
-- Add `marriage_timeline` field to profiles
-- Display prominently on profile cards
-- Filter option in discovery
-
----
-
-## Phase 9: Engagement Features (Priority: Medium)
-
-### 9.1 Virtual Gifts System
-
-**What It Does**: Send virtual gifts (roses, hearts, custom Kurdish symbols) to matches.
-
-**Implementation**:
-- `virtual_gifts` table (sender, recipient, gift_type, message)
-- Gift shop UI with Kurdish-themed items
-- Notification when gift received
-- Premium users get free gifts, others purchase
-
-**Files to Create**:
-- `src/pages/GiftShop.tsx`
-- `src/components/chat/SendGiftButton.tsx`
-- `src/components/notifications/GiftNotification.tsx`
+New:
+- `rounded-3xl` (24px corners)
+- No visible border
+- Background: `bg-[#281C3D]`
+- Soft shadow: `shadow-[0_4px_24px_rgba(0,0,0,0.3)]`
+- Floating visual separation from background
 
 ---
 
-### 9.2 Date Scheduler
+## 5. Button System (src/components/ui/button.tsx)
 
-**What It Does**: Propose and manage date invitations within the app.
-
-**Implementation**:
-- `date_proposals` table (proposer, recipient, location, time, status)
-- Integration with device calendar
-- Location suggestions based on both users' areas
-- Reminder notifications
+Update variants:
+- **default (primary)**: `bg-[#F43F8E]` white text, `rounded-3xl`, subtle outer glow `shadow-[0_0_20px_rgba(244,63,142,0.3)]`
+- **secondary**: `bg-[#281C3D]` pink text, no heavy border
+- **ghost/outline**: updated to purple surface tones
+- Add `active:scale-95` tap animation to all variants
 
 ---
 
-## Phase 10: Admin & Analytics (Priority: Low)
+## 6. Swipe Screen (src/pages/Swipe.tsx, src/components/swipe/*)
 
-### 10.1 Advanced User Analytics
-
-**Current State**: Basic stats in admin dashboard.
-
-**Enhancement**:
-- User retention charts
-- Match success rates by region/age
-- Message response times
-- Feature usage heatmaps
-
----
-
-### 10.2 A/B Testing Framework
-
-**What It Does**: Test different UI variations and features.
-
-**Implementation**:
-- Feature flags system
-- User cohort assignment
-- Metrics tracking per variation
+- Page background: deep purple gradient `bg-gradient-to-b from-[#140F1F] to-[#1E1630]`
+- Card bottom overlay: `from-[#140F1F]/90` instead of `from-black/80`
+- Intent badges: pink pill style
+- SwipeActions buttons:
+  - Like (Heart): `bg-[#F43F8E]` with pink glow
+  - Pass (X): `bg-[#281C3D]` muted purple
+  - Super Like: keep blue but soften
+  - Rewind/Boost: muted purple surface with pink accents
+  - All buttons: circular, soft shadow, even horizontal spacing
 
 ---
 
-## Summary Table
+## 7. Messages Screen (src/pages/Messages.tsx)
 
-| Phase | Feature | Tier Gate | Effort |
-|-------|---------|-----------|--------|
-| 6.1 | Rewind/Undo Swipe | Basic+ | Medium |
-| 6.2 | Travel Mode | Gold | Medium |
-| 6.3 | Read Receipts | Premium+ | Low |
-| 7.1 | Video/Voice Calls | Premium+ | High |
-| 8.1 | Chaperone Mode | All | Medium |
-| 8.2 | Marriage Timeline | All | Low |
-| 9.1 | Virtual Gifts | All (paid) | Medium |
-| 9.2 | Date Scheduler | Premium+ | Medium |
-| 10.1 | Admin Analytics | Admin | Medium |
-| 10.2 | A/B Testing | Admin | High |
+- Background: `bg-[#140F1F]`
+- Sent bubbles: `bg-[#F43F8E]` pink
+- Received bubbles: `bg-[#281C3D]` muted purple
+- Large bubble radius (`rounded-2xl`)
+- Input field: pill shape, `bg-[#1E1630]` surface, pink send icon
+- Conversation list cards: `bg-[#281C3D]` with no borders
 
 ---
 
-## Recommended Implementation Order
+## 8. Profile Screen (src/pages/MyProfile.tsx)
 
-1. **Rewind/Undo** - Quick win, already has UI
-2. **Read Receipts** - Low effort, high perceived value
-3. **Travel Mode** - Gold tier differentiator
-4. **Video/Voice Calls** - Major competitive feature
-5. **Chaperone Mode** - Cultural differentiator for Kurdish audience
-6. **Virtual Gifts** - Monetization opportunity
-7. **Date Scheduler** - Nice-to-have engagement feature
-8. **Admin Analytics** - Internal improvement
+- Top header: subtle purple gradient overlay
+- Photo grid: `rounded-2xl` corners
+- Section containers: floating cards with `bg-[#281C3D]`, `rounded-3xl`
+- Chips: `rounded-full`, default `bg-[#1E1630]`, active `bg-[#F43F8E]`
+- Compatibility circle: purple base ring, pink animated progress
+
+---
+
+## 9. Match Popup (src/components/MatchPopup.tsx)
+
+- Dialog background: brand gradient `from-[#2A1E45] to-[#F43F8E]`
+- CTA button: gradient pink
+- Keep existing animations
+
+---
+
+## 10. Subscription / Premium Screen (src/pages/Subscription.tsx)
+
+- Background: darker purple `bg-[#0E0A17]`
+- Centered layout
+- CTA: pink gradient button with outer glow
+- Subtle animated pink glow in background (CSS keyframe)
+- "Exclusive" premium feel
+
+---
+
+## 11. Discovery Feed (src/pages/Discovery.tsx, DiscoveryFeed.tsx)
+
+- Stories row: maintain horizontal scroll, update card backgrounds to `#281C3D`
+- Post cards: large rounded (`rounded-3xl`), image top, text below
+- Cards separated by 24px vertical spacing, no divider lines
+
+---
+
+## 12. Global Utility Classes (src/index.css)
+
+Update existing utilities:
+- `.glass` / `.glass-dark`: use `bg-[#1E1630]/60 backdrop-blur-xl`
+- `.neo-card`: update to purple surface
+- `.tinder-gradient`: `from-[#F43F8E] to-[#FB6FA9]`
+- `.premium-card`: purple glass effect
+- Add `.midnight-glow`: `shadow-[0_0_30px_rgba(244,63,142,0.15)]`
+
+---
+
+## 13. Swipe Config (src/config/swipe.ts)
+
+- Update border radius to `rounded-3xl`
+- Ensure card sizing stays the same (no layout changes)
+
+---
+
+## Files Modified (no new files created)
+
+| File | Change Type |
+|------|------------|
+| `src/index.css` | CSS variables + utility classes |
+| `tailwind.config.ts` | Color tokens + gradient |
+| `src/components/ui/card.tsx` | Card styling |
+| `src/components/ui/button.tsx` | Button variants |
+| `src/components/BottomNavigation.tsx` | Floating tab bar |
+| `src/components/swipe/SwipeActions.tsx` | Action button colors |
+| `src/components/swipe/SwipeCard.tsx` | Card overlay gradient |
+| `src/components/swipe/ProfileInfo.tsx` | Badge/text colors |
+| `src/pages/Swipe.tsx` | Page background |
+| `src/pages/Messages.tsx` | Bubble colors, input, background |
+| `src/pages/MyProfile.tsx` | Section cards, chips |
+| `src/pages/Subscription.tsx` | Premium dark purple bg |
+| `src/pages/Discovery.tsx` | Post card styling |
+| `src/pages/DiscoveryFeed.tsx` | Feed card styling |
+| `src/components/MatchPopup.tsx` | Gradient background |
+| `src/components/LoadingState.tsx` | Background gradient |
+| `src/config/swipe.ts` | Border radius update |
+
+---
+
+## Design Principles Followed
+
+- Spacious, soft, layered, floating
+- No pure black or pure white in dark mode
+- Gradient used sparingly (CTAs, match popup, premium, compatibility ring only)
+- Depth via shadow instead of divider lines
+- Dark mode is the primary experience
 
