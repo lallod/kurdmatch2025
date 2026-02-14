@@ -2,40 +2,55 @@ import React, { useState, useEffect } from 'react';
 import { Users, UserCheck, UserX, Ban, TrendingUp, TrendingDown } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+interface MonthlyPayment {
+  month: string;
+  amount: number;
+}
+
+interface MonthlyRegistration {
+  month: string;
+  male: number;
+  female: number;
+  other: number;
+}
 
 const DashboardNew = () => {
   const [stats, setStats] = useState({
     online: 0,
     active: 0,
     inactive: 0,
-    blocked: 0
+    blocked: 0,
+    totalPrev: 0,
+    activePrev: 0,
   });
+  const [earningsData, setEarningsData] = useState<MonthlyPayment[]>([]);
+  const [registrationsData, setRegistrationsData] = useState<MonthlyRegistration[]>([]);
+  const [totalEarnings, setTotalEarnings] = useState(0);
 
   useEffect(() => {
     fetchStats();
+    fetchEarnings();
+    fetchRegistrations();
   }, []);
 
   const fetchStats = async () => {
     try {
-      // Get total users
       const { count: totalCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
 
-      // Get active users (logged in within last 24 hours)
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const { count: activeCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .gte('last_active', oneDayAgo);
 
-      // Get blocked users
       const { count: blockedCount } = await supabase
         .from('blocked_users')
         .select('blocked_id', { count: 'exact', head: true });
 
-      // Get online users (last 5 minutes)
       const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
       const { count: onlineCount } = await supabase
         .from('profiles')
@@ -46,44 +61,73 @@ const DashboardNew = () => {
         online: onlineCount || 0,
         active: activeCount || 0,
         inactive: (totalCount || 0) - (activeCount || 0),
-        blocked: blockedCount || 0
+        blocked: blockedCount || 0,
+        totalPrev: 0,
+        activePrev: 0,
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
   };
 
-  // Mock data for earnings chart
-  const earningsData = [
-    { month: 'Jan', lastYear: 800, thisYear: 1100 },
-    { month: 'Feb', lastYear: 900, thisYear: 950 },
-    { month: 'Mar', lastYear: 950, thisYear: 1000 },
-    { month: 'Apr', lastYear: 1000, thisYear: 1050 },
-    { month: 'May', lastYear: 850, thisYear: 1000 },
-    { month: 'Jun', lastYear: 900, thisYear: 1100 },
-    { month: 'Jul', lastYear: 950, thisYear: 1000 },
-    { month: 'Aug', lastYear: 1000, thisYear: 1050 },
-    { month: 'Sep', lastYear: 1100, thisYear: 900 },
-    { month: 'Oct', lastYear: 1050, thisYear: 950 },
-    { month: 'Nov', lastYear: 1000, thisYear: 1000 },
-    { month: 'Dec', lastYear: 950, thisYear: 1100 }
-  ];
+  const fetchEarnings = async () => {
+    try {
+      const now = new Date();
+      const months: MonthlyPayment[] = [];
+      
+      for (let i = 11; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+        const monthName = date.toLocaleString('en', { month: 'short' });
 
-  // Mock data for registrations chart
-  const registrationsData = [
-    { month: 'Jan', male: 120, female: 140, other: 30 },
-    { month: 'Feb', male: 110, female: 150, other: 25 },
-    { month: 'Mar', male: 130, female: 160, other: 35 },
-    { month: 'Apr', male: 140, female: 170, other: 40 },
-    { month: 'May', male: 125, female: 155, other: 32 },
-    { month: 'Jun', male: 135, female: 165, other: 38 },
-    { month: 'Jul', male: 145, female: 175, other: 42 },
-    { month: 'Aug', male: 130, female: 160, other: 35 },
-    { month: 'Sep', male: 120, female: 150, other: 30 },
-    { month: 'Oct', male: 140, female: 170, other: 40 },
-    { month: 'Nov', male: 150, female: 180, other: 45 },
-    { month: 'Dec', male: 160, female: 190, other: 50 }
-  ];
+        const { data } = await supabase
+          .from('payments')
+          .select('amount')
+          .eq('status', 'completed')
+          .gte('created_at', date.toISOString())
+          .lt('created_at', nextMonth.toISOString());
+
+        const total = (data || []).reduce((sum, p) => sum + (p.amount || 0), 0);
+        months.push({ month: monthName, amount: total });
+      }
+
+      setEarningsData(months);
+      setTotalEarnings(months.reduce((s, m) => s + m.amount, 0));
+    } catch (error) {
+      console.error('Error fetching earnings:', error);
+    }
+  };
+
+  const fetchRegistrations = async () => {
+    try {
+      const now = new Date();
+      const months: MonthlyRegistration[] = [];
+
+      for (let i = 11; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+        const monthName = date.toLocaleString('en', { month: 'short' });
+
+        const { data } = await supabase
+          .from('profiles')
+          .select('gender')
+          .gte('created_at', date.toISOString())
+          .lt('created_at', nextMonth.toISOString());
+
+        const profiles = data || [];
+        months.push({
+          month: monthName,
+          male: profiles.filter(p => p.gender === 'male').length,
+          female: profiles.filter(p => p.gender === 'female').length,
+          other: profiles.filter(p => p.gender !== 'male' && p.gender !== 'female').length,
+        });
+      }
+
+      setRegistrationsData(months);
+    } catch (error) {
+      console.error('Error fetching registrations:', error);
+    }
+  };
 
   const statCards = [
     {
@@ -92,7 +136,6 @@ const DashboardNew = () => {
       icon: Users,
       color: 'from-red-500 to-orange-500',
       bgColor: 'bg-red-500/10',
-      trend: '+12%'
     },
     {
       title: 'Active Users',
@@ -100,7 +143,6 @@ const DashboardNew = () => {
       icon: UserCheck,
       color: 'from-green-500 to-emerald-500',
       bgColor: 'bg-green-500/10',
-      trend: '+8%'
     },
     {
       title: 'Inactive Users',
@@ -108,7 +150,6 @@ const DashboardNew = () => {
       icon: UserX,
       color: 'from-yellow-500 to-orange-500',
       bgColor: 'bg-yellow-500/10',
-      trend: '-3%'
     },
     {
       title: 'Blocked Users',
@@ -116,13 +157,11 @@ const DashboardNew = () => {
       icon: Ban,
       color: 'from-red-600 to-pink-600',
       bgColor: 'bg-red-600/10',
-      trend: '+2%'
     }
   ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
         <p className="text-white/60">Welcome back! Here's what's happening with your app today.</p>
@@ -136,36 +175,12 @@ const DashboardNew = () => {
             <Card key={index} className="bg-[#141414] border-white/5 p-6 hover:border-white/10 transition-all">
               <div className="flex items-start justify-between mb-4">
                 <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                  <Icon className={`w-6 h-6 bg-gradient-to-br ${stat.color} text-white`} style={{ 
-                    WebkitMaskImage: 'linear-gradient(white, white)',
-                    maskImage: 'linear-gradient(white, white)'
-                  }} />
-                </div>
-                <div className="flex items-center gap-1 text-xs">
-                  {stat.trend.startsWith('+') ? (
-                    <TrendingUp className="w-3 h-3 text-green-500" />
-                  ) : (
-                    <TrendingDown className="w-3 h-3 text-red-500" />
-                  )}
-                  <span className={stat.trend.startsWith('+') ? 'text-green-500' : 'text-red-500'}>
-                    {stat.trend}
-                  </span>
+                  <Icon className="w-6 h-6 text-white" />
                 </div>
               </div>
-              
               <div>
                 <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
                 <p className="text-white/50 text-sm">{stat.title}</p>
-              </div>
-
-              {/* User Avatars */}
-              <div className="flex -space-x-2 mt-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 border-2 border-[#141414]" />
-                ))}
-                <div className="w-7 h-7 rounded-full bg-white/10 border-2 border-[#141414] flex items-center justify-center">
-                  <span className="text-[10px] text-white/60">+</span>
-                </div>
               </div>
             </Card>
           );
@@ -178,21 +193,12 @@ const DashboardNew = () => {
         <Card className="bg-[#141414] border-white/5 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-white">Earning Overview</h3>
-            <div className="flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500" />
-                <span className="text-white/60">Last year</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-white/60" />
-                <span className="text-white/60">Year 2022</span>
-              </div>
-            </div>
           </div>
 
           <div className="mb-4">
             <div className="inline-block bg-white/10 rounded-lg px-3 py-1">
-              <span className="text-white font-semibold">$1100.50</span>
+              <span className="text-white font-semibold">${totalEarnings.toFixed(2)}</span>
+              <span className="text-white/40 text-xs ml-1">last 12 months</span>
             </div>
           </div>
 
@@ -201,16 +207,16 @@ const DashboardNew = () => {
               <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
               <XAxis dataKey="month" stroke="#ffffff40" style={{ fontSize: '12px' }} />
               <YAxis stroke="#ffffff40" style={{ fontSize: '12px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1a1a1a', 
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#1a1a1a',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '8px',
                   color: '#fff'
-                }} 
+                }}
+                formatter={(value: number) => [`$${value.toFixed(2)}`, 'Revenue']}
               />
-              <Line type="monotone" dataKey="lastYear" stroke="#ef4444" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="thisYear" stroke="#ffffff60" strokeWidth={2} dot={{ fill: '#fff', r: 4 }} />
+              <Line type="monotone" dataKey="amount" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -240,13 +246,13 @@ const DashboardNew = () => {
               <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
               <XAxis dataKey="month" stroke="#ffffff40" style={{ fontSize: '12px' }} />
               <YAxis stroke="#ffffff40" style={{ fontSize: '12px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1a1a1a', 
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#1a1a1a',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '8px',
                   color: '#fff'
-                }} 
+                }}
               />
               <Bar dataKey="male" fill="#ffffff60" radius={[4, 4, 0, 0]} />
               <Bar dataKey="female" fill="#ef4444" radius={[4, 4, 0, 0]} />
