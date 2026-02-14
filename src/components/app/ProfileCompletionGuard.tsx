@@ -73,7 +73,7 @@ export const ProfileCompletionGuard: React.FC<ProfileCompletionGuardProps> = ({ 
 
   // Redirect to profile completion if profile is incomplete
   if (isComplete === false) {
-    return <Navigate to="/complete-profile" replace />;
+    return <Navigate to="/my-profile" replace />;
   }
 
   // Allow access if profile is complete

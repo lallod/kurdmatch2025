@@ -16,125 +16,93 @@ interface EventCardProps {
 const EventCard: React.FC<EventCardProps> = ({ event, onJoin, onLeave }) => {
   const navigate = useNavigate();
 
-  const handleUsernameClick = () => {
-    navigate(`/profile/${event.user_id}`);
-  };
-
-  const handleEventClick = () => {
-    navigate(`/event/${event.id}`);
-  };
+  const handleUsernameClick = () => navigate(`/profile/${event.user_id}`);
+  const handleEventClick = () => navigate(`/event/${event.id}`);
 
   const handleJoinToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (event.is_attending) {
-      onLeave(event.id);
-    } else {
-      onJoin(event.id);
-    }
+    if (event.is_attending) onLeave(event.id);
+    else onJoin(event.id);
   };
 
   const isFull = event.max_attendees && event.attendees_count >= event.max_attendees;
 
   return (
     <div 
-      className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all animate-fade-in cursor-pointer"
+      className="bg-card rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all animate-fade-in cursor-pointer"
       onClick={handleEventClick}
     >
-      {/* Event Image */}
+      {/* Cover image */}
       {event.image_url && (
-        <div className="aspect-video overflow-hidden bg-gradient-to-br from-purple-900/50 to-pink-900/50">
+        <div className="aspect-video overflow-hidden bg-muted">
           <img 
             src={event.image_url} 
             alt={event.title}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              // Hide image container if it fails to load
-              e.currentTarget.parentElement!.style.display = 'none';
-            }}
+            onError={(e) => { e.currentTarget.parentElement!.style.display = 'none'; }}
           />
         </div>
       )}
 
-      <div className="p-5 space-y-4">
-        {/* Header with Host Info */}
+      <div className="p-4 space-y-3">
+        {/* Host row */}
         <div className="flex items-center gap-3">
           <Avatar 
-            className="w-10 h-10 cursor-pointer hover:ring-2 hover:ring-white/40 transition-all"
-            onClick={handleUsernameClick}
+            className="w-9 h-9 cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); handleUsernameClick(); }}
           >
             <AvatarImage src={event.profiles.profile_image} alt={event.profiles.name} />
-            <AvatarFallback className="bg-purple-500 text-white">{event.profiles.name[0]}</AvatarFallback>
+            <AvatarFallback className="bg-primary/20 text-primary text-sm">{event.profiles.name[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-1">
-              <button
-                onClick={handleUsernameClick}
-                className="font-semibold text-white hover:underline"
-              >
+              <button onClick={(e) => { e.stopPropagation(); handleUsernameClick(); }} className="font-semibold text-sm text-foreground hover:opacity-70">
                 {event.profiles.name}
               </button>
-              {event.profiles.verified && (
-                <CheckCircle className="w-4 h-4 text-pink-400 fill-pink-400" />
-              )}
+              {event.profiles.verified && <CheckCircle className="w-3.5 h-3.5 text-primary fill-primary" />}
             </div>
-            <p className="text-xs text-white/70">Event Host</p>
+            <p className="text-xs text-muted-foreground">Event Host</p>
           </div>
           {event.category && (
-            <Badge className="bg-pink-500/80 text-white border-0">
-              {event.category}
-            </Badge>
+            <Badge className="bg-primary/15 text-primary border-primary/20 text-xs">{event.category}</Badge>
           )}
         </div>
 
-        {/* Event Title & Description */}
-        <div className="space-y-2">
-          <h3 className="text-xl font-bold text-white">{event.title}</h3>
-          <p className="text-white/80 text-sm line-clamp-2">{event.description}</p>
+        {/* Title & description */}
+        <div>
+          <h3 className="text-lg font-bold text-foreground">{event.title}</h3>
+          <p className="text-muted-foreground text-sm line-clamp-2 mt-1">{event.description}</p>
         </div>
 
-        {/* Event Details */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-white/90">
-            <Calendar className="w-4 h-4 text-pink-400" />
-            <span className="text-sm">
-              {format(new Date(event.event_date), 'MMM d, yyyy • h:mm a')}
-            </span>
+        {/* Details */}
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Calendar className="w-4 h-4 text-primary" />
+            <span className="text-sm">{format(new Date(event.event_date), 'MMM d, yyyy • h:mm a')}</span>
           </div>
-          <div className="flex items-center gap-2 text-white/90">
-            <MapPin className="w-4 h-4 text-pink-400" />
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4 text-primary" />
             <span className="text-sm">{event.location}</span>
           </div>
-          <div className="flex items-center gap-2 text-white/90">
-            <Users className="w-4 h-4 text-pink-400" />
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Users className="w-4 h-4 text-primary" />
             <span className="text-sm">
-              {event.attendees_count} attending
-              {event.max_attendees && ` • ${event.max_attendees} max`}
+              {event.attendees_count} attending{event.max_attendees && ` • ${event.max_attendees} max`}
             </span>
           </div>
         </div>
 
-        {/* Join Button */}
+        {/* Join button — full width */}
         <Button
           onClick={handleJoinToggle}
-          disabled={!event.is_attending && isFull}
-          className={`w-full ${
+          disabled={!event.is_attending && !!isFull}
+          className={`w-full rounded-2xl h-11 font-semibold ${
             event.is_attending
-              ? 'bg-white/20 hover:bg-white/30 text-white'
-              : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white'
+              ? 'bg-muted hover:bg-muted/80 text-foreground'
+              : 'bg-primary hover:bg-primary/90 text-primary-foreground'
           }`}
         >
           {event.is_attending ? 'Going ✓' : isFull ? 'Event Full' : 'Join Event'}
-        </Button>
-        
-        <Button
-          variant="ghost"
-          className="w-full text-white hover:bg-white/20"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEventClick();
-          }}
-        >
-          View Details
         </Button>
       </div>
     </div>

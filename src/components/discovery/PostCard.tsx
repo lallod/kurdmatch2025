@@ -127,13 +127,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   return (
     <div className="animate-fade-in">
       {/* Header: avatar + name + more menu */}
-      <div className="flex items-center px-4 py-2.5">
+      <div className="flex items-center px-4 py-3">
         <Avatar 
-          className="w-8 h-8 cursor-pointer"
+          className="w-9 h-9 cursor-pointer ring-1 ring-border/50"
           onClick={handleUsernameClick}
         >
           <AvatarImage src={post.profiles.profile_image} alt={post.profiles.name} />
-          <AvatarFallback className="text-xs">{post.profiles.name[0]}</AvatarFallback>
+          <AvatarFallback className="text-xs bg-muted text-muted-foreground">{post.profiles.name[0]}</AvatarFallback>
         </Avatar>
         <div className="flex-1 ml-3">
           <button onClick={handleUsernameClick} className="font-semibold text-sm text-foreground hover:opacity-70">
@@ -142,14 +142,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           {post.profiles.verified && (
             <CheckCircle className="w-3.5 h-3.5 text-primary fill-primary inline ml-1" />
           )}
+          <p className="text-xs text-muted-foreground">
+            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+          </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-foreground h-8 w-8">
+            <Button variant="ghost" size="icon" className="text-muted-foreground h-10 w-10 rounded-full">
               <MoreVertical className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-card border-border">
+          <DropdownMenuContent align="end" className="bg-card border-border rounded-2xl">
             {currentUserId === post.user_id ? (
               <>
                 <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
@@ -173,34 +176,34 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         </DropdownMenu>
       </div>
 
-      {/* Full-bleed media */}
+      {/* Edge-to-edge media within card */}
       {post.media_url && (
         <div className="w-full">
           {post.media_type === 'image' ? (
-            <img src={post.media_url} alt="Post media" className="w-full h-auto max-h-[500px] object-cover" />
+            <img src={post.media_url} alt="Post media" className="w-full h-auto max-h-[480px] object-cover" />
           ) : (
-            <video src={post.media_url} controls className="w-full h-auto max-h-[500px]" />
+            <video src={post.media_url} controls className="w-full h-auto max-h-[480px]" />
           )}
         </div>
       )}
 
-      {/* Action row: Instagram layout */}
-      <div className="px-4 pt-2.5 pb-1">
+      {/* Action row — 28px icons, 48px touch targets */}
+      <div className="px-4 pt-3 pb-1.5">
         <div className="flex items-center">
-          <div className="flex items-center gap-4">
-            <button onClick={handleLike} className="group">
-              <Heart className={`w-6 h-6 transition-transform group-hover:scale-110 ${isLiked ? 'fill-primary text-primary' : 'text-foreground'}`} />
+          <div className="flex items-center gap-1">
+            <button onClick={handleLike} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <Heart className={`w-7 h-7 transition-all ${isLiked ? 'fill-primary text-primary scale-110' : 'text-foreground'}`} />
             </button>
-            <button onClick={() => setShowComments(!showComments)} className="group">
-              <MessageCircle className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
+            <button onClick={() => setShowComments(!showComments)} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <MessageCircle className="w-7 h-7 text-foreground" />
             </button>
-            <button onClick={() => setShowShareDialog(true)} className="group">
-              <Share2 className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
+            <button onClick={() => setShowShareDialog(true)} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <Share2 className="w-7 h-7 text-foreground" />
             </button>
           </div>
           <div className="ml-auto">
-            <button onClick={handleSaveToggle} className="group">
-              <Bookmark className={`w-6 h-6 transition-transform group-hover:scale-110 ${isSaved ? 'fill-foreground text-foreground' : 'text-foreground'}`} />
+            <button onClick={handleSaveToggle} className="h-12 w-12 flex items-center justify-center rounded-full active:scale-90 transition-transform">
+              <Bookmark className={`w-7 h-7 transition-all ${isSaved ? 'fill-foreground text-foreground' : 'text-foreground'}`} />
             </button>
           </div>
         </div>
@@ -208,27 +211,23 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
       {/* Likes count */}
       <div className="px-4 pb-1">
-        <span className="text-sm font-semibold text-foreground">{likesCount} likes</span>
+        <span className="text-sm font-bold text-foreground">{likesCount} likes</span>
       </div>
 
       {/* Caption */}
-      <div className="px-4 pb-1">
+      <div className="px-4 pb-1.5">
         <PostContent content={post.content} />
       </div>
 
       {/* Comments count */}
       {commentsCount > 0 && !showComments && (
-        <button onClick={() => setShowComments(true)} className="px-4 pb-1">
+        <button onClick={() => setShowComments(true)} className="px-4 pb-1.5">
           <span className="text-sm text-muted-foreground">View all {commentsCount} comments</span>
         </button>
       )}
 
-      {/* Timestamp */}
-      <div className="px-4 pb-3">
-        <span className="text-xs text-muted-foreground uppercase">
-          {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-        </span>
-      </div>
+      {/* Bottom padding */}
+      <div className="h-3" />
 
       {/* Comment Section */}
       {showComments && (
@@ -239,7 +238,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
       {/* Dialogs */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent className="bg-card border-border">
+        <DialogContent className="bg-card border-border rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-foreground text-xl flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-primary" />
@@ -247,7 +246,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
             </DialogTitle>
             <DialogDescription className="text-muted-foreground space-y-4">
               <p>Messaging is available to Premium and Gold members!</p>
-              <div className="bg-muted rounded-lg p-4 space-y-2">
+              <div className="bg-muted rounded-2xl p-4 space-y-2">
                 <p className="font-semibold text-foreground">Premium Benefits:</p>
                 <ul className="space-y-1 text-sm">
                   <li>✓ Send unlimited messages</li>
@@ -257,7 +256,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
                   <li>✓ 5 Rewinds per day</li>
                 </ul>
               </div>
-              <Button onClick={handleUpgrade} className="w-full">
+              <Button onClick={handleUpgrade} className="w-full rounded-2xl h-11">
                 Upgrade to Premium
               </Button>
             </DialogDescription>

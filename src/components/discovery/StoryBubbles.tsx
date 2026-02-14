@@ -10,11 +10,8 @@ interface StoryBubblesProps {
 }
 
 const StoryBubbles: React.FC<StoryBubblesProps> = ({ stories, onStoryClick, onAddStory }) => {
-  // Group stories by user
   const storiesByUser = stories.reduce((acc, story) => {
-    if (!acc[story.user_id]) {
-      acc[story.user_id] = [];
-    }
+    if (!acc[story.user_id]) acc[story.user_id] = [];
     acc[story.user_id].push(story);
     return acc;
   }, {} as Record<string, Story[]>);
@@ -22,36 +19,36 @@ const StoryBubbles: React.FC<StoryBubblesProps> = ({ stories, onStoryClick, onAd
   const userStories = Object.values(storiesByUser).map(stories => stories[0]);
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-      {/* Add Story Button */}
+    <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+      {/* Add Story — 72px with profile overlay */}
       <button
         onClick={onAddStory}
-        className="flex flex-col items-center gap-1 min-w-[72px] group"
+        className="flex flex-col items-center gap-1.5 min-w-[76px] group"
       >
         <div className="relative">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-            <Plus className="w-6 h-6 text-white" />
+          <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-primary to-accent/60 flex items-center justify-center shadow-md">
+            <Plus className="w-7 h-7 text-primary-foreground" />
           </div>
         </div>
-        <span className="text-xs text-muted-foreground">Add Story</span>
+        <span className="text-[11px] text-muted-foreground font-medium">Your Story</span>
       </button>
 
-      {/* User Stories */}
+      {/* User Stories — 72px with gradient ring */}
       {userStories.map((story) => (
         <button
           key={story.id}
           onClick={() => onStoryClick(story)}
-          className="flex flex-col items-center gap-1 min-w-[72px] group"
+          className="flex flex-col items-center gap-1.5 min-w-[76px] group"
         >
           <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary via-accent to-secondary p-[2px]">
-              <Avatar className="w-full h-full border-2 border-background">
+            <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-tr from-primary via-accent to-secondary p-[2.5px] shadow-md">
+              <Avatar className="w-full h-full border-[3px] border-background">
                 <AvatarImage src={story.profiles.profile_image} alt={story.profiles.name} />
-                <AvatarFallback>{story.profiles.name[0]}</AvatarFallback>
+                <AvatarFallback className="text-sm bg-muted">{story.profiles.name[0]}</AvatarFallback>
               </Avatar>
             </div>
           </div>
-          <span className="text-xs text-foreground truncate max-w-[72px]">
+          <span className="text-[11px] text-foreground truncate max-w-[72px] font-medium">
             {story.profiles.name.split(' ')[0]}
           </span>
         </button>
