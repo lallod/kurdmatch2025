@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, MapPin, Briefcase, MessageCircle, Sparkles } from 'lucide-react';
+import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Profile } from '@/api/profiles';
 import { followUser, unfollowUser, checkIsFollowing } from '@/api/posts';
 import { toast } from 'sonner';
@@ -31,6 +32,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
   const [loading, setLoading] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const { canSeeDatingDetails } = useProfileAccess('social', profile.id);
 
   useEffect(() => {
     const checkFollowStatus = async () => {
@@ -99,27 +101,27 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
         </Avatar>
 
         <div className="flex items-center gap-1.5 mb-1">
-          <h2 className="text-lg font-bold text-foreground">{profile.name}, {profile.age}</h2>
+          <h2 className="text-lg font-bold text-foreground">{profile.name}{canSeeDatingDetails && profile.age ? `, ${profile.age}` : ''}</h2>
           {profile.verified && (
             <CheckCircle className="w-4 h-4 text-primary fill-primary" />
           )}
         </div>
 
-        {profile.occupation && (
+        {canSeeDatingDetails && profile.occupation && (
           <div className="flex items-center gap-1 text-muted-foreground text-xs mb-0.5">
             <Briefcase className="w-3 h-3" />
             <span>{profile.occupation}</span>
           </div>
         )}
 
-        {profile.kurdistan_region && (
+        {canSeeDatingDetails && profile.kurdistan_region && (
           <div className="flex items-center gap-1 text-muted-foreground text-xs mb-0.5">
             <MapPin className="w-3 h-3" />
             <span>From {getKurdistanRegionDisplay(profile.kurdistan_region)}</span>
           </div>
         )}
 
-        {profile.location && (() => {
+        {canSeeDatingDetails && profile.location && (() => {
           const locationInfo = parseLocation(profile.location);
           return (
             <div className="flex items-center gap-1 text-muted-foreground text-xs">

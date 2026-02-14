@@ -2213,6 +2213,7 @@ export type Database = {
           company: string | null
           created_at: string | null
           creative_pursuits: string[] | null
+          dating_profile_visible: boolean | null
           decision_making_style: string | null
           dietary_preferences: string | null
           dream_home: string | null
@@ -2294,6 +2295,7 @@ export type Database = {
           company?: string | null
           created_at?: string | null
           creative_pursuits?: string[] | null
+          dating_profile_visible?: boolean | null
           decision_making_style?: string | null
           dietary_preferences?: string | null
           dream_home?: string | null
@@ -2375,6 +2377,7 @@ export type Database = {
           company?: string | null
           created_at?: string | null
           creative_pursuits?: string[] | null
+          dating_profile_visible?: boolean | null
           decision_making_style?: string | null
           dietary_preferences?: string | null
           dream_home?: string | null
@@ -3874,6 +3877,7 @@ export type Database = {
           company: string | null
           created_at: string | null
           creative_pursuits: string[] | null
+          dating_profile_visible: boolean | null
           decision_making_style: string | null
           dietary_preferences: string | null
           dream_home: string | null
