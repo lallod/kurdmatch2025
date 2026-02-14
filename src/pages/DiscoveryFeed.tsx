@@ -1,104 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPosts, getStories, likePost, unlikePost, Post, Story, getFollowingPosts } from '@/api/posts';
-import { getEvents, joinEvent, leaveEvent, Event } from '@/api/events';
 import { getPostsByHashtag } from '@/api/hashtags';
-import { getGroupPosts } from '@/api/groups';
 import StoryBubbles from '@/components/discovery/StoryBubbles';
 import PostCard from '@/components/discovery/PostCard';
-import EventCard from '@/components/discovery/EventCard';
-import EventFilters from '@/components/discovery/EventFilters';
-import { Button } from '@/components/ui/button';
-import { PenSquare, Loader2, Calendar, Plus, Filter, Users as UsersIcon, Hash, X, Sparkles, Search, Heart } from 'lucide-react';
+import { Loader2, Heart, Search, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
 import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
-import { CompactDiscoveryDropdowns } from '@/components/discovery/CompactDiscoveryDropdowns';
+import { Input } from '@/components/ui/input';
 
-type FeedTab = 'posts' | 'events' | 'groups';
+type FeedFilter = 'for_you' | 'following';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [posts, setPosts] = useState<Post[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<FeedTab>('posts');
-  const [showEventFilters, setShowEventFilters] = useState(false);
-  const [showFollowingOnly, setShowFollowingOnly] = useState(false);
+  const [feedFilter, setFeedFilter] = useState<FeedFilter>('for_you');
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showCreateStory, setShowCreateStory] = useState(false);
-  
-  const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
-  const [activeGroup, setActiveGroup] = useState<string | null>(null);
-  
-  const [eventCategory, setEventCategory] = useState('all');
-  const [eventLocation, setEventLocation] = useState('');
-  const [eventDateFrom, setEventDateFrom] = useState('');
-  const [eventDateTo, setEventDateTo] = useState('');
-  const [eventSearchQuery, setEventSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchingHashtag, setSearchingHashtag] = useState<string | null>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
-      const [postsData, storiesData, eventsData] = await Promise.all([
-        showFollowingOnly ? getFollowingPosts() : getPosts(),
-        getStories(),
-        getEvents()
+      const [postsData, storiesData] = await Promise.all([
+        feedFilter === 'following' ? getFollowingPosts() : getPosts(),
+        getStories()
       ]);
       setPosts(postsData);
       setStories(storiesData);
-      setEvents(eventsData);
     } catch (error) {
       console.error('Error loading feed:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load feed',
-        variant: 'destructive'
-      });
+      toast({ title: 'Error', description: 'Failed to load feed', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
-  };
+  }, [feedFilter]);
 
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       let postsData: Post[];
-      
-      if (activeHashtag) {
-        postsData = await getPostsByHashtag(activeHashtag) as Post[];
-      } else if (activeGroup) {
-        const groupPostsData = await getGroupPosts(activeGroup);
-        postsData = groupPostsData?.map((item: any) => item.posts).filter(Boolean) || [];
+      if (searchingHashtag) {
+        postsData = await getPostsByHashtag(searchingHashtag) as Post[];
       } else {
-        postsData = showFollowingOnly ? await getFollowingPosts() : await getPosts();
+        postsData = feedFilter === 'following' ? await getFollowingPosts() : await getPosts();
       }
-      
       setPosts(postsData);
     } catch (error) {
       console.error('Error loading posts:', error);
     }
-  };
+  }, [feedFilter, searchingHashtag]);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, [feedFilter]);
+  useEffect(() => { if (searchingHashtag) loadPosts(); }, [searchingHashtag]);
 
-  useEffect(() => {
-    loadPosts();
-  }, [showFollowingOnly, activeHashtag, activeGroup]);
-
-  useRealtimePosts({
-    onPostInserted: loadPosts,
-    onPostUpdated: loadPosts,
-    onPostDeleted: loadPosts
-  });
+  useRealtimePosts({ onPostInserted: loadPosts, onPostUpdated: loadPosts, onPostDeleted: loadPosts });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -111,109 +76,47 @@ const DiscoveryFeed = () => {
   const handleLike = async (postId: string) => {
     try {
       const post = posts.find(p => p.id === postId);
-      if (post?.is_liked) {
-        await unlikePost(postId);
-      } else {
-        await likePost(postId);
-      }
+      if (post?.is_liked) await unlikePost(postId);
+      else await likePost(postId);
     } catch (error) {
-      console.error('Error liking post:', error);
       toast({ title: 'Error', description: 'Failed to like post', variant: 'destructive' });
     }
   };
 
   const handleComment = (postId: string) => {
-    toast({ title: 'Comments', description: 'Comment feature coming soon!' });
+    navigate(`/post/${postId}`);
   };
 
-  const handleStoryClick = (story: Story) => {
-    navigate(`/stories/${story.user_id}`);
-  };
+  const handleStoryClick = (story: Story) => navigate(`/stories/${story.user_id}`);
+  const handleAddStory = () => navigate('/stories/create');
+  const handleStoryCreated = async () => { const s = await getStories(); setStories(s); };
 
-  const handleAddStory = () => {
-    navigate('/stories/create');
-  };
-
-  const handleStoryCreated = async () => {
-    const storiesData = await getStories();
-    setStories(storiesData);
-  };
-
-  const handleCreatePost = () => { navigate('/create-post'); };
-  const handleCreateEvent = () => { navigate('/create-event'); };
-
-  const handleJoinEvent = async (eventId: string) => {
-    try {
-      await joinEvent(eventId);
-      setEvents(events.map(event => 
-        event.id === eventId 
-          ? { ...event, is_attending: true, attendees_count: event.attendees_count + 1 }
-          : event
-      ));
-      toast({ title: 'Success', description: 'Joined event successfully!' });
-    } catch (error) {
-      console.error('Error joining event:', error);
-      toast({ title: 'Error', description: 'Failed to join event', variant: 'destructive' });
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) { setSearchingHashtag(null); return; }
+    // If starts with #, search hashtag
+    if (q.startsWith('#')) {
+      setSearchingHashtag(q.slice(1));
+    } else {
+      setSearchingHashtag(q);
     }
   };
 
-  const handleLeaveEvent = async (eventId: string) => {
-    try {
-      await leaveEvent(eventId);
-      setEvents(events.map(event => 
-        event.id === eventId 
-          ? { ...event, is_attending: false, attendees_count: Math.max(0, event.attendees_count - 1) }
-          : event
-      ));
-      toast({ title: 'Left event', description: 'You are no longer attending this event' });
-    } catch (error) {
-      console.error('Error leaving event:', error);
-      toast({ title: 'Error', description: 'Failed to leave event', variant: 'destructive' });
-    }
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchingHashtag(null);
+    setShowSearch(false);
+    loadPosts();
   };
 
-  const handleHashtagFilter = (hashtag: string | null) => {
-    setActiveHashtag(hashtag);
-    setActiveGroup(null);
-  };
-
-  const handleGroupFilter = (groupId: string | null) => {
-    setActiveGroup(groupId);
-    setActiveHashtag(null);
-  };
-
-  const clearDiscoveryFilters = () => {
-    setActiveHashtag(null);
-    setActiveGroup(null);
-  };
-
-  const handleClearEventFilters = () => {
-    setEventCategory('all');
-    setEventLocation('');
-    setEventDateFrom('');
-    setEventDateTo('');
-    setEventSearchQuery('');
-  };
-
-  const filteredEvents = events.filter(event => {
-    if (eventCategory !== 'all' && event.category !== eventCategory) return false;
-    if (eventLocation && !event.location.toLowerCase().includes(eventLocation.toLowerCase())) return false;
-    if (eventDateFrom && new Date(event.event_date) < new Date(eventDateFrom)) return false;
-    if (eventDateTo && new Date(event.event_date) > new Date(eventDateTo)) return false;
-    if (eventSearchQuery) {
-      const query = eventSearchQuery.toLowerCase();
-      if (!event.title.toLowerCase().includes(query) && !event.description.toLowerCase().includes(query) && !event.location.toLowerCase().includes(query)) return false;
-    }
-    return true;
+  // Filter posts to prioritize image posts
+  const sortedPosts = [...posts].sort((a, b) => {
+    // Posts with images first
+    if (a.media_url && !b.media_url) return -1;
+    if (!a.media_url && b.media_url) return 1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
-
-  const getCreateAction = () => {
-    switch (activeTab) {
-      case 'events': return handleCreateEvent;
-      case 'groups': return () => navigate('/groups');
-      default: return handleCreatePost;
-    }
-  };
 
   if (loading) {
     return (
@@ -222,12 +125,6 @@ const DiscoveryFeed = () => {
       </div>
     );
   }
-
-  const tabs: { key: FeedTab; label: string; icon: React.ReactNode }[] = [
-    { key: 'posts', label: 'Posts', icon: <Sparkles className="w-3.5 h-3.5" /> },
-    { key: 'events', label: 'Events', icon: <Calendar className="w-3.5 h-3.5" /> },
-    { key: 'groups', label: 'Groups', icon: <UsersIcon className="w-3.5 h-3.5" /> },
-  ];
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -244,193 +141,108 @@ const DiscoveryFeed = () => {
               </h1>
             </div>
             <div className="flex items-center gap-0.5">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/search')}
-                className="text-muted-foreground h-9 w-9 rounded-full"
+              <button
+                onClick={() => setShowSearch(!showSearch)}
+                className="text-muted-foreground h-9 w-9 rounded-full flex items-center justify-center active:scale-90 transition-transform"
               >
                 <Search className="w-[18px] h-[18px]" />
-              </Button>
+              </button>
               <NotificationBell />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={getCreateAction()}
-                className="text-foreground h-9 w-9 rounded-full"
-              >
-                <Plus className="w-5 h-5" />
-              </Button>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-md mx-auto">
-        {/* Stories Row */}
-        <div className="px-3 pt-3 pb-2">
-          <StoryBubbles
-            stories={stories}
-            onStoryClick={handleStoryClick}
-            onAddStory={handleAddStory}
-          />
-        </div>
-
-        {/* Segmented tab control — native iOS style */}
-        <div className="px-4 py-2">
-          <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-1 flex gap-0.5 border border-border/10">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-[11px] font-semibold rounded-xl whitespace-nowrap transition-all duration-300 ${
-                  activeTab === tab.key
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Compact filter chips for posts */}
-        {activeTab === 'posts' && (
-          <div className="px-4 pb-2">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-              <button
-                onClick={() => setShowFollowingOnly(!showFollowingOnly)}
-                className={`text-[11px] font-medium px-3 py-1.5 rounded-xl whitespace-nowrap transition-all ${
-                  showFollowingOnly
-                    ? 'bg-primary/15 text-primary border border-primary/25'
-                    : 'bg-card/60 text-muted-foreground border border-border/15'
-                }`}
-              >
-                Following
-              </button>
-              <CompactDiscoveryDropdowns 
-                onHashtagFilter={handleHashtagFilter}
-                onGroupFilter={handleGroupFilter}
-                activeHashtag={activeHashtag}
-                activeGroup={activeGroup}
+        {/* Search bar — collapsible */}
+        {showSearch && (
+          <div className="px-4 pt-3 pb-1 animate-fade-in">
+            <form onSubmit={handleSearch} className="relative">
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by word or #hashtag..."
+                className="h-10 rounded-xl bg-card/60 border-border/15 text-foreground placeholder:text-muted-foreground/50 pr-16 text-sm"
+                autoFocus
               />
-            </div>
+              <div className="absolute right-1 top-1 flex items-center gap-0.5">
+                {searchQuery && (
+                  <button type="button" onClick={clearSearch} className="h-8 w-8 flex items-center justify-center rounded-lg text-muted-foreground">
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+                <button type="submit" className="h-8 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-medium">
+                  Search
+                </button>
+              </div>
+            </form>
           </div>
         )}
 
-        {activeTab === 'events' && (
-          <div className="px-4 pb-2 flex items-center justify-end">
-            <button
-              onClick={() => setShowEventFilters(!showEventFilters)}
-              className="text-[11px] font-medium px-3 py-1.5 rounded-xl bg-card/60 text-muted-foreground border border-border/15 flex items-center gap-1"
-            >
-              <Filter className="w-3 h-3" />
-              Filters
-            </button>
-          </div>
-        )}
-
-        {/* Active filter banner */}
-        {(activeHashtag || activeGroup) && (
-          <div className="mx-4 mb-2 px-3 py-2 flex items-center justify-between bg-primary/10 rounded-xl border border-primary/15">
-            <div className="flex items-center gap-1.5 text-xs text-foreground font-medium">
-              {activeHashtag && <><Hash className="w-3 h-3 text-primary" /><span>#{activeHashtag}</span></>}
-              {activeGroup && <><UsersIcon className="w-3 h-3 text-primary" /><span>Group</span></>}
-            </div>
-            <button onClick={clearDiscoveryFilters} className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted/50 active:scale-90 transition-transform">
+        {/* Active search banner */}
+        {searchingHashtag && (
+          <div className="mx-4 mt-2 px-3 py-2 flex items-center justify-between bg-primary/10 rounded-xl border border-primary/15">
+            <span className="text-xs text-foreground font-medium">#{searchingHashtag}</span>
+            <button onClick={clearSearch} className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted/50 active:scale-90 transition-transform">
               <X className="w-3 h-3 text-muted-foreground" />
             </button>
           </div>
         )}
 
-        {/* Posts Feed */}
-        {activeTab === 'posts' && (
-          <div className="space-y-3 px-4 pt-1">
-            {posts.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <PenSquare className="w-7 h-7 text-muted-foreground/40" />
-                </div>
-                <h3 className="text-sm font-semibold text-foreground mb-1">No posts yet</h3>
-                <p className="text-xs text-muted-foreground mb-5">Be the first to share something</p>
-                <Button onClick={handleCreatePost} size="sm" className="gap-2 rounded-xl h-10 text-xs px-6 shadow-lg shadow-primary/20">
-                  <PenSquare className="w-3.5 h-3.5" />
-                  Create Post
-                </Button>
-              </div>
-            ) : (
-              posts.map((post) => (
-                <div key={post.id} className="bg-card rounded-2xl overflow-hidden shadow-lg shadow-black/10 border border-border/10">
-                  <PostCard
-                    post={post}
-                    onLike={handleLike}
-                    onComment={handleComment}
-                  />
-                </div>
-              ))
-            )}
+        {/* Stories Row */}
+        <div className="px-3 pt-3 pb-2">
+          <StoryBubbles stories={stories} onStoryClick={handleStoryClick} onAddStory={handleAddStory} />
+        </div>
+
+        {/* Simple filter tabs — For You / Following */}
+        <div className="px-4 py-2">
+          <div className="flex gap-0 border-b border-border/10">
+            {([
+              { key: 'for_you' as FeedFilter, label: 'For You' },
+              { key: 'following' as FeedFilter, label: 'Following' },
+            ]).map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => { setFeedFilter(tab.key); setSearchingHashtag(null); }}
+                className={`flex-1 py-2.5 text-[13px] font-semibold text-center transition-all relative ${
+                  feedFilter === tab.key
+                    ? 'text-foreground'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {tab.label}
+                {feedFilter === tab.key && (
+                  <div className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-primary rounded-full" />
+                )}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
 
-        {/* Events Feed */}
-        {activeTab === 'events' && (
-          <div className="px-4 pt-1 space-y-3">
-            {showEventFilters && (
-              <EventFilters
-                category={eventCategory}
-                location={eventLocation}
-                dateFrom={eventDateFrom}
-                dateTo={eventDateTo}
-                searchQuery={eventSearchQuery}
-                onCategoryChange={setEventCategory}
-                onLocationChange={setEventLocation}
-                onDateFromChange={setEventDateFrom}
-                onDateToChange={setEventDateTo}
-                onSearchChange={setEventSearchQuery}
-                onClearFilters={handleClearEventFilters}
-              />
-            )}
-
-            {filteredEvents.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <Calendar className="w-7 h-7 text-muted-foreground/40" />
-                </div>
-                <h3 className="text-sm font-semibold text-foreground mb-1">
-                  {events.length === 0 ? 'No upcoming events' : 'No events match'}
-                </h3>
-                <p className="text-xs text-muted-foreground mb-5">
-                  {events.length === 0 ? 'Create the first one' : 'Try different filters'}
-                </p>
-                <Button onClick={events.length === 0 ? handleCreateEvent : handleClearEventFilters} size="sm" className="rounded-xl h-10 text-xs px-6 shadow-lg shadow-primary/20">
-                  {events.length === 0 ? 'Create Event' : 'Clear Filters'}
-                </Button>
-              </div>
-            ) : (
-              filteredEvents.map((event) => (
-                <EventCard key={event.id} event={event} onJoin={handleJoinEvent} onLeave={handleLeaveEvent} />
-              ))
-            )}
-          </div>
-        )}
-
-        {/* Groups Tab */}
-        {activeTab === 'groups' && (
-          <div className="px-4 pt-1">
-            <div className="text-center py-20">
+        {/* Feed */}
+        <div className="space-y-0">
+          {sortedPosts.length === 0 ? (
+            <div className="text-center py-20 px-4">
               <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <UsersIcon className="w-7 h-7 text-muted-foreground/40" />
+                <Heart className="w-7 h-7 text-muted-foreground/40" />
               </div>
-              <h3 className="text-sm font-semibold text-foreground mb-1">Community Groups</h3>
-              <p className="text-xs text-muted-foreground mb-5">Find your people</p>
-              <Button onClick={() => navigate('/groups')} size="sm" className="rounded-xl h-10 text-xs px-6 shadow-lg shadow-primary/20">
-                Browse Groups
-              </Button>
+              <h3 className="text-sm font-semibold text-foreground mb-1">
+                {feedFilter === 'following' ? 'No posts from people you follow' : 'No posts yet'}
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                {feedFilter === 'following' 
+                  ? 'Follow people to see their posts here' 
+                  : 'Posts from users will appear here'}
+              </p>
             </div>
-          </div>
-        )}
+          ) : (
+            sortedPosts.map((post) => (
+              <div key={post.id} className="border-b border-border/5">
+                <PostCard post={post} onLike={handleLike} onComment={handleComment} />
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {selectedStory && (
