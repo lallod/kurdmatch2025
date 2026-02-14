@@ -55,6 +55,9 @@ import TermsOfService from '@/pages/TermsOfService';
 import CompatibilityInsights from '@/pages/CompatibilityInsights';
 import PostDetail from '@/pages/PostDetail';
 import RelationshipSettings from '@/pages/RelationshipSettings';
+import Settings from '@/pages/Settings';
+import Matches from '@/pages/Matches';
+import Events from '@/pages/Events';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -259,8 +262,20 @@ export const AppRoutes: React.FC = () => {
         element={<ProtectedRoute><PhoneVerification /></ProtectedRoute>} 
       />
       <Route 
+        path="/settings" 
+        element={<ProtectedRoute><Settings /></ProtectedRoute>} 
+      />
+      <Route 
         path="/settings/relationship" 
         element={<ProtectedRoute><RelationshipSettings /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/matches" 
+        element={<ProtectedRoute><Matches /></ProtectedRoute>} 
+      />
+      <Route 
+        path="/events" 
+        element={<ProtectedRoute><Events /></ProtectedRoute>} 
       />
       <Route 
         path="/help" 
