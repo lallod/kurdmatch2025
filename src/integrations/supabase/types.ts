@@ -2177,6 +2177,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_sharing: {
+        Row: {
+          created_at: string
+          id: string
+          owner_id: string
+          share_type: string
+          shared_fields: string[] | null
+          shared_with_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_id: string
+          share_type?: string
+          shared_fields?: string[] | null
+          shared_with_user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_id?: string
+          share_type?: string
+          shared_fields?: string[] | null
+          shared_with_user_id?: string
+        }
+        Relationships: []
+      }
       profile_views: {
         Row: {
           created_at: string
@@ -2201,10 +2228,38 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_visibility_settings: {
+        Row: {
+          created_at: string
+          field_name: string
+          id: string
+          is_visible: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          field_name: string
+          id?: string
+          is_visible?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          field_name?: string
+          id?: string
+          is_visible?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number
           bio: string
+          blur_photos: boolean | null
           body_type: string
           career_ambitions: string | null
           charity_involvement: string | null
@@ -2287,6 +2342,7 @@ export type Database = {
         Insert: {
           age: number
           bio?: string
+          blur_photos?: boolean | null
           body_type?: string
           career_ambitions?: string | null
           charity_involvement?: string | null
@@ -2369,6 +2425,7 @@ export type Database = {
         Update: {
           age?: number
           bio?: string
+          blur_photos?: boolean | null
           body_type?: string
           career_ambitions?: string | null
           charity_involvement?: string | null
@@ -3869,6 +3926,7 @@ export type Database = {
         Returns: {
           age: number
           bio: string
+          blur_photos: boolean | null
           body_type: string
           career_ambitions: string | null
           charity_involvement: string | null

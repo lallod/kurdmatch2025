@@ -6,9 +6,10 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { 
   Settings, Heart, Camera, CheckCircle2, Share2, ChevronRight,
-  User, Dumbbell, Star, Briefcase, MapPin, Pencil, Plus
+  User, Dumbbell, Star, Briefcase, MapPin, Pencil, Plus, Shield
 } from 'lucide-react';
 import PhotoManagement from '@/components/my-profile/PhotoManagement';
+import PrivacySettings from '@/components/my-profile/PrivacySettings';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
 import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
 import BasicInfoEditor from '@/components/my-profile/sections/editors/BasicInfoEditor';
@@ -382,6 +383,12 @@ const MyProfile = () => {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Privacy & Visibility Settings */}
+          <div className="mx-4">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Privacy & Visibility</h3>
+            <PrivacySettings />
           </div>
         </div>
       </div>

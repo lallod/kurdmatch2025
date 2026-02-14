@@ -48,10 +48,11 @@ export const useDiscoveryProfiles = (options: UseDiscoveryProfilesOptions = {}) 
 
       let query = supabase
         .from('profiles')
-        .select('*')
+        .select('*, blur_photos')
         .neq('profile_image', 'https://placehold.co/400')
         .not('profile_image', 'is', null)
-        .neq('profile_image', '');
+        .neq('profile_image', '')
+        .eq('dating_profile_visible', true);
 
       // Apply age filter
       if (options.filters?.ageRange) {
