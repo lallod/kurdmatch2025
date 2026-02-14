@@ -38,12 +38,6 @@ import { HashtagFeed } from '@/pages/HashtagFeed';
 import { GroupsList } from '@/pages/GroupsList';
 import NotificationSettings from '@/pages/NotificationSettings';
 import AdvancedSearch from '@/pages/AdvancedSearch';
-import AdminDashboard from '@/pages/Admin/AdminDashboard';
-import UserManagement from '@/pages/Admin/UserManagement';
-import ReportsManagement from '@/pages/Admin/ReportsManagement';
-import ContentModeration from '@/pages/Admin/ContentModeration';
-import PlatformAnalytics from '@/pages/Admin/PlatformAnalytics';
-import SystemSettings from '@/pages/Admin/SystemSettings';
 import SavedPosts from '@/pages/SavedPosts';
 import BlockedUsers from '@/pages/BlockedUsers';
 import PrivacySettings from '@/pages/PrivacySettings';
@@ -280,31 +274,8 @@ export const AppRoutes: React.FC = () => {
         element={<TermsOfService />} 
       />
       
-      {/* Admin Dashboard routes */}
-      <Route 
-        path="/admin/dashboard" 
-        element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/users" 
-        element={<ProtectedRoute><UserManagement /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/reports" 
-        element={<ProtectedRoute><ReportsManagement /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/content" 
-        element={<ProtectedRoute><ContentModeration /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/analytics" 
-        element={<ProtectedRoute><PlatformAnalytics /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/settings" 
-        element={<ProtectedRoute><SystemSettings /></ProtectedRoute>} 
-      />
+      {/* Admin routes redirect to Super Admin */}
+      <Route path="/admin/*" element={<Navigate to="/super-admin" replace />} />
       
       {/* Super Admin routes */}
       <Route 
