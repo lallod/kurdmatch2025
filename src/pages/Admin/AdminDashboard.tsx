@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Save, Bot, Brain, Zap, Cpu } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import BasicInfoTab from './tabs/BasicInfoTab';
 import PhotosTab from './tabs/PhotosTab';
 import DetailsTab from './tabs/DetailsTab';
 import PreferencesTab from './tabs/PreferencesTab';
 
 const AdminDashboard = () => {
-  const { toast } = useToast();
+  
   const [activeTab, setActiveTab] = useState("basic");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -21,10 +21,7 @@ const AdminDashboard = () => {
     // Simulate AI processing
     setTimeout(() => {
       setIsProcessing(false);
-      toast({
-        title: "AI Analysis Complete",
-        description: "Your profile changes have been processed and optimized.",
-      });
+      toast.success("Your profile changes have been processed and optimized.");
     }, 1500);
   };
 

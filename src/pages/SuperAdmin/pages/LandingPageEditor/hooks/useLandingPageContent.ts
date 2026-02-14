@@ -1,12 +1,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
 import { LandingPageContent, initialContent } from '../types';
 
 export const useLandingPageContent = (retryCount = 0) => {
-  const { toast } = useToast();
+  
   const [content, setContent] = useState<LandingPageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,11 +36,7 @@ export const useLandingPageContent = (retryCount = 0) => {
             await initializeDefaultContent();
           } else {
             setError(`Failed to load content: ${error.message}`);
-            toast({
-              title: "Failed to load content",
-              description: "Could not load landing page content from the database.",
-              variant: "destructive"
-            });
+            toast.error("Could not load landing page content from the database.");
           }
         } else if (data) {
           console.log('Content found:', data);
@@ -53,11 +49,7 @@ export const useLandingPageContent = (retryCount = 0) => {
           } else {
             console.error('Invalid landing page content format:', contentData);
             setError('The content stored in the database has an invalid format.');
-            toast({
-              title: "Invalid content format",
-              description: "The content stored in the database has an invalid format.",
-              variant: "destructive"
-            });
+            toast.error("The content stored in the database has an invalid format.");
           }
         } else {
           // No data found, initialize the database with default content
@@ -67,11 +59,7 @@ export const useLandingPageContent = (retryCount = 0) => {
       } catch (error: any) {
         console.error('Unexpected error:', error);
         setError(`An unexpected error occurred: ${error.message}`);
-        toast({
-          title: "An error occurred",
-          description: "An unexpected error occurred while loading the content.",
-          variant: "destructive"
-        });
+        toast.error("An unexpected error occurred while loading the content.");
       } finally {
         setLoading(false);
       }
@@ -96,11 +84,7 @@ export const useLandingPageContent = (retryCount = 0) => {
         if (insertError) {
           console.error('Error initializing landing page content:', insertError);
           setError(`Failed to initialize content: ${insertError.message}`);
-          toast({
-            title: "Error initializing content",
-            description: "Could not save default content to the database. You can still edit, but changes may not persist.",
-            variant: "destructive"
-          });
+            toast.error("Could not save default content to the database.");
         } else {
           console.log('Default content initialized successfully');
         }
@@ -124,7 +108,7 @@ export const useLandingPageContent = (retryCount = 0) => {
     };
 
     fetchLandingPageContent();
-  }, [toast, retryCount]); // Only re-run if toast or retryCount changes
+  }, [retryCount]);
 
   // Make sure we always have content to work with
   const safeContent = content || initialContent;
@@ -223,11 +207,7 @@ export const useLandingPageContent = (retryCount = 0) => {
   // Save all changes to the database - memoized to prevent unnecessary re-renders
   const saveChanges = useCallback(async () => {
     if (!content) {
-      toast({
-        title: "Cannot save",
-        description: "No content to save. Please try reloading the page.",
-        variant: "destructive"
-      });
+      toast.error("No content to save. Please try reloading the page.");
       return;
     }
     
@@ -250,30 +230,19 @@ export const useLandingPageContent = (retryCount = 0) => {
       if (error) {
         console.error('Error saving landing page content:', error);
         setError(`Failed to save content: ${error.message}`);
-        toast({
-          title: "Failed to save content",
-          description: "Could not save landing page content to the database.",
-          variant: "destructive"
-        });
+        toast.error("Could not save landing page content to the database.");
       } else {
         console.log('Content saved successfully');
-        toast({
-          title: "Content saved",
-          description: "Landing page content has been updated successfully.",
-        });
+        toast.success("Landing page content has been updated successfully.");
       }
     } catch (error: any) {
       console.error('Error:', error);
       setError(`An unexpected error occurred: ${error.message}`);
-      toast({
-        title: "An error occurred",
-        description: "An unexpected error occurred while saving the content.",
-        variant: "destructive"
-      });
+      toast.error("An unexpected error occurred while saving the content.");
     } finally {
       setSaving(false);
     }
-  }, [content, toast]);
+  }, [content]);
 
   return {
     content: safeContent,

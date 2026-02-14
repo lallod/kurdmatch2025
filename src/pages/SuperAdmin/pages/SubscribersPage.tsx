@@ -34,14 +34,14 @@ import {
 } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { useAdminSubscribers } from '../hooks/useAdminSubscribers';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const SubscribersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'basic' | 'premium' | 'ultimate'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const { subscribers, loading, totalCount, stats, fetchSubscribers, cancelSubscription } = useAdminSubscribers();
-  const { toast } = useToast();
+  
 
   React.useEffect(() => {
     fetchSubscribers(currentPage, 10, typeFilter);
@@ -55,16 +55,9 @@ const SubscribersPage = () => {
   const handleCancel = async (subscriptionId: string) => {
     const success = await cancelSubscription(subscriptionId);
     if (success) {
-      toast({
-        title: "Subscription cancelled",
-        description: "The subscription has been successfully cancelled.",
-      });
+      toast.success("Subscription cancelled successfully");
     } else {
-      toast({
-        title: "Error",
-        description: "Failed to cancel subscription.",
-        variant: "destructive",
-      });
+      toast.error("Failed to cancel subscription");
     }
   };
 

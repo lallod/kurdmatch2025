@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAdminABTests } from '../hooks/useAdminABTests';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { 
   Card, 
   CardContent, 
@@ -77,7 +77,7 @@ const ABTestingPage = () => {
   const [newTestOpen, setNewTestOpen] = useState(false);
   const [selectedTest, setSelectedTest] = useState<any>(null);
   const { tests: abTests, loading, createTest, updateTest, deleteTest } = useAdminABTests();
-  const { toast } = useToast();
+  
 
   // Status badge component
   const getStatusBadge = (status: string) => {
@@ -96,13 +96,13 @@ const ABTestingPage = () => {
   const handleTestAction = async (testId: string, action: 'start' | 'stop' | 'delete' | 'duplicate') => {
     if (action === 'start') {
       await updateTest(testId, { status: 'active', start_date: new Date().toISOString() });
-      toast({ title: "Test started successfully" });
+      toast.success("Test started successfully");
     } else if (action === 'stop') {
       await updateTest(testId, { status: 'paused' });
-      toast({ title: "Test stopped" });
+      toast.success("Test stopped");
     } else if (action === 'delete') {
       await deleteTest(testId);
-      toast({ title: "Test deleted" });
+      toast.success("Test deleted");
     }
   };
 

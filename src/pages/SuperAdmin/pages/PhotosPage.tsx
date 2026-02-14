@@ -7,14 +7,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Search, Eye, Trash2, CheckCircle, XCircle, Image as ImageIcon, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAdminPhotos } from '../hooks/useAdminPhotos';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const PhotosPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const { photos, loading, totalCount, fetchPhotos, deletePhoto, approvePhoto } = useAdminPhotos();
-  const { toast } = useToast();
+  
 
   React.useEffect(() => {
     fetchPhotos(currentPage, 12, searchTerm);
@@ -28,19 +28,12 @@ const PhotosPage = () => {
   const handleDelete = async (photoId: string) => {
     const success = await deletePhoto(photoId);
     if (success) {
-      toast({
-        title: "Photo deleted",
-        description: "The photo has been successfully deleted.",
-      });
+      toast.success("Photo deleted successfully");
       if (selectedPhoto?.id === photoId) {
         setSelectedPhoto(null);
       }
     } else {
-      toast({
-        title: "Error",
-        description: "Failed to delete photo.",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete photo");
     }
   };
 

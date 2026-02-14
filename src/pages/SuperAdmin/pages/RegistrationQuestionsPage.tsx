@@ -4,7 +4,7 @@ import { Download, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 import QuestionCategoriesSection from '../components/registration-questions/QuestionCategoriesSection';
 import QuestionPreviewCard from '../components/registration-questions/QuestionPreviewCard';
 import QuestionsTable from '../components/registration-questions/QuestionsTable';
@@ -16,7 +16,7 @@ import { QuestionItem } from '../components/registration-questions/types';
 import { useQuestions } from '../components/registration-questions/useQuestions';
 
 const RegistrationQuestionsPage = () => {
-  const { toast } = useToast();
+  
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<QuestionItem | null>(null);
   
@@ -52,10 +52,7 @@ const RegistrationQuestionsPage = () => {
           <Button
             variant="outline"
             onClick={() => {
-              toast({
-                title: "Export Started",
-                description: "Questions exported to CSV successfully",
-              });
+              toast.success("Questions exported to CSV successfully");
             }}
           >
             <Download className="mr-2 h-4 w-4" /> Export

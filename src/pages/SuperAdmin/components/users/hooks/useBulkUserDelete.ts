@@ -1,12 +1,12 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export const useBulkUserDelete = (onRefresh: () => void) => {
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = useToast();
+  
 
   const handleDeleteAllUsers = () => {
     setIsDeleteAllDialogOpen(true);
@@ -32,10 +32,7 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
         
         if (error) throw error;
         
-        toast({
-          title: "Users Deactivated",
-          description: "All users have been deactivated.",
-        });
+        toast.success("All users have been deactivated");
       } else {
         // For specific roles, first get all user IDs with the selected role
         // without any pagination limits
@@ -53,10 +50,7 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
             .filter(id => id !== currentUserId);
           
           if (userIds.length === 0) {
-            toast({
-              title: "No Users Deactivated",
-              description: `No other users with the role "${role}" were found.`,
-            });
+            toast.info(`No other users with the role "${role}" were found`);
             setIsDeleting(false);
             setIsDeleteAllDialogOpen(false);
             return;
@@ -74,16 +68,10 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
           
           if (error) throw error;
           
-          toast({
-            title: "Users Deactivated",
-            description: `All users with role "${role}" have been deactivated.`,
-          });
+          toast.success(`All users with role "${role}" have been deactivated`);
         } else {
           // If no users with this role, exit early
-          toast({
-            title: "No Users Deactivated",
-            description: `No users with the role "${role}" were found.`,
-          });
+          toast.info(`No users with the role "${role}" were found`);
           setIsDeleting(false);
           setIsDeleteAllDialogOpen(false);
           return;
@@ -93,11 +81,7 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
       onRefresh();
     } catch (error) {
       console.error("Error deactivating users:", error);
-      toast({
-        title: "Deactivation Failed",
-        description: "There was an error deactivating users.",
-        variant: "destructive",
-      });
+      toast.error("There was an error deactivating users");
     } finally {
       setIsDeleting(false);
       setIsDeleteAllDialogOpen(false);

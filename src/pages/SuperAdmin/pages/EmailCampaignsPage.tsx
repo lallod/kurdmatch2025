@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAdminEmailCampaigns } from '../hooks/useAdminEmailCampaigns';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { 
   Table, 
   TableBody, 
@@ -83,7 +83,7 @@ const EmailCampaignsPage = () => {
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
   const [newCampaignOpen, setNewCampaignOpen] = useState(false);
   const { campaigns: emailCampaigns, loading, createCampaign, updateCampaign, deleteCampaign } = useAdminEmailCampaigns();
-  const { toast } = useToast();
+  
 
   // Filter campaigns based on search term and status
   const filteredCampaigns = emailCampaigns.filter(campaign => {
@@ -117,13 +117,13 @@ const EmailCampaignsPage = () => {
   const handleCampaignAction = async (campaignId: string, action: 'start' | 'pause' | 'duplicate' | 'delete') => {
     if (action === 'start') {
       await updateCampaign(campaignId, { status: 'active' });
-      toast({ title: "Campaign started" });
+      toast.success("Campaign started");
     } else if (action === 'pause') {
       await updateCampaign(campaignId, { status: 'paused' });
-      toast({ title: "Campaign paused" });
+      toast.success("Campaign paused");
     } else if (action === 'delete') {
       await deleteCampaign(campaignId);
-      toast({ title: "Campaign deleted" });
+      toast.success("Campaign deleted");
     }
   };
 

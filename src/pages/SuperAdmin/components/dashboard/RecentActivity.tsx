@@ -4,7 +4,7 @@ import { UserPlus, TrendingUp, ImageIcon, Mail, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface ActivityItem {
   id: string;
@@ -19,7 +19,7 @@ interface ActivityItem {
 const RecentActivity = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  
 
   useEffect(() => {
     const loadActivities = async () => {
@@ -61,11 +61,7 @@ const RecentActivity = () => {
         setActivities(formattedActivities);
       } catch (error) {
         console.error('Failed to load recent activities:', error);
-        toast({
-          title: 'Error loading activities',
-          description: 'Could not load recent activities. Please try again.',
-          variant: 'destructive',
-        });
+        toast.error('Could not load recent activities');
         setActivities([]);
       } finally {
         setLoading(false);
@@ -73,7 +69,7 @@ const RecentActivity = () => {
     };
 
     loadActivities();
-  }, [toast]);
+  }, []);
 
   const activityIcons = {
     user_register: <UserPlus size={16} className="text-green-500" />,

@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminDashboard from './AdminDashboard';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const Admin = () => {
   const { user, loading, session } = useSupabaseAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [checkingRole, setCheckingRole] = useState(true);
 
@@ -50,20 +50,12 @@ const Admin = () => {
         
         if (!roleData) {
           // User doesn't have admin role, redirect them
-          toast({
-            title: "Access Denied",
-            description: "You don't have admin permissions",
-            variant: "destructive"
-          });
+          toast.error("You don't have admin permissions");
         }
       } catch (error) {
         console.error('Error verifying admin status:', error);
         setIsAdmin(false);
-        toast({
-          title: "Authentication Error",
-          description: "Please sign in again",
-          variant: "destructive"
-        });
+        toast.error("Please sign in again");
       } finally {
         setCheckingRole(false);
       }

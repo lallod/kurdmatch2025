@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { format } from 'date-fns';
 import {
   Ticket,
@@ -69,7 +69,7 @@ const SupportTicketsPage = () => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [adminResponse, setAdminResponse] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const { toast } = useToast();
+  
 
   const fetchTickets = async () => {
     setIsLoading(true);
@@ -97,11 +97,7 @@ const SupportTicketsPage = () => {
       setTickets(data || []);
     } catch (error) {
       console.error('Error fetching tickets:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch support tickets',
-        variant: 'destructive',
-      });
+      toast.error('Failed to fetch support tickets');
     } finally {
       setIsLoading(false);
     }
@@ -191,10 +187,7 @@ const SupportTicketsPage = () => {
         });
       }
 
-      toast({
-        title: 'Success',
-        description: `Ticket status updated to ${newStatus}`,
-      });
+      toast.success(`Ticket status updated to ${newStatus}`);
 
       fetchTickets();
       
@@ -203,11 +196,7 @@ const SupportTicketsPage = () => {
       }
     } catch (error) {
       console.error('Error updating ticket status:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update ticket status',
-        variant: 'destructive',
-      });
+      toast.error('Failed to update ticket status');
     }
   };
 
@@ -245,21 +234,14 @@ const SupportTicketsPage = () => {
         });
       }
 
-      toast({
-        title: 'Response sent',
-        description: 'Your response has been added to the ticket and user notified',
-      });
+      toast.success('Response sent and user notified');
 
       setAdminResponse('');
       setSelectedTicket({ ...selectedTicket, admin_notes: updatedNotes, status: 'pending' });
       fetchTickets();
     } catch (error) {
       console.error('Error sending response:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to send response',
-        variant: 'destructive',
-      });
+      toast.error('Failed to send response');
     } finally {
       setIsSending(false);
     }

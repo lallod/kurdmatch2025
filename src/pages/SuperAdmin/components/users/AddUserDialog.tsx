@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { comprehensiveTestDataCleanup } from '@/utils/comprehensiveDataCleanup';
 import { Loader2, Trash2, Users, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -15,33 +15,21 @@ interface AddUserDialogProps {
 
 const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUserAdded }) => {
   const [isCleaningUp, setIsCleaningUp] = useState(false);
-  const { toast } = useToast();
+  
 
   const handleCleanupTestData = async () => {
     setIsCleaningUp(true);
     try {
       const result = await comprehensiveTestDataCleanup();
       if (result.success) {
-        toast({
-          title: "Cleanup Complete",
-          description: "All test data has been removed. Only real users from normal registration will be shown.",
-          variant: "default",
-        });
+        toast.success("All test data has been removed. Only real users will be shown.");
         onUserAdded(); // Refresh the user list
         onOpenChange(false);
       } else {
-        toast({
-          title: "Cleanup Failed", 
-          description: result.error || "Failed to clean up test data",
-          variant: "destructive",
-        });
+        toast.error(result.error || "Failed to clean up test data");
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred during cleanup",
-        variant: "destructive",
-      });
+      toast.error("An error occurred during cleanup");
     } finally {
       setIsCleaningUp(false);
     }

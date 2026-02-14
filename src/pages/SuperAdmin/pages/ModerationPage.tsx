@@ -39,7 +39,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { useAdminReports } from '../hooks/useAdminReports';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const ModerationPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,7 +49,7 @@ const ModerationPage = () => {
   const [adminNotes, setAdminNotes] = useState('');
   const [actionType, setActionType] = useState<'dismiss' | 'action_taken'>('dismiss');
   const { reports, loading, totalCount, fetchReports, resolveReport } = useAdminReports();
-  const { toast } = useToast();
+  
 
   React.useEffect(() => {
     fetchReports(currentPage, 10, statusFilter);
@@ -65,18 +65,11 @@ const ModerationPage = () => {
 
     const success = await resolveReport(selectedReport.id, adminNotes, actionType);
     if (success) {
-      toast({
-        title: "Report resolved",
-        description: "The report has been successfully resolved.",
-      });
+      toast.success("Report resolved successfully");
       setSelectedReport(null);
       setAdminNotes('');
     } else {
-      toast({
-        title: "Error",
-        description: "Failed to resolve report.",
-        variant: "destructive",
-      });
+      toast.error("Failed to resolve report");
     }
   };
 

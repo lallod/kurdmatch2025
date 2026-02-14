@@ -2,14 +2,14 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '../types';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export const useUserData = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsers, setTotalUsers] = useState(0);
   const [databaseVerified, setDatabaseVerified] = useState(false);
-  const { toast } = useToast();
+  
 
   const fetchUsers = async (currentPage: number, usersPerPage: number) => {
     try {
@@ -121,11 +121,7 @@ export const useUserData = () => {
       setUsers(userData);
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast({
-        title: 'Error loading users',
-        description: 'Could not load user data. Please try again.',
-        variant: 'destructive',
-      });
+      toast.error('Could not load user data. Please try again.');
       setUsers([]);
     } finally {
       setLoading(false);

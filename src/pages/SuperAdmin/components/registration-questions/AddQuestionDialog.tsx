@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { QuestionItem } from './types';
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 
 interface AddQuestionDialogProps {
   isOpen: boolean;
@@ -24,7 +24,7 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
   onAddQuestion,
   questionsCount
 }) => {
-  const { toast } = useToast();
+  
   const [newQuestion, setNewQuestion] = React.useState<Partial<QuestionItem>>({
     text: '',
     category: 'Basics',
@@ -58,11 +58,7 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
 
   const handleSubmit = () => {
     if (!newQuestion.text) {
-      toast({
-        title: "Error",
-        description: "Question text is required",
-        variant: "destructive"
-      });
+      toast.error("Question text is required");
       return;
     }
     
