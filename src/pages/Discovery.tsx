@@ -295,7 +295,9 @@ const Discovery = () => {
                         <img
                           src={profile.profile_image}
                           alt={profile.name}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                            (profile as any).blur_photos ? 'blur-xl' : ''
+                          }`}
                         />
                         {/* Gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -310,17 +312,26 @@ const Discovery = () => {
                         {/* Online indicator */}
                         <div className="absolute top-2.5 left-2.5 w-2.5 h-2.5 bg-success rounded-full border-2 border-background/50 shadow-sm" />
 
+                        {/* Blurred photo indicator */}
+                        {(profile as any).blur_photos && (
+                          <div className="absolute top-2.5 left-8 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5">
+                            <span className="text-white text-[8px] font-medium">Photo hidden</span>
+                          </div>
+                        )}
+
                         {/* Info overlay */}
                         <div className="absolute bottom-0 left-0 right-0 p-2.5">
                           <div className="flex items-center gap-1">
                             <span className="font-bold text-sm text-white leading-tight">{profile.name}</span>
-                            <span className="text-white/70 text-xs">{profile.age}</span>
+                            {canSeeDatingDetails && <span className="text-white/70 text-xs">{profile.age}</span>}
                           </div>
-                          <div className="flex items-center gap-1 text-white/60 text-[10px] mt-0.5">
-                            <MapPin className="w-2.5 h-2.5" />
-                            <span className="truncate">{profile.location}</span>
-                          </div>
-                          {profile.occupation && profile.occupation !== 'Not specified' && (
+                          {canSeeDatingDetails && (
+                            <div className="flex items-center gap-1 text-white/60 text-[10px] mt-0.5">
+                              <MapPin className="w-2.5 h-2.5" />
+                              <span className="truncate">{profile.location}</span>
+                            </div>
+                          )}
+                          {canSeeDatingDetails && profile.occupation && profile.occupation !== 'Not specified' && (
                             <div className="flex items-center gap-1 text-white/50 text-[9px] mt-0.5">
                               <Briefcase className="w-2.5 h-2.5" />
                               <span className="truncate">{profile.occupation}</span>
@@ -336,7 +347,7 @@ const Discovery = () => {
                             {profile.kurdistan_region}
                           </Badge>
                         )}
-                        {profile.religion && (
+                        {canSeeDatingDetails && profile.religion && (
                           <Badge variant="secondary" className="text-[8px] px-1.5 py-0 rounded-full bg-muted text-muted-foreground h-4">
                             {profile.religion}
                           </Badge>
