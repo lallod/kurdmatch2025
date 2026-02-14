@@ -1,179 +1,141 @@
 
-# Komplett Pre-Launch Audit og Feilsokingsplan for KurdMatch
+
+# Super Admin Dashboard -- Komplett Design og Funksjonsaudit
 
 ## Oversikt
 
-Etter en grundig skanning av hele kodebasen, databasen, sikkerhetspolicyer, edge functions, og frontend-kode, presenterer jeg her en fullstendig rapport med alt som gjenstor for lansering.
+Etter grundig gjennomgang av hele Super Admin-dashboardet (38 sider + sidebar-layout), har jeg identifisert problemer i 3 hovedkategorier: **design-inkonsistens**, **manglende admin-funksjoner**, og **teknisk gjeld**.
 
 ---
 
-## SEKSJON A: SIKKERHET (Database og RLS)
+## SEKSJON A: DESIGN-INKONSISTENS (To temaer i bruk)
 
-### A1. FIKSET - Profiler er naa beskyttet
-Profiles-tabellen har naa `authenticated`-only SELECT policy. Dette var kritisk og er fikset.
+Super Admin-dashboardet bruker et **mork tema** (svart bakgrunn `#0a0a0a`/`#0f0f0f`/`#141414` med hvit tekst). MEN **en side** bryter fullstendig med dette:
 
-### A2. FIKSET - Reports beskytter reporter-identitet
-Reports-tabellen har naa kun `Super admins can view all reports` for SELECT. Vanlige brukere kan kun INSERT (opprette rapporter), ikke se dem.
+### A1. SettingsPage bruker LIGHT tema (kritisk)
+`src/pages/SuperAdmin/pages/SettingsPage.tsx` bruker:
+- `text-gray-900` (svart tekst pa svart bakgrunn = uleselig)
+- Standard `Card` uten dark-styling (hvit bakgrunn)
+- `TabsList` med `w-[600px]` hardkodet bredde (bryter pa mobil)
 
-### A3. FIKSET - RLS aktivert pa alle tabeller
-72 av 73 tabeller har RLS aktivert. Den eneste uten er `spatial_ref_sys` (PostGIS systemtabell - ikke sensitiv).
+**Alle andre SuperAdmin-sider** bruker:
+- `text-white` / `text-white/60` for tekst
+- `bg-[#141414] border-white/5` for kort
+- `bg-white/5 border-white/10 text-white` for inputs
 
-### A4. FIKSET - Function search paths
-Alle security definer funksjoner har `search_path=public` satt korrekt.
+### A2. ContentModerationTab bruker LIGHT tema
+`src/pages/SuperAdmin/components/users/redesign/tabs/ContentModerationTab.tsx` bruker:
+- `text-gray-900` og `text-gray-600` (hvit/lys tema)
 
-### A5. MÅ FIKSES - RLS Policy "Always True" (5 stk)
-Folgende policyer bruker `WITH CHECK (true)` som gir ubegrenset INSERT-tilgang:
+### A3. RolesPage og AIRecommendations bruker LIGHT tema
+- `RolesPage.tsx` bruker standard `Card` uten dark-styling
+- `AIRecommendations.tsx` bruker `bg-blue-50`, `text-blue-800` (lys tema-farger)
+- `RoleData.tsx` bruker mock-data istedenfor ekte database
 
-| Tabell | Policy | Risiko |
-|--------|--------|--------|
-| `user_roles` | "Allow insertion of super_admin roles" | **KRITISK** - Enhver autentisert bruker kan gi seg selv super_admin-rollen |
-| `hashtags` | "System can manage hashtags" | Middels - alle kan opprette/endre hashtags |
-| `matches` | "System can create matches" | Hoy - alle kan opprette falske matches |
-| `notifications` | "System can create notifications" | Middels - alle kan sende falske varsler |
-| `message_safety_flags` | "Service role can create flags" | Lav - men bor begrenses |
-
-**Aksjon:** Endre `user_roles` INSERT-policyen til a kreve `is_super_admin(auth.uid())`. De andre "System"-policyene bor endres til `service_role` only eller fjernes.
-
-### A6. MÅ FIKSES - Leaked Password Protection
-Supabase Auth har ikke aktivert sjekk mot lekke passord-databaser.
-**Aksjon:** Aktiver i Supabase Dashboard -> Authentication -> Settings.
-
-### A7. BOR FIKSES - Postgres-versjon utdatert
-Sikkerhetsoppdateringer er tilgjengelige.
-**Aksjon:** Oppgrader i Supabase Dashboard -> Settings -> Infrastructure.
-
-### A8. BOR FIKSES - Extensions i public schema
-PostGIS er installert i public schema i stedet for en dedikert schema.
-**Aksjon:** Lav prioritet, kan gjores etter lansering.
+### A4. Sidebar branding feil
+SuperAdminLayout.tsx viser "**LoveAffection**" som appen heter -- men appen heter **KurdMatch**.
 
 ---
 
-## SEKSJON B: DESIGN-KONSISTENS (Gjenstående)
+## SEKSJON B: TOAST-MIGRERING (19 filer)
 
-### B1. MÅ FIKSES - 14 filer har fortsatt gammel lilla gradient
-Folgende filer bruker fortsatt `from-purple-900 via-purple-800 to-pink-900`:
+Folgende SuperAdmin-filer bruker fortsatt `useToast` fra `@/hooks/use-toast`:
 
-1. `src/pages/Landing.tsx` - Hele landingssiden
-2. `src/pages/Auth.tsx` - Login-siden
-3. `src/pages/CreateEvent.tsx` - Opprett arrangement
-4. `src/pages/Admin/PlatformAnalytics.tsx` - Admin analytics
-5. `src/pages/Admin/SystemSettings.tsx` - Admin innstillinger
-6. `src/pages/Admin/UserManagement.tsx` - Admin brukeradministrasjon
-7. `src/pages/Admin/ContentModeration.tsx` - Innholdsmoderering
-8. `src/pages/Messages.tsx` - Meldinger (avatar-ring)
-9. `src/components/discovery/EditPostDialog.tsx` - Rediger innlegg
-10. `src/components/messages/UnmatchDialog.tsx` - Avmatch dialog
-11. `src/components/landing/MobileSidebar.tsx` - Mobil sidebar
-12. `src/components/swipe/SwipeFilters.tsx` - Swipe-filtre
-13. `src/components/my-profile/sections/ComprehensiveProfileEditor.tsx` - Profilredigering
-14. `src/pages/Swipe.tsx` - Padding pb-20
-
-**Aksjon:** Oppdater alle til `bg-background`, `text-foreground`, `bg-card`, `border-border` osv.
-
-### B2. MÅ FIKSES - 90+ filer bruker fortsatt useToast
-Ca. 90 filer bruker fortsatt den gamle `useToast` fra `@/hooks/use-toast` i stedet for `sonner`. Dette gir inkonsistente varsler pa forskjellige sider.
-
-**Aksjon:** Migrere alle til `toast` fra `sonner`.
+1. `SubscribersPage.tsx`
+2. `ModerationPage.tsx`
+3. `EmailCampaignsPage.tsx`
+4. `ABTestingPage.tsx`
+5. `RegistrationQuestionsPage.tsx`
+6. `SupportTicketsPage.tsx`
+7. `Admin/index.tsx`
+8. `AddUserDialog.tsx`
+9. `QuestionsTable.tsx`
+10. `StatsOverview.tsx`
+11. `UserDistributionChart.tsx`
+12. `UpdateProfilesForm.tsx`
+13. + ca. 7 andre
 
 ---
 
-## SEKSJON C: EDGE FUNCTIONS
+## SEKSJON C: DUPLISERT ADMIN-SYSTEM
 
-### C1. SJEKK - Manglende API-hemmeligheter
-Kun 3 hemmeligheter er konfigurert: `LOVABLE_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
+Appen har **TO separate admin-systemer** som gjor det forvirrende:
 
-Edge functions som trenger hemmeligheter som IKKE er konfigurert:
-- `ai-wingman` - Trenger AI API-nokkel (OpenAI/Anthropic)
-- `generate-bio` - Trenger AI API-nokkel
-- `generate-icebreakers` - Trenger AI API-nokkel
-- `generate-insights` - Trenger AI API-nokkel
-- `translate-message` - Trenger oversettelse-API
-- `moderate-message` / `moderate-photo` - Trenger moderering-API
-- `send-sms-verification` - Trenger Twilio-hemmeligheter
-- `send-push-notification` - Trenger push-tjeneste-nokkel
+| System | Rute | Sider |
+|--------|------|-------|
+| **Admin** (`/admin/*`) | 6 sider | Dashboard, Users, Reports, Content, Analytics, Settings |
+| **Super Admin** (`/super-admin/*`) | 38 sider | Alt over + mange flere |
 
-**Aksjon:** Disse kan konfigureres via admin-panelet etter lansering (ifolge prosjektets strategi). Funksjonene vil returnere feil inntil API-noklene er satt opp.
+`/admin/*`-rutene har **ingen ekstra rollekontroll** utover `ProtectedRoute` (som bare sjekker innlogging, ikke admin-rolle). Super Admin bruker `useAdminRoleCheck` korrekt.
+
+**Forslag:** Fjern `/admin/*`-rutene og redirect til `/super-admin/*`. Alt admin-arbeid bor skje fra ett sted.
 
 ---
 
-## SEKSJON D: FUNKSJONALITET
+## SEKSJON D: MANGLENDE ADMIN-FUNKSJONER
 
-### D1. BOR SJEKKES - Registreringsflyt
-Multi-select-felt bruker tomme strenger i stedet for arrays. Sjekk at registrering fungerer ende-til-ende.
+### D1. Funksjoner som finnes men bruker mock-data:
+| Side | Problem |
+|------|---------|
+| DashboardNew.tsx | Earnings-chart og registrations-chart bruker **hardkodet mock-data** |
+| RolesPage.tsx | Bruker `mockRoles` fra `RoleData.tsx` istedenfor database |
+| AIRecommendations.tsx | Statisk tekst, ingen ekte AI-anbefalinger |
+| ABTestingPage.tsx | Grunnstruktur men trenger ekte A/B-test-integrasjon |
 
-### D2. BOR SJEKKES - OAuth / Social Login
-Callback-handler finnes, men bor testes med faktiske providere.
-
-### D3. BOR SJEKKES - Stripe betalingsflyt
-Checkout og webhook er konfigurert. Bor verifiseres i test-modus.
-
----
-
-## SEKSJON E: PRIORITERT HANDLINGSPLAN
-
-### Fase 1: Kritisk sikkerhet (MA gjores for lansering)
-1. **Fiks `user_roles` INSERT-policy** - Fjern `WITH CHECK (true)` og krev super_admin
-2. **Fiks `matches`, `notifications`, `hashtags` INSERT-policyer** - Begrens til service_role
-3. **Aktiver leaked password protection** i Supabase Dashboard
-
-### Fase 2: Design-konsistens (Anbefalt for lansering)
-4. **Oppdater de 14 gjenvarende filene** med gammel lilla gradient til Midnight Rose-tema
-5. **Migrere useToast til sonner** i alle gjenvarende filer (~90 filer, men kan gjores i batches)
-
-### Fase 3: Testing (MA gjores for lansering)
-6. **Test registreringsflyt** ende-til-ende
-7. **Test login/logout** med e-post og social login
-8. **Test matching og meldinger**
-9. **Test admin-panelet** (super admin tilgang)
-10. **Test pa mobil og desktop**
-
-### Fase 4: Etter lansering
-11. Konfigurer API-hemmeligheter for edge functions
-12. Oppgrader Postgres-versjon
-13. Flytt PostGIS-extension til egen schema
+### D2. Admin-funksjoner som BOR finnes (forslag):
+| Funksjon | Beskrivelse | Prioritet |
+|----------|-------------|-----------|
+| **Bruker-sletting** | Admin kan ikke slette brukere permanent (kun blokkere) | Hoy |
+| **Masse-e-post** | EmailCampaigns eksisterer men sender ikke ekte e-post | Middels |
+| **Backup/Restore** | Ingen mulighet til a ta backup av data | Lav |
+| **Admin-varsler i sanntid** | Varsler for nye rapporter, nye brukere (real-time) | Middels |
+| **Bruker-impersonering** | Se appen som en spesifikk bruker (for feilsoking) | Lav |
+| **Geo-analyse** | Kart over hvor brukere befinner seg (data finnes allerede) | Middels |
+| **Inntektsrapporter** | Ekte Stripe-integrasjon for betalingsdata pa dashboardet | Hoy |
 
 ---
 
-## TEKNISK GJENNOMFORING
+## SEKSJON E: HANDLINGSPLAN
 
-### Steg 1: Database-migrering for kritiske sikkerhetsfiks
-```sql
--- Fiks user_roles: Fjern ubegrenset INSERT
-DROP POLICY "Allow insertion of super_admin roles" ON public.user_roles;
-CREATE POLICY "Only super admins can insert roles"
-ON public.user_roles FOR INSERT
-TO authenticated
-WITH CHECK (is_super_admin(auth.uid()));
+### Fase 1: Kritisk design-fix (SettingsPage + branding)
+1. Oppdater `SettingsPage.tsx` til dark tema (`bg-[#141414]`, `text-white`, `border-white/5`)
+2. Oppdater `ContentModerationTab.tsx` til dark tema
+3. Oppdater `RolesPage.tsx` og `AIRecommendations.tsx` til dark tema
+4. Endre sidebar-branding fra "LoveAffection" til "KurdMatch"
 
--- Fiks matches: Kun system/service_role
-DROP POLICY "System can create matches" ON public.matches;
+### Fase 2: Toast-migrering (19 filer)
+5. Migrere alle 19 SuperAdmin-filer fra `useToast` til `sonner`
 
--- Fiks notifications: Kun system
-DROP POLICY "System can create notifications" ON public.notifications;
+### Fase 3: Fjern duplisert admin-system
+6. Redirect `/admin/*`-ruter til `/super-admin/*`
+7. Fjern gammel `Admin/AdminDashboard.tsx` (profil-redigerer som feilaktig heter "Admin")
 
--- Fiks hashtags
-DROP POLICY "System can manage hashtags" ON public.hashtags;
-
--- Fiks message_safety_flags
-DROP POLICY "Service role can create flags" ON public.message_safety_flags;
-```
-
-Merk: Etter a fjerne "System"-policyene, ma backend-koden som oppretter matches/notifications bruke `service_role`-nokkel (via edge functions) i stedet for klientsiden.
-
-### Steg 2: Frontend tema-oppdatering
-Oppdater alle 14 filer fra Seksjon B1 til a bruke CSS-variabler.
-
-### Steg 3: Toast-migrering
-Erstatt `useToast` med `sonner` i batches av 10-15 filer.
+### Fase 4: Erstatt mock-data
+8. Koble DashboardNew earnings-chart til ekte Stripe-data
+9. Koble registrations-chart til ekte `profiles.created_at` data
+10. Flytt roles fra mock-data til `user_roles`-tabellen
 
 ---
 
-## ESTIMERT TID
+## TEKNISK DETALJER
 
-| Oppgave | Tid |
-|---------|-----|
-| Kritisk sikkerhet (database) | 30 min |
-| Design-oppdatering (14 filer) | 1 time |
-| Toast-migrering (90 filer) | 2-3 timer |
-| Ende-til-ende testing | 2-3 timer |
-| **Totalt** | **5-7 timer** |
+### Filer som ma endres (Fase 1):
+- `src/pages/SuperAdmin/pages/SettingsPage.tsx` -- Full dark-tema konvertering
+- `src/pages/SuperAdmin/components/users/redesign/tabs/ContentModerationTab.tsx` -- Dark tema
+- `src/pages/SuperAdmin/pages/RolesPage.tsx` -- Dark tema for kort
+- `src/pages/SuperAdmin/components/roles/AIRecommendations.tsx` -- Dark tema
+- `src/pages/SuperAdmin/SuperAdminLayout.tsx` -- Endre "LoveAffection" til "KurdMatch"
+
+### Filer for toast-migrering (Fase 2):
+Alle 19 filer listet i Seksjon B -- erstatt `import { useToast } from '@/hooks/use-toast'` med `import { toast } from 'sonner'` og oppdater alle `toast({title, description})` til `toast.success(title)` / `toast.error(title)`.
+
+### Estimert omfang:
+| Oppgave | Antall filer | Tid |
+|---------|-------------|-----|
+| Design-fix (dark tema) | 5 filer | 30 min |
+| Toast-migrering | 19 filer | 1 time |
+| Branding-fix | 1 fil | 5 min |
+| Duplisert admin-cleanup | 3-5 filer | 30 min |
+| Mock-data erstatning | 3 filer | 1 time |
+| **Totalt** | **~30 filer** | **~3 timer** |
+
