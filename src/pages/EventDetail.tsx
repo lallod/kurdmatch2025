@@ -195,7 +195,7 @@ const EventDetail = () => {
   const isHost = currentUserId === event.user_id;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600 pb-20">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4 sticky top-0 z-10">
         <div className="flex items-center gap-4">

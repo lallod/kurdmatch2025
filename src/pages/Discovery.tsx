@@ -164,7 +164,7 @@ const Discovery = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl">
         <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">

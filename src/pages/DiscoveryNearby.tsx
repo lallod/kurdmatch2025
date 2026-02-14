@@ -89,7 +89,7 @@ const DiscoveryNearby = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted pb-20">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background border-b border-border sticky top-0 z-10 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">

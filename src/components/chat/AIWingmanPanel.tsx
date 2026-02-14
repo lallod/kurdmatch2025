@@ -92,7 +92,7 @@ export const AIWingmanPanel = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-full left-0 right-0 mb-2 bg-gradient-to-br from-purple-900/95 to-pink-900/95 backdrop-blur-xl rounded-xl border border-purple-500/30 shadow-2xl overflow-hidden z-50"
+            className="absolute bottom-full left-0 right-0 mb-2 bg-card/95 backdrop-blur-xl rounded-xl border border-border shadow-2xl overflow-hidden z-50"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-purple-500/20">

@@ -203,7 +203,7 @@ const MyProfile = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex-1 overflow-y-auto scrollbar-hide pb-28">
+      <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
         {/* Header with settings */}
         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/10">
           <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">

@@ -76,7 +76,7 @@ const InstagramProfile = () => {
   const isOwnProfile = currentUserId === id;
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-24">
       {/* Frosted header */}
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/10">
         <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">

@@ -156,13 +156,13 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-purple-900 to-pink-900 border-purple-500/30">
+      <DialogContent className="sm:max-w-md bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-white flex items-center gap-2">
+          <DialogTitle className="text-foreground flex items-center gap-2">
             <Shield className="w-5 h-5 text-green-400" />
             Video Verification
           </DialogTitle>
-          <DialogDescription className="text-purple-200">
+          <DialogDescription className="text-muted-foreground">
             Verify your identity to get the trusted badge
           </DialogDescription>
         </DialogHeader>

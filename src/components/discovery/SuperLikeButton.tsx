@@ -126,16 +126,16 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
       </Button>
 
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
+        <DialogContent className="bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-white text-2xl flex items-center gap-2">
+            <DialogTitle className="text-foreground text-2xl flex items-center gap-2">
               <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
               Super Like - Premium Feature
             </DialogTitle>
-            <DialogDescription className="text-white/70 space-y-4">
+            <DialogDescription className="text-muted-foreground space-y-4">
               <p>Super Likes are available to Premium and Gold members!</p>
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 space-y-2">
-                <p className="font-semibold text-white">Premium Benefits:</p>
+              <div className="bg-accent/10 backdrop-blur-md rounded-lg p-4 space-y-2">
+                <p className="font-semibold text-foreground">Premium Benefits:</p>
                 <ul className="space-y-1 text-sm">
                   <li>✓ 10 Super Likes per day</li>
                   <li>✓ Unlimited regular likes</li>
@@ -146,7 +146,7 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
               </div>
               <Button
                 onClick={handleUpgrade}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+                className="w-full bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600 text-primary-foreground"
               >
                 Upgrade to Premium
               </Button>
