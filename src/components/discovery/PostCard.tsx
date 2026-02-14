@@ -16,17 +16,10 @@ import DeletePostDialog from './DeletePostDialog';
 import { SharePostDialog } from './SharePostDialog';
 import { supabase } from '@/integrations/supabase/client';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 
@@ -60,24 +53,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
     const channel = supabase
       .channel('post-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'posts',
-          filter: `id=eq.${post.id}`
-        },
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'posts', filter: `id=eq.${post.id}` },
         (payload: any) => {
           setLikesCount(payload.new.likes_count || 0);
           setCommentsCount(payload.new.comments_count || 0);
         }
-      )
-      .subscribe();
+      ).subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [post.id]);
 
   const checkSubscription = async () => {
@@ -92,229 +75,97 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
   const checkIfSaved = async () => {
     if (!currentUserId) return;
-    
     try {
-      // Using type assertion to work around TypeScript until types regenerate
       const { data, error } = await (supabase as any)
-        .from('saved_posts')
-        .select('id')
-        .eq('user_id', currentUserId)
-        .eq('post_id', post.id)
-        .maybeSingle();
-
-      if (!error && data) {
-        setIsSaved(true);
-      }
-    } catch (error) {
-      console.error('Error checking saved status:', error);
-    }
+        .from('saved_posts').select('id').eq('user_id', currentUserId).eq('post_id', post.id).maybeSingle();
+      if (!error && data) setIsSaved(true);
+    } catch (error) { console.error('Error checking saved status:', error); }
   };
 
   const handleSaveToggle = async () => {
     if (!currentUserId) return;
-
     try {
       if (isSaved) {
-        // Using type assertion to work around TypeScript until types regenerate
-        const { error } = await (supabase as any)
-          .from('saved_posts')
-          .delete()
-          .eq('user_id', currentUserId)
-          .eq('post_id', post.id);
-
+        const { error } = await (supabase as any).from('saved_posts').delete().eq('user_id', currentUserId).eq('post_id', post.id);
         if (error) throw error;
         setIsSaved(false);
         toast({ description: 'Post unsaved' });
       } else {
-        const { error } = await (supabase as any)
-          .from('saved_posts')
-          .insert({
-            user_id: currentUserId,
-            post_id: post.id
-          });
-
+        const { error } = await (supabase as any).from('saved_posts').insert({ user_id: currentUserId, post_id: post.id });
         if (error) throw error;
         setIsSaved(true);
         toast({ description: 'Post saved!' });
       }
     } catch (error) {
       console.error('Error toggling save:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to save post',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to save post', variant: 'destructive' });
     }
   };
 
   const handleLike = async () => {
     try {
-      if (isLiked) {
-        await unlikePost(post.id);
-        setIsLiked(false);
-      } else {
-        await likePost(post.id);
-        setIsLiked(true);
-      }
+      if (isLiked) { await unlikePost(post.id); setIsLiked(false); }
+      else { await likePost(post.id); setIsLiked(true); }
       onLike(post.id);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to update like',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to update like', variant: 'destructive' });
     }
   };
 
-  const handleUsernameClick = () => {
-    navigate(`/profile/${post.user_id}`);
-  };
+  const handleUsernameClick = () => navigate(`/profile/${post.user_id}`);
 
   const handleMessageClick = () => {
-    if (!isPremium) {
-      setShowUpgradeDialog(true);
-      return;
-    }
+    if (!isPremium) { setShowUpgradeDialog(true); return; }
     navigate(`/messages?userId=${post.user_id}`);
   };
 
   const handleUpgrade = async () => {
-    try {
-      await createPremiumCheckout('premium');
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to start checkout',
-        variant: 'destructive'
-      });
-    }
+    try { await createPremiumCheckout('premium'); }
+    catch (error) { toast({ title: 'Error', description: 'Failed to start checkout', variant: 'destructive' }); }
   };
 
   return (
-    <div className="space-y-3 animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center gap-3">
+    <div className="animate-fade-in">
+      {/* Header: avatar + name + more menu */}
+      <div className="flex items-center px-4 py-2.5">
         <Avatar 
-          className="w-10 h-10 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+          className="w-8 h-8 cursor-pointer"
           onClick={handleUsernameClick}
         >
           <AvatarImage src={post.profiles.profile_image} alt={post.profiles.name} />
-          <AvatarFallback>{post.profiles.name[0]}</AvatarFallback>
+          <AvatarFallback className="text-xs">{post.profiles.name[0]}</AvatarFallback>
         </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center gap-1">
-            <button
-              onClick={handleUsernameClick}
-              className="font-semibold text-white hover:underline"
-            >
-              {post.profiles.name}
-            </button>
-            {post.profiles.verified && (
-              <CheckCircle className="w-4 h-4 text-pink-400 fill-pink-400" />
-            )}
-          </div>
-          <p className="text-xs text-white/70">
-            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-          </p>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="space-y-3">
-        <PostContent content={post.content} />
-        
-        {/* Media */}
-        {post.media_url && (
-          <div className="rounded-lg overflow-hidden">
-            {post.media_type === 'image' ? (
-              <img 
-                src={post.media_url} 
-                alt="Post media" 
-                className="w-full h-auto max-h-[500px] object-cover"
-              />
-            ) : (
-              <video 
-                src={post.media_url} 
-                controls 
-                className="w-full h-auto max-h-[500px]"
-              />
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className="flex items-center gap-4 pt-2">
-        <button
-          onClick={handleLike}
-          className={`flex items-center gap-2 transition-colors group ${
-            isLiked ? 'text-pink-500' : 'text-white/70 hover:text-pink-400'
-          }`}
-        >
-          <Heart className={`w-5 h-5 group-hover:scale-110 transition-transform ${isLiked ? 'fill-pink-500' : ''}`} />
-          <span className="text-sm">{likesCount}</span>
-        </button>
-        
-        <button
-          onClick={() => setShowComments(!showComments)}
-          className="flex items-center gap-2 text-white/70 hover:text-purple-400 transition-colors group"
-        >
-          <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <span className="text-sm">{commentsCount}</span>
-        </button>
-
-        <button 
-          onClick={() => setShowShareDialog(true)}
-          className="flex items-center gap-2 text-white/70 hover:text-blue-400 transition-colors group"
-        >
-          <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-        </button>
-        
-        <button 
-          onClick={handleMessageClick}
-          className="flex items-center gap-2 text-white/70 hover:text-purple-400 transition-colors group relative"
-        >
-          <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          {!isPremium && (
-            <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-1.5 py-0.5 rounded-full">
-              PRO
-            </span>
+        <div className="flex-1 ml-3">
+          <button onClick={handleUsernameClick} className="font-semibold text-sm text-foreground hover:opacity-70">
+            {post.profiles.name}
+          </button>
+          {post.profiles.verified && (
+            <CheckCircle className="w-3.5 h-3.5 text-primary fill-primary inline ml-1" />
           )}
-        </button>
-
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="ml-auto text-white/70 hover:text-white">
+            <Button variant="ghost" size="icon" className="text-foreground h-8 w-8">
               <MoreVertical className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-md border-white/20">
+          <DropdownMenuContent align="end" className="bg-card border-border">
             {currentUserId === post.user_id ? (
               <>
                 <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-                  <Pencil className="w-4 h-4 mr-2" />
-                  Edit Post
+                  <Pencil className="w-4 h-4 mr-2" />Edit Post
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setShowDeleteDialog(true)}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Post
+                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive focus:text-destructive">
+                  <Trash2 className="w-4 h-4 mr-2" />Delete Post
                 </DropdownMenuItem>
               </>
             ) : (
               <>
                 <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
-                  <Flag className="w-4 h-4 mr-2" />
-                  Report Post
+                  <Flag className="w-4 h-4 mr-2" />Report Post
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setShowBlockDialog(true)} 
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Ban className="w-4 h-4 mr-2" />
-                  Block User
+                <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive focus:text-destructive">
+                  <Ban className="w-4 h-4 mr-2" />Block User
                 </DropdownMenuItem>
               </>
             )}
@@ -322,25 +173,82 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         </DropdownMenu>
       </div>
 
+      {/* Full-bleed media */}
+      {post.media_url && (
+        <div className="w-full">
+          {post.media_type === 'image' ? (
+            <img src={post.media_url} alt="Post media" className="w-full h-auto max-h-[500px] object-cover" />
+          ) : (
+            <video src={post.media_url} controls className="w-full h-auto max-h-[500px]" />
+          )}
+        </div>
+      )}
+
+      {/* Action row: Instagram layout */}
+      <div className="px-4 pt-2.5 pb-1">
+        <div className="flex items-center">
+          <div className="flex items-center gap-4">
+            <button onClick={handleLike} className="group">
+              <Heart className={`w-6 h-6 transition-transform group-hover:scale-110 ${isLiked ? 'fill-primary text-primary' : 'text-foreground'}`} />
+            </button>
+            <button onClick={() => setShowComments(!showComments)} className="group">
+              <MessageCircle className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
+            </button>
+            <button onClick={() => setShowShareDialog(true)} className="group">
+              <Share2 className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
+            </button>
+          </div>
+          <div className="ml-auto">
+            <button onClick={handleSaveToggle} className="group">
+              <Bookmark className={`w-6 h-6 transition-transform group-hover:scale-110 ${isSaved ? 'fill-foreground text-foreground' : 'text-foreground'}`} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Likes count */}
+      <div className="px-4 pb-1">
+        <span className="text-sm font-semibold text-foreground">{likesCount} likes</span>
+      </div>
+
+      {/* Caption */}
+      <div className="px-4 pb-1">
+        <PostContent content={post.content} />
+      </div>
+
+      {/* Comments count */}
+      {commentsCount > 0 && !showComments && (
+        <button onClick={() => setShowComments(true)} className="px-4 pb-1">
+          <span className="text-sm text-muted-foreground">View all {commentsCount} comments</span>
+        </button>
+      )}
+
+      {/* Timestamp */}
+      <div className="px-4 pb-3">
+        <span className="text-xs text-muted-foreground uppercase">
+          {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+        </span>
+      </div>
+
       {/* Comment Section */}
       {showComments && (
-        <div className="mt-4 pt-4 border-t border-white/10">
+        <div className="px-4 pb-4 border-t border-border/10 pt-3">
           <CommentSection postId={post.id} currentUserId={currentUserId} />
         </div>
       )}
 
       {/* Dialogs */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
+        <DialogContent className="bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-white text-2xl flex items-center gap-2">
-              <MessageCircle className="w-6 h-6 text-purple-400" />
+            <DialogTitle className="text-foreground text-xl flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-primary" />
               Messaging - Premium Feature
             </DialogTitle>
-            <DialogDescription className="text-white/70 space-y-4">
+            <DialogDescription className="text-muted-foreground space-y-4">
               <p>Messaging is available to Premium and Gold members!</p>
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 space-y-2">
-                <p className="font-semibold text-white">Premium Benefits:</p>
+              <div className="bg-muted rounded-lg p-4 space-y-2">
+                <p className="font-semibold text-foreground">Premium Benefits:</p>
                 <ul className="space-y-1 text-sm">
                   <li>✓ Send unlimited messages</li>
                   <li>✓ 10 Super Likes per day</li>
@@ -349,10 +257,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
                   <li>✓ 5 Rewinds per day</li>
                 </ul>
               </div>
-              <Button
-                onClick={handleUpgrade}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
-              >
+              <Button onClick={handleUpgrade} className="w-full">
                 Upgrade to Premium
               </Button>
             </DialogDescription>
@@ -360,48 +265,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         </DialogContent>
       </Dialog>
 
-      <EditPostDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        postId={post.id}
-        initialContent={post.content}
-        onSuccess={() => window.location.reload()}
-      />
-
-      <DeletePostDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-        postId={post.id}
-        onSuccess={() => window.location.reload()}
-      />
-
-      <ReportDialog
-        open={showReportDialog}
-        onOpenChange={setShowReportDialog}
-        contentId={post.id}
-        contentType="post"
-        reportedUserId={post.user_id}
-      />
-
-      <BlockUserDialog
-        open={showBlockDialog}
-        onOpenChange={setShowBlockDialog}
-        userId={post.user_id}
-        userName={post.profiles.name}
-        onBlocked={() => {
-          toast({
-            title: 'User Blocked',
-            description: 'This user has been blocked successfully',
-          });
-        }}
-      />
-
-      <SharePostDialog
-        open={showShareDialog}
-        onOpenChange={setShowShareDialog}
-        postId={post.id}
-        postContent={post.content}
-      />
+      <EditPostDialog open={showEditDialog} onOpenChange={setShowEditDialog} postId={post.id} initialContent={post.content} onSuccess={() => window.location.reload()} />
+      <DeletePostDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} postId={post.id} onSuccess={() => window.location.reload()} />
+      <ReportDialog open={showReportDialog} onOpenChange={setShowReportDialog} contentId={post.id} contentType="post" reportedUserId={post.user_id} />
+      <BlockUserDialog open={showBlockDialog} onOpenChange={setShowBlockDialog} userId={post.user_id} userName={post.profiles.name} onBlocked={() => { toast({ title: 'User Blocked', description: 'This user has been blocked successfully' }); }} />
+      <SharePostDialog open={showShareDialog} onOpenChange={setShowShareDialog} postId={post.id} postContent={post.content} />
     </div>
   );
 };

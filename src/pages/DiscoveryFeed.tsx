@@ -9,7 +9,6 @@ import PostCard from '@/components/discovery/PostCard';
 import EventCard from '@/components/discovery/EventCard';
 import EventFilters from '@/components/discovery/EventFilters';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PenSquare, Loader2, Calendar, Plus, Filter, Users as UsersIcon, Hash, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -27,7 +26,7 @@ const DiscoveryFeed = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'events'>('posts');
   const [showEventFilters, setShowEventFilters] = useState(false);
   const [showFollowingOnly, setShowFollowingOnly] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -95,7 +94,6 @@ const DiscoveryFeed = () => {
     loadPosts();
   }, [showFollowingOnly, activeHashtag, activeGroup]);
 
-  // Real-time updates for posts
   useRealtimePosts({
     onPostInserted: loadPosts,
     onPostUpdated: loadPosts,
@@ -129,7 +127,6 @@ const DiscoveryFeed = () => {
   };
 
   const handleComment = (postId: string) => {
-    // Navigate to post detail with comments
     toast({
       title: 'Comments',
       description: 'Comment feature coming soon!'
@@ -165,17 +162,10 @@ const DiscoveryFeed = () => {
           ? { ...event, is_attending: true, attendees_count: event.attendees_count + 1 }
           : event
       ));
-      toast({
-        title: 'Success',
-        description: 'Joined event successfully!'
-      });
+      toast({ title: 'Success', description: 'Joined event successfully!' });
     } catch (error) {
       console.error('Error joining event:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to join event',
-        variant: 'destructive'
-      });
+      toast({ title: 'Error', description: 'Failed to join event', variant: 'destructive' });
     }
   };
 
@@ -187,28 +177,21 @@ const DiscoveryFeed = () => {
           ? { ...event, is_attending: false, attendees_count: Math.max(0, event.attendees_count - 1) }
           : event
       ));
-      toast({
-        title: 'Left event',
-        description: 'You are no longer attending this event'
-      });
+      toast({ title: 'Left event', description: 'You are no longer attending this event' });
     } catch (error) {
       console.error('Error leaving event:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to leave event',
-        variant: 'destructive'
-      });
+      toast({ title: 'Error', description: 'Failed to leave event', variant: 'destructive' });
     }
   };
 
   const handleHashtagFilter = (hashtag: string | null) => {
     setActiveHashtag(hashtag);
-    setActiveGroup(null); // Clear group filter
+    setActiveGroup(null);
   };
 
   const handleGroupFilter = (groupId: string | null) => {
     setActiveGroup(groupId);
-    setActiveHashtag(null); // Clear hashtag filter
+    setActiveHashtag(null);
   };
 
   const clearDiscoveryFilters = () => {
@@ -225,189 +208,156 @@ const DiscoveryFeed = () => {
   };
 
   const filteredEvents = events.filter(event => {
-    // Category filter
-    if (eventCategory !== 'all' && event.category !== eventCategory) {
-      return false;
-    }
-    
-    // Location filter
-    if (eventLocation && !event.location.toLowerCase().includes(eventLocation.toLowerCase())) {
-      return false;
-    }
-    
-    // Date from filter
-    if (eventDateFrom && new Date(event.event_date) < new Date(eventDateFrom)) {
-      return false;
-    }
-    
-    // Date to filter
-    if (eventDateTo && new Date(event.event_date) > new Date(eventDateTo)) {
-      return false;
-    }
-
-    // Search filter
+    if (eventCategory !== 'all' && event.category !== eventCategory) return false;
+    if (eventLocation && !event.location.toLowerCase().includes(eventLocation.toLowerCase())) return false;
+    if (eventDateFrom && new Date(event.event_date) < new Date(eventDateFrom)) return false;
+    if (eventDateTo && new Date(event.event_date) > new Date(eventDateTo)) return false;
     if (eventSearchQuery) {
       const query = eventSearchQuery.toLowerCase();
-      if (
-        !event.title.toLowerCase().includes(query) &&
-        !event.description.toLowerCase().includes(query) &&
-        !event.location.toLowerCase().includes(query)
-      ) {
-        return false;
-      }
+      if (!event.title.toLowerCase().includes(query) && !event.description.toLowerCase().includes(query) && !event.location.toLowerCase().includes(query)) return false;
     }
-    
     return true;
   });
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-white" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 pb-24">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">Discovery</h1>
-          <div className="flex items-center gap-2">
+    <div className="min-h-screen bg-background pb-24">
+      {/* Instagram-style slim header */}
+      <div className="sticky top-0 z-10 bg-background border-b border-border/30">
+        <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground tracking-tight">KurdMatch</h1>
+          <div className="flex items-center gap-1">
             <NotificationBell />
-            {activeTab === 'posts' && (
-              <Button 
-                onClick={() => setShowFollowingOnly(!showFollowingOnly)}
-                size="sm"
-                variant={showFollowingOnly ? "default" : "outline"}
-                className={`gap-2 ${showFollowingOnly ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0' : 'bg-purple-600/50 backdrop-blur-sm border-white/20 text-white hover:bg-purple-600/70'}`}
-              >
-                <UsersIcon className="w-4 h-4" />
-                Following
-              </Button>
-            )}
-            {activeTab === 'events' && (
-              <Button 
-                onClick={() => setShowEventFilters(!showEventFilters)}
-                size="sm"
-                variant="outline"
-                className="gap-2 border-white/20 text-white hover:bg-white/10"
-              >
-                <Filter className="w-4 h-4" />
-                Filters
-              </Button>
-            )}
-            <Button 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={activeTab === 'posts' ? handleCreatePost : handleCreateEvent}
-              size="sm" 
-              className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0"
+              className="text-foreground h-9 w-9"
             >
-              <Plus className="w-4 h-4" />
-              {activeTab === 'posts' ? 'New Post' : 'New Event'}
+              <Plus className="w-5 h-5" />
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 bg-white/10 backdrop-blur-sm border border-white/20">
-            <TabsTrigger 
-              value="posts" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-white/70"
-            >
-              Posts
-            </TabsTrigger>
-            <TabsTrigger 
-              value="events"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-white/70"
-            >
-              Events
-            </TabsTrigger>
-          </TabsList>
+      <div className="max-w-lg mx-auto">
+        {/* Stories Row — no card wrapper */}
+        {stories.length > 0 && (
+          <div className="px-4 py-3 border-b border-border/10">
+            <StoryBubbles
+              stories={stories}
+              onStoryClick={handleStoryClick}
+              onAddStory={handleAddStory}
+            />
+          </div>
+        )}
 
-          {/* Posts Tab */}
-          <TabsContent value="posts" className="space-y-6">
-            {/* Stories Section */}
-            {stories.length > 0 && (
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
-                <StoryBubbles
-                  stories={stories}
-                  onStoryClick={handleStoryClick}
-                  onAddStory={handleAddStory}
-                />
+        {/* Underline-style tabs */}
+        <div className="flex border-b border-border/20">
+          <button
+            onClick={() => setActiveTab('posts')}
+            className={`flex-1 py-2.5 text-sm font-semibold text-center transition-colors relative ${
+              activeTab === 'posts' ? 'text-foreground' : 'text-muted-foreground'
+            }`}
+          >
+            Posts
+            {activeTab === 'posts' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground" />}
+          </button>
+          <button
+            onClick={() => setActiveTab('events')}
+            className={`flex-1 py-2.5 text-sm font-semibold text-center transition-colors relative ${
+              activeTab === 'events' ? 'text-foreground' : 'text-muted-foreground'
+            }`}
+          >
+            Events
+            {activeTab === 'events' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground" />}
+          </button>
+        </div>
+
+        {/* Following toggle + filters row */}
+        {activeTab === 'posts' && (
+          <div className="px-4 py-2 flex items-center gap-2 border-b border-border/10">
+            <button
+              onClick={() => setShowFollowingOnly(!showFollowingOnly)}
+              className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${
+                showFollowingOnly 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              Following
+            </button>
+            <CompactDiscoveryDropdowns 
+              onHashtagFilter={handleHashtagFilter}
+              onGroupFilter={handleGroupFilter}
+              activeHashtag={activeHashtag}
+              activeGroup={activeGroup}
+            />
+          </div>
+        )}
+
+        {activeTab === 'events' && (
+          <div className="px-4 py-2 flex items-center justify-end border-b border-border/10">
+            <Button 
+              onClick={() => setShowEventFilters(!showEventFilters)}
+              size="sm"
+              variant="ghost"
+              className="gap-1 text-muted-foreground text-xs"
+            >
+              <Filter className="w-3.5 h-3.5" />
+              Filters
+            </Button>
+          </div>
+        )}
+
+        {/* Active filter banner */}
+        {(activeHashtag || activeGroup) && (
+          <div className="px-4 py-2 flex items-center justify-between bg-muted/50">
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              {activeHashtag && <><Hash className="w-3.5 h-3.5 text-primary" /><span>#{activeHashtag}</span></>}
+              {activeGroup && <><UsersIcon className="w-3.5 h-3.5 text-primary" /><span>Group Posts</span></>}
+            </div>
+            <Button size="sm" variant="ghost" onClick={clearDiscoveryFilters} className="h-7 w-7 p-0">
+              <X className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+        )}
+
+        {/* Posts Feed */}
+        {activeTab === 'posts' && (
+          <div>
+            {posts.length === 0 ? (
+              <div className="text-center py-16 px-4">
+                <p className="text-muted-foreground mb-4">No posts yet</p>
+                <Button onClick={handleCreatePost} className="gap-2">
+                  <PenSquare className="w-4 h-4" />
+                  Create First Post
+                </Button>
               </div>
+            ) : (
+              posts.map((post) => (
+                <div key={post.id} className="border-b border-border/10">
+                  <PostCard
+                    post={post}
+                    onLike={handleLike}
+                    onComment={handleComment}
+                  />
+                </div>
+              ))
             )}
+          </div>
+        )}
 
-            {/* Compact Discovery Dropdowns */}
-            <div className="space-y-3">
-              <CompactDiscoveryDropdowns 
-                onHashtagFilter={handleHashtagFilter}
-                onGroupFilter={handleGroupFilter}
-                activeHashtag={activeHashtag}
-                activeGroup={activeGroup}
-              />
-              
-              {/* Active Filter Display */}
-              {(activeHashtag || activeGroup) && (
-                <div className="bg-purple-500/20 border border-purple-400/30 rounded-xl p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {activeHashtag && (
-                      <>
-                        <Hash className="w-4 h-4 text-purple-400" />
-                        <span className="text-white font-medium">#{activeHashtag}</span>
-                      </>
-                    )}
-                    {activeGroup && (
-                      <>
-                        <UsersIcon className="w-4 h-4 text-purple-400" />
-                        <span className="text-white font-medium">Group Posts</span>
-                      </>
-                    )}
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={clearDiscoveryFilters}
-                    className="text-white hover:text-white hover:bg-purple-500/20"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Posts Feed */}
-            <div className="space-y-4">
-              {posts.length === 0 ? (
-                <div className="text-center py-12 text-white">
-                  <p className="text-white/70 mb-4">No posts yet</p>
-                  <Button 
-                    onClick={handleCreatePost} 
-                    className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
-                  >
-                    <PenSquare className="w-4 h-4" />
-                    Create First Post
-                  </Button>
-                </div>
-              ) : (
-                posts.map((post) => (
-                  <div key={post.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
-                    <PostCard
-                      post={post}
-                      onLike={handleLike}
-                      onComment={handleComment}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
-          </TabsContent>
-
-          {/* Events Tab */}
-          <TabsContent value="events" className="space-y-4">
-            {/* Event Filters */}
+        {/* Events Feed */}
+        {activeTab === 'events' && (
+          <div className="px-4 py-4 space-y-4">
             {showEventFilters && (
               <EventFilters
                 category={eventCategory}
@@ -425,45 +375,26 @@ const DiscoveryFeed = () => {
             )}
 
             {filteredEvents.length === 0 ? (
-              <div className="text-center py-12 text-white">
-                <Calendar className="w-16 h-16 mx-auto mb-4 text-white/50" />
-                <p className="text-white/70 mb-4">
+              <div className="text-center py-16">
+                <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
+                <p className="text-muted-foreground mb-4">
                   {events.length === 0 ? 'No upcoming events' : 'No events match your filters'}
                 </p>
-                {events.length === 0 ? (
-                  <Button 
-                    onClick={handleCreateEvent} 
-                    className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    Create First Event
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={handleClearEventFilters} 
-                    className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
-                  >
-                    Clear Filters
-                  </Button>
-                )}
+                <Button onClick={events.length === 0 ? handleCreateEvent : handleClearEventFilters}>
+                  {events.length === 0 ? 'Create First Event' : 'Clear Filters'}
+                </Button>
               </div>
             ) : (
               filteredEvents.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onJoin={handleJoinEvent}
-                  onLeave={handleLeaveEvent}
-                />
+                <EventCard key={event.id} event={event} onJoin={handleJoinEvent} onLeave={handleLeaveEvent} />
               ))
             )}
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
       </div>
 
       <BottomNavigation />
 
-      {/* Story Viewer */}
       {selectedStory && (
         <StoryViewer
           open={!!selectedStory}
@@ -473,7 +404,6 @@ const DiscoveryFeed = () => {
         />
       )}
 
-      {/* Create Story Modal */}
       {currentUserId && (
         <CreateStoryModal
           open={showCreateStory}
@@ -487,3 +417,4 @@ const DiscoveryFeed = () => {
 };
 
 export default DiscoveryFeed;
+
