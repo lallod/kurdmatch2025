@@ -139,7 +139,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
 
   return (
     <div 
-      className={`relative bg-card ${SWIPE_CONFIG.card.borderRadius} shadow-[0_4px_24px_rgba(0,0,0,0.3)] overflow-hidden cursor-grab active:cursor-grabbing select-none w-full h-full`}
+      className={`relative bg-card overflow-hidden cursor-grab active:cursor-grabbing select-none w-full h-full`}
       style={{
         transform: `translateX(${dragPosition.x}px) translateY(${dragPosition.y}px) rotate(${cardRotation}deg)`,
         opacity: cardOpacity,
@@ -186,7 +186,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
         
         {/* Profile info overlay at bottom - Transparent and clickable */}
         <div 
-          className={`absolute bottom-0 left-0 right-0 bg-background/30 backdrop-blur-md border-t border-border/20 ${SWIPE_CONFIG.info.overlay.height} ${onProfileClick ? 'cursor-pointer hover:bg-background/40 transition-all duration-200' : ''}`}
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-16 pb-3 px-4 ${onProfileClick ? 'cursor-pointer' : ''}`}
           onClick={(e) => {
             e.stopPropagation();
             if (onProfileClick && !isBackground) {
@@ -194,7 +194,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
             }
           }}
         >
-          <div className={`absolute ${SWIPE_CONFIG.info.overlay.padding}`}>
+          <div>
             <ProfileInfo profile={profile} minimal={true} />
           </div>
         </div>

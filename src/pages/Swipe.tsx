@@ -246,15 +246,15 @@ const Swipe = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-b from-background to-surface-secondary flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
       {/* Header Actions - floating over card */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-end px-3 py-2 sm:px-4 sm:py-3 z-30" style={{ paddingTop: 'max(env(safe-area-inset-top, 8px), 8px)' }}>
-        <div className="flex items-center gap-2">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-end px-3 z-30" style={{ paddingTop: 'max(env(safe-area-inset-top, 8px), 8px)' }}>
+        <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setBoostOpen(true)}
-            className="text-foreground hover:bg-muted border border-border/30 rounded-full w-10 h-10 sm:w-11 sm:h-11"
+            className="text-white/90 hover:bg-white/10 rounded-full w-9 h-9 backdrop-blur-sm border-0"
           >
             <Zap className="w-5 h-5 text-warning" />
           </Button>
@@ -262,7 +262,7 @@ const Swipe = () => {
             variant="ghost"
             size="icon"
             onClick={() => setNotificationsOpen(true)}
-            className="text-foreground hover:bg-muted border border-border/30 rounded-full w-10 h-10 sm:w-11 sm:h-11 relative"
+            className="text-white/90 hover:bg-white/10 rounded-full w-9 h-9 backdrop-blur-sm border-0 relative"
           >
             <Bell className="w-5 h-5" />
           </Button>
@@ -270,7 +270,7 @@ const Swipe = () => {
             variant="ghost"
             size="icon"
             onClick={() => setFilterOpen(true)}
-            className="text-foreground hover:bg-muted border border-border/30 rounded-full w-10 h-10 sm:w-11 sm:h-11"
+            className="text-white/90 hover:bg-white/10 rounded-full w-9 h-9 backdrop-blur-sm border-0"
           >
             <SlidersHorizontal className="w-5 h-5" />
           </Button>
@@ -300,10 +300,10 @@ const Swipe = () => {
         </div>
       )}
 
-      {/* Main Content - card fills from top to above actions */}
-      <div className="flex-1 flex items-stretch" style={{ paddingBottom: '76px' }}>
+      {/* Main Content - fills between top and bottom nav + actions */}
+      <div className="absolute inset-0" style={{ bottom: 'calc(56px + 72px + env(safe-area-inset-bottom, 0px))' }}>
         {/* Card Stack Container */}
-        <div className={`relative flex items-center justify-center w-full h-full ${SWIPE_CONFIG.stack.container.spacing}`}>
+        <div className="relative w-full h-full">
           {/* Background Cards (stacked behind) */}
           {profiles.slice(currentIndex + 1, currentIndex + 3).map((profile, index) => (
             <div
@@ -327,7 +327,7 @@ const Swipe = () => {
           ))}
           
           {/* Main Active Card */}
-          <div className="relative z-20">
+          <div className="relative z-20 w-full h-full">
             <SwipeCard 
               profile={currentProfile}
               onSwipeLeft={() => handleSwipeAction('pass', currentProfile.id)}
