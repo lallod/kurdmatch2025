@@ -3,18 +3,18 @@ export const SWIPE_CONFIG = {
   // Card Dimensions (responsive)
   card: {
     maxWidth: {
-      mobile: 'w-[96vw]',
-      tablet: 'w-[85vw] max-w-[450px]',
-      desktop: 'w-[80vw] max-w-[480px]'
+      mobile: 'w-full',
+      tablet: 'w-full max-w-[450px]',
+      desktop: 'w-full max-w-[480px]'
     },
     height: {
-      mobile: 'h-[calc(100vh-200px)]',
-      tablet: 'h-[calc(100vh-240px)]',
-      desktop: 'h-[calc(100vh-260px)]'
+      mobile: 'h-full',
+      tablet: 'h-full',
+      desktop: 'h-full'
     },
-    minHeight: 'min-h-[500px]',
-    maxHeight: 'max-h-[calc(100vh-120px)]',
-    borderRadius: 'rounded-3xl'
+    minHeight: 'min-h-0',
+    maxHeight: 'max-h-none',
+    borderRadius: 'rounded-2xl sm:rounded-3xl'
   },
 
   // Header Configuration
@@ -78,7 +78,7 @@ export const SWIPE_CONFIG = {
   // Profile Info Configuration
   info: {
     overlay: {
-      height: 'h-36 sm:h-40',
+      height: 'h-44 sm:h-48',
       padding: 'bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4'
     },
     name: {
