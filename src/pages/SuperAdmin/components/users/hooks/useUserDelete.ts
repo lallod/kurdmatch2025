@@ -1,79 +1,49 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { User } from '../types';
 
 export const useUserDelete = (onRefresh: () => void) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = useToast();
 
   const handleDeleteUser = (user: User) => {
     setUserToDelete(user);
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDeleteUser = async () => {
+  const confirmDeleteUser = async (permanent = false) => {
     if (!userToDelete) return;
     
     setIsDeleting(true);
     try {
-      // First get the session to make sure we don't delete ourselves
       const { data: { session } } = await supabase.auth.getSession();
       if (userToDelete.id === session?.user?.id) {
-        throw new Error("You cannot deactivate your own account");
+        throw new Error("You cannot delete your own account");
       }
-      
-      // Check if we have the proper permissions first
-      const { error: checkError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', userToDelete.id)
-        .limit(1);
-        
-      if (checkError) {
-        if (checkError.message.includes('row-level security policy')) {
-          throw new Error("You don't have permission to deactivate users. Contact your database administrator.");
-        } else {
-          throw checkError;
-        }
-      }
-      
-      // Instead of deleting, update status to "inactive"
-      const { error } = await supabase
-        .from('profiles')
-        .update({ 
-          status: 'deactivated',
-          last_active: null,
-          verified: false
-        })
-        .eq('id', userToDelete.id);
-      
-      if (error) {
-        if (error.message.includes('row-level security policy')) {
-          throw new Error("You don't have permission to deactivate users. Contact your database administrator.");
-        } else {
-          throw error;
-        }
-      }
-      
-      toast({
-        title: "User Deactivated",
-        description: `${userToDelete.name} has been deactivated.`,
+
+      const { data, error } = await supabase.functions.invoke('admin-delete-user', {
+        body: {
+          userId: userToDelete.id,
+          action: permanent ? 'permanent_delete' : 'deactivate',
+        },
       });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      toast.success(
+        permanent
+          ? `${userToDelete.name} has been permanently deleted.`
+          : `${userToDelete.name} has been deactivated.`
+      );
       
       onRefresh();
     } catch (error) {
-      console.error("Error deactivating user:", error);
+      console.error("Error deleting user:", error);
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      
-      toast({
-        title: "Deactivation Failed",
-        description: errorMessage || "There was an error deactivating this user.",
-        variant: "destructive",
-      });
+      toast.error(errorMessage || "There was an error processing this request.");
     } finally {
       setIsDeleting(false);
       setIsDeleteDialogOpen(false);
