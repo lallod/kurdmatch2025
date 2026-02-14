@@ -88,133 +88,126 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
   };
 
   return (
-    <div className="mb-8">
-      <div className="flex items-start gap-6 mb-6">
-        {/* Profile Picture */}
-        <Avatar className="w-24 h-24 md:w-32 md:h-32 ring-4 ring-purple-400/30">
+    <div>
+      {/* Centered hero layout */}
+      <div className="flex flex-col items-center text-center mb-4">
+        <Avatar className="w-24 h-24 ring-[3px] ring-primary/30 mb-3">
           <AvatarImage src={profile.profile_image} alt={profile.name} />
-          <AvatarFallback className="text-2xl bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+          <AvatarFallback className="text-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
             {profile.name[0]}
           </AvatarFallback>
         </Avatar>
 
-        {/* Stats */}
-        <div className="flex-1">
-          <div className="flex items-center gap-8 mb-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">{stats.posts}</div>
-              <div className="text-sm text-white/70">posts</div>
-            </div>
-            <div className="text-center cursor-pointer hover:opacity-80">
-              <div className="text-2xl font-bold text-white">{followersCount}</div>
-              <div className="text-sm text-white/70">followers</div>
-            </div>
-            <div className="text-center cursor-pointer hover:opacity-80">
-              <div className="text-2xl font-bold text-white">{stats.following}</div>
-              <div className="text-sm text-white/70">following</div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-1.5 md:gap-2">
-            {isOwnProfile ? (
-              <Button
-                onClick={handleEditProfile}
-                className="flex-1 bg-white/10 hover:bg-white/20 text-white border-white/20 text-xs md:text-sm px-2 md:px-4"
-                variant="outline"
-              >
-                Edit Profile
-              </Button>
-            ) : (
-              <>
-                <Button
-                  onClick={handleFollowToggle}
-                  disabled={loading}
-                  size="sm"
-                  className={`flex-1 text-xs md:text-sm px-2 md:px-4 ${
-                    isFollowing
-                      ? 'bg-white/10 hover:bg-white/20 text-white'
-                      : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
-                  }`}
-                >
-                  {isFollowing ? 'Following' : 'Follow'}
-                </Button>
-                <Button
-                  onClick={handleMessage}
-                  size="sm"
-                  className="flex-1 bg-white/10 hover:bg-white/20 text-white relative text-xs md:text-sm px-2 md:px-4 border-yellow-500/30"
-                  variant="outline"
-                >
-                  <MessageCircle className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                  <span className="hidden sm:inline">PM</span>
-                  {!isPremium && (
-                    <span className="absolute -top-0.5 -right-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[8px] px-1 py-0 rounded-full leading-tight font-bold">
-                      PRO
-                    </span>
-                  )}
-                </Button>
-                <SuperLikeButton postId={profile.id} userId={profile.id} />
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Profile Info */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-white">
-            {profile.name}, {profile.age}
-          </h2>
+        <div className="flex items-center gap-1.5 mb-1">
+          <h2 className="text-lg font-bold text-foreground">{profile.name}, {profile.age}</h2>
           {profile.verified && (
-            <CheckCircle className="w-5 h-5 text-pink-400 fill-pink-400" />
+            <CheckCircle className="w-4 h-4 text-primary fill-primary" />
           )}
         </div>
 
-        {/* Kurdistan Region Origin */}
-        {profile.kurdistan_region && (
-          <div className="flex items-center gap-2 text-white/70 text-sm">
-            <MapPin className="w-4 h-4" />
-            <span>From {getKurdistanRegionDisplay(profile.kurdistan_region)}</span>
-          </div>
-        )}
-
-        {/* Current Location */}
-        {profile.location && (() => {
-          const locationInfo = parseLocation(profile.location);
-          return (
-            <div className="flex items-center gap-2 text-white/70 text-sm">
-              <span>📍</span>
-              <span>Lives in {locationInfo.city}{locationInfo.country ? `, ${locationInfo.country}` : ''}</span>
-            </div>
-          );
-        })()}
-
         {profile.occupation && (
-          <div className="flex items-center gap-2 text-white/70 text-sm">
-            <Briefcase className="w-4 h-4" />
+          <div className="flex items-center gap-1 text-muted-foreground text-xs mb-0.5">
+            <Briefcase className="w-3 h-3" />
             <span>{profile.occupation}</span>
           </div>
         )}
 
-        {profile.bio && (
-          <p className="text-white/90 text-sm leading-relaxed mt-3">{profile.bio}</p>
+        {profile.kurdistan_region && (
+          <div className="flex items-center gap-1 text-muted-foreground text-xs mb-0.5">
+            <MapPin className="w-3 h-3" />
+            <span>From {getKurdistanRegionDisplay(profile.kurdistan_region)}</span>
+          </div>
+        )}
+
+        {profile.location && (() => {
+          const locationInfo = parseLocation(profile.location);
+          return (
+            <div className="flex items-center gap-1 text-muted-foreground text-xs">
+              <span>📍 {locationInfo.city}{locationInfo.country ? `, ${locationInfo.country}` : ''}</span>
+            </div>
+          );
+        })()}
+      </div>
+
+      {/* Stats Card */}
+      <div className="bg-card rounded-2xl p-3 shadow-sm mb-4">
+        <div className="flex items-center justify-around">
+          <div className="text-center">
+            <div className="text-lg font-bold text-foreground">{stats.posts}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Posts</div>
+          </div>
+          <div className="w-px h-8 bg-border" />
+          <div className="text-center">
+            <div className="text-lg font-bold text-foreground">{followersCount}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Followers</div>
+          </div>
+          <div className="w-px h-8 bg-border" />
+          <div className="text-center">
+            <div className="text-lg font-bold text-foreground">{stats.following}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Following</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bio */}
+      {profile.bio && (
+        <p className="text-foreground/80 text-sm leading-relaxed mb-4 px-1">{profile.bio}</p>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex gap-2 mb-2">
+        {isOwnProfile ? (
+          <Button
+            onClick={handleEditProfile}
+            className="flex-1 h-10 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-sm font-medium"
+            variant="ghost"
+          >
+            Edit Profile
+          </Button>
+        ) : (
+          <>
+            <Button
+              onClick={handleFollowToggle}
+              disabled={loading}
+              className={`flex-1 h-10 rounded-xl text-sm font-semibold ${
+                isFollowing
+                  ? 'bg-muted hover:bg-muted/80 text-foreground'
+                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+              }`}
+            >
+              {isFollowing ? 'Following' : 'Follow'}
+            </Button>
+            <Button
+              onClick={handleMessage}
+              className="flex-1 h-10 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-sm font-medium relative"
+              variant="ghost"
+            >
+              <MessageCircle className="w-4 h-4 mr-1.5" />
+              Message
+              {!isPremium && (
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">
+                  PRO
+                </span>
+              )}
+            </Button>
+            <SuperLikeButton postId={profile.id} userId={profile.id} />
+          </>
         )}
       </div>
 
-      {/* Message Upgrade Dialog */}
+      {/* Upgrade Dialog */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 border-white/20">
+        <DialogContent className="bg-card border-border rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-white text-2xl flex items-center gap-2">
-              <MessageCircle className="w-6 h-6 text-pink-400" />
-              PM - Premium Feature
+            <DialogTitle className="text-foreground text-xl flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-primary" />
+              Premium Feature
             </DialogTitle>
-            <DialogDescription className="text-white/70 space-y-4">
+            <DialogDescription className="text-muted-foreground space-y-4">
               <p>Send unlimited messages to Premium and Gold members!</p>
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 space-y-2">
-                <p className="font-semibold text-white">Premium Benefits:</p>
-                <ul className="space-y-1 text-sm">
+              <div className="bg-muted rounded-2xl p-4 space-y-2">
+                <p className="font-semibold text-foreground text-sm">Premium Benefits:</p>
+                <ul className="space-y-1 text-xs">
                   <li>✓ Send messages to anyone</li>
                   <li>✓ 10 Super Likes per day</li>
                   <li>✓ Unlimited regular likes</li>
@@ -224,7 +217,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
               </div>
               <Button
                 onClick={handleUpgrade}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+                className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Upgrade to Premium

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Profile } from '@/api/profiles';
 import { Badge } from '@/components/ui/badge';
-import { User, Briefcase, Heart, Sparkles, Home, Users } from 'lucide-react';
+import { User, Briefcase, Heart, Sparkles, Home } from 'lucide-react';
 
 interface ProfileAboutProps {
   profile: Profile;
@@ -72,27 +72,26 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {sections.map((section) => {
         const hasItems = section.items && section.items.length > 0;
         const hasArrays = section.arrays?.some(arr => arr.values && arr.values.length > 0);
-        
         if (!hasItems && !hasArrays) return null;
 
         return (
-          <div key={section.title} className="bg-white/5 backdrop-blur-sm rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                <section.icon className="w-5 h-5 text-white" />
+          <div key={section.title} className="bg-card rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <section.icon className="w-4 h-4 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-white">{section.title}</h3>
+              <h3 className="text-sm font-semibold text-foreground">{section.title}</h3>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               {section.items?.map((item) => (
                 <div key={item.label} className="flex justify-between items-start">
-                  <span className="text-white/70 text-sm">{item.label}:</span>
-                  <span className="text-white text-sm text-right flex-1 ml-4">{item.value}</span>
+                  <span className="text-muted-foreground text-xs">{item.label}</span>
+                  <span className="text-foreground text-xs text-right flex-1 ml-4 font-medium">{item.value}</span>
                 </div>
               ))}
 
@@ -100,12 +99,13 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
                 if (!arr.values || arr.values.length === 0) return null;
                 return (
                   <div key={arr.label}>
-                    <span className="text-white/70 text-sm">{arr.label}:</span>
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <span className="text-muted-foreground text-xs">{arr.label}</span>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {arr.values.map((value, index) => (
                         <Badge
                           key={index}
-                          className="bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-white border-purple-400/30"
+                          variant="secondary"
+                          className="text-[10px] bg-muted text-muted-foreground rounded-full px-2.5 py-0.5"
                         >
                           {value}
                         </Badge>

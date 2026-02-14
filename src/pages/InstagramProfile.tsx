@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, MoreHorizontal, Share2, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/api/profiles';
 import { Post, Story } from '@/api/posts';
 import { getPostsByUserId, getStoriesByUserId, getUserStats } from '@/api/posts';
-import { Button } from '@/components/ui/button';
 import ProfileHeader from '@/components/instagram/ProfileHeader';
 import StoryHighlights from '@/components/instagram/StoryHighlights';
 import ProfileTabs from '@/components/instagram/ProfileTabs';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import BottomNavigation from '@/components/BottomNavigation';
+import ProfileFans from '@/components/instagram/ProfileFans';
 
 const InstagramProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,13 +30,26 @@ const InstagramProfile = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         setCurrentUserId(user?.id || null);
-        const { data: profileData, error: profileError } = await supabase.from('profiles').select(`*, photos (id, url, is_primary)`).eq('id', id).single();
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select(`*, photos (id, url, is_primary)`)
+          .eq('id', id)
+          .single();
         if (profileError) throw profileError;
         setProfile(profileData);
-        const [postsData, storiesData, statsData] = await Promise.all([getPostsByUserId(id), getStoriesByUserId(id), getUserStats(id)]);
-        setPosts(postsData); setStories(storiesData); setStats(statsData);
-      } catch (error) { console.error('Error loading profile:', error); }
-      finally { setLoading(false); }
+        const [postsData, storiesData, statsData] = await Promise.all([
+          getPostsByUserId(id),
+          getStoriesByUserId(id),
+          getUserStats(id),
+        ]);
+        setPosts(postsData);
+        setStories(storiesData);
+        setStats(statsData);
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, [id]);
@@ -63,35 +76,60 @@ const InstagramProfile = () => {
   const isOwnProfile = currentUserId === id;
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Slim header */}
-      <div className="sticky top-0 z-50 bg-background border-b border-border/30">
-        <div className="max-w-lg mx-auto px-4 h-11 flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-1 hover:bg-muted rounded-full transition-colors">
+    <div className="min-h-screen bg-background pb-28">
+      {/* Frosted glass header */}
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors active:scale-95"
+          >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-base font-semibold text-foreground">{profile.name}</h1>
+          <h1 className="text-base font-bold text-foreground tracking-tight">{profile.name}</h1>
+          <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/60 transition-colors active:scale-95">
+            <MoreHorizontal className="w-5 h-5 text-foreground" />
+          </button>
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-4">
-        <ProfileHeader profile={profile} stats={stats} isOwnProfile={isOwnProfile} />
+      <div className="max-w-md mx-auto">
+        {/* Profile Header Card */}
+        <div className="px-4 pt-4 pb-2">
+          <ProfileHeader profile={profile} stats={stats} isOwnProfile={isOwnProfile} />
+        </div>
 
-        {isOwnProfile && (
-          <div className="mb-4">
-            <Button onClick={() => setShowCreateStory(true)} variant="outline" size="sm" className="w-full gap-1.5">
-              <Plus className="w-3.5 h-3.5" />Create Story
-            </Button>
+        {/* Stories Row */}
+        {(stories.length > 0 || isOwnProfile) && (
+          <div className="px-4 py-3">
+            <StoryHighlights
+              stories={stories}
+              isOwnProfile={isOwnProfile}
+              onAddStory={() => setShowCreateStory(true)}
+            />
           </div>
         )}
 
-        {stories.length > 0 && <StoryHighlights stories={stories} isOwnProfile={isOwnProfile} />}
-        <ProfileTabs profile={profile} posts={posts} onRefreshPosts={() => getPostsByUserId(id!).then(setPosts)} />
+        {/* Fans Section */}
+        {id && <ProfileFans userId={id} />}
+
+        {/* Content Tabs */}
+        <div className="px-4 mt-2">
+          <ProfileTabs
+            profile={profile}
+            posts={posts}
+            onRefreshPosts={() => getPostsByUserId(id!).then(setPosts)}
+          />
+        </div>
       </div>
 
       {id && (
-        <CreateStoryModal open={showCreateStory} onOpenChange={setShowCreateStory}
-          onStoryCreated={() => getStoriesByUserId(id).then(setStories)} userId={id} />
+        <CreateStoryModal
+          open={showCreateStory}
+          onOpenChange={setShowCreateStory}
+          onStoryCreated={() => getStoriesByUserId(id).then(setStories)}
+          userId={id}
+        />
       )}
 
       <BottomNavigation />
