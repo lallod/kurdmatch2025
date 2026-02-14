@@ -2,7 +2,8 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Heart, Clock, Sparkles } from 'lucide-react';
+import { Crown, Heart, Clock } from 'lucide-react';
+import PremiumBenefitsList from '@/components/shared/PremiumBenefitsList';
 
 interface LimitReachedModalProps {
   isOpen: boolean;
@@ -64,22 +65,7 @@ const LimitReachedModal: React.FC<LimitReachedModalProps> = ({
             </div>
           </div>
 
-          {!isPremium && (
-            <div className="space-y-3">
-              <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-warning" />
-                Why Upgrade?
-              </h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>Unlimited likes every day</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>10 Super Likes daily</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>5 Rewinds daily</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>3 Boosts daily</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>See who liked you</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>Priority support</li>
-              </ul>
-            </div>
-          )}
+          {!isPremium && <PremiumBenefitsList />}
 
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose} className="flex-1">Wait Until Tomorrow</Button>

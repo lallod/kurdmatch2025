@@ -11,12 +11,13 @@ import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth as useAuth } from '@/integrations/supabase/auth';
 import { SWIPE_CONFIG } from '@/config/swipe';
 
-import { SlidersHorizontal, Bell, Zap } from 'lucide-react';
+import { SlidersHorizontal, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCompatibility } from '@/hooks/useCompatibility';
 import { SmartNotificationCenter } from '@/components/notifications/SmartNotificationCenter';
-import { ProfileBoostCard } from '@/components/boost/ProfileBoostCard';
 import { useSwipeHistory } from '@/hooks/useSwipeHistory';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { ProfileBoostCard } from '@/components/boost/ProfileBoostCard';
 
 const Swipe = () => {
   const navigate = useNavigate();
@@ -253,14 +254,6 @@ const Swipe = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setBoostOpen(true)}
-            className="text-white/90 hover:bg-white/10 rounded-full w-9 h-9 backdrop-blur-sm border-0"
-          >
-            <Zap className="w-5 h-5 text-warning" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
             onClick={() => setNotificationsOpen(true)}
             className="text-white/90 hover:bg-white/10 rounded-full w-9 h-9 backdrop-blur-sm border-0 relative"
           >
@@ -291,14 +284,14 @@ const Swipe = () => {
         onOpenChange={setNotificationsOpen} 
       />
 
-      {/* Boost Modal */}
-      {boostOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setBoostOpen(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md">
+      {/* Boost Sheet */}
+      <Sheet open={boostOpen} onOpenChange={setBoostOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl p-0 border-t border-border">
+          <div className="p-4">
             <ProfileBoostCard onClose={() => setBoostOpen(false)} />
           </div>
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
 
       {/* Main Content - fills between top and bottom nav + actions */}
       <div className="absolute inset-0" style={{ bottom: 'calc(56px + 72px + env(safe-area-inset-bottom, 0px))' }}>
@@ -348,7 +341,7 @@ const Swipe = () => {
           onPass={() => handleSwipeAction('pass', currentProfile.id)}
           onLike={() => handleSwipeAction('like', currentProfile.id)}
           onSuperLike={() => handleSwipeAction('superlike', currentProfile.id)}
-          onBoost={() => toast("Boost is a premium feature", { icon: "⚡" })}
+          onBoost={() => setBoostOpen(true)}
           isRewinding={isRewinding}
           remainingRewinds={remainingRewinds}
         />
