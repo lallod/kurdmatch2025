@@ -1,206 +1,172 @@
 
 
-# Instagram-Style Redesign for All Pages
+# Native Mobile Redesign: Home + Profile + Global Polish
 
 ## Overview
 
-Complete template/layout overhaul across all pages to match an Instagram 2026 aesthetic -- clean, minimal, content-first design. All existing functionality (events, groups, stories, filters, swipe actions, etc.) will be preserved. Only the visual template and layout structure changes. The Midnight Rose color palette stays.
+Complete visual overhaul of the Home (DiscoveryFeed) and Profile (MyProfile) pages to feel like a native iOS/Android dating app. Move "Complete Profile" functionality into Settings. Apply global mobile-native optimizations across all pages.
 
 ---
 
-## Design Philosophy Change
+## 1. Home Page (DiscoveryFeed.tsx) -- Full Redesign
 
-**Current**: Heavy headers with gradients, icon circles, subtitle text, large search bars, wrapped-in-card layouts with animated gradient backgrounds.
+### Header
+- Replace flat sticky header with a translucent frosted-glass header: `bg-background/80 backdrop-blur-xl`
+- "KurdMatch" in a bold serif/display font weight, slightly larger (text-2xl)
+- Icons (notification bell, create) as 40x40 touch targets with subtle circular backgrounds
 
-**New (Instagram-style)**: Clean top bar with logo/title left + action icons right. No decorative icon circles. No subtitle text. Content starts immediately. Full-bleed content. Minimal chrome. Stories row is top-level, not inside a card.
+### Stories Row (StoryBubbles.tsx)
+- Increase story bubble size from 64px to 72px
+- Add gradient ring animation for unseen stories
+- "Your Story" bubble with profile image + small "+" overlay (not a plain gradient circle)
+- Add 16px horizontal padding, 12px vertical breathing room
+- Remove bottom border -- use spacing instead
 
----
+### Tab Bar (Posts | Events)
+- Replace underline tabs with pill-style segmented control: `rounded-full bg-card p-1`
+- Active pill: `bg-primary text-white rounded-full`
+- Inactive: transparent, `text-muted-foreground`
+- Centered, with 16px horizontal margin
 
-## 1. DiscoveryFeed.tsx (Main Social Feed -- Instagram Home equivalent)
+### Filter Row
+- "Following" chip + hashtag/group filters: slightly larger touch targets (36px height), `rounded-full`
+- Remove border-bottom, use 8px spacing gap instead
 
-This becomes the primary "Instagram Home" screen.
+### Post Cards (PostCard.tsx)
+- Add 12px vertical spacing between posts (instead of thin border dividers)
+- Wrap each post in a `bg-card rounded-3xl mx-4 mb-3 overflow-hidden shadow-lg` floating card
+- Avatar row inside card: 12px padding
+- Media: edge-to-edge within card (no page-edge bleed)
+- Action icons: increase to 28px, 48px touch target areas
+- Double-tap to like animation hint
 
-**Header**: Slim sticky bar -- "KurdMatch" text logo left, notification bell + create post icon right. No gradient background on header, just `bg-background` with subtle border.
+### Event Cards (EventCard.tsx)
+- Replace `bg-white/10 border border-white/20` with `bg-card rounded-3xl shadow-lg border-0`
+- Cover image: `rounded-t-3xl`
+- Content padding: 16px
+- Join button: full-width at bottom of card, `rounded-2xl`
 
-**Stories Row**: Directly below header, no wrapping card. Horizontal scroll with ring-gradient around active stories.
-
-**Tab Bar**: Subtle underline-style tabs (Posts | Events) instead of filled pill tabs. Inline below stories.
-
-**Post Cards**: Remove outer `bg-white/10` wrapper. Each post is full-width with:
-- Avatar + name + time at top (no card border)
-- Full-bleed image/media
-- Action row (heart, comment, share, bookmark) below media -- Instagram icon layout
-- Likes count + caption below actions
-- Divider line between posts (thin `border-border/10`)
-
-**Events Tab**: Event cards as clean image-top cards with rounded corners, no heavy wrappers.
-
-**Following Toggle**: Small text button or segmented control, not a gradient pill button.
-
----
-
-## 2. Discovery.tsx (Explore/People Discovery)
-
-Transform into an Instagram Explore-style grid.
-
-**Header**: Slim bar -- search input taking most width, filter icon right. Remove the large decorative header with icon circle and subtitle.
-
-**Content**: Remove the card wrapper with animated gradient background. Content flows directly.
-
-**Profile Grid**: 2-column photo grid (like Instagram Explore). Each cell is the profile photo with name/age overlay at bottom. Tapping opens profile detail.
-
-**Filters**: Collapsed into a sheet/bottom-sheet triggered by filter icon. Not inline dropdowns.
-
-**Sections (Hashtags, Trending, Groups)**: Remove `CompactSection` rows. Move to a horizontal chip row below search (tappable filter chips).
+### Bottom Padding
+- Increase `pb-24` to `pb-28` for comfortable scroll-past of floating nav
 
 ---
 
-## 3. Messages.tsx (Instagram DMs equivalent)
+## 2. Profile Page (MyProfile.tsx) -- Full Redesign
 
-**Conversation List Header**: "Messages" title left, compose icon right. Clean, no decorative elements.
+### Hero Section (top of page)
+- Large profile image: 96px (from 80px), centered above name
+- Subtle purple gradient header background behind the image area (`h-32 bg-gradient-to-b from-primary/20 to-background`)
+- Name, age, verified badge centered below photo
+- Occupation + location as secondary text, centered
+- Remove the left-aligned Instagram-style avatar+stats row
 
-**New Matches Row**: Horizontal avatar scroll (Instagram "Notes" style) at top with name below each.
+### Stats Row
+- Horizontal row of 3 stats (Views, Likes, Matches) in floating card: `bg-card rounded-2xl mx-4 p-4 shadow-md`
+- Each stat as bold number + label, evenly spaced
+- Subtle divider lines between stats
 
-**Conversation List**: Clean list -- avatar, name, last message preview, time. No cards. Simple rows with dividers. Unread = bold text + blue dot.
+### Bio Section
+- Floating card: `bg-card rounded-2xl mx-4 p-4`
+- "About" header + bio text
+- Edit pencil icon inline
 
-**Chat View Header**: Back arrow, avatar, name, online status dot. Action icons right (call, video, more). Clean background.
+### Quick Info Cards
+- Replace the ComprehensiveProfileEditor inline tabs with visual card sections
+- Each category (Basic Info, Lifestyle, Interests, Relationship) as a tappable floating card
+- Card shows: icon + title + completion badge + chevron-right
+- Tapping opens a bottom sheet (Sheet component) for editing that section
+- Cards stacked vertically with 12px spacing
 
-**Chat Bubbles**: Already updated with Midnight Rose colors (pink sent, purple received). Keep as-is. Ensure large radius and comfortable padding.
+### Photo Grid
+- 3-column grid of rounded-2xl photos inside a floating card
+- "+" placeholder for empty slots
+- Primary photo has a small star badge
 
-**Input Bar**: Keep floating pill style. Already updated.
+### Action Buttons
+- "Edit Profile" and "Share Profile" as full-width stacked buttons inside a card
+- Primary: filled pink, Secondary: outlined
 
----
-
-## 4. MyProfile.tsx (Instagram Profile equivalent)
-
-Complete Instagram-profile-style layout.
-
-**Header Area**: 
-- No decorative icon/subtitle header
-- Profile photo (large, centered or left-aligned), stats row (posts/matches/likes) as tap-able numbers
-- Name + bio below photo
-- "Edit Profile" and "Share Profile" buttons as outlined pills
-
-**Remove**: The card wrapper with animated gradient. The `TabsList` with icon+text tabs.
-
-**Tabs**: Underline-style tab strip (grid icon for profile sections, camera for photos, gear for settings) -- icons only, no text, Instagram-style.
-
-**Content**: Each section (About, Photos, Settings) rendered directly, no wrapping card. Sections use subtle dividers.
-
-**Profile Completion**: Move to a thin progress bar at the very top of the profile section, or as a subtle banner.
-
----
-
-## 5. Matches.tsx
-
-**Header**: "Matches" title + count badge, clean.
-
-**New Matches**: Horizontal scroll avatars (like Stories) with ring gradient.
-
-**All Matches Grid**: 2-column grid of photos with name/age overlay (like Instagram Explore), instead of list cards.
+### Remove Inline Settings Tab
+- Remove the Settings tab from the profile tabs
+- Settings is already accessible via the gear icon in the header
+- Profile page becomes view-focused with edit sheets
 
 ---
 
-## 6. LikedMe.tsx & ViewedMe.tsx
+## 3. Complete Profile Page -- Move to Settings
 
-**Layout**: Clean list view (like Instagram activity/notifications). Each row: avatar, name+age, action buttons (like back / view). No card wrappers. Divider between rows.
+### Remove standalone /complete-profile page redirect
+- Keep the route and guard logic (ProfileCompletionGuard) but redirect to MyProfile instead of a separate page
+- On MyProfile, show a prominent completion banner at top when profile < 100%
 
----
+### Completion Banner (MyProfile)
+- Floating card at top: `bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl mx-4 p-4`
+- Circular progress ring (not a bar) showing percentage
+- "Complete your profile" text + "Continue" button
+- Tapping opens the first incomplete section as a bottom sheet
 
-## 7. Notifications.tsx
-
-**Layout**: Instagram Activity page style. Group by today/this week/earlier. Each notification: avatar + text + time. No card wrappers. Clean rows.
-
-Update hardcoded `from-purple-900 via-purple-800 to-pink-900` to use `bg-background`.
-
----
-
-## 8. Events.tsx
-
-**Header**: Clean "Events" + create button.
-
-**Tabs**: Underline-style (All Events | My Events).
-
-**Event Cards**: Image-dominant cards (cover image full-width at top, title/details below). Remove old gradient backgrounds.
+### Settings Page
+- Move the detailed requirements checklist into Settings > "Profile Completion" section
+- Shows which fields are missing with check/warning icons
 
 ---
 
-## 9. Groups.tsx
+## 4. Bottom Navigation (BottomNavigation.tsx)
 
-Already fairly clean. Update background to `bg-background`. Cards get the standardized floating card style.
-
----
-
-## 10. Subscription.tsx
-
-Keep the dark premium feel but clean up:
-- Remove heavy header text, use cleaner type hierarchy
-- Cards: Cleaner pricing cards with subtle borders
-- CTA: Keep pink gradient button
+- Add safe area padding: `pb-[env(safe-area-inset-bottom)]`
+- Increase icon size to 24px, label to 11px
+- Active tab: filled icon style + pink dot indicator above icon (instead of just color change)
+- Background: `bg-card/95 backdrop-blur-xl` for depth
+- Subtle top shadow instead of border: `shadow-[0_-2px_20px_rgba(0,0,0,0.15)]`
+- Height: increase to 56px content area + safe area
 
 ---
 
-## 11. Secondary Pages (Update bg/header patterns)
+## 5. Global Mobile Optimizations
 
-The following pages still use hardcoded `from-purple-900 via-purple-800 to-pink-900`:
+### All Pages
+- Ensure `pb-28` on all pages with bottom nav (consistent scroll clearance)
+- All headers: `h-12` with `pt-[env(safe-area-inset-top)]` for notch safety
+- Replace all `max-w-lg mx-auto` containers with `max-w-md mx-auto` for tighter mobile feel
 
-| Page | Change |
-|------|--------|
-| InstagramProfile.tsx | `bg-background`, semantic token header |
-| SavedPosts.tsx | `bg-background`, clean header |
-| BlockedUsers.tsx | `bg-background`, clean header |
-| CompatibilityInsights.tsx | `bg-background`, clean header |
-| Notifications.tsx | `bg-background`, clean header |
+### Card System
+- All cards: `rounded-2xl` or `rounded-3xl`, no visible borders, `shadow-md`
+- Card internal padding: 16px consistently
+- Card spacing: 12px between cards
 
-Each gets the standard pattern: `bg-background` page, slim sticky header with back arrow + title.
+### Touch Targets
+- All interactive elements: minimum 44px height
+- All icon buttons: 40x40 minimum
+- Chips/badges: 36px height, `rounded-full`
 
----
+### Typography
+- Headers: `text-lg font-bold` (not oversized)
+- Body: `text-sm` or `text-base`
+- Captions: `text-xs text-muted-foreground`
 
-## 12. Swipe.tsx
-
-Minimal changes -- already works well. Just ensure header aligns with the new slim-header pattern. Keep full-screen card experience.
-
----
-
-## 13. PostCard.tsx Component Updates
-
-Transform from spacious card layout to Instagram post layout:
-- Remove outer card wrapper styling (the `bg-white/10 rounded-2xl p-4` in DiscoveryFeed)
-- Avatar + name inline at top with more menu right
-- Full-width media (no rounded corners on media, edge-to-edge)
-- Action icon row: Heart, Comment, Share, Bookmark (right-aligned bookmark)
-- "Liked by X" text
-- Caption with "more" truncation
-- Thin bottom border separator
+### Modals and Sheets
+- All edit dialogs become bottom sheets (Sheet component with `side="bottom"`)
+- Sheet content: `rounded-t-3xl` with drag handle indicator
+- No desktop-style centered modals on mobile
 
 ---
 
-## Technical Approach
+## Technical: Files Modified
 
-All changes are CSS/layout only. No logic, API, or functionality changes.
+| File | Changes |
+|------|---------|
+| `src/pages/DiscoveryFeed.tsx` | Header, tab bar, spacing, card wrapping |
+| `src/components/discovery/PostCard.tsx` | Card wrapper, icon sizes, spacing |
+| `src/components/discovery/StoryBubbles.tsx` | Bubble size, "Your Story" style |
+| `src/components/discovery/EventCard.tsx` | Card style, border removal |
+| `src/pages/MyProfile.tsx` | Full layout restructure -- hero, stats card, section cards |
+| `src/components/my-profile/sections/ComprehensiveProfileEditor.tsx` | Convert to card-list with sheet editors |
+| `src/components/my-profile/sections/EditableAboutMeSection.tsx` | Floating card style |
+| `src/components/my-profile/PhotoManagement.tsx` | 3-col grid in card |
+| `src/components/BottomNavigation.tsx` | Safe area, sizing, active indicator |
+| `src/pages/CompleteProfile.tsx` | Redirect to /my-profile instead of standalone page |
+| `src/components/app/ProfileCompletionGuard.tsx` | Update redirect target |
+| `src/components/my-profile/AccountSettings.tsx` | Add profile completion section |
 
-**Files to modify** (~18 files):
-
-| File | Type of Change |
-|------|---------------|
-| `src/pages/DiscoveryFeed.tsx` | Full template overhaul |
-| `src/pages/Discovery.tsx` | Explore-grid template |
-| `src/pages/Messages.tsx` | Clean DM list layout |
-| `src/pages/MyProfile.tsx` | Instagram profile layout |
-| `src/pages/Matches.tsx` | Photo grid matches |
-| `src/pages/LikedMe.tsx` | Clean activity list |
-| `src/pages/ViewedMe.tsx` | Clean activity list |
-| `src/pages/Notifications.tsx` | Activity page, semantic tokens |
-| `src/pages/Events.tsx` | Clean event layout, semantic tokens |
-| `src/pages/Groups.tsx` | Semantic tokens |
-| `src/pages/Subscription.tsx` | Cleaner premium layout |
-| `src/pages/InstagramProfile.tsx` | Semantic tokens |
-| `src/pages/SavedPosts.tsx` | Semantic tokens |
-| `src/pages/BlockedUsers.tsx` | Semantic tokens |
-| `src/pages/CompatibilityInsights.tsx` | Semantic tokens |
-| `src/components/discovery/PostCard.tsx` | Instagram post layout |
-| `src/components/BottomNavigation.tsx` | Add labels below icons |
-| `src/pages/Swipe.tsx` | Minor header alignment |
-
-**No new files created. No functionality removed. All events, groups, stories, filters, swipe actions, hashtags, save/bookmark, report/block, comments, reactions preserved.**
+No functionality removed. All editing, stories, events, filters, save/bookmark, report/block, comments preserved.
 
