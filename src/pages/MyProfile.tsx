@@ -1,29 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { 
-  Pencil, Settings, Eye, Heart, Camera, Shield, Sparkles, TrendingUp, Users, Clock, CheckCircle2, Star, Grid3X3, Share2
+  Settings, Heart, Camera, CheckCircle2, Share2, ChevronRight,
+  User, Dumbbell, Star, Briefcase, MapPin, Pencil, Plus
 } from 'lucide-react';
 import PhotoManagement from '@/components/my-profile/PhotoManagement';
-import AccountSettings from '@/components/my-profile/AccountSettings';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
-import ComprehensiveProfileEditor from '@/components/my-profile/sections/ComprehensiveProfileEditor';
+import BasicInfoEditor from '@/components/my-profile/sections/editors/BasicInfoEditor';
+import LifestyleEditor from '@/components/my-profile/sections/editors/LifestyleEditor';
+import ValuesPersonalityEditor from '@/components/my-profile/sections/editors/ValuesPersonalityEditor';
+import InterestsHobbiesEditor from '@/components/my-profile/sections/editors/InterestsHobbiesEditor';
+import EducationCareerEditor from '@/components/my-profile/sections/editors/EducationCareerEditor';
+import RelationshipPreferencesEditor from '@/components/my-profile/sections/editors/RelationshipPreferencesEditor';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useRealProfileData } from '@/hooks/useRealProfileData';
 import { toast } from 'sonner';
 import { uploadProfilePhoto } from '@/api/profiles';
 
+const profileSections = [
+  { id: 'basic', label: 'Basic Info', icon: User, component: BasicInfoEditor },
+  { id: 'lifestyle', label: 'Lifestyle', icon: Dumbbell, component: LifestyleEditor },
+  { id: 'values', label: 'Values & Beliefs', icon: Star, component: ValuesPersonalityEditor },
+  { id: 'interests', label: 'Interests & Hobbies', icon: Heart, component: InterestsHobbiesEditor },
+  { id: 'career', label: 'Career & Education', icon: Briefcase, component: EducationCareerEditor },
+  { id: 'relationship', label: 'Relationship Goals', icon: Heart, component: RelationshipPreferencesEditor },
+];
+
 const MyProfile = () => {
   const navigate = useNavigate();
-  const [isEditingSections, setIsEditingSections] = useState(false);
-  const [profileBgColor, setProfileBgColor] = useState("#F1F0FB");
+  const [openSheet, setOpenSheet] = useState<string | null>(null);
   
   const { 
     profileData: realProfileData, fieldSources = {}, loading, onboardingProgress, categoryProgress, engagement, updateProfileData, refreshData 
@@ -95,7 +105,6 @@ const MyProfile = () => {
     views: engagement?.profileViews || 0,
     likes: engagement?.likesReceived || 0,
     matches: engagement?.totalMatches || 0,
-    messages: engagement?.messagesReceived || 0
   };
 
   if (loading) {
@@ -178,165 +187,225 @@ const MyProfile = () => {
     } catch (error) { toast.error('Failed to update profile'); }
   };
 
+  const getSectionCompletion = (id: string) => {
+    if (!categoryProgress) return 0;
+    switch (id) {
+      case 'basic': return categoryProgress.basicInfo || 0;
+      case 'lifestyle': return categoryProgress.lifestyle || 0;
+      case 'values': return categoryProgress.valuesAndBeliefs || 0;
+      case 'interests': return categoryProgress.interestsAndHobbies || 0;
+      case 'career': return categoryProgress.careerAndEducation || 0;
+      case 'relationship': return categoryProgress.relationshipGoals || 0;
+      default: return 0;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
-        {/* Slim header */}
-        <div className="sticky top-0 z-10 bg-background border-b border-border/30">
-          <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
-            <h1 className="text-base font-semibold text-foreground">{profileData.name || 'Profile'}</h1>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/settings')}>
+      <div className="flex-1 overflow-y-auto scrollbar-hide pb-28">
+        {/* Header with settings */}
+        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/10">
+          <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">
+            <h1 className="text-lg font-bold text-foreground">Profile</h1>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => navigate('/settings')}>
               <Settings className="w-5 h-5" />
             </Button>
           </div>
         </div>
 
-        <div className="max-w-lg mx-auto px-4 py-4">
-          {/* Profile completion bar */}
-          {profileCompletion < 100 && (
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-muted-foreground">Profile {profileCompletion}% complete</span>
-              </div>
-              <Progress value={profileCompletion} className="h-1 bg-muted" />
-            </div>
-          )}
-
-          {/* Instagram-style profile header */}
-          <div className="flex items-start gap-6 mb-4">
-            <div className="relative flex-shrink-0">
-              <Avatar className="h-20 w-20 ring-2 ring-border">
+        {/* Hero section with gradient bg */}
+        <div className="relative">
+          <div className="h-28 bg-gradient-to-b from-primary/20 to-background" />
+          <div className="max-w-md mx-auto px-4 -mt-16 flex flex-col items-center">
+            {/* Profile image */}
+            <div className="relative mb-3">
+              <Avatar className="h-24 w-24 ring-4 ring-background shadow-xl">
                 <AvatarImage src={galleryImages[0]} alt={profileData.name} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                   {profileData.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <label className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-primary flex items-center justify-center cursor-pointer">
-                <Camera className="h-3 w-3 text-primary-foreground" />
+              <label className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-primary flex items-center justify-center cursor-pointer shadow-lg">
+                <Camera className="h-4 w-4 text-primary-foreground" />
                 <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
               </label>
             </div>
 
-            {/* Stats row */}
-            <div className="flex-1 flex justify-around pt-2">
-              <div className="text-center">
-                <div className="text-lg font-bold text-foreground">{profileStats.views}</div>
-                <div className="text-xs text-muted-foreground">Views</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-foreground">{profileStats.likes}</div>
-                <div className="text-xs text-muted-foreground">Likes</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-foreground">{profileStats.matches}</div>
-                <div className="text-xs text-muted-foreground">Matches</div>
-              </div>
+            {/* Name + verified + age */}
+            <div className="flex items-center gap-1.5 mb-1">
+              <h2 className="text-xl font-bold text-foreground">{profileData.name}</h2>
+              {profileData.verified && <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />}
+              {profileData.age > 0 && <span className="text-muted-foreground font-medium">, {profileData.age}</span>}
             </div>
-          </div>
 
-          {/* Name + bio */}
-          <div className="mb-3">
-            <div className="flex items-center gap-1.5">
-              <h2 className="font-semibold text-foreground">{profileData.name}</h2>
-              {profileData.verified && <CheckCircle2 className="h-4 w-4 text-primary fill-primary" />}
-              <span className="text-muted-foreground text-sm">{profileData.age}</span>
-            </div>
-            {profileData.occupation && <p className="text-sm text-muted-foreground">{profileData.occupation}</p>}
-            {profileData.location && <p className="text-sm text-muted-foreground">{profileData.location}</p>}
-            {profileData.bio && <p className="text-sm text-foreground mt-1">{profileData.bio}</p>}
+            {/* Occupation + location */}
+            {profileData.occupation && (
+              <p className="text-sm text-muted-foreground">{profileData.occupation}</p>
+            )}
+            {profileData.location && (
+              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                <MapPin className="w-3 h-3" />{profileData.location}
+              </p>
+            )}
+
             <div className="flex gap-1.5 mt-2">
-              <Badge className="bg-primary/15 text-primary border-primary/20 text-xs">{profileData.kurdistanRegion}</Badge>
-              <Badge className="bg-muted text-muted-foreground text-xs">Online now</Badge>
+              <Badge className="bg-primary/15 text-primary border-primary/20 text-xs rounded-full">{profileData.kurdistanRegion}</Badge>
             </div>
           </div>
-
-          {/* Action buttons */}
-          <div className="flex gap-2 mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 text-sm"
-              onClick={() => {
-                const el = document.getElementById('profile-sections');
-                el?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              <Pencil className="h-3.5 w-3.5 mr-1.5" />
-              Edit Profile
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 text-sm"
-              onClick={() => navigate(`/profile/${realProfileData?.id}`)}
-            >
-              <Share2 className="h-3.5 w-3.5 mr-1.5" />
-              Share Profile
-            </Button>
-          </div>
-
-          {/* Underline icon tabs */}
-          <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="w-full h-auto p-0 bg-transparent border-t border-border/20 rounded-none grid grid-cols-3">
-              <TabsTrigger
-                value="profile"
-                className="py-2.5 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-foreground text-muted-foreground data-[state=active]:text-foreground"
-              >
-                <Grid3X3 className="h-5 w-5" />
-              </TabsTrigger>
-              <TabsTrigger
-                value="photos"
-                className="py-2.5 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-foreground text-muted-foreground data-[state=active]:text-foreground"
-              >
-                <Camera className="h-5 w-5" />
-              </TabsTrigger>
-              <TabsTrigger
-                value="settings"
-                className="py-2.5 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-foreground text-muted-foreground data-[state=active]:text-foreground"
-              >
-                <Settings className="h-5 w-5" />
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="profile" className="space-y-4 mt-4">
-              <EditableAboutMeSection bio={profileData.bio} onSave={handleBioSave} profileData={profileData} />
-              <div id="profile-sections">
-                <ComprehensiveProfileEditor
-                  profileData={profileData}
-                  categoryProgress={categoryProgress}
-                  fieldSources={fieldSources}
-                  onUpdateProfile={handleProfileUpdate}
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="photos" className="mt-4">
-              <PhotoManagement 
-                galleryImages={galleryImages}
-                onImageUpload={handleImageUpload}
-                removeImage={removeImage}
-                setAsProfilePic={setAsProfilePic}
-              />
-            </TabsContent>
-            
-            <TabsContent value="settings" className="mt-4">
-              <AccountSettings />
-            </TabsContent>
-          </Tabs>
         </div>
 
-        <Dialog open={isEditingSections} onOpenChange={setIsEditingSections}>
-          <DialogContent className="sm:max-w-md bg-card border-border">
-            <DialogHeader>
-              <DialogTitle className="text-foreground">Edit Profile Sections</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <p className="text-sm text-muted-foreground">Choose which sections to display on your profile</p>
+        <div className="max-w-md mx-auto mt-4 space-y-3">
+          {/* Stats card */}
+          <div className="mx-4 bg-card rounded-2xl p-4 shadow-md">
+            <div className="flex justify-around">
+              {[
+                { value: profileStats.views, label: 'Views' },
+                { value: profileStats.likes, label: 'Likes' },
+                { value: profileStats.matches, label: 'Matches' },
+              ].map((stat, i) => (
+                <React.Fragment key={stat.label}>
+                  {i > 0 && <div className="w-px bg-border/30" />}
+                  <div className="text-center px-4">
+                    <div className="text-xl font-bold text-foreground">{stat.value}</div>
+                    <div className="text-xs text-muted-foreground">{stat.label}</div>
+                  </div>
+                </React.Fragment>
+              ))}
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+
+          {/* Completion banner */}
+          {profileCompletion < 100 && (
+            <div className="mx-4 bg-gradient-to-r from-primary/15 to-accent/15 rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-4">
+                {/* Circular progress ring */}
+                <div className="relative w-14 h-14 flex-shrink-0">
+                  <svg viewBox="0 0 56 56" className="w-14 h-14 -rotate-90">
+                    <circle cx="28" cy="28" r="24" fill="none" strokeWidth="4" className="stroke-muted/30" />
+                    <circle cx="28" cy="28" r="24" fill="none" strokeWidth="4" className="stroke-primary"
+                      strokeDasharray={`${(profileCompletion / 100) * 150.8} 150.8`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-foreground">
+                    {profileCompletion}%
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">Complete your profile</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Fill in missing details to get more matches</p>
+                </div>
+                <Button size="sm" className="rounded-full h-9 px-4 text-xs" onClick={() => {
+                  const incomplete = profileSections.find(s => getSectionCompletion(s.id) < 100);
+                  if (incomplete) setOpenSheet(incomplete.id);
+                }}>
+                  Continue
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="mx-4 flex gap-2">
+            <Button variant="outline" size="sm" className="flex-1 h-11 rounded-2xl text-sm font-medium"
+              onClick={() => navigate(`/profile/${realProfileData?.id}`)}
+            >
+              <Share2 className="h-4 w-4 mr-1.5" />
+              Share Profile
+            </Button>
+            <Button variant="outline" size="sm" className="flex-1 h-11 rounded-2xl text-sm font-medium"
+              onClick={() => setOpenSheet('basic')}
+            >
+              <Pencil className="h-4 w-4 mr-1.5" />
+              Edit Profile
+            </Button>
+          </div>
+
+          {/* Bio card */}
+          <div className="mx-4">
+            <EditableAboutMeSection bio={profileData.bio} onSave={handleBioSave} profileData={profileData} />
+          </div>
+
+          {/* Quick info section cards */}
+          <div className="mx-4 space-y-2">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">Profile Sections</h3>
+            {profileSections.map((section) => {
+              const completion = getSectionCompletion(section.id);
+              const Icon = section.icon;
+              return (
+                <button
+                  key={section.id}
+                  onClick={() => setOpenSheet(section.id)}
+                  className="w-full bg-card rounded-2xl p-4 shadow-sm flex items-center gap-3 active:scale-[0.98] transition-transform"
+                >
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className="text-sm font-medium text-foreground">{section.label}</p>
+                  </div>
+                  <Badge className={`text-xs px-2 py-0.5 rounded-full ${
+                    completion === 100 
+                      ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/20' 
+                      : completion > 50 
+                      ? 'bg-amber-500/15 text-amber-500 border-amber-500/20' 
+                      : 'bg-red-500/15 text-red-500 border-red-500/20'
+                  }`}>
+                    {completion}%
+                  </Badge>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Photo Grid card */}
+          <div className="mx-4">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
+            <div className="bg-card rounded-2xl p-3 shadow-sm">
+              <div className="grid grid-cols-3 gap-2">
+                {galleryImages.slice(0, 6).map((img, i) => (
+                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
+                    <img src={img} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                    {i === 0 && (
+                      <div className="absolute top-1.5 left-1.5">
+                        <Star className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {galleryImages.length < 6 && (
+                  <label className="aspect-square rounded-2xl border-2 border-dashed border-border/40 flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
+                    <Plus className="w-6 h-6 text-muted-foreground" />
+                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </label>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      
+
+      {/* Bottom sheets for editing sections */}
+      {profileSections.map((section) => {
+        const EditorComponent = section.component;
+        return (
+          <Sheet key={section.id} open={openSheet === section.id} onOpenChange={(open) => !open && setOpenSheet(null)}>
+            <SheetContent side="bottom" className="rounded-t-3xl max-h-[85vh] overflow-y-auto bg-background">
+              <div className="w-12 h-1.5 bg-muted-foreground/30 rounded-full mx-auto mb-4 mt-2" />
+              <SheetHeader className="pb-4">
+                <SheetTitle className="text-foreground text-lg">{section.label}</SheetTitle>
+              </SheetHeader>
+              <EditorComponent 
+                profileData={profileData} 
+                fieldSources={fieldSources}
+                onUpdate={handleProfileUpdate}
+              />
+            </SheetContent>
+          </Sheet>
+        );
+      })}
+
       <BottomNavigation />
     </div>
   );

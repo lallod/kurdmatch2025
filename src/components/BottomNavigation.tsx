@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
@@ -39,8 +38,10 @@ const BottomNavigation = () => {
     : baseNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-background border-t border-border/30 safe-area-inset-bottom">
-      <div className="flex items-center justify-around w-full max-w-lg mx-auto px-2 py-1.5">
+    <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-card/95 backdrop-blur-xl shadow-[0_-2px_20px_rgba(0,0,0,0.15)]"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    >
+      <div className="flex items-center justify-around w-full max-w-md mx-auto px-2" style={{ height: '56px' }}>
         {navItems.map(item => {
           const isActive = currentPath === item.path;
           return (
@@ -48,13 +49,17 @@ const BottomNavigation = () => {
               key={item.name} 
               to={item.path} 
               className={cn(
-                "flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-all duration-200 relative",
+                "flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all duration-200 relative min-h-[44px]",
                 isActive ? "text-foreground" : "text-muted-foreground"
               )} 
               aria-label={item.name}
             >
-              <item.icon size={22} className={cn("mb-0.5", isActive ? "stroke-foreground" : "stroke-muted-foreground")} />
-              <span className={cn("text-[10px]", isActive ? "font-semibold" : "font-normal")}>{item.name}</span>
+              {/* Active dot indicator */}
+              {isActive && (
+                <div className="absolute -top-1 w-1.5 h-1.5 rounded-full bg-primary" />
+              )}
+              <item.icon size={24} className={cn("mb-0.5", isActive ? "stroke-foreground" : "stroke-muted-foreground")} />
+              <span className={cn("text-[11px] leading-tight", isActive ? "font-semibold" : "font-normal")}>{item.name}</span>
               
               {item.path === '/messages' && counts.messages > 0 && (
                 <span className="absolute -top-0.5 right-0 bg-primary text-primary-foreground text-[9px] rounded-full h-4 min-w-[16px] flex items-center justify-center font-bold px-1">
