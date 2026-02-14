@@ -24,6 +24,8 @@ import { likeProfile } from '@/api/likes';
 import { toast } from 'sonner';
 import { SmartFilters } from '@/components/discovery/SmartFilters';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { useProfileAccess } from '@/hooks/useProfileAccess';
+import BlurredProfileOverlay from '@/components/profile/BlurredProfileOverlay';
 
 const areas = [
   { value: "all", name: "All Regions" },
@@ -53,9 +55,11 @@ interface SmartFilterState {
 
 const Discovery = () => {
   const navigate = useNavigate();
+  const { canUseFilters, isPremium, canSeeDatingDetails, discoveryProfileLimit } = useProfileAccess('dating');
   const [selectedArea, setSelectedArea] = useState("all");
   const [activeFilters, setActiveFilters] = useState(0);
   const [selectedProfile, setSelectedProfile] = useState<DiscoveryProfile | null>(null);
+  const [showBlurOverlay, setShowBlurOverlay] = useState(false);
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showCreateStory, setShowCreateStory] = useState(false);
@@ -76,11 +80,11 @@ const Discovery = () => {
   });
 
   const { profiles: dbProfiles, loading: profilesLoading } = useDiscoveryProfiles({
-    limit: 50,
-    filters: {
+    limit: discoveryProfileLimit > 0 ? discoveryProfileLimit : 50,
+    filters: canUseFilters ? {
       area: selectedArea !== 'all' ? selectedArea : undefined,
       ageRange: smartFilters.ageRange,
-    }
+    } : undefined
   });
 
   useEffect(() => {
@@ -119,13 +123,22 @@ const Discovery = () => {
     setSelectedArea("all");
   };
 
-  const filteredProfiles = dbProfiles.filter(profile => {
+  const filteredProfiles = (canUseFilters ? dbProfiles : dbProfiles).filter(profile => {
+    if (!canUseFilters) return true; // Free users get unfiltered random results
     const matchesOccupation = !smartFilters.occupation || (profile.occupation && profile.occupation.toLowerCase().includes(smartFilters.occupation.toLowerCase()));
     const matchesVerified = !smartFilters.verifiedOnly || profile.verified;
     return matchesOccupation && matchesVerified;
   });
 
-  const handleProfileClick = (profile: DiscoveryProfile) => setSelectedProfile(profile);
+  const handleProfileClick = (profile: DiscoveryProfile) => {
+    if (!canSeeDatingDetails) {
+      setSelectedProfile(profile);
+      setShowBlurOverlay(true);
+      return;
+    }
+    setSelectedProfile(profile);
+    setShowBlurOverlay(false);
+  };
   const handleLike = async () => {
     if (!selectedProfile) return;
     try {
@@ -208,25 +221,37 @@ const Discovery = () => {
         {/* People Tab */}
         {activeTab === 'people' && (
           <>
-            {/* Filters row */}
+            {/* Filters row — premium only */}
             <div className="px-4 pb-2 flex items-center gap-2">
-              <div className="flex-1 min-w-0">
-                <Select value={selectedArea} onValueChange={setSelectedArea}>
-                  <SelectTrigger className="h-9 text-xs bg-card/60 border-border/20 text-foreground rounded-xl">
-                    <SelectValue placeholder="All Regions" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border rounded-xl">
-                    {areas.map((area) => (
-                      <SelectItem key={area.value} value={area.value} className="text-xs text-foreground">{area.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <SmartFilters onFiltersChange={handleSmartFiltersChange} activeFilterCount={activeFilters} />
-              {activeFilters > 0 && (
-                <button onClick={resetFilters} className="h-9 px-3 rounded-xl bg-destructive/10 text-destructive text-[10px] font-medium flex items-center gap-1 shrink-0">
-                  <X className="w-3 h-3" /> Clear
-                </button>
+              {canUseFilters ? (
+                <>
+                  <div className="flex-1 min-w-0">
+                    <Select value={selectedArea} onValueChange={setSelectedArea}>
+                      <SelectTrigger className="h-9 text-xs bg-card/60 border-border/20 text-foreground rounded-xl">
+                        <SelectValue placeholder="All Regions" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border rounded-xl">
+                        {areas.map((area) => (
+                          <SelectItem key={area.value} value={area.value} className="text-xs text-foreground">{area.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <SmartFilters onFiltersChange={handleSmartFiltersChange} activeFilterCount={activeFilters} />
+                  {activeFilters > 0 && (
+                    <button onClick={resetFilters} className="h-9 px-3 rounded-xl bg-destructive/10 text-destructive text-[10px] font-medium flex items-center gap-1 shrink-0">
+                      <X className="w-3 h-3" /> Clear
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div className="flex-1 flex items-center gap-2 px-1">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-card/40 rounded-xl px-3 py-2">
+                    <Filter className="w-3.5 h-3.5" />
+                    <span>Filters</span>
+                    <Badge variant="secondary" className="text-[8px] px-1.5 py-0 rounded-full bg-primary/10 text-primary h-4 ml-1">PRO</Badge>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -389,21 +414,29 @@ const Discovery = () => {
             <div className="aspect-[3/4] relative overflow-hidden">
               <img src={selectedProfile.profile_image} alt={selectedProfile.name} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              
+              {/* Blurred overlay for free users */}
+              {showBlurOverlay && (
+                <BlurredProfileOverlay onClose={() => setSelectedProfile(null)} />
+              )}
+
               <div className="absolute bottom-0 left-0 right-0 p-5">
                 <div className="flex items-center gap-2 mb-1">
                   <h1 className="text-2xl font-bold text-white">{selectedProfile.name}</h1>
-                  <span className="text-lg text-white/70">{selectedProfile.age}</span>
+                  {canSeeDatingDetails && <span className="text-lg text-white/70">{selectedProfile.age}</span>}
                   {selectedProfile.verified && (
                     <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                       <span className="text-primary-foreground text-[9px] font-bold">✓</span>
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-1.5 text-white/70 text-sm">
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>{selectedProfile.location}</span>
-                </div>
-                {selectedProfile.occupation && selectedProfile.occupation !== 'Not specified' && (
+                {canSeeDatingDetails && (
+                  <div className="flex items-center gap-1.5 text-white/70 text-sm">
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>{selectedProfile.location}</span>
+                  </div>
+                )}
+                {canSeeDatingDetails && selectedProfile.occupation && selectedProfile.occupation !== 'Not specified' && (
                   <Badge className="mt-2 bg-primary/80 text-primary-foreground text-xs rounded-lg">{selectedProfile.occupation}</Badge>
                 )}
               </div>

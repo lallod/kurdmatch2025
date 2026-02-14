@@ -1,14 +1,33 @@
 import React from 'react';
 import { Profile } from '@/api/profiles';
 import { Badge } from '@/components/ui/badge';
-import { User, Briefcase, Heart, Sparkles, Home } from 'lucide-react';
+import { User, Briefcase, Heart, Sparkles, Home, Lock } from 'lucide-react';
+import { useProfileAccess } from '@/hooks/useProfileAccess';
 
 interface ProfileAboutProps {
   profile: Profile;
+  context?: 'social' | 'dating' | 'swipe';
 }
 
-const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
+const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social' }) => {
+  const { canSeeDatingDetails, isPremium } = useProfileAccess(context, profile.id);
+
+  // In social context without premium, only show interests/hobbies (non-dating info)
+  const gatedSections = !canSeeDatingDetails;
   const sections = [
+    // Values & Interests — always visible
+    {
+      title: 'Values & Interests',
+      icon: Sparkles,
+      items: [],
+      arrays: [
+        { label: 'Values', values: profile.values },
+        { label: 'Interests', values: profile.interests },
+        { label: 'Hobbies', values: profile.hobbies },
+      ],
+      gated: false,
+    },
+    // Below sections are gated for social context (non-premium)
     {
       title: 'Basic Info',
       icon: User,
@@ -20,6 +39,7 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
         { label: 'Zodiac', value: profile.zodiac_sign },
         { label: 'Personality', value: profile.personality_type },
       ].filter(item => item.value),
+      gated: true,
     },
     {
       title: 'Career & Education',
@@ -31,6 +51,7 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
         { label: 'Work Style', value: profile.work_environment },
         { label: 'Career Goals', value: profile.career_ambitions },
       ].filter(item => item.value),
+      gated: true,
     },
     {
       title: 'Lifestyle',
@@ -43,16 +64,7 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
         { label: 'Sleep', value: profile.sleep_schedule },
         { label: 'Pets', value: profile.have_pets },
       ].filter(item => item.value),
-    },
-    {
-      title: 'Values & Interests',
-      icon: Sparkles,
-      items: [],
-      arrays: [
-        { label: 'Values', values: profile.values },
-        { label: 'Interests', values: profile.interests },
-        { label: 'Hobbies', values: profile.hobbies },
-      ],
+      gated: true,
     },
     {
       title: 'Relationships',
@@ -68,6 +80,7 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
       arrays: [
         { label: 'Languages', values: profile.languages },
       ],
+      gated: true,
     },
   ];
 
@@ -77,6 +90,31 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile }) => {
         const hasItems = section.items && section.items.length > 0;
         const hasArrays = section.arrays?.some(arr => arr.values && arr.values.length > 0);
         if (!hasItems && !hasArrays) return null;
+
+        // If section is gated and user doesn't have access, show locked card
+        if (section.gated && gatedSections) {
+          return (
+            <div key={section.title} className="bg-card rounded-2xl p-4 shadow-sm relative overflow-hidden">
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <h3 className="text-sm font-semibold text-muted-foreground">{section.title}</h3>
+              </div>
+              <div className="blur-sm select-none pointer-events-none space-y-2">
+                {section.items?.slice(0, 2).map((item) => (
+                  <div key={item.label} className="flex justify-between">
+                    <span className="text-muted-foreground text-xs">{item.label}</span>
+                    <span className="text-foreground text-xs">••••••</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2 text-center">
+                Available on Dating Profile
+              </p>
+            </div>
+          );
+        }
 
         return (
           <div key={section.title} className="bg-card rounded-2xl p-4 shadow-sm">
