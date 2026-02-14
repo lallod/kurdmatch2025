@@ -36,6 +36,8 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				surface: 'hsl(var(--surface))',
+				'surface-secondary': 'hsl(var(--surface-secondary))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
@@ -79,10 +81,11 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				tinder: {
-					rose: "#FD297B",
-					orange: "#FF5864",
-					peach: "#ff7b54",
-					light: "#ffe2e0"
+					rose: "#F43F8E",
+					orange: "#FB6FA9",
+					peach: "#F43F8E",
+					light: "#FB6FA9",
+					dark: "#140F1F"
 				}
 			},
 			borderRadius: {
@@ -127,6 +130,10 @@ export default {
 				'pulse-heart': {
 					'0%, 100%': { transform: 'scale(1)' },
 					'50%': { transform: 'scale(1.25)' }
+				},
+				'midnight-pulse': {
+					'0%, 100%': { opacity: '0.3' },
+					'50%': { opacity: '0.6' }
 				}
 			},
 			animation: {
@@ -138,10 +145,12 @@ export default {
 				'swipe-right': 'swipe-right 0.5s ease-out forwards',
 				'swipe-left': 'swipe-left 0.5s ease-out forwards',
 				'bounce-in': 'bounce-in 0.5s ease-out',
-				'pulse-heart': 'pulse-heart 1.5s infinite'
+				'pulse-heart': 'pulse-heart 1.5s infinite',
+				'midnight-pulse': 'midnight-pulse 4s ease-in-out infinite'
 			},
 			backgroundImage: {
-				'gradient-tinder': 'linear-gradient(to right, #FD297B, #FF5864)',
+				'gradient-tinder': 'linear-gradient(to right, #F43F8E, #FB6FA9)',
+				'gradient-brand': 'linear-gradient(135deg, #2A1E45, #F43F8E)',
 			}
 		}
 	},

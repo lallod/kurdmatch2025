@@ -547,10 +547,10 @@ const Messages = () => {
   if (selectedConversation !== null) {
     const conversation = conversations.find(c => c.id === selectedConversation);
     if (!conversation) return null;
-    return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+    return <div className="min-h-screen bg-background flex flex-col">
         <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
         {/* Header */}
-        <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+        <div className="bg-surface-secondary/80 backdrop-blur-xl shadow-sm border-b border-border/20 sticky top-0 z-10">
           <div className="flex items-center p-3 sm:p-4">
             <Button variant="ghost" size="icon" onClick={() => setSelectedConversation(null)} className="mr-1.5 sm:mr-2 text-white hover:bg-white/10 h-9 w-9 sm:h-10 sm:w-10">
               <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -664,8 +664,8 @@ const Messages = () => {
             {(conversationMessages.length > 0 ? conversationMessages : conversation.messages || []).map(message => (
               <div key={message.id} className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'} group`}>
                 <div className={`
-                  max-w-[80%] rounded-xl p-3 backdrop-blur-md border relative
-                  ${message.sender === 'me' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-purple-400/30' : 'bg-white/10 text-white border-white/20'}
+                  max-w-[80%] rounded-2xl p-3 backdrop-blur-md border relative
+                  ${message.sender === 'me' ? 'bg-primary text-primary-foreground border-primary/30' : 'bg-card text-card-foreground border-border/20'}
                 `}>
                   {message.sender !== 'me' && (
                     <DropdownMenu>
@@ -754,7 +754,7 @@ const Messages = () => {
           </div>
         </div>
 
-        <div className="backdrop-blur-md bg-white/10 border-t border-white/20 p-3 max-w-4xl mx-auto">
+        <div className="backdrop-blur-md bg-surface-secondary/80 border-t border-border/20 p-3 max-w-4xl mx-auto">
           {/* Typing Indicator */}
           {isOtherUserTyping && (
             <div className="px-3 py-2 text-sm text-purple-200 animate-pulse">
@@ -837,7 +837,7 @@ const Messages = () => {
                   onBlur={stopTyping}
                   placeholder="Type a message..." 
                   disabled={isChecking}
-                  className="min-h-[80px] resize-none flex-1 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-purple-200" 
+                  className="min-h-[80px] resize-none flex-1 bg-surface-secondary/80 backdrop-blur border-border/20 text-foreground placeholder:text-muted-foreground rounded-2xl" 
                 />
                 
                 <div className="flex flex-col gap-2">
@@ -846,7 +846,7 @@ const Messages = () => {
                       variant="default" 
                       size="icon" 
                       onClick={handleSendImage}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0"
+                      className="bg-primary hover:bg-primary/90 flex-shrink-0"
                     >
                       <Send className="h-5 w-5" />
                     </Button>
@@ -856,7 +856,7 @@ const Messages = () => {
                       size="icon" 
                       onClick={handleSendMessage} 
                       disabled={!newMessage.trim() || isChecking} 
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex-shrink-0"
+                      className="bg-primary hover:bg-primary/90 flex-shrink-0"
                     >
                       <Send className="h-5 w-5" />
                     </Button>
@@ -898,10 +898,10 @@ const Messages = () => {
         <BottomNavigation />
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
       {/* Header with Enhanced Notifications */}
-      <div className="bg-black/20 backdrop-blur shadow-sm border-b border-white/20 sticky top-0 z-10">
+      <div className="bg-surface-secondary/80 backdrop-blur-xl shadow-sm border-b border-border/20 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="text-center space-y-2">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 relative">
@@ -940,8 +940,8 @@ const Messages = () => {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="backdrop-blur-md bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 animate-pulse"></div>
+        <div className="backdrop-blur-md bg-card/80 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.3)] border border-border/20 p-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 animate-midnight-pulse"></div>
           
           <div className="relative z-10">
             {/* New Matches Section with Enhanced Notifications */}

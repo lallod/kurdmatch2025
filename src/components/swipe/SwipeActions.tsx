@@ -96,11 +96,11 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
           disabled={isRewinding}
           className={`${SWIPE_CONFIG.actions.buttons.small} ${
             userLimits.rewinds.canPerform && !isRewinding
-              ? 'bg-yellow-500 hover:bg-yellow-600' 
-              : 'bg-gray-500 hover:bg-gray-600'
-          } rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 relative disabled:opacity-50 disabled:cursor-not-allowed`}
+              ? 'bg-card hover:bg-card/80 text-primary' 
+              : 'bg-card/50 hover:bg-card/60 text-muted-foreground'
+          } rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)] transform hover:scale-110 transition-all duration-200 active:scale-95 relative disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          <RotateCcw className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-white ${isRewinding ? 'animate-spin' : ''}`} />
+          <RotateCcw className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-primary ${isRewinding ? 'animate-spin' : ''}`} />
           {!userLimits.rewinds.isPremium && !isRewinding && (
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
               <span className="text-white text-xs">P</span>
@@ -116,9 +116,9 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Pass */}
         <button
           onClick={onPass}
-          className={`${SWIPE_CONFIG.actions.buttons.large} bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95`}
+          className={`${SWIPE_CONFIG.actions.buttons.large} bg-card hover:bg-card/80 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)] transform hover:scale-110 transition-all duration-200 active:scale-95`}
         >
-          <X className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} strokeWidth={3} />
+          <X className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-destructive`} strokeWidth={3} />
         </button>
 
         {/* Like */}
@@ -126,11 +126,11 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
           onClick={() => handleActionWithLimit('like', onLike)}
           className={`${SWIPE_CONFIG.actions.buttons.large} ${
             userLimits.likes.canPerform 
-              ? 'bg-green-500 hover:bg-green-600' 
-              : 'bg-gray-500 hover:bg-gray-600'
-          } rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 relative`}
+              ? 'bg-primary hover:bg-primary/90 shadow-[0_0_20px_hsl(336_90%_60%/0.3)]' 
+              : 'bg-card/50 hover:bg-card/60'
+          } rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)] transform hover:scale-110 transition-all duration-200 active:scale-95 relative`}
         >
-          <Heart className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} fill="currentColor" />
+          <Heart className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-primary-foreground`} fill="currentColor" />
           {userLimits.likes.remainingCount <= 5 && !userLimits.likes.isPremium && (
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {userLimits.likes.remainingCount}
@@ -143,11 +143,11 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
           onClick={() => handleActionWithLimit('super_like', onSuperLike)}
           className={`${SWIPE_CONFIG.actions.buttons.large} ${
             userLimits.superLikes.canPerform 
-              ? 'bg-blue-500 hover:bg-blue-600' 
-              : 'bg-gray-500 hover:bg-gray-600'
-          } rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 relative`}
+              ? 'bg-info/80 hover:bg-info/90' 
+              : 'bg-card/50 hover:bg-card/60'
+          } rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)] transform hover:scale-110 transition-all duration-200 active:scale-95 relative`}
         >
-          <Star className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-white`} fill="currentColor" />
+          <Star className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-primary-foreground`} fill="currentColor" />
           {userLimits.superLikes.remainingCount === 0 && !userLimits.superLikes.isPremium && (
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
               <span className="text-white text-xs">P</span>
@@ -165,11 +165,11 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
           onClick={() => handleActionWithLimit('boost', onBoost)}
           className={`${SWIPE_CONFIG.actions.buttons.small} ${
             userLimits.boosts.canPerform 
-              ? 'bg-purple-500 hover:bg-purple-600' 
-              : 'bg-gray-500 hover:bg-gray-600'
-          } rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-200 active:scale-95 relative`}
+              ? 'bg-card hover:bg-card/80 text-primary' 
+              : 'bg-card/50 hover:bg-card/60 text-muted-foreground'
+          } rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)] transform hover:scale-110 transition-all duration-200 active:scale-95 relative`}
         >
-          <Zap className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-white`} fill="currentColor" />
+          <Zap className={`${SWIPE_CONFIG.actions.buttons.iconSize.small} text-primary`} fill="currentColor" />
           {!userLimits.boosts.isPremium && (
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
               <span className="text-white text-xs">P</span>

@@ -25,7 +25,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
 
   if (fullScreen) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-dark via-primary-dark/80 to-primary">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-surface-secondary to-background">
         {content}
       </div>
     );

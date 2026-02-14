@@ -213,7 +213,7 @@ const Swipe = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-surface-secondary">
         <div className="text-center">
           <div className={`${SWIPE_CONFIG.header.icon.size} bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin} animate-pulse`}>
             <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -229,7 +229,7 @@ const Swipe = () => {
 
   if (!currentProfile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-surface-secondary">
         <div className="text-center text-white">
           <div className={`${SWIPE_CONFIG.header.icon.size} bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto ${SWIPE_CONFIG.header.icon.margin}`}>
             <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -247,7 +247,7 @@ const Swipe = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 flex flex-col overflow-hidden">
+    <div className="h-screen bg-gradient-to-b from-background to-surface-secondary flex flex-col overflow-hidden">
       {/* Header with Logo and Actions */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 z-20">
         <Logo size="small" withText={true} />
@@ -344,7 +344,7 @@ const Swipe = () => {
       </div>
         
       {/* Action Buttons Section - Fixed above navigation */}
-      <div className="fixed bottom-14 sm:bottom-16 left-0 right-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent backdrop-blur-md z-40 pb-1 sm:pb-2">
+      <div className="fixed bottom-14 sm:bottom-16 left-0 right-0 bg-gradient-to-t from-background/60 via-background/30 to-transparent backdrop-blur-md z-40 pb-1 sm:pb-2">
         <SwipeActions
           onRewind={handleRewind}
           onPass={() => handleSwipeAction('pass', currentProfile.id)}

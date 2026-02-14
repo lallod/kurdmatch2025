@@ -14,7 +14,7 @@ export const SWIPE_CONFIG = {
     },
     minHeight: 'min-h-[500px]',
     maxHeight: 'max-h-[calc(100vh-120px)]',
-    borderRadius: 'rounded-2xl sm:rounded-3xl'
+    borderRadius: 'rounded-3xl'
   },
 
   // Header Configuration
