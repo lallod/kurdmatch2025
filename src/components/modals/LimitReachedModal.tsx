@@ -26,42 +26,42 @@ const LimitReachedModal: React.FC<LimitReachedModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border text-foreground">
-        <DialogHeader className="text-center space-y-4">
-          <div className="w-20 h-20 bg-destructive/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-10 h-10 text-destructive" />
+      <DialogContent className="bg-card border-border text-foreground max-h-[85vh] overflow-y-auto rounded-3xl max-w-[calc(100vw-2rem)]">
+        <DialogHeader className="text-center space-y-2">
+          <div className="w-14 h-14 bg-destructive/20 rounded-full flex items-center justify-center mx-auto mb-2">
+            <Heart className="w-7 h-7 text-destructive" />
           </div>
-          <DialogTitle className="text-2xl font-bold text-foreground">
+          <DialogTitle className="text-xl font-bold text-foreground">
             Daily Like Limit Reached
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground text-lg">
-            You've used all your free likes for today. Come back tomorrow or upgrade to premium for unlimited likes!
+          <DialogDescription className="text-muted-foreground text-sm">
+            You've used all your free likes for today. Upgrade to premium for unlimited likes!
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
-          <div className="text-center p-4 bg-destructive/10 rounded-lg border border-destructive/20">
-            <p className="text-destructive font-semibold">50/50 free likes used today</p>
-            <p className="text-destructive/80 text-sm mt-1">
-              <Clock className="w-4 h-4 inline mr-1" />
+        <div className="space-y-4">
+          <div className="text-center p-3 bg-destructive/10 rounded-xl border border-destructive/20">
+            <p className="text-destructive font-semibold text-sm">50/50 free likes used today</p>
+            <p className="text-destructive/80 text-xs mt-1">
+              <Clock className="w-3 h-3 inline mr-1" />
               Resets in {timeUntilReset} hours
             </p>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between p-2.5 bg-muted/50 rounded-xl">
               <div className="flex items-center gap-2">
                 <Heart className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Free</span>
+                <span className="text-muted-foreground text-sm">Free</span>
               </div>
-              <Badge variant="outline" className="border-border text-muted-foreground">50 per day</Badge>
+              <Badge variant="outline" className="border-border text-muted-foreground text-xs">50 per day</Badge>
             </div>
-            <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg border border-primary/20">
+            <div className="flex items-center justify-between p-2.5 bg-primary/10 rounded-xl border border-primary/20">
               <div className="flex items-center gap-2">
                 <Crown className="w-4 h-4 text-warning" />
-                <span className="text-foreground font-semibold">Premium</span>
+                <span className="text-foreground font-semibold text-sm">Premium</span>
               </div>
-              <Badge className="bg-primary text-primary-foreground">Unlimited</Badge>
+              <Badge className="bg-primary text-primary-foreground text-xs">Unlimited</Badge>
             </div>
           </div>
 
