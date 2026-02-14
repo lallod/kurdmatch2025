@@ -2,7 +2,8 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Star, Zap, RotateCcw, Heart, Sparkles } from 'lucide-react';
+import { Crown, Star, Zap, RotateCcw, Heart } from 'lucide-react';
+import PremiumBenefitsList from '@/components/shared/PremiumBenefitsList';
 
 interface PremiumFeatureModalProps {
   isOpen: boolean;
@@ -72,20 +73,7 @@ const PremiumFeatureModal: React.FC<PremiumFeatureModalProps> = ({
             </div>
           </div>
 
-          {!isPremium && (
-            <div className="space-y-3">
-              <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-warning" />Premium Benefits
-              </h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>Unlimited likes per day</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>10 Super Likes daily</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>5 Rewinds daily</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>3 Boosts daily</li>
-                <li className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div>See who liked you</li>
-              </ul>
-            </div>
-          )}
+          {!isPremium && <PremiumBenefitsList title="Premium Benefits" />}
 
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose} className="flex-1">Maybe Later</Button>
