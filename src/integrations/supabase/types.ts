@@ -300,6 +300,51 @@ export type Database = {
           },
         ]
       }
+      chaperone_settings: {
+        Row: {
+          can_view_messages: boolean
+          can_view_photos: boolean
+          chaperone_email: string | null
+          chaperone_name: string | null
+          chaperone_user_id: string | null
+          created_at: string
+          enabled: boolean
+          id: string
+          notify_on_match: boolean
+          notify_on_message: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_view_messages?: boolean
+          can_view_photos?: boolean
+          chaperone_email?: string | null
+          chaperone_name?: string | null
+          chaperone_user_id?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notify_on_match?: boolean
+          notify_on_message?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_view_messages?: boolean
+          can_view_photos?: boolean
+          chaperone_email?: string | null
+          chaperone_name?: string | null
+          chaperone_user_id?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notify_on_match?: boolean
+          notify_on_message?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       comment_likes: {
         Row: {
           comment_id: string
@@ -1168,6 +1213,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      marriage_intentions: {
+        Row: {
+          created_at: string
+          family_plans: string | null
+          id: string
+          intention: string
+          timeline: string | null
+          updated_at: string
+          user_id: string
+          visible_on_profile: boolean
+        }
+        Insert: {
+          created_at?: string
+          family_plans?: string | null
+          id?: string
+          intention: string
+          timeline?: string | null
+          updated_at?: string
+          user_id: string
+          visible_on_profile?: boolean
+        }
+        Update: {
+          created_at?: string
+          family_plans?: string | null
+          id?: string
+          intention?: string
+          timeline?: string | null
+          updated_at?: string
+          user_id?: string
+          visible_on_profile?: boolean
+        }
+        Relationships: []
       }
       matches: {
         Row: {
