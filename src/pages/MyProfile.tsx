@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Accordion } from '@/components/ui/accordion';
 import { 
-  Settings, Heart, Camera, CheckCircle2, Share2, ChevronRight,
-  User, Dumbbell, Star, Briefcase, MapPin, Pencil, Plus, Shield
+  Settings, Heart, Camera, CheckCircle2, Share2,
+  User, Wine, Star, Briefcase, MapPin, Pencil, Plus, Shield,
+  Languages, BrainCircuit, Palette, Plane
 } from 'lucide-react';
-import PhotoManagement from '@/components/my-profile/PhotoManagement';
 import PrivacySettings from '@/components/my-profile/PrivacySettings';
+import EditableAccordionSection from '@/components/my-profile/EditableAccordionSection';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
 import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
 import BasicInfoEditor from '@/components/my-profile/sections/editors/BasicInfoEditor';
@@ -19,6 +21,15 @@ import InterestsHobbiesEditor from '@/components/my-profile/sections/editors/Int
 import EducationCareerEditor from '@/components/my-profile/sections/editors/EducationCareerEditor';
 import RelationshipPreferencesEditor from '@/components/my-profile/sections/editors/RelationshipPreferencesEditor';
 
+import ProfileBasics from '@/components/profile/ProfileBasics';
+import ProfileLifestyle from '@/components/profile/ProfileLifestyle';
+import ProfileInterests from '@/components/profile/ProfileInterests';
+import ProfileCommunication from '@/components/profile/ProfileCommunication';
+import ProfilePersonality from '@/components/profile/ProfilePersonality';
+import ProfileCreative from '@/components/profile/ProfileCreative';
+import ProfileTravel from '@/components/profile/ProfileTravel';
+import ProfileQuickStats from '@/components/profile/ProfileQuickStats';
+
 import { useRealProfileData } from '@/hooks/useRealProfileData';
 import { toast } from 'sonner';
 import { uploadProfilePhoto } from '@/api/profiles';
@@ -26,7 +37,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 
 const profileSections = [
   { id: 'basic', label: 'Basic Info', icon: User, component: BasicInfoEditor },
-  { id: 'lifestyle', label: 'Lifestyle', icon: Dumbbell, component: LifestyleEditor },
+  { id: 'lifestyle', label: 'Lifestyle', icon: Wine, component: LifestyleEditor },
   { id: 'values', label: 'Values & Beliefs', icon: Star, component: ValuesPersonalityEditor },
   { id: 'interests', label: 'Interests & Hobbies', icon: Heart, component: InterestsHobbiesEditor },
   { id: 'career', label: 'Career & Education', icon: Briefcase, component: EducationCareerEditor },
@@ -97,6 +108,52 @@ const MyProfile = () => {
     stressRelievers: [], workEnvironment: '', decisionMakingStyle: '', smoking: '', drinking: ''
   };
 
+  // Map profileData to the `details` format expected by profile viewer components
+  const details = {
+    about: profileData.bio,
+    height: profileData.height,
+    bodyType: profileData.bodyType,
+    ethnicity: profileData.ethnicity,
+    education: profileData.education,
+    occupation: profileData.occupation,
+    company: profileData.company,
+    religion: profileData.religion,
+    politicalViews: profileData.politicalViews,
+    drinking: profileData.drinking,
+    smoking: profileData.smoking,
+    relationshipGoals: profileData.relationshipGoals,
+    wantChildren: profileData.wantChildren,
+    havePets: profileData.havePets,
+    languages: profileData.languages,
+    interests: profileData.interests,
+    hobbies: profileData.hobbies,
+    exerciseHabits: profileData.exerciseHabits,
+    zodiacSign: profileData.zodiacSign,
+    personalityType: profileData.personalityType,
+    sleepSchedule: profileData.sleepSchedule,
+    travelFrequency: profileData.travelFrequency,
+    communicationStyle: profileData.communicationStyle,
+    loveLanguage: profileData.loveLanguage,
+    weekendActivities: profileData.weekendActivities,
+    dietaryPreferences: profileData.dietaryPreferences,
+    idealDate: profileData.idealDate,
+    workLifeBalance: profileData.workLifeBalance,
+    careerAmbitions: profileData.careerAmbitions,
+    values: profileData.values,
+    creativePursuits: profileData.creativePursuits,
+    favoriteBooks: [],
+    favoriteMovies: [],
+    favoriteMusic: [],
+    favoriteFoods: [],
+  };
+
+  const tinderBadgeStyle = "rounded-full bg-primary/10 border border-primary/20 text-primary shadow-sm";
+  const formatList = (value: string[] | string | undefined) => {
+    if (!value) return "";
+    if (Array.isArray(value)) return value.join(", ");
+    return value;
+  };
+
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
@@ -134,14 +191,6 @@ const MyProfile = () => {
         toast.error('Failed to upload photo');
       }
     }
-  };
-
-  const removeImage = (index: number) => setGalleryImages(prev => prev.filter((_, i) => i !== index));
-  const setAsProfilePic = (index: number) => {
-    if (index === 0) return;
-    const newGallery = [...galleryImages];
-    [newGallery[0], newGallery[index]] = [newGallery[index], newGallery[0]];
-    setGalleryImages(newGallery);
   };
 
   const handleBioSave = async (newBio: string) => {
@@ -201,7 +250,7 @@ const MyProfile = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
-        {/* Header with settings */}
+        {/* Header */}
         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/10">
           <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">
             <h1 className="text-lg font-bold text-foreground">{t('my_profile.title', 'Profile')}</h1>
@@ -211,11 +260,10 @@ const MyProfile = () => {
           </div>
         </div>
 
-        {/* Hero section with gradient bg */}
+        {/* Hero section */}
         <div className="relative">
           <div className="h-28 bg-gradient-to-b from-primary/20 to-background" />
           <div className="max-w-md mx-auto px-4 -mt-16 flex flex-col items-center">
-            {/* Profile image */}
             <div className="relative mb-3">
               <Avatar className="h-24 w-24 ring-4 ring-background shadow-xl">
                 <AvatarImage src={galleryImages[0]} alt={profileData.name} />
@@ -229,14 +277,12 @@ const MyProfile = () => {
               </label>
             </div>
 
-            {/* Name + verified + age */}
             <div className="flex items-center gap-1.5 mb-1">
               <h2 className="text-xl font-bold text-foreground">{profileData.name}</h2>
               {profileData.verified && <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />}
               {profileData.age > 0 && <span className="text-muted-foreground font-medium">, {profileData.age}</span>}
             </div>
 
-            {/* Occupation + location */}
             {profileData.occupation && (
               <p className="text-sm text-muted-foreground">{profileData.occupation}</p>
             )}
@@ -276,7 +322,6 @@ const MyProfile = () => {
           {profileCompletion < 100 && (
             <div className="mx-4 bg-gradient-to-r from-primary/15 to-accent/15 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center gap-4">
-                {/* Circular progress ring */}
                 <div className="relative w-14 h-14 flex-shrink-0">
                   <svg viewBox="0 0 56 56" className="w-14 h-14 -rotate-90">
                     <circle cx="28" cy="28" r="24" fill="none" strokeWidth="4" className="stroke-muted/30" />
@@ -319,45 +364,146 @@ const MyProfile = () => {
             </Button>
           </div>
 
-          {/* Bio card */}
+          {/* Bio section - editable inline */}
           <div className="mx-4">
             <EditableAboutMeSection bio={profileData.bio} onSave={handleBioSave} profileData={profileData} />
           </div>
 
-          {/* Quick info section cards */}
-          <div className="mx-4 space-y-2">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">{t('my_profile.profile_sections', 'Profile Sections')}</h3>
-            {profileSections.map((section) => {
-              const completion = getSectionCompletion(section.id);
-              const Icon = section.icon;
-              return (
-                <button
-                  key={section.id}
-                  onClick={() => setOpenSheet(section.id)}
-                  className="w-full bg-card rounded-2xl p-4 shadow-sm flex items-center gap-3 active:scale-[0.98] transition-transform"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="text-sm font-medium text-foreground">{section.label}</p>
-                  </div>
-                  <Badge className={`text-xs px-2 py-0.5 rounded-full ${
-                    completion === 100 
-                      ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/20' 
-                      : completion > 50 
-                      ? 'bg-amber-500/15 text-amber-500 border-amber-500/20' 
-                      : 'bg-red-500/15 text-red-500 border-red-500/20'
-                  }`}>
-                    {completion}%
-                  </Badge>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </button>
-              );
-            })}
+          {/* Quick Stats (as others see) */}
+          <div className="mx-4">
+            <ProfileQuickStats
+              education={details.education}
+              occupation={details.occupation}
+              company={details.company}
+              relationshipGoals={details.relationshipGoals}
+              zodiacSign={details.zodiacSign}
+              personalityType={details.personalityType}
+              tinderBadgeStyle={tinderBadgeStyle}
+              isMobile={true}
+            />
           </div>
 
-          {/* Photo Grid card */}
+          {/* Profile Sections - as others see them, with edit buttons */}
+          <div className="mx-4">
+            <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives", "travel"]} className="w-full space-y-3">
+              <EditableAccordionSection
+                value="basics"
+                title="Basics"
+                icon={<User />}
+                color="text-primary"
+                gradientClass="bg-gradient-to-r from-primary/5 to-transparent"
+                borderClass="border-primary/10"
+                onEdit={() => setOpenSheet('basic')}
+              >
+                <ProfileBasics
+                  details={details as any}
+                  tinderBadgeStyle={tinderBadgeStyle}
+                  formatList={formatList}
+                  isMobile={true}
+                />
+              </EditableAccordionSection>
+
+              <EditableAccordionSection
+                value="lifestyle"
+                title="Lifestyle"
+                icon={<Wine />}
+                color="text-orange-500"
+                gradientClass="bg-gradient-to-r from-orange-500/5 to-transparent"
+                borderClass="border-orange-500/10"
+                onEdit={() => setOpenSheet('lifestyle')}
+              >
+                <ProfileLifestyle
+                  details={details as any}
+                  formatList={formatList}
+                  isMobile={true}
+                />
+              </EditableAccordionSection>
+
+              <EditableAccordionSection
+                value="interests"
+                title="Interests & Hobbies"
+                icon={<Star />}
+                color="text-amber-500"
+                gradientClass="bg-gradient-to-r from-amber-500/5 to-transparent"
+                borderClass="border-amber-500/10"
+                onEdit={() => setOpenSheet('interests')}
+              >
+                <ProfileInterests
+                  details={details as any}
+                  tinderBadgeStyle={tinderBadgeStyle}
+                  formatList={formatList}
+                  isMobile={true}
+                />
+              </EditableAccordionSection>
+
+              <EditableAccordionSection
+                value="more"
+                title="Communication"
+                icon={<Languages />}
+                color="text-primary"
+                gradientClass="bg-gradient-to-r from-primary/5 to-transparent"
+                borderClass="border-primary/10"
+                onEdit={() => setOpenSheet('values')}
+              >
+                <ProfileCommunication
+                  details={details as any}
+                  tinderBadgeStyle={tinderBadgeStyle}
+                  isMobile={true}
+                />
+              </EditableAccordionSection>
+
+              <EditableAccordionSection
+                value="personality"
+                title="Personality & Growth"
+                icon={<BrainCircuit />}
+                color="text-purple-500"
+                gradientClass="bg-gradient-to-r from-purple-500/5 to-transparent"
+                borderClass="border-purple-500/10"
+                onEdit={() => setOpenSheet('values')}
+              >
+                <ProfilePersonality
+                  details={details as any}
+                  tinderBadgeStyle={tinderBadgeStyle}
+                  formatList={formatList}
+                  isMobile={true}
+                />
+              </EditableAccordionSection>
+
+              <EditableAccordionSection
+                value="creatives"
+                title="Creative & Lifestyle"
+                icon={<Palette />}
+                color="text-pink-500"
+                gradientClass="bg-gradient-to-r from-pink-500/5 to-transparent"
+                borderClass="border-pink-500/10"
+                onEdit={() => setOpenSheet('interests')}
+              >
+                <ProfileCreative
+                  details={details as any}
+                  tinderBadgeStyle={tinderBadgeStyle}
+                  formatList={formatList}
+                  isMobile={true}
+                />
+              </EditableAccordionSection>
+
+              <EditableAccordionSection
+                value="travel"
+                title="Travel"
+                icon={<Plane />}
+                color="text-teal-600"
+                gradientClass="bg-gradient-to-r from-teal-600/5 to-transparent"
+                borderClass="border-teal-600/10"
+                onEdit={() => setOpenSheet('lifestyle')}
+              >
+                <ProfileTravel
+                  details={details as any}
+                  isMobile={true}
+                />
+              </EditableAccordionSection>
+            </Accordion>
+          </div>
+
+          {/* Photo Grid */}
           <div className="mx-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
             <div className="bg-card rounded-2xl p-3 shadow-sm">
@@ -382,9 +528,12 @@ const MyProfile = () => {
             </div>
           </div>
 
-          {/* Privacy & Visibility Settings */}
+          {/* Privacy & Visibility */}
           <div className="mx-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Privacy & Visibility</h3>
+            <div className="flex items-center gap-2 px-1 mb-2">
+              <Shield className="w-4 h-4 text-muted-foreground" />
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Privacy & Visibility</h3>
+            </div>
             <PrivacySettings />
           </div>
         </div>
