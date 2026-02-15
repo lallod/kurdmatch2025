@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Eye, Heart, MessageCircle, UserRound, Newspaper, Shield } from 'lucide-react';
+import { Home, Eye, Heart, MessageCircle, UserRound, Shield } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTranslations } from '@/hooks/useTranslations';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,8 +26,8 @@ const BottomNavigation = () => {
   };
   
   const baseNavItems = [
-    { name: 'Home', icon: Newspaper, path: '/discovery' },
-    { name: 'Swipe', icon: Home, path: '/swipe' },
+    { name: 'Home', icon: Home, path: '/discovery' },
+    { name: 'Swipe', icon: Heart, path: '/swipe' },
     { name: 'Chat', icon: MessageCircle, path: '/messages' },
     { name: 'Views', icon: Eye, path: '/viewed-me' },
     { name: 'Profile', icon: UserRound, path: '/my-profile' },

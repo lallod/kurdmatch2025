@@ -13,7 +13,7 @@ interface FooterProps {
 
 // Default content
 const defaultContent: FooterContent = {
-  copyright: "© 2023 Kurdish Dating. All rights reserved."
+  copyright: `© ${new Date().getFullYear()} KurdMatch. All rights reserved.`
 };
 
 const Footer: React.FC<FooterProps> = ({ content = defaultContent }) => {
