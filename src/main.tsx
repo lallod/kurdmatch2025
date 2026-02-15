@@ -11,6 +11,13 @@ if (import.meta.env.PROD) {
   console.warn = () => {};
 }
 
+// Register service worker for push notifications
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').catch((err) => {
+    console.error('Service worker registration failed:', err);
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />

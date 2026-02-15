@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import ProtectedRoute from '../ProtectedRoute';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { CompleteProfile } from '@/pages/CompleteProfile';
 import Swipe from '@/pages/Swipe';
 import DiscoveryNearby from '@/pages/DiscoveryNearby';
@@ -33,9 +34,9 @@ const P: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 export const protectedRoutes = (
   <>
     <Route path="/complete-profile" element={<P><CompleteProfile /></P>} />
-    <Route path="/swipe" element={<P><Swipe /></P>} />
-    <Route path="/discovery" element={<P><DiscoveryFeed /></P>} />
-    <Route path="/discovery-nearby" element={<P><DiscoveryNearby /></P>} />
+    <Route path="/swipe" element={<P><ErrorBoundary><Swipe /></ErrorBoundary></P>} />
+    <Route path="/discovery" element={<P><ErrorBoundary><DiscoveryFeed /></ErrorBoundary></P>} />
+    <Route path="/discovery-nearby" element={<P><ErrorBoundary><DiscoveryNearby /></ErrorBoundary></P>} />
     <Route path="/create-post" element={<P><CreatePost /></P>} />
     <Route path="/search" element={<P><AdvancedSearch /></P>} />
     <Route path="/saved" element={<P><SavedPosts /></P>} />
@@ -44,11 +45,11 @@ export const protectedRoutes = (
     <Route path="/post/:id" element={<P><PostDetail /></P>} />
     <Route path="/liked-me" element={<P><LikedMe /></P>} />
     <Route path="/viewed-me" element={<P><ViewedMe /></P>} />
-    <Route path="/messages" element={<P><Messages /></P>} />
-    <Route path="/my-profile" element={<P><MyProfile /></P>} />
+    <Route path="/messages" element={<P><ErrorBoundary><Messages /></ErrorBoundary></P>} />
+    <Route path="/my-profile" element={<P><ErrorBoundary><MyProfile /></ErrorBoundary></P>} />
     
-    <Route path="/profile/:id" element={<P><InstagramProfile /></P>} />
-    <Route path="/profile" element={<P><Profile /></P>} />
+    <Route path="/profile/:id" element={<P><ErrorBoundary><InstagramProfile /></ErrorBoundary></P>} />
+    <Route path="/profile" element={<P><ErrorBoundary><Profile /></ErrorBoundary></P>} />
     <Route path="/subscription" element={<P><Subscription /></P>} />
     <Route path="/verification" element={<P><Verification /></P>} />
     <Route path="/hashtag/:hashtag" element={<P><HashtagFeed /></P>} />
