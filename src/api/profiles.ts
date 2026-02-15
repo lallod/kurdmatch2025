@@ -125,8 +125,8 @@ export const updateProfile = async (userId: string, updates: Partial<Profile>): 
   return data;
 };
 
-// Upload profile photo
-export const uploadProfilePhoto = async (file: File, showProgress?: boolean): Promise<string> => {
+// Upload profile photo and save to photos table
+export const uploadProfilePhoto = async (file: File, isPrimary?: boolean): Promise<string> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   
@@ -143,8 +143,115 @@ export const uploadProfilePhoto = async (file: File, showProgress?: boolean): Pr
   const { data } = supabase.storage
     .from('profile-photos')
     .getPublicUrl(filePath);
-    
-  return data.publicUrl;
+
+  const publicUrl = data.publicUrl;
+
+  // If this is the primary photo, unset existing primary first
+  if (isPrimary) {
+    await supabase
+      .from('photos')
+      .update({ is_primary: false })
+      .eq('profile_id', user.id);
+  }
+
+  // Insert into photos table
+  const { error: insertError } = await supabase
+    .from('photos')
+    .insert({ profile_id: user.id, url: publicUrl, is_primary: isPrimary || false });
+
+  if (insertError) throw insertError;
+
+  // Update profile_image if primary
+  if (isPrimary) {
+    await supabase
+      .from('profiles')
+      .update({ profile_image: publicUrl })
+      .eq('id', user.id);
+  }
+
+  return publicUrl;
+};
+
+// Get all photos for a user
+export const getUserPhotos = async (userId: string): Promise<{ id: string; url: string; is_primary: boolean }[]> => {
+  const { data, error } = await supabase
+    .from('photos')
+    .select('id, url, is_primary')
+    .eq('profile_id', userId)
+    .order('is_primary', { ascending: false })
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+};
+
+// Delete a photo
+export const deletePhoto = async (photoId: string): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Get photo info before deleting
+  const { data: photo } = await supabase
+    .from('photos')
+    .select('url, is_primary')
+    .eq('id', photoId)
+    .single();
+
+  const { error } = await supabase
+    .from('photos')
+    .delete()
+    .eq('id', photoId);
+
+  if (error) throw error;
+
+  // If deleted photo was primary, set another as primary
+  if (photo?.is_primary) {
+    const { data: remaining } = await supabase
+      .from('photos')
+      .select('id, url')
+      .eq('profile_id', user.id)
+      .order('created_at', { ascending: true })
+      .limit(1);
+
+    if (remaining && remaining.length > 0) {
+      await supabase.from('photos').update({ is_primary: true }).eq('id', remaining[0].id);
+      await supabase.from('profiles').update({ profile_image: remaining[0].url }).eq('id', user.id);
+    } else {
+      await supabase.from('profiles').update({ profile_image: '' }).eq('id', user.id);
+    }
+  }
+};
+
+// Set a photo as primary
+export const setPhotoPrimary = async (photoId: string): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Unset all primary
+  await supabase
+    .from('photos')
+    .update({ is_primary: false })
+    .eq('profile_id', user.id);
+
+  // Set selected as primary
+  await supabase
+    .from('photos')
+    .update({ is_primary: true })
+    .eq('id', photoId);
+
+  // Get the URL and update profile_image
+  const { data: photo } = await supabase
+    .from('photos')
+    .select('url')
+    .eq('id', photoId)
+    .single();
+
+  if (photo) {
+    await supabase
+      .from('profiles')
+      .update({ profile_image: photo.url })
+      .eq('id', user.id);
+  }
 };
 
 export interface SearchFilters {
