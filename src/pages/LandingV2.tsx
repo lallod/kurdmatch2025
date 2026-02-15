@@ -402,8 +402,8 @@ const LandingV2 = () => {
             <div>
               <h4 className="font-semibold mb-4 text-white">Legal</h4>
               <ul className="space-y-2 text-sm text-purple-200">
-                <li><a href="#" className="hover:text-pink-300 transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-pink-300 transition-colors">Terms of Service</a></li>
+                <li><a href="/privacy-policy" className="hover:text-pink-300 transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-pink-300 transition-colors">Terms of Service</a></li>
               </ul>
             </div>
 
@@ -428,7 +428,7 @@ const LandingV2 = () => {
           </div>
 
           <div className={`border-t border-white/20 mt-8 pt-8 text-center text-sm text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>
-            <p>{content.footer_text}</p>
+            <p>© {new Date().getFullYear()} KurdMatch. All rights reserved.</p>
           </div>
         </div>
       </footer>
