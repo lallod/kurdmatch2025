@@ -1,31 +1,32 @@
 
-# Production Hardening - Phase 2
+# KurdMatch Production Roadmap
 
-## Completed (Previous)
+## Completed ✅
 - ✅ Service Worker registration
 - ✅ Safari voice recording compatibility
 - ✅ GIF Picker wired to Giphy API via edge function
 - ✅ Error Boundaries on critical routes
 - ✅ API Keys admin page (all integrations configurable)
+- ✅ Phase 6: Marriage Intentions
+- ✅ Phase 8: Chaperone Mode
+- ✅ Phase 9: Virtual Gifts & Date Scheduler
+- ✅ Security: Profiles table restricted to authenticated users
+- ✅ Security: Reports table protects reporter identities
+- ✅ Security: Group members infinite recursion fixed
+- ✅ Help & Support page with FAQ
+- ✅ Privacy Policy & Terms of Service pages
+- ✅ Community Guidelines page
+- ✅ Profile Verification (selfie + ID) with admin review
+- ✅ UI/UX polish pass (consistent Midnight Rose design system)
 
-## Next: Phase 9 - Virtual Gifts & Date Scheduler
+## Remaining Dashboard Actions (Manual)
+- ⬜ Enable leaked password protection (Supabase Auth dashboard)
+- ⬜ Upgrade Postgres version (Supabase dashboard)
+- ⬜ Move extensions out of public schema
 
-### Virtual Gifts System
-- Create `virtual_gifts` table (gift catalog with prices)
-- Create `sent_gifts` table (tracks who sent what to whom)
-- Gift shop UI component
-- Send gift from profile / chat
-- Gift notification system
-
-### Date Scheduler
-- Create `date_proposals` table
-- Propose date UI (time, place, activity)
-- Accept/decline flow
-- Calendar integration view
-- Reminders via notifications
-
-### Priority Order
-1. Virtual Gifts catalog + database
-2. Send gift flow
-3. Date proposal system
-4. Calendar view
+## Future Enhancements
+- Video/Voice calls between matched users
+- Stories feature enhancements
+- Push notification improvements
+- Performance optimization (lazy loading, code splitting)
+- Cross-browser comprehensive testing
