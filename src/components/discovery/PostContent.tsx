@@ -25,7 +25,7 @@ export const PostContent = ({ content }: PostContentProps) => {
                   e.stopPropagation();
                   navigate(`/hashtag/${hashtags[index].slice(1)}`);
                 }}
-                className="text-purple-300 hover:text-purple-200 font-medium transition-colors"
+                className="text-primary hover:text-primary/80 font-medium transition-colors"
               >
                 {hashtags[index]}
               </button>
@@ -37,9 +37,9 @@ export const PostContent = ({ content }: PostContentProps) => {
   };
 
   return (
-    <p className="text-white whitespace-pre-wrap">
+    <span className="text-foreground whitespace-pre-wrap">
       {renderContent()}
-    </p>
+    </span>
   );
 };
 

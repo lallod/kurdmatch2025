@@ -1,5 +1,5 @@
-// Kurdish dialects
-const kurdishLanguages = [
+// Kurdish dialects (always first)
+const kurdishDialects = [
   "Kurdish (Sorani)",
   "Kurdish (Kurmanji)",
   "Kurdish (Zazaki)",
@@ -7,41 +7,46 @@ const kurdishLanguages = [
   "Kurdish (Hawrami)"
 ];
 
-// Middle Eastern languages
-const middleEasternLanguages = [
+// Most popular languages among Kurdish diaspora & regional
+const popularLanguages = [
   "Arabic",
-  "Hebrew",
-  "Persian (Farsi)",
   "Turkish",
-  "Aramaic",
-  "Armenian",
-  "Azerbaijani",
-  "Georgian",
-  "Urdu",
-  "Pashto",
-  "Balochi",
-  "Luri",
-  "Assyrian",
-  "Turkmen",
-  "Kazakh"
-];
-
-// European languages
-const europeanLanguages = [
-  "English",
-  "French",
+  "Persian (Farsi)",
   "German",
-  "Spanish",
-  "Italian",
-  "Portuguese",
-  "Russian",
-  "Dutch",
-  "Polish",
+  "English",
   "Swedish",
+  "Dutch",
+  "French",
   "Norwegian",
   "Danish",
   "Finnish",
+];
+
+// Regional / neighboring languages
+const regionalLanguages = [
+  "Azerbaijani",
+  "Armenian",
+  "Georgian",
+  "Assyrian",
+  "Aramaic",
+  "Turkmen",
+  "Uzbek",
+  "Dari",
+  "Pashto",
+  "Balochi",
+  "Luri",
+  "Hebrew",
+  "Urdu",
+];
+
+// European languages (diaspora)
+const europeanLanguages = [
+  "Italian",
+  "Spanish",
+  "Portuguese",
+  "Russian",
   "Greek",
+  "Polish",
   "Czech",
   "Hungarian",
   "Romanian",
@@ -49,25 +54,24 @@ const europeanLanguages = [
   "Croatian",
   "Serbian",
   "Ukrainian",
-  "Belarusian",
+  "Bosnian",
+  "Albanian",
   "Slovak",
   "Slovenian",
-  "Albanian",
+  "Austrian German",
+  "Swiss German",
+  "Luxembourgish",
+  "Icelandic",
   "Lithuanian",
   "Latvian",
   "Estonian",
-  "Icelandic",
-  "Irish",
-  "Welsh",
-  "Scots Gaelic",
-  "Catalan",
-  "Basque",
-  "Galician",
-  "Luxembourgish",
-  "Maltese",
+  "Belarusian",
   "Macedonian",
   "Montenegrin",
-  "Bosnian"
+  "Catalan",
+  "Irish",
+  "Welsh",
+  "Maltese",
 ];
 
 // Asian languages
@@ -77,16 +81,15 @@ const asianLanguages = [
   "Korean",
   "Hindi",
   "Bengali",
-  "Vietnamese",
-  "Thai",
+  "Punjabi",
+  "Tamil",
   "Indonesian",
   "Malay",
+  "Vietnamese",
+  "Thai",
   "Tagalog",
-  "Tamil",
-  "Telugu",
-  "Punjabi",
   "Nepali",
-  "Sinhala"
+  "Telugu",
 ];
 
 // African languages
@@ -96,34 +99,38 @@ const africanLanguages = [
   "Somali",
   "Hausa",
   "Yoruba",
-  "Zulu",
   "Afrikaans",
-  "Berber"
 ];
 
-// All languages combined and sorted alphabetically
+// All languages combined — Kurdish dialects first, then popular, then rest sorted
 export const allLanguages = [
-  ...kurdishLanguages,
-  ...middleEasternLanguages,
-  ...europeanLanguages,
-  ...asianLanguages,
-  ...africanLanguages
-].sort();
+  ...kurdishDialects,
+  ...popularLanguages,
+  ...[
+    ...regionalLanguages,
+    ...europeanLanguages,
+    ...asianLanguages,
+    ...africanLanguages,
+  ].sort()
+];
 
 // Language categories for filtering
 export const languageCategories = {
-  kurdish: kurdishLanguages,
-  middleEastern: middleEasternLanguages,
+  kurdish: kurdishDialects,
+  popular: popularLanguages,
+  regional: regionalLanguages,
   european: europeanLanguages,
   asian: asianLanguages,
   african: africanLanguages,
-  kurdishDialects: kurdishLanguages // Alias for backwards compatibility
+  kurdishDialects: kurdishDialects, // Alias for backwards compatibility
+  middleEastern: [...popularLanguages.slice(0, 3), ...regionalLanguages.slice(0, 6)], // backwards compat
 };
 
 // Get category for a language
 export const getLanguageCategory = (language: string): string => {
-  if (kurdishLanguages.includes(language)) return 'kurdish';
-  if (middleEasternLanguages.includes(language)) return 'middleEastern';
+  if (kurdishDialects.includes(language)) return 'kurdish';
+  if (popularLanguages.includes(language)) return 'popular';
+  if (regionalLanguages.includes(language)) return 'regional';
   if (europeanLanguages.includes(language)) return 'european';
   if (asianLanguages.includes(language)) return 'asian';
   if (africanLanguages.includes(language)) return 'african';
