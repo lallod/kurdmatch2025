@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
+import { languageCategories, allLanguages } from '@/data/languages';
 import { SuggestionBadge } from '@/components/ui/suggestion-badge';
 
 interface BasicInfoEditorProps {
@@ -64,10 +65,12 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
     onCancel?.();
   };
 
-  const commonLanguages = [
-    'Kurdish', 'English', 'Arabic', 'Turkish', 'Persian', 'German', 
-    'French', 'Spanish', 'Italian', 'Dutch', 'Swedish'
-  ];
+  const [showAllLanguages, setShowAllLanguages] = useState(false);
+  const kurdishDialects = languageCategories.kurdish;
+  const commonLanguages = languageCategories.popular;
+  const remainingLanguages = allLanguages.filter(
+    l => !kurdishDialects.includes(l) && !commonLanguages.includes(l)
+  );
 
   const kurdistanRegions: KurdistanRegion[] = [
     'South-Kurdistan', 'West-Kurdistan', 'East-Kurdistan', 'North-Kurdistan'
@@ -140,22 +143,62 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
         </div>
       </div>
       
-      <div>
-        <Label className="text-muted-foreground text-xs">Languages</Label>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {commonLanguages.map(language => (
-            <Badge key={language}
-              variant={formData.languages.includes(language) ? "default" : "outline"}
-              className={`cursor-pointer transition-colors ${
-                formData.languages.includes(language)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              }`}
-              onClick={() => handleLanguageToggle(language)}
-            >
-              {language}
-            </Badge>
-          ))}
+      <div className="space-y-3">
+        <div>
+          <Label className="text-muted-foreground text-xs uppercase tracking-wider">Kurdish Dialects</Label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {kurdishDialects.map(language => (
+              <Badge key={language}
+                variant={formData.languages.includes(language) ? "default" : "outline"}
+                className={`cursor-pointer transition-colors ${
+                  formData.languages.includes(language)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                }`}
+                onClick={() => handleLanguageToggle(language)}
+              >
+                {language.replace('Kurdish (', '').replace(')', '')}
+              </Badge>
+            ))}
+          </div>
+        </div>
+        <div>
+          <Label className="text-muted-foreground text-xs uppercase tracking-wider">Languages</Label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {commonLanguages.map(language => (
+              <Badge key={language}
+                variant={formData.languages.includes(language) ? "default" : "outline"}
+                className={`cursor-pointer transition-colors ${
+                  formData.languages.includes(language)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                }`}
+                onClick={() => handleLanguageToggle(language)}
+              >
+                {language}
+              </Badge>
+            ))}
+            {showAllLanguages && remainingLanguages.map(language => (
+              <Badge key={language}
+                variant={formData.languages.includes(language) ? "default" : "outline"}
+                className={`cursor-pointer transition-colors ${
+                  formData.languages.includes(language)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                }`}
+                onClick={() => handleLanguageToggle(language)}
+              >
+                {language}
+              </Badge>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAllLanguages(!showAllLanguages)}
+            className="text-xs text-primary font-medium hover:underline transition-colors mt-2"
+          >
+            {showAllLanguages ? 'See less' : `See more languages (+${remainingLanguages.length})`}
+          </button>
         </div>
       </div>
 
