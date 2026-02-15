@@ -185,14 +185,6 @@ const MyProfile = () => {
     }
   };
 
-  const handleBioSave = async (newBio: string) => {
-    try {
-      await updateProfileData({ bio: newBio });
-      toast.success('Bio updated successfully');
-      refreshData();
-    } catch (error) { toast.error('Failed to update bio'); }
-  };
-
   const handleProfileUpdate = async (updates: Partial<ProfileData>) => {
     try {
       const fieldMap: Record<string, string> = {
@@ -224,19 +216,6 @@ const MyProfile = () => {
         refreshData();
       }
     } catch (error) { toast.error('Failed to update profile'); }
-  };
-
-  const getSectionCompletion = (id: string) => {
-    if (!categoryProgress) return 0;
-    switch (id) {
-      case 'basic': return categoryProgress.basicInfo || 0;
-      case 'lifestyle': return categoryProgress.lifestyle || 0;
-      case 'values': return categoryProgress.valuesAndBeliefs || 0;
-      case 'interests': return categoryProgress.interestsAndHobbies || 0;
-      case 'career': return categoryProgress.careerAndEducation || 0;
-      case 'relationship': return categoryProgress.relationshipGoals || 0;
-      default: return 0;
-    }
   };
 
   return (
@@ -349,7 +328,7 @@ const MyProfile = () => {
 
           {/* Bio section - editable inline */}
           <div className="mx-4">
-            <EditableAboutMeSection bio={profileData.bio} onSave={handleBioSave} profileData={profileData} />
+            <EditableAboutMeSection bio={profileData.bio} onSave={(newBio: string) => handleProfileUpdate({ bio: newBio })} profileData={profileData} />
           </div>
 
           {/* Quick Stats (as others see) */}
