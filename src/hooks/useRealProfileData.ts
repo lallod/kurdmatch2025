@@ -154,27 +154,10 @@ export const useRealProfileData = () => {
         const dbUpdates = convertUiToDbProfile(updates);
         const dbValueUpdates = convertUiToDbValues(dbUpdates);
         
-        const updated = await updateProfile(profileData.id, dbValueUpdates as any);
-        setProfileData(updated as any);
+        await updateProfile(profileData.id, dbValueUpdates as any);
         
-        // Update enhanced data and mark fields as user-set
-        let newEnhanced = { ...enhancedData };
-        Object.keys(updates).forEach(fieldName => {
-          newEnhanced = updateFieldWithSource(
-            newEnhanced.profileData,
-            newEnhanced.fieldSources,
-            fieldName,
-            updates[fieldName as keyof DatabaseProfile]
-          );
-        });
-        setEnhancedData(newEnhanced);
-        
-        toast.success('Profile updated successfully');
-        
-        // Refresh onboarding progress with enhanced data
-        const progress = await getUserOnboardingProgress(profileData.id, newEnhanced.profileData);
-        setOnboardingProgress(progress);
-        setCategoryProgress(progress.categoryProgress);
+        // Full refresh to get consistent state
+        await loadRealProfileData();
       }
     } catch (error) {
       console.error('Error updating profile:', error);

@@ -112,13 +112,17 @@ export const getCurrentUserProfile = async (): Promise<Profile | null> => {
 };
 
 // Update profile
-export const updateProfile = async (userId: string, updates: Partial<Profile>): Promise<void> => {
-  const { error } = await supabase
+export const updateProfile = async (userId: string, updates: Partial<Profile>): Promise<Profile> => {
+  const { data, error } = await supabase
     .from('profiles')
     .update(updates)
-    .eq('id', userId);
+    .eq('id', userId)
+    .select()
+    .maybeSingle();
     
   if (error) throw error;
+  if (!data) throw new Error('Profile not found after update');
+  return data;
 };
 
 // Upload profile photo
