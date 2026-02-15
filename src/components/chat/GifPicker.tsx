@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { supabase } from '@/integrations/supabase/client';
 
 interface GifResult {
   id: string;
@@ -28,21 +27,14 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
   const fetchGifs = useCallback(async (query: string) => {
     setIsLoading(true);
     try {
-      const params = new URLSearchParams({ limit: '20' });
-      if (query.trim()) params.set('q', query.trim());
-
-      const { data, error } = await supabase.functions.invoke('search-gifs', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        body: undefined,
-      });
-
-      // Use fetch directly since invoke doesn't support GET query params well
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-gifs?${params.toString()}`;
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-gifs`;
       const response = await fetch(url, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ q: query.trim(), limit: '20' }),
       });
 
       if (response.ok) {
