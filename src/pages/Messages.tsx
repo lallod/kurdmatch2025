@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban, Globe, Image as ImageIcon, Smile, UserX } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Mic, Sparkles, Bell, BellDot, Eye, Heart, MoreVertical, Flag, Ban, Globe, Image as ImageIcon, Smile, UserX, Phone, Video } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -39,6 +39,9 @@ import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge
 import { MatchInsightsHeader } from '@/components/chat/MatchInsightsHeader';
 import { IcebreakerSuggestions } from '@/components/chat/IcebreakerSuggestions';
 import { ReadReceiptIndicator } from '@/components/chat/ReadReceiptIndicator';
+import { useWebRTC } from '@/hooks/useWebRTC';
+import VideoCallScreen from '@/components/calls/VideoCallScreen';
+import IncomingCallSheet from '@/components/calls/IncomingCallSheet';
 
 const Messages = () => {
   const { user } = useSupabaseAuth();
@@ -67,6 +70,23 @@ const Messages = () => {
   // Unmatch state
   const [unmatchDialogOpen, setUnmatchDialogOpen] = useState(false);
   const [currentMatchId, setCurrentMatchId] = useState<string | null>(null);
+  
+  // Call state
+  const [showIncomingCall, setShowIncomingCall] = useState(false);
+  const [incomingCallerName, setIncomingCallerName] = useState('');
+  const [showCallScreen, setShowCallScreen] = useState(false);
+  
+  const {
+    callStatus, callType, callDuration, isMuted, isCameraOff,
+    remoteUserId, localVideoRef, remoteVideoRef,
+    initiateCall, acceptCall, declineCall, endCall, toggleMute, toggleCamera,
+  } = useWebRTC({
+    userId: user?.id || '',
+    onIncomingCall: (callerId, callerName, type, callId) => {
+      setIncomingCallerName(callerName);
+      setShowIncomingCall(true);
+    },
+  });
   
   const { moderateMessage, isChecking } = useMessageModeration();
   const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
@@ -587,7 +607,28 @@ const Messages = () => {
               </p>
             </div>
             {/* Notification indicators in header */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              {/* Voice call button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground hover:bg-muted/20 h-9 w-9"
+                onClick={() => { initiateCall(conversation.id, 'voice'); setShowCallScreen(true); }}
+                aria-label="Voice call"
+              >
+                <Phone className="h-4 w-4" />
+              </Button>
+              {/* Video call button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground hover:bg-muted/20 h-9 w-9"
+                onClick={() => { initiateCall(conversation.id, 'video'); setShowCallScreen(true); }}
+                aria-label="Video call"
+              >
+                <Video className="h-4 w-4" />
+              </Button>
+              
               {conversation.notifications?.includes('online') && <Badge className="bg-success/20 text-success border-success/30">
                   Online
                 </Badge>}
@@ -1083,6 +1124,33 @@ const Messages = () => {
       </div>
       </div>
 
+      {/* Call screen */}
+      {showCallScreen && callStatus !== 'idle' && (
+        <VideoCallScreen
+          callStatus={callStatus}
+          callType={callType}
+          callDuration={callDuration}
+          isMuted={isMuted}
+          isCameraOff={isCameraOff}
+          remoteUserId={remoteUserId}
+          localVideoRef={localVideoRef}
+          remoteVideoRef={remoteVideoRef}
+          onEndCall={() => { endCall(); setShowCallScreen(false); }}
+          onToggleMute={toggleMute}
+          onToggleCamera={toggleCamera}
+          onMinimize={() => setShowCallScreen(false)}
+        />
+      )}
+
+      {/* Incoming call sheet */}
+      <IncomingCallSheet
+        open={showIncomingCall && callStatus === 'ringing'}
+        callerId={remoteUserId || ''}
+        callerName={incomingCallerName}
+        callType={callType}
+        onAccept={() => { acceptCall(); setShowIncomingCall(false); setShowCallScreen(true); }}
+        onDecline={() => { declineCall(); setShowIncomingCall(false); }}
+      />
       
     </div>;
 };
