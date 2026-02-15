@@ -1,62 +1,63 @@
 
 
-# MyProfile Page Redesign
+# Inline Editing -- Remove Popups
 
 ## Overview
-Redesign the MyProfile page so it shows your profile exactly as other users see it (using the same visual components), with inline edit buttons on each section. Add a dedicated Privacy and Visibility panel with field toggles and blur photos control.
+Replace the bottom-sheet popup editors with inline editing directly inside each accordion section. When you tap the edit pencil icon, the section content switches from the read-only profile view to the editable form -- right in place, no popup.
 
 ## What Changes
 
-### 1. New Layout Structure
-The page will be reorganized into three main areas:
+### 1. EditableAccordionSection -- Toggle between View and Edit mode
+- Add an `isEditing` state toggled by the pencil button.
+- When `isEditing` is false, show the existing read-only profile viewer (ProfileBasics, ProfileLifestyle, etc.).
+- When `isEditing` is true, show the editor component (BasicInfoEditor, LifestyleEditor, etc.) inline.
+- The pencil icon changes to an X (close) icon when editing, so users can cancel.
 
-- **Profile Preview** -- Your profile rendered using the same `ProfileDetails`, `ProfileBio`, `ProfileQuickStats`, and accordion sections that other users see when viewing your profile. This gives you a true "what others see" preview.
-- **Inline Edit Buttons** -- Each section (Basics, Lifestyle, Interests, etc.) gets a small pencil/edit icon in its header. Tapping it opens the existing bottom-sheet editor for that section, saving directly to the database.
-- **Privacy and Visibility Panel** -- Placed below the profile preview, containing the existing `PrivacySettings` component (field visibility toggles, blur photos switch, and share-with-matches).
+### 2. MyProfile.tsx -- Remove all Sheet/popup code
+- Remove the `Sheet`, `SheetContent`, `SheetHeader`, `SheetTitle` imports and the bottom sheet rendering loop (lines 542-560).
+- Remove the `openSheet` state entirely.
+- Remove the "Edit Profile" button that opens a sheet.
+- Each `EditableAccordionSection` now receives both its viewer child AND its editor component as props.
+- When saving inside an editor, it calls `onUpdate` (same as before, saves directly to DB), then switches back to view mode.
 
-### 2. Profile Preview Section
-- Reuse the existing `MobileProfileDetails` / `DesktopProfileDetails` components (the same ones used on `/profile/:id`) to render your own data.
-- Map your profile data from `useRealProfileData` into the `details` prop format these components expect (about, height, bodyType, interests, etc.).
-- Add a floating "Edit" icon overlay on each accordion section header so you can tap to open the corresponding editor sheet.
+### 3. Editor components -- Theme and auto-close fixes
+- Update editor styling from hardcoded dark (`bg-gray-800`, `text-white`, `text-purple-200`) to use CSS variables (`bg-card`, `text-foreground`, `text-muted-foreground`) so they blend with the page instead of looking like a popup.
+- After a successful save, signal the parent to exit edit mode (via a new `onSaveComplete` callback).
+- Files affected:
+  - `BasicInfoEditor.tsx`
+  - `LifestyleEditor.tsx`
+  - `ValuesPersonalityEditor.tsx`
+  - `InterestsHobbiesEditor.tsx`
+  - `EducationCareerEditor.tsx`
+  - `RelationshipPreferencesEditor.tsx`
 
-### 3. Header Area (Kept Simplified)
-- Profile photo with camera upload button (existing).
-- Name, age, verified badge, occupation, location, Kurdistan region badge.
-- Stats bar (Views, Likes, Matches).
-- Completion banner (if < 100%).
-- "Share Profile" button.
+### 4. Section mapping
+Each accordion section will pair its viewer and editor:
 
-### 4. Photo Grid
-- Keep the existing photo grid with upload capability.
+```text
+Basics           -> ProfileBasics (view)         + BasicInfoEditor (edit)
+Lifestyle        -> ProfileLifestyle (view)      + LifestyleEditor (edit)
+Communication    -> ProfileCommunication (view)  + RelationshipPreferencesEditor (edit)
+Personality      -> ProfilePersonality (view)    + ValuesPersonalityEditor (edit)
+Creative         -> ProfileCreative (view)       + InterestsHobbiesEditor (edit)
+Travel           -> ProfileTravel (view)         + LifestyleEditor (edit)
+```
 
-### 5. Privacy and Visibility Section
-- Render the existing `PrivacySettings` component as-is (it already handles blur photos, field visibility toggles by category, and share-with-matches).
-- Add a section header "Privacy & Visibility" with a Shield icon.
+### 5. Database-first save
+Each editor's save handler already calls `handleProfileUpdate` which maps camelCase fields to snake_case DB columns and calls `updateProfileData`. This flow remains unchanged -- edits save directly to the database via Supabase.
 
 ## Technical Details
 
-### Files Modified
-- **`src/pages/MyProfile.tsx`** -- Major rewrite:
-  - Remove the current "profile sections list" (the cards with completion % that just link to editors).
-  - Instead, render profile data through the viewer components (`ProfileBio`, `ProfileQuickStats`, `ProfileBasics`, `ProfileLifestyle`, `ProfileInterests`, `ProfileCommunication`, `ProfilePersonality`, `ProfileCreative`, `ProfileTravel`) wrapped in accordion sections.
-  - Add an edit button overlay on each accordion section that opens the corresponding editor sheet.
-  - Keep the bottom-sheet editors (already working, save directly to DB).
-  - Keep `PrivacySettings` at the bottom.
+### EditableAccordionSection changes
+- New props: `editorContent` (ReactNode) -- the editor form to show when editing.
+- Internal `isEditing` state, toggled by pencil/X button.
+- When `isEditing=true`, render `editorContent` instead of `children`.
 
-### Data Mapping
-The `useRealProfileData` hook returns database-format fields. A mapping object will convert these to the `details` prop shape expected by the profile viewer components:
+### Editor onSaveComplete callback
+- Each editor receives a new optional `onSaveComplete?: () => void` prop.
+- Called after successful save so the accordion section can switch back to view mode.
+- Cancel button also exits edit mode.
 
-```text
-profileData.bio         -> details.about
-profileData.height      -> details.height
-profileData.body_type   -> details.bodyType
-profileData.interests   -> details.interests
-... etc
-```
-
-### Edit Flow
-Each section header gets an edit button. When clicked, it opens the same bottom-sheet editor that exists today (BasicInfoEditor, LifestyleEditor, etc.). These editors already save directly to the database via `updateProfileData`.
-
-### No New Dependencies
-All existing components and hooks are reused. No new packages needed.
+### No new dependencies
+All existing components reused. No new packages.
 
