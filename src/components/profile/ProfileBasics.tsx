@@ -95,6 +95,11 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
       <DetailItem 
         icon={<Award size={18} />} 
         label="Values" 
+        editable={!!onFieldEdit}
+        fieldKey="values"
+        fieldType="multi-select"
+        fieldOptions={["Family", "Honesty", "Loyalty", "Ambition", "Kindness", "Faith", "Freedom", "Education", "Tradition", "Equality"]}
+        onFieldEdit={onFieldEdit}
         value={
           <div className="flex flex-wrap gap-2 mt-1">
             {Array.isArray(details.values) ? 

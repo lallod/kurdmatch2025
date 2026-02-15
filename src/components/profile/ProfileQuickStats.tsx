@@ -41,7 +41,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
             </div>
             <h4 className="text-sm font-medium">Education</h4>
           </div>
-          <p className="text-sm text-muted-foreground">{education.split(',')[0]}</p>
+          <p className="text-sm text-muted-foreground">{Array.isArray(education) ? (education as string[])[0] : education.replace(/[\[\]"]/g, '').split(',')[0]}</p>
         </div>
         
         <div className={`${cardClass} group`}>
@@ -88,7 +88,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           </div>
           <h4 className="text-sm font-medium">Education</h4>
         </div>
-        <p className="text-sm text-muted-foreground">{education}</p>
+        <p className="text-sm text-muted-foreground">{Array.isArray(education) ? (education as string[]).join(', ') : education.replace(/[\[\]"]/g, '')}</p>
       </div>
       
       <div className={`${cardClass} group`}>

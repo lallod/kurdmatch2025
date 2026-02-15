@@ -95,7 +95,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={formatList(details.weekendActivities) || 'Not specified'}
         editable={!!onFieldEdit}
         fieldKey="weekendActivities"
-        fieldType="text"
+        fieldType="multi-select"
+        fieldOptions={["Hiking", "Reading", "Socializing", "Gaming", "Cooking", "Sports", "Shopping", "Traveling", "Relaxing", "Volunteering"]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />

@@ -57,7 +57,23 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
       <div className="space-y-1">
         <DetailItem 
           icon={<Calendar size={18} />} label="Weekend Activities" 
-          value={formatList(details.weekendActivities) || "Not specified"}
+          editable={!!onFieldEdit}
+          fieldKey="weekendActivities"
+          fieldType="multi-select"
+          fieldOptions={["Hiking", "Reading", "Socializing", "Gaming", "Cooking", "Sports", "Shopping", "Traveling", "Relaxing", "Volunteering"]}
+          onFieldEdit={onFieldEdit}
+          value={
+            <div className="flex flex-wrap gap-2 mt-1">
+              {Array.isArray(details.weekendActivities) ? 
+                details.weekendActivities.map((act, i) => (
+                  <Badge key={i} variant="outline" className={tinderBadgeStyle}>{act}</Badge>
+                )) : 
+                (formatList(details.weekendActivities) || "Not specified").split(", ").filter(Boolean).map((act, i) => (
+                  <Badge key={i} variant="outline" className={tinderBadgeStyle}>{act}</Badge>
+                ))
+              }
+            </div>
+          }
         />
         <Separator />
         <DetailItem 
@@ -82,6 +98,11 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
         <Separator />
         <DetailItem 
           icon={<Headphones size={18} />} label="Music Instruments" 
+          editable={!!onFieldEdit}
+          fieldKey="musicInstruments"
+          fieldType="multi-select"
+          fieldOptions={["Guitar", "Piano", "Drums", "Violin", "Flute", "Oud", "Saz", "Daf", "None"]}
+          onFieldEdit={onFieldEdit}
           value={
             <div className="flex flex-wrap gap-2 mt-1">
               {Array.isArray(details.musicInstruments) ? 
@@ -98,6 +119,11 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
         <Separator />
         <DetailItem 
           icon={<Puzzle size={18} />} label="Favorite Games" 
+          editable={!!onFieldEdit}
+          fieldKey="favoriteGames"
+          fieldType="multi-select"
+          fieldOptions={["Chess", "Card games", "Video games", "Board games", "Puzzle games", "Sports games", "Strategy games"]}
+          onFieldEdit={onFieldEdit}
           value={
             <div className="flex flex-wrap gap-2 mt-1">
               {Array.isArray(details.favoriteGames) ? 

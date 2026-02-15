@@ -30,8 +30,9 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
   onFieldEdit
 }) => {
   const renderBadgeList = (items: string[] | string | undefined) => {
-    if (!items) return null;
+    if (!items) return <span className="text-muted-foreground">Not specified</span>;
     const itemList = Array.isArray(items) ? items : formatList(items).split(", ");
+    if (itemList.length === 0) return <span className="text-muted-foreground">Not specified</span>;
     return (
       <div className="flex flex-wrap gap-2 mt-1">
         {itemList.map((item, i) => (
@@ -43,9 +44,25 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
 
   return (
     <div className="space-y-6 py-4">
-      <DetailItem icon={<Trophy size={18} />} label="Growth Goals" value={renderBadgeList(details.growthGoals)} />
+      <DetailItem 
+        icon={<Trophy size={18} />} label="Growth Goals" 
+        editable={!!onFieldEdit}
+        fieldKey="growthGoals"
+        fieldType="multi-select"
+        fieldOptions={["Career growth", "Health & fitness", "Education", "Spiritual growth", "Financial freedom", "Better relationships", "Travel more", "Learn new skills"]}
+        onFieldEdit={onFieldEdit}
+        value={renderBadgeList(details.growthGoals)} 
+      />
       <Separator />
-      <DetailItem icon={<Gem size={18} />} label="Hidden Talents" value={renderBadgeList(details.hiddenTalents)} />
+      <DetailItem 
+        icon={<Gem size={18} />} label="Hidden Talents" 
+        editable={!!onFieldEdit}
+        fieldKey="hiddenTalents"
+        fieldType="multi-select"
+        fieldOptions={["Singing", "Dancing", "Cooking", "Drawing", "Writing", "Languages", "Sports", "Comedy", "Crafts"]}
+        onFieldEdit={onFieldEdit}
+        value={renderBadgeList(details.hiddenTalents)} 
+      />
       <Separator />
       <DetailItem 
         icon={<Star size={18} />} label="Favorite Memory" 
@@ -56,7 +73,15 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
         onFieldEdit={onFieldEdit}
       />
       <Separator />
-      <DetailItem icon={<ThermometerSun size={18} />} label="Stress Relievers" value={renderBadgeList(details.stressRelievers)} />
+      <DetailItem 
+        icon={<ThermometerSun size={18} />} label="Stress Relievers" 
+        editable={!!onFieldEdit}
+        fieldKey="stressRelievers"
+        fieldType="multi-select"
+        fieldOptions={["Exercise", "Meditation", "Music", "Reading", "Nature walks", "Cooking", "Gaming", "Socializing", "Art"]}
+        onFieldEdit={onFieldEdit}
+        value={renderBadgeList(details.stressRelievers)} 
+      />
       <Separator />
       <DetailItem 
         icon={<Globe size={18} />} label="Charity Involvement" 

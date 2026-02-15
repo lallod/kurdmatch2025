@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Pencil, Check, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 interface DetailItemProps {
   icon: React.ReactNode;
@@ -10,7 +11,7 @@ interface DetailItemProps {
   value: React.ReactNode;
   editable?: boolean;
   fieldKey?: string;
-  fieldType?: 'text' | 'select';
+  fieldType?: 'text' | 'select' | 'multi-select';
   fieldOptions?: string[];
   onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
@@ -18,14 +19,44 @@ interface DetailItemProps {
 const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, editable, fieldKey, fieldType = 'text', fieldOptions = [], onFieldEdit }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState('');
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const handleStartEdit = () => {
     if (!editable || !onFieldEdit || !fieldKey) return;
-    const currentVal = typeof value === 'string' ? value : '';
-    setTempValue(currentVal);
-    setIsEditing(true);
+    if (fieldType === 'multi-select') {
+      // Extract current array value from the rendered value
+      const currentVal = extractArrayValue(value);
+      setSelectedItems(currentVal);
+      setIsEditing(true);
+    } else {
+      const currentVal = typeof value === 'string' ? value : '';
+      setTempValue(currentVal);
+      setIsEditing(true);
+    }
+  };
+
+  const extractArrayValue = (val: React.ReactNode): string[] => {
+    // Try to extract text from Badge children
+    if (React.isValidElement(val) && val.props?.children) {
+      const children = val.props.children;
+      if (Array.isArray(children)) {
+        return children
+          .filter((child: any) => React.isValidElement(child))
+          .map((child: any) => {
+            if (child.props?.children && typeof child.props.children === 'string') {
+              return child.props.children;
+            }
+            return '';
+          })
+          .filter(Boolean);
+      }
+    }
+    if (typeof val === 'string') {
+      return val.split(', ').filter(Boolean);
+    }
+    return [];
   };
 
   const handleSave = async (val?: string) => {
@@ -44,6 +75,24 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, editable, f
     }
   };
 
+  const handleMultiSelectToggle = async (item: string) => {
+    if (!onFieldEdit || !fieldKey) return;
+    const updated = selectedItems.includes(item)
+      ? selectedItems.filter(i => i !== item)
+      : [...selectedItems, item];
+    setSelectedItems(updated);
+    setSaving(true);
+    try {
+      await onFieldEdit({ [fieldKey]: updated });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1500);
+    } catch {
+      // error handled by parent
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSave();
     if (e.key === 'Escape') setIsEditing(false);
@@ -58,37 +107,67 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, editable, f
         <p className="text-sm text-muted-foreground font-medium">
           {label}
         </p>
-        <div className="font-medium mt-1 text-foreground flex items-center gap-1.5">
-          {isEditing ? (
-            fieldType === 'select' && fieldOptions.length > 0 ? (
-              <Select
-                value={tempValue}
-                onValueChange={(val) => {
-                  setTempValue(val);
-                  handleSave(val);
-                }}
+        <div className="font-medium mt-1 text-foreground">
+          {isEditing && fieldType === 'multi-select' ? (
+            <div>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {fieldOptions.map((opt) => {
+                  const isSelected = selectedItems.includes(opt);
+                  return (
+                    <button
+                      key={opt}
+                      onClick={() => handleMultiSelectToggle(opt)}
+                      disabled={saving}
+                      className={`text-xs px-2.5 py-1.5 rounded-full border transition-all ${
+                        isSelected
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'bg-background text-foreground border-border/50 hover:border-primary/40'
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="text-xs text-primary font-medium mt-2 hover:underline"
               >
-                <SelectTrigger className="h-8 text-sm w-auto min-w-[140px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {fieldOptions.map((opt) => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <Input
-                autoFocus
-                value={tempValue}
-                onChange={(e) => setTempValue(e.target.value)}
-                onBlur={() => handleSave()}
-                onKeyDown={handleKeyDown}
-                className="h-8 text-sm w-auto min-w-[140px]"
-              />
-            )
+                Done
+              </button>
+            </div>
+          ) : isEditing ? (
+            <div className="flex items-center gap-1.5">
+              {fieldType === 'select' && fieldOptions.length > 0 ? (
+                <Select
+                  value={tempValue}
+                  onValueChange={(val) => {
+                    setTempValue(val);
+                    handleSave(val);
+                  }}
+                >
+                  <SelectTrigger className="h-8 text-sm w-auto min-w-[140px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border border-border z-50">
+                    {fieldOptions.map((opt) => (
+                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  autoFocus
+                  value={tempValue}
+                  onChange={(e) => setTempValue(e.target.value)}
+                  onBlur={() => handleSave()}
+                  onKeyDown={handleKeyDown}
+                  className="h-8 text-sm w-auto min-w-[140px]"
+                />
+              )}
+            </div>
           ) : (
-            <>
+            <div className="flex items-center gap-1.5">
               <div className="flex-1">{value}</div>
               {editable && onFieldEdit && (
                 saving ? (
@@ -104,7 +183,7 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, editable, f
                   </button>
                 )
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
