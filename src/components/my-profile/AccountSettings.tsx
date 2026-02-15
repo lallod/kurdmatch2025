@@ -8,6 +8,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Shield, Bell, Eye, Heart, MessageCircle, Users, Lock, Smartphone, Mail, Globe, Download, Trash2, Settings, CheckCircle2, AlertTriangle, LogOut, Crown, Phone, HelpCircle, FileText, Video, ShieldCheck, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import DownloadDataDialog from './dialogs/DownloadDataDialog';
+import { TravelModeSettings } from '@/components/settings/TravelModeSettings';
 import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
 import ConnectedAccountsDialog from './dialogs/ConnectedAccountsDialog';
 import DeleteAccountDialog from './dialogs/DeleteAccountDialog';
@@ -239,6 +240,9 @@ const AccountSettings = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Travel Mode */}
+      <TravelModeSettings />
 
       {/* Privacy Settings */}
       <Card className="backdrop-blur-md bg-white/10 border border-white/20">
