@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import ContactSupportDialog from '@/components/support/ContactSupportDialog';
 import MyTickets from '@/components/support/MyTickets';
 import { useAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const faqCategories = [
   {
@@ -160,6 +161,7 @@ const HelpSupport = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [showMyTickets, setShowMyTickets] = useState(false);
+  const { t } = useTranslations();
 
   // Get all popular FAQs
   const popularFaqs = useMemo(() => {
@@ -202,8 +204,8 @@ const HelpSupport = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-lg font-semibold">Help & Support</h1>
-            <p className="text-xs text-muted-foreground">We're here to help</p>
+             <h1 className="text-lg font-semibold">{t('help.title', 'Help & Support')}</h1>
+             <p className="text-xs text-muted-foreground">{t('help.subtitle', "We're here to help")}</p>
           </div>
         </div>
       </div>

@@ -4,14 +4,15 @@ import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Post, likePost, unlikePost } from '@/api/posts';
 import PostCard from '@/components/discovery/PostCard';
-
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslations();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -89,8 +90,8 @@ const PostDetail = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-foreground mb-2">Post not found</h2>
-          <button onClick={() => navigate(-1)} className="text-primary text-sm">Go back</button>
+           <h2 className="text-lg font-semibold text-foreground mb-2">{t('post.not_found', 'Post not found')}</h2>
+           <button onClick={() => navigate(-1)} className="text-primary text-sm">{t('post.go_back', 'Go back')}</button>
         </div>
       </div>
     );
@@ -107,7 +108,7 @@ const PostDetail = () => {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-sm font-bold text-foreground">Post</h1>
+          <h1 className="text-sm font-bold text-foreground">{t('post.title', 'Post')}</h1>
           <div className="w-10" />
         </div>
       </div>

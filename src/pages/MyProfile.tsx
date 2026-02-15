@@ -22,6 +22,7 @@ import RelationshipPreferencesEditor from '@/components/my-profile/sections/edit
 import { useRealProfileData } from '@/hooks/useRealProfileData';
 import { toast } from 'sonner';
 import { uploadProfilePhoto } from '@/api/profiles';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const profileSections = [
   { id: 'basic', label: 'Basic Info', icon: User, component: BasicInfoEditor },
@@ -35,6 +36,7 @@ const profileSections = [
 const MyProfile = () => {
   const navigate = useNavigate();
   const [openSheet, setOpenSheet] = useState<string | null>(null);
+  const { t } = useTranslations();
   
   const { 
     profileData: realProfileData, fieldSources = {}, loading, onboardingProgress, categoryProgress, engagement, updateProfileData, refreshData 
@@ -207,7 +209,7 @@ const MyProfile = () => {
         {/* Header with settings */}
         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/10">
           <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">
-            <h1 className="text-lg font-bold text-foreground">Profile</h1>
+            <h1 className="text-lg font-bold text-foreground">{t('my_profile.title', 'Profile')}</h1>
             <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => navigate('/settings')}>
               <Settings className="w-5 h-5" />
             </Button>
@@ -260,9 +262,9 @@ const MyProfile = () => {
           <div className="mx-4 bg-card rounded-2xl p-4 shadow-md">
             <div className="flex justify-around">
               {[
-                { value: profileStats.views, label: 'Views' },
-                { value: profileStats.likes, label: 'Likes' },
-                { value: profileStats.matches, label: 'Matches' },
+                 { value: profileStats.views, label: t('my_profile.views', 'Views') },
+                 { value: profileStats.likes, label: t('my_profile.likes', 'Likes') },
+                 { value: profileStats.matches, label: t('my_profile.matches', 'Matches') },
               ].map((stat, i) => (
                 <React.Fragment key={stat.label}>
                   {i > 0 && <div className="w-px bg-border/30" />}
@@ -293,14 +295,14 @@ const MyProfile = () => {
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-foreground">Complete your profile</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Fill in missing details to get more matches</p>
+                   <p className="text-sm font-semibold text-foreground">{t('my_profile.complete_profile', 'Complete your profile')}</p>
+                   <p className="text-xs text-muted-foreground mt-0.5">{t('my_profile.complete_profile_desc', 'Fill in missing details to get more matches')}</p>
                 </div>
                 <Button size="sm" className="rounded-full h-9 px-4 text-xs" onClick={() => {
                   const incomplete = profileSections.find(s => getSectionCompletion(s.id) < 100);
                   if (incomplete) setOpenSheet(incomplete.id);
                 }}>
-                  Continue
+                  {t('my_profile.continue', 'Continue')}
                 </Button>
               </div>
             </div>
@@ -312,13 +314,13 @@ const MyProfile = () => {
               onClick={() => navigate(`/profile/${realProfileData?.id}`)}
             >
               <Share2 className="h-4 w-4 mr-1.5" />
-              Share Profile
+              {t('my_profile.share_profile', 'Share Profile')}
             </Button>
             <Button variant="outline" size="sm" className="flex-1 h-11 rounded-2xl text-sm font-medium"
               onClick={() => setOpenSheet('basic')}
             >
               <Pencil className="h-4 w-4 mr-1.5" />
-              Edit Profile
+              {t('my_profile.edit_profile', 'Edit Profile')}
             </Button>
           </div>
 
@@ -329,7 +331,7 @@ const MyProfile = () => {
 
           {/* Quick info section cards */}
           <div className="mx-4 space-y-2">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">Profile Sections</h3>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">{t('my_profile.profile_sections', 'Profile Sections')}</h3>
             {profileSections.map((section) => {
               const completion = getSectionCompletion(section.id);
               const Icon = section.icon;

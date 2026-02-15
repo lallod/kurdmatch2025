@@ -10,11 +10,13 @@ import PremiumPlansDialog from '@/components/subscription/PremiumPlansDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useCompatibility } from '@/hooks/useCompatibility';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const ViewedMe = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const { getCompatibilityForProfiles } = useCompatibility();
+  const { t } = useTranslations();
   const [viewedProfiles, setViewedProfiles] = useState([]);
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -114,7 +116,7 @@ const ViewedMe = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary overflow-hidden">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="text-foreground text-xl">Loading profile views...</div>
+          <div className="text-foreground text-xl">{t('profile.loading_views', 'Loading profile views...')}</div>
         </div>
       </div>
     );
@@ -129,8 +131,8 @@ const ViewedMe = () => {
               <Eye className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Profile Views</h1>
-              <p className="text-muted-foreground text-sm">See who's been checking you out</p>
+               <h1 className="text-xl font-bold text-foreground">{t('viewed_me.title', 'Profile Views')}</h1>
+               <p className="text-muted-foreground text-sm">{t('viewed_me.subtitle', "See who's been checking you out")}</p>
             </div>
           </div>
           <Badge className="bg-muted text-muted-foreground border-border">
@@ -198,10 +200,10 @@ const ViewedMe = () => {
             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
               <Eye className="h-10 w-10 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">No profile views yet</h3>
-            <p className="text-muted-foreground max-w-sm">
-              When someone views your profile, they'll appear here. Keep your profile active to get more views!
-            </p>
+             <h3 className="text-xl font-semibold text-foreground mb-2">{t('viewed_me.no_views', 'No profile views yet')}</h3>
+             <p className="text-muted-foreground max-w-sm">
+               {t('viewed_me.no_views_desc', "When someone views your profile, they'll appear here. Keep your profile active to get more views!")}
+             </p>
           </div>
         )}
       </div>

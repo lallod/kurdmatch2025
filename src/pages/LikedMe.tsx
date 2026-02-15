@@ -15,10 +15,12 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import SwipeActions from '@/components/swipe/SwipeActions';
 import { toast } from 'sonner';
 import SectionViewStats from '@/components/profile/SectionViewStats';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const LikedMe = () => {
   const { toast: toastHook } = useToast();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [likedProfiles, setLikedProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -100,7 +102,7 @@ const LikedMe = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="text-foreground text-xl">Loading profiles who liked you...</div>
+          <div className="text-foreground text-xl">{t('liked_me.loading', 'Loading profiles who liked you...')}</div>
         </div>
       </div>
     );
@@ -173,8 +175,8 @@ const LikedMe = () => {
               <Heart className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Liked You</h1>
-              <p className="text-muted-foreground text-sm">People who liked your profile</p>
+               <h1 className="text-xl font-bold text-foreground">{t('liked_me.title', 'Liked You')}</h1>
+               <p className="text-muted-foreground text-sm">{t('liked_me.subtitle', 'People who liked your profile')}</p>
             </div>
           </div>
           
@@ -188,10 +190,10 @@ const LikedMe = () => {
             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
               <Heart className="h-10 w-10 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">No likes yet</h3>
-            <p className="text-muted-foreground max-w-sm">
-              When someone likes your profile, they'll appear here. Keep your profile active to get more likes!
-            </p>
+             <h3 className="text-xl font-semibold text-foreground mb-2">{t('liked_me.no_likes', 'No likes yet')}</h3>
+             <p className="text-muted-foreground max-w-sm">
+               {t('liked_me.no_likes_desc', "When someone likes your profile, they'll appear here. Keep your profile active to get more likes!")}
+             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3">

@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import SwipeActions from '@/components/swipe/SwipeActions';
 import { likeProfile } from '@/api/likes';
 import SectionViewStats from '@/components/profile/SectionViewStats';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Match {
   id: string; profileId: string; name: string; avatar: string; age: number;
@@ -21,6 +22,7 @@ interface Match {
 const Matches = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [matches, setMatches] = useState<Match[]>([]);
   const [newMatches, setNewMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +81,7 @@ const Matches = () => {
       {/* Slim header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border/30">
         <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
-          <h1 className="text-base font-semibold text-foreground">Matches</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('matches.title', 'Matches')}</h1>
           {newMatches.length > 0 && (
             <Badge className="bg-primary/15 text-primary text-xs">{newMatches.length} New</Badge>
           )}
@@ -90,7 +92,7 @@ const Matches = () => {
         {/* New Matches — horizontal story-style scroll */}
         {newMatches.length > 0 && (
           <div className="px-4 py-3 border-b border-border/10">
-            <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">New Matches</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{t('matches.new_matches', 'New Matches')}</p>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide">
               {newMatches.map(match => (
                 <div key={match.id} className="flex flex-col items-center cursor-pointer flex-shrink-0" onClick={() => handleMatchClick(match)}>
@@ -115,9 +117,9 @@ const Matches = () => {
           {matches.length === 0 ? (
             <div className="text-center py-16">
               <Heart className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="text-base font-semibold text-foreground mb-1">No matches yet</h3>
-              <p className="text-sm text-muted-foreground mb-4">Start swiping to find your match!</p>
-              <Button onClick={() => navigate('/swipe')} size="sm">Start Swiping</Button>
+               <h3 className="text-base font-semibold text-foreground mb-1">{t('matches.no_matches', 'No matches yet')}</h3>
+               <p className="text-sm text-muted-foreground mb-4">{t('matches.start_swiping', 'Start swiping to find your match!')}</p>
+               <Button onClick={() => navigate('/swipe')} size="sm">{t('matches.start_swiping_btn', 'Start Swiping')}</Button>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2">

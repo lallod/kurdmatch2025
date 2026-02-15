@@ -5,12 +5,14 @@ import { ArrowLeft, Bookmark, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const SavedPosts = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const [savedPostsCount, setSavedPostsCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslations();
 
   useEffect(() => {
     loadSavedPostsCount();
@@ -44,7 +46,7 @@ const SavedPosts = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-base font-semibold text-foreground">Saved Posts</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('saved_posts.title', 'Saved Posts')}</h1>
         </div>
       </div>
 
