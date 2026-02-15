@@ -29,6 +29,7 @@ const CreateStory = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'choose' | 'photo' | 'text'>('choose');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -168,6 +169,14 @@ const CreateStory = () => {
         className="hidden"
         onChange={handleFileSelect}
       />
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*,video/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
 
       <AnimatePresence mode="wait">
         {/* Mode Selector */}
@@ -180,24 +189,33 @@ const CreateStory = () => {
             className="flex-1 flex flex-col items-center justify-center gap-6 px-8"
           >
             <p className="text-muted-foreground text-center">What kind of story do you want to create?</p>
-            <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
+            <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
+              <button
+                onClick={() => cameraInputRef.current?.click()}
+                className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-card border border-border/50 hover:border-primary/50 transition-all active:scale-95"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <Camera className="h-7 w-7 text-primary" />
+                </div>
+                <span className="font-medium text-xs">Camera</span>
+              </button>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex flex-col items-center gap-3 p-8 rounded-3xl bg-card border border-border/50 hover:border-primary/50 transition-all active:scale-95"
+                className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-card border border-border/50 hover:border-primary/50 transition-all active:scale-95"
               >
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <Camera className="h-8 w-8 text-primary" />
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <ImageIcon className="h-7 w-7 text-primary" />
                 </div>
-                <span className="font-medium text-sm">Photo/Video</span>
+                <span className="font-medium text-xs">Gallery</span>
               </button>
               <button
                 onClick={() => setMode('text')}
-                className="flex flex-col items-center gap-3 p-8 rounded-3xl bg-card border border-border/50 hover:border-primary/50 transition-all active:scale-95"
+                className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-card border border-border/50 hover:border-primary/50 transition-all active:scale-95"
               >
-                <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center">
-                  <Type className="h-8 w-8 text-accent" />
+                <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <Type className="h-7 w-7 text-accent" />
                 </div>
-                <span className="font-medium text-sm">Text Story</span>
+                <span className="font-medium text-xs">Text Story</span>
               </button>
             </div>
           </motion.div>
