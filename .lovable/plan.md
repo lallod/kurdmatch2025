@@ -1,63 +1,59 @@
 
-
-# Inline Editing -- Remove Popups
+# Languages Expansion + Instagram-style Discovery Feed
 
 ## Overview
-Replace the bottom-sheet popup editors with inline editing directly inside each accordion section. When you tap the edit pencil icon, the section content switches from the read-only profile view to the editable form -- right in place, no popup.
+Two changes: (1) expand the language list to 50+ languages most used by Kurds worldwide, and (2) redesign the Discovery Feed to be image-first like Instagram — showing post images/videos prominently with text as captions below.
 
-## What Changes
+## Part 1: Expand Languages
 
-### 1. EditableAccordionSection -- Toggle between View and Edit mode
-- Add an `isEditing` state toggled by the pencil button.
-- When `isEditing` is false, show the existing read-only profile viewer (ProfileBasics, ProfileLifestyle, etc.).
-- When `isEditing` is true, show the editor component (BasicInfoEditor, LifestyleEditor, etc.) inline.
-- The pencil icon changes to an X (close) icon when editing, so users can cancel.
+### Current State
+The language list in `src/data/languages.ts` has ~85 languages but is missing several commonly spoken by Kurdish diaspora communities.
 
-### 2. MyProfile.tsx -- Remove all Sheet/popup code
-- Remove the `Sheet`, `SheetContent`, `SheetHeader`, `SheetTitle` imports and the bottom sheet rendering loop (lines 542-560).
-- Remove the `openSheet` state entirely.
-- Remove the "Edit Profile" button that opens a sheet.
-- Each `EditableAccordionSection` now receives both its viewer child AND its editor component as props.
-- When saving inside an editor, it calls `onUpdate` (same as before, saves directly to DB), then switches back to view mode.
+### Changes to `src/data/languages.ts`
+Add languages frequently used by Kurds (diaspora + regional), ensuring at least 50 of the most relevant are present. Key additions:
+- **Kurdish dialects**: Keep all 5 existing (Sorani, Kurmanji, Zazaki, Gorani, Hawrami)
+- **Diaspora languages** (commonly spoken by Kurdish communities abroad): Add or confirm: Swedish, Norwegian, Danish, Dutch, German, French, English, Finnish, Italian, Greek, Russian, Austrian German
+- **Regional neighbors**: Add or confirm: Arabic, Turkish, Persian, Azerbaijani, Armenian, Georgian, Assyrian/Syriac, Turkmen, Uzbek
+- **South Asian**: Add Dari (Afghan Persian)
+- Trim rarely-used-by-Kurds languages (Berber, Zulu, Sinhala, etc.) to keep the list focused
 
-### 3. Editor components -- Theme and auto-close fixes
-- Update editor styling from hardcoded dark (`bg-gray-800`, `text-white`, `text-purple-200`) to use CSS variables (`bg-card`, `text-foreground`, `text-muted-foreground`) so they blend with the page instead of looking like a popup.
-- After a successful save, signal the parent to exit edit mode (via a new `onSaveComplete` callback).
-- Files affected:
-  - `BasicInfoEditor.tsx`
-  - `LifestyleEditor.tsx`
-  - `ValuesPersonalityEditor.tsx`
-  - `InterestsHobbiesEditor.tsx`
-  - `EducationCareerEditor.tsx`
-  - `RelationshipPreferencesEditor.tsx`
+The final list will be reorganized with "Most Popular" at top (Kurdish dialects + top diaspora languages) for easy selection.
 
-### 4. Section mapping
-Each accordion section will pair its viewer and editor:
+### Also update `src/components/DetailEditor/constants.ts`
+Sync the `OPTIONS.languages` array to match the expanded list from `languages.ts` so the profile editor shows all options.
+
+## Part 2: Instagram-style Discovery Feed
+
+### Current Problem
+`PostCard` only renders text content via `PostContent`. The `media_url` field on posts is completely ignored in the feed — no images or videos are shown, making the feed text-heavy instead of visual.
+
+### Changes to `src/components/discovery/PostCard.tsx`
+Add media rendering between the header and action bar:
+- If `post.media_url` exists and `media_type === 'image'`: render a full-width image (aspect-ratio auto, max-height capped)
+- If `post.media_url` exists and `media_type === 'video'`: render a video element with controls
+- Move text content (`PostContent`) below the media as a caption (smaller text, 2-line clamp with "more" expand)
+- Double-tap to like on image (Instagram gesture)
+
+### Changes to `src/pages/DiscoveryFeed.tsx`
+- Reduce spacing between posts (tight feed like Instagram)
+- Remove the gap/padding between cards for edge-to-edge media
+- Keep stories row and tabs as-is
+
+### Visual Layout per Post (Instagram-style)
 
 ```text
-Basics           -> ProfileBasics (view)         + BasicInfoEditor (edit)
-Lifestyle        -> ProfileLifestyle (view)      + LifestyleEditor (edit)
-Communication    -> ProfileCommunication (view)  + RelationshipPreferencesEditor (edit)
-Personality      -> ProfilePersonality (view)    + ValuesPersonalityEditor (edit)
-Creative         -> ProfileCreative (view)       + InterestsHobbiesEditor (edit)
-Travel           -> ProfileTravel (view)         + LifestyleEditor (edit)
++----------------------------------+
+| [Avatar] Username   ...  [time]  |  <- header (existing, keep)
++----------------------------------+
+|                                  |
+|     [  FULL WIDTH IMAGE  ]       |  <- NEW: media_url rendered
+|                                  |
++----------------------------------+
+| [Heart] [Comment] [Share]  [Save]|  <- actions (existing, keep)
++----------------------------------+
+| Username: caption text...  more  |  <- text as caption, not main
++----------------------------------+
 ```
 
-### 5. Database-first save
-Each editor's save handler already calls `handleProfileUpdate` which maps camelCase fields to snake_case DB columns and calls `updateProfileData`. This flow remains unchanged -- edits save directly to the database via Supabase.
-
-## Technical Details
-
-### EditableAccordionSection changes
-- New props: `editorContent` (ReactNode) -- the editor form to show when editing.
-- Internal `isEditing` state, toggled by pencil/X button.
-- When `isEditing=true`, render `editorContent` instead of `children`.
-
-### Editor onSaveComplete callback
-- Each editor receives a new optional `onSaveComplete?: () => void` prop.
-- Called after successful save so the accordion section can switch back to view mode.
-- Cancel button also exits edit mode.
-
-### No new dependencies
-All existing components reused. No new packages.
-
+### No New Dependencies
+All changes use existing components and native HTML elements (img, video).
