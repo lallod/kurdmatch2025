@@ -30,22 +30,29 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
   isMobile,
   onFieldEdit
 }) => {
+  const renderBadgeList = (items: string[] | string | undefined) => {
+    if (!items) return <span className="text-muted-foreground">Not specified</span>;
+    const itemList = Array.isArray(items) ? items : formatList(items).split(", ");
+    if (itemList.length === 0) return <span className="text-muted-foreground">Not specified</span>;
+    return (
+      <div className="flex flex-wrap gap-2 mt-1">
+        {itemList.map((item, i) => (
+          <Badge key={i} variant="outline" className={tinderBadgeStyle}>{item}</Badge>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6 py-4">
       <DetailItem 
         icon={<Palette size={18} />} label="Creative Pursuits" 
-        value={
-          <div className="flex flex-wrap gap-2 mt-1">
-            {Array.isArray(details.creativePursuits) ? 
-              details.creativePursuits.map((pursuit, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{pursuit}</Badge>
-              )) : 
-              formatList(details.creativePursuits).split(", ").map((pursuit, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{pursuit}</Badge>
-              ))
-            }
-          </div>
-        } 
+        editable={!!onFieldEdit}
+        fieldKey="creativePursuits"
+        fieldType="multi-select"
+        fieldOptions={["Photography", "Painting", "Writing", "Music", "Dance", "Film", "Crafts", "Design", "Poetry"]}
+        onFieldEdit={onFieldEdit}
+        value={renderBadgeList(details.creativePursuits)} 
       />
       <Separator />
       <DetailItem 
@@ -53,7 +60,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.dreamHome || "Not specified"}
         editable={!!onFieldEdit}
         fieldKey="dreamHome"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["City apartment", "Suburban house", "Country home", "Beach house", "Mountain cabin", "Penthouse", "Tiny home"]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
@@ -62,24 +70,19 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.transportationPreference || "Not specified"}
         editable={!!onFieldEdit}
         fieldKey="transportationPreference"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["Car", "Public transit", "Bicycle", "Walking", "Motorcycle", "Mixed"]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
       <DetailItem 
         icon={<Cpu size={18} />} label="Tech Skills" 
-        value={
-          <div className="flex flex-wrap gap-2 mt-1">
-            {Array.isArray(details.techSkills) ? 
-              details.techSkills.map((skill, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{skill}</Badge>
-              )) : 
-              formatList(details.techSkills).split(", ").map((skill, i) => (
-                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{skill}</Badge>
-              ))
-            }
-          </div>
-        } 
+        editable={!!onFieldEdit}
+        fieldKey="techSkills"
+        fieldType="multi-select"
+        fieldOptions={["Programming", "Design", "Video editing", "Photography", "Social media", "Data analysis", "AI/ML", "Web development"]}
+        onFieldEdit={onFieldEdit}
+        value={renderBadgeList(details.techSkills)} 
       />
       <Separator />
       <DetailItem 
@@ -87,7 +90,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.workEnvironment || "Not specified"}
         editable={!!onFieldEdit}
         fieldKey="workEnvironment"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["Office", "Remote", "Hybrid", "Outdoor", "Studio", "Lab"]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
@@ -106,7 +110,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
         value={details.idealWeather || "Not specified"}
         editable={!!onFieldEdit}
         fieldKey="idealWeather"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["Sunny & warm", "Cool & breezy", "Rainy & cozy", "Snowy", "Mild & temperate", "Hot & tropical"]}
         onFieldEdit={onFieldEdit}
       />
     </div>
