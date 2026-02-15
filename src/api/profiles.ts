@@ -427,7 +427,10 @@ export const getProfileSuggestions = async (filters?: { ageMin?: number; ageMax?
     .from('profiles')
     .select('*')
     .neq('id', user.id)
-    .eq('gender', oppositeGender);
+    .eq('gender', oppositeGender)
+    .eq('dating_profile_visible', true)
+    .not('profile_image', 'is', null)
+    .neq('profile_image', '');
 
   // Apply additional filters if provided (premium feature)
   if (filters?.ageMin) {
@@ -439,9 +442,8 @@ export const getProfileSuggestions = async (filters?: { ageMin?: number; ageMax?
   if (filters?.location) {
     // If user has travel mode active, search in travel location area
     // Also match profiles whose travel_location matches
-    query = query.or(`location.ilike.%${filters.location}%,travel_location.ilike.%${filters.location}%`);
+    query = query.or(`location.ilike.%${filters.location}%,travel_location.ilike.%${filters.location}%,kurdistan_region.ilike.%${filters.location}%`);
   } else if (currentProfile.travel_mode_active && currentProfile.travel_location) {
-    // If user is in travel mode, show profiles from the travel location
     query = query.or(`location.ilike.%${currentProfile.travel_location}%,travel_location.ilike.%${currentProfile.travel_location}%`);
   }
   if (filters?.religion) {
