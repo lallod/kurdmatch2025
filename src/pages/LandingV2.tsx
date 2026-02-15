@@ -405,6 +405,8 @@ const LandingV2 = () => {
               <ul className="space-y-2 text-sm text-purple-200">
                 <li><a href="/privacy-policy" className="hover:text-pink-300 transition-colors">Privacy Policy</a></li>
                 <li><a href="/terms" className="hover:text-pink-300 transition-colors">Terms of Service</a></li>
+                <li><a href="/cookie-policy" className="hover:text-pink-300 transition-colors">Cookie Policy</a></li>
+                <li><a href="/contact" className="hover:text-pink-300 transition-colors">Contact Us</a></li>
               </ul>
             </div>
 

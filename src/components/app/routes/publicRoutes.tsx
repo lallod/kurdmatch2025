@@ -15,6 +15,8 @@ const CommunityGuidelines = lazy(() => import('@/pages/CommunityGuidelines'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
 const AboutUs = lazy(() => import('@/pages/AboutUs'));
+const ContactUs = lazy(() => import('@/pages/ContactUs'));
+const CookiePolicy = lazy(() => import('@/pages/CookiePolicy'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const PageLoader = () => (
@@ -41,6 +43,8 @@ export const getPublicRoutes = (user: User | null) => (
     <Route path="/privacy-policy" element={<L><PrivacyPolicy /></L>} />
     <Route path="/terms" element={<L><TermsOfService /></L>} />
     <Route path="/about" element={<L><AboutUs /></L>} />
+    <Route path="/contact" element={<L><ContactUs /></L>} />
+    <Route path="/cookie-policy" element={<L><CookiePolicy /></L>} />
     <Route path="*" element={<L><NotFound /></L>} />
   </>
 );
