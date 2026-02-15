@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 import { Loader2, Shield } from 'lucide-react';
 
 const CreateSuperAdmin = () => {
-  const [email, setEmail] = useState('lalo.peshawa@gmail.com');
-  const [password, setPassword] = useState('Kurdistan2025!');
-  const [name, setName] = useState('Lalo Peshawa');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateAdmin = async () => {
