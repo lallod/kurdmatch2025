@@ -23,7 +23,8 @@ export const usePushNotificationTriggers = (options: PushTriggerOptions = {}) =>
     userId: string,
     title: string,
     body: string,
-    data?: Record<string, any>
+    data?: Record<string, any>,
+    notificationType?: string
   ) => {
     try {
       const { error } = await supabase.functions.invoke('send-push-notification', {
@@ -32,6 +33,7 @@ export const usePushNotificationTriggers = (options: PushTriggerOptions = {}) =>
           title,
           body,
           data,
+          notificationType,
         },
       });
 
@@ -80,7 +82,8 @@ export const usePushNotificationTriggers = (options: PushTriggerOptions = {}) =>
                 user.id,
                 'Ny match! 🎉',
                 `Du matchet med ${partner.name}!`,
-                { type: 'match', userId: partnerId, url: `/messages?user=${partnerId}` }
+                { type: 'match', userId: partnerId, url: `/messages?user=${partnerId}` },
+                'match'
               );
             }
           }
@@ -117,7 +120,8 @@ export const usePushNotificationTriggers = (options: PushTriggerOptions = {}) =>
                 user.id,
                 `Melding fra ${sender.name}`,
                 message.text.length > 50 ? `${message.text.slice(0, 50)}...` : message.text,
-                { type: 'message', userId: message.sender_id, url: `/messages?user=${message.sender_id}` }
+                { type: 'message', userId: message.sender_id, url: `/messages?user=${message.sender_id}` },
+                'message'
               );
             }
           }
@@ -154,7 +158,8 @@ export const usePushNotificationTriggers = (options: PushTriggerOptions = {}) =>
                 user.id,
                 'Noen likte deg! ❤️',
                 `${liker.name} likte profilen din`,
-                { type: 'like', userId: like.liker_id, url: `/profile/${like.liker_id}` }
+                { type: 'like', userId: like.liker_id, url: `/profile/${like.liker_id}` },
+                'like'
               );
             }
           }

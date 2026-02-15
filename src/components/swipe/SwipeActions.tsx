@@ -94,6 +94,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         <button
           onClick={() => handleActionWithLimit('rewind', onRewind)}
           disabled={isRewinding}
+          aria-label="Rewind to previous profile"
           className={`${SWIPE_CONFIG.actions.buttons.small} ${
             userLimits.rewinds.canPerform && !isRewinding
               ? 'bg-card hover:bg-card/80 text-primary' 
@@ -116,6 +117,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Pass */}
         <button
           onClick={onPass}
+          aria-label="Pass on this profile"
           className={`${SWIPE_CONFIG.actions.buttons.large} bg-card hover:bg-card/80 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)] transform hover:scale-110 transition-all duration-200 active:scale-95`}
         >
           <X className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-destructive`} strokeWidth={3} />
@@ -124,6 +126,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Like */}
         <button
           onClick={() => handleActionWithLimit('like', onLike)}
+          aria-label="Like this profile"
           className={`${SWIPE_CONFIG.actions.buttons.large} ${
             userLimits.likes.canPerform 
               ? 'bg-primary hover:bg-primary/90 shadow-[0_0_20px_hsl(336_90%_60%/0.3)]' 
@@ -141,6 +144,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Super Like */}
         <button
           onClick={() => handleActionWithLimit('super_like', onSuperLike)}
+          aria-label="Super like this profile"
           className={`${SWIPE_CONFIG.actions.buttons.large} ${
             userLimits.superLikes.canPerform 
               ? 'bg-info/80 hover:bg-info/90' 
@@ -163,6 +167,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Boost */}
         <button
           onClick={() => handleActionWithLimit('boost', onBoost)}
+          aria-label="Boost your profile"
           className={`${SWIPE_CONFIG.actions.buttons.small} ${
             userLimits.boosts.canPerform 
               ? 'bg-card hover:bg-card/80 text-primary' 
