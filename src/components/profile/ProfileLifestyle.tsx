@@ -23,112 +23,112 @@ interface ProfileLifestyleProps {
   };
   formatList: (value: string[] | string | undefined) => string;
   isMobile: boolean;
+  onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
 
 const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({ 
   details, 
   formatList,
-  isMobile
+  isMobile,
+  onFieldEdit
 }) => {
-  // Use consistent styles for all status indicators
-  const getLifestyleStatusBadge = (value: string, options: string[]) => {
-    const index = options.indexOf(value);
-    let color = "";
-    
-    // Create a gradient of colors based on the option position
-    if (index === 0) color = "bg-green-100 text-green-800 border-green-200";
-    else if (index === options.length - 1) color = "bg-red-100 text-red-800 border-red-200";
-    else {
-      const midpoint = Math.floor(options.length / 2);
-      if (index < midpoint) color = "bg-blue-100 text-blue-800 border-blue-200";
-      else color = "bg-amber-100 text-amber-800 border-amber-200";
-    }
-    
-    return (
-      <Badge variant="outline" className={`${color} animate-in fade-in duration-300`}>
-        {value}
-      </Badge>
-    );
-  };
-
   return (
     <div className="space-y-1 py-4 animate-fade-in">
       <DetailItem 
-        icon={<Wine size={18} className="group-hover:animate-pulse" />} 
+        icon={<Wine size={18} />} 
         label="Drinking" 
-        value={getLifestyleStatusBadge(details.drinking, ["Never", "Rarely", "Socially", "Regularly"])} 
+        value={details.drinking}
+        editable={!!onFieldEdit}
+        fieldKey="drinking"
+        fieldType="select"
+        fieldOptions={["Never", "Rarely", "Socially", "Regularly"]}
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Cigarette size={18} className="group-hover:animate-pulse" />} 
+        icon={<Cigarette size={18} />} 
         label="Smoking" 
-        value={getLifestyleStatusBadge(details.smoking, ["Never", "Rarely", "Socially", "Regularly", "Trying to quit"])} 
+        value={details.smoking}
+        editable={!!onFieldEdit}
+        fieldKey="smoking"
+        fieldType="select"
+        fieldOptions={["Never", "Rarely", "Socially", "Regularly", "Trying to quit"]}
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Dumbbell size={18} className="group-hover:animate-pulse" />} 
+        icon={<Dumbbell size={18} />} 
         label="Exercise" 
-        value={getLifestyleStatusBadge(details.exerciseHabits, ["Never", "Rarely", "Occasional - 1-3 times per week", "Regular - 4-5 times per week", "Daily"])} 
+        value={details.exerciseHabits}
+        editable={!!onFieldEdit}
+        fieldKey="exerciseHabits"
+        fieldType="select"
+        fieldOptions={["Never", "Rarely", "Occasional", "Regular", "Daily"]}
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<AlarmClock size={18} className="group-hover:animate-pulse" />} 
+        icon={<AlarmClock size={18} />} 
         label="Sleep Schedule" 
-        value={getLifestyleStatusBadge(details.sleepSchedule, ["Night owl", "Irregular schedule", "Regular schedule", "Early bird"])} 
+        value={details.sleepSchedule || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="sleepSchedule"
+        fieldType="select"
+        fieldOptions={["Night owl", "Irregular schedule", "Regular schedule", "Early bird"]}
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<DollarSign size={18} className="group-hover:animate-pulse" />} 
+        icon={<DollarSign size={18} />} 
         label="Financial Habits" 
-        value={details.financialHabits ? getLifestyleStatusBadge(details.financialHabits, ["Spender", "Balanced", "Saver with occasional splurges", "Saver", "Financial planner"]) : "Not specified"} 
+        value={details.financialHabits || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="financialHabits"
+        fieldType="select"
+        fieldOptions={["Spender", "Balanced", "Saver with occasional splurges", "Saver", "Financial planner"]}
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Calendar size={18} className="group-hover:animate-pulse" />} 
+        icon={<Calendar size={18} />} 
         label="Weekend Activities" 
-        value={formatList(details.weekendActivities) || "Not specified"} 
+        value={formatList(details.weekendActivities) || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="weekendActivities"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Clock4 size={18} className="group-hover:animate-pulse" />} 
+        icon={<Clock4 size={18} />} 
         label="Work-Life Balance" 
-        value={details.workLifeBalance || "Not specified"} 
+        value={details.workLifeBalance || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="workLifeBalance"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Utensils size={18} className="group-hover:animate-pulse" />} 
+        icon={<Utensils size={18} />} 
         label="Dietary Preferences" 
-        value={details.dietaryPreferences || "Not specified"} 
+        value={details.dietaryPreferences || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="dietaryPreferences"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Sun size={18} className="group-hover:animate-pulse" />} 
+        icon={<Sun size={18} />} 
         label="Morning Routine" 
-        value={details.morningRoutine || "Not specified"} 
+        value={details.morningRoutine || 'Not specified'}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Moon size={18} className="group-hover:animate-pulse" />} 
+        icon={<Moon size={18} />} 
         label="Evening Routine" 
-        value={details.eveningRoutine || "Not specified"} 
+        value={details.eveningRoutine || 'Not specified'}
       />
     </div>
   );

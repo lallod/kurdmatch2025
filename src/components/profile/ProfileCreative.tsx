@@ -20,19 +20,20 @@ interface ProfileCreativeProps {
   tinderBadgeStyle: string;
   formatList: (value: string[] | string | undefined) => string;
   isMobile: boolean;
+  onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
 
 const ProfileCreative: React.FC<ProfileCreativeProps> = ({ 
   details, 
   tinderBadgeStyle, 
   formatList,
-  isMobile
+  isMobile,
+  onFieldEdit
 }) => {
   return (
     <div className="space-y-6 py-4">
       <DetailItem 
-        icon={<Palette size={18} />} 
-        label="Creative Pursuits" 
+        icon={<Palette size={18} />} label="Creative Pursuits" 
         value={
           <div className="flex flex-wrap gap-2 mt-1">
             {Array.isArray(details.creativePursuits) ? 
@@ -46,28 +47,27 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
           </div>
         } 
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Home size={18} />} 
-        label="Dream Home" 
-        value={details.dreamHome || "Not specified"} 
+        icon={<Home size={18} />} label="Dream Home" 
+        value={details.dreamHome || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="dreamHome"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Car size={18} />} 
-        label="Transportation" 
-        value={details.transportationPreference || "Not specified"} 
+        icon={<Car size={18} />} label="Transportation" 
+        value={details.transportationPreference || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="transportationPreference"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Cpu size={18} />} 
-        label="Tech Skills" 
+        icon={<Cpu size={18} />} label="Tech Skills" 
         value={
           <div className="flex flex-wrap gap-2 mt-1">
             {Array.isArray(details.techSkills) ? 
@@ -81,29 +81,33 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
           </div>
         } 
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Briefcase size={18} />} 
-        label="Work Environment" 
-        value={details.workEnvironment || "Not specified"} 
+        icon={<Briefcase size={18} />} label="Work Environment" 
+        value={details.workEnvironment || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="workEnvironment"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<MountainSnow size={18} />} 
-        label="Favorite Season" 
-        value={details.favoriteSeason || "Not specified"} 
+        icon={<MountainSnow size={18} />} label="Favorite Season" 
+        value={details.favoriteSeason || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="favoriteSeason"
+        fieldType="select"
+        fieldOptions={["Spring", "Summer", "Autumn", "Winter"]}
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<CloudSun size={18} />} 
-        label="Ideal Weather" 
-        value={details.idealWeather || "Not specified"} 
+        icon={<CloudSun size={18} />} label="Ideal Weather" 
+        value={details.idealWeather || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="idealWeather"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
     </div>
   );
