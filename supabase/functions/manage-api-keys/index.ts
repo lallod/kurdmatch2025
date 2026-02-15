@@ -3,17 +3,26 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 }
 
 const ALLOWED_KEYS = [
   'GIPHY_API_KEY',
-  'OPENAI_API_KEY', 
+  'OPENAI_API_KEY',
+  'GOOGLE_AI_API_KEY',
   'TWILIO_ACCOUNT_SID',
   'TWILIO_AUTH_TOKEN',
   'TWILIO_PHONE_NUMBER',
   'STRIPE_SECRET_KEY',
   'STRIPE_WEBHOOK_SECRET',
+  'STRIPE_PRICE_PREMIUM',
+  'STRIPE_PRICE_GOLD',
+  'GOOGLE_TRANSLATE_API_KEY',
+  'VAPID_PUBLIC_KEY',
+  'VAPID_PRIVATE_KEY',
+  'GOOGLE_VISION_API_KEY',
+  'SUPER_ADMIN_EMAIL',
+  'SUPER_ADMIN_PASSWORD',
 ]
 
 serve(async (req) => {
@@ -22,7 +31,6 @@ serve(async (req) => {
   }
 
   try {
-    // Verify the caller is a super admin
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -78,7 +86,6 @@ serve(async (req) => {
         })
       }
 
-      // Store in app_settings table as encrypted config
       const { error: upsertError } = await supabase
         .from('app_settings')
         .upsert({
@@ -96,13 +103,46 @@ serve(async (req) => {
         })
       }
 
-      // Log the action
       await supabase.from('admin_audit_log').insert({
         user_id: user.id,
         action_type: 'api_key_updated',
         table_name: 'app_settings',
         record_id: key,
         changes: { key, action: 'set' },
+      })
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    if (action === 'delete') {
+      if (!ALLOWED_KEYS.includes(key)) {
+        return new Response(JSON.stringify({ error: `Key '${key}' is not allowed` }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      const { error: deleteError } = await supabase
+        .from('app_settings')
+        .delete()
+        .eq('key', key)
+
+      if (deleteError) {
+        console.error('Error deleting API key:', deleteError)
+        return new Response(JSON.stringify({ error: 'Failed to delete key' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      await supabase.from('admin_audit_log').insert({
+        user_id: user.id,
+        action_type: 'api_key_deleted',
+        table_name: 'app_settings',
+        record_id: key,
+        changes: { key, action: 'delete' },
       })
 
       return new Response(JSON.stringify({ success: true }), {
@@ -125,7 +165,7 @@ serve(async (req) => {
       })
     }
 
-    return new Response(JSON.stringify({ error: 'Invalid action' }), {
+    return new Response(JSON.stringify({ error: 'Invalid action. Use: set, delete, list' }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
