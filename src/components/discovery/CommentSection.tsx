@@ -14,7 +14,7 @@ interface CommentSectionProps {
 
 const CommentSection: React.FC<CommentSectionProps> = ({ postId, currentUserId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -70,7 +70,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, currentUserId }
 
   const loadComments = async () => {
     try {
-      setLoading(true);
       const data = await getComments(postId);
       
       // Build nested comment structure
@@ -101,7 +100,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, currentUserId }
         variant: 'destructive',
       });
     } finally {
-      setLoading(false);
+      setInitialLoading(false);
     }
   };
 
@@ -113,7 +112,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, currentUserId }
       await createComment(postId, newComment, replyingTo || undefined);
       setNewComment('');
       setReplyingTo(null);
-      await loadComments();
       toast({
         title: 'Success',
         description: 'Comment posted',
@@ -132,14 +130,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, currentUserId }
   const handleDelete = async (commentId: string) => {
     await loadComments();
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center py-4">
-        <Loader2 className="w-6 h-6 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-4">
@@ -177,19 +167,24 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, currentUserId }
 
       {/* Comments List */}
       <div className="space-y-4">
-        {comments.map((comment) => (
-          <CommentThread
-            key={comment.id}
-            comment={comment}
-            onReply={setReplyingTo}
-            onDelete={handleDelete}
-            currentUserId={currentUserId}
-          />
-        ))}
-        {comments.length === 0 && (
+        {initialLoading ? (
+          <div className="flex justify-center py-4">
+            <Loader2 className="w-6 h-6 animate-spin" />
+          </div>
+        ) : comments.length === 0 ? (
           <p className="text-center text-muted-foreground text-sm py-4">
             No comments yet. Be the first to comment!
           </p>
+        ) : (
+          comments.map((comment) => (
+            <CommentThread
+              key={comment.id}
+              comment={comment}
+              onReply={setReplyingTo}
+              onDelete={handleDelete}
+              currentUserId={currentUserId}
+            />
+          ))
         )}
       </div>
     </div>
