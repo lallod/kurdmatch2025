@@ -20,32 +20,34 @@ interface ProfileInterestsProps {
   tinderBadgeStyle: string;
   formatList: (value: string[] | string | undefined) => string;
   isMobile: boolean;
+  onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
 
 const ProfileInterests: React.FC<ProfileInterestsProps> = ({ 
   details, 
   tinderBadgeStyle, 
   formatList,
-  isMobile
+  isMobile,
+  onFieldEdit
 }) => {
   return (
     <div className="py-4">
       <div className="flex flex-wrap gap-2 mb-6">
         {details.interests.map((interest, index) => (
-          <Badge key={index} className="rounded-full bg-gradient-to-r from-tinder-rose/90 to-tinder-orange/90 text-white hover:from-tinder-rose hover:to-tinder-orange transition-colors py-1.5 px-3">
+          <Badge key={index} className="rounded-full bg-gradient-to-r from-primary/90 to-accent/90 text-primary-foreground hover:from-primary hover:to-accent transition-colors py-1.5 px-3">
             {interest}
           </Badge>
         ))}
         
         {details.hobbies && Array.isArray(details.hobbies) && details.hobbies.map((hobby, index) => (
-          <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-tinder-orange/90 to-tinder-peach/90 text-white hover:from-tinder-orange hover:to-tinder-peach transition-colors py-1.5 px-3">
+          <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-accent/90 to-primary/70 text-primary-foreground hover:from-accent hover:to-primary transition-colors py-1.5 px-3">
             {hobby}
           </Badge>
         ))}
         
         {details.hobbies && !Array.isArray(details.hobbies) && 
           details.hobbies.split(", ").map((hobby, index) => (
-            <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-tinder-orange/90 to-tinder-peach/90 text-white hover:from-tinder-orange hover:to-tinder-peach transition-colors py-1.5 px-3">
+            <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-accent/90 to-primary/70 text-primary-foreground hover:from-accent hover:to-primary transition-colors py-1.5 px-3">
               {hobby}
             </Badge>
           ))
@@ -54,32 +56,30 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
       
       <div className="space-y-1">
         <DetailItem 
-          icon={<Calendar size={18} />} 
-          label="Weekend Activities" 
-          value={formatList(details.weekendActivities) || "Not specified"} 
+          icon={<Calendar size={18} />} label="Weekend Activities" 
+          value={formatList(details.weekendActivities) || "Not specified"}
         />
-        
         <Separator />
-        
         <DetailItem 
-          icon={<Sparkles size={18} />} 
-          label="Ideal Date" 
-          value={details.idealDate || "Not specified"} 
+          icon={<Sparkles size={18} />} label="Ideal Date" 
+          value={details.idealDate || "Not specified"}
+          editable={!!onFieldEdit}
+          fieldKey="idealDate"
+          fieldType="text"
+          onFieldEdit={onFieldEdit}
         />
-        
         <Separator />
-        
         <DetailItem 
-          icon={<Map size={18} />} 
-          label="Career Ambitions" 
-          value={details.careerAmbitions || "Not specified"} 
+          icon={<Map size={18} />} label="Career Ambitions" 
+          value={details.careerAmbitions || "Not specified"}
+          editable={!!onFieldEdit}
+          fieldKey="careerAmbitions"
+          fieldType="text"
+          onFieldEdit={onFieldEdit}
         />
-        
         <Separator />
-        
         <DetailItem 
-          icon={<Headphones size={18} />} 
-          label="Music Instruments" 
+          icon={<Headphones size={18} />} label="Music Instruments" 
           value={
             <div className="flex flex-wrap gap-2 mt-1">
               {Array.isArray(details.musicInstruments) ? 
@@ -93,12 +93,9 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
             </div>
           } 
         />
-        
         <Separator />
-        
         <DetailItem 
-          icon={<Puzzle size={18} />} 
-          label="Favorite Games" 
+          icon={<Puzzle size={18} />} label="Favorite Games" 
           value={
             <div className="flex flex-wrap gap-2 mt-1">
               {Array.isArray(details.favoriteGames) ? 

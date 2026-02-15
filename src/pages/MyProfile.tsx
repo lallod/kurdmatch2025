@@ -14,12 +14,6 @@ import PrivacySettings from '@/components/my-profile/PrivacySettings';
 import EditableAccordionSection from '@/components/my-profile/EditableAccordionSection';
 import { ProfileData, KurdistanRegion } from '@/types/profile';
 import EditableAboutMeSection from '@/components/my-profile/sections/EditableAboutMeSection';
-import BasicInfoEditor from '@/components/my-profile/sections/editors/BasicInfoEditor';
-import LifestyleEditor from '@/components/my-profile/sections/editors/LifestyleEditor';
-import ValuesPersonalityEditor from '@/components/my-profile/sections/editors/ValuesPersonalityEditor';
-import InterestsHobbiesEditor from '@/components/my-profile/sections/editors/InterestsHobbiesEditor';
-import EducationCareerEditor from '@/components/my-profile/sections/editors/EducationCareerEditor';
-import RelationshipPreferencesEditor from '@/components/my-profile/sections/editors/RelationshipPreferencesEditor';
 
 import ProfileBasics from '@/components/profile/ProfileBasics';
 import ProfileLifestyle from '@/components/profile/ProfileLifestyle';
@@ -350,31 +344,27 @@ const MyProfile = () => {
               <EditableAccordionSection
                 value="basics" title="Basics" icon={<User />} color="text-primary"
                 gradientClass="bg-gradient-to-r from-primary/5 to-transparent" borderClass="border-primary/10"
-                editorContent={<BasicInfoEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileBasics details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
+                <ProfileBasics details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
                 value="lifestyle" title="Lifestyle" icon={<Wine />} color="text-orange-500"
                 gradientClass="bg-gradient-to-r from-orange-500/5 to-transparent" borderClass="border-orange-500/10"
-                editorContent={<LifestyleEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileLifestyle details={details as any} formatList={formatList} isMobile={true} />
+                <ProfileLifestyle details={details as any} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
                 value="interests" title="Interests & Hobbies" icon={<Star />} color="text-amber-500"
                 gradientClass="bg-gradient-to-r from-amber-500/5 to-transparent" borderClass="border-amber-500/10"
-                editorContent={<InterestsHobbiesEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileInterests details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
+                <ProfileInterests details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
                 value="more" title="Communication" icon={<Languages />} color="text-primary"
                 gradientClass="bg-gradient-to-r from-primary/5 to-transparent" borderClass="border-primary/10"
-                editorContent={<RelationshipPreferencesEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
                 <ProfileCommunication details={details as any} tinderBadgeStyle={tinderBadgeStyle} isMobile={true} />
               </EditableAccordionSection>
@@ -382,25 +372,22 @@ const MyProfile = () => {
               <EditableAccordionSection
                 value="personality" title="Personality & Growth" icon={<BrainCircuit />} color="text-purple-500"
                 gradientClass="bg-gradient-to-r from-purple-500/5 to-transparent" borderClass="border-purple-500/10"
-                editorContent={<ValuesPersonalityEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfilePersonality details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
+                <ProfilePersonality details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
                 value="creatives" title="Creative & Lifestyle" icon={<Palette />} color="text-pink-500"
                 gradientClass="bg-gradient-to-r from-pink-500/5 to-transparent" borderClass="border-pink-500/10"
-                editorContent={<InterestsHobbiesEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileCreative details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
+                <ProfileCreative details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
                 value="travel" title="Travel" icon={<Plane />} color="text-teal-600"
                 gradientClass="bg-gradient-to-r from-teal-600/5 to-transparent" borderClass="border-teal-600/10"
-                editorContent={<LifestyleEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileTravel details={details as any} isMobile={true} />
+                <ProfileTravel details={details as any} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
             </Accordion>
           </div>

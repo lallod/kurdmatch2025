@@ -19,42 +19,72 @@ interface ProfileBasicsProps {
   tinderBadgeStyle: string;
   formatList: (value: string[] | string | undefined) => string;
   isMobile: boolean;
+  onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
 
 const ProfileBasics: React.FC<ProfileBasicsProps> = ({ 
   details, 
   tinderBadgeStyle, 
   formatList,
-  isMobile
+  isMobile,
+  onFieldEdit
 }) => {
-  // Ensure height is displayed in cm format
   const heightDisplay = details.height?.includes('cm') ? details.height : `${details.height} cm`;
 
   return (
     <div className="space-y-1 py-4">
       <DetailItem 
         icon={<User size={18} />} 
-        label="Basics" 
-        value={
-          <div className="flex flex-wrap gap-2 mt-1">
-            <Badge variant="outline" className={tinderBadgeStyle}>{heightDisplay}</Badge>
-            <Badge variant="outline" className={tinderBadgeStyle}>{details.bodyType}</Badge>
-            <Badge variant="outline" className={tinderBadgeStyle}>{details.ethnicity}</Badge>
-          </div>
-        } 
+        label="Height"
+        value={heightDisplay}
+        editable={!!onFieldEdit}
+        fieldKey="height"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
+      />
+      <Separator />
+      <DetailItem 
+        icon={<User size={18} />} 
+        label="Body Type"
+        value={details.bodyType}
+        editable={!!onFieldEdit}
+        fieldKey="bodyType"
+        fieldType="select"
+        fieldOptions={["Slim", "Athletic", "Average", "Curvy", "Plus-size"]}
+        onFieldEdit={onFieldEdit}
+      />
+      <Separator />
+      <DetailItem 
+        icon={<User size={18} />} 
+        label="Ethnicity"
+        value={details.ethnicity}
+        editable={!!onFieldEdit}
+        fieldKey="ethnicity"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
       
       <Separator />
       
       <DetailItem 
         icon={<Church size={18} />} 
-        label="Beliefs" 
-        value={
-          <div className="flex flex-wrap gap-2 mt-1">
-            <Badge variant="outline" className={tinderBadgeStyle}>{details.religion}</Badge>
-            <Badge variant="outline" className={tinderBadgeStyle}>{details.politicalViews}</Badge>
-          </div>
-        } 
+        label="Religion"
+        value={details.religion}
+        editable={!!onFieldEdit}
+        fieldKey="religion"
+        fieldType="select"
+        fieldOptions={["Islam", "Christianity", "Judaism", "Yazidism", "Zoroastrianism", "Other", "Not religious"]}
+        onFieldEdit={onFieldEdit}
+      />
+      <Separator />
+      <DetailItem 
+        icon={<Church size={18} />} 
+        label="Political Views"
+        value={details.politicalViews}
+        editable={!!onFieldEdit}
+        fieldKey="politicalViews"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
       
       <Separator />

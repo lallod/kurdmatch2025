@@ -19,22 +19,19 @@ interface ProfilePersonalityProps {
   tinderBadgeStyle: string;
   formatList: (value: string[] | string | undefined) => string;
   isMobile: boolean;
+  onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
 
 const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({ 
   details, 
   tinderBadgeStyle, 
   formatList,
-  isMobile
+  isMobile,
+  onFieldEdit
 }) => {
-  // Helper function to render badge lists
   const renderBadgeList = (items: string[] | string | undefined) => {
     if (!items) return null;
-    
-    const itemList = Array.isArray(items) 
-      ? items 
-      : formatList(items).split(", ");
-    
+    const itemList = Array.isArray(items) ? items : formatList(items).split(", ");
     return (
       <div className="flex flex-wrap gap-2 mt-1">
         {itemList.map((item, i) => (
@@ -46,50 +43,38 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
 
   return (
     <div className="space-y-6 py-4">
-      <DetailItem 
-        icon={<Trophy size={18} />} 
-        label="Growth Goals" 
-        value={renderBadgeList(details.growthGoals)} 
-      />
-      
+      <DetailItem icon={<Trophy size={18} />} label="Growth Goals" value={renderBadgeList(details.growthGoals)} />
       <Separator />
-      
-      <DetailItem 
-        icon={<Gem size={18} />} 
-        label="Hidden Talents" 
-        value={renderBadgeList(details.hiddenTalents)} 
-      />
-      
+      <DetailItem icon={<Gem size={18} />} label="Hidden Talents" value={renderBadgeList(details.hiddenTalents)} />
       <Separator />
-      
       <DetailItem 
-        icon={<Star size={18} />} 
-        label="Favorite Memory" 
-        value={details.favoriteMemory || "Not specified"} 
+        icon={<Star size={18} />} label="Favorite Memory" 
+        value={details.favoriteMemory || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="favoriteMemory"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
+      <DetailItem icon={<ThermometerSun size={18} />} label="Stress Relievers" value={renderBadgeList(details.stressRelievers)} />
+      <Separator />
       <DetailItem 
-        icon={<ThermometerSun size={18} />} 
-        label="Stress Relievers" 
-        value={renderBadgeList(details.stressRelievers)} 
+        icon={<Globe size={18} />} label="Charity Involvement" 
+        value={details.charityInvolvement || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="charityInvolvement"
+        fieldType="text"
+        onFieldEdit={onFieldEdit}
       />
-      
       <Separator />
-      
       <DetailItem 
-        icon={<Globe size={18} />} 
-        label="Charity Involvement" 
-        value={details.charityInvolvement || "Not specified"} 
-      />
-      
-      <Separator />
-      
-      <DetailItem 
-        icon={<Brain size={18} />} 
-        label="Decision Making Style" 
-        value={details.decisionMakingStyle || "Not specified"} 
+        icon={<Brain size={18} />} label="Decision Making Style" 
+        value={details.decisionMakingStyle || "Not specified"}
+        editable={!!onFieldEdit}
+        fieldKey="decisionMakingStyle"
+        fieldType="select"
+        fieldOptions={["Analytical", "Intuitive", "Collaborative", "Spontaneous"]}
+        onFieldEdit={onFieldEdit}
       />
     </div>
   );

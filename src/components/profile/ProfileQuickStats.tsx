@@ -26,10 +26,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
   tinderBadgeStyle,
   isMobile 
 }) => {
-  // Make the card styling more consistent between desktop and mobile
-  const cardClass = isMobile
-    ? "bg-gradient-to-br from-gray-50/90 to-white/95 p-4 rounded-lg border border-gray-100/80 shadow-sm hover:shadow-[0_5px_15px_rgba(253,41,123,0.1)] hover:border-tinder-rose/20 transition-all duration-300"
-    : "bg-gradient-to-br from-gray-50/90 to-white/95 p-4 rounded-lg border border-gray-100/80 shadow-sm hover:shadow-[0_5px_15px_rgba(253,41,123,0.1)] hover:border-tinder-rose/20 transition-all duration-300";
+  const cardClass = "bg-card p-4 rounded-lg border border-border/20 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300";
 
   // Use the same icon container styling for both mobile and desktop
   const iconContainerClass = "w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 transition-transform duration-300 group-hover:scale-110";
@@ -44,7 +41,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
             </div>
             <h4 className="text-sm font-medium">Education</h4>
           </div>
-          <p className="text-sm text-gray-600 ai-text-gradient">{education.split(',')[0]}</p>
+          <p className="text-sm text-muted-foreground">{education.split(',')[0]}</p>
         </div>
         
         <div className={`${cardClass} group`}>
@@ -54,7 +51,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
             </div>
             <h4 className="text-sm font-medium">Work</h4>
           </div>
-          <p className="text-sm text-gray-600 ai-text-gradient">{occupation}</p>
+          <p className="text-sm text-muted-foreground">{occupation}</p>
         </div>
         
         <div className={`${cardClass} group`}>
@@ -64,7 +61,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
             </div>
             <h4 className="text-sm font-medium">Looking for</h4>
           </div>
-          <p className="text-sm text-gray-600 ai-text-gradient">{relationshipGoals.split('looking for ')[1]}</p>
+          <p className="text-sm text-muted-foreground">{relationshipGoals.split('looking for ')[1]}</p>
         </div>
         
         <div className={`${cardClass} group`}>
@@ -91,7 +88,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           </div>
           <h4 className="text-sm font-medium">Education</h4>
         </div>
-        <p className="text-sm text-gray-600 ai-text-gradient">{education}</p>
+        <p className="text-sm text-muted-foreground">{education}</p>
       </div>
       
       <div className={`${cardClass} group`}>
@@ -101,7 +98,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           </div>
           <h4 className="text-sm font-medium">Work</h4>
         </div>
-        <p className="text-sm text-gray-600 ai-text-gradient">{occupation} at {company}</p>
+        <p className="text-sm text-muted-foreground">{occupation} at {company}</p>
       </div>
       
       <div className={`${cardClass} group`}>
@@ -111,7 +108,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           </div>
           <h4 className="text-sm font-medium">Relationship Goals</h4>
         </div>
-        <p className="text-sm text-gray-600 ai-text-gradient">{relationshipGoals}</p>
+        <p className="text-sm text-muted-foreground">{relationshipGoals}</p>
       </div>
       
       <div className={`${cardClass} group`}>
