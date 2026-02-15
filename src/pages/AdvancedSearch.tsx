@@ -8,6 +8,7 @@ import { AdvancedSearchFilters } from '@/components/discovery/AdvancedSearchFilt
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Profile {
   id: string;
@@ -31,6 +32,7 @@ const AdvancedSearch = () => {
   const [gender, setGender] = useState('all');
   const [location, setLocation] = useState('');
   const [region, setRegion] = useState('all');
+  const { t } = useTranslations();
 
   useEffect(() => { searchProfiles(); }, [ageRange, gender, location, region]);
 
@@ -62,7 +64,7 @@ const AdvancedSearch = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-foreground hover:bg-muted">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">Advanced Search</h1>
+          <h1 className="text-lg font-bold text-foreground">{t('search.title', 'Advanced Search')}</h1>
         </div>
         <div className="max-w-md mx-auto px-4 pb-3">
           <div className="flex gap-2">

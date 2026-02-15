@@ -32,6 +32,7 @@ import { toast } from 'sonner';
 import { messageSchema } from '@/utils/validation/messageValidation';
 import LoadingState from '@/components/LoadingState';
 import EmptyState from '@/components/EmptyState';
+import { useTranslations } from '@/hooks/useTranslations';
 import UnmatchDialog from '@/components/messages/UnmatchDialog';
 import { AIWingmanPanel } from '@/components/chat/AIWingmanPanel';
 import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
@@ -41,6 +42,7 @@ import { ReadReceiptIndicator } from '@/components/chat/ReadReceiptIndicator';
 
 const Messages = () => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const { compressImageForChat } = useImageCompression();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -580,8 +582,8 @@ const Messages = () => {
                     animationDelay: '0.2s'
                   }}></div>
                     </div>
-                    typing...
-                  </span> : conversation.online ? 'Online' : 'Offline'}
+                    {t('messages.typing', 'typing...')}
+                  </span> : conversation.online ? t('messages.online', 'Online') : t('messages.offline', 'Offline')}
               </p>
             </div>
             {/* Notification indicators in header */}
@@ -615,15 +617,15 @@ const Messages = () => {
                 <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
                   <DropdownMenuItem onClick={handleUnmatch}>
                     <UserX className="h-4 w-4 mr-2" />
-                    Unmatch
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
-                    <Flag className="h-4 w-4 mr-2" />
-                    Report Conversation
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleBlockUser} className="text-destructive">
-                    <Ban className="h-4 w-4 mr-2" />
-                    Block User
+                    {t('messages.unmatch', 'Unmatch')}
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
+                     <Flag className="h-4 w-4 mr-2" />
+                     {t('messages.report_conversation', 'Report Conversation')}
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={handleBlockUser} className="text-destructive">
+                     <Ban className="h-4 w-4 mr-2" />
+                     {t('messages.block_user', 'Block User')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -835,7 +837,7 @@ const Messages = () => {
                   }}
                   onKeyDown={handleKeyPress} 
                   onBlur={stopTyping}
-                  placeholder="Type a message..." 
+                  placeholder={t('messages.type_message', 'Type a message...')} 
                   disabled={isChecking}
                   className="min-h-[80px] resize-none flex-1 bg-surface-secondary/80 backdrop-blur border-border/20 text-foreground placeholder:text-muted-foreground rounded-2xl" 
                 />
@@ -902,7 +904,7 @@ const Messages = () => {
       {/* Header with Enhanced Notifications */}
       <div className="bg-background border-b border-border/30 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
-          <h1 className="text-base font-semibold text-foreground">Messages</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('messages.title', 'Messages')}</h1>
           <div className="flex items-center gap-2">
             {totalUnreadMessages > 0 && <Badge className="bg-primary/15 text-primary text-xs">{totalUnreadMessages} new</Badge>}
             {onlineCount > 0 && <Badge className="bg-muted text-muted-foreground text-xs">{onlineCount} online</Badge>}
@@ -917,7 +919,7 @@ const Messages = () => {
             {/* New Matches Section with Enhanced Notifications */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-medium text-muted-foreground">New Matches</h2>
+                <h2 className="text-sm font-medium text-muted-foreground">{t('messages.new_matches', 'New Matches')}</h2>
                 {newMatchesCount > 0 && <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse">
                     {newMatchesCount} New
                   </Badge>}
@@ -988,7 +990,7 @@ const Messages = () => {
 
             {/* Active Conversations Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-foreground">All Conversations</h2>
+              <h2 className="text-xl font-bold text-foreground">{t('messages.all_conversations', 'All Conversations')}</h2>
               <div className="flex gap-2">
                 <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
                   {conversations.filter(c => c.unread).length} unread
@@ -1064,11 +1066,11 @@ const Messages = () => {
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">No messages yet</h3>
-                <p className="text-muted-foreground mb-4">When you match with someone, your conversations will appear here</p>
+                <h3 className="text-xl font-semibold text-foreground mb-2">{t('messages.no_messages', 'No messages yet')}</h3>
+                <p className="text-muted-foreground mb-4">{t('messages.no_messages_desc', 'When you match with someone, your conversations will appear here')}</p>
                 <Button className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600">
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Start discovering people
+                  {t('messages.start_discovering', 'Start discovering people')}
                 </Button>
               </div>}
           </div>

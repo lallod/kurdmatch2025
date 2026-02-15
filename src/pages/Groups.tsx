@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, Users } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Group {
   id: string;
@@ -26,6 +27,7 @@ const Groups = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useTranslations();
 
   useEffect(() => {
     fetchGroups();
@@ -64,11 +66,11 @@ const Groups = () => {
       {/* Slim header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border/30">
         <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
-          <h1 className="text-base font-semibold text-foreground">Groups</h1>
-          <Button onClick={() => navigate('/groups/create')} size="sm" variant="ghost" className="gap-1 text-sm">
-            <Plus className="w-4 h-4" />
-            Create
-          </Button>
+           <h1 className="text-base font-semibold text-foreground">{t('groups.title', 'Groups')}</h1>
+           <Button onClick={() => navigate('/groups/create')} size="sm" variant="ghost" className="gap-1 text-sm">
+             <Plus className="w-4 h-4" />
+             {t('groups.create', 'Create')}
+           </Button>
         </div>
       </div>
 
@@ -76,7 +78,7 @@ const Groups = () => {
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Search groups..."
+            placeholder={t('groups.search', 'Search groups...')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-muted border-border/30 h-9"
@@ -89,7 +91,7 @@ const Groups = () => {
           <div className="text-center py-16">
             <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
             <p className="text-muted-foreground text-sm">
-              {searchTerm ? 'No groups found' : 'No groups available yet'}
+              {searchTerm ? t('groups.no_found', 'No groups found') : t('groups.no_available', 'No groups available yet')}
             </p>
           </div>
         ) : (

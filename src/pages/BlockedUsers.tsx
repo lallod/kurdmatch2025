@@ -10,6 +10,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface BlockedUser {
   id: string; blocked_id: string; created_at: string; reason?: string;
@@ -19,6 +20,7 @@ interface BlockedUser {
 const BlockedUsers = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [unblockingId, setUnblockingId] = useState<string | null>(null);
@@ -59,7 +61,7 @@ const BlockedUsers = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-base font-semibold text-foreground">Blocked Users</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('blocked_users.title', 'Blocked Users')}</h1>
         </div>
       </div>
 
@@ -71,8 +73,8 @@ const BlockedUsers = () => {
         ) : blockedUsers.length === 0 ? (
           <div className="text-center py-16">
             <Shield className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
-            <h3 className="text-base font-semibold text-foreground mb-1">No blocked users</h3>
-            <p className="text-sm text-muted-foreground">You haven't blocked anyone yet</p>
+             <h3 className="text-base font-semibold text-foreground mb-1">{t('blocked_users.no_blocked', 'No blocked users')}</h3>
+             <p className="text-sm text-muted-foreground">{t('blocked_users.no_blocked_desc', "You haven't blocked anyone yet")}</p>
           </div>
         ) : (
           <div>

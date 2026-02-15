@@ -12,12 +12,14 @@ import { toast } from 'sonner';
 import { getDisplayValue, hasRealArrayValues } from '@/utils/profileHelpers';
 import { useCompatibility } from '@/hooks/useCompatibility';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Profile = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSupabaseAuth();
   const { calculateCompatibility } = useCompatibility();
+  const { t } = useTranslations();
   const profileId = location.state?.profileId;
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +67,7 @@ const Profile = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center text-foreground">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading profile...</p>
+          <p className="text-muted-foreground">{t('profile.loading', 'Loading profile...')}</p>
         </div>
       </div>
     );
@@ -75,8 +77,8 @@ const Profile = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center text-foreground">
-          <h2 className="text-2xl font-bold mb-2 text-foreground">Profile not found</h2>
-          <button onClick={() => navigate(-1)} className="text-primary hover:text-primary/80">Go back</button>
+          <h2 className="text-2xl font-bold mb-2 text-foreground">{t('profile.not_found', 'Profile not found')}</h2>
+          <button onClick={() => navigate(-1)} className="text-primary hover:text-primary/80">{t('profile.go_back', 'Go back')}</button>
         </div>
       </div>
     );
@@ -138,7 +140,7 @@ const Profile = () => {
             <div className="p-4 sm:p-6 bg-card/30 border-b border-border/10">
               <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm">⚡</div>
-                <h3 className="text-base sm:text-lg font-semibold text-foreground">About {profile.name.split(' ')[0]}</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-foreground">{t('profile.about', 'About')} {profile.name.split(' ')[0]}</h3>
               </div>
               <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed mb-2 sm:mb-3">{profile.bio}</p>
             </div>
@@ -149,23 +151,23 @@ const Profile = () => {
             <Accordion type="multiple" className="w-full">
               <AccordionItem value="basic" className="border-b border-border/10">
                 <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-foreground hover:text-foreground/80 hover:no-underline">
-                  <div className="flex items-center gap-2 sm:gap-3"><User className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">Basic Info</span></div>
+                  <div className="flex items-center gap-2 sm:gap-3"><User className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">{t('profile.basic_info', 'Basic Info')}</span></div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                    {getDisplayValue(profile.height) && <div><span className="text-muted-foreground/70">Height:</span> {profile.height}</div>}
-                    {getDisplayValue(profile.body_type) && <div><span className="text-muted-foreground/70">Body Type:</span> {profile.body_type}</div>}
-                    {getDisplayValue(profile.ethnicity) && <div><span className="text-muted-foreground/70">Ethnicity:</span> {profile.ethnicity}</div>}
-                    {getDisplayValue(profile.religion) && <div><span className="text-muted-foreground/70">Religion:</span> {profile.religion}</div>}
-                    {getDisplayValue(profile.zodiac_sign) && <div><span className="text-muted-foreground/70">Zodiac:</span> {profile.zodiac_sign}</div>}
-                    {getDisplayValue(profile.personality_type) && <div><span className="text-muted-foreground/70">Personality:</span> {profile.personality_type}</div>}
+                    {getDisplayValue(profile.height) && <div><span className="text-muted-foreground/70">{t('profile.height', 'Height')}:</span> {profile.height}</div>}
+                    {getDisplayValue(profile.body_type) && <div><span className="text-muted-foreground/70">{t('profile.body_type', 'Body Type')}:</span> {profile.body_type}</div>}
+                    {getDisplayValue(profile.ethnicity) && <div><span className="text-muted-foreground/70">{t('profile.ethnicity', 'Ethnicity')}:</span> {profile.ethnicity}</div>}
+                    {getDisplayValue(profile.religion) && <div><span className="text-muted-foreground/70">{t('profile.religion', 'Religion')}:</span> {profile.religion}</div>}
+                    {getDisplayValue(profile.zodiac_sign) && <div><span className="text-muted-foreground/70">{t('profile.zodiac', 'Zodiac')}:</span> {profile.zodiac_sign}</div>}
+                    {getDisplayValue(profile.personality_type) && <div><span className="text-muted-foreground/70">{t('profile.personality', 'Personality')}:</span> {profile.personality_type}</div>}
                   </div>
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="career" className="border-b border-border/10">
                 <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-foreground hover:text-foreground/80 hover:no-underline">
-                  <div className="flex items-center gap-2 sm:gap-3"><Briefcase className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">Career & Education</span></div>
+                  <div className="flex items-center gap-2 sm:gap-3"><Briefcase className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">{t('profile.career_education', 'Career & Education')}</span></div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
@@ -180,7 +182,7 @@ const Profile = () => {
 
               <AccordionItem value="lifestyle" className="border-b border-border/10">
                 <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-foreground hover:text-foreground/80 hover:no-underline">
-                  <div className="flex items-center gap-2 sm:gap-3"><Home className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">Lifestyle</span></div>
+                  <div className="flex items-center gap-2 sm:gap-3"><Home className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">{t('profile.lifestyle', 'Lifestyle')}</span></div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
@@ -206,7 +208,7 @@ const Profile = () => {
 
               <AccordionItem value="beliefs" className="border-b border-border/10">
                 <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-foreground hover:text-foreground/80 hover:no-underline">
-                  <div className="flex items-center gap-2 sm:gap-3"><Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">Beliefs & Values</span></div>
+                  <div className="flex items-center gap-2 sm:gap-3"><Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">{t('profile.beliefs_values', 'Beliefs & Values')}</span></div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
@@ -237,7 +239,7 @@ const Profile = () => {
 
               <AccordionItem value="relationships" className="border-b-0">
                 <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 text-foreground hover:text-foreground/80 hover:no-underline">
-                  <div className="flex items-center gap-2 sm:gap-3"><Users className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">Relationships</span></div>
+                  <div className="flex items-center gap-2 sm:gap-3"><Users className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" /><span className="font-medium text-sm sm:text-base">{t('profile.relationships', 'Relationships')}</span></div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">

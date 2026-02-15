@@ -7,10 +7,12 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { SUBSCRIPTION_PLANS } from "@/types/subscription";
 import { toast } from "sonner";
 import { Settings, RefreshCw } from "lucide-react";
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Subscription = () => {
   const [searchParams] = useSearchParams();
   const { subscription, isLoading, checkSubscription, createCheckout, openCustomerPortal } = useSubscription();
+  const { t } = useTranslations();
 
   useEffect(() => {
     const success = searchParams.get("success");
@@ -25,8 +27,8 @@ const Subscription = () => {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Choose Your Plan</h1>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto">Unlock premium features and find your perfect match faster</p>
+           <h1 className="text-2xl font-bold text-foreground mb-2">{t('subscription.choose_plan', 'Choose Your Plan')}</h1>
+           <p className="text-muted-foreground text-sm max-w-md mx-auto">{t('subscription.unlock_premium', 'Unlock premium features and find your perfect match faster')}</p>
         </div>
 
         {subscription.subscription_type !== "free" && (
@@ -54,7 +56,7 @@ const Subscription = () => {
         </div>
 
         <Card className="bg-card/50 border-border/30">
-          <CardHeader><CardTitle className="text-sm">Subscription Details</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t('subscription.details', 'Subscription Details')}</CardTitle></CardHeader>
           <CardContent className="text-muted-foreground text-xs space-y-1.5">
             <p>• All subscriptions are billed monthly</p>
             <p>• Cancel anytime through the management portal</p>
