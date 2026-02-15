@@ -226,25 +226,30 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         </div>
       )}
 
-      {/* Action bar */}
-      <div className="flex items-center justify-between px-3 py-2">
+      {/* Action bar - Instagram style */}
+      <div className="flex items-center justify-between px-3 py-1.5">
         <div className="flex items-center gap-4">
-          <button onClick={handleLike} className="flex items-center gap-1.5 group" aria-label={isLiked ? 'Unlike post' : 'Like post'}>
-            <Heart className={`w-5 h-5 transition-colors ${isLiked ? 'text-red-500 fill-red-500' : 'text-muted-foreground group-hover:text-red-400'}`} />
-            {likesCount > 0 && <span className="text-xs text-muted-foreground">{likesCount}</span>}
+          <button onClick={handleLike} className="group" aria-label={isLiked ? 'Unlike post' : 'Like post'}>
+            <Heart className={`w-6 h-6 transition-colors ${isLiked ? 'text-red-500 fill-red-500' : 'text-foreground group-hover:text-red-400'}`} />
           </button>
-          <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 group" aria-label="Comments">
-            <MessageCircle className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-            {commentsCount > 0 && <span className="text-xs text-muted-foreground">{commentsCount}</span>}
+          <button onClick={() => setShowComments(!showComments)} className="group" aria-label="Comments">
+            <MessageCircle className="w-6 h-6 text-foreground group-hover:text-muted-foreground transition-colors" />
           </button>
-          <button onClick={handleMessageClick} className="flex items-center gap-1.5 group" aria-label="Send message">
-            <MessageCircle className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          <button onClick={() => setShowShareDialog(true)} className="group" aria-label="Share">
+            <Share2 className="w-[22px] h-[22px] text-foreground group-hover:text-muted-foreground transition-colors" />
           </button>
         </div>
         <button onClick={handleSaveToggle} aria-label={isSaved ? 'Unsave post' : 'Save post'}>
-          <Bookmark className={`w-5 h-5 transition-colors ${isSaved ? 'text-primary fill-primary' : 'text-muted-foreground hover:text-primary'}`} />
+          <Bookmark className={`w-6 h-6 transition-colors ${isSaved ? 'text-foreground fill-foreground' : 'text-foreground hover:text-muted-foreground'}`} />
         </button>
       </div>
+
+      {/* Likes count */}
+      {likesCount > 0 && (
+        <div className="px-3 pb-0.5">
+          <span className="text-sm font-semibold text-foreground">{likesCount} {likesCount === 1 ? 'like' : 'likes'}</span>
+        </div>
+      )}
 
       {/* Caption (text content below media, Instagram-style) */}
       {post.content && (
@@ -264,8 +269,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       {/* Text-only posts (no media) show content normally */}
       {!hasMedia && !post.content && null}
 
+      {/* View comments link */}
+      {commentsCount > 0 && !showComments && (
+        <div className="px-3 pb-1">
+          <button onClick={() => setShowComments(true)} className="text-sm text-muted-foreground">
+            View all {commentsCount} comments
+          </button>
+        </div>
+      )}
+
       {/* Comments section */}
       {showComments && <CommentSection postId={post.id} />}
+
+      {/* Post separator */}
+      <div className="border-b border-border/10 mt-2" />
 
       {/* Upgrade dialog */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
