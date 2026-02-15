@@ -2,30 +2,31 @@
  * Direct profile filler - fills all empty fields with random values
  */
 
+// OPTIONS must exactly match the fieldOptions in ProfileLifestyle, ProfileBasics, ProfileCommunication, ProfileCreative, ProfileTravel, ProfilePersonality
 const OPTIONS = {
-  exerciseHabits: ['Daily', 'Few times a week', 'Weekly', 'Occasionally', 'Rarely'],
-  dietaryPreferences: ['No restrictions', 'Vegetarian', 'Vegan', 'Pescatarian', 'Keto', 'Paleo', 'Gluten-free'],
-  smoking: ['Never', 'Socially', 'Regularly', 'Trying to quit'],
-  drinking: ['Never', 'Socially', 'Occasionally', 'Regularly'],
-  sleepSchedule: ['Early bird', 'Night owl', 'Flexible', 'Regular schedule'],
+  exerciseHabits: ['Never', 'Rarely', 'Occasional', 'Regular', 'Daily'],
+  dietaryPreferences: ['No restrictions', 'Vegetarian', 'Vegan', 'Halal', 'Kosher', 'Pescatarian', 'Gluten-free', 'Other'],
+  smoking: ['Never', 'Rarely', 'Socially', 'Regularly', 'Trying to quit'],
+  drinking: ['Never', 'Rarely', 'Socially', 'Regularly'],
+  sleepSchedule: ['Night owl', 'Irregular schedule', 'Regular schedule', 'Early bird'],
   petsOwned: ['Dog', 'Cat', 'Both', 'Other pets', 'No pets', 'Want pets'],
-  travelFrequency: ['Often', 'Sometimes', 'Rarely', 'Never', 'Love to travel'],
-  workLifeBalance: ['Very important', 'Important', 'Balanced', 'Work-focused'],
-  religion: ['Christianity', 'Islam', 'Judaism', 'Buddhism', 'Hinduism', 'Agnostic', 'Atheist', 'Spiritual', 'Other'],
-  politicalViews: ['Liberal', 'Conservative', 'Moderate', 'Apolitical', 'Progressive'],
+  travelFrequency: ['Rarely', 'Once a year', 'A few times a year', 'Monthly', 'Constantly traveling'],
+  workLifeBalance: ['Work-focused', 'Balanced', 'Life-focused', 'Flexible', 'Struggling'],
+  religion: ['Islam', 'Christianity', 'Judaism', 'Yazidism', 'Zoroastrianism', 'Other', 'Not religious'],
+  politicalViews: ['Liberal', 'Conservative', 'Moderate', 'Progressive', 'Libertarian', 'Apolitical', 'Other'],
   zodiacSign: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'],
   personalityType: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'],
-  communicationStyle: ['Direct', 'Diplomatic', 'Humorous', 'Thoughtful', 'Expressive'],
+  communicationStyle: ['Direct', 'Diplomatic', 'Expressive', 'Reserved', 'Humorous', 'Analytical'],
   loveLanguage: ['Words of Affirmation', 'Physical Touch', 'Acts of Service', 'Quality Time', 'Receiving Gifts'],
   relationshipGoals: ['Long-term relationship', 'Marriage', 'Casual dating', 'Something serious', 'Let\'s see what happens'],
   wantChildren: ['Want children', 'Don\'t want children', 'Have children', 'Maybe someday', 'Open to it'],
   childrenStatus: ['No children', 'Have children', 'Want children', 'Maybe someday'],
   familyCloseness: ['Very close', 'Close', 'Somewhat close', 'Not very close'],
   bodyType: ['Slim', 'Athletic', 'Average', 'Curvy', 'Plus-size'],
-  ethnicity: ['White/Caucasian', 'Black/African', 'Hispanic/Latino', 'Asian', 'Middle Eastern', 'Mixed', 'Other'],
+  ethnicity: ['Kurdish', 'Middle Eastern', 'European', 'Asian', 'African', 'Latin American', 'Mixed', 'Other'],
   education: ['High School', 'Some College', 'Bachelor\'s Degree', 'Master\'s Degree', 'PhD', 'Trade School'],
-  financialHabits: ['Saver', 'Spender', 'Investor', 'Budgeter', 'Spontaneous'],
-  favoriteSeason: ['Spring', 'Summer', 'Fall', 'Winter']
+  financialHabits: ['Spender', 'Balanced', 'Saver with occasional splurges', 'Saver', 'Financial planner'],
+  favoriteSeason: ['Spring', 'Summer', 'Autumn', 'Winter']
 };
 
 export const fillEmptyProfileFields = (profile: any): any => {
