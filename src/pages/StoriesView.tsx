@@ -1,10 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
-import { X, Heart, Send, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { X, Heart, Send, Trash2, Eye, Pause, Play } from 'lucide-react';
+import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const BG_MAP: Record<string, string> = {
+  sunset: 'from-rose-500 via-orange-400 to-amber-300',
+  ocean: 'from-blue-600 via-cyan-400 to-teal-300',
+  forest: 'from-emerald-600 via-green-400 to-lime-300',
+  night: 'from-indigo-900 via-purple-700 to-pink-500',
+  fire: 'from-red-600 via-orange-500 to-yellow-400',
+  midnight: 'from-slate-900 via-violet-900 to-fuchsia-900',
+};
+
+const TEXT_POS_MAP: Record<string, string> = {
+  top: 'top-20 left-4 right-4',
+  center: 'top-1/2 left-4 right-4 -translate-y-1/2',
+  bottom: 'bottom-24 left-4 right-4',
+};
 
 interface Story {
   id: string;
@@ -16,6 +33,9 @@ interface Story {
   reactions: any[];
   created_at: string;
   expires_at: string;
+  text_overlay?: string;
+  text_position?: string;
+  background_color?: string;
   profiles: {
     id: string;
     name: string;
@@ -32,16 +52,20 @@ const StoriesView = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [showReply, setShowReply] = useState(false);
+  const [reactedEmoji, setReactedEmoji] = useState<string | null>(null);
 
   useEffect(() => {
     fetchStories();
   }, [userId]);
 
   useEffect(() => {
-    if (stories.length === 0) return;
+    if (stories.length === 0 || paused) return;
 
     const currentStory = stories[currentIndex];
-    const duration = currentStory.duration * 1000;
+    const duration = (currentStory?.duration || 10) * 1000;
     const interval = 50;
     const increment = (interval / duration) * 100;
 
@@ -56,22 +80,14 @@ const StoriesView = () => {
     }, interval);
 
     return () => clearInterval(timer);
-  }, [currentIndex, stories]);
+  }, [currentIndex, stories, paused]);
 
   const fetchStories = async () => {
     try {
       setLoading(true);
       const { data, error } = await (supabase as any)
         .from('stories')
-        .select(`
-          *,
-          profiles (
-            id,
-            name,
-            profile_image,
-            verified
-          )
-        `)
+        .select(`*, profiles (id, name, profile_image, verified)`)
         .eq('user_id', userId)
         .gt('expires_at', new Date().toISOString())
         .order('created_at', { ascending: true });
@@ -79,16 +95,12 @@ const StoriesView = () => {
       if (error) throw error;
       setStories(data || []);
 
-      if (data && data.length > 0 && user) {
+      if (data?.length > 0 && user) {
         incrementViewCount(data[0].id);
       }
     } catch (error) {
       console.error('Error fetching stories:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load stories',
-        variant: 'destructive',
-      });
+      toast.error('Failed to load stories');
     } finally {
       setLoading(false);
     }
@@ -96,48 +108,47 @@ const StoriesView = () => {
 
   const incrementViewCount = async (storyId: string) => {
     try {
+      const story = stories.find(s => s.id === storyId);
       await (supabase as any)
         .from('stories')
-        .update({ views_count: (stories[currentIndex]?.views_count || 0) + 1 })
+        .update({ views_count: (story?.views_count || 0) + 1 })
         .eq('id', storyId);
     } catch (error) {
       console.error('Error incrementing view count:', error);
     }
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentIndex < stories.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prev => prev + 1);
       setProgress(0);
-      if (stories[currentIndex + 1]) {
-        incrementViewCount(stories[currentIndex + 1].id);
-      }
+      setReactedEmoji(null);
     } else {
       navigate('/discovery');
     }
-  };
+  }, [currentIndex, stories.length, navigate]);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setProgress(0);
+      setReactedEmoji(null);
     }
   };
 
   const handleReaction = async (emoji: string) => {
     if (!user || !stories[currentIndex]) return;
+    setReactedEmoji(emoji);
 
     try {
       const currentStory = stories[currentIndex];
-      const reactions = currentStory.reactions || [];
+      const reactions = [...(currentStory.reactions || [])];
       reactions.push({ userId: user.id, emoji, timestamp: new Date().toISOString() });
 
       await (supabase as any)
         .from('stories')
         .update({ reactions })
         .eq('id', currentStory.id);
-
-      toast({ description: `Reacted with ${emoji}` });
     } catch (error) {
       console.error('Error adding reaction:', error);
     }
@@ -145,66 +156,85 @@ const StoriesView = () => {
 
   const handleDelete = async () => {
     if (!user || !stories[currentIndex]) return;
-
     const currentStory = stories[currentIndex];
     if (currentStory.user_id !== user.id) return;
 
     try {
-      await (supabase as any)
-        .from('stories')
-        .delete()
-        .eq('id', currentStory.id);
+      await (supabase as any).from('stories').delete().eq('id', currentStory.id);
+      toast.success('Story deleted');
 
-      toast({ description: 'Story deleted' });
-      
       const newStories = stories.filter((_, i) => i !== currentIndex);
       if (newStories.length === 0) {
         navigate('/discovery');
       } else {
         setStories(newStories);
-        if (currentIndex >= newStories.length) {
-          setCurrentIndex(newStories.length - 1);
-        }
+        if (currentIndex >= newStories.length) setCurrentIndex(newStories.length - 1);
       }
     } catch (error) {
-      console.error('Error deleting story:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete story',
-        variant: 'destructive',
-      });
+      toast.error('Failed to delete story');
     }
+  };
+
+  const handleReply = async () => {
+    if (!replyText.trim() || !user || !stories[currentIndex]) return;
+    // Send as a message to the story creator
+    try {
+      await supabase.from('messages').insert({
+        sender_id: user.id,
+        recipient_id: stories[currentIndex].user_id,
+        text: `📖 Replied to your story: "${replyText}"`,
+      });
+      toast.success('Reply sent!');
+      setReplyText('');
+      setShowReply(false);
+    } catch (error) {
+      toast.error('Failed to send reply');
+    }
+  };
+
+  const timeAgo = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const hours = Math.floor(diff / 3600000);
+    const mins = Math.floor(diff / 60000);
+    if (hours > 0) return `${hours}h ago`;
+    return `${mins}m ago`;
   };
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black flex items-center justify-center">
-        <div className="text-white">Loading stories...</div>
+      <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
+        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
       </div>
     );
   }
 
   if (stories.length === 0) {
     return (
-      <div className="fixed inset-0 bg-black flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-white mb-4">No stories available</p>
-          <Button onClick={() => navigate('/discovery')}>Go Back</Button>
+      <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
+        <div className="text-center space-y-4">
+          <p className="text-white/70">No stories available</p>
+          <Button onClick={() => navigate('/discovery')} variant="outline" className="rounded-full">
+            Go Back
+          </Button>
         </div>
       </div>
     );
   }
 
   const currentStory = stories[currentIndex];
+  const isTextStory = currentStory.media_url === 'text-story' || currentStory.background_color;
+  const bgGradient = currentStory.background_color ? BG_MAP[currentStory.background_color] || BG_MAP.night : '';
+  const textPosClass = TEXT_POS_MAP[currentStory.text_position || 'center'] || TEXT_POS_MAP.center;
+  const isOwner = currentStory.user_id === user?.id;
 
   return (
-    <div className="fixed inset-0 bg-black z-50">
+    <div className="fixed inset-0 bg-black z-50 select-none" onClick={(e) => e.stopPropagation()}>
       {/* Progress bars */}
-      <div className="absolute top-0 left-0 right-0 flex gap-1 p-2 z-10">
+      <div className="absolute top-0 left-0 right-0 flex gap-1 p-2 pt-3 z-20">
         {stories.map((_, index) => (
-          <div key={index} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white transition-all"
+          <div key={index} className="flex-1 h-[3px] bg-white/25 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-white rounded-full"
               style={{
                 width: index < currentIndex ? '100%' : index === currentIndex ? `${progress}%` : '0%',
               }}
@@ -214,92 +244,184 @@ const StoriesView = () => {
       </div>
 
       {/* Header */}
-      <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-10">
+      <div className="absolute top-6 left-0 right-0 flex items-center justify-between px-4 z-20">
         <div className="flex items-center gap-3">
           <img
             src={currentStory.profiles.profile_image}
             alt={currentStory.profiles.name}
-            className="w-10 h-10 rounded-full border-2 border-white"
+            className="w-9 h-9 rounded-full border-2 border-white/50 object-cover"
           />
           <div>
-            <p className="text-white font-semibold">{currentStory.profiles.name}</p>
-            <p className="text-white/70 text-xs">
-              {new Date(currentStory.created_at).toLocaleTimeString()}
+            <p className="text-white font-semibold text-sm flex items-center gap-1">
+              {currentStory.profiles.name}
+              {currentStory.profiles.verified && (
+                <span className="text-blue-400 text-xs">✓</span>
+              )}
             </p>
+            <p className="text-white/50 text-[10px]">{timeAgo(currentStory.created_at)}</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          {currentStory.user_id === user?.id && (
+        <div className="flex items-center gap-1">
+          {isOwner && (
+            <span className="text-white/50 text-xs flex items-center gap-1 mr-2">
+              <Eye className="w-3.5 h-3.5" /> {currentStory.views_count}
+            </span>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setPaused(!paused)}
+            className="text-white hover:bg-white/10 h-8 w-8"
+          >
+            {paused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+          </Button>
+          {isOwner && (
             <Button
               variant="ghost"
               size="icon"
               onClick={handleDelete}
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-white/10 h-8 w-8"
             >
-              <Trash2 className="w-5 h-5" />
+              <Trash2 className="w-4 h-4" />
             </Button>
           )}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/discovery')}
-            className="text-white hover:bg-white/10"
+            className="text-white hover:bg-white/10 h-8 w-8"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </Button>
         </div>
       </div>
 
       {/* Story content */}
-      <div className="h-full flex items-center justify-center">
-        {currentStory.media_type === 'image' ? (
+      <div className={`h-full flex items-center justify-center ${isTextStory ? `bg-gradient-to-br ${bgGradient}` : ''}`}>
+        {!isTextStory && currentStory.media_type === 'image' && (
           <img
             src={currentStory.media_url}
             alt="Story"
-            className="max-h-full max-w-full object-contain"
+            className="h-full w-full object-cover"
           />
-        ) : (
+        )}
+        {!isTextStory && currentStory.media_type === 'video' && (
           <video
             src={currentStory.media_url}
-            className="max-h-full max-w-full object-contain"
+            className="h-full w-full object-cover"
             autoPlay
             loop
-            muted
+            muted={false}
+            playsInline
           />
+        )}
+
+        {/* Text overlay */}
+        {currentStory.text_overlay && (
+          <div className={`absolute ${textPosClass} text-center z-10`}>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`font-bold drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] px-4 leading-relaxed ${
+                isTextStory ? 'text-white text-2xl' : 'text-white text-xl'
+              }`}
+            >
+              {currentStory.text_overlay}
+            </motion.p>
+          </div>
         )}
       </div>
 
       {/* Navigation areas */}
       <button
         onClick={handlePrevious}
-        className="absolute left-0 top-0 bottom-0 w-1/4 cursor-pointer"
+        className="absolute left-0 top-16 bottom-20 w-1/3"
         disabled={currentIndex === 0}
-      >
-        {currentIndex > 0 && (
-          <ChevronLeft className="absolute left-4 top-1/2 transform -translate-y-1/2 w-8 h-8 text-white/50" />
-        )}
-      </button>
+      />
       <button
         onClick={handleNext}
-        className="absolute right-0 top-0 bottom-0 w-1/4 cursor-pointer"
-      >
-        <ChevronRight className="absolute right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 text-white/50" />
-      </button>
+        className="absolute right-0 top-16 bottom-20 w-1/3"
+      />
+      {/* Hold to pause - center area */}
+      <button
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+        onMouseDown={() => setPaused(true)}
+        onMouseUp={() => setPaused(false)}
+        className="absolute left-1/3 right-1/3 top-16 bottom-20"
+      />
 
-      {/* Reactions */}
-      {currentStory.user_id !== user?.id && (
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4 px-4">
-          {['❤️', '😍', '🔥', '👏', '😂'].map((emoji) => (
-            <Button
-              key={emoji}
-              variant="ghost"
-              size="lg"
-              onClick={() => handleReaction(emoji)}
-              className="text-3xl hover:scale-125 transition-transform"
+      {/* Reaction animation */}
+      <AnimatePresence>
+        {reactedEmoji && (
+          <motion.div
+            key={reactedEmoji + Date.now()}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1.5, opacity: 1 }}
+            exit={{ scale: 3, opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
+          >
+            <span className="text-7xl">{reactedEmoji}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom actions */}
+      {!isOwner && (
+        <div className="absolute bottom-0 left-0 right-0 z-20 pb-6 px-4">
+          {showReply ? (
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="flex gap-2"
             >
-              {emoji}
-            </Button>
-          ))}
+              <Input
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Reply to story..."
+                className="rounded-full bg-white/15 border-white/20 text-white placeholder:text-white/40 backdrop-blur-sm"
+                autoFocus
+                onKeyDown={(e) => e.key === 'Enter' && handleReply()}
+              />
+              <Button
+                size="icon"
+                onClick={handleReply}
+                disabled={!replyText.trim()}
+                className="rounded-full bg-primary shrink-0"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => { setShowReply(false); setReplyText(''); }}
+                className="rounded-full text-white shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </motion.div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => { setPaused(true); setShowReply(true); }}
+                className="text-white/70 text-sm bg-white/10 backdrop-blur-sm rounded-full px-4 py-2"
+              >
+                Send a reply...
+              </button>
+              <div className="flex gap-1">
+                {['❤️', '🔥', '😍', '😂', '😮'].map((emoji) => (
+                  <button
+                    key={emoji}
+                    onClick={() => handleReaction(emoji)}
+                    className="text-2xl hover:scale-125 active:scale-150 transition-transform p-1"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
