@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+
 import { Accordion } from '@/components/ui/accordion';
 import { 
   Settings, Heart, Camera, CheckCircle2, Share2,
-  User, Wine, Star, Briefcase, MapPin, Pencil, Plus, Shield,
+  User, Wine, Star, Briefcase, MapPin, Plus, Shield,
   Languages, BrainCircuit, Palette, Plane
 } from 'lucide-react';
 import PrivacySettings from '@/components/my-profile/PrivacySettings';
@@ -35,18 +35,10 @@ import { toast } from 'sonner';
 import { uploadProfilePhoto } from '@/api/profiles';
 import { useTranslations } from '@/hooks/useTranslations';
 
-const profileSections = [
-  { id: 'basic', label: 'Basic Info', icon: User, component: BasicInfoEditor },
-  { id: 'lifestyle', label: 'Lifestyle', icon: Wine, component: LifestyleEditor },
-  { id: 'values', label: 'Values & Beliefs', icon: Star, component: ValuesPersonalityEditor },
-  { id: 'interests', label: 'Interests & Hobbies', icon: Heart, component: InterestsHobbiesEditor },
-  { id: 'career', label: 'Career & Education', icon: Briefcase, component: EducationCareerEditor },
-  { id: 'relationship', label: 'Relationship Goals', icon: Heart, component: RelationshipPreferencesEditor },
-];
 
 const MyProfile = () => {
   const navigate = useNavigate();
-  const [openSheet, setOpenSheet] = useState<string | null>(null);
+  
   const { t } = useTranslations();
   
   const { 
@@ -338,10 +330,7 @@ const MyProfile = () => {
                    <p className="text-sm font-semibold text-foreground">{t('my_profile.complete_profile', 'Complete your profile')}</p>
                    <p className="text-xs text-muted-foreground mt-0.5">{t('my_profile.complete_profile_desc', 'Fill in missing details to get more matches')}</p>
                 </div>
-                <Button size="sm" className="rounded-full h-9 px-4 text-xs" onClick={() => {
-                  const incomplete = profileSections.find(s => getSectionCompletion(s.id) < 100);
-                  if (incomplete) setOpenSheet(incomplete.id);
-                }}>
+                 <Button size="sm" className="rounded-full h-9 px-4 text-xs">
                   {t('my_profile.continue', 'Continue')}
                 </Button>
               </div>
@@ -355,12 +344,6 @@ const MyProfile = () => {
             >
               <Share2 className="h-4 w-4 mr-1.5" />
               {t('my_profile.share_profile', 'Share Profile')}
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1 h-11 rounded-2xl text-sm font-medium"
-              onClick={() => setOpenSheet('basic')}
-            >
-              <Pencil className="h-4 w-4 mr-1.5" />
-              {t('my_profile.edit_profile', 'Edit Profile')}
             </Button>
           </div>
 
@@ -387,118 +370,59 @@ const MyProfile = () => {
           <div className="mx-4">
             <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives", "travel"]} className="w-full space-y-3">
               <EditableAccordionSection
-                value="basics"
-                title="Basics"
-                icon={<User />}
-                color="text-primary"
-                gradientClass="bg-gradient-to-r from-primary/5 to-transparent"
-                borderClass="border-primary/10"
-                onEdit={() => setOpenSheet('basic')}
+                value="basics" title="Basics" icon={<User />} color="text-primary"
+                gradientClass="bg-gradient-to-r from-primary/5 to-transparent" borderClass="border-primary/10"
+                editorContent={<BasicInfoEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileBasics
-                  details={details as any}
-                  tinderBadgeStyle={tinderBadgeStyle}
-                  formatList={formatList}
-                  isMobile={true}
-                />
+                <ProfileBasics details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="lifestyle"
-                title="Lifestyle"
-                icon={<Wine />}
-                color="text-orange-500"
-                gradientClass="bg-gradient-to-r from-orange-500/5 to-transparent"
-                borderClass="border-orange-500/10"
-                onEdit={() => setOpenSheet('lifestyle')}
+                value="lifestyle" title="Lifestyle" icon={<Wine />} color="text-orange-500"
+                gradientClass="bg-gradient-to-r from-orange-500/5 to-transparent" borderClass="border-orange-500/10"
+                editorContent={<LifestyleEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileLifestyle
-                  details={details as any}
-                  formatList={formatList}
-                  isMobile={true}
-                />
+                <ProfileLifestyle details={details as any} formatList={formatList} isMobile={true} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="interests"
-                title="Interests & Hobbies"
-                icon={<Star />}
-                color="text-amber-500"
-                gradientClass="bg-gradient-to-r from-amber-500/5 to-transparent"
-                borderClass="border-amber-500/10"
-                onEdit={() => setOpenSheet('interests')}
+                value="interests" title="Interests & Hobbies" icon={<Star />} color="text-amber-500"
+                gradientClass="bg-gradient-to-r from-amber-500/5 to-transparent" borderClass="border-amber-500/10"
+                editorContent={<InterestsHobbiesEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileInterests
-                  details={details as any}
-                  tinderBadgeStyle={tinderBadgeStyle}
-                  formatList={formatList}
-                  isMobile={true}
-                />
+                <ProfileInterests details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="more"
-                title="Communication"
-                icon={<Languages />}
-                color="text-primary"
-                gradientClass="bg-gradient-to-r from-primary/5 to-transparent"
-                borderClass="border-primary/10"
-                onEdit={() => setOpenSheet('values')}
+                value="more" title="Communication" icon={<Languages />} color="text-primary"
+                gradientClass="bg-gradient-to-r from-primary/5 to-transparent" borderClass="border-primary/10"
+                editorContent={<RelationshipPreferencesEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileCommunication
-                  details={details as any}
-                  tinderBadgeStyle={tinderBadgeStyle}
-                  isMobile={true}
-                />
+                <ProfileCommunication details={details as any} tinderBadgeStyle={tinderBadgeStyle} isMobile={true} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="personality"
-                title="Personality & Growth"
-                icon={<BrainCircuit />}
-                color="text-purple-500"
-                gradientClass="bg-gradient-to-r from-purple-500/5 to-transparent"
-                borderClass="border-purple-500/10"
-                onEdit={() => setOpenSheet('values')}
+                value="personality" title="Personality & Growth" icon={<BrainCircuit />} color="text-purple-500"
+                gradientClass="bg-gradient-to-r from-purple-500/5 to-transparent" borderClass="border-purple-500/10"
+                editorContent={<ValuesPersonalityEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfilePersonality
-                  details={details as any}
-                  tinderBadgeStyle={tinderBadgeStyle}
-                  formatList={formatList}
-                  isMobile={true}
-                />
+                <ProfilePersonality details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="creatives"
-                title="Creative & Lifestyle"
-                icon={<Palette />}
-                color="text-pink-500"
-                gradientClass="bg-gradient-to-r from-pink-500/5 to-transparent"
-                borderClass="border-pink-500/10"
-                onEdit={() => setOpenSheet('interests')}
+                value="creatives" title="Creative & Lifestyle" icon={<Palette />} color="text-pink-500"
+                gradientClass="bg-gradient-to-r from-pink-500/5 to-transparent" borderClass="border-pink-500/10"
+                editorContent={<InterestsHobbiesEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileCreative
-                  details={details as any}
-                  tinderBadgeStyle={tinderBadgeStyle}
-                  formatList={formatList}
-                  isMobile={true}
-                />
+                <ProfileCreative details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="travel"
-                title="Travel"
-                icon={<Plane />}
-                color="text-teal-600"
-                gradientClass="bg-gradient-to-r from-teal-600/5 to-transparent"
-                borderClass="border-teal-600/10"
-                onEdit={() => setOpenSheet('lifestyle')}
+                value="travel" title="Travel" icon={<Plane />} color="text-teal-600"
+                gradientClass="bg-gradient-to-r from-teal-600/5 to-transparent" borderClass="border-teal-600/10"
+                editorContent={<LifestyleEditor profileData={profileData} fieldSources={fieldSources} onUpdate={handleProfileUpdate} />}
               >
-                <ProfileTravel
-                  details={details as any}
-                  isMobile={true}
-                />
+                <ProfileTravel details={details as any} isMobile={true} />
               </EditableAccordionSection>
             </Accordion>
           </div>
@@ -539,25 +463,6 @@ const MyProfile = () => {
         </div>
       </div>
 
-      {/* Bottom sheets for editing sections */}
-      {profileSections.map((section) => {
-        const EditorComponent = section.component;
-        return (
-          <Sheet key={section.id} open={openSheet === section.id} onOpenChange={(open) => !open && setOpenSheet(null)}>
-            <SheetContent side="bottom" className="rounded-t-3xl max-h-[85vh] overflow-y-auto bg-background">
-              <div className="w-12 h-1.5 bg-muted-foreground/30 rounded-full mx-auto mb-4 mt-2" />
-              <SheetHeader className="pb-4">
-                <SheetTitle className="text-foreground text-lg">{section.label}</SheetTitle>
-              </SheetHeader>
-              <EditorComponent 
-                profileData={profileData} 
-                fieldSources={fieldSources}
-                onUpdate={handleProfileUpdate}
-              />
-            </SheetContent>
-          </Sheet>
-        );
-      })}
     </div>
   );
 };
