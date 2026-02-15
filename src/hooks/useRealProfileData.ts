@@ -4,8 +4,7 @@ import { getCurrentUserProfile, updateProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement, CategoryProgress } from '@/utils/realUserEnhancement';
 import { assignRandomValues, updateFieldWithSource, EnhancedProfileData, FieldSource } from '@/utils/profileEnhancement';
 import { fillEmptyProfileFields } from '@/utils/directProfileFiller';
-import { convertDbToUiValues, convertUiToDbValues } from '@/utils/valueMapping';
-import { convertDbToUiProfile, convertUiToDbProfile } from '@/utils/fieldNameMapping';
+import { convertDbToUiProfile } from '@/utils/fieldNameMapping';
 import { toast } from 'sonner';
 
 // Define a database-compatible profile interface
@@ -120,8 +119,8 @@ export const useRealProfileData = () => {
         // Fill empty fields directly with random values FIRST
         const filledProfile = fillEmptyProfileFields(dbProfile);
 
-        // Convert database values to UI values for proper display
-        const uiCompatibleProfile = convertDbToUiValues(filledProfile);
+        // Skip value conversion - keep DB values as-is so they match select options
+        const uiCompatibleProfile = filledProfile;
 
         // Convert field names from snake_case to camelCase for UI
         const finalProfile = convertDbToUiProfile(uiCompatibleProfile);
@@ -150,20 +149,18 @@ export const useRealProfileData = () => {
   const updateProfileData = async (updates: Partial<DatabaseProfile>) => {
     try {
       if (profileData && enhancedData) {
-        // Convert UI updates to database format before saving
-        const dbUpdates = convertUiToDbProfile(updates);
-        const dbValueUpdates = convertUiToDbValues(dbUpdates);
+        // Updates already come in snake_case with human-readable values from handleProfileUpdate
+        // No need for additional conversions - save directly
+        await updateProfile(profileData.id, updates as any);
         
-        await updateProfile(profileData.id, dbValueUpdates as any);
-        
-        // Optimistic local merge instead of full refresh
-        const mergedProfileData = { ...profileData, ...dbValueUpdates };
+        // Optimistic local merge
+        const mergedProfileData = { ...profileData, ...updates };
         setProfileData(mergedProfileData as DatabaseProfile);
 
         // Merge into enhanced data and mark fields as user-set
         let updatedEnhanced = { ...enhancedData };
-        const uiUpdates = convertDbToUiProfile(dbValueUpdates);
-        Object.entries(uiUpdates).forEach(([key, value]) => {
+        // Merge snake_case keys
+        Object.entries(updates).forEach(([key, value]) => {
           updatedEnhanced = updateFieldWithSource(
             updatedEnhanced.profileData,
             updatedEnhanced.fieldSources,
@@ -171,8 +168,9 @@ export const useRealProfileData = () => {
             value
           );
         });
-        // Also merge the db-named keys
-        Object.entries(dbValueUpdates).forEach(([key, value]) => {
+        // Also merge camelCase equivalents for UI components
+        const uiUpdates = convertDbToUiProfile(updates);
+        Object.entries(uiUpdates).forEach(([key, value]) => {
           updatedEnhanced = updateFieldWithSource(
             updatedEnhanced.profileData,
             updatedEnhanced.fieldSources,
