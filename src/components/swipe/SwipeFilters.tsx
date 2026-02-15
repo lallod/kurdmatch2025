@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SlidersHorizontal, Lock, X } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { SlidersHorizontal, Lock, X, MapPin } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -23,6 +24,7 @@ export interface SwipeFilters {
   exerciseHabits?: string;
   education?: string;
   occupation?: string;
+  maxDistance?: number;
 }
 
 interface SwipeFilterSidebarProps {
@@ -54,6 +56,7 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
   const [exerciseHabits, setExerciseHabits] = useState(currentFilters.exerciseHabits || '');
   const [education, setEducation] = useState(currentFilters.education || '');
   const [occupation, setOccupation] = useState(currentFilters.occupation || '');
+  const [maxDistance, setMaxDistance] = useState(currentFilters.maxDistance || 100);
 
   const handleApply = () => {
     if (!isSubscribed) {
@@ -75,6 +78,7 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
       exerciseHabits: exerciseHabits || undefined,
       education: education || undefined,
       occupation: occupation || undefined,
+      maxDistance: maxDistance < 100 ? maxDistance : undefined,
     });
     onOpenChange(false);
     toast.success(t('swipe.filters_applied', 'Filters applied'));
@@ -85,7 +89,7 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
     setEthnicity(''); setKurdistanRegion(''); setBodyType('');
     setHeightMin(''); setHeightMax('');
     setSmoking(''); setDrinking(''); setExerciseHabits('');
-    setEducation(''); setOccupation('');
+    setEducation(''); setOccupation(''); setMaxDistance(100);
     onApplyFilters({});
     onOpenChange(false);
     toast.success(t('swipe.filters_reset', 'Filters reset'));
@@ -140,7 +144,27 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
               <Input type="text" placeholder={t('swipe.city_or_region', 'City or region...')} value={location} onChange={(e) => setLocation(e.target.value)} className={`${inputCls} placeholder:text-muted-foreground`} disabled={dis} />
             </div>
 
-            {/* Kurdistan Region */}
+            {/* Max Distance */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label className={labelCls}>
+                  <MapPin className="w-3.5 h-3.5 inline mr-1" />
+                  Near Me
+                </Label>
+                <span className="text-xs text-muted-foreground">{maxDistance >= 100 ? 'Any distance' : `${maxDistance} km`}</span>
+              </div>
+              <Slider
+                value={[maxDistance]}
+                onValueChange={([v]) => setMaxDistance(v)}
+                min={5}
+                max={100}
+                step={5}
+                disabled={dis}
+                className="w-full"
+              />
+              <p className="text-[10px] text-muted-foreground">Uses your current GPS location</p>
+            </div>
+
             <div className="space-y-1.5">
               <Label className={labelCls}>Kurdistan Region</Label>
               <Select value={selectVal(kurdistanRegion)} onValueChange={(v) => setKurdistanRegion(fromSelect(v))} disabled={dis}>
