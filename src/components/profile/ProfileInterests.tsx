@@ -3,7 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Calendar, Sparkles, Map, Headphones, Puzzle
+  Calendar, Sparkles, Map, Headphones, Puzzle, Heart, Star
 } from 'lucide-react';
 import DetailItem from './DetailItem';
 
@@ -32,26 +32,44 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
 }) => {
   return (
     <div className="py-4">
-      <div className="flex flex-wrap gap-2 mb-6">
-        {details.interests.map((interest, index) => (
-          <Badge key={index} className="rounded-full bg-gradient-to-r from-primary/90 to-accent/90 text-primary-foreground hover:from-primary hover:to-accent transition-colors py-1.5 px-3">
-            {interest}
-          </Badge>
-        ))}
-        
-        {details.hobbies && Array.isArray(details.hobbies) && details.hobbies.map((hobby, index) => (
-          <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-accent/90 to-primary/70 text-primary-foreground hover:from-accent hover:to-primary transition-colors py-1.5 px-3">
-            {hobby}
-          </Badge>
-        ))}
-        
-        {details.hobbies && !Array.isArray(details.hobbies) && 
-          details.hobbies.split(", ").map((hobby, index) => (
-            <Badge key={`hobby-${index}`} className="rounded-full bg-gradient-to-r from-accent/90 to-primary/70 text-primary-foreground hover:from-accent hover:to-primary transition-colors py-1.5 px-3">
-              {hobby}
-            </Badge>
-          ))
-        }
+      <div className="space-y-1">
+        <DetailItem 
+          icon={<Heart size={18} />} label="Interests" 
+          editable={!!onFieldEdit}
+          fieldKey="interests"
+          fieldType="multi-select"
+          fieldOptions={["Travel", "Photography", "Cooking", "Hiking", "Reading", "Music", "Dancing", "Sports", "Fitness", "Art", "Movies", "Gaming", "Technology", "Fashion", "Food", "Nature", "Animals", "History", "Science", "Politics"]}
+          onFieldEdit={onFieldEdit}
+          value={
+            <div className="flex flex-wrap gap-2 mt-1">
+              {details.interests.map((interest, i) => (
+                <Badge key={i} variant="outline" className={tinderBadgeStyle}>{interest}</Badge>
+              ))}
+            </div>
+          }
+        />
+        <Separator />
+        <DetailItem 
+          icon={<Star size={18} />} label="Hobbies" 
+          editable={!!onFieldEdit}
+          fieldKey="hobbies"
+          fieldType="multi-select"
+          fieldOptions={["Drawing", "Painting", "Writing", "Singing", "Playing instruments", "Gardening", "Crafting", "Collecting", "Board games", "Video games", "Yoga", "Meditation", "Running", "Cycling", "Swimming", "Rock climbing", "Martial arts", "Chess"]}
+          onFieldEdit={onFieldEdit}
+          value={
+            <div className="flex flex-wrap gap-2 mt-1">
+              {Array.isArray(details.hobbies) ? 
+                details.hobbies.map((hobby, i) => (
+                  <Badge key={i} variant="outline" className={tinderBadgeStyle}>{hobby}</Badge>
+                )) : 
+                (formatList(details.hobbies) || "Not specified").split(", ").filter(Boolean).map((hobby, i) => (
+                  <Badge key={i} variant="outline" className={tinderBadgeStyle}>{hobby}</Badge>
+                ))
+              }
+            </div>
+          }
+        />
+        <Separator />
       </div>
       
       <div className="space-y-1">
