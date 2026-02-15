@@ -82,10 +82,10 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
 
             <div className="space-y-1.5 sm:space-y-2">
               <Label className="text-foreground text-sm">{t('swipe.religion', 'Religion')}</Label>
-              <Select value={religion} onValueChange={setReligion} disabled={!isSubscribed}>
+              <Select value={religion || "any"} onValueChange={(val) => setReligion(val === "any" ? "" : val)} disabled={!isSubscribed}>
                 <SelectTrigger className="bg-muted/50 border-border text-foreground h-9"><SelectValue placeholder={t('swipe.select_religion', 'Select religion...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
                   <SelectItem value="Muslim">Muslim</SelectItem><SelectItem value="Christian">Christian</SelectItem><SelectItem value="Jewish">Jewish</SelectItem>
                   <SelectItem value="Yazidi">Yazidi</SelectItem><SelectItem value="Spiritual">Spiritual</SelectItem><SelectItem value="Agnostic">Agnostic</SelectItem>
                   <SelectItem value="Atheist">Atheist</SelectItem><SelectItem value="Other">{t('swipe.other', 'Other')}</SelectItem>
