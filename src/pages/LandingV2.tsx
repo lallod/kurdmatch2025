@@ -393,9 +393,10 @@ const LandingV2 = () => {
             <div>
               <h4 className="font-semibold mb-4 text-white">Company</h4>
               <ul className="space-y-2 text-sm text-purple-200">
-                <li><a href="#about" className="hover:text-pink-300 transition-colors">About Us</a></li>
+                <li><a href="/about" className="hover:text-pink-300 transition-colors">About Us</a></li>
                 <li><a href="#features" className="hover:text-pink-300 transition-colors">Features</a></li>
-                <li><a href="#contact" className="hover:text-pink-300 transition-colors">Contact</a></li>
+                <li><a href="/help" className="hover:text-pink-300 transition-colors">Help & Support</a></li>
+                <li><a href="/community-guidelines" className="hover:text-pink-300 transition-colors">Community Guidelines</a></li>
               </ul>
             </div>
 
