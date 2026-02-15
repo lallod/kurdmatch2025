@@ -30,7 +30,15 @@ export const OPTIONS = {
   education: ['High School', 'Some College', 'Associate\'s Degree', 'Bachelor\'s Degree', 'Master\'s Degree', 'PhD', 'Trade School', 'Self-Educated', 'Professional Degree'],
   travelFrequency: ['Never', 'Rarely', 'Yearly', 'Several times per year', 'Monthly', 'Digital nomad'],
   dietaryPreferences: ['Omnivore', 'Vegetarian', 'Vegan', 'Pescatarian', 'Flexitarian', 'Keto', 'Paleo', 'Gluten-free', 'Kosher', 'Halal', 'No restrictions'],
-  languages: ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Japanese', 'Chinese', 'Arabic', 'Hindi', 'Kurdish', 'Farsi', 'Turkish', 'Other'],
+  languages: [
+    'Kurdish (Sorani)', 'Kurdish (Kurmanji)', 'Kurdish (Zazaki)', 'Kurdish (Gorani)', 'Kurdish (Hawrami)',
+    'Arabic', 'Turkish', 'Persian (Farsi)', 'German', 'English', 'Swedish', 'Dutch', 'French', 'Norwegian', 'Danish', 'Finnish',
+    'Azerbaijani', 'Armenian', 'Georgian', 'Assyrian', 'Aramaic', 'Turkmen', 'Uzbek', 'Dari', 'Pashto', 'Balochi', 'Luri', 'Hebrew', 'Urdu',
+    'Italian', 'Spanish', 'Portuguese', 'Russian', 'Greek', 'Polish', 'Czech', 'Hungarian', 'Romanian', 'Bulgarian', 'Croatian', 'Serbian',
+    'Ukrainian', 'Bosnian', 'Albanian', 'Austrian German', 'Swiss German',
+    'Mandarin Chinese', 'Japanese', 'Korean', 'Hindi', 'Bengali', 'Punjabi', 'Tamil', 'Indonesian',
+    'Swahili', 'Amharic', 'Somali', 'Other'
+  ],
   relationshipType: ['Monogamous', 'Polyamorous', 'Open relationship', 'Not sure yet', 'Depends on the partner'],
   livingArrangement: ['Live alone', 'Live with roommates', 'Live with family', 'Live with partner', 'Nomadic', 'Own my home', 'Rent'],
   petsOwned: ['Dog(s)', 'Cat(s)', 'Birds', 'Fish', 'Reptiles', 'Small mammals', 'Farm animals', 'No pets', 'Allergic to pets'],

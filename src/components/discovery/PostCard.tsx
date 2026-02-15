@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Post, likePost, unlikePost } from '@/api/posts';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -47,6 +47,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
+  const [showFullCaption, setShowFullCaption] = useState(false);
+  const [showDoubleTapHeart, setShowDoubleTapHeart] = useState(false);
+  const lastTapRef = useRef(0);
 
   useEffect(() => {
     checkSubscription();
@@ -126,17 +129,27 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
     catch (error) { toast({ title: t('common.error', 'Error'), description: t('subscription.failed_checkout', 'Failed to start checkout'), variant: 'destructive' }); }
   };
 
+  const handleDoubleTap = () => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 300) {
+      if (!isLiked) handleLike();
+      setShowDoubleTapHeart(true);
+      setTimeout(() => setShowDoubleTapHeart(false), 800);
+    }
+    lastTapRef.current = now;
+  };
+
   const profiles = post.profiles ?? { name: 'Unknown', profile_image: '', verified: false };
   const isOwnPost = currentUserId === post.user_id;
+  const hasMedia = !!(post as any).media_url;
+  const mediaType = (post as any).media_type || 'image';
+  const mediaUrl = (post as any).media_url;
 
   return (
     <div className="animate-fade-in">
       {/* Header */}
       <div className="flex items-center px-3 py-2.5">
-        <Avatar 
-          className="w-8 h-8 cursor-pointer"
-          onClick={handleUsernameClick}
-        >
+        <Avatar className="w-8 h-8 cursor-pointer" onClick={handleUsernameClick}>
           <AvatarImage src={profiles.profile_image} alt={profiles.name} />
           <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">{profiles.name?.[0] ?? '?'}</AvatarFallback>
         </Avatar>
@@ -145,9 +158,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
             <button onClick={handleUsernameClick} className="font-semibold text-sm text-foreground hover:opacity-70">
               {profiles.name}
             </button>
-            {profiles.verified && (
-              <CheckCircle className="w-3 h-3 text-primary fill-primary" />
-            )}
+            {profiles.verified && <CheckCircle className="w-3 h-3 text-primary fill-primary" />}
           </div>
           <p className="text-[10px] text-muted-foreground leading-tight">
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
@@ -163,37 +174,57 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
             {isOwnPost && (
               <>
                 <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  {t('common.edit', 'Edit')}
+                  <Pencil className="mr-2 h-4 w-4" />{t('common.edit', 'Edit')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {t('common.delete', 'Delete')}
+                  <Trash2 className="mr-2 h-4 w-4" />{t('common.delete', 'Delete')}
                 </DropdownMenuItem>
               </>
             )}
             {!isOwnPost && (
               <>
                 <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
-                  <Flag className="mr-2 h-4 w-4" />
-                  {t('common.report', 'Report')}
+                  <Flag className="mr-2 h-4 w-4" />{t('common.report', 'Report')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowBlockDialog(true)}>
-                  <Ban className="mr-2 h-4 w-4" />
-                  {t('common.block', 'Block')}
+                  <Ban className="mr-2 h-4 w-4" />{t('common.block', 'Block')}
                 </DropdownMenuItem>
               </>
             )}
             <DropdownMenuItem onClick={() => setShowShareDialog(true)}>
-              <Share2 className="mr-2 h-4 w-4" />
-              {t('common.share', 'Share')}
+              <Share2 className="mr-2 h-4 w-4" />{t('common.share', 'Share')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      {/* Post content */}
-      <PostContent content={post.content} />
+      {/* Media (Instagram-style full-width) */}
+      {hasMedia && (
+        <div className="relative w-full" onClick={handleDoubleTap}>
+          {mediaType === 'video' ? (
+            <video
+              src={mediaUrl}
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full max-h-[600px] object-cover bg-black"
+            />
+          ) : (
+            <img
+              src={mediaUrl}
+              alt="Post media"
+              className="w-full max-h-[600px] object-cover bg-muted"
+              loading="lazy"
+            />
+          )}
+          {/* Double-tap heart animation */}
+          {showDoubleTapHeart && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <Heart className="w-20 h-20 text-white fill-white drop-shadow-lg animate-scale-in" />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Action bar */}
       <div className="flex items-center justify-between px-3 py-2">
@@ -214,6 +245,24 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           <Bookmark className={`w-5 h-5 transition-colors ${isSaved ? 'text-primary fill-primary' : 'text-muted-foreground hover:text-primary'}`} />
         </button>
       </div>
+
+      {/* Caption (text content below media, Instagram-style) */}
+      {post.content && (
+        <div className="px-3 pb-2">
+          <div className={`text-sm ${!showFullCaption && hasMedia ? 'line-clamp-2' : ''}`}>
+            <span className="font-semibold text-foreground mr-1.5 text-sm">{profiles.name}</span>
+            <PostContent content={post.content} />
+          </div>
+          {hasMedia && !showFullCaption && post.content.length > 100 && (
+            <button onClick={() => setShowFullCaption(true)} className="text-xs text-muted-foreground mt-0.5">
+              more
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Text-only posts (no media) show content normally */}
+      {!hasMedia && !post.content && null}
 
       {/* Comments section */}
       {showComments && <CommentSection postId={post.id} />}
