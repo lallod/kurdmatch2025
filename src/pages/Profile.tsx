@@ -5,6 +5,7 @@ import { Profile as ProfileType } from '@/types/swipe';
 import { supabase } from '@/integrations/supabase/client';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
+import { languageCategories } from '@/data/languages';
 
 import ProfileSwipeActions from '@/components/swipe/ProfileSwipeActions';
 import ProfileActionButtons from '@/components/profile/ProfileActionButtons';
@@ -249,16 +250,34 @@ const Profile = () => {
                     {getDisplayValue(profile.communication_style) && <div><span className="text-muted-foreground/70">Communication:</span> {profile.communication_style}</div>}
                     {getDisplayValue(profile.ideal_date) && <div><span className="text-muted-foreground/70">Ideal Date:</span> {profile.ideal_date}</div>}
                     {getDisplayValue(profile.family_closeness) && <div><span className="text-muted-foreground/70">Family:</span> {profile.family_closeness}</div>}
-                    {hasRealArrayValues(profile.languages) && (
-                      <div>
-                        <span className="text-muted-foreground/70">Languages:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {profile.languages.map((language: string, index: number) => (
-                            <Badge key={index} className="bg-primary/20 text-primary text-xs">{language}</Badge>
-                          ))}
+                    {hasRealArrayValues(profile.languages) && (() => {
+                      const kurdish = profile.languages.filter((l: string) => languageCategories.kurdish.includes(l));
+                      const other = profile.languages.filter((l: string) => !languageCategories.kurdish.includes(l));
+                      return (
+                        <div className="space-y-1.5">
+                          {kurdish.length > 0 && (
+                            <div>
+                              <span className="text-muted-foreground/70 text-[10px] uppercase tracking-wider">Kurdish</span>
+                              <div className="flex flex-wrap gap-1 mt-0.5">
+                                {kurdish.map((l: string, i: number) => (
+                                  <Badge key={i} className="bg-primary/20 text-primary text-xs">{l.replace('Kurdish (', '').replace(')', '')}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {other.length > 0 && (
+                            <div>
+                              <span className="text-muted-foreground/70 text-[10px] uppercase tracking-wider">Languages</span>
+                              <div className="flex flex-wrap gap-1 mt-0.5">
+                                {other.map((l: string, i: number) => (
+                                  <Badge key={i} className="bg-primary/20 text-primary text-xs">{l}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
                   </div>
                 </AccordionContent>
               </AccordionItem>
