@@ -126,6 +126,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
     catch (error) { toast({ title: t('common.error', 'Error'), description: t('subscription.failed_checkout', 'Failed to start checkout'), variant: 'destructive' }); }
   };
 
+  const profiles = post.profiles ?? { name: 'Unknown', profile_image: '', verified: false };
+  const isOwnPost = currentUserId === post.user_id;
+
   return (
     <div className="animate-fade-in">
       {/* Header */}
@@ -134,15 +137,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           className="w-8 h-8 cursor-pointer"
           onClick={handleUsernameClick}
         >
-          <AvatarImage src={post.profiles.profile_image} alt={post.profiles.name} />
-          <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">{post.profiles.name[0]}</AvatarFallback>
+          <AvatarImage src={profiles.profile_image} alt={profiles.name} />
+          <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">{profiles.name?.[0] ?? '?'}</AvatarFallback>
         </Avatar>
         <div className="flex-1 ml-2.5">
           <div className="flex items-center gap-1">
             <button onClick={handleUsernameClick} className="font-semibold text-sm text-foreground hover:opacity-70">
-              {post.profiles.name}
+              {profiles.name}
             </button>
-            {post.profiles.verified && (
+            {profiles.verified && (
               <CheckCircle className="w-3 h-3 text-primary fill-primary" />
             )}
           </div>
@@ -152,111 +155,79 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="text-muted-foreground h-8 w-8 flex items-center justify-center rounded-full">
+            <button className="text-muted-foreground h-8 w-8 flex items-center justify-center rounded-full" aria-label="Post options">
               <MoreVertical className="w-4 h-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-card border-border rounded-xl">
-            {currentUserId === post.user_id ? (
+          <DropdownMenuContent align="end" className="w-48">
+            {isOwnPost && (
               <>
-                <DropdownMenuItem onClick={() => setShowEditDialog(true)} className="text-xs">
-                  <Pencil className="w-3.5 h-3.5 mr-2" />{t('common.edit', 'Edit')}
+                <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  {t('common.edit', 'Edit')}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive focus:text-destructive text-xs">
-                  <Trash2 className="w-3.5 h-3.5 mr-2" />{t('common.delete', 'Delete')}
-                </DropdownMenuItem>
-              </>
-            ) : (
-              <>
-                <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-xs">
-                  <Flag className="w-3.5 h-3.5 mr-2" />{t('common.report', 'Report')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive focus:text-destructive text-xs">
-                  <Ban className="w-3.5 h-3.5 mr-2" />{t('common.block', 'Block')}
+                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {t('common.delete', 'Delete')}
                 </DropdownMenuItem>
               </>
             )}
+            {!isOwnPost && (
+              <>
+                <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
+                  <Flag className="mr-2 h-4 w-4" />
+                  {t('common.report', 'Report')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowBlockDialog(true)}>
+                  <Ban className="mr-2 h-4 w-4" />
+                  {t('common.block', 'Block')}
+                </DropdownMenuItem>
+              </>
+            )}
+            <DropdownMenuItem onClick={() => setShowShareDialog(true)}>
+              <Share2 className="mr-2 h-4 w-4" />
+              {t('common.share', 'Share')}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      {/* Media */}
-      {post.media_url && (
-        <div className="w-full">
-          {post.media_type === 'image' ? (
-            <img src={post.media_url} alt="Post media" className="w-full h-auto max-h-[420px] object-cover" />
-          ) : (
-            <video src={post.media_url} controls className="w-full h-auto max-h-[420px]" />
-          )}
+      {/* Post content */}
+      <PostContent content={post.content} />
+
+      {/* Action bar */}
+      <div className="flex items-center justify-between px-3 py-2">
+        <div className="flex items-center gap-4">
+          <button onClick={handleLike} className="flex items-center gap-1.5 group" aria-label={isLiked ? 'Unlike post' : 'Like post'}>
+            <Heart className={`w-5 h-5 transition-colors ${isLiked ? 'text-red-500 fill-red-500' : 'text-muted-foreground group-hover:text-red-400'}`} />
+            {likesCount > 0 && <span className="text-xs text-muted-foreground">{likesCount}</span>}
+          </button>
+          <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1.5 group" aria-label="Comments">
+            <MessageCircle className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            {commentsCount > 0 && <span className="text-xs text-muted-foreground">{commentsCount}</span>}
+          </button>
+          <button onClick={handleMessageClick} className="flex items-center gap-1.5 group" aria-label="Send message">
+            <MessageCircle className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          </button>
         </div>
-      )}
-
-      {/* Actions */}
-      <div className="px-3 pt-2 pb-1">
-        <div className="flex items-center">
-          <div className="flex items-center gap-0">
-            <button onClick={handleLike} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <Heart className={`w-5 h-5 transition-all ${isLiked ? 'fill-primary text-primary scale-110' : 'text-foreground'}`} />
-            </button>
-            <button onClick={() => setShowComments(!showComments)} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <MessageCircle className="w-5 h-5 text-foreground" />
-            </button>
-            <button onClick={() => setShowShareDialog(true)} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <Share2 className="w-5 h-5 text-foreground" />
-            </button>
-          </div>
-          <div className="ml-auto">
-            <button onClick={handleSaveToggle} className="h-10 w-10 flex items-center justify-center rounded-full active:scale-90 transition-transform">
-              <Bookmark className={`w-5 h-5 transition-all ${isSaved ? 'fill-foreground text-foreground' : 'text-foreground'}`} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Likes */}
-      <div className="px-3 pb-0.5">
-        <span className="text-xs font-bold text-foreground">{likesCount} {t('discovery.likes', 'likes')}</span>
-      </div>
-
-      {/* Caption */}
-      <div className="px-3 pb-1">
-        <PostContent content={post.content} />
-      </div>
-
-      {/* Comments count */}
-      {commentsCount > 0 && !showComments && (
-        <button onClick={() => setShowComments(true)} className="px-3 pb-1">
-          <span className="text-xs text-muted-foreground">{t('discovery.view_all_comments', 'View all {{count}} comments', { count: commentsCount })}</span>
+        <button onClick={handleSaveToggle} aria-label={isSaved ? 'Unsave post' : 'Save post'}>
+          <Bookmark className={`w-5 h-5 transition-colors ${isSaved ? 'text-primary fill-primary' : 'text-muted-foreground hover:text-primary'}`} />
         </button>
-      )}
+      </div>
 
-      <div className="h-2" />
+      {/* Comments section */}
+      {showComments && <CommentSection postId={post.id} />}
 
-      {showComments && (
-        <div className="px-3 pb-3 border-t border-border/10 pt-2">
-          <CommentSection postId={post.id} currentUserId={currentUserId} />
-        </div>
-      )}
-
-      {/* Dialogs */}
+      {/* Upgrade dialog */}
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent className="bg-card border-border rounded-2xl">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-foreground text-lg flex items-center gap-2">
-              <MessageCircle className="w-4 h-4 text-primary" />
-              {t('subscription.premium_feature', 'Premium Feature')}
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground space-y-3">
-              <p className="text-sm">{t('subscription.messaging_premium', 'Messaging is available to Premium members!')}</p>
-              <div className="bg-muted rounded-xl p-3 space-y-1.5">
-                <p className="font-semibold text-foreground text-sm">{t('subscription.benefits', 'Benefits')}:</p>
-                <ul className="space-y-0.5 text-xs">
-                  <li>✓ {t('subscription.unlimited_messages', 'Unlimited messages')}</li>
-                  <li>✓ {t('subscription.super_likes_day', '10 Super Likes per day')}</li>
-                  <li>✓ {t('subscription.see_who_liked', 'See who liked you')}</li>
-                </ul>
-              </div>
-              <Button onClick={handleUpgrade} className="w-full rounded-xl h-10 text-sm">
+            <DialogTitle>{t('subscription.upgrade_title', 'Upgrade to Premium')}</DialogTitle>
+            <DialogDescription className="space-y-4 pt-4">
+              <p className="text-sm text-muted-foreground">
+                {t('subscription.upgrade_message_feature', 'Messaging is a premium feature. Upgrade to start conversations!')}
+              </p>
+              <Button onClick={handleUpgrade} className="w-full">
                 {t('subscription.upgrade_premium', 'Upgrade to Premium')}
               </Button>
             </DialogDescription>
@@ -267,7 +238,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       <EditPostDialog open={showEditDialog} onOpenChange={setShowEditDialog} postId={post.id} initialContent={post.content} onSuccess={() => window.location.reload()} />
       <DeletePostDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} postId={post.id} onSuccess={() => window.location.reload()} />
       <ReportDialog open={showReportDialog} onOpenChange={setShowReportDialog} contentId={post.id} contentType="post" reportedUserId={post.user_id} />
-      <BlockUserDialog open={showBlockDialog} onOpenChange={setShowBlockDialog} userId={post.user_id} userName={post.profiles.name} onBlocked={() => { toast({ title: t('common.user_blocked', 'User Blocked'), description: t('common.user_blocked_desc', 'This user has been blocked successfully') }); }} />
+      <BlockUserDialog open={showBlockDialog} onOpenChange={setShowBlockDialog} userId={post.user_id} userName={profiles.name} onBlocked={() => { toast({ title: t('common.user_blocked', 'User Blocked'), description: t('common.user_blocked_desc', 'This user has been blocked successfully') }); }} />
       <SharePostDialog open={showShareDialog} onOpenChange={setShowShareDialog} postId={post.id} postContent={post.content} />
     </div>
   );

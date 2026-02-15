@@ -154,39 +154,34 @@ const MyProfile = () => {
 
   const handleProfileUpdate = async (updates: Partial<ProfileData>) => {
     try {
+      const fieldMap: Record<string, string> = {
+        height: 'height', bodyType: 'body_type', ethnicity: 'ethnicity',
+        religion: 'religion', politicalViews: 'political_views',
+        values: 'values', interests: 'interests', hobbies: 'hobbies',
+        languages: 'languages', education: 'education', company: 'company',
+        relationshipGoals: 'relationship_goals', wantChildren: 'want_children',
+        havePets: 'have_pets', exerciseHabits: 'exercise_habits',
+        zodiacSign: 'zodiac_sign', personalityType: 'personality_type',
+        sleepSchedule: 'sleep_schedule', travelFrequency: 'travel_frequency',
+        communicationStyle: 'communication_style', loveLanguage: 'love_language',
+        creativePursuits: 'creative_pursuits', weekendActivities: 'weekend_activities',
+        dietaryPreferences: 'dietary_preferences', smoking: 'smoking', drinking: 'drinking',
+        idealDate: 'ideal_date', workLifeBalance: 'work_life_balance',
+        careerAmbitions: 'career_ambitions', occupation: 'occupation', name: 'name',
+        location: 'location', bio: 'bio',
+      };
       const dbUpdates: any = {};
-      if (updates.height) dbUpdates.height = updates.height;
-      if (updates.bodyType) dbUpdates.body_type = updates.bodyType;
-      if (updates.ethnicity) dbUpdates.ethnicity = updates.ethnicity;
-      if (updates.religion) dbUpdates.religion = updates.religion;
-      if (updates.politicalViews) dbUpdates.political_views = updates.politicalViews;
-      if (updates.values) dbUpdates.values = updates.values;
-      if (updates.interests) dbUpdates.interests = updates.interests;
-      if (updates.hobbies) dbUpdates.hobbies = updates.hobbies;
-      if (updates.languages) dbUpdates.languages = updates.languages;
-      if (updates.education) dbUpdates.education = updates.education;
-      if (updates.company) dbUpdates.company = updates.company;
-      if (updates.relationshipGoals) dbUpdates.relationship_goals = updates.relationshipGoals;
-      if (updates.wantChildren) dbUpdates.want_children = updates.wantChildren;
-      if (updates.havePets) dbUpdates.have_pets = updates.havePets;
-      if (updates.exerciseHabits) dbUpdates.exercise_habits = updates.exerciseHabits;
-      if (updates.zodiacSign) dbUpdates.zodiac_sign = updates.zodiacSign;
-      if (updates.personalityType) dbUpdates.personality_type = updates.personalityType;
-      if (updates.sleepSchedule) dbUpdates.sleep_schedule = updates.sleepSchedule;
-      if (updates.travelFrequency) dbUpdates.travel_frequency = updates.travelFrequency;
-      if (updates.communicationStyle) dbUpdates.communication_style = updates.communicationStyle;
-      if (updates.loveLanguage) dbUpdates.love_language = updates.loveLanguage;
-      if (updates.creativePursuits) dbUpdates.creative_pursuits = updates.creativePursuits;
-      if (updates.weekendActivities) dbUpdates.weekend_activities = updates.weekendActivities;
-      if (updates.dietaryPreferences) dbUpdates.dietary_preferences = updates.dietaryPreferences;
-      if (updates.smoking) dbUpdates.smoking = updates.smoking;
-      if (updates.drinking) dbUpdates.drinking = updates.drinking;
-      if (updates.idealDate) dbUpdates.ideal_date = updates.idealDate;
-      if (updates.workLifeBalance) dbUpdates.work_life_balance = updates.workLifeBalance;
-      if (updates.careerAmbitions) dbUpdates.career_ambitions = updates.careerAmbitions;
-      await updateProfileData(dbUpdates);
-      toast.success('Profile updated successfully');
-      refreshData();
+      for (const [key, value] of Object.entries(updates)) {
+        const dbKey = fieldMap[key];
+        if (dbKey !== undefined) {
+          dbUpdates[dbKey] = value;
+        }
+      }
+      if (Object.keys(dbUpdates).length > 0) {
+        await updateProfileData(dbUpdates);
+        toast.success('Profile updated successfully');
+        refreshData();
+      }
     } catch (error) { toast.error('Failed to update profile'); }
   };
 
