@@ -11,9 +11,12 @@ export const useVoiceRecorder = () => {
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm',
-      });
+      
+      // Detect best supported MIME type (Safari doesn't support webm)
+      const supportedTypes = ['audio/webm', 'audio/mp4', 'audio/ogg'];
+      const mimeType = supportedTypes.find(t => MediaRecorder.isTypeSupported(t));
+      
+      const mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
 
       chunksRef.current = [];
 
@@ -24,7 +27,7 @@ export const useVoiceRecorder = () => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const blob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType || 'audio/webm' });
         setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
       };
