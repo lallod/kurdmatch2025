@@ -156,8 +156,36 @@ export const useRealProfileData = () => {
         
         await updateProfile(profileData.id, dbValueUpdates as any);
         
-        // Full refresh to get consistent state
-        await loadRealProfileData();
+        // Optimistic local merge instead of full refresh
+        const mergedProfileData = { ...profileData, ...dbValueUpdates };
+        setProfileData(mergedProfileData as DatabaseProfile);
+
+        // Merge into enhanced data and mark fields as user-set
+        let updatedEnhanced = { ...enhancedData };
+        const uiUpdates = convertDbToUiProfile(dbValueUpdates);
+        Object.entries(uiUpdates).forEach(([key, value]) => {
+          updatedEnhanced = updateFieldWithSource(
+            updatedEnhanced.profileData,
+            updatedEnhanced.fieldSources,
+            key,
+            value
+          );
+        });
+        // Also merge the db-named keys
+        Object.entries(dbValueUpdates).forEach(([key, value]) => {
+          updatedEnhanced = updateFieldWithSource(
+            updatedEnhanced.profileData,
+            updatedEnhanced.fieldSources,
+            key,
+            value
+          );
+        });
+        setEnhancedData(updatedEnhanced);
+
+        // Recalculate onboarding progress locally
+        const progress = await getUserOnboardingProgress(profileData.id, updatedEnhanced.profileData);
+        setOnboardingProgress(progress);
+        setCategoryProgress(progress.categoryProgress);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
