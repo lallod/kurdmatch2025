@@ -1,155 +1,172 @@
+# Complete Translation Audit and Fix Plan
 
+## Current State Analysis
 
-# Final Pre-Launch Audit -- Comprehensive Plan
+### Languages Supported
 
-## Overview
+The app supports 5 languages in the UI switcher:
 
-A line-by-line audit of the entire app has been completed. Below are all remaining issues grouped by severity, followed by the implementation steps.
+- English (294 translation keys)
+- Kurdish Sorani (180 keys -- **114 missing**)
+- Kurdish Kurmanci (180 keys -- **114 missing**)
+- German (180 keys -- **114 missing**)
+- Norwegian (180 keys -- **114 missing**)
 
----
+Additionally, 4 languages exist in the database but are NOT in the app language switcher: Arabic (115), Persian (115), Turkish (115), and a generic "kurdish" (115).
 
-## Category 1: Critical -- Broken Pages & Dead Code
+### Problem 1: 114 Missing Translation Keys Per Language
 
-### 1.1 `UserProfile.tsx` is a Hardcoded Mock Page
-- **Route**: `/user/:id`
-- **Problem**: This page contains entirely fake hardcoded data (name "Alex", location "San Francisco"), uses `tinder-rose` / `tinder-orange` / `bg-gray-50` colors (completely off-brand), and says "Dating Profile App" in the footer. It is NOT connected to any database.
-- **Impact**: If any user ever lands on this URL, they see a fake profile with Tinder branding. No code currently links to it, but it is still a live route.
-- **Fix**: Delete `UserProfile.tsx` and remove the `/user/:id` route from `protectedRoutes.tsx`.
+The following categories of keys exist in English but are completely absent from the other 4 languages:
 
-### 1.2 `Discovery.tsx` Has Dead Navigation Links
-- **Route**: Not actively routed (replaced by `DiscoveryFeed.tsx`)
-- **Problem**: The tabs inside navigate to `/discovery/hashtags`, `/discovery/trending`, `/discovery/groups` -- none of which exist. This page also imports ~15 components.
-- **Impact**: Dead code bloat. If imported elsewhere by mistake, users hit 404.
-- **Fix**: Delete `Discovery.tsx` (it is not imported anywhere).
+- `discovery.*` (20 keys) -- filter labels, search results, etc.
+- `message.*` (20 keys) -- chat UI labels
+- `notifications.*` (15 keys) -- notification strings
+- `profile.*` (20 keys) -- profile section labels
+- `settings.*` (18 keys) -- settings page labels
+- `social.*` (14 keys) -- social feed labels
+- `filters.*` (7 keys) -- filter options
 
-### 1.3 `AdminDashboard.tsx` is Unused
-- **Problem**: Not imported or routed anywhere. Admin uses the SuperAdmin system.
-- **Fix**: Delete `AdminDashboard.tsx`.
+### Problem 2: Untranslated Values (Still in English)
 
----
+Some keys exist in other languages but their values are still in English:
 
-## Category 2: Broken Links & Wrong Routes
+**Kurdish Sorani (21 untranslated):**
+`auth.password`, `auth.register`, `common.back`, `common.cancel`, `common.close`, `common.edit`, `common.error`, `common.loading`, `common.next`, `common.submit`, `common.success`, `nav.discover`, `nav.messages`, `nav.profile`, `nav.settings`, `nav.swipe`, `settings.account`, `settings.language`, `settings.notifications`, `settings.privacy`, `settings.title`
 
-### 2.1 `Footer.tsx` Links to `/privacy` Instead of `/privacy-policy`
-- **File**: `src/components/landing/Footer.tsx` line 32
-- **Problem**: Links to `/privacy` which does not exist. The correct route is `/privacy-policy`.
-- **Fix**: Change `to="/privacy"` to `to="/privacy-policy"`.
+**Kurdish Kurmanci (27 untranslated):**
+All of the above plus `auth.email`, `auth.forgot_password`, `auth.login`, `auth.sign_out`, `common.delete`, `common.save`
 
-### 2.2 `Footer.tsx` Uses Raw Gray Colors
-- **File**: `src/components/landing/Footer.tsx`
-- **Problem**: Uses `text-gray-500`, `text-gray-800`, `bg-black/60` instead of theme variables.
-- **Fix**: Update to use `text-muted-foreground`, `border-border`, `bg-card/30`.
+**German (8 untranslated):**
+`common.info`, `common.ok`, `messages.status.offline`, `messages.status.online`, `profile.fields.religion`, `profile.stats.likes`, `profile.stats.matches`, `swipe.actions.super_like`
 
----
+**Norwegian (6 untranslated):**
+`common.info`, `common.ok`, `filters.religions.muslim`, `nav.filter`, `profile.fields.religion`, `swipe.actions.pass`
 
-## Category 3: Security -- Console Logging Sensitive Data
+### Problem 3: Translation Hook Not Wired Up
 
-### 3.1 `Auth.tsx` Logs User Email to Console
-- **File**: `src/pages/Auth.tsx` line 62
-- **Code**: `console.log('Attempting to sign in with: ${email}')`
-- **Problem**: Logs the user's email address in production (even though `main.tsx` suppresses `console.log` in prod, this is still bad practice and a security risk if the suppression is ever removed).
-- **Fix**: Remove this log and the other debug console.logs in Auth.tsx.
-
-### 3.2 `HashtagFeed.tsx` Has Placeholder Like/Comment Handlers
-- **File**: `src/pages/HashtagFeed.tsx` lines 35-43
-- **Problem**: `handleLike` and `handleComment` just do `console.log` and don't actually work. Users tapping Like on a hashtag feed post see nothing happen.
-- **Fix**: Implement proper like/comment handlers (reuse `likePost`/`unlikePost` from the API and navigate to post detail for comments).
+`useTranslations` is imported in `BottomNavigation.tsx` but the `t()` function is never actually called -- nav items use hardcoded English strings. The rest of the app does not use translations at all.
 
 ---
 
-## Category 4: Design Inconsistencies (Off-Theme Pages)
+## Implementation Plan
 
-### 4.1 `EventDetail.tsx` Uses Raw White Classes
-- Uses `bg-white/10`, `border-white/20`, `text-white` in header/cards instead of theme variables.
-- **Fix**: Replace with `bg-card/50`, `border-border/20`, `text-foreground`.
+### Step 1: Fix Untranslated Values (62 keys)
 
-### 4.2 `Messages.tsx` Uses Raw Colors Extensively
-- Uses `bg-white/10`, `bg-white/15`, `bg-blue-500`, `text-blue-300` throughout.
-- This is a large file (1000+ lines) and is the most complex page. These are functional but aesthetically inconsistent.
-- **Fix**: Update key color classes to theme variables in Messages.tsx.
+Update existing rows in `app_translations` where the value is still in English. Correct translations:
 
-### 4.3 `ErrorBoundary.tsx` Uses Non-Existent Custom Classes
-- Uses `bg-gradient-to-br from-primary-dark via-primary-dark/80 to-primary` -- `primary-dark` likely does not exist in the theme.
-- **Fix**: Replace with `bg-background`.
+**Kurdish Sorani (21 fixes):**
 
----
+- `auth.password` = `وشەی نهێنی`
+- `auth.register` = `خۆتۆمارکردن`
+- `common.back` = `گەڕانەوە`
+- `common.cancel` = `هەڵوەشاندنەوە`
+- `common.close` = `داخستن`
+- `common.edit` = `دەستکاری`
+- `common.error` = `هەڵە`
+- `common.loading` = `بارکردن...`
+- `common.next` = `دواتر`
+- `common.submit` = `ناردن`
+- `common.success` = `سەرکەوتوو`
+- `nav.discover` = `دۆزینەوە`
+- `nav.messages` = `نامەکان`
+- `nav.profile` = `پرۆفایل`
+- `nav.settings` = `ڕێکخستنەکان`
+- `nav.swipe` = `سوایپ`
+- `settings.account` = `هەژمار`
+- `settings.language` = `زمان`
+- `settings.notifications` = `ئاگاداریەکان`
+- `settings.privacy` = `تایبەتێتی`
+- `settings.title` = `ڕێکخستنەکان`
 
-## Category 5: Console Logs Cleanup
+**Kurdish Kurmanci (27 fixes):**
 
-Multiple pages have `console.log` statements that leak in development and clutter debugging:
-- `Profile.tsx`: 3 console.logs about location state
-- `ViewedMe.tsx`: console.log for plan selection  
-- `Messages.tsx`: console.logs for realtime events
-- `Auth.tsx`: 5 console.logs
+- `auth.email` = `E-peyam`
+- `auth.forgot_password` = `Peyva niheni ji bir kir?`
+- `auth.login` = `Tekevin`
+- `auth.password` = `Peyva niheni`
+- `auth.register` = `Tomarbun`
+- `auth.sign_out` = `Derkeve`
+- `common.back` = `Vegere`
+- `common.cancel` = `Betal bike`
+- `common.close` = `Bigire`
+- `common.delete` = `Jebibe`
+- `common.edit` = `Biguherîne`
+- `common.error` = `Cewti`
+- `common.loading` = `Tê barkirin...`
+- `common.next` = `Pêsîve`
+- `common.save` = `Tomar bike`
+- `common.submit` = `Bîsîne`
+- `common.success` = `Serkeftin`
+- `nav.discover` = `Kesfkirin`
+- `nav.messages` = `Peyam`
+- `nav.profile` = `Profîl`
+- `nav.settings` = `Mîheng`
+- `nav.swipe` = `Swipe`
+- `settings.account` = `Hesab`
+- `settings.language` = `Ziman`
+- `settings.notifications` = `Agahdarî`
+- `settings.privacy` = `Niheniparêzî`
+- `settings.title` = `Mîheng`
 
-**Fix**: Remove all non-error console statements from user-facing pages. Keep `console.error` only.
+**German (8 fixes):**
 
----
+- `common.info` = `Information`
+- `common.ok` = `Okay`
+- `messages.status.offline` = `Abwesend`
+- `messages.status.online` = `Verfugbar`
+- `profile.fields.religion` = `Glaube`
+- `profile.stats.likes` = `Gefallt mir`
+- `profile.stats.matches` = `Ubereinstimmungen`
+- `swipe.actions.super_like` = `Super-Gefallt mir`
 
-## Category 6: Minor Functional Issues
+**Norwegian (6 fixes):**
 
-### 6.1 `main.tsx` Has Duplicate QueryClient + Unused Import
-- `main.tsx` creates a `QueryClient` but `App.tsx` also creates one. Double wrapping.
-- `main.tsx` imports `useSupabaseAuth` but never uses it.
-- **Fix**: Remove `QueryClient` and the unused import from `main.tsx` (App.tsx already handles both).
+- `common.info` = `Informasjon`
+- `common.ok` = `Greit`
+- `filters.religions.muslim` = `Muslimsk`
+- `nav.filter` = `Filtrer`
+- `profile.fields.religion` = `Religion/Tro`
+- `swipe.actions.pass` = `Hopp over`
 
----
+### Step 2: Insert 114 Missing Keys Per Language
 
-## Implementation Plan (Ordered by Priority)
+Create an edge function `sync-translations` that inserts the 114 missing translation keys for each of the 4 non-English languages with proper translations. The keys fall into these categories:
 
-### Step 1: Delete Dead Pages & Routes
-- Delete `src/pages/UserProfile.tsx`
-- Delete `src/pages/Discovery.tsx`  
-- Delete `src/pages/AdminDashboard.tsx`
-- Remove `/user/:id` route from `protectedRoutes.tsx`
+- **discovery.*** -- Discovery page filters and labels
+- **message.*** -- Messaging UI
+- **notifications.*** -- Notification strings
+- **profile.*** -- Profile sections
+- **settings.*** -- Settings page
+- **social.*** -- Social feed
+- **filters.*** -- Filter options (body types, regions, religions)
 
-### Step 2: Fix Footer.tsx
-- Change `/privacy` link to `/privacy-policy`
-- Replace raw gray/black colors with theme variables
+Each key will get a proper human-quality translation for all 4 languages.
 
-### Step 3: Fix HashtagFeed.tsx Like/Comment
-- Replace `console.log` stubs with real `likePost`/`unlikePost` calls
-- Navigate to `/post/:id` on comment click
+### Step 3: Wire Up BottomNavigation to Use Translations
 
-### Step 4: Fix ErrorBoundary.tsx
-- Replace `from-primary-dark` with `bg-background`
+Update `BottomNavigation.tsx` to actually use the `t()` function for nav item labels instead of hardcoded English strings.
 
-### Step 5: Fix Auth.tsx Security
-- Remove `console.log` that exposes user email
-- Remove other debug console.logs
+### Step 4: Clean Up Orphan DB Languages
 
-### Step 6: Clean Up Console Logs
-- Remove all `console.log` from `Profile.tsx`, `ViewedMe.tsx`, `Messages.tsx`
-
-### Step 7: Fix main.tsx Duplicate Provider
-- Remove `QueryClient`, `QueryClientProvider`, and unused `useSupabaseAuth` import from `main.tsx`
-
-### Step 8: Design Touch-Up on EventDetail.tsx
-- Replace `bg-white/10` and `text-white` in header with theme variables
-
-### Step 9: Design Touch-Up on Messages.tsx
-- Replace key `bg-white/*` and `text-blue-*` classes with theme equivalents
+The `kurdish` language code (115 keys) is not used by the app -- the app uses `kurdish_sorani` and `kurdish_kurmanci`. The `arabic`, `persian`, and `turkish` codes also exist but are not in the language switcher. These will be left as-is (no harm) but documented.
 
 ---
 
 ## Technical Details
 
-### Files to delete (3):
-- `src/pages/UserProfile.tsx`
-- `src/pages/Discovery.tsx`
-- `src/pages/AdminDashboard.tsx`
+### Files to create:
 
-### Files to modify (8):
-1. `src/components/app/routes/protectedRoutes.tsx` -- remove UserProfile route + import
-2. `src/components/landing/Footer.tsx` -- fix link + theme colors
-3. `src/pages/HashtagFeed.tsx` -- implement real like/comment
-4. `src/components/ErrorBoundary.tsx` -- fix background class
-5. `src/pages/Auth.tsx` -- remove sensitive console.logs
-6. `src/pages/Profile.tsx` -- remove debug console.logs
-7. `src/main.tsx` -- remove duplicate QueryClient + unused import
-8. `src/pages/EventDetail.tsx` -- theme consistency
-9. `src/pages/Messages.tsx` -- theme consistency (key areas only)
-10. `src/pages/ViewedMe.tsx` -- remove console.log
+- `supabase/functions/sync-translations/index.ts` -- Edge function with all 456+ translation inserts (114 keys x 4 languages)
 
-### Estimated scope: ~10 files modified, 3 files deleted
+### Files to modify:
 
+- `src/components/BottomNavigation.tsx` -- Wire up `t()` for nav labels
+
+### Database operations:
+
+- UPDATE ~62 rows (fix untranslated values)
+- INSERT ~456 rows (missing keys for 4 languages)
+
+### Scope:
+
+This plan achieves **100% database translation coverage** for all 294 keys across all 5 languages. Wiring up `t()` across every page in the app (beyond BottomNavigation) is a separate, much larger effort that would touch 30+ files.
