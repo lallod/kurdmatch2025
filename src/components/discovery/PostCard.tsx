@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Post, likePost, unlikePost } from '@/api/posts';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { MessageCircle, CheckCircle, MoreVertical, Flag, Ban, Heart, Pencil, Trash2, Share2, Bookmark } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -32,6 +33,7 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [isLiked, setIsLiked] = useState(post.is_liked || false);
   const [likesCount, setLikesCount] = useState(post.likes_count || 0);
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
@@ -89,16 +91,16 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
         const { error } = await (supabase as any).from('saved_posts').delete().eq('user_id', currentUserId).eq('post_id', post.id);
         if (error) throw error;
         setIsSaved(false);
-        toast({ description: 'Post unsaved' });
+        toast({ description: t('discovery.post_unsaved', 'Post unsaved') });
       } else {
         const { error } = await (supabase as any).from('saved_posts').insert({ user_id: currentUserId, post_id: post.id });
         if (error) throw error;
         setIsSaved(true);
-        toast({ description: 'Post saved!' });
+        toast({ description: t('discovery.post_saved', 'Post saved!') });
       }
     } catch (error) {
       console.error('Error toggling save:', error);
-      toast({ title: 'Error', description: 'Failed to save post', variant: 'destructive' });
+      toast({ title: t('common.error', 'Error'), description: t('discovery.failed_save', 'Failed to save post'), variant: 'destructive' });
     }
   };
 
@@ -108,7 +110,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       else { await likePost(post.id); setIsLiked(true); }
       onLike(post.id);
     } catch (error) {
-      toast({ title: 'Error', description: 'Failed to update like', variant: 'destructive' });
+      toast({ title: t('common.error', 'Error'), description: t('discovery.failed_like', 'Failed to update like'), variant: 'destructive' });
     }
   };
 
@@ -121,7 +123,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
   const handleUpgrade = async () => {
     try { await createPremiumCheckout('premium'); }
-    catch (error) { toast({ title: 'Error', description: 'Failed to start checkout', variant: 'destructive' }); }
+    catch (error) { toast({ title: t('common.error', 'Error'), description: t('subscription.failed_checkout', 'Failed to start checkout'), variant: 'destructive' }); }
   };
 
   return (
@@ -158,19 +160,19 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
             {currentUserId === post.user_id ? (
               <>
                 <DropdownMenuItem onClick={() => setShowEditDialog(true)} className="text-xs">
-                  <Pencil className="w-3.5 h-3.5 mr-2" />Edit
+                  <Pencil className="w-3.5 h-3.5 mr-2" />{t('common.edit', 'Edit')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive focus:text-destructive text-xs">
-                  <Trash2 className="w-3.5 h-3.5 mr-2" />Delete
+                  <Trash2 className="w-3.5 h-3.5 mr-2" />{t('common.delete', 'Delete')}
                 </DropdownMenuItem>
               </>
             ) : (
               <>
                 <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-xs">
-                  <Flag className="w-3.5 h-3.5 mr-2" />Report
+                  <Flag className="w-3.5 h-3.5 mr-2" />{t('common.report', 'Report')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive focus:text-destructive text-xs">
-                  <Ban className="w-3.5 h-3.5 mr-2" />Block
+                  <Ban className="w-3.5 h-3.5 mr-2" />{t('common.block', 'Block')}
                 </DropdownMenuItem>
               </>
             )}
@@ -213,7 +215,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
 
       {/* Likes */}
       <div className="px-3 pb-0.5">
-        <span className="text-xs font-bold text-foreground">{likesCount} likes</span>
+        <span className="text-xs font-bold text-foreground">{likesCount} {t('discovery.likes', 'likes')}</span>
       </div>
 
       {/* Caption */}
@@ -224,7 +226,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       {/* Comments count */}
       {commentsCount > 0 && !showComments && (
         <button onClick={() => setShowComments(true)} className="px-3 pb-1">
-          <span className="text-xs text-muted-foreground">View all {commentsCount} comments</span>
+          <span className="text-xs text-muted-foreground">{t('discovery.view_all_comments', 'View all {{count}} comments', { count: commentsCount })}</span>
         </button>
       )}
 
@@ -242,20 +244,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           <DialogHeader>
             <DialogTitle className="text-foreground text-lg flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-primary" />
-              Premium Feature
+              {t('subscription.premium_feature', 'Premium Feature')}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground space-y-3">
-              <p className="text-sm">Messaging is available to Premium members!</p>
+              <p className="text-sm">{t('subscription.messaging_premium', 'Messaging is available to Premium members!')}</p>
               <div className="bg-muted rounded-xl p-3 space-y-1.5">
-                <p className="font-semibold text-foreground text-sm">Benefits:</p>
+                <p className="font-semibold text-foreground text-sm">{t('subscription.benefits', 'Benefits')}:</p>
                 <ul className="space-y-0.5 text-xs">
-                  <li>✓ Unlimited messages</li>
-                  <li>✓ 10 Super Likes per day</li>
-                  <li>✓ See who liked you</li>
+                  <li>✓ {t('subscription.unlimited_messages', 'Unlimited messages')}</li>
+                  <li>✓ {t('subscription.super_likes_day', '10 Super Likes per day')}</li>
+                  <li>✓ {t('subscription.see_who_liked', 'See who liked you')}</li>
                 </ul>
               </div>
               <Button onClick={handleUpgrade} className="w-full rounded-xl h-10 text-sm">
-                Upgrade to Premium
+                {t('subscription.upgrade_premium', 'Upgrade to Premium')}
               </Button>
             </DialogDescription>
           </DialogHeader>
@@ -265,7 +267,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       <EditPostDialog open={showEditDialog} onOpenChange={setShowEditDialog} postId={post.id} initialContent={post.content} onSuccess={() => window.location.reload()} />
       <DeletePostDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} postId={post.id} onSuccess={() => window.location.reload()} />
       <ReportDialog open={showReportDialog} onOpenChange={setShowReportDialog} contentId={post.id} contentType="post" reportedUserId={post.user_id} />
-      <BlockUserDialog open={showBlockDialog} onOpenChange={setShowBlockDialog} userId={post.user_id} userName={post.profiles.name} onBlocked={() => { toast({ title: 'User Blocked', description: 'This user has been blocked successfully' }); }} />
+      <BlockUserDialog open={showBlockDialog} onOpenChange={setShowBlockDialog} userId={post.user_id} userName={post.profiles.name} onBlocked={() => { toast({ title: t('common.user_blocked', 'User Blocked'), description: t('common.user_blocked_desc', 'This user has been blocked successfully') }); }} />
       <SharePostDialog open={showShareDialog} onOpenChange={setShowShareDialog} postId={post.id} postContent={post.content} />
     </div>
   );

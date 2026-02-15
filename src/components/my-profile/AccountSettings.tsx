@@ -15,6 +15,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { useVideoVerification } from '@/hooks/useVideoVerification';
 import { VideoVerificationDialog } from '@/components/verification/VideoVerificationDialog';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const AccountSettings = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const AccountSettings = () => {
   const { settings, loading, updateSettings } = useUserSettings();
   const { verification, isLoading: verificationLoading, fetchVerification, getVerificationStatus } = useVideoVerification();
   const [isVideoVerificationOpen, setIsVideoVerificationOpen] = useState(false);
+  const { t } = useTranslations();
 
   // Fetch verification status on mount
   useEffect(() => {
@@ -60,11 +62,11 @@ const AccountSettings = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      toast.success('Logged out successfully');
+      toast.success(t('settings.logged_out', 'Logged out successfully'));
       navigate('/auth');
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('Failed to log out. Please try again.');
+      toast.error(t('settings.logout_failed', 'Failed to log out. Please try again.'));
     }
   };
   return <div className="space-y-6">
@@ -77,12 +79,12 @@ const AccountSettings = () => {
                 <Crown className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-white font-medium">Premium Subscription</p>
-                <p className="text-purple-200 text-sm">Unlock all premium features</p>
+                <p className="text-white font-medium">{t('settings.premium_subscription', 'Premium Subscription')}</p>
+                <p className="text-purple-200 text-sm">{t('settings.unlock_premium', 'Unlock all premium features')}</p>
               </div>
             </div>
             <Button onClick={() => navigate('/subscription')} className="bg-gradient-to-r from-tinder-rose to-tinder-orange hover:opacity-90">
-              Manage Plan
+              {t('settings.manage_plan', 'Manage Plan')}
             </Button>
           </div>
         </CardContent>
@@ -91,15 +93,15 @@ const AccountSettings = () => {
       {/* Account Status */}
       <Card className="backdrop-blur-md bg-white/10 border border-white/20">
         <CardContent className="p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Account Status</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">{t('settings.account_status', 'Account Status')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
                 <CheckCircle2 className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-white font-medium">Verified Account</p>
-                <p className="text-purple-200 text-sm">Email verified</p>
+                <p className="text-white font-medium">{t('settings.verified_account', 'Verified Account')}</p>
+                <p className="text-purple-200 text-sm">{t('settings.email_verified', 'Email verified')}</p>
               </div>
             </div>
             
@@ -108,8 +110,8 @@ const AccountSettings = () => {
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-white font-medium">Premium Member</p>
-                <p className="text-purple-200 text-sm">Active subscription</p>
+                <p className="text-white font-medium">{t('settings.premium_member', 'Premium Member')}</p>
+                <p className="text-purple-200 text-sm">{t('settings.active_subscription', 'Active subscription')}</p>
               </div>
             </div>
             
@@ -131,7 +133,7 @@ const AccountSettings = () => {
                 )}
               </div>
               <div>
-                <p className="text-white font-medium">Video Verification</p>
+                <p className="text-white font-medium">{t('settings.video_verification', 'Video Verification')}</p>
                 <p className={`text-sm ${verificationStatus.color}`}>{verificationStatus.message}</p>
               </div>
             </div>
@@ -145,18 +147,18 @@ const AccountSettings = () => {
                   size="sm"
                 >
                   <Video className="w-4 h-4 mr-2" />
-                  Verify Now
+                  {t('settings.verify_now', 'Verify Now')}
                 </Button>
               )}
               {verificationStatus.status === 'Pending' && (
                 <Badge variant="outline" className="border-yellow-500 text-yellow-400">
-                  Under Review
+                  {t('settings.under_review', 'Under Review')}
                 </Badge>
               )}
               {verificationStatus.status === 'Verified' && (
                 <Badge variant="outline" className="border-green-500 text-green-400">
                   <ShieldCheck className="w-3 h-3 mr-1" />
-                  Verified
+                  {t('settings.verified', 'Verified')}
                 </Badge>
               )}
             </div>
@@ -169,13 +171,13 @@ const AccountSettings = () => {
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
             <Globe className="w-5 h-5 mr-2 text-purple-400" />
-            Language Settings
+            {t('settings.language_settings', 'Language Settings')}
           </h3>
           
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white">App Language</p>
-              <p className="text-purple-200 text-sm">Choose your preferred language</p>
+              <p className="text-white">{t('settings.app_language', 'App Language')}</p>
+              <p className="text-purple-200 text-sm">{t('settings.choose_language', 'Choose your preferred language')}</p>
             </div>
             <LanguageSwitcher />
           </div>
@@ -187,7 +189,7 @@ const AccountSettings = () => {
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
             <Bell className="w-5 h-5 mr-2 text-purple-400" />
-            Notification Settings
+            {t('settings.notification_settings', 'Notification Settings')}
           </h3>
           
           <div className="space-y-4">
@@ -195,8 +197,8 @@ const AccountSettings = () => {
               <div className="flex items-center gap-3">
                 <Heart className="w-5 h-5 text-pink-400" />
                 <div>
-                  <p className="text-white">New Matches</p>
-                  <p className="text-purple-200 text-sm">Get notified when someone likes you back</p>
+                  <p className="text-white">{t('settings.new_matches', 'New Matches')}</p>
+                  <p className="text-purple-200 text-sm">{t('settings.new_matches_desc', 'Get notified when someone likes you back')}</p>
                 </div>
               </div>
               <Switch checked={settings?.notifications_matches ?? true} onCheckedChange={value => handleNotificationChange('notifications_matches', value)} />
@@ -206,8 +208,8 @@ const AccountSettings = () => {
               <div className="flex items-center gap-3">
                 <MessageCircle className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="text-white">New Messages</p>
-                  <p className="text-purple-200 text-sm">Get notified about new messages</p>
+                  <p className="text-white">{t('settings.new_messages', 'New Messages')}</p>
+                  <p className="text-purple-200 text-sm">{t('settings.new_messages_desc', 'Get notified about new messages')}</p>
                 </div>
               </div>
               <Switch checked={settings?.notifications_messages ?? true} onCheckedChange={value => handleNotificationChange('notifications_messages', value)} />
@@ -217,8 +219,8 @@ const AccountSettings = () => {
               <div className="flex items-center gap-3">
                 <Heart className="w-5 h-5 text-red-400" />
                 <div>
-                  <p className="text-white">Likes Received</p>
-                  <p className="text-purple-200 text-sm">Get notified when someone likes your profile</p>
+                  <p className="text-white">{t('settings.likes_received', 'Likes Received')}</p>
+                  <p className="text-purple-200 text-sm">{t('settings.likes_received_desc', 'Get notified when someone likes your profile')}</p>
                 </div>
               </div>
               <Switch checked={settings?.notifications_likes ?? false} onCheckedChange={value => handleNotificationChange('notifications_likes', value)} />
@@ -228,8 +230,8 @@ const AccountSettings = () => {
               <div className="flex items-center gap-3">
                 <Eye className="w-5 h-5 text-green-400" />
                 <div>
-                  <p className="text-white">Profile Views</p>
-                  <p className="text-purple-200 text-sm">Get notified when someone views your profile</p>
+                  <p className="text-white">{t('settings.profile_views', 'Profile Views')}</p>
+                  <p className="text-purple-200 text-sm">{t('settings.profile_views_desc', 'Get notified when someone views your profile')}</p>
                 </div>
               </div>
               <Switch checked={settings?.notifications_profile_views ?? true} onCheckedChange={value => handleNotificationChange('notifications_profile_views', value)} />
@@ -243,38 +245,38 @@ const AccountSettings = () => {
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
             <Lock className="w-5 h-5 mr-2 text-purple-400" />
-            Privacy Settings
+            {t('settings.privacy_settings', 'Privacy Settings')}
           </h3>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white">Show My Age</p>
-                <p className="text-purple-200 text-sm">Display your age on your profile</p>
+                <p className="text-white">{t('settings.show_age', 'Show My Age')}</p>
+                <p className="text-purple-200 text-sm">{t('settings.show_age_desc', 'Display your age on your profile')}</p>
               </div>
               <Switch checked={settings?.privacy_show_age ?? true} onCheckedChange={value => handlePrivacyChange('privacy_show_age', value)} />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white">Show Distance</p>
-                <p className="text-purple-200 text-sm">Show your distance to other users</p>
+                <p className="text-white">{t('settings.show_distance', 'Show Distance')}</p>
+                <p className="text-purple-200 text-sm">{t('settings.show_distance_desc', 'Show your distance to other users')}</p>
               </div>
               <Switch checked={settings?.privacy_show_distance ?? true} onCheckedChange={value => handlePrivacyChange('privacy_show_distance', value)} />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white">Show Online Status</p>
-                <p className="text-purple-200 text-sm">Let others see when you're online</p>
+                <p className="text-white">{t('settings.show_online', 'Show Online Status')}</p>
+                <p className="text-purple-200 text-sm">{t('settings.show_online_desc', 'Let others see when you\'re online')}</p>
               </div>
               <Switch checked={settings?.privacy_show_online ?? true} onCheckedChange={value => handlePrivacyChange('privacy_show_online', value)} />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white">Discoverable</p>
-                <p className="text-purple-200 text-sm">Allow others to find your profile</p>
+                <p className="text-white">{t('settings.discoverable', 'Discoverable')}</p>
+                <p className="text-purple-200 text-sm">{t('settings.discoverable_desc', 'Allow others to find your profile')}</p>
               </div>
               <Switch checked={settings?.privacy_discoverable ?? true} onCheckedChange={value => handlePrivacyChange('privacy_discoverable', value)} />
             </div>
@@ -287,7 +289,7 @@ const AccountSettings = () => {
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
             <Smartphone className="w-5 h-5 mr-2 text-purple-400" />
-            Communication Preferences
+            {t('settings.communication', 'Communication Preferences')}
           </h3>
           
           <div className="space-y-4">
@@ -295,8 +297,8 @@ const AccountSettings = () => {
               <div className="flex items-center gap-3">
                 <Smartphone className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="text-white">Push Notifications</p>
-                  <p className="text-purple-200 text-sm">Receive notifications on your device</p>
+                  <p className="text-white">{t('settings.push_notifications', 'Push Notifications')}</p>
+                  <p className="text-purple-200 text-sm">{t('settings.push_desc', 'Receive notifications on your device')}</p>
                 </div>
               </div>
               <Switch checked={settings?.notifications_push ?? true} onCheckedChange={value => handleNotificationChange('notifications_push', value)} />
@@ -306,8 +308,8 @@ const AccountSettings = () => {
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-green-400" />
                 <div>
-                  <p className="text-white">Email Notifications</p>
-                  <p className="text-purple-200 text-sm">Receive updates via email</p>
+                  <p className="text-white">{t('settings.email_notifications', 'Email Notifications')}</p>
+                  <p className="text-purple-200 text-sm">{t('settings.email_desc', 'Receive updates via email')}</p>
                 </div>
               </div>
               <Switch checked={settings?.notifications_email ?? true} onCheckedChange={value => handleNotificationChange('notifications_email', value)} />
@@ -321,48 +323,48 @@ const AccountSettings = () => {
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
             <Settings className="w-5 h-5 mr-2 text-purple-400" />
-            Account Actions
+            {t('settings.account_actions', 'Account Actions')}
           </h3>
           
           <div className="space-y-3">
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => openDialog('downloadData')}>
               <Download className="w-4 h-4 mr-2" />
-              Download My Data
+              {t('settings.download_data', 'Download My Data')}
             </Button>
             
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => openDialog('changePassword')}>
               <Lock className="w-4 h-4 mr-2" />
-              Change Password
+              {t('settings.change_password', 'Change Password')}
             </Button>
             
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => openDialog('connectedAccounts')}>
               <Globe className="w-4 h-4 mr-2" />
-              Connected Accounts
+              {t('settings.connected_accounts', 'Connected Accounts')}
             </Button>
             
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => navigate('/settings/phone-verification')}>
               <Phone className="w-4 h-4 mr-2" />
-              Phone Verification
+              {t('settings.phone_verification', 'Phone Verification')}
             </Button>
             
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => navigate('/help')}>
               <HelpCircle className="w-4 h-4 mr-2" />
-              Help & Support
+              {t('settings.help_support', 'Help & Support')}
             </Button>
             
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => navigate('/community-guidelines')}>
               <FileText className="w-4 h-4 mr-2" />
-              Community Guidelines
+              {t('settings.community_guidelines', 'Community Guidelines')}
             </Button>
             
             <Button variant="outline" className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
-              Logout
+              {t('settings.logout', 'Logout')}
             </Button>
             
             <Button variant="destructive" className="w-full justify-start" onClick={() => openDialog('deleteAccount')}>
               <Trash2 className="w-4 h-4 mr-2" />
-              Delete Account
+              {t('settings.delete_account', 'Delete Account')}
             </Button>
           </div>
         </CardContent>
@@ -382,12 +384,10 @@ const AccountSettings = () => {
         open={isVideoVerificationOpen} 
         onOpenChange={(open) => {
           setIsVideoVerificationOpen(open);
-          if (!open) {
-            // Refresh verification status when dialog closes
-            fetchVerification();
-          }
-        }} 
+          if (!open) fetchVerification();
+        }}
       />
     </div>;
 };
+
 export default AccountSettings;
