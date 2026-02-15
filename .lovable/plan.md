@@ -1,172 +1,141 @@
-# Complete Translation Audit and Fix Plan
 
-## Current State Analysis
 
-### Languages Supported
+# Full Translation Wiring Plan -- 100% App Coverage
 
-The app supports 5 languages in the UI switcher:
+## The Problem
 
-- English (294 translation keys)
-- Kurdish Sorani (180 keys -- **114 missing**)
-- Kurdish Kurmanci (180 keys -- **114 missing**)
-- German (180 keys -- **114 missing**)
-- Norwegian (180 keys -- **114 missing**)
+The database has **294 translation keys** perfectly synchronized across all 5 languages (English, Kurdish Sorani, Kurdish Kurmanci, German, Norwegian). However, **only `BottomNavigation.tsx`** actually uses the `t()` function. Every other page renders hardcoded English text that ignores the user's language setting.
 
-Additionally, 4 languages exist in the database but are NOT in the app language switcher: Arabic (115), Persian (115), Turkish (115), and a generic "kurdish" (115).
+**Bottom line**: Changing the language in the app settings does nothing except change the bottom nav labels.
 
-### Problem 1: 114 Missing Translation Keys Per Language
+---
 
-The following categories of keys exist in English but are completely absent from the other 4 languages:
+## Scope of Work
 
-- `discovery.*` (20 keys) -- filter labels, search results, etc.
-- `message.*` (20 keys) -- chat UI labels
-- `notifications.*` (15 keys) -- notification strings
-- `profile.*` (20 keys) -- profile section labels
-- `settings.*` (18 keys) -- settings page labels
-- `social.*` (14 keys) -- social feed labels
-- `filters.*` (7 keys) -- filter options
+### Pages to Wire Up (30+ files)
 
-### Problem 2: Untranslated Values (Still in English)
+Every file below contains hardcoded English strings that need to be replaced with `t('key', 'Fallback')` calls:
 
-Some keys exist in other languages but their values are still in English:
+**Authentication (3 files)**
+- `Auth.tsx` -- "Welcome Back", "Log in to continue", "Email", "Password", "Log In", "Logging In...", "Don't have an account? Sign up", "Back to Landing Page"
+- `Register.tsx` -- "Join Our Community", "Create your account in just a few simple steps", "Back to Home", "Already have an account? Sign in here"
+- `CompleteProfile.tsx` -- onboarding step labels
 
-**Kurdish Sorani (21 untranslated):**
-`auth.password`, `auth.register`, `common.back`, `common.cancel`, `common.close`, `common.edit`, `common.error`, `common.loading`, `common.next`, `common.submit`, `common.success`, `nav.discover`, `nav.messages`, `nav.profile`, `nav.settings`, `nav.swipe`, `settings.account`, `settings.language`, `settings.notifications`, `settings.privacy`, `settings.title`
+**Core User Pages (8 files)**
+- `DiscoveryFeed.tsx` -- "For You", "Following", "Search", "No posts yet", "No posts from people you follow", "Follow people to see their posts here"
+- `Swipe.tsx` -- "Loading profiles...", "Finding your perfect matches", "No more profiles", "Check back later!", "Profile passed", "It's a match!", "Profile liked!", "Super like sent!"
+- `Messages.tsx` -- "Messages", "New Matches", "Start chatting", "Type a message...", "Send", "No conversations yet" (~50+ strings)
+- `Profile.tsx` -- "Loading profile...", "Profile not found", "Go back", "Basic Info", "Career & Education", "Lifestyle", "Beliefs & Values", "Relationships", field labels (Height, Body Type, Ethnicity, etc.)
+- `MyProfile.tsx` -- "Profile", "Views", "Likes", "Matches", "Complete your profile", "Share Profile", "Edit Profile", "Profile Sections", section labels
+- `Notifications.tsx` -- "Activity", "All", "Unread", "Mark all read", "No notifications yet", "New Like", "New Comment", "Profile View"
+- `Settings.tsx` -- "Settings"
+- `ViewedMe.tsx` -- page title and labels
 
-**Kurdish Kurmanci (27 untranslated):**
-All of the above plus `auth.email`, `auth.forgot_password`, `auth.login`, `auth.sign_out`, `common.delete`, `common.save`
+**Social Features (8 files)**
+- `HashtagFeed.tsx` -- heading, empty states
+- `PostDetail.tsx` -- "Comments", "Write a comment...", "Post"
+- `CreatePost.tsx` -- "Create Post", "What's on your mind?"
+- `CreateStory.tsx` -- story creation labels
+- `Events.tsx` -- "Events", "Create Event"
+- `EventDetail.tsx` -- event detail labels
+- `Groups.tsx` -- "Groups", "Create Group"
+- `GroupDetail.tsx` -- group detail labels
 
-**German (8 untranslated):**
-`common.info`, `common.ok`, `messages.status.offline`, `messages.status.online`, `profile.fields.religion`, `profile.stats.likes`, `profile.stats.matches`, `swipe.actions.super_like`
+**Other Pages (7 files)**
+- `Matches.tsx` -- "Matches", empty states
+- `LikedMe.tsx` -- "Who Liked Me"
+- `BlockedUsers.tsx` -- "Blocked Users"
+- `Subscription.tsx` -- plan names, pricing labels
+- `HelpSupport.tsx` -- "Help & Support"
+- `AdvancedSearch.tsx` -- search labels
+- `Verification.tsx` -- verification labels
 
-**Norwegian (6 untranslated):**
-`common.info`, `common.ok`, `filters.religions.muslim`, `nav.filter`, `profile.fields.religion`, `swipe.actions.pass`
+**Key Components (15+ files)**
+- `BottomNavigation.tsx` -- already done
+- `components/landing/Footer.tsx` -- footer links text
+- `components/ErrorBoundary.tsx` -- error messages
+- `components/LoadingState.tsx` -- loading text
+- `components/EmptyState.tsx` -- empty state text
+- `components/auth/components/SocialLogin.tsx` -- "Or continue with"
+- `components/auth/components/basic-info/BasicInfoHeader.tsx` -- "Basic Info", "Tell us about yourself"
+- `components/my-profile/AccountSettings.tsx` -- all settings labels
+- `components/swipe/SwipeCard.tsx` -- card labels
+- `components/chat/` -- all chat UI components
+- `components/discovery/PostCard.tsx` -- post interaction labels
+- `components/notifications/NotificationBell.tsx` -- notification labels
 
-### Problem 3: Translation Hook Not Wired Up
+### New Translation Keys Needed
 
-`useTranslations` is imported in `BottomNavigation.tsx` but the `t()` function is never actually called -- nav items use hardcoded English strings. The rest of the app does not use translations at all.
+Approximately **200+ new translation keys** need to be added to the database across these categories:
+
+| Category | Estimated New Keys | Examples |
+|---|---|---|
+| `auth.*` | ~15 | `auth.welcome_back`, `auth.back_to_landing`, `auth.logging_in` |
+| `discovery.feed.*` | ~10 | `discovery.feed.for_you`, `discovery.feed.following`, `discovery.feed.no_posts` |
+| `swipe.*` | ~15 | `swipe.loading`, `swipe.no_more`, `swipe.its_a_match`, `swipe.profile_liked` |
+| `messages.*` | ~25 | `messages.type_message`, `messages.no_conversations`, `messages.new_matches` |
+| `profile.*` | ~30 | `profile.loading`, `profile.not_found`, `profile.basic_info`, all field labels |
+| `my_profile.*` | ~20 | `my_profile.views`, `my_profile.likes`, `my_profile.complete_profile` |
+| `notifications.*` | ~15 | `notifications.activity`, `notifications.mark_all_read`, `notifications.no_notifications` |
+| `social.*` | ~15 | `social.create_post`, `social.whats_on_mind`, `social.comments` |
+| `settings.*` | ~10 | settings labels |
+| `events.*` | ~10 | event labels |
+| `groups.*` | ~10 | group labels |
+| `subscription.*` | ~10 | plan/pricing labels |
+| `misc.*` | ~15 | error boundary, loading states, empty states |
+
+**Total: ~200 new keys x 5 languages = ~1000 new database rows**
 
 ---
 
 ## Implementation Plan
 
-### Step 1: Fix Untranslated Values (62 keys)
+### Phase 1: Create New Translation Keys Edge Function
+Create a new edge function `sync-all-translations` that inserts all ~200 new keys with proper translations for all 5 languages in one batch.
 
-Update existing rows in `app_translations` where the value is still in English. Correct translations:
+### Phase 2: Wire Up Core Pages (highest user impact)
+Modify each page file to:
+1. Import `useTranslations`
+2. Destructure `const { t } = useTranslations()`
+3. Replace every hardcoded English string with `t('key', 'Fallback')`
 
-**Kurdish Sorani (21 fixes):**
+**Priority order:**
+1. `Auth.tsx` + `Register.tsx` (first thing users see)
+2. `DiscoveryFeed.tsx` (main page)
+3. `Swipe.tsx` (core feature)
+4. `Messages.tsx` (core feature)
+5. `Profile.tsx` + `MyProfile.tsx` (user profiles)
+6. `Notifications.tsx` (activity page)
+7. `Settings.tsx` (where language is changed)
 
-- `auth.password` = `وشەی نهێنی`
-- `auth.register` = `خۆتۆمارکردن`
-- `common.back` = `گەڕانەوە`
-- `common.cancel` = `هەڵوەشاندنەوە`
-- `common.close` = `داخستن`
-- `common.edit` = `دەستکاری`
-- `common.error` = `هەڵە`
-- `common.loading` = `بارکردن...`
-- `common.next` = `دواتر`
-- `common.submit` = `ناردن`
-- `common.success` = `سەرکەوتوو`
-- `nav.discover` = `دۆزینەوە`
-- `nav.messages` = `نامەکان`
-- `nav.profile` = `پرۆفایل`
-- `nav.settings` = `ڕێکخستنەکان`
-- `nav.swipe` = `سوایپ`
-- `settings.account` = `هەژمار`
-- `settings.language` = `زمان`
-- `settings.notifications` = `ئاگاداریەکان`
-- `settings.privacy` = `تایبەتێتی`
-- `settings.title` = `ڕێکخستنەکان`
+### Phase 3: Wire Up Secondary Pages
+- Social features (Posts, Stories, Events, Groups)
+- Utility pages (Subscription, Help, Verification, etc.)
 
-**Kurdish Kurmanci (27 fixes):**
-
-- `auth.email` = `E-peyam`
-- `auth.forgot_password` = `Peyva niheni ji bir kir?`
-- `auth.login` = `Tekevin`
-- `auth.password` = `Peyva niheni`
-- `auth.register` = `Tomarbun`
-- `auth.sign_out` = `Derkeve`
-- `common.back` = `Vegere`
-- `common.cancel` = `Betal bike`
-- `common.close` = `Bigire`
-- `common.delete` = `Jebibe`
-- `common.edit` = `Biguherîne`
-- `common.error` = `Cewti`
-- `common.loading` = `Tê barkirin...`
-- `common.next` = `Pêsîve`
-- `common.save` = `Tomar bike`
-- `common.submit` = `Bîsîne`
-- `common.success` = `Serkeftin`
-- `nav.discover` = `Kesfkirin`
-- `nav.messages` = `Peyam`
-- `nav.profile` = `Profîl`
-- `nav.settings` = `Mîheng`
-- `nav.swipe` = `Swipe`
-- `settings.account` = `Hesab`
-- `settings.language` = `Ziman`
-- `settings.notifications` = `Agahdarî`
-- `settings.privacy` = `Niheniparêzî`
-- `settings.title` = `Mîheng`
-
-**German (8 fixes):**
-
-- `common.info` = `Information`
-- `common.ok` = `Okay`
-- `messages.status.offline` = `Abwesend`
-- `messages.status.online` = `Verfugbar`
-- `profile.fields.religion` = `Glaube`
-- `profile.stats.likes` = `Gefallt mir`
-- `profile.stats.matches` = `Ubereinstimmungen`
-- `swipe.actions.super_like` = `Super-Gefallt mir`
-
-**Norwegian (6 fixes):**
-
-- `common.info` = `Informasjon`
-- `common.ok` = `Greit`
-- `filters.religions.muslim` = `Muslimsk`
-- `nav.filter` = `Filtrer`
-- `profile.fields.religion` = `Religion/Tro`
-- `swipe.actions.pass` = `Hopp over`
-
-### Step 2: Insert 114 Missing Keys Per Language
-
-Create an edge function `sync-translations` that inserts the 114 missing translation keys for each of the 4 non-English languages with proper translations. The keys fall into these categories:
-
-- **discovery.*** -- Discovery page filters and labels
-- **message.*** -- Messaging UI
-- **notifications.*** -- Notification strings
-- **profile.*** -- Profile sections
-- **settings.*** -- Settings page
-- **social.*** -- Social feed
-- **filters.*** -- Filter options (body types, regions, religions)
-
-Each key will get a proper human-quality translation for all 4 languages.
-
-### Step 3: Wire Up BottomNavigation to Use Translations
-
-Update `BottomNavigation.tsx` to actually use the `t()` function for nav item labels instead of hardcoded English strings.
-
-### Step 4: Clean Up Orphan DB Languages
-
-The `kurdish` language code (115 keys) is not used by the app -- the app uses `kurdish_sorani` and `kurdish_kurmanci`. The `arabic`, `persian`, and `turkish` codes also exist but are not in the language switcher. These will be left as-is (no harm) but documented.
+### Phase 4: Wire Up Shared Components
+- LoadingState, EmptyState, ErrorBoundary
+- Auth sub-components (BasicInfoHeader, SocialLogin)
+- Chat components
+- Profile display components
 
 ---
 
 ## Technical Details
 
-### Files to create:
+### Files to create (1):
+- `supabase/functions/sync-all-translations/index.ts` -- Edge function with ~1000 INSERT statements
 
-- `supabase/functions/sync-translations/index.ts` -- Edge function with all 456+ translation inserts (114 keys x 4 languages)
-
-### Files to modify:
-
-- `src/components/BottomNavigation.tsx` -- Wire up `t()` for nav labels
+### Files to modify (~35):
+Every page and key component listed above -- each gets `useTranslations` import and `t()` calls replacing hardcoded strings.
 
 ### Database operations:
+- INSERT ~1000 rows (200 new keys x 5 languages)
 
-- UPDATE ~62 rows (fix untranslated values)
-- INSERT ~456 rows (missing keys for 4 languages)
+### Important notes:
+- All `t()` calls include English fallback text, so the app works even if translations fail to load
+- The `useTranslations` hook already caches translations per language, so adding it to more components does not multiply API calls
+- RTL support for Kurdish Sorani would be a separate future effort
 
-### Scope:
+### Estimated effort:
+This is a very large change touching 35+ files with ~500+ string replacements. It will be done methodically, page by page, starting with the highest-traffic screens.
 
-This plan achieves **100% database translation coverage** for all 294 keys across all 5 languages. Wiring up `t()` across every page in the app (beyond BottomNavigation) is a separate, much larger effort that would touch 30+ files.
