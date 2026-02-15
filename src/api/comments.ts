@@ -21,21 +21,25 @@ export interface Comment {
 }
 
 export const getComments = async (postId: string): Promise<Comment[]> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  const { data, error } = await supabase
-    .from('post_comments')
-    .select(`
-      *,
-      profiles:user_id (
-        id,
-        name,
-        profile_image,
-        verified
-      )
-    `)
-    .eq('post_id', postId)
-    .order('created_at', { ascending: true });
+  const [userRes, commentsRes] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from('post_comments')
+      .select(`
+        *,
+        profiles:user_id (
+          id,
+          name,
+          profile_image,
+          verified
+        )
+      `)
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true }),
+  ]);
+
+  const user = userRes.data.user;
+  const { data, error } = commentsRes;
   
   if (error) throw error;
 
