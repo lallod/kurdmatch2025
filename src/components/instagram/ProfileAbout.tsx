@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Profile } from '@/api/profiles';
 import { Badge } from '@/components/ui/badge';
 import { User, Briefcase, Heart, Sparkles, Home, Lock, Globe, Trophy, Palette, Star, Book } from 'lucide-react';
@@ -15,8 +15,15 @@ const formatArrayField = (value: string[] | string | undefined): string[] => {
   return [value];
 };
 
+const MAX_VISIBLE_BADGES = 3;
+
 const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social' }) => {
   const { canSeeDatingDetails, isPremium } = useProfileAccess(context, profile.id);
+  const [expandedArrays, setExpandedArrays] = useState<Record<string, boolean>>({});
+
+  const toggleArray = (label: string) => {
+    setExpandedArrays(prev => ({ ...prev, [label]: !prev[label] }));
+  };
 
   const gatedSections = !canSeeDatingDetails;
   const sections = [
@@ -204,11 +211,14 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
 
               {section.arrays?.map((arr) => {
                 if (!arr.values || arr.values.length === 0) return null;
+                const isExpanded = expandedArrays[arr.label] || false;
+                const hasMore = arr.values.length > MAX_VISIBLE_BADGES;
+                const visible = isExpanded ? arr.values : arr.values.slice(0, MAX_VISIBLE_BADGES);
                 return (
                   <div key={arr.label}>
                     <span className="text-muted-foreground text-xs">{arr.label}</span>
-                    <div className="flex flex-wrap gap-1.5 mt-1.5">
-                      {arr.values.map((value, index) => (
+                    <div className="flex flex-wrap gap-1.5 mt-1.5 items-center">
+                      {visible.map((value, index) => (
                         <Badge
                           key={index}
                           variant="secondary"
@@ -217,6 +227,14 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
                           {value}
                         </Badge>
                       ))}
+                      {hasMore && (
+                        <button
+                          onClick={() => toggleArray(arr.label)}
+                          className="text-[10px] text-primary font-medium hover:underline transition-colors"
+                        >
+                          {isExpanded ? 'See less' : `+${arr.values.length - MAX_VISIBLE_BADGES} more`}
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
