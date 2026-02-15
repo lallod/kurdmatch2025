@@ -1,32 +1,44 @@
 
-
-# Remove Duplicated Interests/Hobbies Badge Cloud
+# Show All Profile Data on Instagram Profile and Swipe Page
 
 ## Problem
 
-The "Interests & Hobbies" section in `ProfileInterests.tsx` has two parts:
-1. **Top badge cloud** (lines 35-55): Renders interests and hobbies as a mixed, unlabeled, non-editable blob of badges
-2. **DetailItem list below**: Renders Weekend Activities, Music Instruments, Favorite Games with proper labels and editing
+The **swipe page** (`ProfileDetails.tsx`) already displays all profile fields across 8 accordion sections -- this is complete.
 
-The top badge cloud is redundant -- interests and hobbies should be proper, labeled, editable fields like the rest.
+The **Instagram profile** (`ProfileAbout.tsx`) only shows 5 sections with limited fields. It is missing:
 
-## Fix
+**Missing sections entirely:**
+- Interests & Hobbies (only shows values/interests/hobbies -- missing creative pursuits, weekend activities, music instruments, tech skills)
+- Favorites (books, movies, music, foods, games, podcasts, quote, memory, season)
+- Personal Growth (growth goals, morning/evening routine, stress relievers, financial habits, friendship style, decision making, charity involvement, hidden talents, pet peeves, dream vacation, ideal date, dream home, ideal weather)
 
-Replace the top uneditable badge cloud with two `DetailItem` components:
-- **Interests** -- `multi-select` with options from the predefined interests list
-- **Hobbies** -- `multi-select` with options from the predefined hobbies list
+**Missing fields from existing sections:**
+- Basic Info: missing Gender, Kurdistan Region
+- Career: missing nothing major
+- Lifestyle: missing Travel Frequency, Transportation Preference
+- Relationships: missing Children Status
 
-Both will use `fieldType="multi-select"` so users can toggle items on/off inline, consistent with all other array fields.
+## Solution
 
-## Files Changed
+Update `ProfileAbout.tsx` to include all the same fields as the swipe page's `ProfileDetails.tsx`, organized into matching sections. This ensures users see the same comprehensive profile data regardless of where they view a profile.
 
-| File | Change |
-|------|--------|
-| `src/components/profile/ProfileInterests.tsx` | Remove the top badge cloud (lines 35-55). Add two `DetailItem` components for Interests and Hobbies with `fieldType="multi-select"`, proper icons, labels, and predefined options. |
+## Technical Details
 
-## Options
+### File: `src/components/instagram/ProfileAbout.tsx`
 
-**Interests options**: Travel, Photography, Cooking, Hiking, Reading, Music, Dancing, Sports, Fitness, Art, Movies, Gaming, Technology, Fashion, Food, Nature, Animals, History, Science, Politics
+Add the following to existing sections:
+- **Basic Info**: Add Gender, Kurdistan Region
+- **Lifestyle**: Add Travel Frequency, Transportation Preference
+- **Relationships**: Add Children Status
 
-**Hobbies options**: Drawing, Painting, Writing, Singing, Playing instruments, Gardening, Crafting, Collecting, Board games, Video games, Yoga, Meditation, Running, Cycling, Swimming, Rock climbing, Martial arts, Chess
+Add new sections:
+- **Interests & Hobbies** (separate from Values -- add Creative Pursuits, Weekend Activities, Music Instruments, Tech Skills, Hobbies as array badges)
+- **Favorites** (Books, Movies, Music, Foods, Games, Podcasts, Quote, Memory, Season)
+- **Personal Growth** (Growth Goals, Morning Routine, Evening Routine, Stress Relievers, Financial Habits, Friendship Style, Decision Making, Charity Involvement, Hidden Talents, Pet Peeves, Dream Vacation, Ideal Date, Dream Home, Ideal Weather)
 
+New icons needed: `Globe`, `Trophy`, `Palette` (from lucide-react, matching swipe page).
+
+Each new section follows the existing card pattern with icon header, key-value rows for string fields, and badge arrays for list fields. Gated sections (all except Values & Interests) remain behind the `canSeeDatingDetails` check.
+
+### No changes needed for swipe page
+The swipe page `ProfileDetails.tsx` already shows all fields comprehensively.
