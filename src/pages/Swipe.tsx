@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import SwipeActions from '@/components/swipe/SwipeActions';
-import { SwipeFilterSidebar } from '@/components/swipe/SwipeFilters';
+import { SwipeFilterSidebar, type SwipeFilters } from '@/components/swipe/SwipeFilters';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
@@ -31,7 +31,7 @@ const Swipe = () => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [boostOpen, setBoostOpen] = useState(false);
-  const [filters, setFilters] = useState<{ ageMin?: number; ageMax?: number; location?: string; religion?: string; }>({});
+  const [filters, setFilters] = useState<SwipeFilters>({});
 
   const currentProfile = profiles[currentIndex];
 
