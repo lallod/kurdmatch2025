@@ -6,6 +6,7 @@ import { AuthProvider } from '@/integrations/supabase/auth';
 import { AppRoutes } from "@/components/app/AppRoutes";
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import CookieConsentBanner from '@/components/CookieConsentBanner';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ function App() {
             <AuthProvider>
               <LanguageProvider>
                 <AppRoutes />
+                <CookieConsentBanner />
               </LanguageProvider>
             </AuthProvider>
           </BrowserRouter>

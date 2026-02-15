@@ -18,6 +18,12 @@
 - ✅ Community Guidelines page
 - ✅ Profile Verification (selfie + ID) with admin review
 - ✅ UI/UX polish pass (consistent Midnight Rose design system)
+- ✅ Lazy loading on all routes (React.lazy + Suspense)
+- ✅ About Us page
+- ✅ Contact Us page with form
+- ✅ Cookie Policy page + consent banner
+- ✅ SEO: meta tags, OG tags, Twitter Card, JSON-LD structured data
+- ✅ Footer links updated (About, Help, Contact, Cookie Policy, Guidelines)
 
 ## Remaining Dashboard Actions (Manual)
 - ⬜ Enable leaked password protection (Supabase Auth dashboard)
@@ -28,5 +34,4 @@
 - Video/Voice calls between matched users
 - Stories feature enhancements
 - Push notification improvements
-- Performance optimization (lazy loading, code splitting)
 - Cross-browser comprehensive testing
