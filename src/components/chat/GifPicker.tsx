@@ -1,9 +1,17 @@
-import { useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Search, X, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
+
+interface GifResult {
+  id: string;
+  url: string;
+  preview: string;
+  title: string;
+}
 
 interface GifPickerProps {
   open: boolean;
@@ -11,44 +19,58 @@ interface GifPickerProps {
   onSelectGif: (gifUrl: string) => void;
 }
 
-// Sample GIF categories and trending GIFs (in production, use Giphy API)
-const trendingGifs = [
-  'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif',
-  'https://media.giphy.com/media/l0HlRnAWXxn0MhKLK/giphy.gif',
-  'https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif',
-  'https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif',
-  'https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif',
-  'https://media.giphy.com/media/26tPplGWjN0xLybiU/giphy.gif',
-];
-
 export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [gifs, setGifs] = useState<string[]>(trendingGifs);
-  const [isSearching, setIsSearching] = useState(false);
+  const [gifs, setGifs] = useState<GifResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const handleSearch = async (query: string) => {
-    setSearchQuery(query);
-    
-    if (!query.trim()) {
-      setGifs(trendingGifs);
-      return;
+  const fetchGifs = useCallback(async (query: string) => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({ limit: '20' });
+      if (query.trim()) params.set('q', query.trim());
+
+      const { data, error } = await supabase.functions.invoke('search-gifs', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        body: undefined,
+      });
+
+      // Use fetch directly since invoke doesn't support GET query params well
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-gifs?${params.toString()}`;
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setGifs(result.gifs || []);
+      } else {
+        console.error('Failed to fetch GIFs:', response.status);
+        setGifs([]);
+      }
+    } catch (err) {
+      console.error('Error fetching GIFs:', err);
+      setGifs([]);
+    } finally {
+      setIsLoading(false);
     }
+  }, []);
 
-    setIsSearching(true);
-    
-    // In production, use Giphy API:
-    // const GIPHY_API_KEY = import.meta.env.VITE_GIPHY_API_KEY;
-    // const response = await fetch(
-    //   `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${query}&limit=20`
-    // );
-    // const data = await response.json();
-    // setGifs(data.data.map((gif: any) => gif.images.fixed_height.url));
-    
-    // For now, just filter trending
-    setTimeout(() => {
-      setGifs(trendingGifs);
-      setIsSearching(false);
-    }, 500);
+  // Load trending on open
+  useEffect(() => {
+    if (open) {
+      fetchGifs('');
+    }
+  }, [open, fetchGifs]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchGifs(query), 400);
   };
 
   return (
@@ -59,7 +81,6 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -80,27 +101,27 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
             )}
           </div>
 
-          {/* GIF Grid */}
           <ScrollArea className="h-[400px]">
-            {isSearching ? (
+            {isLoading ? (
               <div className="flex items-center justify-center h-40">
-                <p className="text-muted-foreground">Searching...</p>
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : gifs.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {gifs.map((gifUrl, index) => (
+                {gifs.map((gif) => (
                   <button
-                    key={index}
+                    key={gif.id}
                     onClick={() => {
-                      onSelectGif(gifUrl);
+                      onSelectGif(gif.url);
                       onOpenChange(false);
                     }}
                     className="relative aspect-square rounded-lg overflow-hidden hover:ring-2 ring-primary transition-all"
                   >
                     <img
-                      src={gifUrl}
-                      alt="GIF"
+                      src={gif.preview}
+                      alt={gif.title || 'GIF'}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </button>
                 ))}
@@ -112,7 +133,6 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
             )}
           </ScrollArea>
 
-          {/* Powered by Giphy */}
           <p className="text-xs text-center text-muted-foreground">
             Powered by GIPHY
           </p>

@@ -56,3 +56,9 @@ verify_jwt = false
 
 [functions.sync-all-translations]
 verify_jwt = false
+
+[functions.search-gifs]
+verify_jwt = false
+
+[functions.manage-api-keys]
+verify_jwt = true
