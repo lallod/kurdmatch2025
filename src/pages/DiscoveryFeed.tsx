@@ -122,18 +122,13 @@ const DiscoveryFeed = () => {
     <div className="min-h-screen bg-background pb-24">
       <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-2xl border-b border-border/10">
         <div className="max-w-md mx-auto px-4" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
-          <div className="h-12 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
-                <Heart className="w-3.5 h-3.5 text-primary-foreground fill-primary-foreground" />
-              </div>
-              <h1 className="text-lg font-bold text-foreground tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>
-                KurdMatch
-              </h1>
-            </div>
-            <div className="flex items-center gap-0.5">
-              <button onClick={() => setShowSearch(!showSearch)} className="text-muted-foreground h-9 w-9 rounded-full flex items-center justify-center active:scale-90 transition-transform">
-                <Search className="w-[18px] h-[18px]" />
+          <div className="h-11 flex items-center justify-between">
+            <h1 className="text-[22px] font-bold text-foreground" style={{ fontFamily: 'Georgia, serif' }}>
+              KurdMatch
+            </h1>
+            <div className="flex items-center gap-1">
+              <button onClick={() => setShowSearch(!showSearch)} className="text-foreground h-10 w-10 flex items-center justify-center active:scale-90 transition-transform">
+                <Search className="w-[22px] h-[22px]" />
               </button>
               <NotificationBell />
             </div>
@@ -163,12 +158,13 @@ const DiscoveryFeed = () => {
           </div>
         )}
 
-        <div className="px-3 pt-3 pb-2">
+        <div className="px-3 pt-2 pb-0">
           <StoryBubbles stories={stories} onStoryClick={handleStoryClick} onAddStory={handleAddStory} />
         </div>
+        <div className="border-b border-border/10" />
 
-        <div className="px-4 py-2">
-          <div className="flex gap-0 border-b border-border/10">
+        <div className="px-0">
+          <div className="flex border-b border-border/10">
             {([
               { key: 'for_you' as FeedFilter, label: t('discovery.feed.for_you', 'For You') },
               { key: 'following' as FeedFilter, label: t('discovery.feed.following', 'Following') },
@@ -176,7 +172,7 @@ const DiscoveryFeed = () => {
               <button key={tab.key} onClick={() => { setFeedFilter(tab.key); setSearchingHashtag(null); }}
                 className={`flex-1 py-2.5 text-[13px] font-semibold text-center transition-all relative ${feedFilter === tab.key ? 'text-foreground' : 'text-muted-foreground'}`}>
                 {tab.label}
-                {feedFilter === tab.key && <div className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-primary rounded-full" />}
+                {feedFilter === tab.key && <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-foreground" />}
               </button>
             ))}
           </div>
@@ -197,9 +193,7 @@ const DiscoveryFeed = () => {
             </div>
           ) : (
             sortedPosts.map((post) => (
-              <div key={post.id} className="border-b border-border/5">
-                <PostCard post={post} onLike={handleLike} onComment={handleComment} />
-              </div>
+              <PostCard key={post.id} post={post} onLike={handleLike} onComment={handleComment} />
             ))
           )}
         </div>
