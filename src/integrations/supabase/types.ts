@@ -3288,6 +3288,7 @@ export type Database = {
       }
       stories: {
         Row: {
+          background_color: string | null
           category: string | null
           created_at: string
           duration: number | null
@@ -3296,10 +3297,13 @@ export type Database = {
           media_type: string
           media_url: string
           reactions: Json | null
+          text_overlay: string | null
+          text_position: string | null
           user_id: string
           views_count: number
         }
         Insert: {
+          background_color?: string | null
           category?: string | null
           created_at?: string
           duration?: number | null
@@ -3308,10 +3312,13 @@ export type Database = {
           media_type: string
           media_url: string
           reactions?: Json | null
+          text_overlay?: string | null
+          text_position?: string | null
           user_id: string
           views_count?: number
         }
         Update: {
+          background_color?: string | null
           category?: string | null
           created_at?: string
           duration?: number | null
@@ -3320,6 +3327,8 @@ export type Database = {
           media_type?: string
           media_url?: string
           reactions?: Json | null
+          text_overlay?: string | null
+          text_position?: string | null
           user_id?: string
           views_count?: number
         }

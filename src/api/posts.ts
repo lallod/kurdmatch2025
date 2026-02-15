@@ -38,6 +38,9 @@ export interface Story {
   created_at: string;
   expires_at: string;
   reactions?: any[];
+  text_overlay?: string;
+  text_position?: string;
+  background_color?: string;
   profiles: {
     id: string;
     name: string;
