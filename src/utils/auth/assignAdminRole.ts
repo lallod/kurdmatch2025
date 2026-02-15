@@ -37,7 +37,4 @@ export const assignAdminRole = async (userId: string) => {
   }
 };
 
-// Auto-assign admin role for the specified user
-assignAdminRole('ebd61474-e0a3-44e2-b6b2-76003985ec9d').then(result => {
-  console.log('Admin role assignment result:', result);
-});
+// Admin role assignment should only be done through the super admin UI or edge functions
