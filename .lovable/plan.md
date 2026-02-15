@@ -1,31 +1,58 @@
 
-# Add "See more" Button for Long Badge Lists (Languages & All Arrays)
 
-## Problem
+# Fix Profile Data Saving Issues
 
-Languages (and other array fields like Interests, Hobbies, etc.) can have many items, making the badge lists very long. Users need a "See more" / "See less" toggle to collapse long lists.
+## Problem Summary
+Profile edits from the My Profile page are not reliably saving to the database due to **value format mismatches** in the data conversion pipeline. The data goes through multiple transformation layers (field name mapping, value mapping, random filling) that conflict with each other.
+
+## Root Causes
+
+1. **Value format mismatch on save**: When you edit a field (e.g., Drinking), the select shows options like "Never", "Socially". But the save pipeline tries to convert these using a mapping that expects lowercase keys like "never", "socially" -- so the conversion silently fails and inconsistent values get saved.
+
+2. **Double field-name conversion**: `handleProfileUpdate` in MyProfile.tsx already converts field names from camelCase to snake_case. Then `updateProfileData` does the same conversion again -- redundant and error-prone.
+
+3. **Displayed values are converted UI keys**: The load pipeline converts database values like "Non-drinker" into UI keys like "never", which is what gets displayed. But the edit select options show human-readable labels like "Never" -- these don't match, so the select can't show the current value.
+
+4. **Random filler values interfere**: Empty fields get filled with random values before display, making it unclear what's real data vs. generated data, and these random values go through additional format conversions.
 
 ## Solution
 
-Add a collapsible display to badge arrays in **three locations**:
+### Step 1: Simplify the save path in `handleProfileUpdate` (MyProfile.tsx)
+- Send values directly to the database without going through `convertUiToDbValues`, since the inline editor select options already use human-readable values the DB can store directly.
+- Keep the camelCase-to-snake_case field name mapping (which works correctly).
 
-1. **`LanguageDisplay.tsx`** (swipe page) -- Show first 3 languages, then a "See more" button to expand
-2. **`ProfileAbout.tsx`** (Instagram profile) -- Apply the same truncation to all array badge sections (Languages, Interests, Growth Goals, etc.), showing first 3 with "See more"
-3. Both use the same pattern: show N items by default, a subtle text button to expand, and "See less" to collapse
+### Step 2: Fix `updateProfileData` in `useRealProfileData.ts`
+- Remove the redundant `convertUiToDbProfile` call since the caller already provides snake_case keys.
+- Remove the `convertUiToDbValues` call since values from inline editors are already in DB-compatible format.
+- Save the raw values directly to the database.
+
+### Step 3: Fix value display consistency
+- Update `convertDbToUiValues` usage: stop converting DB values to UI keys for display purposes. The inline editors expect human-readable values that match their select options.
+- Alternatively, make the DetailItem component aware of the value mapping so it can properly translate between display values and stored values.
+
+### Step 4: Fix optimistic state update
+- After saving, merge the new values into the local state correctly so the UI updates immediately without needing a full reload.
 
 ## Technical Details
 
-### File: `src/components/profile/LanguageDisplay.tsx`
-- Add `useState` for `expanded` (default false)
-- Show only first 3 badges when collapsed
-- After the 3rd badge, show a "+X more" text button
-- Clicking it expands to show all; shows "See less" to collapse
+### Files to modify:
 
-### File: `src/components/instagram/ProfileAbout.tsx`
-- In the arrays rendering section (lines 205-222), add the same truncation logic
-- Show first 3 badges per array field when collapsed
-- Add a small "See more" / "See less" toggle per array group
-- Use local state keyed by array label to track which are expanded
+**`src/hooks/useRealProfileData.ts`**
+- In `updateProfileData`: remove `convertUiToDbProfile` and `convertUiToDbValues` calls. Pass values directly to `updateProfile()`.
+- Fix the optimistic state merge to work with the simplified format.
 
-### Default visible count: 3 badges
-This keeps the UI compact while still giving a preview of the data.
+**`src/pages/MyProfile.tsx`**
+- In `handleProfileUpdate`: keep the camelCase-to-snake_case field map but ensure values pass through unchanged to the DB.
+
+**`src/utils/valueMapping.ts`**
+- Either remove value mapping from the load path, or make the DetailItem select options use the same format as the mapped values. The simpler fix: stop value-mapping on load so displayed values match DB values and select options.
+
+**`src/components/profile/DetailItem.tsx`**
+- Ensure `tempValue` initialization correctly matches one of the select options so the current value is shown when editing begins.
+
+### Expected behavior after fix:
+- Editing any field saves the selected value directly to the database
+- The displayed value matches the select options (no format mismatch)
+- Saves persist across page reloads
+- No double-conversion of field names or values
+
