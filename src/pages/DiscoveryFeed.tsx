@@ -12,12 +12,14 @@ import { supabase } from '@/integrations/supabase/client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
 import { Input } from '@/components/ui/input';
+import { useTranslations } from '@/hooks/useTranslations';
 
 type FeedFilter = 'for_you' | 'following';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [posts, setPosts] = useState<Post[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,10 +85,7 @@ const DiscoveryFeed = () => {
     }
   };
 
-  const handleComment = (postId: string) => {
-    navigate(`/post/${postId}`);
-  };
-
+  const handleComment = (postId: string) => { navigate(`/post/${postId}`); };
   const handleStoryClick = (story: Story) => navigate(`/stories/${story.user_id}`);
   const handleAddStory = () => navigate('/stories/create');
   const handleStoryCreated = async () => { const s = await getStories(); setStories(s); };
@@ -95,12 +94,7 @@ const DiscoveryFeed = () => {
     e.preventDefault();
     const q = searchQuery.trim();
     if (!q) { setSearchingHashtag(null); return; }
-    // If starts with #, search hashtag
-    if (q.startsWith('#')) {
-      setSearchingHashtag(q.slice(1));
-    } else {
-      setSearchingHashtag(q);
-    }
+    if (q.startsWith('#')) { setSearchingHashtag(q.slice(1)); } else { setSearchingHashtag(q); }
   };
 
   const clearSearch = () => {
@@ -110,9 +104,7 @@ const DiscoveryFeed = () => {
     loadPosts();
   };
 
-  // Filter posts to prioritize image posts
   const sortedPosts = [...posts].sort((a, b) => {
-    // Posts with images first
     if (a.media_url && !b.media_url) return -1;
     if (!a.media_url && b.media_url) return 1;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -128,7 +120,6 @@ const DiscoveryFeed = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Native app header */}
       <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-2xl border-b border-border/10">
         <div className="max-w-md mx-auto px-4" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
           <div className="h-12 flex items-center justify-between">
@@ -141,10 +132,7 @@ const DiscoveryFeed = () => {
               </h1>
             </div>
             <div className="flex items-center gap-0.5">
-              <button
-                onClick={() => setShowSearch(!showSearch)}
-                className="text-muted-foreground h-9 w-9 rounded-full flex items-center justify-center active:scale-90 transition-transform"
-              >
+              <button onClick={() => setShowSearch(!showSearch)} className="text-muted-foreground h-9 w-9 rounded-full flex items-center justify-center active:scale-90 transition-transform">
                 <Search className="w-[18px] h-[18px]" />
               </button>
               <NotificationBell />
@@ -154,72 +142,46 @@ const DiscoveryFeed = () => {
       </div>
 
       <div className="max-w-md mx-auto">
-        {/* Search bar — collapsible */}
         {showSearch && (
           <div className="px-4 pt-3 pb-1 animate-fade-in">
             <form onSubmit={handleSearch} className="relative">
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by word or #hashtag..."
-                className="h-10 rounded-xl bg-card/60 border-border/15 text-foreground placeholder:text-muted-foreground/50 pr-16 text-sm"
-                autoFocus
-              />
+              <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('discovery.search', 'Search by word or #hashtag...')} className="h-10 rounded-xl bg-card/60 border-border/15 text-foreground placeholder:text-muted-foreground/50 pr-16 text-sm" autoFocus />
               <div className="absolute right-1 top-1 flex items-center gap-0.5">
                 {searchQuery && (
-                  <button type="button" onClick={clearSearch} className="h-8 w-8 flex items-center justify-center rounded-lg text-muted-foreground">
-                    <X className="w-4 h-4" />
-                  </button>
+                  <button type="button" onClick={clearSearch} className="h-8 w-8 flex items-center justify-center rounded-lg text-muted-foreground"><X className="w-4 h-4" /></button>
                 )}
-                <button type="submit" className="h-8 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-medium">
-                  Search
-                </button>
+                <button type="submit" className="h-8 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-medium">{t('common.search', 'Search')}</button>
               </div>
             </form>
           </div>
         )}
 
-        {/* Active search banner */}
         {searchingHashtag && (
           <div className="mx-4 mt-2 px-3 py-2 flex items-center justify-between bg-primary/10 rounded-xl border border-primary/15">
             <span className="text-xs text-foreground font-medium">#{searchingHashtag}</span>
-            <button onClick={clearSearch} className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted/50 active:scale-90 transition-transform">
-              <X className="w-3 h-3 text-muted-foreground" />
-            </button>
+            <button onClick={clearSearch} className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted/50 active:scale-90 transition-transform"><X className="w-3 h-3 text-muted-foreground" /></button>
           </div>
         )}
 
-        {/* Stories Row */}
         <div className="px-3 pt-3 pb-2">
           <StoryBubbles stories={stories} onStoryClick={handleStoryClick} onAddStory={handleAddStory} />
         </div>
 
-        {/* Simple filter tabs — For You / Following */}
         <div className="px-4 py-2">
           <div className="flex gap-0 border-b border-border/10">
             {([
-              { key: 'for_you' as FeedFilter, label: 'For You' },
-              { key: 'following' as FeedFilter, label: 'Following' },
+              { key: 'for_you' as FeedFilter, label: t('discovery.feed.for_you', 'For You') },
+              { key: 'following' as FeedFilter, label: t('discovery.feed.following', 'Following') },
             ]).map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => { setFeedFilter(tab.key); setSearchingHashtag(null); }}
-                className={`flex-1 py-2.5 text-[13px] font-semibold text-center transition-all relative ${
-                  feedFilter === tab.key
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
-                }`}
-              >
+              <button key={tab.key} onClick={() => { setFeedFilter(tab.key); setSearchingHashtag(null); }}
+                className={`flex-1 py-2.5 text-[13px] font-semibold text-center transition-all relative ${feedFilter === tab.key ? 'text-foreground' : 'text-muted-foreground'}`}>
                 {tab.label}
-                {feedFilter === tab.key && (
-                  <div className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-primary rounded-full" />
-                )}
+                {feedFilter === tab.key && <div className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-primary rounded-full" />}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Feed */}
         <div className="space-y-0">
           {sortedPosts.length === 0 ? (
             <div className="text-center py-20 px-4">
@@ -227,12 +189,10 @@ const DiscoveryFeed = () => {
                 <Heart className="w-7 h-7 text-muted-foreground/40" />
               </div>
               <h3 className="text-sm font-semibold text-foreground mb-1">
-                {feedFilter === 'following' ? 'No posts from people you follow' : 'No posts yet'}
+                {feedFilter === 'following' ? t('discovery.feed.no_following_posts', 'No posts from people you follow') : t('discovery.feed.no_posts', 'No posts yet')}
               </h3>
               <p className="text-xs text-muted-foreground">
-                {feedFilter === 'following' 
-                  ? 'Follow people to see their posts here' 
-                  : 'Posts from users will appear here'}
+                {feedFilter === 'following' ? t('discovery.feed.follow_people', 'Follow people to see their posts here') : t('discovery.feed.posts_appear', 'Posts from users will appear here')}
               </p>
             </div>
           ) : (
@@ -246,21 +206,11 @@ const DiscoveryFeed = () => {
       </div>
 
       {selectedStory && (
-        <StoryViewer
-          open={!!selectedStory}
-          onOpenChange={(open) => !open && setSelectedStory(null)}
-          stories={stories}
-          initialIndex={stories.findIndex(s => s.id === selectedStory.id)}
-        />
+        <StoryViewer open={!!selectedStory} onOpenChange={(open) => !open && setSelectedStory(null)} stories={stories} initialIndex={stories.findIndex(s => s.id === selectedStory.id)} />
       )}
 
       {currentUserId && (
-        <CreateStoryModal
-          open={showCreateStory}
-          onOpenChange={setShowCreateStory}
-          onStoryCreated={handleStoryCreated}
-          userId={currentUserId}
-        />
+        <CreateStoryModal open={showCreateStory} onOpenChange={setShowCreateStory} onStoryCreated={handleStoryCreated} userId={currentUserId} />
       )}
     </div>
   );

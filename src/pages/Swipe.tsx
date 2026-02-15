@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import SwipeActions from '@/components/swipe/SwipeActions';
-
 import { SwipeFilterSidebar } from '@/components/swipe/SwipeFilters';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
 import { useSupabaseAuth as useAuth } from '@/integrations/supabase/auth';
 import { SWIPE_CONFIG } from '@/config/swipe';
-
 import { SlidersHorizontal, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCompatibility } from '@/hooks/useCompatibility';
@@ -18,10 +16,12 @@ import { SmartNotificationCenter } from '@/components/notifications/SmartNotific
 import { useSwipeHistory } from '@/hooks/useSwipeHistory';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { ProfileBoostCard } from '@/components/boost/ProfileBoostCard';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Swipe = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslations();
   const { getCompatibilityForProfiles } = useCompatibility();
   const { recordSwipeAction, rewind, isRewinding, remainingRewinds } = useSwipeHistory();
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -31,12 +31,7 @@ const Swipe = () => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [boostOpen, setBoostOpen] = useState(false);
-  const [filters, setFilters] = useState<{
-    ageMin?: number;
-    ageMax?: number;
-    location?: string;
-    religion?: string;
-  }>({});
+  const [filters, setFilters] = useState<{ ageMin?: number; ageMax?: number; location?: string; religion?: string; }>({});
 
   const currentProfile = profiles[currentIndex];
 
@@ -66,80 +61,80 @@ const Swipe = () => {
         distance: Math.floor(Math.random() * 20) + 1,
         compatibilityScore: compatibilityScores.get(profile.id) || 50,
         kurdistanRegion: profile.kurdistan_region || 'South-Kurdistan',
-          area: profile.kurdistan_region || 'South-Kurdistan',
-          interests: profile.interests || [],
-          occupation: profile.occupation || '',
-          religion: profile.religion || '',
-          bodyType: profile.body_type || 'average',
-          languages: profile.languages || [],
-          height: profile.height || '',
-          dietaryPreferences: profile.dietary_preferences || '',
-          photos: profile.photos?.map(p => p.url) || [],
-          bio: profile.bio || '',
-          relationshipGoals: profile.relationship_goals || 'Long-term relationship',
-          verified: profile.verified || false,
-          video_verified: profile.video_verified || false,
-          gender: profile.gender || 'female',
-          ethnicity: profile.ethnicity || '',
-          education: profile.education || '',
-          company: profile.company || '',
-          careerAmbitions: profile.career_ambitions || '',
-          workEnvironment: profile.work_environment || '',
-          workLifeBalance: profile.work_life_balance || '',
-          exerciseHabits: profile.exercise_habits || '',
-          drinking: profile.drinking || '',
-          smoking: profile.smoking || '',
-          havePets: profile.have_pets || '',
-          sleepSchedule: profile.sleep_schedule || '',
-          transportationPreference: profile.transportation_preference || '',
-          travelFrequency: profile.travel_frequency || '',
-          politicalViews: profile.political_views || '',
-          values: profile.values || [],
-          zodiacSign: profile.zodiac_sign || '',
-          personalityType: profile.personality_type || '',
-          wantChildren: profile.want_children || '',
-          childrenStatus: profile.children_status || '',
-          familyCloseness: profile.family_closeness || '',
-          loveLanguage: profile.love_language || '',
-          communicationStyle: profile.communication_style || '',
-          hobbies: profile.hobbies || [],
-          creativePursuits: profile.creative_pursuits || [],
-          weekendActivities: profile.weekend_activities || [],
-          musicInstruments: profile.music_instruments || [],
-          techSkills: profile.tech_skills || [],
-          favoriteBooks: profile.favorite_books || [],
-          favoriteMovies: profile.favorite_movies || [],
-          favoriteMusic: profile.favorite_music || [],
-          favoriteFoods: profile.favorite_foods || [],
-          favoriteGames: profile.favorite_games || [],
-          favoritePodcasts: profile.favorite_podcasts || [],
-          favoriteQuote: profile.favorite_quote || '',
-          favoriteMemory: profile.favorite_memory || '',
-          favoriteSeason: profile.favorite_season || '',
-          growthGoals: profile.growth_goals || [],
-          morningRoutine: profile.morning_routine || '',
-          eveningRoutine: profile.evening_routine || '',
-          stressRelievers: profile.stress_relievers || [],
-          financialHabits: profile.financial_habits || '',
-          friendshipStyle: profile.friendship_style || '',
-          decisionMakingStyle: profile.decision_making_style || '',
-          charityInvolvement: profile.charity_involvement || '',
-          hiddenTalents: profile.hidden_talents || [],
-          petPeeves: profile.pet_peeves || [],
-          dreamVacation: profile.dream_vacation || '',
-          idealDate: profile.ideal_date || '',
-          dreamHome: profile.dream_home || '',
-          idealWeather: profile.ideal_weather || ''
-        })) || [];
+        area: profile.kurdistan_region || 'South-Kurdistan',
+        interests: profile.interests || [],
+        occupation: profile.occupation || '',
+        religion: profile.religion || '',
+        bodyType: profile.body_type || 'average',
+        languages: profile.languages || [],
+        height: profile.height || '',
+        dietaryPreferences: profile.dietary_preferences || '',
+        photos: profile.photos?.map(p => p.url) || [],
+        bio: profile.bio || '',
+        relationshipGoals: profile.relationship_goals || 'Long-term relationship',
+        verified: profile.verified || false,
+        video_verified: profile.video_verified || false,
+        gender: profile.gender || 'female',
+        ethnicity: profile.ethnicity || '',
+        education: profile.education || '',
+        company: profile.company || '',
+        careerAmbitions: profile.career_ambitions || '',
+        workEnvironment: profile.work_environment || '',
+        workLifeBalance: profile.work_life_balance || '',
+        exerciseHabits: profile.exercise_habits || '',
+        drinking: profile.drinking || '',
+        smoking: profile.smoking || '',
+        havePets: profile.have_pets || '',
+        sleepSchedule: profile.sleep_schedule || '',
+        transportationPreference: profile.transportation_preference || '',
+        travelFrequency: profile.travel_frequency || '',
+        politicalViews: profile.political_views || '',
+        values: profile.values || [],
+        zodiacSign: profile.zodiac_sign || '',
+        personalityType: profile.personality_type || '',
+        wantChildren: profile.want_children || '',
+        childrenStatus: profile.children_status || '',
+        familyCloseness: profile.family_closeness || '',
+        loveLanguage: profile.love_language || '',
+        communicationStyle: profile.communication_style || '',
+        hobbies: profile.hobbies || [],
+        creativePursuits: profile.creative_pursuits || [],
+        weekendActivities: profile.weekend_activities || [],
+        musicInstruments: profile.music_instruments || [],
+        techSkills: profile.tech_skills || [],
+        favoriteBooks: profile.favorite_books || [],
+        favoriteMovies: profile.favorite_movies || [],
+        favoriteMusic: profile.favorite_music || [],
+        favoriteFoods: profile.favorite_foods || [],
+        favoriteGames: profile.favorite_games || [],
+        favoritePodcasts: profile.favorite_podcasts || [],
+        favoriteQuote: profile.favorite_quote || '',
+        favoriteMemory: profile.favorite_memory || '',
+        favoriteSeason: profile.favorite_season || '',
+        growthGoals: profile.growth_goals || [],
+        morningRoutine: profile.morning_routine || '',
+        eveningRoutine: profile.evening_routine || '',
+        stressRelievers: profile.stress_relievers || [],
+        financialHabits: profile.financial_habits || '',
+        friendshipStyle: profile.friendship_style || '',
+        decisionMakingStyle: profile.decision_making_style || '',
+        charityInvolvement: profile.charity_involvement || '',
+        hiddenTalents: profile.hidden_talents || [],
+        petPeeves: profile.pet_peeves || [],
+        dreamVacation: profile.dream_vacation || '',
+        idealDate: profile.ideal_date || '',
+        dreamHome: profile.dream_home || '',
+        idealWeather: profile.ideal_weather || ''
+      })) || [];
 
-        setProfiles(transformedProfiles);
-      } catch (error) {
-        console.error('Failed to load profiles:', error);
-        toast.error('Failed to load profiles');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      setProfiles(transformedProfiles);
+    } catch (error) {
+      console.error('Failed to load profiles:', error);
+      toast.error('Failed to load profiles');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     loadProfiles(filters);
@@ -161,31 +156,31 @@ const Swipe = () => {
       switch (action) {
         case 'pass':
           await unlikeProfile(profileId);
-          toast("Profile passed", { icon: "👋" });
+          toast(t('swipe.profile_passed', 'Profile passed'), { icon: "👋" });
           break;
         case 'like':
           const result = await likeProfile(profileId);
           if (result.match) {
-            toast("It's a match! 🎉", { icon: "💜" });
+            toast(t('swipe.its_a_match', "It's a match! 🎉"), { icon: "💜" });
           } else {
-            toast("Profile liked!", { icon: "💜" });
+            toast(t('swipe.profile_liked', 'Profile liked!'), { icon: "💜" });
           }
           break;
         case 'superlike':
           await likeProfile(profileId);
-          toast("Super like sent!", { icon: "⭐" });
+          toast(t('swipe.super_like_sent', 'Super like sent!'), { icon: "⭐" });
           break;
       }
     } catch (error) {
       console.error('Error handling swipe action:', error);
-      toast.error('Something went wrong. Please try again.');
+      toast.error(t('misc.error', 'Something went wrong. Please try again.'));
     }
 
     // Move to next profile
     if (currentIndex < profiles.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      toast("No more profiles to show", { icon: "🔄" });
+      toast(t('swipe.no_more_profiles', 'No more profiles to show'), { icon: "🔄" });
     }
   };
 
@@ -221,8 +216,8 @@ const Swipe = () => {
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
           </div>
-          <div className="text-foreground text-lg sm:text-xl font-semibold">Loading profiles...</div>
-          <div className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">Finding your perfect matches</div>
+          <div className="text-foreground text-lg sm:text-xl font-semibold">{t('swipe.loading', 'Loading profiles...')}</div>
+          <div className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">{t('swipe.finding_matches', 'Finding your perfect matches')}</div>
         </div>
       </div>
     );
@@ -237,10 +232,8 @@ const Swipe = () => {
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
           </div>
-          <h2 className={`${SWIPE_CONFIG.header.title.size} font-bold mb-2 text-foreground`}>
-            No more profiles
-          </h2>
-          <p className="text-muted-foreground text-sm sm:text-base">Check back later for new matches!</p>
+          <h2 className={`${SWIPE_CONFIG.header.title.size} font-bold mb-2 text-foreground`}>{t('swipe.no_more', 'No more profiles')}</h2>
+          <p className="text-muted-foreground text-sm sm:text-base">{t('swipe.check_back', 'Check back later for new matches!')}</p>
         </div>
       </div>
     );

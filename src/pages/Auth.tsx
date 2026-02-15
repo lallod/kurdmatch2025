@@ -9,6 +9,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import SocialLogin from '@/components/auth/components/SocialLogin';
 import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ const Auth = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { signIn, user } = useSupabaseAuth();
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -24,7 +26,6 @@ const Auth = () => {
     const isOAuthCallback = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token');
     
     if (isOAuthCallback) {
-      
       navigate('/auth/callback', { replace: true });
       return;
     }
@@ -34,12 +35,7 @@ const Auth = () => {
     const checkUserRole = async () => {
       try {
         const isSuperAdmin = await isUserSuperAdmin(user.id);
-
-        if (isSuperAdmin) {
-          navigate('/super-admin', { replace: true });
-          return;
-        }
-
+        if (isSuperAdmin) { navigate('/super-admin', { replace: true }); return; }
         navigate('/discovery', { replace: true });
       } catch (error) {
         console.error('Error checking user role:', error);
@@ -56,23 +52,17 @@ const Auth = () => {
     setErrorMessage(null);
 
     try {
-      
       const { error } = await signIn(email, password);
-
       if (error) throw error;
-
-      toast.success("Welcome back!", { description: "You've successfully logged in." });
+      toast.success(t('auth.welcome_success', 'Welcome back!'), { description: t('auth.login_success', "You've successfully logged in.") });
     } catch (error: any) {
-      
-      
       if (error.message === 'Email not confirmed') {
-        setErrorMessage("Please check your email to confirm your account before logging in.");
+        setErrorMessage(t('auth.confirm_email', 'Please check your email to confirm your account before logging in.'));
       } else {
-        setErrorMessage(error.message || "Something went wrong. Please try again.");
+        setErrorMessage(error.message || t('misc.error', 'Something went wrong. Please try again.'));
       }
-      
-      toast.error("Authentication failed", {
-        description: error.message || "Something went wrong. Please try again.",
+      toast.error(t('auth.auth_failed', 'Authentication failed'), {
+        description: error.message || t('misc.error', 'Something went wrong. Please try again.'),
       });
     } finally {
       setIsLoading(false);
@@ -84,10 +74,10 @@ const Auth = () => {
       <div className="w-full max-w-sm sm:max-w-md space-y-5 sm:space-y-6 bg-card/80 backdrop-blur-lg border border-border/20 p-6 sm:p-8 lg:p-10 rounded-3xl shadow-2xl">
         <div className="text-center space-y-1.5 sm:space-y-2">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-            Welcome Back
+            {t('auth.welcome_back', 'Welcome Back')}
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Log in to continue your journey
+            {t('auth.login_subtitle', 'Log in to continue your journey')}
           </p>
         </div>
         
@@ -99,7 +89,7 @@ const Auth = () => {
             onClick={() => navigate('/')}
           >
             <ArrowLeft className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            Back to Landing Page
+            {t('auth.back_to_landing', 'Back to Landing Page')}
           </Button>
         </div>
         
@@ -112,7 +102,7 @@ const Auth = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div className="space-y-1.5 sm:space-y-2">
-            <Label htmlFor="email" className="text-foreground font-medium text-sm">Email</Label>
+            <Label htmlFor="email" className="text-foreground font-medium text-sm">{t('auth.email', 'Email')}</Label>
             <Input
               id="email"
               type="email"
@@ -126,7 +116,7 @@ const Auth = () => {
           </div>
           
           <div className="space-y-1.5 sm:space-y-2">
-            <Label htmlFor="password" className="text-foreground font-medium text-sm">Password</Label>
+            <Label htmlFor="password" className="text-foreground font-medium text-sm">{t('auth.password', 'Password')}</Label>
             <Input
               id="password"
               type="password"
@@ -147,10 +137,10 @@ const Auth = () => {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
-                Logging In...
+                {t('auth.logging_in', 'Logging In...')}
               </>
             ) : (
-              'Log In'
+              t('auth.log_in', 'Log In')
             )}
           </Button>
         </form>
@@ -160,7 +150,7 @@ const Auth = () => {
             to="/register"
             className="text-sm text-muted-foreground hover:text-foreground"
           >
-            Don't have an account? <span className="text-primary font-medium">Sign up</span>
+            {t('auth.no_account', "Don't have an account?")} <span className="text-primary font-medium">{t('auth.sign_up', 'Sign up')}</span>
           </Link>
         </div>
 
