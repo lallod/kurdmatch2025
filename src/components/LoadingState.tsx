@@ -1,6 +1,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LoadingStateProps {
   message?: string;
@@ -9,17 +10,17 @@ interface LoadingStateProps {
 }
 
 export const LoadingState: React.FC<LoadingStateProps> = ({
-  message = 'Loading...',
+  message,
   fullScreen = false,
   className
 }) => {
+  const { t } = useTranslations();
+  const displayMessage = message || t('misc.loading', 'Loading...');
+
   const content = (
-    <div className={cn(
-      "flex flex-col items-center justify-center gap-4",
-      className
-    )}>
+    <div className={cn("flex flex-col items-center justify-center gap-4", className)}>
       <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      <p className="text-sm text-muted-foreground">{message}</p>
+      <p className="text-sm text-muted-foreground">{displayMessage}</p>
     </div>
   );
 

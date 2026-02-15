@@ -4,8 +4,10 @@ import EnhancedDynamicRegistrationForm from '@/components/auth/EnhancedDynamicRe
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Register = () => {
+  const { t } = useTranslations();
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, []);
 
   return (
@@ -13,7 +15,7 @@ const Register = () => {
       <div className="w-full max-w-sm sm:max-w-lg lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto space-y-6 sm:space-y-8">
         <div className="absolute top-4 left-4 z-10">
           <Button asChild variant="ghost" size="sm" className="flex items-center text-muted-foreground hover:text-foreground hover:bg-muted backdrop-blur border border-border/20 text-sm sm:text-base">
-            <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />Back to Home</Link>
+            <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />{t('auth.back_to_home', 'Back to Home')}</Link>
           </Button>
         </div>
         
@@ -26,8 +28,8 @@ const Register = () => {
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">KurdMatch</h1>
             </div>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-2">Join Our Community</h2>
-          <p className="text-muted-foreground text-base sm:text-lg lg:text-xl px-4">Create your account in just a few simple steps</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-2">{t('auth.join_community', 'Join Our Community')}</h2>
+          <p className="text-muted-foreground text-base sm:text-lg lg:text-xl px-4">{t('auth.create_account_steps', 'Create your account in just a few simple steps')}</p>
         </div>
         
         <div className="backdrop-blur-md bg-card/50 p-4 sm:p-6 lg:p-8 xl:p-10 rounded-3xl shadow-2xl border border-border/20 relative overflow-hidden">
@@ -35,8 +37,8 @@ const Register = () => {
         </div>
         
         <div className="text-center text-sm text-muted-foreground border-t border-border/20 pt-6">
-          Already have an account?{' '}
-          <Link to="/auth" className="text-primary hover:text-primary/80 font-medium transition-colors">Sign in here</Link>
+          {t('auth.have_account', 'Already have an account?')}{' '}
+          <Link to="/auth" className="text-primary hover:text-primary/80 font-medium transition-colors">{t('auth.sign_in_here', 'Sign in here')}</Link>
         </div>
       </div>
     </div>

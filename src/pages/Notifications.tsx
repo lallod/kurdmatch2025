@@ -7,23 +7,18 @@ import { Badge } from '@/components/ui/badge';
 import { Bell, Heart, MessageCircle, UserPlus, Eye, Calendar, Users, ArrowLeft, Check, Trash2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Notification {
-  id: string;
-  type: 'like' | 'comment' | 'follow' | 'view' | 'event' | 'group' | 'message';
-  title: string;
-  message: string;
-  read: boolean;
-  created_at: string;
-  action_url?: string;
-  actor_id?: string;
-  actor_name?: string;
-  actor_image?: string;
+  id: string; type: 'like' | 'comment' | 'follow' | 'view' | 'event' | 'group' | 'message';
+  title: string; message: string; read: boolean; created_at: string;
+  action_url?: string; actor_id?: string; actor_name?: string; actor_image?: string;
 }
 
 const Notifications = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
@@ -123,85 +118,53 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Slim header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border/30">
         <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <h1 className="text-base font-semibold text-foreground">Activity</h1>
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8"><ArrowLeft className="w-4 h-4" /></Button>
+            <h1 className="text-base font-semibold text-foreground">{t('notifications.activity', 'Activity')}</h1>
           </div>
           {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-xs text-primary">
-              Mark all read
-            </Button>
+            <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-xs text-primary">{t('notifications.mark_all_read', 'Mark all read')}</Button>
           )}
         </div>
       </div>
 
       <div className="max-w-lg mx-auto">
-        {/* Tab row */}
         <div className="flex border-b border-border/20 px-4">
-          <button
-            onClick={() => setFilter('all')}
-            className={`flex-1 py-2.5 text-sm font-semibold text-center relative ${filter === 'all' ? 'text-foreground' : 'text-muted-foreground'}`}
-          >
-            All
+          <button onClick={() => setFilter('all')} className={`flex-1 py-2.5 text-sm font-semibold text-center relative ${filter === 'all' ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {t('notifications.all', 'All')}
             {filter === 'all' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground" />}
           </button>
-          <button
-            onClick={() => setFilter('unread')}
-            className={`flex-1 py-2.5 text-sm font-semibold text-center relative ${filter === 'unread' ? 'text-foreground' : 'text-muted-foreground'}`}
-          >
-            Unread {unreadCount > 0 && `(${unreadCount})`}
+          <button onClick={() => setFilter('unread')} className={`flex-1 py-2.5 text-sm font-semibold text-center relative ${filter === 'unread' ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {t('notifications.unread', 'Unread')} {unreadCount > 0 && `(${unreadCount})`}
             {filter === 'unread' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground" />}
           </button>
         </div>
 
-        {/* Notifications list */}
         <div>
           {loading ? (
-            <div className="py-12 text-center text-muted-foreground text-sm">Loading...</div>
+            <div className="py-12 text-center text-muted-foreground text-sm">{t('notifications.loading', 'Loading...')}</div>
           ) : filteredNotifications.length === 0 ? (
             <div className="py-16 text-center">
               <Bell className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
               <p className="text-muted-foreground text-sm">
-                {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
+                {filter === 'unread' ? t('notifications.no_unread', 'No unread notifications') : t('notifications.no_notifications', 'No notifications yet')}
               </p>
             </div>
           ) : (
             filteredNotifications.map(notification => (
-              <div
-                key={notification.id}
-                className={`flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-muted/30 transition-colors border-b border-border/10 ${
-                  !notification.read ? 'bg-primary/5' : ''
-                }`}
-                onClick={() => handleNotificationClick(notification)}
-              >
+              <div key={notification.id} className={`flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-muted/30 transition-colors border-b border-border/10 ${!notification.read ? 'bg-primary/5' : ''}`} onClick={() => handleNotificationClick(notification)}>
                 {notification.actor_image ? (
                   <img src={notification.actor_image} alt="" className="w-11 h-11 rounded-full object-cover flex-shrink-0" />
                 ) : (
-                  <div className="w-11 h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                    {getNotificationIcon(notification.type)}
-                  </div>
+                  <div className="w-11 h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">{getNotificationIcon(notification.type)}</div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-foreground">
-                    <span className="font-semibold">{notification.actor_name || notification.title}</span>{' '}
-                    {notification.message.replace(notification.actor_name || '', '').trim()}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
-                  </p>
+                  <p className="text-sm text-foreground"><span className="font-semibold">{notification.actor_name || notification.title}</span>{' '}{notification.message.replace(notification.actor_name || '', '').trim()}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}</p>
                 </div>
-                <Button
-                  variant="ghost" size="icon"
-                  onClick={(e) => { e.stopPropagation(); deleteNotification(notification.id); }}
-                  className="text-muted-foreground h-8 w-8 flex-shrink-0 opacity-0 hover:opacity-100"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
+                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); deleteNotification(notification.id); }} className="text-muted-foreground h-8 w-8 flex-shrink-0 opacity-0 hover:opacity-100"><Trash2 className="w-3.5 h-3.5" /></Button>
               </div>
             ))
           )}
