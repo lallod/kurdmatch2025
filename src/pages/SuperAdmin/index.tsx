@@ -41,6 +41,7 @@ import InterestsPage from './pages/InterestsPage';
 import SupportTicketsPage from './pages/SupportTicketsPage';
 import ApiKeysPage from './pages/ApiKeysPage';
 import VirtualGiftsPage from './pages/VirtualGiftsPage';
+import GhostUsersPage from './pages/GhostUsersPage';
 
 const SuperAdmin = () => {
   return (
@@ -85,6 +86,7 @@ const SuperAdmin = () => {
         <Route path="/support-tickets" element={<SupportTicketsPage />} />
         <Route path="/api-keys" element={<ApiKeysPage />} />
         <Route path="/virtual-gifts" element={<VirtualGiftsPage />} />
+        <Route path="/ghost-users" element={<GhostUsersPage />} />
       </Routes>
     </SuperAdminLayout>
   );
