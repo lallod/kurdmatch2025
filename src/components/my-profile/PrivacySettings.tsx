@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Eye, EyeOff, ImageOff, Users, ChevronDown, ChevronRight, Share2 } from 'lucide-react';
+import { Eye, EyeOff, ImageOff, Users, ChevronDown, ChevronRight, Share2, Lock } from 'lucide-react';
 import { useProfileVisibility, PROFILE_FIELDS } from '@/hooks/useProfileVisibility';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -10,6 +11,8 @@ import { Button } from '@/components/ui/button';
 
 const PrivacySettings: React.FC = () => {
   const { visibility, blurPhotos, loading, toggleField, setBlurPhotos } = useProfileVisibility();
+  const { subscription } = useSubscription();
+  const isPremium = subscription.subscription_type !== 'free';
   const [expandedCategory, setExpandedCategory] = useState<string | null>('Basic Info');
   const [matches, setMatches] = useState<any[]>([]);
   const [sharedWith, setSharedWith] = useState<Record<string, boolean>>({});
@@ -149,12 +152,25 @@ const PrivacySettings: React.FC = () => {
                 <p className="text-[11px] text-muted-foreground">Control what others see</p>
               </div>
             </div>
-            {hiddenCount > 0 && (
-              <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary rounded-full">
-                {hiddenCount} hidden
-              </Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {!isPremium && (
+                <Badge className="text-[10px] bg-amber-500/15 text-amber-600 border-amber-500/20 rounded-full flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5" />
+                  Premium
+                </Badge>
+              )}
+              {hiddenCount > 0 && isPremium && (
+                <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary rounded-full">
+                  {hiddenCount} hidden
+                </Badge>
+              )}
+            </div>
           </div>
+          {!isPremium && (
+            <p className="text-[10px] text-muted-foreground mt-2 ml-[52px]">
+              Upgrade to Premium to control which fields are visible on your profile.
+            </p>
+          )}
         </div>
 
         {Object.entries(categories).map(([category, fields]) => {
@@ -169,7 +185,7 @@ const PrivacySettings: React.FC = () => {
               >
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-foreground">{category}</span>
-                  {hiddenInCategory > 0 && (
+                  {hiddenInCategory > 0 && isPremium && (
                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 rounded-full border-destructive/30 text-destructive">
                       {hiddenInCategory} hidden
                     </Badge>
@@ -198,7 +214,14 @@ const PrivacySettings: React.FC = () => {
                       </div>
                       <Switch
                         checked={visibility[field.key] ?? true}
-                        onCheckedChange={(checked) => toggleField(field.key, checked)}
+                        onCheckedChange={(checked) => {
+                          if (!isPremium) {
+                            toast.error('Field visibility is a Premium feature', { icon: '⭐' });
+                            return;
+                          }
+                          toggleField(field.key, checked);
+                        }}
+                        disabled={!isPremium}
                         className="scale-75"
                       />
                     </div>
