@@ -71,8 +71,29 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false, sho
           )}
         </div>
       )}
+
+      {/* Deal-breaker badges: Religion, Occupation, Relationship Goals */}
+      {minimal && (
+        <div className="flex flex-wrap gap-1.5">
+          {profile.religion && (
+            <span className="bg-white/20 backdrop-blur-sm text-white px-2 py-0.5 rounded-full text-xs">
+              {profile.religion}
+            </span>
+          )}
+          {profile.occupation && (
+            <span className="bg-white/20 backdrop-blur-sm text-white px-2 py-0.5 rounded-full text-xs">
+              {profile.occupation}
+            </span>
+          )}
+          {profile.relationshipGoals && (
+            <span className="bg-white/20 backdrop-blur-sm text-white px-2 py-0.5 rounded-full text-xs">
+              {profile.relationshipGoals}
+            </span>
+          )}
+        </div>
+      )}
       
-      {/* Interests/Bio snippet */}
+      {/* Interests snippet */}
       {minimal && profile.interests && profile.interests.length > 0 && (
         <div className={`flex flex-wrap ${SWIPE_CONFIG.info.interests.gap}`}>
           {profile.interests.slice(0, 3).map((interest, index) => (
