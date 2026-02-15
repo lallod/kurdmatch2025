@@ -1,7 +1,7 @@
 import React from 'react';
 import { Profile } from '@/api/profiles';
 import { Badge } from '@/components/ui/badge';
-import { User, Briefcase, Heart, Sparkles, Home, Lock } from 'lucide-react';
+import { User, Briefcase, Heart, Sparkles, Home, Lock, Globe, Trophy, Palette, Star, Book } from 'lucide-react';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 
 interface ProfileAboutProps {
@@ -9,10 +9,15 @@ interface ProfileAboutProps {
   context?: 'social' | 'dating' | 'swipe';
 }
 
+const formatArrayField = (value: string[] | string | undefined): string[] => {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  return [value];
+};
+
 const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social' }) => {
   const { canSeeDatingDetails, isPremium } = useProfileAccess(context, profile.id);
 
-  // In social context without premium, only show interests/hobbies (non-dating info)
   const gatedSections = !canSeeDatingDetails;
   const sections = [
     // Values & Interests — always visible
@@ -27,20 +32,23 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ],
       gated: false,
     },
-    // Below sections are gated for social context (non-premium)
+    // Basic Info
     {
       title: 'Basic Info',
       icon: User,
       items: [
+        { label: 'Gender', value: profile.gender },
         { label: 'Height', value: profile.height },
         { label: 'Body Type', value: profile.body_type },
         { label: 'Ethnicity', value: profile.ethnicity },
         { label: 'Religion', value: profile.religion },
+        { label: 'Kurdistan Region', value: profile.kurdistan_region },
         { label: 'Zodiac', value: profile.zodiac_sign },
         { label: 'Personality', value: profile.personality_type },
       ].filter(item => item.value),
       gated: true,
     },
+    // Career & Education
     {
       title: 'Career & Education',
       icon: Briefcase,
@@ -50,9 +58,11 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
         { label: 'Company', value: profile.company },
         { label: 'Work Style', value: profile.work_environment },
         { label: 'Career Goals', value: profile.career_ambitions },
+        { label: 'Work-Life Balance', value: profile.work_life_balance },
       ].filter(item => item.value),
       gated: true,
     },
+    // Lifestyle
     {
       title: 'Lifestyle',
       icon: Home,
@@ -63,15 +73,19 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
         { label: 'Drinking', value: profile.drinking },
         { label: 'Sleep', value: profile.sleep_schedule },
         { label: 'Pets', value: profile.have_pets },
+        { label: 'Travel Frequency', value: profile.travel_frequency },
+        { label: 'Transportation', value: profile.transportation_preference },
       ].filter(item => item.value),
       gated: true,
     },
+    // Relationships
     {
       title: 'Relationships',
       icon: Heart,
       items: [
         { label: 'Looking for', value: profile.relationship_goals },
         { label: 'Children', value: profile.want_children },
+        { label: 'Children Status', value: profile.children_status },
         { label: 'Love Language', value: profile.love_language },
         { label: 'Communication', value: profile.communication_style },
         { label: 'Ideal Date', value: profile.ideal_date },
@@ -79,6 +93,61 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ].filter(item => item.value),
       arrays: [
         { label: 'Languages', values: profile.languages },
+      ],
+      gated: true,
+    },
+    // Interests & Hobbies (expanded)
+    {
+      title: 'Interests & Hobbies',
+      icon: Palette,
+      items: [],
+      arrays: [
+        { label: 'Creative Pursuits', values: formatArrayField(profile.creative_pursuits) },
+        { label: 'Weekend Activities', values: formatArrayField(profile.weekend_activities) },
+        { label: 'Music Instruments', values: formatArrayField(profile.music_instruments) },
+        { label: 'Tech Skills', values: formatArrayField(profile.tech_skills) },
+      ],
+      gated: true,
+    },
+    // Favorites
+    {
+      title: 'Favorites',
+      icon: Star,
+      items: [
+        { label: 'Quote', value: profile.favorite_quote },
+        { label: 'Memory', value: profile.favorite_memory },
+        { label: 'Season', value: profile.favorite_season },
+      ].filter(item => item.value),
+      arrays: [
+        { label: 'Books', values: formatArrayField(profile.favorite_books) },
+        { label: 'Movies', values: formatArrayField(profile.favorite_movies) },
+        { label: 'Music', values: formatArrayField(profile.favorite_music) },
+        { label: 'Foods', values: formatArrayField(profile.favorite_foods) },
+        { label: 'Games', values: formatArrayField(profile.favorite_games) },
+        { label: 'Podcasts', values: formatArrayField(profile.favorite_podcasts) },
+      ],
+      gated: true,
+    },
+    // Personal Growth
+    {
+      title: 'Personal Growth',
+      icon: Trophy,
+      items: [
+        { label: 'Morning Routine', value: profile.morning_routine },
+        { label: 'Evening Routine', value: profile.evening_routine },
+        { label: 'Financial Habits', value: profile.financial_habits },
+        { label: 'Friendship Style', value: profile.friendship_style },
+        { label: 'Decision Making', value: profile.decision_making_style },
+        { label: 'Charity', value: profile.charity_involvement },
+        { label: 'Dream Vacation', value: profile.dream_vacation },
+        { label: 'Dream Home', value: profile.dream_home },
+        { label: 'Ideal Weather', value: profile.ideal_weather },
+      ].filter(item => item.value),
+      arrays: [
+        { label: 'Growth Goals', values: formatArrayField(profile.growth_goals) },
+        { label: 'Stress Relievers', values: formatArrayField(profile.stress_relievers) },
+        { label: 'Hidden Talents', values: formatArrayField(profile.hidden_talents) },
+        { label: 'Pet Peeves', values: formatArrayField(profile.pet_peeves) },
       ],
       gated: true,
     },
