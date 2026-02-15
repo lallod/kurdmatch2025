@@ -201,7 +201,7 @@ const MyProfile = () => {
         dietaryPreferences: 'dietary_preferences', smoking: 'smoking', drinking: 'drinking',
         idealDate: 'ideal_date', workLifeBalance: 'work_life_balance',
         careerAmbitions: 'career_ambitions', occupation: 'occupation', name: 'name',
-        location: 'location', bio: 'bio',
+        location: 'location', bio: 'bio', kurdistanRegion: 'kurdistan_region',
       };
       const dbUpdates: any = {};
       for (const [key, value] of Object.entries(updates)) {
@@ -213,7 +213,6 @@ const MyProfile = () => {
       if (Object.keys(dbUpdates).length > 0) {
         await updateProfileData(dbUpdates);
         toast.success('Profile updated successfully');
-        refreshData();
       }
     } catch (error) { toast.error('Failed to update profile'); }
   };

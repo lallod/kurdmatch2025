@@ -59,7 +59,14 @@ const EditableAccordionSection: React.FC<EditableAccordionSectionProps> = ({
         </div>
       </AccordionTrigger>
       <AccordionContent className="px-4 pb-3">
-        {isEditing && editorContent ? editorContent : children}
+        {isEditing && editorContent
+          ? React.isValidElement(editorContent)
+            ? React.cloneElement(editorContent as React.ReactElement<any>, {
+                onSaveComplete: () => setIsEditing(false),
+                onCancel: () => setIsEditing(false),
+              })
+            : editorContent
+          : children}
       </AccordionContent>
     </AccordionItem>
   );
