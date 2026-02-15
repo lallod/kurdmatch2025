@@ -1,63 +1,72 @@
 
 
-# Convert Free-Text Fields to Select Dropdowns, Simplify Languages, Move Photos
+# Fix Missing Editable Fields, Add Multi-Select Support, Improve Languages
 
-## Changes Overview
+## Problem Summary
 
-### 1. Convert fields from free-text to select/dropdown editing
+Multiple profile fields are not editable because:
+1. They are rendered as static badge lists with no edit button (array fields like Growth Goals, Values, etc.)
+2. Many fields are missing from the `details` object mapping and `fieldMap` in MyProfile.tsx, so even if editing existed, saves would silently fail
+3. The `DetailItem` component only supports `text` and `select` (single value) -- there is no multi-select for array fields
+4. The Education field in Quick Stats shows raw array format like `["Teacher / Teaching Assistant / Professor"]`
 
-The following fields currently use `fieldType="text"` (free-text input) but should use `fieldType="select"` with predefined options:
+## Changes
 
-| Field | Component | Options |
-|-------|-----------|---------|
-| Height | ProfileBasics | 145 cm - 210 cm (generated range) |
-| Ethnicity | ProfileBasics | Kurdish, Middle Eastern, European, Asian, African, Latin American, Mixed, Other |
-| Political Views | ProfileBasics | Liberal, Conservative, Moderate, Progressive, Libertarian, Apolitical, Other |
-| Work-Life Balance | ProfileLifestyle | Work-focused, Balanced, Life-focused, Flexible, Struggling |
-| Dietary Preferences | ProfileLifestyle | No restrictions, Vegetarian, Vegan, Halal, Kosher, Pescatarian, Gluten-free, Other |
-| Morning Routine | ProfileLifestyle | Early riser & active, Slow & relaxed, Coffee then go, Exercise first, Meditation/mindfulness |
-| Evening Routine | ProfileLifestyle | Early to bed, Night owl, Reading/relaxing, Socializing, TV/streaming, Exercise |
-| Ideal Date | ProfileInterests | Dinner & conversation, Outdoor adventure, Coffee shop, Movie night, Cooking together, Cultural event, Picnic, Surprise me |
-| Career Ambitions | ProfileInterests | Climbing the ladder, Entrepreneurial, Content where I am, Career change, Creative pursuit, Work to live |
-| Decision Making | ProfilePersonality | Already a select -- keep as is |
-| Communication Style | ProfileCommunication | Direct, Diplomatic, Expressive, Reserved, Humorous, Analytical |
+### 1. Add `fieldType="multi-select"` to DetailItem.tsx
 
-### 2. Fix Communication section -- remove Sheet popups, use inline editing
+Add a new editing mode to `DetailItem` that shows toggleable badges (same pattern as the Languages section). When a user taps "Edit" on an array field, it expands into a grid of toggleable option badges. Selecting/deselecting auto-saves.
 
-`ProfileCommunication.tsx` currently opens Sheet sidebars for editing languages and communication style. This needs to be refactored to:
-- Use `DetailItem` with `onFieldEdit` for Communication Style (select dropdown inline)
-- Remove the Sheet/sidebar editing pattern entirely
-- Accept `onFieldEdit` prop like other sections
+This will be used for: Growth Goals, Stress Relievers, Hidden Talents, Music Instruments, Values, Weekend Activities, Creative Pursuits, Tech Skills, Favorite Games.
 
-### 3. Simplify Languages section -- remove "Add new language"
+### 2. Wire up all missing fields in MyProfile.tsx
 
-- Remove the "Add new language" text input and button from LanguageEditor
-- Remove the Sheet-based language editor entirely
-- Replace with a simple inline badge-toggle list using the predefined `allLanguages` list
-- Users can only toggle languages on/off from the predefined list (admin manages the list)
-- Save happens automatically when toggling
+**Add to profileData mapping** (from `realProfileData`):
+- growthGoals, hiddenTalents, stressRelievers, charityInvolvement, favoriteMemory, musicInstruments, favoriteGames, techSkills, dreamHome, transportationPreference, workEnvironment, favoriteSeason, idealWeather, dreamVacation, financialHabits, loveLanguage (plus favoriteBooks, favoriteMovies, favoriteMusic, favoriteFoods, favoritePodcasts, favoriteQuote)
 
-### 4. Move Photos section above the accordion sections
+**Add to `details` object**:
+- growthGoals, hiddenTalents, stressRelievers, charityInvolvement, favoriteMemory, musicInstruments, favoriteGames, techSkills, dreamHome, transportationPreference, workEnvironment, favoriteSeason, idealWeather, dreamVacation, financialHabits
 
-In `MyProfile.tsx`, move the Photos grid (lines 396-418) to appear right after the Bio section and before the Quick Stats / Accordion sections.
+**Add to `fieldMap`** (camelCase to snake_case mappings):
+- growthGoals: 'growth_goals', hiddenTalents: 'hidden_talents', stressRelievers: 'stress_relievers', charityInvolvement: 'charity_involvement', favoriteMemory: 'favorite_memory', musicInstruments: 'music_instruments', favoriteGames: 'favorite_games', techSkills: 'tech_skills', dreamHome: 'dream_home', transportationPreference: 'transportation_preference', workEnvironment: 'work_environment', favoriteSeason: 'favorite_season', idealWeather: 'ideal_weather', dreamVacation: 'dream_vacation', financialHabits: 'financial_habits', loveLanguage: 'love_language'
 
-## Technical Details
+### 3. Make array fields editable in section components
 
-### Files Modified
+| Component | Field | Edit Type | Options |
+|-----------|-------|-----------|---------|
+| ProfileBasics | Values | multi-select | Family, Honesty, Loyalty, Ambition, Kindness, Faith, Freedom, Education, Tradition, Equality |
+| ProfileInterests | Weekend Activities | multi-select | Hiking, Reading, Socializing, Gaming, Cooking, Sports, Shopping, Traveling, Relaxing, Volunteering |
+| ProfileInterests | Music Instruments | multi-select | Guitar, Piano, Drums, Violin, Flute, Oud, Saz, Daf, None |
+| ProfileInterests | Favorite Games | multi-select | Chess, Card games, Video games, Board games, Puzzle games, Sports games, Strategy games |
+| ProfilePersonality | Growth Goals | multi-select | Career growth, Health & fitness, Education, Spiritual growth, Financial freedom, Better relationships, Travel more, Learn new skills |
+| ProfilePersonality | Stress Relievers | multi-select | Exercise, Meditation, Music, Reading, Nature walks, Cooking, Gaming, Socializing, Art |
+| ProfilePersonality | Hidden Talents | multi-select | Singing, Dancing, Cooking, Drawing, Writing, Languages, Sports, Comedy, Crafts |
+| ProfilePersonality | Charity Involvement | text | (already text -- no change needed, just ensure fieldMap) |
+| ProfilePersonality | Favorite Memory | text | (already text -- no change needed, just ensure fieldMap) |
+| ProfileCreative | Creative Pursuits | multi-select | Photography, Painting, Writing, Music, Dance, Film, Crafts, Design, Poetry |
+| ProfileCreative | Tech Skills | multi-select | Programming, Design, Video editing, Photography, Social media, Data analysis, AI/ML, Web development |
+
+### 4. Improve Languages design in ProfileCommunication
+
+Make the language toggle area more compact and visually cleaner:
+- Use a 2-column grid layout for language badges instead of flex-wrap
+- Smaller, more uniform badge sizing
+- Always show the picker inline (no expand/collapse toggle) since users expect direct interaction
+- Selected languages highlighted with primary color, unselected are muted
+
+### 5. Fix Quick Stats Education display
+
+In `ProfileQuickStats`, handle array values for education field to avoid showing raw `["value"]` format.
+
+## Files Modified
 
 | File | Change |
 |------|--------|
-| `src/components/profile/ProfileBasics.tsx` | Change Height to select (145-210 cm range), Ethnicity to select, Political Views to select |
-| `src/components/profile/ProfileLifestyle.tsx` | Change Work-Life Balance, Dietary Preferences, Morning Routine, Evening Routine to select; add editable+onFieldEdit to Morning/Evening Routine |
-| `src/components/profile/ProfileInterests.tsx` | Change Ideal Date and Career Ambitions to select |
-| `src/components/profile/ProfileCommunication.tsx` | Remove all Sheet/sidebar editing; accept `onFieldEdit` prop; use DetailItem with select for Communication Style; simplify Languages to inline badge toggles (no add-new) |
-| `src/pages/MyProfile.tsx` | Move Photos grid above Quick Stats; pass `onFieldEdit` to ProfileCommunication |
-
-### Languages Redesign
-
-The language section will show all predefined languages as toggleable badges inline (similar to how BasicInfoEditor already does it). Tapping a badge toggles it on/off and auto-saves via `onFieldEdit({ languages: updatedArray })`. No sidebar, no "Add new language" input.
-
-### Height Select
-
-Since there are many height options (145-210 cm), the `DetailItem` select dropdown will display them. The `fieldOptions` array will be generated as `["145 cm", "146 cm", ..., "210 cm"]`.
+| `src/components/profile/DetailItem.tsx` | Add `fieldType="multi-select"` with toggleable badge UI |
+| `src/pages/MyProfile.tsx` | Add all missing fields to profileData mapping, details object, and fieldMap |
+| `src/components/profile/ProfileBasics.tsx` | Make Values editable with multi-select |
+| `src/components/profile/ProfileInterests.tsx` | Make Weekend Activities, Music Instruments, Favorite Games editable with multi-select |
+| `src/components/profile/ProfilePersonality.tsx` | Make Growth Goals, Stress Relievers, Hidden Talents editable with multi-select |
+| `src/components/profile/ProfileCreative.tsx` | Make Creative Pursuits, Tech Skills editable with multi-select |
+| `src/components/profile/ProfileCommunication.tsx` | Simplify Languages layout to always-visible compact grid |
+| `src/components/profile/ProfileQuickStats.tsx` | Fix Education array display bug |
 
