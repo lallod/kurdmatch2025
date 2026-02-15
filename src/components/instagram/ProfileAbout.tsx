@@ -3,6 +3,7 @@ import { Profile } from '@/api/profiles';
 import { Badge } from '@/components/ui/badge';
 import { User, Briefcase, Heart, Sparkles, Home, Lock, Globe, Trophy, Palette, Star, Book } from 'lucide-react';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
+import { languageCategories } from '@/data/languages';
 
 interface ProfileAboutProps {
   profile: Profile;
@@ -99,7 +100,8 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
         { label: 'Family', value: profile.family_closeness },
       ].filter(item => item.value),
       arrays: [
-        { label: 'Languages', values: profile.languages },
+        { label: 'Kurdish Dialects', values: profile.languages?.filter(l => languageCategories.kurdish.includes(l)) },
+        { label: 'Languages', values: profile.languages?.filter(l => !languageCategories.kurdish.includes(l)) },
       ],
       gated: true,
     },
