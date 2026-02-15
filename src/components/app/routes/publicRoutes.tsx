@@ -1,32 +1,46 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { User } from '@supabase/supabase-js';
-import LandingV2 from '@/pages/LandingV2';
-import Auth from '@/pages/Auth';
-import Register from '@/pages/Register';
-import AuthCallback from '@/components/auth/AuthCallback';
-import SuperAdminLogin from '@/components/auth/SuperAdminLogin';
-import SuperAdminSetup from '@/components/auth/SuperAdminSetup';
-import CreateSuperAdmin from '@/pages/CreateSuperAdmin';
-import HelpSupport from '@/pages/HelpSupport';
-import CommunityGuidelines from '@/pages/CommunityGuidelines';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import TermsOfService from '@/pages/TermsOfService';
-import NotFound from '@/pages/NotFound';
+import { Loader2 } from 'lucide-react';
+
+const LandingV2 = lazy(() => import('@/pages/LandingV2'));
+const Auth = lazy(() => import('@/pages/Auth'));
+const Register = lazy(() => import('@/pages/Register'));
+const AuthCallback = lazy(() => import('@/components/auth/AuthCallback'));
+const SuperAdminLogin = lazy(() => import('@/components/auth/SuperAdminLogin'));
+const SuperAdminSetup = lazy(() => import('@/components/auth/SuperAdminSetup'));
+const CreateSuperAdmin = lazy(() => import('@/pages/CreateSuperAdmin'));
+const HelpSupport = lazy(() => import('@/pages/HelpSupport'));
+const CommunityGuidelines = lazy(() => import('@/pages/CommunityGuidelines'));
+const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
+const AboutUs = lazy(() => import('@/pages/AboutUs'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
+
+const L: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+);
 
 export const getPublicRoutes = (user: User | null) => (
   <>
-    <Route path="/" element={user ? <Navigate to="/discovery" replace /> : <LandingV2 />} />
-    <Route path="/auth" element={user ? <Navigate to="/discovery" replace /> : <Auth />} />
-    <Route path="/register" element={user ? <Navigate to="/discovery" replace /> : <Register />} />
-    <Route path="/auth/callback" element={<AuthCallback />} />
-    <Route path="/admin-login" element={<SuperAdminLogin />} />
-    <Route path="/admin-setup" element={<SuperAdminSetup />} />
-    <Route path="/create-admin" element={<CreateSuperAdmin />} />
-    <Route path="/help" element={<HelpSupport />} />
-    <Route path="/community-guidelines" element={<CommunityGuidelines />} />
-    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-    <Route path="/terms" element={<TermsOfService />} />
-    <Route path="*" element={<NotFound />} />
+    <Route path="/" element={user ? <Navigate to="/discovery" replace /> : <L><LandingV2 /></L>} />
+    <Route path="/auth" element={user ? <Navigate to="/discovery" replace /> : <L><Auth /></L>} />
+    <Route path="/register" element={user ? <Navigate to="/discovery" replace /> : <L><Register /></L>} />
+    <Route path="/auth/callback" element={<L><AuthCallback /></L>} />
+    <Route path="/admin-login" element={<L><SuperAdminLogin /></L>} />
+    <Route path="/admin-setup" element={<L><SuperAdminSetup /></L>} />
+    <Route path="/create-admin" element={<L><CreateSuperAdmin /></L>} />
+    <Route path="/help" element={<L><HelpSupport /></L>} />
+    <Route path="/community-guidelines" element={<L><CommunityGuidelines /></L>} />
+    <Route path="/privacy-policy" element={<L><PrivacyPolicy /></L>} />
+    <Route path="/terms" element={<L><TermsOfService /></L>} />
+    <Route path="/about" element={<L><AboutUs /></L>} />
+    <Route path="*" element={<L><NotFound /></L>} />
   </>
 );
