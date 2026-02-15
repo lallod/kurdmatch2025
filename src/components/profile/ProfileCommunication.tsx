@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { 
   MessageCircle, Bot, Globe 
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import DetailItem from './DetailItem';
-import { allLanguages } from '@/data/languages';
+import { allLanguages, languageCategories } from '@/data/languages';
 
 interface ProfileCommunicationProps {
   details: {
@@ -26,6 +26,16 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
   onFieldEdit
 }) => {
   const currentLanguages = details.languages || [];
+  const [showAllEditLanguages, setShowAllEditLanguages] = useState(false);
+
+  const kurdishDialects = languageCategories.kurdish;
+  const popularLanguages = languageCategories.popular;
+  const remainingLanguages = allLanguages.filter(
+    l => !kurdishDialects.includes(l) && !popularLanguages.includes(l)
+  );
+
+  const currentKurdish = currentLanguages.filter(l => languageCategories.kurdish.includes(l));
+  const currentOther = currentLanguages.filter(l => !languageCategories.kurdish.includes(l));
 
   const handleToggleLanguage = async (language: string) => {
     if (!onFieldEdit) return;
@@ -36,6 +46,23 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
       updated = [...currentLanguages, language];
     }
     await onFieldEdit({ languages: updated });
+  };
+
+  const renderLangButton = (lang: string, displayName?: string) => {
+    const isSelected = currentLanguages.includes(lang);
+    return (
+      <button
+        key={lang}
+        onClick={() => handleToggleLanguage(lang)}
+        className={`text-xs px-3 py-2 rounded-lg border text-left transition-all ${
+          isSelected 
+            ? 'bg-primary text-primary-foreground border-primary font-medium' 
+            : 'bg-background text-muted-foreground border-border/40 hover:border-primary/40'
+        }`}
+      >
+        {displayName || lang}
+      </button>
+    );
   };
 
   return (
@@ -50,31 +77,51 @@ const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({
         
         <div className="ml-[52px]">
           {onFieldEdit ? (
-            <div className="grid grid-cols-2 gap-1.5">
-              {allLanguages.map((lang) => {
-                const isSelected = currentLanguages.includes(lang);
-                return (
-                  <button
-                    key={lang}
-                    onClick={() => handleToggleLanguage(lang)}
-                    className={`text-xs px-3 py-2 rounded-lg border text-left transition-all ${
-                      isSelected 
-                        ? 'bg-primary text-primary-foreground border-primary font-medium' 
-                        : 'bg-background text-muted-foreground border-border/40 hover:border-primary/40'
-                    }`}
-                  >
-                    {lang}
-                  </button>
-                );
-              })}
+            <div className="space-y-3">
+              <div>
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Kurdish Dialects</span>
+                <div className="grid grid-cols-2 gap-1.5 mt-1">
+                  {kurdishDialects.map(lang => renderLangButton(lang, lang.replace('Kurdish (', '').replace(')', '')))}
+                </div>
+              </div>
+              <div>
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Languages</span>
+                <div className="grid grid-cols-2 gap-1.5 mt-1">
+                  {popularLanguages.map(lang => renderLangButton(lang))}
+                  {showAllEditLanguages && remainingLanguages.map(lang => renderLangButton(lang))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAllEditLanguages(!showAllEditLanguages)}
+                  className="text-xs text-primary font-medium hover:underline transition-colors mt-2"
+                >
+                  {showAllEditLanguages ? 'See less' : `See more languages (+${remainingLanguages.length})`}
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="flex flex-wrap gap-2">
-              {currentLanguages.length > 0 ? (
-                currentLanguages.map((language, index) => (
-                  <span key={index} className={`text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium`}>{language}</span>
-                ))
-              ) : (
+            <div className="space-y-2">
+              {currentKurdish.length > 0 && (
+                <div>
+                  <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Kurdish</span>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {currentKurdish.map((language, index) => (
+                      <span key={index} className="text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium">{language.replace('Kurdish (', '').replace(')', '')}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {currentOther.length > 0 && (
+                <div>
+                  <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Languages</span>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {currentOther.map((language, index) => (
+                      <span key={index} className="text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium">{language}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {currentLanguages.length === 0 && (
                 <span className="text-muted-foreground text-sm">No languages selected</span>
               )}
             </div>
