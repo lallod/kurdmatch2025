@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,11 +13,39 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url)
-    const query = url.searchParams.get('q') || ''
-    const limit = url.searchParams.get('limit') || '20'
+    let query = url.searchParams.get('q') || ''
+    let limit = url.searchParams.get('limit') || '20'
+    
+    // Also support POST body
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json()
+        if (body.q) query = body.q
+        if (body.limit) limit = body.limit
+      } catch {}
+    }
 
-    // Use configured key or fall back to Giphy public beta key
-    const apiKey = Deno.env.get('GIPHY_API_KEY') || 'dc6zaTOxFJmzC'
+    // Try env, then app_settings table, then Giphy public beta key
+    let apiKey = Deno.env.get('GIPHY_API_KEY')
+    
+    if (!apiKey) {
+      try {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+        )
+        const { data } = await supabase
+          .from('app_settings')
+          .select('value')
+          .eq('key', 'GIPHY_API_KEY')
+          .maybeSingle()
+        if (data?.value) apiKey = data.value
+      } catch (e) {
+        console.warn('Could not read app_settings:', e)
+      }
+    }
+    
+    if (!apiKey) apiKey = 'dc6zaTOxFJmzC'
 
     const endpoint = query.trim()
       ? `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=${limit}&rating=pg-13`
