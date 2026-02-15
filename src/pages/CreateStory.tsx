@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -13,6 +14,7 @@ import { toast } from 'sonner';
 const CreateStory = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ media_url: '', media_type: 'image' as 'image' | 'video', duration: 15, category: 'general' });
 
@@ -24,19 +26,19 @@ const CreateStory = () => {
       setLoading(true);
       const { error } = await (supabase as any).from('stories').insert({ user_id: user.id, media_url: formData.media_url, media_type: formData.media_type, duration: formData.duration, category: formData.category });
       if (error) throw error;
-      toast.success('Story created successfully');
+      toast.success(t('social.story_created', 'Story created successfully'));
       navigate('/discovery');
-    } catch (error) { console.error('Error creating story:', error); toast.error('Failed to create story'); }
+    } catch (error) { console.error('Error creating story:', error); toast.error(t('social.story_failed', 'Failed to create story')); }
     finally { setLoading(false); }
   };
 
   return (
     <div className="min-h-screen bg-background p-4 pb-24">
       <div className="max-w-md mx-auto space-y-6">
-        <Button variant="ghost" onClick={() => navigate('/discovery')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+        <Button variant="ghost" onClick={() => navigate('/discovery')}><ArrowLeft className="mr-2 h-4 w-4" />{t('common.back', 'Back')}</Button>
 
         <Card className="bg-card border-border/20">
-          <CardHeader><CardTitle className="text-foreground text-2xl">Create Story</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-foreground text-2xl">{t('social.create_story', 'Create Story')}</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
@@ -66,22 +68,22 @@ const CreateStory = () => {
                 </Select>
               </div>
               <div className="bg-muted/30 border border-border/10 rounded-2xl p-4">
-                <h3 className="text-foreground font-semibold mb-2">Preview</h3>
+                <h3 className="text-foreground font-semibold mb-2">{t('social.preview', 'Preview')}</h3>
                 {formData.media_url ? (
                   formData.media_type === 'image' ? <img src={formData.media_url} alt="Story preview" className="w-full h-64 object-cover rounded-xl" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} /> : <video src={formData.media_url} className="w-full h-64 object-cover rounded-xl" controls />
                 ) : (
                   <div className="w-full h-64 bg-muted/50 rounded-xl flex items-center justify-center"><Upload className="w-12 h-12 text-muted-foreground/30" /></div>
                 )}
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>{loading ? 'Creating...' : 'Create Story'}</Button>
+              <Button type="submit" className="w-full" disabled={loading}>{loading ? t('social.creating', 'Creating...') : t('social.create_story', 'Create Story')}</Button>
             </form>
           </CardContent>
         </Card>
 
         <div className="bg-muted/30 border border-border/10 rounded-2xl p-4">
-          <h3 className="text-foreground font-semibold mb-2">Story Guidelines</h3>
+          <h3 className="text-foreground font-semibold mb-2">{t('social.story_guidelines', 'Story Guidelines')}</h3>
           <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Stories expire after 24 hours</li><li>• Keep content appropriate and respectful</li><li>• Maximum duration is 30 seconds</li><li>• Stories are visible to all users</li>
+            <li>• {t('social.stories_expire', 'Stories expire after 24 hours')}</li><li>• {t('social.keep_appropriate', 'Keep content appropriate and respectful')}</li><li>• {t('social.max_duration', 'Maximum duration is 30 seconds')}</li><li>• {t('social.stories_visible', 'Stories are visible to all users')}</li>
           </ul>
         </div>
       </div>

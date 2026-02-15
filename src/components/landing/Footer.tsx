@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface FooterContent {
   copyright: string;
@@ -17,6 +18,7 @@ const defaultContent: FooterContent = {
 };
 
 const Footer: React.FC<FooterProps> = ({ content = defaultContent }) => {
+  const { t } = useTranslations();
   return (
     <footer className="py-8 bg-card/30 backdrop-blur-sm mt-auto border-t border-border">
       <div className="container mx-auto px-4">
@@ -27,13 +29,13 @@ const Footer: React.FC<FooterProps> = ({ content = defaultContent }) => {
           </div>
           <div className="flex space-x-4">
             <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Terms
+              {t('common.terms', 'Terms')}
             </Link>
             <Link to="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Privacy
+              {t('common.privacy', 'Privacy')}
             </Link>
             <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Contact
+              {t('common.contact', 'Contact')}
             </Link>
           </div>
         </div>

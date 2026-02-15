@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -46,6 +47,7 @@ interface Attendee {
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [loading, setLoading] = useState(true);
@@ -178,7 +180,7 @@ const EventDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-foreground text-xl">Loading event...</div>
+        <div className="text-foreground text-xl">{t('events.loading', 'Loading event...')}</div>
       </div>
     );
   }
@@ -186,7 +188,7 @@ const EventDetail = () => {
   if (!event) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-foreground text-xl">Event not found</div>
+        <div className="text-foreground text-xl">{t('events.not_found', 'Event not found')}</div>
       </div>
     );
   }
@@ -207,7 +209,7 @@ const EventDetail = () => {
           >
             <ArrowLeft className="w-6 h-6" />
           </Button>
-          <h1 className="text-xl font-bold text-foreground">Event Details</h1>
+          <h1 className="text-xl font-bold text-foreground">{t('events.event_details', 'Event Details')}</h1>
         </div>
       </div>
 
@@ -249,7 +251,7 @@ const EventDetail = () => {
                     <CheckCircle className="w-5 h-5 text-pink-400 fill-pink-400" />
                   )}
                 </div>
-                <p className="text-muted-foreground">Event Host</p>
+                <p className="text-muted-foreground">{t('events.event_host', 'Event Host')}</p>
               </div>
             </div>
             {event.category && (
@@ -270,7 +272,7 @@ const EventDetail = () => {
             <div className="flex items-start gap-3 text-foreground">
               <Calendar className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <p className="font-semibold">Date & Time</p>
+                <p className="font-semibold">{t('events.date_time', 'Date & Time')}</p>
                 <p className="text-muted-foreground">{format(new Date(event.event_date), 'EEEE, MMMM d, yyyy')}</p>
                 <p className="text-muted-foreground">{format(new Date(event.event_date), 'h:mm a')}</p>
               </div>
@@ -278,14 +280,14 @@ const EventDetail = () => {
             <div className="flex items-start gap-3 text-foreground">
               <MapPin className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <p className="font-semibold">Location</p>
+                <p className="font-semibold">{t('events.location', 'Location')}</p>
                 <p className="text-muted-foreground">{event.location}</p>
               </div>
             </div>
             <div className="flex items-start gap-3 text-foreground">
               <Users className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <p className="font-semibold">Attendees</p>
+                <p className="font-semibold">{t('events.attendees', 'Attendees')}</p>
                 <p className="text-muted-foreground">
                   {event.attendees_count} going
                   {event.max_attendees && ` • ${event.max_attendees} max capacity`}
@@ -295,7 +297,7 @@ const EventDetail = () => {
             <div className="flex items-start gap-3 text-foreground">
               <Clock className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <p className="font-semibold">Created</p>
+                <p className="font-semibold">{t('events.created', 'Created')}</p>
                 <p className="text-muted-foreground">{format(new Date(event.created_at), 'MMM d, yyyy')}</p>
               </div>
             </div>
@@ -313,7 +315,7 @@ const EventDetail = () => {
                   : 'bg-gradient-to-r from-primary to-pink-600 hover:from-primary/90 hover:to-pink-700 text-primary-foreground'
               }`}
             >
-              {event.is_attending ? 'Going ✓' : isFull ? 'Event Full' : 'Join Event'}
+              {event.is_attending ? t('events.going', 'Going ✓') : isFull ? t('events.event_full', 'Event Full') : t('events.join_event', 'Join Event')}
             </Button>
           )}
         </Card>
@@ -322,11 +324,11 @@ const EventDetail = () => {
         <Card className="bg-card/50 backdrop-blur-md border-border/20 p-6 space-y-4">
           <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Users className="w-6 h-6 text-primary" />
-            Who's Going ({attendees.length})
+            {t('events.whos_going', "Who's Going")} ({attendees.length})
           </h3>
           
           {attendees.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No attendees yet. Be the first to join!</p>
+            <p className="text-muted-foreground text-center py-8">{t('events.no_attendees', 'No attendees yet. Be the first to join!')}</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {attendees.map((attendee) => (

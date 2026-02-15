@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Settings } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -14,6 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 const NotificationBell = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
@@ -105,7 +107,7 @@ const NotificationBell = () => {
       </PopoverTrigger>
       <PopoverContent className="w-96 p-0 bg-card border-border" align="end">
         <div className="flex items-center justify-between p-4 border-b border-border/10">
-          <h3 className="text-foreground font-semibold">Notifications</h3>
+          <h3 className="text-foreground font-semibold">{t('notifications.title', 'Notifications')}</h3>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
               <Button
@@ -114,7 +116,7 @@ const NotificationBell = () => {
                 onClick={handleMarkAllRead}
                 className="text-muted-foreground hover:text-foreground hover:bg-accent/10 h-7"
               >
-                Mark all read
+                {t('notifications.mark_all_read', 'Mark all read')}
               </Button>
             )}
             <Button
@@ -126,7 +128,7 @@ const NotificationBell = () => {
               }}
               className="text-muted-foreground hover:text-foreground hover:bg-accent/10 h-7"
             >
-              View All
+              {t('notifications.view_all', 'View All')}
             </Button>
             <Button
               variant="ghost"
@@ -146,7 +148,7 @@ const NotificationBell = () => {
           {notifications.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <Bell className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>No notifications yet</p>
+              <p>{t('notifications.no_notifications', 'No notifications yet')}</p>
             </div>
           ) : (
             <div className="divide-y divide-border/10">

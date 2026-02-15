@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +29,7 @@ const GroupDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [group, setGroup] = useState<Group | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [isMember, setIsMember] = useState(false);
@@ -109,7 +111,7 @@ const GroupDetail = () => {
   if (!group) {
     return (
       <div className="min-h-screen bg-background p-4 flex items-center justify-center">
-        <div className="text-muted-foreground">Group not found</div>
+        <div className="text-muted-foreground">{t('groups.not_found', 'Group not found')}</div>
       </div>
     );
   }
@@ -129,7 +131,7 @@ const GroupDetail = () => {
       <div className="max-w-4xl mx-auto p-4 space-y-6">
         <Button variant="ghost" onClick={() => navigate('/groups')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Groups
+          {t('groups.back_to_groups', 'Back to Groups')}
         </Button>
 
         <Card>
@@ -144,15 +146,15 @@ const GroupDetail = () => {
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Users className="h-4 w-4" />
-                    {group.member_count} members
+                    {group.member_count} {t('groups.members', 'members')}
                   </div>
-                  <div>{group.post_count} posts</div>
+                  <div>{group.post_count} {t('groups.posts', 'posts')}</div>
                   <div className="capitalize">{group.category}</div>
                 </div>
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleJoinLeave} variant={isMember ? 'outline' : 'default'}>
-                  {isMember ? 'Leave' : 'Join'}
+                  {isMember ? t('groups.leave', 'Leave') : t('groups.join', 'Join')}
                 </Button>
                 {user?.id === group.created_by && (
                   <Button variant="outline" size="icon">
@@ -166,16 +168,16 @@ const GroupDetail = () => {
 
         <Tabs defaultValue="posts">
           <TabsList>
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="members">Members</TabsTrigger>
-            <TabsTrigger value="about">About</TabsTrigger>
+            <TabsTrigger value="posts">{t('groups.posts', 'Posts')}</TabsTrigger>
+            <TabsTrigger value="members">{t('groups.members', 'Members')}</TabsTrigger>
+            <TabsTrigger value="about">{t('groups.about', 'About')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts" className="space-y-4">
             {posts.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
-                  No posts in this group yet
+                  {t('groups.no_posts', 'No posts in this group yet')}
                 </CardContent>
               </Card>
             ) : (
@@ -193,7 +195,7 @@ const GroupDetail = () => {
           <TabsContent value="members">
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                Members list coming soon
+                {t('groups.members_coming_soon', 'Members list coming soon')}
               </CardContent>
             </Card>
           </TabsContent>
