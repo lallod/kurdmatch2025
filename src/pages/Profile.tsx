@@ -24,9 +24,6 @@ const Profile = () => {
   const [matchPercentage, setMatchPercentage] = useState(50);
 
   useEffect(() => {
-    console.log('Location state:', location.state);
-    console.log('Profile ID from state:', profileId);
-    
     if (profileId) {
       fetchProfile();
       if (user) {
@@ -35,7 +32,6 @@ const Profile = () => {
         });
       }
     } else {
-      console.log('No profile ID provided - location.state:', location.state);
       setLoading(false);
     }
   }, [profileId, user]);

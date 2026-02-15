@@ -106,7 +106,6 @@ const ViewedMe = () => {
   };
 
   const handleSelectPlan = (planId: string) => {
-    console.log('Selected plan:', planId);
     setShowPremiumDialog(false);
     setIsSubscribed(true);
   };

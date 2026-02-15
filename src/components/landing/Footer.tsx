@@ -18,21 +18,21 @@ const defaultContent: FooterContent = {
 
 const Footer: React.FC<FooterProps> = ({ content = defaultContent }) => {
   return (
-    <footer className="py-8 bg-black/60 backdrop-blur-sm mt-auto border-t border-gray-800">
+    <footer className="py-8 bg-card/30 backdrop-blur-sm mt-auto border-t border-border">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 flex items-center">
             <Logo size="small" withText={true} />
-            <span className="ml-2 text-sm text-gray-500">{content.copyright}</span>
+            <span className="ml-2 text-sm text-muted-foreground">{content.copyright}</span>
           </div>
           <div className="flex space-x-4">
-            <Link to="/terms" className="text-sm text-gray-500 hover:text-purple-400 transition-colors">
+            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Terms
             </Link>
-            <Link to="/privacy" className="text-sm text-gray-500 hover:text-purple-400 transition-colors">
+            <Link to="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Privacy
             </Link>
-            <Link to="/contact" className="text-sm text-gray-500 hover:text-purple-400 transition-colors">
+            <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Contact
             </Link>
           </div>

@@ -13,7 +13,7 @@ import LikedMe from '@/pages/LikedMe';
 import ViewedMe from '@/pages/ViewedMe';
 import Messages from '@/pages/Messages';
 import MyProfile from '@/pages/MyProfile';
-import UserProfile from '@/pages/UserProfile';
+
 import InstagramProfile from '@/pages/InstagramProfile';
 import Profile from '@/pages/Profile';
 import Subscription from '@/pages/Subscription';
@@ -46,7 +46,7 @@ export const protectedRoutes = (
     <Route path="/viewed-me" element={<P><ViewedMe /></P>} />
     <Route path="/messages" element={<P><Messages /></P>} />
     <Route path="/my-profile" element={<P><MyProfile /></P>} />
-    <Route path="/user/:id" element={<P><UserProfile /></P>} />
+    
     <Route path="/profile/:id" element={<P><InstagramProfile /></P>} />
     <Route path="/profile" element={<P><Profile /></P>} />
     <Route path="/subscription" element={<P><Subscription /></P>} />

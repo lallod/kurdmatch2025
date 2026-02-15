@@ -3,20 +3,31 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Hash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getPostsByHashtag } from '@/api/hashtags';
+import { likePost, unlikePost } from '@/api/posts';
 import PostCard from '@/components/discovery/PostCard';
-
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export const HashtagFeed = () => {
   const { hashtag } = useParams<{ hashtag: string }>();
   const navigate = useNavigate();
+  const { user } = useSupabaseAuth();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (hashtag) {
       loadPosts();
     }
   }, [hashtag]);
+
+  useEffect(() => {
+    if (user && posts.length > 0) {
+      loadLikedStatus();
+    }
+  }, [user, posts.length]);
 
   const loadPosts = async () => {
     if (!hashtag) return;
@@ -32,14 +43,46 @@ export const HashtagFeed = () => {
     }
   };
 
+  const loadLikedStatus = async () => {
+    if (!user) return;
+    const postIds = posts.map(p => p.id);
+    const { data } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .eq('user_id', user.id)
+      .in('post_id', postIds);
+    
+    if (data) {
+      setLikedPosts(new Set(data.map(d => d.post_id)));
+    }
+  };
+
   const handleLike = async (postId: string) => {
-    // Implement like functionality
-    console.log('Like post:', postId);
+    if (!user) {
+      toast.error('Please log in to like posts');
+      return;
+    }
+
+    try {
+      if (likedPosts.has(postId)) {
+        await unlikePost(postId);
+        setLikedPosts(prev => {
+          const next = new Set(prev);
+          next.delete(postId);
+          return next;
+        });
+      } else {
+        await likePost(postId);
+        setLikedPosts(prev => new Set(prev).add(postId));
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast.error('Failed to update like');
+    }
   };
 
   const handleComment = (postId: string) => {
-    // Implement comment functionality
-    console.log('Comment on post:', postId);
+    navigate(`/post/${postId}`);
   };
 
   return (
@@ -94,8 +137,6 @@ export const HashtagFeed = () => {
           </div>
         )}
       </div>
-
-      
     </div>
   );
 };

@@ -166,7 +166,7 @@ const Messages = () => {
           filter: `sender_id=eq.${selectedConversation},recipient_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('New message received:', payload);
+          
           setConversationMessages(prev => [...prev, {
             id: payload.new.id,
             text: payload.new.text,
@@ -185,7 +185,7 @@ const Messages = () => {
           filter: `sender_id=eq.${user.id},recipient_id=eq.${selectedConversation}`
         },
         (payload) => {
-          console.log('Own message confirmed:', payload);
+          
         }
       )
       .on(
@@ -196,7 +196,7 @@ const Messages = () => {
           table: 'messages'
         },
         (payload) => {
-          console.log('Message updated:', payload);
+          
           setConversationMessages(prev => 
             prev.map(msg => msg.id === payload.new.id ? {
               ...msg,
@@ -917,7 +917,7 @@ const Messages = () => {
             {/* New Matches Section with Enhanced Notifications */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-medium text-purple-200">New Matches</h2>
+                <h2 className="text-sm font-medium text-muted-foreground">New Matches</h2>
                 {newMatchesCount > 0 && <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse">
                     {newMatchesCount} New
                   </Badge>}
@@ -941,7 +941,7 @@ const Messages = () => {
                               NEW
                             </div>}
                         </div>
-                        <span className="text-xs mt-1 text-center w-full truncate text-purple-200">{match.name}</span>
+                        <span className="text-xs mt-1 text-center w-full truncate text-muted-foreground">{match.name}</span>
                       </div>
                     </CarouselItem>)}
                 </CarouselContent>
@@ -988,7 +988,7 @@ const Messages = () => {
 
             {/* Active Conversations Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white">All Conversations</h2>
+              <h2 className="text-xl font-bold text-foreground">All Conversations</h2>
               <div className="flex gap-2">
                 <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
                   {conversations.filter(c => c.unread).length} unread
@@ -1001,13 +1001,13 @@ const Messages = () => {
 
             {/* Enhanced Conversations List */}
             <div className="space-y-3">
-              {sortedConversations.map(conversation => <Card key={conversation.id} className={`overflow-hidden backdrop-blur-md border transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl ${conversation.unread ? 'bg-white/15 border-white/30 hover:bg-white/25' : 'bg-white/10 border-white/20 hover:bg-white/20'}`} onClick={() => setSelectedConversation(conversation.id)}>
+              {sortedConversations.map(conversation => <Card key={conversation.id} className={`overflow-hidden backdrop-blur-md border transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl ${conversation.unread ? 'bg-card/80 border-border/30 hover:bg-card' : 'bg-card/50 border-border/20 hover:bg-card/70'}`} onClick={() => setSelectedConversation(conversation.id)}>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       <div className="relative">
                         <Avatar className={`h-12 w-12 ring-2 ${conversation.unread ? 'ring-purple-400/50' : 'ring-purple-400/30'}`}>
                           <AvatarImage src={conversation.avatar} alt={conversation.name} />
-                          <AvatarFallback className="bg-purple-500 text-white">{conversation.name.charAt(0)}</AvatarFallback>
+                          <AvatarFallback className="bg-primary text-primary-foreground">{conversation.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         {conversation.online && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white ring-1 ring-green-400/50"></span>}
                         {conversation.isTyping && <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 animate-pulse">
@@ -1025,22 +1025,22 @@ const Messages = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-1.5">
-                            <h3 className={`font-semibold truncate ${conversation.unread ? 'text-white' : 'text-purple-100'}`}>
+                            <h3 className={`font-semibold truncate ${conversation.unread ? 'text-foreground' : 'text-foreground/80'}`}>
                               {conversation.name}
                             </h3>
                             {conversation.video_verified && (
                               <VideoVerifiedBadge isVerified={true} size="sm" />
                             )}
                           </div>
-                          <span className="text-xs text-purple-200">{conversation.time}</span>
+                          <span className="text-xs text-muted-foreground">{conversation.time}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <p className={`text-sm truncate ${conversation.unread ? 'font-medium text-white' : 'text-purple-200'}`}>
-                          {conversation.isTyping ? <span className="italic text-blue-300">typing...</span> : conversation.lastMessage}
+                          <p className={`text-sm truncate ${conversation.unread ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
+                          {conversation.isTyping ? <span className="italic text-primary/70">typing...</span> : conversation.lastMessage}
                           </p>
                           {/* Activity Notifications */}
                           <div className="flex items-center gap-1 ml-2">
-                            {(conversation.notifications || []).map((notification, index) => <div key={index} className="text-purple-300 opacity-70" title={notification.replace('_', ' ').toUpperCase()}>
+                            {(conversation.notifications || []).map((notification, index) => <div key={index} className="text-muted-foreground opacity-70" title={notification.replace('_', ' ').toUpperCase()}>
                                 {getNotificationIcon(notification)}
                               </div>)}
                           </div>
@@ -1064,9 +1064,9 @@ const Messages = () => {
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">No messages yet</h3>
-                <p className="text-purple-200 mb-4">When you match with someone, your conversations will appear here</p>
-                <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                <h3 className="text-xl font-semibold text-foreground mb-2">No messages yet</h3>
+                <p className="text-muted-foreground mb-4">When you match with someone, your conversations will appear here</p>
+                <Button className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600">
                   <Sparkles className="h-4 w-4 mr-2" />
                   Start discovering people
                 </Button>
