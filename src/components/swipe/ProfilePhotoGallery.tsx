@@ -32,7 +32,7 @@ const ProfilePhotoGallery = ({
         <img 
           src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
           alt={`${profile.name}'s photo`} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
+          className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02] ${profile.blur_photos ? 'blur-xl' : ''}`}
         />
         
         {/* Photo Navigation - Only show if multiple photos and not background */}

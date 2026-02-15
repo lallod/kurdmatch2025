@@ -125,7 +125,7 @@ const PrivacySettings: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-foreground">Blur Photos</h3>
-              <p className="text-[11px] text-muted-foreground">Hide your face on dating profiles (Muzz-style)</p>
+              <p className="text-[11px] text-muted-foreground">Hide your face on dating profiles</p>
             </div>
           </div>
           <Switch checked={blurPhotos} onCheckedChange={setBlurPhotos} />
