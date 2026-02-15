@@ -13,11 +13,15 @@ export const useLocationManager = (initialLocation: string) => {
   const [activeTab, setActiveTab] = useState('current');
   const [passportLocation, setPassportLocation] = useState("");
 
-  // Load travel mode from database on mount
+  // Load travel mode from database on mount (only for authenticated users)
   useEffect(() => {
     const loadTravelMode = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        // Not authenticated (e.g. registration) - don't auto-detect
+        setIsUsingCurrentLocation(false);
+        return;
+      }
       const { data } = await supabase
         .from('profiles')
         .select('travel_location, travel_mode_active')
@@ -212,12 +216,8 @@ export const useLocationManager = (initialLocation: string) => {
     }
   };
 
-  // Try to get location on initial load if using current location
-  useEffect(() => {
-    if (isUsingCurrentLocation) {
-      handleLocationDetection();
-    }
-  }, []);
+  // Auto-detect is disabled on mount to prevent error toasts on registration.
+  // Users can click the location button to detect manually.
 
   return {
     location,
