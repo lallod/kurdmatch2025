@@ -65,7 +65,8 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
           value={details.idealDate || "Not specified"}
           editable={!!onFieldEdit}
           fieldKey="idealDate"
-          fieldType="text"
+          fieldType="select"
+          fieldOptions={["Dinner & conversation", "Outdoor adventure", "Coffee shop", "Movie night", "Cooking together", "Cultural event", "Picnic", "Surprise me"]}
           onFieldEdit={onFieldEdit}
         />
         <Separator />
@@ -74,7 +75,8 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
           value={details.careerAmbitions || "Not specified"}
           editable={!!onFieldEdit}
           fieldKey="careerAmbitions"
-          fieldType="text"
+          fieldType="select"
+          fieldOptions={["Climbing the ladder", "Entrepreneurial", "Content where I am", "Career change", "Creative pursuit", "Work to live"]}
           onFieldEdit={onFieldEdit}
         />
         <Separator />

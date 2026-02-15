@@ -2,16 +2,13 @@
 import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Languages, MessageCircle, Bot, Pencil, Globe 
+  MessageCircle, Bot, Globe 
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { toast } from 'sonner';
-import LanguageDisplay from './LanguageDisplay';
-import LanguageEditor from './LanguageEditor';
-import CommunicationDisplay from './CommunicationDisplay';
-import CommunicationEditor from './CommunicationEditor';
+import DetailItem from './DetailItem';
+import { allLanguages } from '@/data/languages';
 
 interface ProfileCommunicationProps {
   details: {
@@ -21,88 +18,131 @@ interface ProfileCommunicationProps {
   };
   tinderBadgeStyle: string;
   isMobile: boolean;
+  onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
+
+const MAX_LANGUAGES = 5;
 
 const ProfileCommunication: React.FC<ProfileCommunicationProps> = ({ 
   details, 
   tinderBadgeStyle,
-  isMobile
+  isMobile,
+  onFieldEdit
 }) => {
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(details.languages || []);
-  const [profileLanguages, setProfileLanguages] = useState<string[]>(details.languages || []);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const currentLanguages = details.languages || [];
 
-  const handleSaveLanguages = () => {
-    setProfileLanguages(selectedLanguages);
-    toast.success("Languages saved successfully!");
+  const handleToggleLanguage = async (language: string) => {
+    if (!onFieldEdit) return;
+    let updated: string[];
+    if (currentLanguages.includes(language)) {
+      updated = currentLanguages.filter(l => l !== language);
+    } else {
+      if (currentLanguages.length >= MAX_LANGUAGES) {
+        toast.error(`Maximum ${MAX_LANGUAGES} languages allowed`);
+        return;
+      }
+      updated = [...currentLanguages, language];
+    }
+    await onFieldEdit({ languages: updated });
   };
 
   return (
     <div className="space-y-6 py-4">
       <div>
-        <h4 className="font-medium mb-2 flex items-center justify-between">
-          <span className="flex items-center">
-            <Globe size={18} className="mr-2 text-tinder-orange/70" />
+        <div className="flex items-center justify-between mb-2">
+          <span className="flex items-center text-sm text-muted-foreground font-medium">
+            <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20 text-primary mr-3">
+              <Globe size={18} />
+            </div>
             Languages
           </span>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full hover:bg-gray-100">
-                <Pencil size={16} className="text-gray-500" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-md overflow-y-auto">
-              <SheetClose asChild>
-                <LanguageEditor
-                  selectedLanguages={selectedLanguages}
-                  setSelectedLanguages={setSelectedLanguages}
-                  onSave={handleSaveLanguages}
-                />
-              </SheetClose>
-            </SheetContent>
-          </Sheet>
-        </h4>
-        <LanguageDisplay languages={profileLanguages} tinderBadgeStyle={tinderBadgeStyle} />
+          {onFieldEdit && (
+            <button
+              onClick={() => setShowLanguagePicker(!showLanguagePicker)}
+              className="text-xs text-primary font-medium hover:underline"
+            >
+              {showLanguagePicker ? 'Done' : 'Edit'}
+            </button>
+          )}
+        </div>
+        
+        <div className="flex flex-wrap gap-2 mt-1 ml-[52px]">
+          {currentLanguages.length > 0 ? (
+            currentLanguages.map((language, index) => (
+              <Badge key={index} variant="outline" className={tinderBadgeStyle}>{language}</Badge>
+            ))
+          ) : (
+            <span className="text-muted-foreground text-sm">No languages selected</span>
+          )}
+        </div>
+
+        {showLanguagePicker && onFieldEdit && (
+          <div className="mt-3 ml-[52px] p-3 bg-muted/30 rounded-2xl border border-border/30">
+            <p className="text-xs text-muted-foreground mb-2">
+              Tap to toggle ({currentLanguages.length}/{MAX_LANGUAGES})
+            </p>
+            <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
+              {allLanguages.map((lang) => {
+                const isSelected = currentLanguages.includes(lang);
+                return (
+                  <button
+                    key={lang}
+                    onClick={() => handleToggleLanguage(lang)}
+                    className={`text-xs px-2.5 py-1.5 rounded-full border transition-all ${
+                      isSelected 
+                        ? 'bg-primary text-primary-foreground border-primary' 
+                        : 'bg-background text-foreground border-border/50 hover:border-primary/40'
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
       
-      <div>
-        <h4 className="font-medium mb-2 flex items-center justify-between">
-          <span className="flex items-center">
-            <MessageCircle size={18} className="mr-2 text-tinder-orange/70" />
-            Communication
-            <span className="ml-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Bot size={12} className="text-tinder-orange" />
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="bg-white/90 backdrop-blur-sm border border-tinder-rose/10">
-                    <p className="text-xs text-muted-foreground">
-                      AI analyzes communication style based on profile data
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </span>
-          </span>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full hover:bg-gray-100">
-                <Pencil size={16} className="text-gray-500" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-md overflow-y-auto">
-              <CommunicationEditor 
-                communicationStyle={details.communicationStyle}
-                decisionMakingStyle={details.decisionMakingStyle}
-              />
-            </SheetContent>
-          </Sheet>
-        </h4>
-        <CommunicationDisplay 
-          communicationStyle={details.communicationStyle}
-          decisionMakingStyle={details.decisionMakingStyle}
-        />
-      </div>
+      <Separator />
+
+      <DetailItem
+        icon={<MessageCircle size={18} />}
+        label="Communication Style"
+        value={details.communicationStyle || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="communicationStyle"
+        fieldType="select"
+        fieldOptions={["Direct", "Diplomatic", "Expressive", "Reserved", "Humorous", "Analytical"]}
+        onFieldEdit={onFieldEdit}
+      />
+
+      <DetailItem
+        icon={<Bot size={18} />}
+        label="Decision Making"
+        value={
+          <div className="flex items-center gap-1.5">
+            <span>{details.decisionMakingStyle || 'Not specified'}</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Bot size={12} className="text-primary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="bg-popover border border-border">
+                  <p className="text-xs text-muted-foreground">
+                    AI analyzes decision style based on profile data
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        }
+        editable={!!onFieldEdit}
+        fieldKey="decisionMakingStyle"
+        fieldType="select"
+        fieldOptions={["Analytical", "Intuitive", "Collaborative", "Decisive", "Cautious"]}
+        onFieldEdit={onFieldEdit}
+      />
     </div>
   );
 };

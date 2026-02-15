@@ -78,7 +78,10 @@ const MyProfile = () => {
     drinking: realProfileData.drinking || '',
     idealDate: realProfileData.ideal_date || '',
     workLifeBalance: realProfileData.work_life_balance || '',
-    careerAmbitions: realProfileData.career_ambitions || ''
+    careerAmbitions: realProfileData.career_ambitions || '',
+    morningRoutine: (realProfileData as any).morning_routine || '',
+    eveningRoutine: (realProfileData as any).evening_routine || '',
+    decisionMakingStyle: (realProfileData as any).decision_making_style || ''
   } : {
     name: '', age: 0, location: '', occupation: '', lastActive: '', verified: false, profileImage: '', distance: 0,
     kurdistanRegion: "South-Kurdistan" as KurdistanRegion, bio: '', height: '', bodyType: '', ethnicity: '',
@@ -127,6 +130,9 @@ const MyProfile = () => {
     careerAmbitions: profileData.careerAmbitions,
     values: profileData.values,
     creativePursuits: profileData.creativePursuits,
+    morningRoutine: (profileData as any).morningRoutine || '',
+    eveningRoutine: (profileData as any).eveningRoutine || '',
+    decisionMakingStyle: (profileData as any).decisionMakingStyle || '',
     favoriteBooks: [],
     favoriteMovies: [],
     favoriteMusic: [],
@@ -196,6 +202,8 @@ const MyProfile = () => {
         idealDate: 'ideal_date', workLifeBalance: 'work_life_balance',
         careerAmbitions: 'career_ambitions', occupation: 'occupation', name: 'name',
         location: 'location', bio: 'bio', kurdistanRegion: 'kurdistan_region',
+        morningRoutine: 'morning_routine', eveningRoutine: 'evening_routine',
+        decisionMakingStyle: 'decision_making_style',
       };
       const dbUpdates: any = {};
       for (const [key, value] of Object.entries(updates)) {
@@ -324,6 +332,31 @@ const MyProfile = () => {
             <EditableAboutMeSection bio={profileData.bio} onSave={(newBio: string) => handleProfileUpdate({ bio: newBio })} profileData={profileData} />
           </div>
 
+          {/* Photo Grid */}
+          <div className="mx-4">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
+            <div className="bg-card rounded-2xl p-3 shadow-sm">
+              <div className="grid grid-cols-3 gap-2">
+                {galleryImages.slice(0, 6).map((img, i) => (
+                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
+                    <img src={img} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                    {i === 0 && (
+                      <div className="absolute top-1.5 left-1.5">
+                        <Star className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {galleryImages.length < 6 && (
+                  <label className="aspect-square rounded-2xl border-2 border-dashed border-border/40 flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
+                    <Plus className="w-6 h-6 text-muted-foreground" />
+                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </label>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Quick Stats (as others see) */}
           <div className="mx-4">
             <ProfileQuickStats
@@ -366,7 +399,7 @@ const MyProfile = () => {
                 value="more" title="Communication" icon={<Languages />} color="text-primary"
                 gradientClass="bg-gradient-to-r from-primary/5 to-transparent" borderClass="border-primary/10"
               >
-                <ProfileCommunication details={details as any} tinderBadgeStyle={tinderBadgeStyle} isMobile={true} />
+                <ProfileCommunication details={details as any} tinderBadgeStyle={tinderBadgeStyle} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
@@ -390,31 +423,6 @@ const MyProfile = () => {
                 <ProfileTravel details={details as any} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
             </Accordion>
-          </div>
-
-          {/* Photo Grid */}
-          <div className="mx-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
-            <div className="bg-card rounded-2xl p-3 shadow-sm">
-              <div className="grid grid-cols-3 gap-2">
-                {galleryImages.slice(0, 6).map((img, i) => (
-                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
-                    <img src={img} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-                    {i === 0 && (
-                      <div className="absolute top-1.5 left-1.5">
-                        <Star className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {galleryImages.length < 6 && (
-                  <label className="aspect-square rounded-2xl border-2 border-dashed border-border/40 flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
-                    <Plus className="w-6 h-6 text-muted-foreground" />
-                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                  </label>
-                )}
-              </div>
-            </div>
           </div>
 
           {/* Privacy & Visibility */}
