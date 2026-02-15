@@ -647,6 +647,91 @@ export type Database = {
         }
         Relationships: []
       }
+      date_proposals: {
+        Row: {
+          activity: string
+          created_at: string
+          id: string
+          location: string | null
+          message: string | null
+          proposed_date: string
+          proposer_id: string
+          recipient_id: string
+          responded_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          activity: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          message?: string | null
+          proposed_date: string
+          proposer_id: string
+          recipient_id: string
+          responded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          activity?: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          message?: string | null
+          proposed_date?: string
+          proposer_id?: string
+          recipient_id?: string
+          responded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "date_proposals_proposer_id_fkey"
+            columns: ["proposer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "date_proposals_proposer_id_fkey"
+            columns: ["proposer_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "date_proposals_proposer_id_fkey"
+            columns: ["proposer_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "date_proposals_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "date_proposals_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "date_proposals_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_campaigns: {
         Row: {
           bounced_count: number | null
@@ -3070,6 +3155,86 @@ export type Database = {
           },
         ]
       }
+      sent_gifts: {
+        Row: {
+          created_at: string
+          gift_id: string
+          id: string
+          message: string | null
+          read: boolean
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          gift_id: string
+          id?: string
+          message?: string | null
+          read?: boolean
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          gift_id?: string
+          id?: string
+          message?: string | null
+          read?: boolean
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sent_gifts_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "virtual_gifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sent_gifts_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sent_gifts_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sent_gifts_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sent_gifts_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sent_gifts_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sent_gifts_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_login_providers: {
         Row: {
           client_id: string | null
@@ -3412,6 +3577,55 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_coins: {
+        Row: {
+          balance: number
+          id: string
+          total_earned: number
+          total_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          id?: string
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          id?: string
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_coins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_coins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_public_profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_coins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_engagement: {
         Row: {
@@ -3766,6 +3980,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      virtual_gifts: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          description: string | null
+          emoji: string
+          id: string
+          is_premium: boolean
+          name: string
+          price_coins: number
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          emoji?: string
+          id?: string
+          is_premium?: boolean
+          name: string
+          price_coins?: number
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          emoji?: string
+          id?: string
+          is_premium?: boolean
+          name?: string
+          price_coins?: number
+          sort_order?: number
+        }
+        Relationships: []
       }
     }
     Views: {

@@ -26,7 +26,7 @@ import SavedPosts from '@/pages/SavedPosts';
 import Matches from '@/pages/Matches';
 import Events from '@/pages/Events';
 import Notifications from '@/pages/Notifications';
-
+import GiftsAndDates from '@/pages/GiftsAndDates';
 const P: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ProtectedRoute>{children}</ProtectedRoute>
 );
@@ -57,5 +57,6 @@ export const protectedRoutes = (
     <Route path="/matches" element={<P><Matches /></P>} />
     <Route path="/events" element={<P><Events /></P>} />
     <Route path="/notifications" element={<P><Notifications /></P>} />
+    <Route path="/gifts" element={<P><ErrorBoundary><GiftsAndDates /></ErrorBoundary></P>} />
   </>
 );
