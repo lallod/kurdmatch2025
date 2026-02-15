@@ -40,6 +40,7 @@ import AIInsightsPage from './pages/AIInsightsPage';
 import InterestsPage from './pages/InterestsPage';
 import SupportTicketsPage from './pages/SupportTicketsPage';
 import ApiKeysPage from './pages/ApiKeysPage';
+import VirtualGiftsPage from './pages/VirtualGiftsPage';
 
 const SuperAdmin = () => {
   return (
@@ -83,6 +84,7 @@ const SuperAdmin = () => {
         <Route path="/interests" element={<InterestsPage />} />
         <Route path="/support-tickets" element={<SupportTicketsPage />} />
         <Route path="/api-keys" element={<ApiKeysPage />} />
+        <Route path="/virtual-gifts" element={<VirtualGiftsPage />} />
       </Routes>
     </SuperAdminLayout>
   );

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, MapPin, Briefcase, MessageCircle, Sparkles } from 'lucide-react';
+import { CheckCircle, MapPin, Briefcase, MessageCircle, Sparkles, Gift, CalendarIcon } from 'lucide-react';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Profile } from '@/api/profiles';
 import { followUser, unfollowUser, checkIsFollowing } from '@/api/posts';
@@ -11,6 +11,8 @@ import { getKurdistanRegionDisplay, parseLocation } from '@/utils/profileDataNor
 import { getUserSubscription } from '@/api/usage';
 import { createPremiumCheckout } from '@/api/payments';
 import SuperLikeButton from '@/components/discovery/SuperLikeButton';
+import SendGiftModal from '@/components/gifts/SendGiftModal';
+import ProposeDateModal from '@/components/dates/ProposeDateModal';
 import {
   Dialog,
   DialogContent,
@@ -32,6 +34,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
   const [loading, setLoading] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [showGiftModal, setShowGiftModal] = useState(false);
+  const [showDateModal, setShowDateModal] = useState(false);
   const { canSeeDatingDetails } = useProfileAccess('social', profile.id);
 
   useEffect(() => {
@@ -197,7 +201,41 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
         )}
       </div>
 
-      {/* Upgrade Dialog */}
+      {/* Gift & Date buttons for other profiles */}
+      {!isOwnProfile && (
+        <div className="flex gap-2 mb-2">
+          <Button
+            onClick={() => setShowGiftModal(true)}
+            variant="outline"
+            className="flex-1 h-9 rounded-xl text-sm"
+          >
+            <Gift className="w-4 h-4 mr-1.5" />
+            Send Gift
+          </Button>
+          <Button
+            onClick={() => setShowDateModal(true)}
+            variant="outline"
+            className="flex-1 h-9 rounded-xl text-sm"
+          >
+            <CalendarIcon className="w-4 h-4 mr-1.5" />
+            Propose Date
+          </Button>
+        </div>
+      )}
+
+      {/* Gift & Date Modals */}
+      <SendGiftModal
+        open={showGiftModal}
+        onOpenChange={setShowGiftModal}
+        recipientId={profile.id}
+        recipientName={profile.name}
+      />
+      <ProposeDateModal
+        open={showDateModal}
+        onOpenChange={setShowDateModal}
+        recipientId={profile.id}
+        recipientName={profile.name}
+      />
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
         <DialogContent className="bg-card border-border rounded-3xl">
           <DialogHeader>
