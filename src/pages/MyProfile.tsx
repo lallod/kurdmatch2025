@@ -26,7 +26,8 @@ import ProfileQuickStats from '@/components/profile/ProfileQuickStats';
 
 import { useRealProfileData } from '@/hooks/useRealProfileData';
 import { toast } from 'sonner';
-import { uploadProfilePhoto } from '@/api/profiles';
+import { uploadProfilePhoto, getUserPhotos, deletePhoto, setPhotoPrimary } from '@/api/profiles';
+import { X } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
 
 
@@ -176,11 +177,23 @@ const MyProfile = () => {
     return value;
   };
 
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [galleryPhotos, setGalleryPhotos] = useState<{ id: string; url: string; is_primary: boolean }[]>([]);
+
+  const loadPhotos = async () => {
+    if (!realProfileData?.id) return;
+    try {
+      const photos = await getUserPhotos(realProfileData.id);
+      setGalleryPhotos(photos);
+    } catch (err) {
+      console.error('Failed to load photos:', err);
+    }
+  };
 
   useEffect(() => {
-    if (profileData.profileImage) setGalleryImages([profileData.profileImage]);
-  }, [profileData.profileImage]);
+    loadPhotos();
+  }, [realProfileData?.id]);
+
+  const galleryImages = galleryPhotos.map(p => p.url);
 
   const profileCompletion = categoryProgress?.overall || 0;
   const profileStats = {
@@ -204,14 +217,37 @@ const MyProfile = () => {
     const files = event.target.files;
     if (files && files.length > 0) {
       try {
-        const isPrimary = galleryImages.length === 0;
-        const photo = await uploadProfilePhoto(files[0], isPrimary);
-        setGalleryImages(prev => [photo, ...prev]);
+        const isPrimary = galleryPhotos.length === 0;
+        await uploadProfilePhoto(files[0], isPrimary);
+        await loadPhotos();
+        if (isPrimary) refreshData();
         toast.success(isPrimary ? 'Profile photo set' : 'Photo uploaded');
       } catch (error) {
         console.error('Photo upload failed:', error);
         toast.error('Failed to upload photo');
       }
+    }
+  };
+
+  const handleRemovePhoto = async (photoId: string) => {
+    try {
+      await deletePhoto(photoId);
+      await loadPhotos();
+      refreshData();
+      toast.success('Photo removed');
+    } catch (error) {
+      toast.error('Failed to remove photo');
+    }
+  };
+
+  const handleSetPrimary = async (photoId: string) => {
+    try {
+      await setPhotoPrimary(photoId);
+      await loadPhotos();
+      refreshData();
+      toast.success('Profile photo updated');
+    } catch (error) {
+      toast.error('Failed to set profile photo');
     }
   };
 
@@ -276,7 +312,7 @@ const MyProfile = () => {
           <div className="max-w-md mx-auto px-4 -mt-16 flex flex-col items-center">
             <div className="relative mb-3">
               <Avatar className="h-24 w-24 ring-4 ring-background shadow-xl">
-                <AvatarImage src={galleryImages[0]} alt={profileData.name} />
+                <AvatarImage src={galleryPhotos[0]?.url || profileData.profileImage} alt={profileData.name} />
                 <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                   {profileData.name.charAt(0)}
                 </AvatarFallback>
@@ -375,17 +411,36 @@ const MyProfile = () => {
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
             <div className="bg-card rounded-2xl p-3 shadow-sm">
               <div className="grid grid-cols-3 gap-2">
-                {galleryImages.slice(0, 6).map((img, i) => (
-                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
-                    <img src={img} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-                    {i === 0 && (
+                {galleryPhotos.slice(0, 6).map((photo, i) => (
+                  <div key={photo.id} className="relative aspect-square rounded-2xl overflow-hidden bg-muted group">
+                    <img src={photo.url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                    {photo.is_primary && (
                       <div className="absolute top-1.5 left-1.5">
                         <Star className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow" />
                       </div>
                     )}
+                    {/* Action overlay */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      {!photo.is_primary && (
+                        <button
+                          onClick={() => handleSetPrimary(photo.id)}
+                          className="h-8 w-8 rounded-full bg-card/90 flex items-center justify-center"
+                          title="Set as profile photo"
+                        >
+                          <Star className="w-4 h-4 text-amber-400" />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleRemovePhoto(photo.id)}
+                        className="h-8 w-8 rounded-full bg-destructive/90 flex items-center justify-center"
+                        title="Remove photo"
+                      >
+                        <X className="w-4 h-4 text-destructive-foreground" />
+                      </button>
+                    </div>
                   </div>
                 ))}
-                {galleryImages.length < 6 && (
+                {galleryPhotos.length < 6 && (
                   <label className="aspect-square rounded-2xl border-2 border-dashed border-border/40 flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
                     <Plus className="w-6 h-6 text-muted-foreground" />
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
