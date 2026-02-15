@@ -39,6 +39,7 @@ import DailyUsagePage from './pages/DailyUsagePage';
 import AIInsightsPage from './pages/AIInsightsPage';
 import InterestsPage from './pages/InterestsPage';
 import SupportTicketsPage from './pages/SupportTicketsPage';
+import ApiKeysPage from './pages/ApiKeysPage';
 
 const SuperAdmin = () => {
   return (
@@ -81,6 +82,7 @@ const SuperAdmin = () => {
         <Route path="/ai-insights" element={<AIInsightsPage />} />
         <Route path="/interests" element={<InterestsPage />} />
         <Route path="/support-tickets" element={<SupportTicketsPage />} />
+        <Route path="/api-keys" element={<ApiKeysPage />} />
       </Routes>
     </SuperAdminLayout>
   );
