@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ReportMessageDialogProps {
   open: boolean;
@@ -21,14 +22,6 @@ interface ReportMessageDialogProps {
   reportedUserId: string;
   conversationId?: string;
 }
-
-const REPORT_REASONS = [
-  { value: 'harassment', label: 'Harassment or bullying' },
-  { value: 'spam', label: 'Spam or scam' },
-  { value: 'inappropriate', label: 'Inappropriate content' },
-  { value: 'safety', label: 'Safety concern' },
-  { value: 'other', label: 'Other' },
-];
 
 export const ReportMessageDialog = ({
   open,
@@ -41,11 +34,20 @@ export const ReportMessageDialog = ({
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslations();
+
+  const REPORT_REASONS = [
+    { value: 'harassment', label: t('report.harassment', 'Harassment or bullying') },
+    { value: 'spam', label: t('report.spam', 'Spam or scam') },
+    { value: 'inappropriate', label: t('report.inappropriate', 'Inappropriate content') },
+    { value: 'safety', label: t('report.safety', 'Safety concern') },
+    { value: 'other', label: t('report.other', 'Other') },
+  ];
 
   const handleSubmit = async () => {
     if (!reason) {
       toast({
-        title: "Please select a reason",
+        title: t('report.select_reason', 'Please select a reason'),
         variant: "destructive",
       });
       return;
@@ -71,8 +73,8 @@ export const ReportMessageDialog = ({
       if (error) throw error;
 
       toast({
-        title: "Report submitted",
-        description: "Thank you for helping keep our community safe",
+        title: t('report.submitted', 'Report submitted'),
+        description: t('report.thank_you', 'Thank you for helping keep our community safe'),
       });
 
       onOpenChange(false);
@@ -81,8 +83,8 @@ export const ReportMessageDialog = ({
     } catch (error) {
       console.error('Error reporting message:', error);
       toast({
-        title: "Failed to submit report",
-        description: "Please try again",
+        title: t('report.failed', 'Failed to submit report'),
+        description: t('report.try_again', 'Please try again'),
         variant: "destructive",
       });
     } finally {
@@ -94,9 +96,9 @@ export const ReportMessageDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Report Message</DialogTitle>
+          <DialogTitle>{t('report.title', 'Report Message')}</DialogTitle>
           <DialogDescription>
-            Help us understand what's wrong with this message
+            {t('report.description', "Help us understand what's wrong with this message")}
           </DialogDescription>
         </DialogHeader>
 
@@ -113,10 +115,10 @@ export const ReportMessageDialog = ({
           </RadioGroup>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Additional details (optional)</Label>
+            <Label htmlFor="description">{t('report.additional_details', 'Additional details (optional)')}</Label>
             <Textarea
               id="description"
-              placeholder="Provide more context about why you're reporting this..."
+              placeholder={t('report.provide_context', "Provide more context about why you're reporting this...")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
@@ -130,10 +132,10 @@ export const ReportMessageDialog = ({
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
           >
-            Cancel
+            {t('report.cancel', 'Cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : 'Submit Report'}
+            {isSubmitting ? t('report.submitting', 'Submitting...') : t('report.submit', 'Submit Report')}
           </Button>
         </DialogFooter>
       </DialogContent>

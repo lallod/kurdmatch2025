@@ -4,6 +4,7 @@ import { Sparkles, MessageSquare, Heart, Flame, Brain, X, Loader2, ChevronDown, 
 import { Button } from '@/components/ui/button';
 import { useAIWingman, WingmanType } from '@/hooks/useAIWingman';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface AIWingmanPanelProps {
   matchedUserId: string;
@@ -28,6 +29,7 @@ export const AIWingmanPanel = ({
   onSelectSuggestion,
   isNewConversation = false
 }: AIWingmanPanelProps) => {
+  const { t } = useTranslations();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedMode, setSelectedMode] = useState<WingmanType | null>(null);
   
@@ -80,7 +82,7 @@ export const AIWingmanPanel = ({
         )}
       >
         <Sparkles className="w-3.5 h-3.5" />
-        AI Wingman
+        {t('chat.ai_wingman', 'AI Wingman')}
         {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
       </Button>
 
@@ -100,7 +102,7 @@ export const AIWingmanPanel = ({
                 <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
                   <Sparkles className="w-3.5 h-3.5 text-white" />
                 </div>
-                <span className="text-sm font-medium text-white">AI Wingman</span>
+                <span className="text-sm font-medium text-white">{t('chat.ai_wingman', 'AI Wingman')}</span>
               </div>
               <Button
                 variant="ghost"
@@ -143,7 +145,7 @@ export const AIWingmanPanel = ({
               {isLoading ? (
                 <div className="flex items-center justify-center py-6">
                   <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
-                  <span className="ml-2 text-sm text-purple-300">Generating suggestions...</span>
+                  <span className="ml-2 text-sm text-purple-300">{t('chat.generating_suggestions', 'Generating suggestions...')}</span>
                 </div>
               ) : suggestions.length > 0 ? (
                 <div className="space-y-2">
@@ -160,20 +162,20 @@ export const AIWingmanPanel = ({
                         {suggestion}
                       </p>
                       <p className="text-xs text-purple-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Click to use this message
+                        {t('chat.click_to_use', 'Click to use this message')}
                       </p>
                     </motion.button>
                   ))}
                 </div>
               ) : selectedMode ? (
                 <p className="text-sm text-purple-300 text-center py-4">
-                  No suggestions available. Try again!
+                  {t('chat.no_suggestions', 'No suggestions available. Try again!')}
                 </p>
               ) : (
                 <p className="text-sm text-purple-300/70 text-center py-4">
                   {isNewConversation 
-                    ? "Let me help you start the conversation! 💬"
-                    : "Choose a mode to get AI-powered message suggestions ✨"
+                    ? t('chat.help_start', 'Let me help you start the conversation! 💬')
+                    : t('chat.choose_mode', 'Choose a mode to get AI-powered message suggestions ✨')
                   }
                 </p>
               )}

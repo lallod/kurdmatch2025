@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { generateIcebreakers } from '@/api/ai';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface IcebreakerSuggestionsProps {
   matchedUserId: string;
@@ -16,6 +17,7 @@ export const IcebreakerSuggestions = ({
   onSelectIcebreaker,
   hasMessages = false,
 }: IcebreakerSuggestionsProps) => {
+  const { t } = useTranslations();
   const [icebreakers, setIcebreakers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(!hasMessages);
@@ -57,7 +59,7 @@ export const IcebreakerSuggestions = ({
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-sm">AI Icebreaker Suggestions</span>
+              <span className="font-semibold text-sm">{t('chat.ai_icebreaker', 'AI Icebreaker Suggestions')}</span>
             </div>
             <Button
               variant="ghost"
@@ -98,7 +100,7 @@ export const IcebreakerSuggestions = ({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Start the conversation your way! 💬
+              {t('chat.start_conversation', 'Start the conversation your way! 💬')}
             </p>
           )}
         </Card>
