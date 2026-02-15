@@ -39,7 +39,8 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
         value={heightDisplay}
         editable={!!onFieldEdit}
         fieldKey="height"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={Array.from({ length: 66 }, (_, i) => `${145 + i} cm`)}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
@@ -60,7 +61,8 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
         value={details.ethnicity}
         editable={!!onFieldEdit}
         fieldKey="ethnicity"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["Kurdish", "Middle Eastern", "European", "Asian", "African", "Latin American", "Mixed", "Other"]}
         onFieldEdit={onFieldEdit}
       />
       
@@ -83,7 +85,8 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
         value={details.politicalViews}
         editable={!!onFieldEdit}
         fieldKey="politicalViews"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["Liberal", "Conservative", "Moderate", "Progressive", "Libertarian", "Apolitical", "Other"]}
         onFieldEdit={onFieldEdit}
       />
       

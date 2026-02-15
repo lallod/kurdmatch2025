@@ -105,7 +105,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.workLifeBalance || 'Not specified'}
         editable={!!onFieldEdit}
         fieldKey="workLifeBalance"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["Work-focused", "Balanced", "Life-focused", "Flexible", "Struggling"]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
@@ -115,7 +116,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         value={details.dietaryPreferences || 'Not specified'}
         editable={!!onFieldEdit}
         fieldKey="dietaryPreferences"
-        fieldType="text"
+        fieldType="select"
+        fieldOptions={["No restrictions", "Vegetarian", "Vegan", "Halal", "Kosher", "Pescatarian", "Gluten-free", "Other"]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
@@ -123,12 +125,22 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
         icon={<Sun size={18} />} 
         label="Morning Routine" 
         value={details.morningRoutine || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="morningRoutine"
+        fieldType="select"
+        fieldOptions={["Early riser & active", "Slow & relaxed", "Coffee then go", "Exercise first", "Meditation/mindfulness"]}
+        onFieldEdit={onFieldEdit}
       />
       <Separator />
       <DetailItem 
         icon={<Moon size={18} />} 
         label="Evening Routine" 
         value={details.eveningRoutine || 'Not specified'}
+        editable={!!onFieldEdit}
+        fieldKey="eveningRoutine"
+        fieldType="select"
+        fieldOptions={["Early to bed", "Night owl", "Reading/relaxing", "Socializing", "TV/streaming", "Exercise"]}
+        onFieldEdit={onFieldEdit}
       />
     </div>
   );
