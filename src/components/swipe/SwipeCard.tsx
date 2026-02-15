@@ -5,6 +5,7 @@ import ProfileInfo from './ProfileInfo';
 import DistanceBadge from '@/components/location/DistanceBadge';
 import { Profile } from '@/types/swipe';
 import { SWIPE_CONFIG } from '@/config/swipe';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SwipeCardProps {
   profile: Profile;
@@ -27,6 +28,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
   isBackground = false,
   style
 }) => {
+  const { t } = useTranslations();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -162,7 +164,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
               opacity: Math.min(1, Math.abs(dragPosition.x) / SWIPE_CONFIG.animations.threshold)
             }}
           >
-            {swipeDirection === 'right' ? 'LIKE' : 'NOPE'}
+            {swipeDirection === 'right' ? t('swipe.like_label', 'LIKE') : t('swipe.nope_label', 'NOPE')}
           </div>
         </div>
       )}
