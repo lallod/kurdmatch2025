@@ -24,7 +24,7 @@ const Auth = () => {
     const isOAuthCallback = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token');
     
     if (isOAuthCallback) {
-      console.log('OAuth callback detected, redirecting to callback handler');
+      
       navigate('/auth/callback', { replace: true });
       return;
     }
@@ -33,16 +33,13 @@ const Auth = () => {
     
     const checkUserRole = async () => {
       try {
-        console.log("Checking role for user ID:", user.id);
         const isSuperAdmin = await isUserSuperAdmin(user.id);
 
         if (isSuperAdmin) {
-          console.log("User has super_admin role, redirecting to super-admin");
           navigate('/super-admin', { replace: true });
           return;
         }
 
-        console.log("Regular user, redirecting to discovery");
         navigate('/discovery', { replace: true });
       } catch (error) {
         console.error('Error checking user role:', error);
@@ -59,14 +56,14 @@ const Auth = () => {
     setErrorMessage(null);
 
     try {
-      console.log(`Attempting to sign in with: ${email}`);
+      
       const { error } = await signIn(email, password);
 
       if (error) throw error;
 
       toast.success("Welcome back!", { description: "You've successfully logged in." });
     } catch (error: any) {
-      console.error('Authentication error:', error);
+      
       
       if (error.message === 'Email not confirmed') {
         setErrorMessage("Please check your email to confirm your account before logging in.");

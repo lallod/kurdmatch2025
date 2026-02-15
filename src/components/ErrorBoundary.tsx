@@ -39,7 +39,7 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary-dark via-primary-dark/80 to-primary">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
           <Alert variant="destructive" className="max-w-2xl">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Something went wrong</AlertTitle>
