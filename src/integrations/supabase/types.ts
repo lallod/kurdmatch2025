@@ -2716,6 +2716,7 @@ export type Database = {
           ideal_date: string | null
           ideal_weather: string | null
           interests: string[] | null
+          is_generated: boolean | null
           kurdistan_region: string
           languages: string[] | null
           last_active: string | null
@@ -2799,6 +2800,7 @@ export type Database = {
           ideal_date?: string | null
           ideal_weather?: string | null
           interests?: string[] | null
+          is_generated?: boolean | null
           kurdistan_region?: string
           languages?: string[] | null
           last_active?: string | null
@@ -2882,6 +2884,7 @@ export type Database = {
           ideal_date?: string | null
           ideal_weather?: string | null
           interests?: string[] | null
+          is_generated?: boolean | null
           kurdistan_region?: string
           languages?: string[] | null
           last_active?: string | null
@@ -3190,6 +3193,61 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_content: {
+        Row: {
+          content: string | null
+          content_type: string
+          created_at: string
+          id: string
+          media_url: string | null
+          profile_id: string
+          published: boolean
+          scheduled_for: string
+        }
+        Insert: {
+          content?: string | null
+          content_type: string
+          created_at?: string
+          id?: string
+          media_url?: string | null
+          profile_id: string
+          published?: boolean
+          scheduled_for: string
+        }
+        Update: {
+          content?: string | null
+          content_type?: string
+          created_at?: string
+          id?: string
+          media_url?: string | null
+          profile_id?: string
+          published?: boolean
+          scheduled_for?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_content_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_content_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_content_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_public_view"
             referencedColumns: ["id"]
           },
         ]
@@ -4644,6 +4702,7 @@ export type Database = {
       }
       postgis_version: { Args: never; Returns: string }
       postgis_wagyu_version: { Args: never; Returns: string }
+      publish_scheduled_content: { Args: never; Returns: number }
       search_profiles_fts: {
         Args: { search_query: string }
         Returns: {
@@ -4691,6 +4750,7 @@ export type Database = {
           ideal_date: string | null
           ideal_weather: string | null
           interests: string[] | null
+          is_generated: boolean | null
           kurdistan_region: string
           languages: string[] | null
           last_active: string | null

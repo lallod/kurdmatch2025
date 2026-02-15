@@ -43,7 +43,8 @@ import {
   CalendarIcon,
   Sparkles,
   Ticket,
-  Key
+  Key,
+  Bot
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminRoleCheck } from '@/hooks/useAdminRoleCheck';
@@ -125,6 +126,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const menuItems = [
     { path: '/super-admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { path: '/super-admin/users', icon: <Users size={20} />, label: 'Users Management' },
+    { path: '/super-admin/ghost-users', icon: <Bot size={20} />, label: 'Ghost Users' },
     { path: '/super-admin/subscribers', icon: <Zap size={20} />, label: 'Subscribers' },
     { path: '/super-admin/payments', icon: <CreditCard size={20} />, label: 'Payments' },
     { path: '/super-admin/likes', icon: <Heart size={20} />, label: 'Likes' },
