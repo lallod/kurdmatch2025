@@ -1,6 +1,9 @@
 import { useRef } from 'react';
 import { Image, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+
+const MAX_IMAGE_SIZE_MB = 10;
 
 interface ImageUploaderProps {
   onImageSelect: (file: File) => void;
@@ -16,6 +19,10 @@ export const ImageUploader = ({ onImageSelect }: ImageUploaderProps) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
+      if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+        toast.error(`Image too large`, { description: `Max size is ${MAX_IMAGE_SIZE_MB}MB. Your file is ${(file.size / 1024 / 1024).toFixed(1)}MB.` });
+        return;
+      }
       onImageSelect(file);
     }
   };

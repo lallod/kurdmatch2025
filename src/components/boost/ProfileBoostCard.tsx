@@ -69,13 +69,45 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
       if (remaining > 0) {
         setIsBoostActive(true);
         setBoostTimeRemaining(remaining);
-        // Simulate stats
-        setBoostStats({
-          viewsIncrease: Math.floor(Math.random() * 200) + 100,
-          likesIncrease: Math.floor(Math.random() * 30) + 10,
-          matchesIncrease: Math.floor(Math.random() * 5) + 1,
-        });
+        // Fetch real stats since boost started
+        await fetchBoostStats(data.updated_at);
       }
+    }
+  };
+
+  const fetchBoostStats = async (boostStartTime: string) => {
+    if (!user) return;
+    
+    try {
+      // Get profile views since boost started  
+      const { count: viewsCount } = await supabase
+        .from('profile_views')
+        .select('*', { count: 'exact', head: true })
+        .eq('viewed_profile_id', user.id)
+        .gte('viewed_at', boostStartTime);
+
+      // Get likes since boost started
+      const { count: likesCount } = await supabase
+        .from('likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('likee_id', user.id)
+        .gte('created_at', boostStartTime);
+
+      // Get matches since boost started
+      const { count: matchesCount } = await supabase
+        .from('matches')
+        .select('*', { count: 'exact', head: true })
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+        .gte('matched_at', boostStartTime);
+
+      setBoostStats({
+        viewsIncrease: viewsCount || 0,
+        likesIncrease: likesCount || 0,
+        matchesIncrease: matchesCount || 0,
+      });
+    } catch (error) {
+      console.error('Error fetching boost stats:', error);
+      setBoostStats({ viewsIncrease: 0, likesIncrease: 0, matchesIncrease: 0 });
     }
   };
 
@@ -151,14 +183,11 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
         description: 'Your profile will be shown to more people for 30 minutes',
       });
 
-      // Simulate increasing stats over time
+      // Refresh real stats periodically
+      const boostStart = new Date().toISOString();
       const statsInterval = setInterval(() => {
-        setBoostStats(prev => prev ? {
-          viewsIncrease: prev.viewsIncrease + Math.floor(Math.random() * 10),
-          likesIncrease: prev.likesIncrease + (Math.random() > 0.7 ? 1 : 0),
-          matchesIncrease: prev.matchesIncrease + (Math.random() > 0.95 ? 1 : 0),
-        } : null);
-      }, 5000);
+        fetchBoostStats(boostStart);
+      }, 15000);
 
       setTimeout(() => clearInterval(statsInterval), 30 * 60 * 1000);
 

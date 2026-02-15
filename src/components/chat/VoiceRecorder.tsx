@@ -16,6 +16,8 @@ export const VoiceRecorder = ({ onSendVoice, onCancel }: VoiceRecorderProps) => 
     startRecording,
     stopRecording,
     cancelRecording,
+    maxDuration,
+    remainingTime,
   } = useVoiceRecorder();
 
   useEffect(() => {
@@ -59,6 +61,11 @@ export const VoiceRecorder = ({ onSendVoice, onCancel }: VoiceRecorderProps) => 
         <span className="text-sm font-medium text-red-500">
           {formatDuration(duration)}
         </span>
+        {isRecording && remainingTime <= 30 && (
+          <span className="text-xs text-red-400 animate-pulse">
+            {formatDuration(remainingTime)} left
+          </span>
+        )}
         <div className="flex-1 h-8 flex items-center gap-0.5">
           {Array.from({ length: 20 }).map((_, i) => (
             <div

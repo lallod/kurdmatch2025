@@ -302,7 +302,7 @@ export const getProfileSuggestions = async (filters?: { ageMin?: number; ageMax?
 
   const { data: currentProfile } = await supabase
     .from('profiles')
-    .select('gender, interests, values, hobbies, kurdistan_region')
+    .select('gender, interests, values, hobbies, kurdistan_region, travel_mode_active, travel_location')
     .eq('id', user.id)
     .maybeSingle();
 
@@ -326,7 +326,12 @@ export const getProfileSuggestions = async (filters?: { ageMin?: number; ageMax?
     query = query.lte('age', filters.ageMax);
   }
   if (filters?.location) {
-    query = query.ilike('location', `%${filters.location}%`);
+    // If user has travel mode active, search in travel location area
+    // Also match profiles whose travel_location matches
+    query = query.or(`location.ilike.%${filters.location}%,travel_location.ilike.%${filters.location}%`);
+  } else if (currentProfile.travel_mode_active && currentProfile.travel_location) {
+    // If user is in travel mode, show profiles from the travel location
+    query = query.or(`location.ilike.%${currentProfile.travel_location}%,travel_location.ilike.%${currentProfile.travel_location}%`);
   }
   if (filters?.religion) {
     query = query.eq('religion', filters.religion);

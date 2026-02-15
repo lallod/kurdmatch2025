@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Filter, Sparkles, MapPin, Heart, Briefcase, GraduationCap, Star, ChevronDown } from 'lucide-react';
+import { Filter, Sparkles, MapPin, Heart, Briefcase, GraduationCap, Star, ChevronDown, Lock } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
@@ -73,6 +75,8 @@ const REGIONS = [
 ];
 
 export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFiltersProps) => {
+  const { hasFeature } = useSubscription();
+  const isPremium = hasFeature('basic');
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     ageRange: [18, 50],
@@ -117,6 +121,10 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
   };
 
   const applyFilters = () => {
+    if (!isPremium) {
+      toast.error('Premium feature', { description: 'Upgrade to use Smart Filters', icon: '⭐' });
+      return;
+    }
     onFiltersChange(filters);
     setIsOpen(false);
   };
@@ -175,8 +183,23 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
           <SheetTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             Smart Filters
+            {!isPremium && (
+              <span className="text-xs bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-2 py-0.5 rounded-full font-medium">Premium</span>
+            )}
           </SheetTitle>
         </SheetHeader>
+
+        {!isPremium && (
+          <div className="mx-4 mt-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+            <div className="flex items-start gap-2">
+              <Lock className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold">Premium Feature</p>
+                <p className="text-xs text-muted-foreground mt-1">Upgrade to unlock advanced Smart Filters</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="py-4 space-y-4">
           {/* Basic Filters */}
@@ -376,8 +399,8 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
           <Button variant="outline" onClick={resetFilters} className="flex-1">
             Reset
           </Button>
-          <Button onClick={applyFilters} className="flex-1">
-            Apply Filters
+          <Button onClick={applyFilters} className="flex-1" disabled={!isPremium}>
+            {isPremium ? 'Apply Filters' : '⭐ Upgrade to Apply'}
           </Button>
         </SheetFooter>
       </SheetContent>
