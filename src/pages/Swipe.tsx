@@ -70,6 +70,7 @@ const Swipe = () => {
         height: profile.height || '',
         dietaryPreferences: profile.dietary_preferences || '',
         photos: profile.photos?.map(p => p.url) || [],
+        blur_photos: (profile as any).blur_photos || false,
         bio: profile.bio || '',
         relationshipGoals: profile.relationship_goals || 'Long-term relationship',
         verified: profile.verified || false,

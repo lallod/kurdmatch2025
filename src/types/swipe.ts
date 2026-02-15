@@ -18,6 +18,7 @@ export interface Profile {
   dietaryPreferences?: string;
   height?: string;
   photos?: string[];
+  blur_photos?: boolean;
   bio?: string;
   relationshipGoals?: string;
   verified?: boolean;
