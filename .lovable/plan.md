@@ -1,58 +1,84 @@
 
 
-# Fix Profile Data Saving Issues
+# Information Display Strategy: Swipe Page vs Instagram Profile
 
-## Problem Summary
-Profile edits from the My Profile page are not reliably saving to the database due to **value format mismatches** in the data conversion pipeline. The data goes through multiple transformation layers (field name mapping, value mapping, random filling) that conflict with each other.
+## Current State
 
-## Root Causes
+Both pages currently show nearly identical data (~60+ fields each), which creates two problems:
+1. **Information overload on swipe** -- users are swiping quickly and don't need 60+ fields buried in 8 accordion sections
+2. **No differentiation** -- there's no reason to visit someone's Instagram profile if you already saw everything on swipe
 
-1. **Value format mismatch on save**: When you edit a field (e.g., Drinking), the select shows options like "Never", "Socially". But the save pipeline tries to convert these using a mapping that expects lowercase keys like "never", "socially" -- so the conversion silently fails and inconsistent values get saved.
+## Recommended Strategy
 
-2. **Double field-name conversion**: `handleProfileUpdate` in MyProfile.tsx already converts field names from camelCase to snake_case. Then `updateProfileData` does the same conversion again -- redundant and error-prone.
+The core idea: **Swipe = quick decision-making snapshot. Instagram Profile = full deep-dive.**
 
-3. **Displayed values are converted UI keys**: The load pipeline converts database values like "Non-drinker" into UI keys like "never", which is what gets displayed. But the edit select options show human-readable labels like "Never" -- these don't match, so the select can't show the current value.
+---
 
-4. **Random filler values interfere**: Empty fields get filled with random values before display, making it unclear what's real data vs. generated data, and these random values go through additional format conversions.
+### SWIPE PAGE -- Show only "Deal-Breaker" Fields (~20 fields)
 
-## Solution
+These are the fields someone needs to make a quick yes/no decision:
 
-### Step 1: Simplify the save path in `handleProfileUpdate` (MyProfile.tsx)
-- Send values directly to the database without going through `convertUiToDbValues`, since the inline editor select options already use human-readable values the DB can store directly.
-- Keep the camelCase-to-snake_case field name mapping (which works correctly).
+**Always visible on card (no accordion):**
+- Name, Age, Location, Distance, Photos
+- Bio (first 2 lines, truncatable)
+- Quick badges: Religion, Occupation, Height
 
-### Step 2: Fix `updateProfileData` in `useRealProfileData.ts`
-- Remove the redundant `convertUiToDbProfile` call since the caller already provides snake_case keys.
-- Remove the `convertUiToDbValues` call since values from inline editors are already in DB-compatible format.
-- Save the raw values directly to the database.
+**In a single expandable section (simplified, no 8 accordions):**
 
-### Step 3: Fix value display consistency
-- Update `convertDbToUiValues` usage: stop converting DB values to UI keys for display purposes. The inline editors expect human-readable values that match their select options.
-- Alternatively, make the DetailItem component aware of the value mapping so it can properly translate between display values and stored values.
+| Category | Fields to KEEP | Fields to REMOVE |
+|----------|---------------|-----------------|
+| Basics | Gender, Ethnicity, Kurdistan Region, Languages | Body Type, Zodiac, Personality Type |
+| Lifestyle | Smoking, Drinking, Exercise | Diet, Sleep, Pets, Travel Freq, Transportation |
+| Values | Religion, Values (badges) | Political Views |
+| Relationships | Relationship Goals, Want Children, Love Language | Children Status, Family Closeness, Communication Style |
+| Career | Education, Occupation | Company, Career Ambitions, Work Environment, Work-Life Balance |
+| Interests | Interests + Hobbies (badges only) | Creative Pursuits, Weekend Activities, Music Instruments, Tech Skills |
+| Favorites | REMOVE ENTIRE SECTION | All favorites |
+| Personal Growth | REMOVE ENTIRE SECTION | All growth fields |
 
-### Step 4: Fix optimistic state update
-- After saving, merge the new values into the local state correctly so the UI updates immediately without needing a full reload.
+**Total on swipe: ~20 fields** (down from ~60)
 
-## Technical Details
+---
 
-### Files to modify:
+### INSTAGRAM PROFILE -- Show Everything (~65 fields)
 
-**`src/hooks/useRealProfileData.ts`**
-- In `updateProfileData`: remove `convertUiToDbProfile` and `convertUiToDbValues` calls. Pass values directly to `updateProfile()`.
-- Fix the optimistic state merge to work with the simplified format.
+Keep exactly as-is. This is the "deep dive" destination. The gating system (free vs premium) already handles access control. No changes needed here.
 
-**`src/pages/MyProfile.tsx`**
-- In `handleProfileUpdate`: keep the camelCase-to-snake_case field map but ensure values pass through unchanged to the DB.
+---
 
-**`src/utils/valueMapping.ts`**
-- Either remove value mapping from the load path, or make the DetailItem select options use the same format as the mapped values. The simpler fix: stop value-mapping on load so displayed values match DB values and select options.
+## Technical Implementation
 
-**`src/components/profile/DetailItem.tsx`**
-- Ensure `tempValue` initialization correctly matches one of the select options so the current value is shown when editing begins.
+### Step 1: Simplify `ProfileDetails.tsx` (Swipe Page)
 
-### Expected behavior after fix:
-- Editing any field saves the selected value directly to the database
-- The displayed value matches the select options (no format mismatch)
-- Saves persist across page reloads
-- No double-conversion of field names or values
+Replace the 8 accordion sections with a cleaner 2-section layout:
+- **Section 1: "About"** -- Bio, Gender, Ethnicity, Kurdistan Region, Languages, Religion, Education, Occupation
+- **Section 2: "Compatibility"** -- Relationship Goals, Want Children, Smoking, Drinking, Exercise, Love Language, Values + Interests as badges
+
+Remove all Favorites, Personal Growth, and lower-priority detail fields from the swipe view entirely.
+
+### Step 2: Update `ProfileQuickBadges.tsx`
+
+Ensure the quick badges shown on the swipe card surface the most decision-relevant info: Religion, Height, Occupation, Relationship Goals.
+
+### Step 3: No changes to `ProfileAbout.tsx` (Instagram page)
+
+The Instagram profile already has proper gating and complete sections -- it stays as the comprehensive view.
+
+### Step 4: Add "View Full Profile" link on swipe
+
+Add a small link/button on the swipe card that navigates to the user's Instagram profile page for those who want the deep dive. This creates a natural funnel from swipe (snapshot) to profile (full details).
+
+---
+
+## Summary
+
+| Aspect | Swipe Page | Instagram Profile |
+|--------|-----------|-------------------|
+| Purpose | Quick decision | Deep exploration |
+| Fields shown | ~20 (deal-breakers) | ~65 (everything) |
+| Layout | 2 clean sections | 8 gated sections |
+| Favorites | Hidden | Shown |
+| Personal Growth | Hidden | Shown |
+| Career details | Basic only | Full |
+| Change needed | Simplify significantly | None |
 
