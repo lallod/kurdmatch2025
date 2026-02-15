@@ -26,11 +26,11 @@ const BottomNavigation = () => {
   };
   
   const baseNavItems = [
-    { name: 'Home', icon: Home, path: '/discovery' },
-    { name: 'Swipe', icon: Heart, path: '/swipe' },
-    { name: 'Chat', icon: MessageCircle, path: '/messages' },
-    { name: 'Views', icon: Eye, path: '/viewed-me' },
-    { name: 'Profile', icon: UserRound, path: '/my-profile' },
+    { name: t('nav.home', 'Home'), icon: Home, path: '/discovery' },
+    { name: t('nav.swipe', 'Swipe'), icon: Heart, path: '/swipe' },
+    { name: t('nav.messages', 'Chat'), icon: MessageCircle, path: '/messages' },
+    { name: t('nav.discover', 'Views'), icon: Eye, path: '/viewed-me' },
+    { name: t('nav.profile', 'Profile'), icon: UserRound, path: '/my-profile' },
   ];
 
   const navItems = isAdmin 
