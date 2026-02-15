@@ -4323,6 +4323,7 @@ export type Database = {
       check_email_exists: { Args: { email_to_check: string }; Returns: boolean }
       cleanup_dead_push_subscriptions: { Args: never; Returns: number }
       cleanup_expired_video_verifications: { Args: never; Returns: number }
+      cleanup_inactive_push_subscriptions: { Args: never; Returns: undefined }
       cleanup_old_typing_status: { Args: never; Returns: undefined }
       create_demo_profile: {
         Args: {
