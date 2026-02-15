@@ -12,6 +12,7 @@ interface PushPayload {
   icon?: string;
   badge?: string;
   data?: any;
+  notificationType?: string; // 'message' | 'match' | 'like' | 'profile_view' | 'compatibility'
 }
 
 Deno.serve(async (req) => {
@@ -26,9 +27,35 @@ Deno.serve(async (req) => {
     );
 
     const payload: PushPayload = await req.json();
-    const { userId, title, body, icon, badge, data } = payload;
+    const { userId, title, body, icon, badge, data, notificationType } = payload;
 
-    console.log(`Sending push notification to user ${userId}: ${title}`);
+    // Check user notification preferences before sending
+    if (notificationType) {
+      const prefMap: Record<string, string> = {
+        message: 'push_new_messages',
+        match: 'push_new_matches',
+        like: 'push_new_likes',
+        profile_view: 'push_profile_views',
+        compatibility: 'push_compatibility_updates',
+      };
+
+      const prefKey = prefMap[notificationType];
+      if (prefKey) {
+        const { data: profile } = await supabaseClient
+          .from('profiles')
+          .select('notification_preferences')
+          .eq('id', userId)
+          .single();
+
+        const prefs = (profile?.notification_preferences as Record<string, boolean>) || {};
+        if (prefs[prefKey] === false) {
+          return new Response(
+            JSON.stringify({ success: true, sent: 0, message: 'User disabled this notification type' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    }
 
     // Get all active push subscriptions for the user
     const { data: subscriptions, error: subsError } = await supabaseClient
@@ -46,12 +73,9 @@ Deno.serve(async (req) => {
     }
 
     if (!subscriptions || subscriptions.length === 0) {
-      console.log('No active subscriptions found for user');
       return new Response(
         JSON.stringify({ success: true, sent: 0, message: 'No active subscriptions' }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -67,7 +91,6 @@ Deno.serve(async (req) => {
             data: data || {},
           };
 
-          // Use Web Push API to send notification
           const response = await fetch(subscription.endpoint, {
             method: 'POST',
             headers: {
@@ -90,7 +113,7 @@ Deno.serve(async (req) => {
           return { success: true, subscriptionId: subscription.id };
         } catch (error) {
           console.error(`Failed to send to subscription ${subscription.id}:`, error);
-          
+
           // Deactivate failed subscription
           await supabaseClient
             .from('push_subscriptions')
@@ -105,27 +128,15 @@ Deno.serve(async (req) => {
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
     const failed = results.length - successful;
 
-    console.log(`Push notifications sent: ${successful} successful, ${failed} failed`);
-
     return new Response(
-      JSON.stringify({
-        success: true,
-        sent: successful,
-        failed,
-        total: results.length,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      JSON.stringify({ success: true, sent: successful, failed, total: results.length }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error in send-push-notification:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

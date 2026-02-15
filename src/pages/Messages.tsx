@@ -554,7 +554,7 @@ const Messages = () => {
         {/* Header */}
         <div className="bg-surface-secondary/80 backdrop-blur-xl shadow-sm border-b border-border/20 sticky top-0 z-10">
           <div className="flex items-center p-3 sm:p-4">
-            <Button variant="ghost" size="icon" onClick={() => setSelectedConversation(null)} className="mr-1.5 sm:mr-2 text-white hover:bg-white/10 h-9 w-9 sm:h-10 sm:w-10">
+            <Button variant="ghost" size="icon" onClick={() => setSelectedConversation(null)} className="mr-1.5 sm:mr-2 text-white hover:bg-white/10 h-9 w-9 sm:h-10 sm:w-10" aria-label="Back to conversations">
               <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <div className="relative">
@@ -603,6 +603,7 @@ const Messages = () => {
                 onClick={handleGenerateInsights}
                 disabled={isGenerating}
                 className="text-purple-200 hover:text-white"
+                aria-label="Generate AI conversation insights"
               >
                 <Sparkles className="h-4 w-4" />
               </Button>
@@ -610,7 +611,7 @@ const Messages = () => {
               {/* More Options Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" aria-label="More conversation options">
                     <MoreVertical className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -710,19 +711,19 @@ const Messages = () => {
                    
                    {/* Media Content */}
                    {message.media_type === 'gif' && message.media_url && (
-                     <img
-                       src={message.media_url}
-                       alt="GIF"
-                       className="rounded-lg max-w-full mb-2"
-                     />
+                      <img
+                        src={message.media_url}
+                        alt="Animated GIF shared in conversation"
+                        className="rounded-lg max-w-full mb-2"
+                      />
                    )}
                    
                    {message.media_type === 'image' && message.media_url && (
-                     <img
-                       src={message.media_url}
-                       alt="Image"
-                       className="rounded-lg max-w-full mb-2"
-                     />
+                      <img
+                        src={message.media_url}
+                        alt="Photo shared in conversation"
+                        className="rounded-lg max-w-full mb-2"
+                      />
                    )}
                    
                    {message.media_type === 'voice' && message.media_url && (
@@ -809,6 +810,7 @@ const Messages = () => {
                     size="icon"
                     onClick={() => setShowGifPicker(true)}
                     className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10"
+                    aria-label="Send a GIF"
                   >
                     <Smile className="h-5 w-5" />
                   </Button>
@@ -820,6 +822,7 @@ const Messages = () => {
                     size="icon"
                     onClick={() => setShowVoiceRecorder(true)}
                     className="flex-shrink-0 text-purple-200 hover:text-white hover:bg-white/10"
+                    aria-label="Record voice message"
                   >
                     <Mic className="h-5 w-5" />
                   </Button>
@@ -849,6 +852,7 @@ const Messages = () => {
                       size="icon" 
                       onClick={handleSendImage}
                       className="bg-primary hover:bg-primary/90 flex-shrink-0"
+                      aria-label="Send image"
                     >
                       <Send className="h-5 w-5" />
                     </Button>
@@ -859,6 +863,7 @@ const Messages = () => {
                       onClick={handleSendMessage} 
                       disabled={!newMessage.trim() || isChecking} 
                       className="bg-primary hover:bg-primary/90 flex-shrink-0"
+                      aria-label="Send message"
                     >
                       <Send className="h-5 w-5" />
                     </Button>

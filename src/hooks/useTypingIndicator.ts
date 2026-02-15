@@ -21,8 +21,6 @@ export const useTypingIndicator = (conversationId: string, currentUserId: string
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          console.log('Typing status change:', payload);
-          
           const newData = payload.new as any;
           if (newData && newData.user_id !== currentUserId) {
             setIsOtherUserTyping(newData.is_typing);
