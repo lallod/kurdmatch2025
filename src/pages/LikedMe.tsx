@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, X, Filter, MessageCircle, ArrowLeft, Bot, Sparkles } from 'lucide-react';
+import { Heart, X, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useNavigate } from 'react-router-dom';
 
 import ProfileDetails from "@/components/ProfileDetails";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -12,19 +12,19 @@ import PhotoGallery from "@/components/PhotoGallery";
 import { getProfilesWhoLikedMe } from '@/api/likes';
 import { likeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
-import SwipeActions from '@/components/swipe/SwipeActions';
 import { toast } from 'sonner';
 import SectionViewStats from '@/components/profile/SectionViewStats';
 import { useTranslations } from '@/hooks/useTranslations';
 
 const LikedMe = () => {
+  const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const { t } = useTranslations();
   const [likedProfiles, setLikedProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showFullProfile, setShowFullProfile] = useState(false);
-  const [showSwipeActions, setShowSwipeActions] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
   useEffect(() => {
     const loadLikedProfiles = async () => {
@@ -74,23 +74,17 @@ const LikedMe = () => {
     toast.info("Profile passed");
   };
 
-  const handleRewind = () => {
-    toast.info("Rewind");
-  };
-
-  const handleSuperLike = () => {
-    if (!selectedProfile) return;
-    toast.info("Super liked!");
-    setShowSwipeActions(false);
-  };
-
-  const handleBoost = () => {
-    toast.info("Boosted!");
-  };
-
   const handleProfileClick = (profile: any) => {
     setSelectedProfile(profile);
-    setShowSwipeActions(true);
+    setShowActions(true);
+  };
+
+  const handleMessage = (profileId: string) => {
+    navigate(`/messages?user=${profileId}`);
+  };
+
+  const handleViewProfile = (profileId: string) => {
+    navigate(`/profile/${profileId}`);
   };
 
   if (isLoading) {
@@ -302,47 +296,30 @@ const LikedMe = () => {
         )}
       </div>
       
-      {/* Profile Modal with Swipe Actions */}
-      {showSwipeActions && selectedProfile && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card backdrop-blur-md rounded-3xl max-w-sm w-full max-h-[80vh] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.3)] border border-border/20">
-            <div className="aspect-[3/4] relative overflow-hidden">
-              <img
-                src={selectedProfile.profile_image}
-                alt={selectedProfile.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent p-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-2xl font-bold text-foreground">{selectedProfile.name}</h1>
-                  <span className="text-xl text-foreground/80">{selectedProfile.age}</span>
-                </div>
-                <div className="flex items-center gap-2 text-foreground/80 mb-3">
-                  <span>{selectedProfile.location}</span>
-                </div>
-                {selectedProfile.occupation && (
-                  <Badge className="bg-primary/80 text-primary-foreground text-sm">
-                    {selectedProfile.occupation}
-                  </Badge>
-                )}
+      {/* Profile Bottom Sheet — Message & View actions */}
+      {showActions && selectedProfile && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end justify-center" onClick={() => setShowActions(false)}>
+          <div className="bg-card rounded-t-3xl w-full max-w-lg overflow-hidden border-t border-border/20 animate-in slide-in-from-bottom" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-4 p-5">
+              <Avatar className="h-16 w-16 ring-2 ring-border">
+                <AvatarImage src={selectedProfile.profile_image} alt={selectedProfile.name} />
+                <AvatarFallback className="bg-primary text-primary-foreground">{selectedProfile.name?.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-bold text-foreground">{selectedProfile.name}, {selectedProfile.age}</h2>
+                <p className="text-sm text-muted-foreground truncate">{selectedProfile.location}</p>
               </div>
+              <button onClick={() => setShowActions(false)} className="p-2 rounded-full hover:bg-muted">
+                <X className="w-5 h-5 text-muted-foreground" />
+              </button>
             </div>
-            
-            <button
-              onClick={() => setShowSwipeActions(false)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-background/30 backdrop-blur-sm text-foreground/80 hover:text-foreground transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            <div className="p-4">
-              <SwipeActions
-                onRewind={handleRewind}
-                onPass={() => { handlePass(selectedProfile.id); setShowSwipeActions(false); }}
-                onLike={() => { handleLikeBack(selectedProfile.id); setShowSwipeActions(false); }}
-                onSuperLike={handleSuperLike}
-                onBoost={handleBoost}
-              />
+            <div className="flex gap-3 px-5 pb-6" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
+              <Button className="flex-1 gap-2" onClick={() => { handleLikeBack(selectedProfile.id); setShowActions(false); }}>
+                <Heart className="w-4 h-4" />{t('liked_me.like_back', 'Like Back')}
+              </Button>
+              <Button variant="outline" className="flex-1 gap-2" onClick={() => { setShowActions(false); handleViewProfile(selectedProfile.id); }}>
+                {t('matches.view_profile', 'View Profile')}
+              </Button>
             </div>
           </div>
         </div>

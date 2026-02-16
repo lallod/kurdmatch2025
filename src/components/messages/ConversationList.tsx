@@ -78,9 +78,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium text-muted-foreground">{t('messages.new_matches', 'New Matches')}</h2>
             {newMatchesCount > 0 && (
-              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse">
-                {newMatchesCount} New
-              </Badge>
+            <Badge className="bg-primary/20 text-primary animate-pulse">
+              {newMatchesCount} New
+            </Badge>
             )}
           </div>
           <Carousel className="w-full">
@@ -89,15 +89,15 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 <CarouselItem key={match.id} className="pl-2 basis-20">
                   <div onClick={() => onSelectConversation(match.profileId || match.id)} className="relative flex flex-col items-center cursor-pointer my-[16px]">
                     <div className="relative">
-                      <div className={`absolute inset-0 rounded-full p-0.5 ${match.isNew ? 'bg-gradient-to-br from-red-500 to-pink-500 animate-pulse' : 'bg-gradient-to-br from-purple-500 to-pink-500'}`}>
-                        <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900"></div>
+                      <div className={`absolute inset-0 rounded-full p-0.5 ${match.isNew ? 'bg-gradient-to-br from-primary to-accent animate-pulse' : 'bg-gradient-to-br from-primary to-accent'}`}>
+                        <div className="absolute inset-0.5 rounded-full bg-background"></div>
                       </div>
                       <Avatar className="h-16 w-16 border-2 border-transparent relative z-10">
                         <AvatarImage src={match.avatar} alt={match.name} />
-                        <AvatarFallback className="bg-purple-500 text-white">{match.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-primary text-primary-foreground">{match.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       {match.isNew && (
-                        <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full px-1.5 py-0.5 font-bold animate-bounce">NEW</div>
+                        <div className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full px-1.5 py-0.5 font-bold animate-bounce">NEW</div>
                       )}
                     </div>
                     <span className="text-xs mt-1 text-center w-full truncate text-muted-foreground">{match.name}</span>
@@ -112,32 +112,32 @@ const ConversationList: React.FC<ConversationListProps> = ({
         {sortedConversations.some(c => c.priority === 'high' && c.unread) && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <BellDot className="w-4 h-4 text-red-400" />
-              <h2 className="text-sm font-medium text-red-300">Priority Messages</h2>
+              <BellDot className="w-4 h-4 text-destructive" />
+              <h2 className="text-sm font-medium text-destructive">Priority Messages</h2>
             </div>
             <div className="space-y-2">
               {sortedConversations.filter(c => c.priority === 'high' && c.unread).map(conversation => (
-                <Card key={conversation.id} className="overflow-hidden backdrop-blur-md bg-red-500/10 border border-red-400/30 hover:bg-red-500/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl animate-pulse" onClick={() => onSelectConversation(conversation.id)}>
+                <Card key={conversation.id} className="overflow-hidden backdrop-blur-md bg-destructive/10 border border-destructive/30 hover:bg-destructive/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl animate-pulse" onClick={() => onSelectConversation(conversation.id)}>
                   <CardContent className="p-3">
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <Avatar className="h-10 w-10 ring-2 ring-red-400/50">
+                        <Avatar className="h-10 w-10 ring-2 ring-destructive/50">
                           <AvatarImage src={conversation.avatar} alt={conversation.name} />
-                          <AvatarFallback className="bg-purple-500 text-white">{conversation.name.charAt(0)}</AvatarFallback>
+                          <AvatarFallback className="bg-primary text-primary-foreground">{conversation.name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        {conversation.online && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white ring-1 ring-green-400/50"></span>}
+                        {conversation.online && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success border-2 border-background ring-1 ring-success/50"></span>}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center">
-                          <h3 className="font-semibold truncate text-white">{conversation.name}</h3>
-                          <span className="text-xs text-red-300">{conversation.time}</span>
+                          <h3 className="font-semibold truncate text-foreground">{conversation.name}</h3>
+                          <span className="text-xs text-destructive/80">{conversation.time}</span>
                         </div>
-                        <p className="text-sm truncate text-red-200 font-medium">{conversation.lastMessage}</p>
+                        <p className="text-sm truncate text-destructive/70 font-medium">{conversation.lastMessage}</p>
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         <div className={`h-3 w-3 rounded-full bg-gradient-to-r ${getUrgencyColor(conversation.lastMessageTime)} animate-pulse`}></div>
                         {conversation.unreadCount > 0 && (
-                          <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full px-2 py-1 font-bold">{conversation.unreadCount}</div>
+                          <div className="bg-destructive text-destructive-foreground text-xs rounded-full px-2 py-1 font-bold">{conversation.unreadCount}</div>
                         )}
                       </div>
                     </div>
@@ -152,11 +152,11 @@ const ConversationList: React.FC<ConversationListProps> = ({
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-foreground">{t('messages.all_conversations', 'All Conversations')}</h2>
           <div className="flex gap-2">
-            <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <Badge className="bg-primary/20 text-primary">
               {conversations.filter(c => c.unread).length} unread
             </Badge>
             {onlineCount > 0 && (
-              <Badge className="bg-green-500/20 text-green-300 border-green-500/30">{onlineCount} online</Badge>
+              <Badge className="bg-success/20 text-success border-success/30">{onlineCount} online</Badge>
             )}
           </div>
         </div>
@@ -171,13 +171,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
                       <AvatarImage src={conversation.avatar} alt={conversation.name} />
                       <AvatarFallback className="bg-primary text-primary-foreground">{conversation.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    {conversation.online && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white ring-1 ring-green-400/50"></span>}
+                    {conversation.online && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success border-2 border-background ring-1 ring-success/50"></span>}
                     {conversation.isTyping && (
-                      <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 animate-pulse">
+                      <div className="absolute -top-1 -right-1 bg-info text-info-foreground text-xs rounded-full px-1.5 py-0.5 animate-pulse">
                         <div className="flex space-x-1">
-                          <div className="w-1 h-1 bg-white rounded-full animate-bounce"></div>
-                          <div className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-1 h-1 bg-info-foreground rounded-full animate-bounce"></div>
+                          <div className="w-1 h-1 bg-info-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-1 h-1 bg-info-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
                       </div>
                     )}
@@ -224,12 +224,12 @@ const ConversationList: React.FC<ConversationListProps> = ({
         {/* Empty State */}
         {conversations.length === 0 && (
           <div className="flex flex-col items-center justify-center h-[40vh] text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="h-8 w-8 text-white" />
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="h-8 w-8 text-primary-foreground" />
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-2">{t('messages.no_messages', 'No messages yet')}</h3>
             <p className="text-muted-foreground mb-4">{t('messages.no_messages_desc', 'When you match with someone, your conversations will appear here')}</p>
-            <Button className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600">
+            <Button className="bg-primary hover:bg-primary/90">
               <Sparkles className="h-4 w-4 mr-2" />
               {t('messages.start_discovering', 'Start discovering people')}
             </Button>

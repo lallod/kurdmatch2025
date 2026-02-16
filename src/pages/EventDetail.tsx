@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { MapPin, Calendar, Users, CheckCircle, ArrowLeft, Clock } from 'lucide-react';
 import { format } from 'date-fns';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 
 interface EventDetail {
@@ -121,11 +121,7 @@ const EventDetail = () => {
       setAttendees(attendeesData || []);
     } catch (error) {
       console.error('Error fetching event details:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load event details',
-        variant: 'destructive',
-      });
+      toast.error('Failed to load event details');
     } finally {
       setLoading(false);
     }
@@ -145,10 +141,7 @@ const EventDetail = () => {
 
         if (error) throw error;
 
-        toast({
-          title: 'Left event',
-          description: 'You are no longer attending this event',
-        });
+        toast.success('You are no longer attending this event');
       } else {
         // Join event
         const { error } = await supabase
@@ -160,20 +153,13 @@ const EventDetail = () => {
 
         if (error) throw error;
 
-        toast({
-          title: 'Joined event!',
-          description: 'You are now attending this event',
-        });
+        toast.success('You are now attending this event! 🎉');
       }
 
       fetchEventDetails();
     } catch (error) {
       console.error('Error toggling attendance:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update attendance',
-        variant: 'destructive',
-      });
+      toast.error('Failed to update attendance');
     }
   };
 

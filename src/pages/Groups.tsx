@@ -5,7 +5,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, Users } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
 
 interface Group {
@@ -46,11 +46,7 @@ const Groups = () => {
       setGroups(data || []);
     } catch (error) {
       console.error('Error fetching groups:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load groups',
-        variant: 'destructive',
-      });
+      toast.error('Failed to load groups');
     } finally {
       setLoading(false);
     }

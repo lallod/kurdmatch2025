@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const CreateGroup = () => {
   const navigate = useNavigate();
@@ -46,18 +46,11 @@ const CreateGroup = () => {
 
       if (error) throw error;
 
-      toast({
-        title: 'Success',
-        description: 'Group created successfully',
-      });
+      toast.success('Group created successfully');
       navigate(`/groups/${data.id}`);
     } catch (error) {
       console.error('Error creating group:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to create group',
-        variant: 'destructive',
-      });
+      toast.error('Failed to create group');
     } finally {
       setLoading(false);
     }
