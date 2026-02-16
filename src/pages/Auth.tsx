@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import SocialLogin from '@/components/auth/components/SocialLogin';
 import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -45,6 +46,24 @@ const Auth = () => {
 
     checkUserRole();
   }, [user, navigate]);
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error(t('auth.enter_email_first', 'Please enter your email address first'));
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success(t('auth.reset_email_sent', 'Password reset email sent!'), {
+        description: t('auth.check_inbox', 'Check your inbox for the reset link.'),
+      });
+    } catch (error: any) {
+      toast.error(error.message || t('misc.error', 'Something went wrong'));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,13 +164,20 @@ const Auth = () => {
           </Button>
         </form>
         
-        <div className="text-center">
+        <div className="flex items-center justify-between">
           <Link
             to="/register"
             className="text-sm text-muted-foreground hover:text-foreground"
           >
             {t('auth.no_account', "Don't have an account?")} <span className="text-primary font-medium">{t('auth.sign_up', 'Sign up')}</span>
           </Link>
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            {t('auth.forgot_password', 'Forgot password?')}
+          </button>
         </div>
 
         <div className="pt-4">

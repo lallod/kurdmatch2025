@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import SocialLogin from './components/SocialLogin';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { supabase } from '@/integrations/supabase/client';
 import { SecureInput } from '@/components/security/SecureInput';
 import { emailSchema } from '@/utils/security/input-validation';
 import { z } from 'zod';
@@ -134,6 +135,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             type="button" 
             variant="link" 
             className="p-0 h-auto text-sm"
+            onClick={async () => {
+              const email = form.getValues('email');
+              if (!email) {
+                toast({ title: 'Enter your email', description: 'Please enter your email address first', variant: 'destructive' });
+                return;
+              }
+              try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                  redirectTo: `${window.location.origin}/reset-password`,
+                });
+                if (error) throw error;
+                toast({ title: 'Check your email', description: 'We sent you a password reset link.' });
+              } catch (err: any) {
+                toast({ title: 'Error', description: err.message, variant: 'destructive' });
+              }
+            }}
           >
             Forgot password?
           </Button>

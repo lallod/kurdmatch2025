@@ -17,6 +17,7 @@ const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
 const AboutUs = lazy(() => import('@/pages/AboutUs'));
 const ContactUs = lazy(() => import('@/pages/ContactUs'));
 const CookiePolicy = lazy(() => import('@/pages/CookiePolicy'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const PageLoader = () => (
@@ -45,6 +46,7 @@ export const getPublicRoutes = (user: User | null) => (
     <Route path="/about" element={<L><AboutUs /></L>} />
     <Route path="/contact" element={<L><ContactUs /></L>} />
     <Route path="/cookie-policy" element={<L><CookiePolicy /></L>} />
+    <Route path="/reset-password" element={<L><ResetPassword /></L>} />
     <Route path="*" element={<L><NotFound /></L>} />
   </>
 );
