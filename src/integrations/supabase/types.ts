@@ -4369,6 +4369,10 @@ export type Database = {
         Returns: unknown
       }
       _st_within: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      add_story_reaction: {
+        Args: { p_emoji: string; p_story_id: string; p_user_id: string }
+        Returns: undefined
+      }
       addauth: { Args: { "": string }; Returns: boolean }
       addgeometrycolumn:
         | {
