@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Profile } from '@/api/profiles';
 import { Badge } from '@/components/ui/badge';
-import { User, Briefcase, Heart, Sparkles, Home, Lock, Globe, Trophy, Palette, Star, Book } from 'lucide-react';
+import { User, Briefcase, Heart, Sparkles, Home, Lock, Globe, Trophy, Palette, Star, Book, ChevronDown, ChevronUp } from 'lucide-react';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { languageCategories } from '@/data/languages';
+import { Separator } from '@/components/ui/separator';
 
 interface ProfileAboutProps {
   profile: Profile;
@@ -21,16 +22,20 @@ const MAX_VISIBLE_BADGES = 3;
 const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social' }) => {
   const { canSeeDatingDetails, isPremium } = useProfileAccess(context, profile.id);
   const [expandedArrays, setExpandedArrays] = useState<Record<string, boolean>>({});
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
 
   const toggleArray = (label: string) => {
     setExpandedArrays(prev => ({ ...prev, [label]: !prev[label] }));
   };
 
+  const toggleSection = (title: string) => {
+    setCollapsedSections(prev => ({ ...prev, [title]: !prev[title] }));
+  };
+
   const gatedSections = !canSeeDatingDetails;
   const sections = [
-    // Values & Interests — always visible
     {
-      title: 'Values & Interests',
+      title: 'Beliefs & Values',
       icon: Sparkles,
       items: [],
       arrays: [
@@ -40,12 +45,10 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ],
       gated: false,
     },
-    // Basic Info
     {
       title: 'Basic Info',
       icon: User,
       items: [
-        { label: 'Gender', value: profile.gender },
         { label: 'Height', value: profile.height },
         { label: 'Body Type', value: profile.body_type },
         { label: 'Ethnicity', value: profile.ethnicity },
@@ -56,7 +59,6 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ].filter(item => item.value),
       gated: true,
     },
-    // Career & Education
     {
       title: 'Career & Education',
       icon: Briefcase,
@@ -70,7 +72,6 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ].filter(item => item.value),
       gated: true,
     },
-    // Lifestyle
     {
       title: 'Lifestyle',
       icon: Home,
@@ -84,9 +85,11 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
         { label: 'Travel Frequency', value: profile.travel_frequency },
         { label: 'Transportation', value: profile.transportation_preference },
       ].filter(item => item.value),
+      arrays: [
+        { label: 'Hobbies', values: profile.hobbies },
+      ],
       gated: true,
     },
-    // Relationships
     {
       title: 'Relationships',
       icon: Heart,
@@ -105,7 +108,6 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ],
       gated: true,
     },
-    // Interests & Hobbies (expanded)
     {
       title: 'Interests & Hobbies',
       icon: Palette,
@@ -118,7 +120,6 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ],
       gated: true,
     },
-    // Favorites
     {
       title: 'Favorites',
       icon: Star,
@@ -137,7 +138,6 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
       ],
       gated: true,
     },
-    // Personal Growth
     {
       title: 'Personal Growth',
       icon: Trophy,
@@ -163,23 +163,25 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
   ];
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 px-1">
       {sections.map((section) => {
         const hasItems = section.items && section.items.length > 0;
         const hasArrays = section.arrays?.some(arr => arr.values && arr.values.length > 0);
         if (!hasItems && !hasArrays) return null;
 
-        // If section is gated and user doesn't have access, show locked card
+        const isCollapsed = collapsedSections[section.title] ?? false;
+
+        // Gated locked card
         if (section.gated && gatedSections) {
           return (
-            <div key={section.title} className="bg-card rounded-2xl p-4 shadow-sm relative overflow-hidden">
-              <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                  <Lock className="w-4 h-4 text-muted-foreground" />
+            <div key={section.title} className="bg-card/60 backdrop-blur-sm rounded-2xl p-4 border border-border/10 relative overflow-hidden">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 bg-muted/50 rounded-lg flex items-center justify-center">
+                  <Lock className="w-3.5 h-3.5 text-muted-foreground" />
                 </div>
                 <h3 className="text-sm font-semibold text-muted-foreground">{section.title}</h3>
               </div>
-              <div className="blur-sm select-none pointer-events-none space-y-2">
+              <div className="blur-sm select-none pointer-events-none mt-3 space-y-2">
                 {section.items?.slice(0, 2).map((item) => (
                   <div key={item.label} className="flex justify-between">
                     <span className="text-muted-foreground text-xs">{item.label}</span>
@@ -187,7 +189,7 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-muted-foreground mt-2 text-center">
+              <p className="text-[10px] text-muted-foreground mt-3 text-center opacity-60">
                 Available on Dating Profile
               </p>
             </div>
@@ -195,53 +197,76 @@ const ProfileAbout: React.FC<ProfileAboutProps> = ({ profile, context = 'social'
         }
 
         return (
-          <div key={section.title} className="bg-card rounded-2xl p-4 shadow-sm">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                <section.icon className="w-4 h-4 text-primary" />
-              </div>
-              <h3 className="text-sm font-semibold text-foreground">{section.title}</h3>
-            </div>
-
-            <div className="space-y-2">
-              {section.items?.map((item) => (
-                <div key={item.label} className="flex justify-between items-start">
-                  <span className="text-muted-foreground text-xs">{item.label}</span>
-                  <span className="text-foreground text-xs text-right flex-1 ml-4 font-medium">{item.value}</span>
+          <div key={section.title} className="bg-card/60 backdrop-blur-sm rounded-2xl border border-border/10 overflow-hidden">
+            {/* Collapsible Header */}
+            <button
+              onClick={() => toggleSection(section.title)}
+              className="w-full flex items-center justify-between p-4 active:bg-card/80 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <section.icon className="w-3.5 h-3.5 text-primary" />
                 </div>
-              ))}
+                <h3 className="text-sm font-bold text-foreground">{section.title}</h3>
+              </div>
+              {isCollapsed ? (
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              )}
+            </button>
 
-              {section.arrays?.map((arr) => {
-                if (!arr.values || arr.values.length === 0) return null;
-                const isExpanded = expandedArrays[arr.label] || false;
-                const hasMore = arr.values.length > MAX_VISIBLE_BADGES;
-                const visible = isExpanded ? arr.values : arr.values.slice(0, MAX_VISIBLE_BADGES);
-                return (
-                  <div key={arr.label}>
-                    <span className="text-muted-foreground text-xs">{arr.label}</span>
-                    <div className="flex flex-wrap gap-1.5 mt-1.5 items-center">
-                      {visible.map((value, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="text-[10px] bg-muted text-muted-foreground rounded-full px-2.5 py-0.5"
-                        >
-                          {value}
-                        </Badge>
-                      ))}
-                      {hasMore && (
-                        <button
-                          onClick={() => toggleArray(arr.label)}
-                          className="text-[10px] text-primary font-medium hover:underline transition-colors"
-                        >
-                          {isExpanded ? 'See less' : `+${arr.values.length - MAX_VISIBLE_BADGES} more`}
-                        </button>
-                      )}
+            {/* Content */}
+            {!isCollapsed && (
+              <div className="px-4 pb-4 space-y-0">
+                {/* Detail Items */}
+                {section.items?.map((item, idx) => (
+                  <React.Fragment key={item.label}>
+                    <div className="flex justify-between items-center py-2.5">
+                      <span className="text-muted-foreground text-xs font-medium">{item.label}</span>
+                      <span className="text-foreground text-xs font-semibold">{item.value}</span>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                    {idx < (section.items?.length || 0) - 1 && (
+                      <Separator className="bg-border/10" />
+                    )}
+                  </React.Fragment>
+                ))}
+
+                {/* Separator between items and arrays */}
+                {hasItems && hasArrays && <Separator className="bg-border/10 my-1" />}
+
+                {/* Badge Arrays */}
+                {section.arrays?.map((arr) => {
+                  if (!arr.values || arr.values.length === 0) return null;
+                  const isExpanded = expandedArrays[arr.label] || false;
+                  const hasMore = arr.values.length > MAX_VISIBLE_BADGES;
+                  const visible = isExpanded ? arr.values : arr.values.slice(0, MAX_VISIBLE_BADGES);
+                  return (
+                    <div key={arr.label} className="py-2">
+                      <span className="text-muted-foreground text-[11px] font-medium">{arr.label}</span>
+                      <div className="flex flex-wrap gap-1.5 mt-2 items-center">
+                        {visible.map((value, index) => (
+                          <Badge
+                            key={index}
+                            className="text-[11px] bg-primary/15 text-primary border-0 rounded-full px-3 py-1 font-medium hover:bg-primary/25 transition-colors"
+                          >
+                            {value}
+                          </Badge>
+                        ))}
+                        {hasMore && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleArray(arr.label); }}
+                            className="text-[11px] text-primary/70 font-medium hover:text-primary transition-colors px-1"
+                          >
+                            {isExpanded ? 'See less' : `+${arr.values.length - MAX_VISIBLE_BADGES} more`}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         );
       })}
