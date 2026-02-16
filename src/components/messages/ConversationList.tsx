@@ -1,28 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Sparkles, BellDot, Eye, Heart, Bell } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { VideoVerifiedBadge } from '@/components/verification/VideoVerifiedBadge';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useNavigate } from 'react-router-dom';
+import StoryViewer from '@/components/stories/StoryViewer';
 
 interface ConversationListProps {
   conversations: any[];
-  newMatches: any[];
+  allMatches: any[];
+  matchStories: Map<string, any[]>;
   onSelectConversation: (id: string) => void;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
-  newMatches,
+  allMatches,
+  matchStories,
   onSelectConversation,
 }) => {
   const { t } = useTranslations();
+  const navigate = useNavigate();
+  const [storyViewerOpen, setStoryViewerOpen] = useState(false);
+  const [selectedStories, setSelectedStories] = useState<any[]>([]);
 
   const totalUnreadMessages = conversations.reduce((sum, conv) => sum + (conv.unreadCount || 0), 0);
-  const newMatchesCount = newMatches.length;
-  const onlineCount = conversations.filter(conv => conv.online).length || 0;
 
   const sortedConversations = (conversations || []).length > 0 ? [...conversations].sort((a, b) => {
     const priorityOrder: Record<string, number> = { high: 3, medium: 2, normal: 1, low: 0 };
@@ -48,6 +52,16 @@ const ConversationList: React.FC<ConversationListProps> = ({
     }
   };
 
+  const handleMatchClick = (match: any) => {
+    const stories = matchStories.get(match.profileId);
+    if (stories && stories.length > 0) {
+      setSelectedStories(stories);
+      setStoryViewerOpen(true);
+    } else {
+      onSelectConversation(match.profileId);
+    }
+  };
+
   return (
     <>
       {/* Header */}
@@ -56,7 +70,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           <h1 className="text-lg font-bold text-foreground tracking-tight">{t('messages.title', 'Messages')}</h1>
           <div className="flex items-center gap-2">
             {totalUnreadMessages > 0 && (
-              <Badge className="bg-primary text-primary-foreground text-[10px] font-semibold rounded-full px-2.5 py-0.5 shadow-lg shadow-primary/30">
+              <Badge className="bg-primary text-white text-[10px] font-semibold rounded-full px-2.5 py-0.5 shadow-lg shadow-primary/30">
                 {totalUnreadMessages} new
               </Badge>
             )}
@@ -65,41 +79,55 @@ const ConversationList: React.FC<ConversationListProps> = ({
       </div>
 
       <div className="max-w-lg mx-auto px-4">
-        {/* New Matches */}
-        {newMatches.length > 0 && (
-          <div className="py-4">
-            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
-              {t('messages.new_matches', 'New Matches')}
-            </h2>
-            <Carousel className="w-full">
-              <CarouselContent className="-ml-1">
-                {(newMatches || []).map(match => (
-                  <CarouselItem key={match.id} className="pl-1 basis-[72px]">
-                    <div onClick={() => onSelectConversation(match.profileId || match.id)} className="flex flex-col items-center cursor-pointer py-1 group">
-                      <div className="relative">
-                        <div className={`absolute -inset-[3px] rounded-full bg-gradient-to-br from-primary via-accent to-primary ${match.isNew ? 'animate-[spin_3s_linear_infinite]' : ''}`} />
-                        <Avatar className="h-14 w-14 border-[3px] border-background relative z-10 group-active:scale-95 transition-transform">
-                          <AvatarImage src={match.avatar} alt={match.name} />
-                          <AvatarFallback className="bg-card text-primary text-sm font-bold">{match.name.charAt(0)}</AvatarFallback>
+        {/* Matches & Stories Row - Instagram Style */}
+        {allMatches.length > 0 && (
+          <div className="py-4 border-b border-border/10">
+            <div className="flex overflow-x-auto scrollbar-hide gap-3 pb-1">
+              {allMatches.map(match => {
+                const hasStory = matchStories.has(match.profileId);
+                return (
+                  <div
+                    key={match.id}
+                    onClick={() => handleMatchClick(match)}
+                    className="flex flex-col items-center cursor-pointer flex-shrink-0 group"
+                  >
+                    <div className="relative">
+                      {/* Story ring gradient or plain border */}
+                      <div
+                        className={`rounded-full p-[2.5px] ${
+                          hasStory
+                            ? 'bg-gradient-to-br from-primary via-pink-500 to-orange-400'
+                            : match.isNew
+                              ? 'bg-gradient-to-br from-primary to-accent'
+                              : 'bg-border/40'
+                        }`}
+                      >
+                        <Avatar className="h-16 w-16 border-[3px] border-background group-active:scale-95 transition-transform">
+                          <AvatarImage src={match.avatar} alt={match.name} className="object-cover" />
+                          <AvatarFallback className="bg-card text-primary text-sm font-bold">
+                            {match.name?.charAt(0)}
+                          </AvatarFallback>
                         </Avatar>
-                        {match.isNew && (
-                          <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[8px] rounded-full px-1.5 py-px font-bold z-20 shadow-md">
-                            NEW
-                          </div>
-                        )}
                       </div>
-                      <span className="text-[11px] mt-1.5 text-center w-full truncate text-muted-foreground font-medium">{match.name.split(' ')[0]}</span>
+                      {match.isNew && (
+                        <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[7px] rounded-full px-1.5 py-px font-bold z-20 shadow-md uppercase tracking-wider">
+                          New
+                        </div>
+                      )}
                     </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+                    <span className="text-[11px] mt-1.5 text-center w-[68px] truncate text-muted-foreground font-medium">
+                      {match.name?.split(' ')[0]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
         {/* Priority Conversations */}
         {sortedConversations.some(c => c.priority === 'high' && c.unread) && (
-          <div className="mb-4">
+          <div className="mb-4 mt-3">
             <div className="flex items-center gap-2 mb-2 px-1">
               <BellDot className="w-3.5 h-3.5 text-destructive" />
               <h2 className="text-xs font-semibold text-destructive uppercase tracking-wider">Priority</h2>
@@ -137,7 +165,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
         )}
 
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-2 mt-2 px-1">
+        <div className="flex items-center justify-between mb-2 mt-3 px-1">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             {t('messages.all_conversations', 'All Conversations')}
           </h2>
@@ -205,7 +233,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
               {/* Unread Badge */}
               {conversation.unread && conversation.unreadCount > 0 && (
-                <div className="bg-primary text-primary-foreground text-[10px] rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 font-bold flex-shrink-0 shadow-md shadow-primary/30">
+                <div className="bg-primary text-white text-[10px] rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 font-bold flex-shrink-0 shadow-md shadow-primary/30">
                   {conversation.unreadCount}
                 </div>
               )}
@@ -214,20 +242,33 @@ const ConversationList: React.FC<ConversationListProps> = ({
         </div>
 
         {/* Empty State */}
-        {conversations.length === 0 && (
+        {conversations.length === 0 && allMatches.length === 0 && (
           <div className="flex flex-col items-center justify-center h-[50vh] text-center px-8">
             <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center mx-auto mb-5">
               <MessageCircle className="h-9 w-9 text-primary" />
             </div>
             <h3 className="text-lg font-bold text-foreground mb-1.5">{t('messages.no_messages', 'No messages yet')}</h3>
             <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{t('messages.no_messages_desc', 'When you match with someone, your conversations will appear here')}</p>
-            <Button className="bg-primary hover:bg-primary/90 rounded-full px-6 h-11 shadow-lg shadow-primary/30">
+            <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 h-11 shadow-lg shadow-primary/30">
               <Sparkles className="h-4 w-4 mr-2" />
               {t('messages.start_discovering', 'Start discovering people')}
             </Button>
           </div>
         )}
       </div>
+
+      {/* Story Viewer */}
+      {selectedStories.length > 0 && (
+        <StoryViewer
+          stories={selectedStories}
+          initialIndex={0}
+          open={storyViewerOpen}
+          onOpenChange={(open) => {
+            setStoryViewerOpen(open);
+            if (!open) setSelectedStories([]);
+          }}
+        />
+      )}
     </>
   );
 };
