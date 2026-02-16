@@ -95,8 +95,8 @@ const StoriesView = () => {
       if (error) throw error;
       setStories(data || []);
 
-      if (data?.length > 0 && user) {
-        incrementViewCount(data[0].id);
+      if (data?.length > 0 && user && data[0].user_id !== user.id) {
+        recordStoryView(data[0].id, user.id);
       }
     } catch (error) {
       console.error('Error fetching stories:', error);
@@ -106,27 +106,33 @@ const StoriesView = () => {
     }
   };
 
-  const incrementViewCount = async (storyId: string) => {
+  const recordStoryView = async (storyId: string, viewerId: string) => {
     try {
-      const story = stories.find(s => s.id === storyId);
       await (supabase as any)
-        .from('stories')
-        .update({ views_count: (story?.views_count || 0) + 1 })
-        .eq('id', storyId);
+        .from('story_views')
+        .upsert({
+          story_id: storyId,
+          viewer_id: viewerId,
+        }, { onConflict: 'story_id,viewer_id' });
     } catch (error) {
-      console.error('Error incrementing view count:', error);
+      console.error('Error recording story view:', error);
     }
   };
 
   const handleNext = useCallback(() => {
     if (currentIndex < stories.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
       setProgress(0);
       setReactedEmoji(null);
+      // Record view for next story
+      if (user && stories[nextIndex]?.user_id !== user.id) {
+        recordStoryView(stories[nextIndex].id, user.id);
+      }
     } else {
       navigate('/discovery');
     }
-  }, [currentIndex, stories.length, navigate]);
+  }, [currentIndex, stories, navigate, user]);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
