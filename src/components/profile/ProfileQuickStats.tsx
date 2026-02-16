@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
-  GraduationCap, Briefcase, Heart, Star 
+  GraduationCap, Briefcase, Heart, Star, Pencil, Check, Loader2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 interface ProfileQuickStatsProps {
   education: string;
@@ -14,7 +16,12 @@ interface ProfileQuickStatsProps {
   personalityType: string;
   tinderBadgeStyle: string;
   isMobile: boolean;
+  onFieldEdit?: (updates: Record<string, any>) => Promise<void>;
 }
+
+const educationOptions = ["High School", "Some College", "Associate's Degree", "Bachelor's Degree", "Master's Degree", "Doctorate", "Trade School", "Self-taught"];
+const relationshipOptions = ["Long-term relationship", "Short-term relationship", "Marriage", "Friendship", "Not sure yet", "Casual dating"];
+const zodiacOptions = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 
 const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({ 
   education, 
@@ -24,103 +31,152 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
   zodiacSign, 
   personalityType,
   tinderBadgeStyle,
-  isMobile 
+  isMobile,
+  onFieldEdit
 }) => {
-  const cardClass = "bg-card p-4 rounded-lg border border-border/20 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300";
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [tempValue, setTempValue] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  // Use the same icon container styling for both mobile and desktop
-  const iconContainerClass = "w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-br from-tinder-rose/10 to-tinder-orange/10 transition-transform duration-300 group-hover:scale-110";
+  const handleStartEdit = (field: string, currentValue: string) => {
+    if (!onFieldEdit) return;
+    setEditingField(field);
+    setTempValue(currentValue || '');
+  };
 
-  if (isMobile) {
+  const handleSave = async (field: string, value: string) => {
+    if (!onFieldEdit) return;
+    setSaving(true);
+    try {
+      await onFieldEdit({ [field]: value });
+    } catch {}
+    setSaving(false);
+    setEditingField(null);
+  };
+
+  const editable = !!onFieldEdit;
+
+  const cardClass = "bg-card/60 backdrop-blur-sm p-4 rounded-2xl border border-border/10 group relative";
+  const iconContainerClass = "w-8 h-8 flex items-center justify-center rounded-full bg-primary/10";
+
+  const renderEditButton = (field: string, currentValue: string) => {
+    if (!editable) return null;
+    if (editingField === field && saving) {
+      return <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground absolute top-3 right-3" />;
+    }
     return (
-      <div className="mt-6 grid grid-cols-2 gap-3 animate-fade-in">
-        <div className={`${cardClass} group`}>
-          <div className="flex items-center mb-3">
-            <div className={`${iconContainerClass} mr-3`}>
-              <GraduationCap size={16} className="text-tinder-rose" />
-            </div>
-            <h4 className="text-sm font-medium">Education</h4>
-          </div>
-          <p className="text-sm text-muted-foreground">{Array.isArray(education) ? (education as string[])[0] : education.replace(/[\[\]"]/g, '').split(',')[0]}</p>
-        </div>
-        
-        <div className={`${cardClass} group`}>
-          <div className="flex items-center mb-3">
-            <div className={`${iconContainerClass} mr-3`}>
-              <Briefcase size={16} className="text-tinder-orange" />
-            </div>
-            <h4 className="text-sm font-medium">Work</h4>
-          </div>
-          <p className="text-sm text-muted-foreground">{occupation}</p>
-        </div>
-        
-        <div className={`${cardClass} group`}>
-          <div className="flex items-center mb-3">
-            <div className={`${iconContainerClass} mr-3`}>
-              <Heart size={16} className="text-tinder-peach" />
-            </div>
-            <h4 className="text-sm font-medium">Looking for</h4>
-          </div>
-          <p className="text-sm text-muted-foreground">{relationshipGoals.split('looking for ')[1]}</p>
-        </div>
-        
-        <div className={`${cardClass} group`}>
-          <div className="flex items-center mb-3">
-            <div className={`${iconContainerClass} mr-3`}>
-              <Star size={16} className="text-blue-400" />
-            </div>
-            <h4 className="text-sm font-medium">Zodiac</h4>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className={`${tinderBadgeStyle} transition-all duration-300 hover:shadow-[0_0_10px_rgba(253,41,123,0.3)]`}>{zodiacSign}</Badge>
-          </div>
-        </div>
-      </div>
+      <button
+        onClick={(e) => { e.stopPropagation(); handleStartEdit(field, currentValue); }}
+        className="absolute top-3 right-3 h-6 w-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-primary/10 transition-all"
+      >
+        <Pencil className="h-3 w-3 text-primary" />
+      </button>
     );
-  }
+  };
+
+  const renderSelectEditor = (field: string, options: string[]) => (
+    <Select
+      value={tempValue}
+      onValueChange={(val) => {
+        setTempValue(val);
+        handleSave(field, val);
+      }}
+    >
+      <SelectTrigger className="h-8 text-xs w-full mt-1">
+        <SelectValue placeholder="Select..." />
+      </SelectTrigger>
+      <SelectContent className="bg-popover border border-border z-50">
+        {options.map((opt) => (
+          <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+
+  const renderTextEditor = (field: string) => (
+    <Input
+      autoFocus
+      value={tempValue}
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={() => handleSave(field, tempValue)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') handleSave(field, tempValue);
+        if (e.key === 'Escape') setEditingField(null);
+      }}
+      className="h-8 text-xs w-full mt-1"
+    />
+  );
+
+  const educationDisplay = Array.isArray(education) 
+    ? (education as string[])[0] 
+    : (education || '').replace(/[\[\]"]/g, '').split(',')[0];
+
+  const relationshipDisplay = isMobile && relationshipGoals
+    ? relationshipGoals.replace('looking for ', '')
+    : relationshipGoals;
 
   return (
-    <div className="grid md:grid-cols-2 gap-6 mb-6 animate-fade-in">
-      <div className={`${cardClass} group`}>
-        <div className="flex items-center mb-3">
+    <div className={`${isMobile ? 'mt-4' : 'mb-6'} grid grid-cols-2 gap-2.5 animate-fade-in`}>
+      {/* Education */}
+      <div className={cardClass}>
+        {renderEditButton('education', educationDisplay)}
+        <div className="flex items-center gap-2.5 mb-2">
           <div className={iconContainerClass}>
-            <GraduationCap size={16} className="text-tinder-rose" />
+            <GraduationCap size={15} className="text-primary" />
           </div>
-          <h4 className="text-sm font-medium">Education</h4>
+          <h4 className="text-xs font-semibold text-foreground">Education</h4>
         </div>
-        <p className="text-sm text-muted-foreground">{Array.isArray(education) ? (education as string[]).join(', ') : education.replace(/[\[\]"]/g, '')}</p>
+        {editingField === 'education' 
+          ? renderSelectEditor('education', educationOptions)
+          : <p className="text-xs text-muted-foreground leading-relaxed">{educationDisplay || 'Not set'}</p>
+        }
       </div>
-      
-      <div className={`${cardClass} group`}>
-        <div className="flex items-center mb-3">
+
+      {/* Work */}
+      <div className={cardClass}>
+        {renderEditButton('occupation', occupation)}
+        <div className="flex items-center gap-2.5 mb-2">
           <div className={iconContainerClass}>
-            <Briefcase size={16} className="text-tinder-orange" />
+            <Briefcase size={15} className="text-primary" />
           </div>
-          <h4 className="text-sm font-medium">Work</h4>
+          <h4 className="text-xs font-semibold text-foreground">Work</h4>
         </div>
-        <p className="text-sm text-muted-foreground">{occupation} at {company}</p>
+        {editingField === 'occupation'
+          ? renderTextEditor('occupation')
+          : <p className="text-xs text-muted-foreground leading-relaxed">{occupation || 'Not set'}</p>
+        }
       </div>
-      
-      <div className={`${cardClass} group`}>
-        <div className="flex items-center mb-3">
+
+      {/* Relationship Goals */}
+      <div className={cardClass}>
+        {renderEditButton('relationshipGoals', relationshipGoals)}
+        <div className="flex items-center gap-2.5 mb-2">
           <div className={iconContainerClass}>
-            <Heart size={16} className="text-tinder-peach" />
+            <Heart size={15} className="text-primary" />
           </div>
-          <h4 className="text-sm font-medium">Relationship Goals</h4>
+          <h4 className="text-xs font-semibold text-foreground">Looking for</h4>
         </div>
-        <p className="text-sm text-muted-foreground">{relationshipGoals}</p>
+        {editingField === 'relationshipGoals'
+          ? renderSelectEditor('relationshipGoals', relationshipOptions)
+          : <p className="text-xs text-muted-foreground leading-relaxed">{relationshipDisplay || 'Not set'}</p>
+        }
       </div>
-      
-      <div className={`${cardClass} group`}>
-        <div className="flex items-center mb-3">
+
+      {/* Zodiac */}
+      <div className={cardClass}>
+        {renderEditButton('zodiacSign', zodiacSign)}
+        <div className="flex items-center gap-2.5 mb-2">
           <div className={iconContainerClass}>
-            <Star size={16} className="text-blue-400" />
+            <Star size={15} className="text-primary" />
           </div>
-          <h4 className="text-sm font-medium">Zodiac</h4>
+          <h4 className="text-xs font-semibold text-foreground">Zodiac</h4>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="outline" className={`${tinderBadgeStyle} transition-all duration-300 hover:shadow-[0_0_10px_rgba(253,41,123,0.3)]`}>{zodiacSign}</Badge>
-        </div>
+        {editingField === 'zodiacSign'
+          ? renderSelectEditor('zodiacSign', zodiacOptions)
+          : zodiacSign
+            ? <Badge className="bg-primary/15 text-primary border-0 rounded-full text-[11px] px-2.5 py-0.5">{zodiacSign}</Badge>
+            : <p className="text-xs text-muted-foreground">Not set</p>
+        }
       </div>
     </div>
   );
