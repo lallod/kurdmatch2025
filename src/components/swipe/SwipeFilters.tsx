@@ -171,10 +171,10 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 <SelectTrigger className={inputCls}><SelectValue placeholder="Select region..." /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
                   <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Bakur">Bakur (Turkey)</SelectItem>
-                  <SelectItem value="Bashur">Bashur (Iraq)</SelectItem>
-                  <SelectItem value="Rojava">Rojava (Syria)</SelectItem>
-                  <SelectItem value="Rojhelat">Rojhelat (Iran)</SelectItem>
+                  <SelectItem value="North-Kurdistan">Bakur (North Kurdistan)</SelectItem>
+                  <SelectItem value="South-Kurdistan">Bashur (South Kurdistan)</SelectItem>
+                  <SelectItem value="West-Kurdistan">Rojava (West Kurdistan)</SelectItem>
+                  <SelectItem value="East-Kurdistan">Rojhelat (East Kurdistan)</SelectItem>
                   <SelectItem value="Diaspora">Diaspora</SelectItem>
                 </SelectContent>
               </Select>
@@ -205,14 +205,14 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select_religion', 'Select religion...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
                   <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
-                  <SelectItem value="Muslim">Muslim</SelectItem>
-                  <SelectItem value="Christian">Christian</SelectItem>
-                  <SelectItem value="Jewish">Jewish</SelectItem>
-                  <SelectItem value="Yazidi">Yazidi</SelectItem>
+                  <SelectItem value="Islam">Islam</SelectItem>
+                  <SelectItem value="Christianity">Christianity</SelectItem>
+                  <SelectItem value="Judaism">Judaism</SelectItem>
+                  <SelectItem value="Yazidism">Yazidism</SelectItem>
+                  <SelectItem value="Yarsanism">Yarsanism</SelectItem>
+                  <SelectItem value="Zoroastrianism">Zoroastrianism</SelectItem>
                   <SelectItem value="Spiritual">Spiritual</SelectItem>
-                  <SelectItem value="Agnostic">Agnostic</SelectItem>
-                  <SelectItem value="Atheist">Atheist</SelectItem>
-                  <SelectItem value="Other">{t('swipe.other', 'Other')}</SelectItem>
+                  <SelectItem value="Non-religious">Non-religious</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -238,7 +238,8 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                   <SelectItem value="Athletic">Athletic</SelectItem>
                   <SelectItem value="Average">Average</SelectItem>
                   <SelectItem value="Curvy">Curvy</SelectItem>
-                  <SelectItem value="Plus Size">Plus Size</SelectItem>
+                  <SelectItem value="Muscular">Muscular</SelectItem>
+                  <SelectItem value="Full figured">Full figured</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -250,9 +251,10 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 <SelectTrigger className={inputCls}><SelectValue placeholder="Select..." /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
                   <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Never">Never</SelectItem>
-                  <SelectItem value="Socially">Socially</SelectItem>
-                  <SelectItem value="Regularly">Regularly</SelectItem>
+                  <SelectItem value="Non-smoker">Non-smoker</SelectItem>
+                  <SelectItem value="Social smoker">Social smoker</SelectItem>
+                  <SelectItem value="Regular smoker">Regular smoker</SelectItem>
+                  <SelectItem value="Former smoker">Former smoker</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -264,9 +266,10 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 <SelectTrigger className={inputCls}><SelectValue placeholder="Select..." /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
                   <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Never">Never</SelectItem>
-                  <SelectItem value="Socially">Socially</SelectItem>
-                  <SelectItem value="Regularly">Regularly</SelectItem>
+                  <SelectItem value="Non-drinker">Non-drinker</SelectItem>
+                  <SelectItem value="Social drinker">Social drinker</SelectItem>
+                  <SelectItem value="Regular drinker">Regular drinker</SelectItem>
+                  <SelectItem value="Former drinker">Former drinker</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -278,11 +281,11 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 <SelectTrigger className={inputCls}><SelectValue placeholder="Select..." /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
                   <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Daily">Daily</SelectItem>
-                  <SelectItem value="3-4 times a week">3-4 times a week</SelectItem>
-                  <SelectItem value="Occasionally">Occasionally</SelectItem>
-                  <SelectItem value="Rarely">Rarely</SelectItem>
-                  <SelectItem value="Never">Never</SelectItem>
+                  <SelectItem value="Regular exercise">Regular exercise</SelectItem>
+                  <SelectItem value="Daily fitness routine">Daily fitness routine</SelectItem>
+                  <SelectItem value="Occasional exercise">Occasional exercise</SelectItem>
+                  <SelectItem value="Sports enthusiast">Sports enthusiast</SelectItem>
+                  <SelectItem value="Yoga practitioner">Yoga practitioner</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -295,11 +298,11 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 <SelectContent className="bg-card border-border max-h-[200px]">
                   <SelectItem value="any">Any</SelectItem>
                   <SelectItem value="High School">High School</SelectItem>
-                  <SelectItem value="Bachelor's">Bachelor's</SelectItem>
-                  <SelectItem value="Master's">Master's</SelectItem>
+                  <SelectItem value="Bachelors Degree">Bachelor's Degree</SelectItem>
+                  <SelectItem value="Masters Degree">Master's Degree</SelectItem>
                   <SelectItem value="PhD">PhD</SelectItem>
                   <SelectItem value="Trade School">Trade School</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="Self-educated">Self-educated</SelectItem>
                 </SelectContent>
               </Select>
             </div>
