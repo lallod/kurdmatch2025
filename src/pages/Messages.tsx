@@ -57,10 +57,16 @@ const Messages = () => {
     if (!user) return;
     const channel = supabase
       .channel('conversations-list')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `recipient_id=eq.${user.id}` }, () => loadData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `recipient_id=eq.${user.id}` }, () => {
+        // Only refresh the conversation list when not in a chat view
+        // to prevent re-render loops with edge function calls
+        if (!selectedConversation) {
+          loadData();
+        }
+      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  }, [user, selectedConversation]);
 
   // Auto-open conversation from query param
   useEffect(() => {
