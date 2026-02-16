@@ -30,8 +30,8 @@ const DiscoverHub = () => {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-5">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="max-w-lg mx-auto px-4 py-4">
+        <div className="grid grid-cols-2 gap-3.5">
           {items.map((item, index) => (
             <motion.button
               key={item.path}
@@ -47,9 +47,9 @@ const DiscoverHub = () => {
               <div className="absolute inset-0 bg-card/40 backdrop-blur-sm" />
               
               {/* Content */}
-              <div className="relative p-5">
-                <div className="w-12 h-12 rounded-2xl bg-background/50 backdrop-blur flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <item.icon className={`w-5.5 h-5.5 ${item.iconColor}`} style={{ width: 22, height: 22 }} />
+              <div className="relative p-4 pt-5 pb-4 flex flex-col items-start min-h-[120px]">
+                <div className="w-11 h-11 rounded-xl bg-background/50 backdrop-blur flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform duration-300">
+                  <item.icon className={`${item.iconColor}`} style={{ width: 20, height: 20 }} />
                 </div>
                 <p className="text-[13px] font-semibold text-foreground text-left leading-tight">{item.label}</p>
               </div>
