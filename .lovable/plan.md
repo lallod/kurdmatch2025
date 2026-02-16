@@ -1,84 +1,76 @@
 
 
-# Information Display Strategy: Swipe Page vs Instagram Profile
+## Profile Update Issues - Deep Scan & Fix Plan
 
-## Current State
+### Problems Found
 
-Both pages currently show nearly identical data (~60+ fields each), which creates two problems:
-1. **Information overload on swipe** -- users are swiping quickly and don't need 60+ fields buried in 8 accordion sections
-2. **No differentiation** -- there's no reason to visit someone's Instagram profile if you already saw everything on swipe
+**1. Random fake data overwrites real database values on every page load**
+- `fillEmptyProfileFields()` and `assignRandomValues()` run on every load in `useRealProfileData.ts`
+- They fill "empty" fields with random values, but their `isEmpty()` check treats legitimate values like "Not specified" or "Prefer not to say" as empty, replacing them with random data
+- This means: after a user saves a value, if they reload the page, random values may overwrite their saved data in the UI (though the DB is correct, the UI shows wrong data)
 
-## Recommended Strategy
+**2. Optimistic update merges into randomly-filled enhanced data, not raw DB data**
+- When a user edits a field, `updateProfileData()` merges into `enhancedData` which already contains random values
+- The DB update succeeds, but the local state still has random values for other fields
+- On next reload, random values are regenerated (different ones), making the profile look inconsistent
 
-The core idea: **Swipe = quick decision-making snapshot. Instagram Profile = full deep-dive.**
+**3. `DetailItem` select values don't match DB values after save**
+- The `DetailItem` component passes the human-readable select option (e.g., "Socially") directly via `handleProfileUpdate`
+- `handleProfileUpdate` correctly maps camelCase keys to snake_case DB columns
+- However, `valueMapping.ts` has a separate mapping system (`dbToUiValueMapping`) that converts DB values to different UI keys -- but this mapping is **skipped** in `useRealProfileData` (line 122: "Skip value conversion")
+- This creates a mismatch: the select options use human-readable values like "Socially" but the value mapping system expects keys like "socially"
 
----
+**4. Missing fields in `fieldNameMapping.ts`**
+- Several fields used in the profile are missing from `dbToUiFieldMapping`: `morning_routine`, `evening_routine`, `decision_making_style`, `growth_goals`, `hidden_talents`, `stress_relievers`, `charity_involvement`, `music_instruments`, `favorite_games`, `tech_skills`, `dream_home`, `transportation_preference`, `work_environment`, `ideal_weather`, `dream_vacation`, `favorite_memory`
+- These fields fall through to raw `(realProfileData as any)` casts in `MyProfile.tsx`
 
-### SWIPE PAGE -- Show only "Deal-Breaker" Fields (~20 fields)
+**5. Profile data not shared across pages (Swipe/Instagram)**
+- `MyProfile.tsx` is the only page using `useRealProfileData` hook
+- Swipe page fetches profiles via `getProfileSuggestions` which reads directly from DB -- this works correctly
+- Instagram profile page (`ProfileAbout.tsx`) fetches via `getProfileById` -- also reads from DB directly
+- So updates DO reflect on other pages after DB save, but only after a page reload/refetch
 
-These are the fields someone needs to make a quick yes/no decision:
+### Fix Plan
 
-**Always visible on card (no accordion):**
-- Name, Age, Location, Distance, Photos
-- Bio (first 2 lines, truncatable)
-- Quick badges: Religion, Occupation, Height
+#### Step 1: Stop filling empty fields with random fake data
+- Remove `fillEmptyProfileFields()` call from `useRealProfileData.ts`
+- Remove `assignRandomValues()` call from `useRealProfileData.ts`
+- Instead, let empty fields display as empty/null -- the UI already handles "Not specified" display
+- This is the **root cause** of most update issues -- random data masks real data
 
-**In a single expandable section (simplified, no 8 accordions):**
+#### Step 2: Simplify the data loading pipeline in `useRealProfileData.ts`
+- Load profile from DB -> convert field names to camelCase -> set as profile data
+- No random filling, no value conversion, no enhancement layers
+- Keep `fieldSources` tracking but mark all fields as `'user'` since they come from the real DB
 
-| Category | Fields to KEEP | Fields to REMOVE |
-|----------|---------------|-----------------|
-| Basics | Gender, Ethnicity, Kurdistan Region, Languages | Body Type, Zodiac, Personality Type |
-| Lifestyle | Smoking, Drinking, Exercise | Diet, Sleep, Pets, Travel Freq, Transportation |
-| Values | Religion, Values (badges) | Political Views |
-| Relationships | Relationship Goals, Want Children, Love Language | Children Status, Family Closeness, Communication Style |
-| Career | Education, Occupation | Company, Career Ambitions, Work Environment, Work-Life Balance |
-| Interests | Interests + Hobbies (badges only) | Creative Pursuits, Weekend Activities, Music Instruments, Tech Skills |
-| Favorites | REMOVE ENTIRE SECTION | All favorites |
-| Personal Growth | REMOVE ENTIRE SECTION | All growth fields |
+#### Step 3: Fix `updateProfileData` to properly merge state
+- After successful DB update, merge the snake_case updates into raw `profileData`
+- Also merge camelCase equivalents so UI components see the change immediately
+- Remove dependency on `enhancedData` wrapper
 
-**Total on swipe: ~20 fields** (down from ~60)
+#### Step 4: Add all missing fields to `fieldNameMapping.ts`
+- Add the 16+ missing field mappings (morning_routine, evening_routine, dream_home, etc.)
+- This ensures `convertDbToUiProfile` handles all fields consistently
 
----
+#### Step 5: Ensure profile completion calculation works without random data
+- Update `getUserOnboardingProgress` to calculate based on actual DB values only
+- Empty fields correctly count as incomplete (which is the desired behavior)
 
-### INSTAGRAM PROFILE -- Show Everything (~65 fields)
+#### Step 6: Verify the swipe and Instagram pages read fresh data
+- These pages already read directly from the DB, so they will show correct data once the profile update actually saves correctly
+- No changes needed for these pages -- the issue was that the MyProfile page was showing random data, not the saved data
 
-Keep exactly as-is. This is the "deep dive" destination. The gating system (free vs premium) already handles access control. No changes needed here.
+### Technical Details
 
----
+Files to modify:
+- `src/hooks/useRealProfileData.ts` -- Remove random data filling, simplify pipeline
+- `src/utils/fieldNameMapping.ts` -- Add 16+ missing field mappings
+- `src/pages/MyProfile.tsx` -- Clean up `as any` casts since field mappings will be complete
+- `src/utils/directProfileFiller.ts` -- Keep file but stop calling it from the main flow
+- `src/utils/profileEnhancement.ts` -- Keep file but stop calling it from the main flow
 
-## Technical Implementation
-
-### Step 1: Simplify `ProfileDetails.tsx` (Swipe Page)
-
-Replace the 8 accordion sections with a cleaner 2-section layout:
-- **Section 1: "About"** -- Bio, Gender, Ethnicity, Kurdistan Region, Languages, Religion, Education, Occupation
-- **Section 2: "Compatibility"** -- Relationship Goals, Want Children, Smoking, Drinking, Exercise, Love Language, Values + Interests as badges
-
-Remove all Favorites, Personal Growth, and lower-priority detail fields from the swipe view entirely.
-
-### Step 2: Update `ProfileQuickBadges.tsx`
-
-Ensure the quick badges shown on the swipe card surface the most decision-relevant info: Religion, Height, Occupation, Relationship Goals.
-
-### Step 3: No changes to `ProfileAbout.tsx` (Instagram page)
-
-The Instagram profile already has proper gating and complete sections -- it stays as the comprehensive view.
-
-### Step 4: Add "View Full Profile" link on swipe
-
-Add a small link/button on the swipe card that navigates to the user's Instagram profile page for those who want the deep dive. This creates a natural funnel from swipe (snapshot) to profile (full details).
-
----
-
-## Summary
-
-| Aspect | Swipe Page | Instagram Profile |
-|--------|-----------|-------------------|
-| Purpose | Quick decision | Deep exploration |
-| Fields shown | ~20 (deal-breakers) | ~65 (everything) |
-| Layout | 2 clean sections | 8 gated sections |
-| Favorites | Hidden | Shown |
-| Personal Growth | Hidden | Shown |
-| Career details | Basic only | Full |
-| Change needed | Simplify significantly | None |
+Files that work correctly (no changes needed):
+- `src/api/profiles.ts` -- `updateProfile()` correctly saves to DB
+- `src/components/profile/DetailItem.tsx` -- Correctly sends field edits
+- `src/pages/MyProfile.tsx` `handleProfileUpdate()` -- Correctly maps camelCase to snake_case
 
