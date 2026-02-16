@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { X, Heart, Send, Trash2, Eye, Pause, Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from '@/hooks/useTranslations';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +59,7 @@ interface Story {
 const StoriesView = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const { user } = useSupabaseAuth();
   const [stories, setStories] = useState<Story[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -114,7 +116,7 @@ const StoriesView = () => {
       }
     } catch (error) {
       console.error('Error fetching stories:', error);
-      toast.error('Failed to load stories');
+      toast.error(t('stories.failed_load', 'Failed to load stories'));
     } finally {
       setLoading(false);
     }
@@ -183,7 +185,7 @@ const StoriesView = () => {
 
     try {
       await (supabase as any).from('stories').delete().eq('id', currentStory.id);
-      toast.success('Story deleted');
+      toast.success(t('stories.deleted', 'Story deleted'));
 
       const newStories = stories.filter((_, i) => i !== currentIndex);
       if (newStories.length === 0) {
@@ -193,7 +195,7 @@ const StoriesView = () => {
         if (currentIndex >= newStories.length) setCurrentIndex(newStories.length - 1);
       }
     } catch (error) {
-      toast.error('Failed to delete story');
+      toast.error(t('stories.failed_delete', 'Failed to delete story'));
     }
   };
 
@@ -206,11 +208,11 @@ const StoriesView = () => {
         recipient_id: stories[currentIndex].user_id,
         text: `📖 Replied to your story: "${replyText}"`,
       });
-      toast.success('Reply sent!');
+      toast.success(t('stories.reply_sent', 'Reply sent!'));
       setReplyText('');
       setShowReply(false);
     } catch (error) {
-      toast.error('Failed to send reply');
+      toast.error(t('stories.failed_reply', 'Failed to send reply'));
     }
   };
 
@@ -234,9 +236,9 @@ const StoriesView = () => {
     return (
       <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
         <div className="text-center space-y-4">
-          <p className="text-white/70">No stories available</p>
+          <p className="text-white/70">{t('stories.no_stories', 'No stories available')}</p>
           <Button onClick={() => navigate('/discovery')} variant="outline" className="rounded-full">
-            Go Back
+            {t('stories.go_back', 'Go Back')}
           </Button>
         </div>
       </div>
@@ -310,15 +312,15 @@ const StoriesView = () => {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Story</AlertDialogTitle>
+                  <AlertDialogTitle>{t('stories.delete_title', 'Delete Story')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete this story. This action cannot be undone.
+                    {t('stories.delete_confirm', 'This will permanently delete this story. This action cannot be undone.')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                    Delete
+                    {t('common.delete', 'Delete')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -418,7 +420,7 @@ const StoriesView = () => {
               <Input
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                placeholder="Reply to story..."
+                placeholder={t('stories.reply_placeholder', 'Reply to story...')}
                 className="rounded-full bg-white/15 border-white/20 text-white placeholder:text-white/40 backdrop-blur-sm"
                 autoFocus
                 onKeyDown={(e) => e.key === 'Enter' && handleReply()}
@@ -446,7 +448,7 @@ const StoriesView = () => {
                 onClick={() => { setPaused(true); setShowReply(true); }}
                 className="text-white/70 text-sm bg-white/10 backdrop-blur-sm rounded-full px-4 py-2"
               >
-                Send a reply...
+                {t('stories.send_reply', 'Send a reply...')}
               </button>
               <div className="flex gap-1">
                 {['❤️', '🔥', '😍', '😂', '😮'].map((emoji) => (
