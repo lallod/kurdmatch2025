@@ -98,6 +98,16 @@ const MyProfile = () => {
     idealWeather: realProfileData.ideal_weather || '',
     dreamVacation: realProfileData.dream_vacation || '',
     financialHabits: realProfileData.financial_habits || '',
+    petPeeves: realProfileData.pet_peeves || [],
+    childrenStatus: realProfileData.children_status || '',
+    familyCloseness: realProfileData.family_closeness || '',
+    friendshipStyle: realProfileData.friendship_style || '',
+    favoriteQuote: realProfileData.favorite_quote || '',
+    favoritePodcasts: realProfileData.favorite_podcasts || [],
+    favoriteBooks: realProfileData.favorite_books || [],
+    favoriteMovies: realProfileData.favorite_movies || [],
+    favoriteMusic: realProfileData.favorite_music || [],
+    favoriteFoods: realProfileData.favorite_foods || [],
   } : {
     name: '', age: 0, location: '', occupation: '', lastActive: '', verified: false, profileImage: '', distance: 0,
     kurdistanRegion: "South-Kurdistan" as KurdistanRegion, bio: '', height: '', bodyType: '', ethnicity: '',
@@ -164,10 +174,16 @@ const MyProfile = () => {
     idealWeather: profileData.idealWeather || '',
     dreamVacation: profileData.dreamVacation || '',
     financialHabits: profileData.financialHabits || '',
-    favoriteBooks: [],
-    favoriteMovies: [],
-    favoriteMusic: [],
-    favoriteFoods: [],
+    favoriteBooks: profileData.favoriteBooks || [],
+    favoriteMovies: profileData.favoriteMovies || [],
+    favoriteMusic: profileData.favoriteMusic || [],
+    favoriteFoods: profileData.favoriteFoods || [],
+    favoriteQuote: profileData.favoriteQuote || '',
+    favoritePodcasts: profileData.favoritePodcasts || [],
+    petPeeves: profileData.petPeeves || [],
+    childrenStatus: profileData.childrenStatus || '',
+    familyCloseness: profileData.familyCloseness || '',
+    friendshipStyle: profileData.friendshipStyle || '',
   };
 
   const tinderBadgeStyle = "rounded-full bg-primary/10 border border-primary/20 text-primary shadow-sm";
@@ -199,7 +215,7 @@ const MyProfile = () => {
   const profileStats = {
     views: engagement?.profileViews || 0,
     likes: engagement?.likesReceived || 0,
-    matches: engagement?.totalMatches || 0,
+    matches: engagement?.matches || 0,
   };
 
   if (loading) {
@@ -278,6 +294,11 @@ const MyProfile = () => {
         workEnvironment: 'work_environment', favoriteSeason: 'favorite_season',
         idealWeather: 'ideal_weather', dreamVacation: 'dream_vacation',
         financialHabits: 'financial_habits',
+        petPeeves: 'pet_peeves', childrenStatus: 'children_status',
+        familyCloseness: 'family_closeness', friendshipStyle: 'friendship_style',
+        favoriteQuote: 'favorite_quote', favoritePodcasts: 'favorite_podcasts',
+        favoriteBooks: 'favorite_books', favoriteMovies: 'favorite_movies',
+        favoriteMusic: 'favorite_music', favoriteFoods: 'favorite_foods',
       };
       const dbUpdates: any = {};
       for (const [key, value] of Object.entries(updates)) {
