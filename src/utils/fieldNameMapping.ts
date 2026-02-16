@@ -38,7 +38,36 @@ export const dbToUiFieldMapping: Record<string, string> = {
   
   // Additional
   financial_habits: 'financialHabits',
-  favorite_season: 'favoriteSeason'
+  favorite_season: 'favoriteSeason',
+  
+  // Missing fields added
+  morning_routine: 'morningRoutine',
+  evening_routine: 'eveningRoutine',
+  decision_making_style: 'decisionMakingStyle',
+  growth_goals: 'growthGoals',
+  hidden_talents: 'hiddenTalents',
+  stress_relievers: 'stressRelievers',
+  charity_involvement: 'charityInvolvement',
+  music_instruments: 'musicInstruments',
+  favorite_games: 'favoriteGames',
+  tech_skills: 'techSkills',
+  dream_home: 'dreamHome',
+  transportation_preference: 'transportationPreference',
+  work_environment: 'workEnvironment',
+  ideal_weather: 'idealWeather',
+  dream_vacation: 'dreamVacation',
+  favorite_memory: 'favoriteMemory',
+  ideal_date: 'idealDate',
+  favorite_quote: 'favoriteQuote',
+  pet_peeves: 'petPeeves',
+  friendship_style: 'friendshipStyle',
+  favorite_podcasts: 'favoritePodcasts',
+  favorite_books: 'favoriteBooks',
+  favorite_movies: 'favoriteMovies',
+  favorite_music: 'favoriteMusic',
+  favorite_foods: 'favoriteFoods',
+  last_active: 'lastActive',
+  profile_image: 'profileImage',
 };
 
 // Reverse mapping from UI field names (camelCase) to database field names (snake_case)
