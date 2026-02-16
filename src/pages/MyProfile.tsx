@@ -406,7 +406,29 @@ const MyProfile = () => {
                    <p className="text-sm font-semibold text-foreground">{t('my_profile.complete_profile', 'Complete your profile')}</p>
                    <p className="text-xs text-muted-foreground mt-0.5">{t('my_profile.complete_profile_desc', 'Fill in missing details to get more matches')}</p>
                 </div>
-                 <Button size="sm" className="rounded-full h-9 px-4 text-xs">
+                 <Button size="sm" className="rounded-full h-9 px-4 text-xs" onClick={() => {
+                   // Find first incomplete section and scroll to it
+                   const sectionMap: { key: keyof NonNullable<typeof categoryProgress>; id: string }[] = [
+                     { key: 'basicInfo', id: 'basics' },
+                     { key: 'lifestyle', id: 'lifestyle' },
+                     { key: 'valuesAndBeliefs', id: 'more' },
+                     { key: 'interestsAndHobbies', id: 'interests' },
+                     { key: 'careerAndEducation', id: 'personality' },
+                     { key: 'relationshipGoals', id: 'creatives' },
+                   ];
+                   const incomplete = sectionMap.find(s => categoryProgress && (categoryProgress[s.key] as number) < 100);
+                   if (incomplete) {
+                     const el = document.querySelector(`[data-value="${incomplete.id}"]`) || document.getElementById(`section-${incomplete.id}`);
+                     if (el) {
+                       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                       // Try to open the accordion
+                       const trigger = el.querySelector('[data-radix-collection-item]') as HTMLElement;
+                       if (trigger && el.getAttribute('data-state') === 'closed') {
+                         trigger.click();
+                       }
+                     }
+                   }
+                 }}>
                   {t('my_profile.continue', 'Continue')}
                 </Button>
               </div>
