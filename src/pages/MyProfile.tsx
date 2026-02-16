@@ -483,6 +483,7 @@ const MyProfile = () => {
               personalityType={details.personalityType}
               tinderBadgeStyle={tinderBadgeStyle}
               isMobile={true}
+              onFieldEdit={handleProfileUpdate}
             />
           </div>
 
