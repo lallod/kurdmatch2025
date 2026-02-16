@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Route } from 'react-router-dom';
 import ProtectedRoute from '../ProtectedRoute';
-import { Loader2 } from 'lucide-react';
+import SharedPageLoader from '@/components/app/SharedPageLoader';
 
 const Groups = lazy(() => import('@/pages/Groups'));
 const CreateGroup = lazy(() => import('@/pages/CreateGroup'));
@@ -9,18 +9,12 @@ const GroupDetailPage = lazy(() => import('@/pages/GroupDetail'));
 const CreateStory = lazy(() => import('@/pages/CreateStory'));
 const StoriesView = lazy(() => import('@/pages/StoriesView'));
 
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
-
 const P: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ProtectedRoute>{children}</ProtectedRoute>
 );
 
 const L: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+  <Suspense fallback={<SharedPageLoader />}>{children}</Suspense>
 );
 
 export const groupRoutes = (

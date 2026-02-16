@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Route } from 'react-router-dom';
 import ProtectedRoute from '../ProtectedRoute';
-import { Loader2 } from 'lucide-react';
+import SharedPageLoader from '@/components/app/SharedPageLoader';
 
 const Settings = lazy(() => import('@/pages/Settings'));
 const NotificationSettings = lazy(() => import('@/pages/NotificationSettings'));
@@ -10,18 +10,12 @@ const BlockedUsers = lazy(() => import('@/pages/BlockedUsers'));
 const PhoneVerification = lazy(() => import('@/pages/PhoneVerification'));
 const RelationshipSettings = lazy(() => import('@/pages/RelationshipSettings'));
 
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
-
 const P: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ProtectedRoute>{children}</ProtectedRoute>
 );
 
 const L: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+  <Suspense fallback={<SharedPageLoader />}>{children}</Suspense>
 );
 
 export const settingsRoutes = (

@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { User } from '@supabase/supabase-js';
-import { Loader2 } from 'lucide-react';
+import SharedPageLoader from '@/components/app/SharedPageLoader';
 
 const LandingV2 = lazy(() => import('@/pages/LandingV2'));
 const Auth = lazy(() => import('@/pages/Auth'));
@@ -20,14 +20,8 @@ const CookiePolicy = lazy(() => import('@/pages/CookiePolicy'));
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
-
 const L: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+  <Suspense fallback={<SharedPageLoader />}>{children}</Suspense>
 );
 
 export const getPublicRoutes = (user: User | null) => (
