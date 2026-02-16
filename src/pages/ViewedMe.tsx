@@ -179,18 +179,18 @@ const ViewedMe = () => {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <Badge className={`${
+                      <Badge className={`text-white ${
                         profile.compatibilityScore > 90 
-                          ? 'bg-success/20 text-success border-success/30' 
+                          ? 'bg-success border-success/30' 
                           : profile.compatibilityScore > 80 
-                            ? 'bg-primary/20 text-primary border-primary/30'
-                            : 'bg-warning/20 text-warning border-warning/30'
+                            ? 'bg-primary border-primary/30'
+                            : 'bg-warning border-warning/30'
                       }`}>
                         {profile.compatibilityScore}% match
                       </Badge>
                       
                       {!profile.hasViewed && (
-                        <Badge className="text-xs bg-primary/20 text-primary border-primary/30">New</Badge>
+                        <Badge className="text-xs bg-primary text-white border-primary/30">New</Badge>
                       )}
                       <ArrowRight className="h-4 w-4 text-muted-foreground" />
                     </div>
