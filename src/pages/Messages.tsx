@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getConversations } from '@/api/messages';
-import { getNewMatches } from '@/api/matches';
+import { getMatches } from '@/api/matches';
+import { getStories } from '@/api/posts';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -15,7 +16,8 @@ const Messages = () => {
   const { user } = useSupabaseAuth();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [conversations, setConversations] = useState<any[]>([]);
-  const [newMatches, setNewMatches] = useState<any[]>([]);
+  const [allMatches, setAllMatches] = useState<any[]>([]);
+  const [matchStories, setMatchStories] = useState<Map<string, any[]>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
   // Call state
@@ -39,12 +41,22 @@ const Messages = () => {
     if (!user) return;
     try {
       setIsLoading(true);
-      const [conversationsData, matchesData] = await Promise.all([
+      const [conversationsData, matchesData, storiesData] = await Promise.all([
         getConversations(),
-        getNewMatches(5),
+        getMatches(),
+        getStories(),
       ]);
       setConversations(conversationsData);
-      setNewMatches(matchesData);
+      setAllMatches(matchesData);
+      
+      // Group stories by user ID for quick lookup
+      const storyMap = new Map<string, any[]>();
+      storiesData.forEach((story: any) => {
+        const userId = story.user_id;
+        if (!storyMap.has(userId)) storyMap.set(userId, []);
+        storyMap.get(userId)!.push(story);
+      });
+      setMatchStories(storyMap);
     } catch {
       toast.error('Failed to load messages');
     } finally {
@@ -98,7 +110,8 @@ const Messages = () => {
           <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
             <ConversationList
               conversations={conversations}
-              newMatches={newMatches}
+              allMatches={allMatches}
+              matchStories={matchStories}
               onSelectConversation={setSelectedConversation}
             />
           </div>
