@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Eye, ChevronUp } from 'lucide-react';
 import { Story } from '@/api/posts';
 import { supabase } from '@/integrations/supabase/client';
 import StoryReactions from './StoryReactions';
@@ -29,6 +29,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
 
   const currentStory = stories[currentIndex];
   const duration = currentStory?.duration || 15;
+  const isOwnStory = currentUserId === currentStory?.user_id;
 
   useEffect(() => {
     if (open && currentStory) {
@@ -169,7 +170,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
             />
           )}
 
-          {/* User info and views */}
+          {/* User info */}
           <div className="absolute top-16 left-4 right-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Avatar className="w-10 h-10 border-2 border-white">
@@ -178,13 +179,11 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
               </Avatar>
               <span className="text-white font-semibold">{currentStory.profiles.name}</span>
             </div>
-            <button
-              onClick={() => setShowViewers(!showViewers)}
-              className="flex items-center gap-1 px-3 py-1 bg-black/30 rounded-full hover:bg-black/50 transition-colors"
-            >
+            {/* Views count - visible to everyone, viewer list only for owner */}
+            <div className="flex items-center gap-1 px-3 py-1 bg-black/30 rounded-full">
               <Eye className="w-4 h-4 text-white" />
               <span className="text-white text-sm">{currentStory.views_count}</span>
-            </button>
+            </div>
           </div>
 
           {/* Reactions */}
@@ -203,7 +202,6 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
               userId={currentStory.user_id}
               currentUserId={currentUserId}
               onReact={(reaction) => {
-                // Handle toolbar reaction
                 console.log('Toolbar reaction:', reaction);
               }}
               isMuted={isMuted}
@@ -211,18 +209,46 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
             />
           )}
 
-          {/* Viewers panel */}
-          {showViewers && viewers.length > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 max-h-60 bg-black/90 backdrop-blur-sm p-4 overflow-y-auto">
-              <h3 className="text-white font-semibold mb-3">Viewed by {viewers.length}</h3>
-              <div className="space-y-2">
+          {/* Viewers panel - Instagram style, only visible to story owner */}
+          {isOwnStory && (
+            <button
+              onClick={() => setShowViewers(!showViewers)}
+              className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-2 bg-black/40 backdrop-blur-sm rounded-full"
+            >
+              <ChevronUp className="w-4 h-4 text-white" />
+              <div className="flex -space-x-2">
+                {viewers.slice(0, 3).map((v) => (
+                  <Avatar key={v.id} className="w-6 h-6 border border-black">
+                    <AvatarImage src={v.profiles?.profile_image} />
+                    <AvatarFallback className="text-[8px]">{v.profiles?.name?.[0]}</AvatarFallback>
+                  </Avatar>
+                ))}
+              </div>
+              <span className="text-white text-xs font-medium">{viewers.length}</span>
+            </button>
+          )}
+
+          {showViewers && isOwnStory && viewers.length > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 max-h-72 bg-black/95 backdrop-blur-md rounded-t-3xl p-5 overflow-y-auto animate-in slide-in-from-bottom duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-white font-semibold text-base">Viewers · {viewers.length}</h3>
+                <button onClick={() => setShowViewers(false)} className="p-1">
+                  <X className="w-5 h-5 text-white/70" />
+                </button>
+              </div>
+              <div className="space-y-3">
                 {viewers.map((viewer) => (
                   <div key={viewer.id} className="flex items-center gap-3">
-                    <Avatar className="w-8 h-8">
+                    <Avatar className="w-10 h-10">
                       <AvatarImage src={viewer.profiles?.profile_image} />
-                      <AvatarFallback>{viewer.profiles?.name[0]}</AvatarFallback>
+                      <AvatarFallback className="text-sm bg-muted">{viewer.profiles?.name?.[0]}</AvatarFallback>
                     </Avatar>
-                    <span className="text-white text-sm">{viewer.profiles?.name}</span>
+                    <div className="flex-1">
+                      <span className="text-white text-sm font-medium">{viewer.profiles?.name}</span>
+                    </div>
+                    <span className="text-white/40 text-xs">
+                      {new Date(viewer.viewed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                 ))}
               </div>
