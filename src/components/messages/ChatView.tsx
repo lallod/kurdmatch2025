@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Send, ArrowLeft, Mic, Sparkles, Eye, MoreVertical, Flag, Ban, Globe, UserX, Phone, Video } from 'lucide-react';
+import { Send, ArrowLeft, Mic, Eye, MoreVertical, Flag, Ban, Globe, UserX, Phone, Video } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -10,11 +10,10 @@ import { Smile } from 'lucide-react';
 import { getMessagesByConversation, sendMessage, markMessagesAsRead } from '@/api/messages';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useMessageModeration } from '@/hooks/useMessageModeration';
-import { useConversationInsights } from '@/hooks/useConversationInsights';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { useImageCompression } from '@/hooks/useImageCompression';
 import { ReportMessageDialog } from '@/components/chat/ReportMessageDialog';
-import { ConversationInsights } from '@/components/chat/ConversationInsights';
+
 import { GifPicker } from '@/components/chat/GifPicker';
 import { VoiceRecorder } from '@/components/chat/VoiceRecorder';
 import { VoicePlayer } from '@/components/chat/VoicePlayer';
@@ -54,7 +53,7 @@ const ChatView: React.FC<ChatViewProps> = ({
   const [conversationMessages, setConversationMessages] = useState<any[]>([]);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
-  const [showInsights, setShowInsights] = useState(false);
+  
   const [translatedMessages, setTranslatedMessages] = useState<Record<string, string>>({});
   const [translatingMessages, setTranslatingMessages] = useState<Set<string>>(new Set());
   const [showGifPicker, setShowGifPicker] = useState(false);
@@ -65,7 +64,6 @@ const ChatView: React.FC<ChatViewProps> = ({
   const [currentMatchId, setCurrentMatchId] = useState<string | null>(null);
 
   const { moderateMessage, isChecking } = useMessageModeration();
-  const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
 
   const conversationId = user ? [user.id, conversation.id].sort().join('_') : '';
   const { isOtherUserTyping, startTyping, stopTyping } = useTypingIndicator(conversationId, user?.id || '');
@@ -103,9 +101,6 @@ const ChatView: React.FC<ChatViewProps> = ({
     return () => { supabase.removeChannel(channel); };
   }, [conversation.id, user]);
 
-  useEffect(() => {
-    if (user) fetchStoredInsights(user.id, conversation.id);
-  }, [conversation.id, user]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
@@ -209,11 +204,6 @@ const ChatView: React.FC<ChatViewProps> = ({
     onConversationsRefresh();
   };
 
-  const handleGenerateInsights = async () => {
-    if (!user) return;
-    await generateInsights(user.id, conversation.id);
-    setShowInsights(true);
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
@@ -282,9 +272,6 @@ const ChatView: React.FC<ChatViewProps> = ({
               </Button>
               {conversation.notifications?.includes('online') && <Badge className="bg-success/20 text-success border-success/30">Online</Badge>}
               {conversation.notifications?.includes('viewed_profile') && <Badge className="bg-info/20 text-info border-info/30"><Eye className="w-3 h-3 mr-1" />Viewed</Badge>}
-              <Button variant="ghost" size="sm" onClick={handleGenerateInsights} disabled={isGenerating} className="text-muted-foreground hover:text-foreground" aria-label="Generate AI conversation insights">
-                <Sparkles className="h-4 w-4" />
-              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="text-foreground hover:bg-muted/20" aria-label="More options">
@@ -305,9 +292,6 @@ const ChatView: React.FC<ChatViewProps> = ({
 
         <div className="flex-1 p-4 overflow-y-auto space-y-4">
           <div className="space-y-4 max-w-4xl mx-auto">
-            {showInsights && insights && (
-              <ConversationInsights sharedInterests={insights.sharedInterests} suggestedTopics={insights.suggestedTopics} conversationSummary={insights.conversationSummary} communicationStyle={insights.communicationStyle} onRefresh={handleGenerateInsights} isLoading={isGenerating} />
-            )}
             {conversationMessages.length === 0 && (
               <IcebreakerSuggestions matchedUserId={conversation.id} onSelectIcebreaker={(text) => setNewMessage(text)} hasMessages={false} />
             )}
