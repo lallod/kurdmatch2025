@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Route } from 'react-router-dom';
 import ProtectedRoute from '../ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { Loader2 } from 'lucide-react';
+import SharedPageLoader from '@/components/app/SharedPageLoader';
 
 const CompleteProfile = lazy(() => import('@/pages/CompleteProfile').then(m => ({ default: m.CompleteProfile })));
 const Swipe = lazy(() => import('@/pages/Swipe'));
@@ -30,18 +30,12 @@ const Events = lazy(() => import('@/pages/Events'));
 const Notifications = lazy(() => import('@/pages/Notifications'));
 const GiftsAndDates = lazy(() => import('@/pages/GiftsAndDates'));
 
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
-
 const P: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ProtectedRoute>{children}</ProtectedRoute>
 );
 
 const L: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+  <Suspense fallback={<SharedPageLoader />}>{children}</Suspense>
 );
 
 export const protectedRoutes = (
