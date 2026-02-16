@@ -317,57 +317,58 @@ const MyProfile = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
-        {/* Header */}
+      {/* Header */}
         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/10">
-          <div className="max-w-md mx-auto px-4 h-12 flex items-center justify-between">
-            <h1 className="text-lg font-bold text-foreground">{t('my_profile.title', 'Profile')}</h1>
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => navigate('/settings')}>
-              <Settings className="w-5 h-5" />
+          <div className="max-w-md mx-auto px-5 h-14 flex items-center justify-between">
+            <h1 className="text-lg font-bold text-foreground tracking-tight">{t('my_profile.title', 'Profile')}</h1>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-muted/60" onClick={() => navigate('/settings')}>
+              <Settings className="w-5 h-5 text-foreground" />
             </Button>
           </div>
         </div>
 
         {/* Hero section */}
         <div className="relative">
-          <div className="h-28 bg-gradient-to-b from-primary/20 to-background" />
+          <div className="h-32 bg-gradient-to-b from-primary/25 via-primary/10 to-background" />
           <div className="max-w-md mx-auto px-4 -mt-16 flex flex-col items-center">
             <div className="relative mb-3">
-              <Avatar className="h-24 w-24 ring-4 ring-background shadow-xl">
+              <div className="absolute -inset-[3px] rounded-full bg-gradient-to-br from-primary via-accent to-primary animate-[spin_4s_linear_infinite] opacity-80" />
+              <Avatar className="h-24 w-24 border-[3px] border-background relative z-10 shadow-2xl">
                 <AvatarImage src={galleryPhotos[0]?.url || profileData.profileImage} alt={profileData.name} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
+                <AvatarFallback className="bg-card text-primary text-2xl font-bold">
                   {profileData.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <label className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-primary flex items-center justify-center cursor-pointer shadow-lg">
+              <label className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-primary flex items-center justify-center cursor-pointer shadow-lg shadow-primary/40 z-20 active:scale-90 transition-transform">
                 <Camera className="h-4 w-4 text-primary-foreground" />
                 <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
               </label>
             </div>
 
-            <div className="flex items-center gap-1.5 mb-1">
-              <h2 className="text-xl font-bold text-foreground">{profileData.name}</h2>
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <h2 className="text-xl font-extrabold text-foreground tracking-tight">{profileData.name}</h2>
               {profileData.verified && <CheckCircle2 className="h-5 w-5 text-primary fill-primary" />}
               {profileData.age > 0 && <span className="text-muted-foreground font-medium">, {profileData.age}</span>}
             </div>
 
             {profileData.occupation && (
-              <p className="text-sm text-muted-foreground">{profileData.occupation}</p>
+              <p className="text-sm text-muted-foreground font-medium">{profileData.occupation}</p>
             )}
             {profileData.location && (
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+              <p className="text-xs text-muted-foreground/70 flex items-center gap-1 mt-0.5">
                 <MapPin className="w-3 h-3" />{profileData.location}
               </p>
             )}
 
-            <div className="flex gap-1.5 mt-2">
-              <Badge className="bg-primary/15 text-primary border-primary/20 text-xs rounded-full">{profileData.kurdistanRegion}</Badge>
+            <div className="flex gap-1.5 mt-2.5">
+              <Badge className="bg-primary/15 text-primary border-0 text-[11px] rounded-full px-3 py-0.5 font-medium">{profileData.kurdistanRegion}</Badge>
             </div>
           </div>
         </div>
 
         <div className="max-w-md mx-auto mt-4 space-y-3">
           {/* Stats card */}
-          <div className="mx-4 bg-card rounded-2xl p-4 shadow-md">
+          <div className="mx-4 bg-card/60 backdrop-blur-sm rounded-2xl p-4 border border-border/10">
             <div className="flex justify-around">
               {[
                  { value: profileStats.views, label: t('my_profile.views', 'Views'), path: '/viewed-me' },
@@ -375,10 +376,10 @@ const MyProfile = () => {
                  { value: profileStats.matches, label: t('my_profile.matches', 'Matches'), path: '/matches' },
               ].map((stat, i) => (
                 <React.Fragment key={stat.label}>
-                  {i > 0 && <div className="w-px bg-border/30" />}
-                  <button onClick={() => navigate(stat.path)} className="text-center px-4 hover:opacity-80 transition-opacity">
-                    <div className="text-xl font-bold text-foreground">{stat.value}</div>
-                    <div className="text-xs text-muted-foreground">{stat.label}</div>
+                  {i > 0 && <div className="w-px bg-border/10" />}
+                  <button onClick={() => navigate(stat.path)} className="text-center px-4 active:scale-95 transition-all">
+                    <div className="text-2xl font-extrabold text-foreground tracking-tight">{stat.value}</div>
+                    <div className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">{stat.label}</div>
                   </button>
                 </React.Fragment>
               ))}
@@ -429,15 +430,15 @@ const MyProfile = () => {
 
           {/* Photo Grid */}
           <div className="mx-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
-            <div className="bg-card rounded-2xl p-3 shadow-sm">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
+            <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-3 border border-border/10">
               <div className="grid grid-cols-3 gap-2">
                 {galleryPhotos.slice(0, 6).map((photo, i) => (
                   <div key={photo.id} className="relative aspect-square rounded-2xl overflow-hidden bg-muted group">
                     <img src={photo.url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
                     {photo.is_primary && (
                       <div className="absolute top-1.5 left-1.5">
-                        <Star className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow" />
+                        <Star className="w-4 h-4 text-primary fill-primary drop-shadow" />
                       </div>
                     )}
                     {/* Action overlay */}
@@ -448,7 +449,7 @@ const MyProfile = () => {
                           className="h-8 w-8 rounded-full bg-card/90 flex items-center justify-center"
                           title="Set as profile photo"
                         >
-                          <Star className="w-4 h-4 text-amber-400" />
+                          <Star className="w-4 h-4 text-primary" />
                         </button>
                       )}
                       <button
