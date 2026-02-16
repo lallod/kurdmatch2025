@@ -114,7 +114,7 @@ const ViewedMe = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary overflow-hidden">
+      <div className="min-h-screen bg-background">
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-foreground text-xl">{t('profile.loading_views', 'Loading profile views...')}</div>
         </div>
@@ -123,22 +123,19 @@ const ViewedMe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-surface-secondary flex flex-col">
-      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 pt-6 pb-24">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-              <Eye className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-               <h1 className="text-xl font-bold text-foreground">{t('viewed_me.title', 'Profile Views')}</h1>
-               <p className="text-muted-foreground text-sm">{t('viewed_me.subtitle', "See who's been checking you out")}</p>
-            </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="sticky top-0 z-10 bg-background border-b border-border/30">
+        <div className="max-w-lg mx-auto px-4 h-11 flex items-center gap-3">
+          <div className="w-8 h-8 bg-primary/15 rounded-full flex items-center justify-center">
+            <Eye className="h-4 w-4 text-primary" />
           </div>
-          <Badge className="bg-muted text-muted-foreground border-border">
-            {viewedProfiles.length} views
+          <h1 className="text-base font-semibold text-foreground">{t('viewed_me.title', 'Profile Views')}</h1>
+          <Badge className="ml-auto bg-muted text-muted-foreground border-border text-xs">
+            {viewedProfiles.length}
           </Badge>
         </div>
+      </div>
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 pt-4 pb-24">
 
         {viewedProfiles.length > 0 ? (
           <div className="grid grid-cols-1 gap-3">

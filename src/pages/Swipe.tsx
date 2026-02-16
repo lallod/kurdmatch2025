@@ -58,7 +58,7 @@ const Swipe = () => {
         age: profile.age,
         location: profile.location,
         avatar: profile.profile_image || profile.photos?.[0]?.url || '',
-        distance: Math.floor(Math.random() * 20) + 1,
+        distance: (profile as any).distance_km || 0,
         compatibilityScore: compatibilityScores.get(profile.id) || 50,
         kurdistanRegion: profile.kurdistan_region || 'South-Kurdistan',
         area: profile.kurdistan_region || 'South-Kurdistan',

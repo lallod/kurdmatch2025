@@ -370,16 +370,16 @@ const MyProfile = () => {
           <div className="mx-4 bg-card rounded-2xl p-4 shadow-md">
             <div className="flex justify-around">
               {[
-                 { value: profileStats.views, label: t('my_profile.views', 'Views') },
-                 { value: profileStats.likes, label: t('my_profile.likes', 'Likes') },
-                 { value: profileStats.matches, label: t('my_profile.matches', 'Matches') },
+                 { value: profileStats.views, label: t('my_profile.views', 'Views'), path: '/viewed-me' },
+                 { value: profileStats.likes, label: t('my_profile.likes', 'Likes'), path: '/liked-me' },
+                 { value: profileStats.matches, label: t('my_profile.matches', 'Matches'), path: '/matches' },
               ].map((stat, i) => (
                 <React.Fragment key={stat.label}>
                   {i > 0 && <div className="w-px bg-border/30" />}
-                  <div className="text-center px-4">
+                  <button onClick={() => navigate(stat.path)} className="text-center px-4 hover:opacity-80 transition-opacity">
                     <div className="text-xl font-bold text-foreground">{stat.value}</div>
                     <div className="text-xs text-muted-foreground">{stat.label}</div>
-                  </div>
+                  </button>
                 </React.Fragment>
               ))}
             </div>

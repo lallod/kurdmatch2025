@@ -9,7 +9,6 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import { getMatches, getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
-import SwipeActions from '@/components/swipe/SwipeActions';
 import { likeProfile } from '@/api/likes';
 import SectionViewStats from '@/components/profile/SectionViewStats';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -150,23 +149,30 @@ const Matches = () => {
         </div>
       </div>
 
-      {/* Profile Modal with Swipe Actions */}
+      {/* Profile Modal - Message & View actions */}
       {showSwipeActions && selectedMatch && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card rounded-2xl max-w-sm w-full max-h-[80vh] overflow-hidden border border-border/20">
-            <div className="aspect-[3/4] relative overflow-hidden">
-              <img src={selectedMatch.avatar} alt={selectedMatch.name} className="w-full h-full object-cover" />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent p-5">
-                <h1 className="text-xl font-bold text-foreground">{selectedMatch.name}, {selectedMatch.age}</h1>
-                <p className="text-sm text-muted-foreground">{selectedMatch.location}</p>
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end justify-center" onClick={() => setShowSwipeActions(false)}>
+          <div className="bg-card rounded-t-3xl w-full max-w-lg overflow-hidden border-t border-border/20 animate-in slide-in-from-bottom" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-4 p-5">
+              <Avatar className="h-16 w-16 ring-2 ring-border">
+                <AvatarImage src={selectedMatch.avatar} alt={selectedMatch.name} />
+                <AvatarFallback className="bg-primary text-primary-foreground">{selectedMatch.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-bold text-foreground">{selectedMatch.name}, {selectedMatch.age}</h2>
+                <p className="text-sm text-muted-foreground truncate">{selectedMatch.location}</p>
               </div>
+              <button onClick={() => setShowSwipeActions(false)} className="p-2 rounded-full hover:bg-muted">
+                <X className="w-5 h-5 text-muted-foreground" />
+              </button>
             </div>
-            <button onClick={() => setShowSwipeActions(false)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-background/30 backdrop-blur-sm text-foreground/80 hover:text-foreground">
-              <X className="w-5 h-5" />
-            </button>
-            <div className="p-4">
-              <SwipeActions onRewind={handleRewind} onPass={handlePass} onLike={handleLike} onSuperLike={handleSuperLike} onBoost={handleBoost} />
+            <div className="flex gap-3 px-5 pb-6" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
+              <Button className="flex-1 gap-2" onClick={() => { setShowSwipeActions(false); handleMessage(selectedMatch.profileId); }}>
+                <MessageCircle className="w-4 h-4" />{t('matches.message', 'Message')}
+              </Button>
+              <Button variant="outline" className="flex-1 gap-2" onClick={() => { setShowSwipeActions(false); handleViewProfile(selectedMatch.profileId); }}>
+                {t('matches.view_profile', 'View Profile')}
+              </Button>
             </div>
           </div>
         </div>

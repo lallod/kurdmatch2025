@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Eye, Heart, MessageCircle, UserRound, Shield } from 'lucide-react';
+import { Home, Compass, Heart, MessageCircle, UserRound, Shield } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTranslations } from '@/hooks/useTranslations';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,7 +29,7 @@ const BottomNavigation = () => {
     { name: t('nav.home', 'Home'), icon: Home, path: '/discovery' },
     { name: t('nav.swipe', 'Swipe'), icon: Heart, path: '/swipe' },
     { name: t('nav.messages', 'Chat'), icon: MessageCircle, path: '/messages' },
-    { name: t('nav.discover', 'Views'), icon: Eye, path: '/viewed-me' },
+    { name: t('nav.discover', 'Discover'), icon: Compass, path: '/discover' },
     { name: t('nav.profile', 'Profile'), icon: UserRound, path: '/my-profile' },
   ];
 

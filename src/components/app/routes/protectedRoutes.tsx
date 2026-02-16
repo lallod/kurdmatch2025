@@ -24,6 +24,7 @@ const HashtagFeed = lazy(() => import('@/pages/HashtagFeed').then(m => ({ defaul
 const CompatibilityInsights = lazy(() => import('@/pages/CompatibilityInsights'));
 const AdvancedSearch = lazy(() => import('@/pages/AdvancedSearch'));
 const SavedPosts = lazy(() => import('@/pages/SavedPosts'));
+const DiscoverHub = lazy(() => import('@/pages/DiscoverHub'));
 const Matches = lazy(() => import('@/pages/Matches'));
 const Events = lazy(() => import('@/pages/Events'));
 const Notifications = lazy(() => import('@/pages/Notifications'));
@@ -52,6 +53,7 @@ export const protectedRoutes = (
     <Route path="/create-post" element={<P><L><CreatePost /></L></P>} />
     <Route path="/search" element={<P><L><AdvancedSearch /></L></P>} />
     <Route path="/saved" element={<P><L><SavedPosts /></L></P>} />
+    <Route path="/discover" element={<P><L><DiscoverHub /></L></P>} />
     <Route path="/create-event" element={<P><L><CreateEvent /></L></P>} />
     <Route path="/event/:id" element={<P><L><EventDetail /></L></P>} />
     <Route path="/post/:id" element={<P><L><PostDetail /></L></P>} />
