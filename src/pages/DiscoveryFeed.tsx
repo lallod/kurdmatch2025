@@ -5,7 +5,7 @@ import { getPostsByHashtag } from '@/api/hashtags';
 import StoryBubbles from '@/components/discovery/StoryBubbles';
 import PostCard from '@/components/discovery/PostCard';
 import { Loader2, Heart, Search, X } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,7 +19,6 @@ type FeedFilter = 'for_you' | 'following';
 
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { t } = useTranslations();
   const { shouldShow: showTour } = useWelcomeTour();
   const [tourDismissed, setTourDismissed] = useState(false);
@@ -45,7 +44,7 @@ const DiscoveryFeed = () => {
       setStories(storiesData);
     } catch (error) {
       console.error('Error loading feed:', error);
-      toast({ title: 'Error', description: 'Failed to load feed', variant: 'destructive' });
+      toast.error('Failed to load feed');
     } finally {
       setLoading(false);
     }
@@ -84,7 +83,7 @@ const DiscoveryFeed = () => {
       if (post?.is_liked) await unlikePost(postId);
       else await likePost(postId);
     } catch (error) {
-      toast({ title: 'Error', description: 'Failed to like post', variant: 'destructive' });
+      toast.error('Failed to like post');
     }
   };
 

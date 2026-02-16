@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import DistanceBadge from '@/components/location/DistanceBadge';
 import { useNearbyUsers } from '@/hooks/useNearbyUsers';
 import { getCurrentLocation, getCachedLocation, cacheLocation } from '@/utils/locationUtils';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   Sheet,
   SheetContent,
@@ -23,7 +23,7 @@ import {
 
 const DiscoveryNearby = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  
   const [radiusKm, setRadiusKm] = useState(50);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const { users, isLoading, fetchNearbyUsers, updateCurrentUserLocation, userLocation } = useNearbyUsers({
@@ -52,16 +52,9 @@ const DiscoveryNearby = () => {
       cacheLocation(coords);
       await fetchNearbyUsers(coords);
       
-      toast({
-        title: 'Location detected',
-        description: `Searching for matches within ${radiusKm} km`,
-      });
+      toast.success(`Searching for matches within ${radiusKm} km`);
     } catch (error) {
-      toast({
-        title: 'Location access denied',
-        description: 'Please enable location access to see nearby matches',
-        variant: 'destructive',
-      });
+      toast.error('Please enable location access to see nearby matches');
     } finally {
       setIsDetectingLocation(false);
     }

@@ -5,7 +5,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bell, Heart, MessageCircle, UserPlus, Eye, Calendar, Users, ArrowLeft, Check, Trash2 } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslations } from '@/hooks/useTranslations';
 
@@ -88,11 +88,11 @@ const Notifications = () => {
   };
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    toast({ description: 'All notifications marked as read' });
+    toast('All notifications marked as read');
   };
   const deleteNotification = async (notificationId: string) => {
     setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    toast({ description: 'Notification removed' });
+    toast('Notification removed');
   };
   const handleNotificationClick = (notification: Notification) => {
     markAsRead(notification.id);

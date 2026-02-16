@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Users, Settings } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import PostCard from '@/components/discovery/PostCard';
 import { LoadingState } from '@/components/LoadingState';
 import { getGroupById, getGroupPosts, isGroupMember, joinGroup, leaveGroup } from '@/api/groups';
@@ -58,11 +58,7 @@ const GroupDetail = () => {
       setIsMember(membershipStatus);
     } catch (error) {
       console.error('Error loading group data:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load group',
-        variant: 'destructive',
-      });
+      toast.error('Failed to load group');
     } finally {
       setLoading(false);
     }
@@ -85,22 +81,18 @@ const GroupDetail = () => {
       if (isMember) {
         await leaveGroup(id);
         setIsMember(false);
-        toast({ description: 'Left group' });
+        toast('Left group');
       } else {
         await joinGroup(id);
         setIsMember(true);
-        toast({ description: 'Joined group' });
+        toast('Joined group');
       }
       // Refresh group data to update member count
       const updatedGroup = await getGroupById(id);
       setGroup(updatedGroup);
     } catch (error) {
       console.error('Error joining/leaving group:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update membership',
-        variant: 'destructive',
-      });
+      toast.error('Failed to update membership');
     }
   };
 
