@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Eye, Clock, ArrowRight } from 'lucide-react';
+import { Eye, Clock, ArrowRight, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import SectionViewStats from '@/components/profile/SectionViewStats';
 
 import PremiumPlansDialog from '@/components/subscription/PremiumPlansDialog';
 import { supabase } from '@/integrations/supabase/client';
@@ -168,6 +169,13 @@ const ViewedMe = () => {
                         {profile.location && (
                           <p className="text-muted-foreground text-sm">{profile.location}</p>
                         )}
+                        <div className="mt-1">
+                          <SectionViewStats 
+                            viewerId={profile.id} 
+                            viewedProfileId={user!.id} 
+                            compact 
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
