@@ -26,13 +26,13 @@ const ProfilePhotoGallery = ({
   };
 
   return (
-    <div className="relative w-full h-full group">
-      {/* Image Container with proper height fitting */}
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-muted/10">
+    <div className="relative w-full h-full">
+      {/* Image Container */}
+      <div className="relative w-full h-full overflow-hidden bg-muted/10">
         <img 
           src={profile.photos?.[currentPhotoIndex] || profile.avatar} 
           alt={`${profile.name}'s photo`} 
-          className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02] ${profile.blur_photos ? 'blur-xl' : ''}`}
+          className={`w-full h-full object-cover ${profile.blur_photos ? 'blur-xl' : ''}`}
         />
         
         {/* Photo Navigation - Only show if multiple photos and not background */}
