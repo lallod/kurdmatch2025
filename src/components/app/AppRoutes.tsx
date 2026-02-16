@@ -1,6 +1,7 @@
 import React from 'react';
-import { Routes } from 'react-router-dom';
+import { Routes, useLocation } from 'react-router-dom';
 import AppLayout from './AppLayout';
+import PageTransition from './PageTransition';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { getPublicRoutes } from './routes/publicRoutes';
 import { protectedRoutes } from './routes/protectedRoutes';
@@ -13,13 +14,15 @@ export const AppRoutes: React.FC = () => {
 
   return (
     <AppLayout>
-      <Routes>
-        {getPublicRoutes(user)}
-        {protectedRoutes}
-        {settingsRoutes}
-        {groupRoutes}
-        {getAdminRoutes(loading)}
-      </Routes>
+      <PageTransition>
+        <Routes>
+          {getPublicRoutes(user)}
+          {protectedRoutes}
+          {settingsRoutes}
+          {groupRoutes}
+          {getAdminRoutes(loading)}
+        </Routes>
+      </PageTransition>
     </AppLayout>
   );
 };
