@@ -1,14 +1,9 @@
 import React, { Suspense, lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import SharedPageLoader from '@/components/app/SharedPageLoader';
+import SuperAdminGuard from '@/components/app/SuperAdminGuard';
 
 const SuperAdmin = lazy(() => import('@/pages/SuperAdmin'));
-
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-muted">
-    <Loader2 className="h-10 w-10 animate-spin text-primary" />
-  </div>
-);
 
 export const getAdminRoutes = (loading: boolean) => (
   <>
@@ -18,11 +13,13 @@ export const getAdminRoutes = (loading: boolean) => (
       path="/super-admin/*"
       element={
         loading ? (
-          <PageLoader />
+          <SharedPageLoader />
         ) : (
-          <Suspense fallback={<PageLoader />}>
-            <SuperAdmin />
-          </Suspense>
+          <SuperAdminGuard>
+            <Suspense fallback={<SharedPageLoader />}>
+              <SuperAdmin />
+            </Suspense>
+          </SuperAdminGuard>
         )
       }
     />

@@ -34,7 +34,7 @@ const BottomNavigation = () => {
   ];
 
   const navItems = isAdmin 
-    ? [...baseNavItems.slice(0, 4), { name: 'Admin', icon: Shield, path: '/admin/dashboard' }]
+    ? [...baseNavItems.slice(0, 4), { name: 'Admin', icon: Shield, path: '/super-admin' }]
     : baseNavItems;
 
   return (
