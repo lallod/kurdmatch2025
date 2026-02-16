@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -7,6 +7,17 @@ import { Input } from '@/components/ui/input';
 import { X, Heart, Send, Trash2, Eye, Pause, Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const BG_MAP: Record<string, string> = {
   sunset: 'from-rose-500 via-orange-400 to-amber-300',
@@ -61,6 +72,9 @@ const StoriesView = () => {
     fetchStories();
   }, [userId]);
 
+  // Use a ref to always have the latest handleNext without re-creating the interval
+  const handleNextRef = useRef<() => void>(() => {});
+
   useEffect(() => {
     if (stories.length === 0 || paused) return;
 
@@ -72,7 +86,7 @@ const StoriesView = () => {
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          handleNext();
+          handleNextRef.current();
           return 0;
         }
         return prev + increment;
@@ -80,7 +94,7 @@ const StoriesView = () => {
     }, interval);
 
     return () => clearInterval(timer);
-  }, [currentIndex, stories, paused]);
+  }, [currentIndex, stories.length, paused]);
 
   const fetchStories = async () => {
     try {
@@ -134,6 +148,9 @@ const StoriesView = () => {
     }
   }, [currentIndex, stories, navigate, user]);
 
+  // Keep ref in sync
+  useEffect(() => { handleNextRef.current = handleNext; }, [handleNext]);
+
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -148,13 +165,12 @@ const StoriesView = () => {
 
     try {
       const currentStory = stories[currentIndex];
-      const reactions = [...(currentStory.reactions || [])];
-      reactions.push({ userId: user.id, emoji, timestamp: new Date().toISOString() });
-
-      await (supabase as any)
-        .from('stories')
-        .update({ reactions })
-        .eq('id', currentStory.id);
+      // Use RPC to add reaction server-side (avoids needing UPDATE permission on stories)
+      await (supabase as any).rpc('add_story_reaction', {
+        p_story_id: currentStory.id,
+        p_user_id: user.id,
+        p_emoji: emoji,
+      });
     } catch (error) {
       console.error('Error adding reaction:', error);
     }
@@ -282,14 +298,31 @@ const StoriesView = () => {
             {paused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
           </Button>
           {isOwner && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDelete}
-              className="text-white hover:bg-white/10 h-8 w-8"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10 h-8 w-8"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Story</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete this story. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
           <Button
             variant="ghost"
