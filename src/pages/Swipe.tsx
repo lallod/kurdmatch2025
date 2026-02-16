@@ -7,7 +7,7 @@ import { SwipeFilterSidebar, type SwipeFilters } from '@/components/swipe/SwipeF
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
 import { likeProfile, unlikeProfile } from '@/api/likes';
-import { useSupabaseAuth as useAuth } from '@/integrations/supabase/auth';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { SWIPE_CONFIG } from '@/config/swipe';
 import { SlidersHorizontal, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 
 const Swipe = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useSupabaseAuth();
   const { t } = useTranslations();
   const { getCompatibilityForProfiles } = useCompatibility();
   const { recordSwipeAction, rewind, isRewinding, remainingRewinds } = useSwipeHistory();

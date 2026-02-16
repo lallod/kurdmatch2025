@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useNavigate } from 'react-router-dom';
 import { getPosts, getStories, likePost, unlikePost, Post, Story, getFollowingPosts } from '@/api/posts';
 import { getPostsByHashtag } from '@/api/hashtags';
@@ -8,7 +9,7 @@ import { Loader2, Heart, Search, X } from 'lucide-react';
 import { toast } from 'sonner';
 import StoryViewer from '@/components/stories/StoryViewer';
 import CreateStoryModal from '@/components/stories/CreateStoryModal';
-import { supabase } from '@/integrations/supabase/client';
+
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
 import { Input } from '@/components/ui/input';
@@ -20,13 +21,14 @@ type FeedFilter = 'for_you' | 'following';
 const DiscoveryFeed = () => {
   const navigate = useNavigate();
   const { t } = useTranslations();
+  const { user } = useSupabaseAuth();
   const { shouldShow: showTour } = useWelcomeTour();
   const [tourDismissed, setTourDismissed] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [feedFilter, setFeedFilter] = useState<FeedFilter>('for_you');
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const currentUserId = user?.id || null;
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -69,13 +71,6 @@ const DiscoveryFeed = () => {
 
   useRealtimePosts({ onPostInserted: loadPosts, onPostUpdated: loadPosts, onPostDeleted: loadPosts });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || null);
-    };
-    fetchUser();
-  }, []);
 
   const handleLike = async (postId: string) => {
     try {
