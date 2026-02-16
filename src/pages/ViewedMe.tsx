@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Eye, Clock, ArrowRight, BookOpen } from 'lucide-react';
+import { Eye, Clock, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SectionViewStats from '@/components/profile/SectionViewStats';
 
