@@ -1,187 +1,133 @@
 
-# KurdMatch UX & Design Audit -- Final Polish Plan
+# QA Report: KurdMatch -- Release Readiness Assessment
 
-## Overview
-After reviewing every page, component, and navigation path in the app, here are the improvements organized by priority. The goal: make the app feel like a polished native mobile app (like Tinder/Hinge/Instagram) that users can understand within 30 seconds.
+## A) Release Readiness: NOT READY
 
----
-
-## 1. Navigation & Discoverability Issues
-
-### Problem: Key features are buried or unreachable
-Users have no way to reach **Matches**, **Liked Me**, **Events**, **Groups**, **Gifts**, **Saved Posts**, or **Nearby** from the bottom navigation. These pages exist as routes but are disconnected from the main flow.
-
-### Fix: Add a "Hub" page accessible from the bottom nav
-- Replace the **Views** tab (Eye icon, `/viewed-me`) in the bottom nav with a **Discover** hub tab
-- The hub page becomes a single scrollable menu with quick-access cards to:
-  - Viewed Me
-  - Liked Me  
-  - Matches
-  - Events
-  - Groups
-  - Nearby Users
-  - Saved Posts
-  - Gifts & Dates
-- Each card shows a count badge (e.g., "3 new likes", "2 events nearby")
-- This consolidates 8 hidden pages into one discoverable entry point
-
-### Alternative: Add a top navigation bar on the Discovery page
-- Add horizontal scrollable chips below the For You / Following tabs: **Nearby**, **Events**, **Groups**, **Matches**
-- Keep Viewed Me and Liked Me accessible from the profile page
+The app has several P0/P1 issues that must be fixed before App Store submission. The most critical are: unprotected admin routes, excessive debug logging in production, security policy weaknesses, and inconsistent error handling.
 
 ---
 
-## 2. Settings Page Design Mismatch
+## B) Critical Technical Issues (P0/P1)
 
-### Problem
-`AccountSettings.tsx` uses `bg-white/10`, `text-white`, `text-purple-200`, hardcoded colors like `bg-[#53073c]` -- these are **not** using the Midnight Rose CSS variables. This creates visual inconsistency, especially in light mode.
+### P0-1: Super Admin Routes Have No Authentication Guard
+The `/super-admin/*` route in `adminRoutes.tsx` has NO `ProtectedRoute` wrapper and NO role check. Any user (or unauthenticated visitor) can navigate to `/super-admin` and access the full admin panel with 40+ admin pages (users, payments, moderation, API keys, etc.). This is a severe security vulnerability.
+- **File**: `src/components/app/routes/adminRoutes.tsx`
+- **Fix**: Wrap the super-admin route in a dedicated `SuperAdminGuard` component that checks both authentication and `user_roles` for `super_admin` role.
 
-### Fix
-- Replace all `text-white` with `text-foreground`
-- Replace `text-purple-200` with `text-muted-foreground`
-- Replace `bg-white/10` and `bg-white/20` with `bg-card` and `border-border`
-- Remove hardcoded `bg-[#53073c]`
-- Replace `from-tinder-rose to-tinder-orange` gradients with `from-primary to-accent`
+### P0-2: RLS Disabled on Public Tables
+The Supabase linter reports `ERROR: RLS Disabled in Public` -- at least one table has no Row Level Security enabled. This means any user with the anon key can read/write all data in that table.
+- **Fix**: Identify the table(s) and enable RLS + create appropriate policies.
 
----
+### P0-3: Overly Permissive RLS Policies (USING true)
+The linter flags two `RLS Policy Always True` warnings for UPDATE/DELETE/INSERT operations. This effectively bypasses access control.
+- **Fix**: Audit and tighten these policies to scope operations to the authenticated user.
 
-## 3. CreatePost -- Missing Image Upload
+### P1-1: Story Reactions Fail for Non-Owners
+In `StoriesView.tsx`, `handleReaction()` calls `.update({ reactions })` on the `stories` table. Only the owner has UPDATE permission (via the "Users can update their own stories" policy). Non-owner reactions will silently fail.
+- **Fix**: Use a separate `story_reactions` table or an RPC function with `SECURITY DEFINER`.
 
-### Problem
-The Create Post page only accepts a **URL** for media. Users cannot upload images from their phone camera/gallery, which is the most basic expectation for a social app.
+### P1-2: Admin Navigation Link Goes to Non-Existent Route
+In `BottomNavigation.tsx`, the admin nav item links to `/admin/dashboard`, but `adminRoutes.tsx` redirects `/admin/*` to `/super-admin`. The super admin layout then has its own routing starting at `/super-admin/` (root = Dashboard). The user will land on the dashboard, but via a redirect chain -- this is fragile and could flash a 404.
+- **Fix**: Link directly to `/super-admin`.
 
-### Fix
-- Add a file input button (camera/gallery icon) that uploads images to Supabase storage
-- Remove the manual URL input approach
-- Add a photo preview with remove button
-- Keep the URL fallback as an advanced option
-
----
-
-## 4. Saved Posts Page is Empty Shell
-
-### Problem
-`SavedPosts.tsx` only shows a count. It does not display the actual saved posts -- users see "X saved posts" but cannot view them.
-
-### Fix
-- Query `saved_posts` table joined with `posts` to fetch full post data
-- Render actual post cards (reuse `PostCard` component)
-- Add unsave functionality
+### P1-3: `handleNext` Closure Bug in Story Timer
+In `StoriesView.tsx`, the `useEffect` timer (line 72-82) calls `handleNext` inside `setProgress`. But `handleNext` is in the dependency array of the effect and is recreated on every render due to its `useCallback` dependencies (`currentIndex`, `stories`, `user`). This creates a new interval every time state changes, causing potential double-advances and flickering.
+- **Fix**: Use a ref for `handleNext` or restructure the timer to avoid this dependency cycle.
 
 ---
 
-## 5. Swipe Card -- Fake Distance Data
+## C) UX Problems
 
-### Problem
-In `Swipe.tsx` line 61: `distance: Math.floor(Math.random() * 20) + 1` -- distance is randomly generated, not real. Users see fake distances.
+### P2-1: Debug Logging Visible to Users
+Over 100 `console.log` statements exist in auth/registration code (e.g., "Form values changed", "Submit button clicked", step completion details). Users opening DevTools will see form data, emails, and internal state printed to the console. This is unprofessional and a minor privacy concern.
+- **Fix**: Remove all debug `console.log` statements or gate them behind a `DEV` flag.
 
-### Fix
-- Remove the random distance generation
-- Either use the real location-based distance from `useNearbyUsers` or hide the distance badge when no real data is available
+### P2-2: Hardcoded English Strings
+Multiple pages have hardcoded English text not wrapped in `t()`:
+- `NotFound.tsx`: "This page doesn't exist", "Back to Home"
+- `StoriesView.tsx`: "No stories available", "Go Back", "Reply to story...", "Story deleted", "Reply sent!", "Failed to load stories"
+- `Subscription.tsx`: "Current Plan", "Refresh", "Manage"
+- `ErrorBoundary.tsx`: "Something went wrong", "Refresh Page"
+- **Impact**: Kurdish/RTL users see English fragments.
 
----
+### P2-3: No Confirmation Dialog for Story Deletion
+`handleDelete` in `StoriesView.tsx` deletes immediately on button press with no confirmation. A misclick permanently removes content.
 
-## 6. ViewedMe & LikedMe -- Inconsistent Design
+### P2-4: "Forgot Password" Without Email Shows Generic Error
+On the Auth page, clicking "Forgot password?" with an empty email field shows a toast error, but it could be more helpful (e.g., highlight the email input).
 
-### Problem
-Both pages have a different design language from the rest of the app:
-- They use `bg-gradient-to-b from-background to-surface-secondary` while other pages use plain `bg-background`
-- The header layout is different (icon + title vs slim header)
-- LikedMe still uses the old `useToast` hook instead of `sonner`
-
-### Fix
-- Standardize both pages to use the same slim header pattern (`sticky top-0 z-10 bg-background border-b border-border/30`)
-- Switch LikedMe from `useToast` to `sonner` (already used elsewhere)
-- Remove gradient backgrounds, use plain `bg-background`
-
----
-
-## 7. Messages Page -- Too Complex, No Back Navigation
-
-### Problem
-`Messages.tsx` is **1157 lines** in a single file. The conversation list and chat view are in the same component, making it hard to maintain and causing potential performance issues. There is also no clear "back to conversations" flow on mobile.
-
-### Fix (Code Quality)
-- Extract `ConversationList` into its own component
-- Extract `ChatView` into its own component  
-- Keep `Messages.tsx` as the orchestrator (~100 lines)
-
-### Fix (UX)
-- On mobile: show conversation list OR chat view (not both)
-- Add clear back arrow from chat view to conversation list
-- This matches WhatsApp/Telegram behavior
+### P3-1: Register Page Back Button Uses `absolute` Positioning
+The "Back to Home" button in `Register.tsx` (line 16) uses `absolute top-4 left-4` which can overlap with content or be cut off by safe-area insets, since it's outside the safe-area padding flow.
 
 ---
 
-## 8. Profile Page -- No Quick Access to Key Features
+## D) Architecture/Code Problems
 
-### Problem
-MyProfile has stats (views, likes, matches) but they are not tappable. Users see "12 views" but cannot tap to see who viewed them.
+### D-1: Massive Use of `as any` Type Assertions (303 matches in 34 files)
+The codebase heavily bypasses TypeScript's type system. This indicates the Supabase types are out of sync with the actual schema (tables like `stories`, `story_views`, `reports` not in generated types). This makes refactoring dangerous and hides real bugs.
+- **Fix**: Regenerate Supabase types and reduce `as any` usage.
 
-### Fix
-- Make the stats cards clickable, navigating to `/viewed-me`, `/liked-me`, `/matches` respectively
-- Add subtle chevron or tap hint
+### D-2: Duplicated `PageLoader` Component
+The same `PageLoader` component (Loader2 spinner centered on screen) is defined identically in 5 separate route files. Should be a shared component.
 
----
+### D-3: `ProfileCompletionGuard` is Defined But Never Used
+`src/components/app/ProfileCompletionGuard.tsx` and `RegisterProtection.tsx` exist but are not referenced in any route. Users with incomplete profiles can access all protected routes.
 
-## 9. Matches Page -- Redundant SwipeActions
+### D-4: Inconsistent Auth Hook Usage
+Both `useSupabaseAuth` and `useAuth` are exported from `auth.tsx` as aliases. Some files use one, some the other (e.g., `Swipe.tsx` imports `useSupabaseAuth as useAuth`). This creates confusion.
 
-### Problem
-When clicking a match on the Matches page, a modal appears with full Swipe actions (Rewind, Pass, Like, Super Like, Boost). This makes no sense -- these people are **already matched**. The appropriate actions are "Message" and "View Profile".
+### D-5: `DiscoveryFeed.tsx` Fetches User ID Separately
+Line 72-78 calls `supabase.auth.getUser()` to get `currentUserId`, even though `useSupabaseAuth()` is available and already used elsewhere. Redundant API call.
 
-### Fix
-- Replace the SwipeActions modal with two simple buttons: **Message** and **View Profile**
-- Use a bottom sheet instead of a centered modal
-
----
-
-## 10. Missing Onboarding Tour
-
-### Problem
-New users land on the Discovery feed with no guidance. There are 5+ navigation tabs and dozens of features but zero explanation.
-
-### Fix
-- Add a first-time user welcome overlay with 3-4 slides:
-  1. "Swipe to find matches" (point to Swipe tab)
-  2. "Discover people in your feed" (point to Home tab)
-  3. "Chat with your matches" (point to Messages tab)
-  4. "Complete your profile to get more matches" (point to Profile tab)
-- Store `has_seen_onboarding` in localStorage
+### D-6: Story Reply Bypasses Messaging Architecture
+`handleReply` in `StoriesView.tsx` directly inserts into the `messages` table, which may not trigger realtime updates or respect any message validation/filtering logic that the main chat system uses.
 
 ---
 
-## Implementation Priority
+## E) Potential Future Risks
 
-| Priority | Change | Impact | Effort |
-|----------|--------|--------|--------|
-| 1 | Fix navigation -- add hub/discover page | Critical | Medium |
-| 2 | Fix Settings hardcoded colors | High | Low |
-| 3 | Fix CreatePost image upload | High | Medium |
-| 4 | Fix Saved Posts to show actual posts | High | Low |
-| 5 | Remove fake distance in Swipe | Medium | Low |
-| 6 | Standardize ViewedMe/LikedMe design | Medium | Low |
-| 7 | Fix Matches page actions | Medium | Low |
-| 8 | Make MyProfile stats clickable | Medium | Low |
-| 9 | Split Messages.tsx into components | Medium | High |
-| 10 | Add onboarding tour | Medium | Medium |
+### E-1: No Rate Limiting on Client-Side Actions
+Likes, reactions, story views, replies -- all fire directly from the client with no throttling. A user could spam reactions or likes rapidly.
+
+### E-2: No Pagination on Posts Feed
+`getPosts()` fetches all posts. As the user base grows, this will hit the 1000-row Supabase limit and become slow.
+
+### E-3: WebRTC Call Infrastructure
+`useWebRTC` is integrated in Messages but there is no TURN/STUN server configuration visible. Video calls will fail behind NATs/firewalls in production.
+
+### E-4: Story Timer Memory Leak Risk
+The `setInterval` in `StoriesView.tsx` clears on unmount, but if `handleNext` navigates away before cleanup, there could be a state update on an unmounted component.
+
+### E-5: OAuth Registration Flow Relies on `sessionStorage`
+The `oauth_registration_flow` flag in `sessionStorage` is fragile -- it won't survive browser crashes or tab closures, potentially leaving OAuth users in a broken state.
 
 ---
 
-## Technical Details
+## F) Recommended Fixes (Priority Order)
 
-### Files to create:
-- `src/pages/DiscoverHub.tsx` -- new hub page for all features
-- `src/components/onboarding/WelcomeTour.tsx` -- first-time user guide
+1. **Immediately secure admin routes** -- add auth + role guard to `/super-admin/*` (P0)
+2. **Enable RLS on all public tables** and tighten permissive policies (P0)
+3. **Fix story reaction permissions** -- move to separate table or use RPC (P1)
+4. **Remove all debug console.log** from auth/registration code (P2)
+5. **Fix story timer closure bug** to prevent double-advance (P1)
+6. **Wrap all user-facing strings** in `t()` translation function (P2)
+7. **Add delete confirmation** for stories (P2)
+8. **Regenerate Supabase types** and reduce `as any` usage (ongoing)
+9. **Extract shared `PageLoader`** component (P3)
+10. **Add pagination** to post feeds (future risk)
 
-### Files to modify:
-- `src/components/BottomNavigation.tsx` -- replace Views tab with Discover hub
-- `src/components/my-profile/AccountSettings.tsx` -- fix ~30 hardcoded color values
-- `src/pages/CreatePost.tsx` -- add image upload to Supabase storage
-- `src/pages/SavedPosts.tsx` -- fetch and render actual saved posts
-- `src/pages/Swipe.tsx` -- remove random distance (line 61)
-- `src/pages/ViewedMe.tsx` -- standardize header design
-- `src/pages/LikedMe.tsx` -- standardize header + switch to sonner
-- `src/pages/Matches.tsx` -- replace SwipeActions with Message/View buttons
-- `src/pages/MyProfile.tsx` -- make stat cards clickable/navigable
-- `src/components/app/routes/protectedRoutes.tsx` -- add hub route
-- `src/components/app/AppLayout.tsx` -- update hidden nav routes if needed
+---
+
+## Technical Details Summary
+
+| Category | Count |
+|----------|-------|
+| Total pages | 50 |
+| Total route files | 5 |
+| Protected routes | 30+ |
+| Unprotected admin routes | 1 (critical) |
+| `as any` type assertions | 303 |
+| Debug console.log in auth | 118 |
+| Hardcoded English strings | 20+ |
+| Unused guard components | 2 |
+| RLS issues (linter) | 3 |
