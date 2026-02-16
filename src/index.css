@@ -383,6 +383,10 @@ html {
   .safe-area-inset-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
   
   .min-h-screen-safe {
     min-height: 100vh;

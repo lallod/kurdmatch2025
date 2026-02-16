@@ -20,10 +20,10 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     !location.pathname.startsWith('/super-admin');
 
   return (
-    <>
+    <div style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
       {children}
       {showNav && <BottomNavigation />}
-    </>
+    </div>
   );
 };
 
