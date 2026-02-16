@@ -13,6 +13,7 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
 import { Input } from '@/components/ui/input';
 import { useTranslations } from '@/hooks/useTranslations';
+import WelcomeTour, { useWelcomeTour } from '@/components/onboarding/WelcomeTour';
 
 type FeedFilter = 'for_you' | 'following';
 
@@ -20,6 +21,8 @@ const DiscoveryFeed = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslations();
+  const { shouldShow: showTour } = useWelcomeTour();
+  const [tourDismissed, setTourDismissed] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
@@ -206,6 +209,8 @@ const DiscoveryFeed = () => {
       {currentUserId && (
         <CreateStoryModal open={showCreateStory} onOpenChange={setShowCreateStory} onStoryCreated={handleStoryCreated} userId={currentUserId} />
       )}
+
+      {showTour && !tourDismissed && <WelcomeTour onComplete={() => setTourDismissed(true)} />}
     </div>
   );
 };
