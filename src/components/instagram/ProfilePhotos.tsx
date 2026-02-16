@@ -38,12 +38,12 @@ const ProfilePhotos: React.FC<ProfilePhotosProps> = ({ profile }) => {
           <button
             key={index}
             onClick={() => setSelectedPhoto(photo.url)}
-            className="relative aspect-square overflow-hidden bg-muted group active:opacity-80 transition-opacity"
+            className="relative aspect-square overflow-hidden bg-muted active:opacity-80 transition-opacity"
           >
             <img
               src={photo.url}
               alt={`Photo ${index + 1}`}
-              className="w-full h-full object-cover transition-transform group-hover:scale-105"
+              className="w-full h-full object-cover"
             />
             {photo.is_primary && (
               <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
