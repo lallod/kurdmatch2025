@@ -97,8 +97,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
     <div>
       {/* Centered hero layout */}
       <div className="flex flex-col items-center text-center mb-4">
-        <Avatar className="w-24 h-24 ring-[3px] ring-primary/30 mb-3">
-          <AvatarImage src={profile.profile_image} alt={profile.name} />
+        <Avatar className="w-20 h-20 mb-3">
+          <AvatarImage src={profile.profile_image} alt={profile.name} className="object-cover" />
           <AvatarFallback className="text-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
             {profile.name[0]}
           </AvatarFallback>
