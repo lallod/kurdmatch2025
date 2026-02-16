@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Heart, Sparkles, MapPin, X } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { MessageCircle, Heart, X } from 'lucide-react';
+
 
 import { getMatches, getNewMatches } from '@/api/matches';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
-import { likeProfile } from '@/api/likes';
-import SectionViewStats from '@/components/profile/SectionViewStats';
 import { useTranslations } from '@/hooks/useTranslations';
 
 interface Match {
@@ -45,18 +43,6 @@ const Matches = () => {
   const handleViewProfile = (profileId: string) => navigate(`/profile/${profileId}`);
   const handleMatchClick = (match: Match) => { setSelectedMatch(match); setShowSwipeActions(true); };
 
-  const handleLike = async () => {
-    if (!selectedMatch) return;
-    try {
-      const result = await likeProfile(selectedMatch.profileId);
-      if (result.success) { toast.success("Liked!"); setShowSwipeActions(false); }
-      else toast.error(result.error || "Failed to like profile");
-    } catch (error) { toast.error("Something went wrong"); }
-  };
-  const handlePass = () => { toast.info("Passed"); setShowSwipeActions(false); };
-  const handleRewind = () => toast.info("Rewind");
-  const handleSuperLike = () => { toast.info("Super liked!"); setShowSwipeActions(false); };
-  const handleBoost = () => toast.info("Boosted!");
 
   const formatMatchTime = (date: string) => {
     const matchDate = new Date(date); const now = new Date();

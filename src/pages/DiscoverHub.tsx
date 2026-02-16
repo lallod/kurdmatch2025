@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, Heart, Users, MapPin, Bookmark, Calendar, Gift, Trophy } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTranslations } from '@/hooks/useTranslations';
 
@@ -30,22 +31,31 @@ const DiscoverHub = () => {
 
       <div className="max-w-lg mx-auto px-4 py-4">
         <div className="grid grid-cols-2 gap-3">
-          {items.map((item) => (
-            <button
+          {items.map((item, index) => (
+            <motion.button
               key={item.path}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3, ease: 'easeOut' }}
               onClick={() => navigate(item.path)}
               className="relative bg-card rounded-2xl p-5 text-left transition-all active:scale-[0.97] border border-border/10 hover:border-border/30"
+              whileTap={{ scale: 0.96 }}
             >
               <div className={`w-11 h-11 ${item.bg} rounded-xl flex items-center justify-center mb-3`}>
                 <item.icon className={`w-5 h-5 ${item.color}`} />
               </div>
               <p className="text-sm font-semibold text-foreground">{item.label}</p>
               {item.count > 0 && (
-                <span className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-bold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1.5">
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: index * 0.05 + 0.2, type: 'spring', stiffness: 400, damping: 15 }}
+                  className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-bold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1.5"
+                >
                   {item.count > 99 ? '99+' : item.count}
-                </span>
+                </motion.span>
               )}
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
