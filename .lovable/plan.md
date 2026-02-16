@@ -1,76 +1,68 @@
 
 
-## Profile Update Issues - Deep Scan & Fix Plan
+## Final Pre-Publication Fix: Swipe Filter Values Mismatch
 
-### Problems Found
+### Problem Found
+The **Swipe page filters are completely broken** -- the dropdown values in `SwipeFilters.tsx` do not match the actual values stored in the database. When a user selects a filter, zero results will be returned because the filter values don't exist in the database.
 
-**1. Random fake data overwrites real database values on every page load**
-- `fillEmptyProfileFields()` and `assignRandomValues()` run on every load in `useRealProfileData.ts`
-- They fill "empty" fields with random values, but their `isEmpty()` check treats legitimate values like "Not specified" or "Prefer not to say" as empty, replacing them with random data
-- This means: after a user saves a value, if they reload the page, random values may overwrite their saved data in the UI (though the DB is correct, the UI shows wrong data)
+### Mismatches to Fix
 
-**2. Optimistic update merges into randomly-filled enhanced data, not raw DB data**
-- When a user edits a field, `updateProfileData()` merges into `enhancedData` which already contains random values
-- The DB update succeeds, but the local state still has random values for other fields
-- On next reload, random values are regenerated (different ones), making the profile look inconsistent
+**1. Kurdistan Region** (most critical)
+- SwipeFilters: `Bakur, Bashur, Rojava, Rojhelat, Diaspora`
+- Database: `South-Kurdistan, North-Kurdistan, East-Kurdistan, West-Kurdistan, Diaspora`
+- Fix: Change SwipeFilters to use DB values with Kurdish names as display labels
 
-**3. `DetailItem` select values don't match DB values after save**
-- The `DetailItem` component passes the human-readable select option (e.g., "Socially") directly via `handleProfileUpdate`
-- `handleProfileUpdate` correctly maps camelCase keys to snake_case DB columns
-- However, `valueMapping.ts` has a separate mapping system (`dbToUiValueMapping`) that converts DB values to different UI keys -- but this mapping is **skipped** in `useRealProfileData` (line 122: "Skip value conversion")
-- This creates a mismatch: the select options use human-readable values like "Socially" but the value mapping system expects keys like "socially"
+**2. Religion**
+- SwipeFilters: `Muslim, Christian, Jewish, Yazidi, Spiritual, Agnostic, Atheist`
+- Database: `Islam, Christianity, Judaism, Yazidism, Yarsanism, Secular, Spiritual`
+- Fix: Update to match DB values (Islam, Christianity, Judaism, Yazidism, Yarsanism, Secular, Spiritual)
 
-**4. Missing fields in `fieldNameMapping.ts`**
-- Several fields used in the profile are missing from `dbToUiFieldMapping`: `morning_routine`, `evening_routine`, `decision_making_style`, `growth_goals`, `hidden_talents`, `stress_relievers`, `charity_involvement`, `music_instruments`, `favorite_games`, `tech_skills`, `dream_home`, `transportation_preference`, `work_environment`, `ideal_weather`, `dream_vacation`, `favorite_memory`
-- These fields fall through to raw `(realProfileData as any)` casts in `MyProfile.tsx`
+**3. Body Type**
+- SwipeFilters: `Slim, Athletic, Average, Curvy, Plus Size`
+- Database: `Slim, Athletic, Average, Curvy, Muscular`
+- Fix: Replace `Plus Size` with `Muscular`
 
-**5. Profile data not shared across pages (Swipe/Instagram)**
-- `MyProfile.tsx` is the only page using `useRealProfileData` hook
-- Swipe page fetches profiles via `getProfileSuggestions` which reads directly from DB -- this works correctly
-- Instagram profile page (`ProfileAbout.tsx`) fetches via `getProfileById` -- also reads from DB directly
-- So updates DO reflect on other pages after DB save, but only after a page reload/refetch
+**4. Smoking**
+- SwipeFilters: `Never, Socially, Regularly`
+- Database: `Non-smoker, Rarely` (very few records, but values must match what users save)
+- Fix: Update to match the values users can select in their profile settings
 
-### Fix Plan
+**5. Drinking**
+- SwipeFilters: `Never, Socially, Regularly`
+- Database: `Social, Never`
+- Fix: Same approach -- match profile settings values
 
-#### Step 1: Stop filling empty fields with random fake data
-- Remove `fillEmptyProfileFields()` call from `useRealProfileData.ts`
-- Remove `assignRandomValues()` call from `useRealProfileData.ts`
-- Instead, let empty fields display as empty/null -- the UI already handles "Not specified" display
-- This is the **root cause** of most update issues -- random data masks real data
+**6. Exercise Habits**
+- SwipeFilters: `Daily, 3-4 times a week, Occasionally, Rarely, Never`
+- Database: `Daily fitness routine, Regular exercise, Occasional exercise, Sometimes, Often, Rarely`
+- Fix: Update to match DB values
 
-#### Step 2: Simplify the data loading pipeline in `useRealProfileData.ts`
-- Load profile from DB -> convert field names to camelCase -> set as profile data
-- No random filling, no value conversion, no enhancement layers
-- Keep `fieldSources` tracking but mark all fields as `'user'` since they come from the real DB
+**7. Education**
+- SwipeFilters: `High School, Bachelor's, Master's, PhD, Trade School`
+- Database: `High School, Bachelor's Degree, Master's Degree, PhD, Some College`
+- Fix: Update to match DB values
 
-#### Step 3: Fix `updateProfileData` to properly merge state
-- After successful DB update, merge the snake_case updates into raw `profileData`
-- Also merge camelCase equivalents so UI components see the change immediately
-- Remove dependency on `enhancedData` wrapper
+### Implementation
 
-#### Step 4: Add all missing fields to `fieldNameMapping.ts`
-- Add the 16+ missing field mappings (morning_routine, evening_routine, dream_home, etc.)
-- This ensures `convertDbToUiProfile` handles all fields consistently
+**File to modify: `src/components/swipe/SwipeFilters.tsx`**
 
-#### Step 5: Ensure profile completion calculation works without random data
-- Update `getUserOnboardingProgress` to calculate based on actual DB values only
-- Empty fields correctly count as incomplete (which is the desired behavior)
+Update all Select dropdown options to use the exact values stored in the database. For Kurdistan Region specifically, use the DB value as the `SelectItem value` with Kurdish names in the display label, e.g.:
+```
+<SelectItem value="South-Kurdistan">South Kurdistan (Bashur)</SelectItem>
+<SelectItem value="North-Kurdistan">North Kurdistan (Bakur)</SelectItem>
+```
 
-#### Step 6: Verify the swipe and Instagram pages read fresh data
-- These pages already read directly from the DB, so they will show correct data once the profile update actually saves correctly
-- No changes needed for these pages -- the issue was that the MyProfile page was showing random data, not the saved data
+### Also verify
+- `src/components/discovery/AdvancedSearchFilters.tsx` -- already uses correct `South-Kurdistan` values (confirmed OK)
+- `src/pages/AdvancedSearch.tsx` -- uses correct values (confirmed OK)
+- `src/hooks/useDiscoveryProfiles.ts` -- passes values directly, no mismatch (confirmed OK)
+- `src/api/profiles.ts` -- filter pipeline is correct, just receives wrong values from UI (confirmed OK)
 
 ### Technical Details
 
-Files to modify:
-- `src/hooks/useRealProfileData.ts` -- Remove random data filling, simplify pipeline
-- `src/utils/fieldNameMapping.ts` -- Add 16+ missing field mappings
-- `src/pages/MyProfile.tsx` -- Clean up `as any` casts since field mappings will be complete
-- `src/utils/directProfileFiller.ts` -- Keep file but stop calling it from the main flow
-- `src/utils/profileEnhancement.ts` -- Keep file but stop calling it from the main flow
+Only **one file** needs changes: `src/components/swipe/SwipeFilters.tsx`
 
-Files that work correctly (no changes needed):
-- `src/api/profiles.ts` -- `updateProfile()` correctly saves to DB
-- `src/components/profile/DetailItem.tsx` -- Correctly sends field edits
-- `src/pages/MyProfile.tsx` `handleProfileUpdate()` -- Correctly maps camelCase to snake_case
+All 7 filter dropdowns need their `<SelectItem>` values updated to match actual database values. The filter logic in `src/api/profiles.ts` is correct -- it passes these values directly to Supabase `.eq()` queries, so the values just need to match what's in the DB.
+
+No database changes needed. No other files need modification.
 
