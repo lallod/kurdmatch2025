@@ -1,76 +1,109 @@
 
+# Full Internationalization (i18n) Audit and Fix Plan
 
-# Pre-Publishing Checklist for KurdMatch
+## Problem Summary
+Many pages and components contain hardcoded English strings that are NOT wrapped in the `t()` translation function. When a user switches to Norwegian, Kurdish, or German, these strings remain in English -- breaking the multilingual experience.
 
-Here's everything you should check and fix before hitting "Publish."
+## Audit Findings
 
----
+### Category A: Entire Pages With ZERO Translation Support
+These pages have NO `useTranslations()` hook at all -- every single string is hardcoded in English:
 
-## 1. Critical Security Issues (Must Fix)
+| Page | Hardcoded Strings Count |
+|------|------------------------|
+| `CookiePolicy.tsx` | ~20 (all section titles + content + button) |
+| `PrivacyPolicy.tsx` | ~25 (all section headings + paragraphs) |
+| `TermsOfService.tsx` | ~20 (all terms sections) |
+| `CommunityGuidelines.tsx` | ~40 (guidelines, rules, violations, reporting) |
+| `AboutUs.tsx` | ~30 (values, stats, mission, features, CTA) |
+| `ContactUs.tsx` | ~20 (labels, placeholders, options, toast messages) |
+| `VerificationForm.tsx` | ~25 (titles, guidelines, buttons, toast messages) |
+| `CookieConsentBanner.tsx` | ~5 (banner title, description, buttons) |
+| `MatchPopup.tsx` | ~5 ("It's a Match!", buttons) |
+| `ErrorBoundary.tsx` | ~3 ("Something went wrong", "Refresh Page") |
+| `PhotoTips.tsx` | ~8 (safety alert, tips list) |
 
-These are flagged as errors in your security scans and **block a safe launch**:
+### Category B: Pages WITH `useTranslations()` but Containing Missed Hardcoded Strings
 
-| Issue | What It Means | How to Fix |
-|-------|--------------|------------|
-| **Phone verifications table exposed** | Attackers could steal phone numbers and verification codes | Tighten RLS policies so only the owner can access their record |
-| **Payments table exposure** | Financial data (Stripe IDs, amounts) could be accessed | Ensure RLS restricts access to the payment owner + super admins only |
-| **Scheduled content table too open** | The `USING(true)` policy lets anyone with the anon key read/write | Replace with `is_super_admin(auth.uid())` check |
+| File | Missed Strings |
+|------|---------------|
+| `LandingV2.tsx` | "Home", "About", "Features", "Contact", "Login", "REGISTER", "What You Can Find", "Connect with Kurdish community worldwide", "All Kurdish Dialects Welcome", "Three simple steps...", footer labels ("Company", "Legal", "Get Started", "About Us", etc.), "All rights reserved" |
+| `MobileSidebar.tsx` | "Login", "Registration", "About Us", "Contact Us", "Language", "Kurdish Hearts" |
+| `Subscription.tsx` | "Current Plan", "Refresh", "Manage", subscription details bullets |
+| `BlockedUsers.tsx` | "Blocked", "Unblock", "Unblock User?", "Are you sure...", "Cancel" (dialog strings) |
+| `Matches.tsx` | "New" badge, "Just now", "h ago", "Yesterday", "d ago", "Loading matches..." |
+| `Notifications.tsx` | "New Like", "New Comment", "Profile View", "All notifications marked as read", "Notification removed" |
+| `HelpSupport.tsx` | ALL FAQ content (~100+ strings: questions, answers, category titles), "Search for help...", "Contact Us", "Send a message", "Guidelines", "Community rules", "My Support Tickets", "Search Results", "Clear", "Popular Questions", "All Topics", "No results found", "Contact support instead" |
+| `fieldLabels.ts` | All field labels and requirement messages (this is acceptable -- used internally for form validation, not displayed in multi-language context) |
 
----
+### Category C: Components With Scattered Hardcoded Strings
 
-## 2. Important Warnings (Should Fix)
+| Component | Missed Strings |
+|-----------|---------------|
+| `PostCard.tsx` | Various action labels |
+| `ConversationList` | Header text |
+| `StoryBubbles` | "Your Story" label |
 
-| Issue | How to Fix |
-|-------|------------|
-| **Leaked password protection disabled** | Enable in your Supabase dashboard: Authentication > Settings > turn on leaked password protection |
-| **Postgres version outdated** | Upgrade in Supabase dashboard: Settings > Infrastructure > Upgrade Postgres |
-| **Extensions in public schema** | Move PostGIS to a dedicated schema (low risk, can do post-launch) |
-| **Function search path mutable** | Add `SET search_path = public` to remaining functions |
-| **Usage tracking functions accept user-supplied IDs** | Modify `can_perform_action` and `increment_usage_count` to use `auth.uid()` internally |
+## Implementation Plan
 
----
+### Step 1: Add Translation Keys to Database
+Insert approximately **200+ new translation keys** across all 5 main languages (english, kurdish_sorani, kurdish_kurmanci, norwegian, german) via a SQL migration. Keys will follow existing naming conventions (e.g., `cookie.title`, `privacy.section_1_title`, `landing.nav.home`, etc.).
 
-## 3. Manual Checks in Supabase Dashboard
+### Step 2: Update Category A Files (Zero Translation Support)
+For each file listed in Category A:
+1. Import `useTranslations` hook (or for class component `ErrorBoundary`, use fallback approach)
+2. Wrap every user-facing string with `t('key', 'English fallback')`
 
-These can't be done through code -- you need to do them in the Supabase dashboard:
+Files to modify:
+- `src/pages/CookiePolicy.tsx`
+- `src/pages/PrivacyPolicy.tsx`
+- `src/pages/TermsOfService.tsx`
+- `src/pages/CommunityGuidelines.tsx`
+- `src/pages/AboutUs.tsx`
+- `src/pages/ContactUs.tsx`
+- `src/components/verification/VerificationForm.tsx`
+- `src/components/CookieConsentBanner.tsx`
+- `src/components/MatchPopup.tsx`
+- `src/components/ErrorBoundary.tsx`
+- `src/components/auth/components/photo-upload/PhotoTips.tsx`
 
-- **Enable leaked password protection**: Auth > Settings
-- **Upgrade Postgres version**: Settings > Infrastructure
-- **Review all RLS policies**: Table Editor > Policies (spot-check that no table has `USING(true)` without role gating)
+### Step 3: Fix Category B Files (Partially Translated)
+For each file listed in Category B, wrap the remaining hardcoded strings:
+- `src/pages/LandingV2.tsx` (~30 strings)
+- `src/components/landing/MobileSidebar.tsx` (~6 strings)
+- `src/pages/Subscription.tsx` (~8 strings)
+- `src/pages/BlockedUsers.tsx` (~6 strings)
+- `src/pages/Matches.tsx` (~6 strings)
+- `src/pages/Notifications.tsx` (~5 strings)
+- `src/pages/HelpSupport.tsx` (~100+ FAQ strings)
 
----
+### Step 4: Insert All Translations for All Languages
+A single large SQL migration will insert rows for each new key across all 5 primary languages with proper translations:
+- **English**: Original text
+- **Kurdish Sorani**: Full Kurdish translation
+- **Kurdish Kurmanci**: Full Kurmanci translation
+- **Norwegian**: Full Norwegian translation
+- **German**: Full German translation
 
-## 4. App Functionality Checks
+### Technical Details
 
-Before publishing, manually test these flows:
+**Translation key naming convention** (matching existing patterns):
+```
+cookie.title, cookie.what_are_cookies, cookie.types_title, ...
+privacy.title, privacy.introduction, privacy.info_collect, ...
+terms.title, terms.acceptance, terms.eligibility, ...
+guidelines.title, guidelines.be_respectful, ...
+about.title, about.mission, about.values_title, ...
+contact.title, contact.full_name, contact.email, ...
+landing.nav.home, landing.nav.about, landing.nav.login, ...
+match_popup.title, match_popup.send_message, ...
+verification.selfie, verification.id_document, ...
+```
 
-- **Registration**: Create a new account, complete all steps, upload a photo
-- **Login/Logout**: Email login, session persistence, logout
-- **Discovery**: Browse profiles, like/dislike, match creation
-- **Messaging**: Send and receive messages, real-time updates
-- **Stories**: Create, view, react, delete
-- **Groups**: Create, join, post
-- **Settings**: Edit profile, change preferences, delete account
-- **Admin**: Access super admin dashboard (if applicable)
-- **Mobile**: Test on a phone-sized screen -- navigation, forms, swipe actions
+**Estimated scope**:
+- ~200 new translation keys
+- ~1000 new rows in app_translations (200 keys x 5 languages)
+- ~18 files to modify
+- 1 SQL migration for all translation data
 
----
-
-## 5. Environment and Data
-
-- **Check Live database for existing data**: If you've previously published, make sure schema changes won't destroy existing user data. Run destructive migrations in Cloud View > Run SQL (with Live selected) first.
-- **Environment variables**: Confirm `VITE_SUPABASE_URL` and keys are correct for production.
-- **Edge functions**: All 20+ edge functions are deployed and configured in `supabase/config.toml`.
-
----
-
-## Priority Order
-
-1. Fix the 3 critical security errors (phone verifications, payments, scheduled content RLS)
-2. Enable leaked password protection in dashboard
-3. Upgrade Postgres in dashboard
-4. Test the main user flows listed above
-5. Publish
-
-Would you like me to fix the 3 critical security issues now?
-
+**Note on legal pages**: CookiePolicy, PrivacyPolicy, TermsOfService, and CommunityGuidelines contain long legal text. These will use translation keys for each section title and content block, allowing proper localization of legal documents.
