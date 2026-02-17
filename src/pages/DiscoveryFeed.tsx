@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useNavigate } from 'react-router-dom';
-import { getPosts, getStories, likePost, unlikePost, Post, Story, getFollowingPosts } from '@/api/posts';
+import { getPosts, getStories, likePost, unlikePost, Post, Story, getFollowingPosts, POSTS_PAGE_SIZE } from '@/api/posts';
 import { getPostsByHashtag } from '@/api/hashtags';
 import StoryBubbles from '@/components/discovery/StoryBubbles';
 import PostCard from '@/components/discovery/PostCard';
@@ -34,15 +34,23 @@ const DiscoveryFeed = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [searchingHashtag, setSearchingHashtag] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
+      setPage(0);
+      setHasMore(true);
       const [postsData, storiesData] = await Promise.all([
-        feedFilter === 'following' ? getFollowingPosts() : getPosts(),
+        feedFilter === 'following' ? getFollowingPosts(0) : getPosts(0),
         getStories()
       ]);
       setPosts(postsData);
+      setHasMore(postsData.length >= POSTS_PAGE_SIZE);
       setStories(storiesData);
     } catch (error) {
       console.error('Error loading feed:', error);
@@ -52,15 +60,48 @@ const DiscoveryFeed = () => {
     }
   }, [feedFilter]);
 
+  const loadMorePosts = useCallback(async () => {
+    if (loadingMore || !hasMore || searchingHashtag) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      const newPosts = feedFilter === 'following'
+        ? await getFollowingPosts(nextPage)
+        : await getPosts(nextPage);
+      if (newPosts.length < POSTS_PAGE_SIZE) setHasMore(false);
+      if (newPosts.length > 0) {
+        setPosts(prev => [...prev, ...newPosts]);
+        setPage(nextPage);
+      }
+    } catch (error) {
+      console.error('Error loading more posts:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [page, feedFilter, loadingMore, hasMore, searchingHashtag]);
+
+  // Intersection observer for infinite scroll
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+    observerRef.current = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) loadMorePosts(); },
+      { threshold: 0.1 }
+    );
+    if (sentinelRef.current) observerRef.current.observe(sentinelRef.current);
+    return () => observerRef.current?.disconnect();
+  }, [loadMorePosts]);
+
   const loadPosts = useCallback(async () => {
     try {
       let postsData: Post[];
       if (searchingHashtag) {
         postsData = await getPostsByHashtag(searchingHashtag) as Post[];
       } else {
-        postsData = feedFilter === 'following' ? await getFollowingPosts() : await getPosts();
+        postsData = feedFilter === 'following' ? await getFollowingPosts(0) : await getPosts(0);
       }
       setPosts(postsData);
+      setPage(0);
+      setHasMore(!searchingHashtag && postsData.length >= POSTS_PAGE_SIZE);
     } catch (error) {
       console.error('Error loading posts:', error);
     }
@@ -192,6 +233,12 @@ const DiscoveryFeed = () => {
             sortedPosts.map((post) => (
               <PostCard key={post.id} post={post} onLike={handleLike} onComment={handleComment} />
             ))
+          )}
+          {/* Infinite scroll sentinel */}
+          {hasMore && !searchingHashtag && sortedPosts.length > 0 && (
+            <div ref={sentinelRef} className="flex justify-center py-6">
+              {loadingMore && <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />}
+            </div>
           )}
         </div>
       </div>

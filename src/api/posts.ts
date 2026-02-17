@@ -49,7 +49,12 @@ export interface Story {
   is_viewed?: boolean;
 }
 
-export const getPosts = async (): Promise<Post[]> => {
+export const POSTS_PAGE_SIZE = 20;
+
+export const getPosts = async (page: number = 0): Promise<Post[]> => {
+  const from = page * POSTS_PAGE_SIZE;
+  const to = from + POSTS_PAGE_SIZE - 1;
+
   const { data: posts, error } = await supabase
     .from('posts')
     .select(`
@@ -62,7 +67,7 @@ export const getPosts = async (): Promise<Post[]> => {
       )
     `)
     .order('created_at', { ascending: false })
-    .limit(50);
+    .range(from, to);
 
   if (error) throw error;
 
@@ -430,11 +435,10 @@ export const deletePost = async (postId: string) => {
 };
 
 // Get posts from followed users only
-export const getFollowingPosts = async (): Promise<Post[]> => {
+export const getFollowingPosts = async (page: number = 0): Promise<Post[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  // Get list of users the current user follows
   const { data: following } = await supabase
     .from('followers')
     .select('following_id')
@@ -443,8 +447,9 @@ export const getFollowingPosts = async (): Promise<Post[]> => {
   if (!following || following.length === 0) return [];
 
   const followingIds = following.map(f => f.following_id);
+  const from = page * POSTS_PAGE_SIZE;
+  const to = from + POSTS_PAGE_SIZE - 1;
 
-  // Get posts from followed users
   const { data: posts, error } = await supabase
     .from('posts')
     .select(`
@@ -458,11 +463,10 @@ export const getFollowingPosts = async (): Promise<Post[]> => {
     `)
     .in('user_id', followingIds)
     .order('created_at', { ascending: false })
-    .limit(50);
+    .range(from, to);
 
   if (error) throw error;
 
-  // Check which posts current user has liked
   const { data: likes } = await supabase
     .from('post_likes')
     .select('post_id')
