@@ -4415,12 +4415,10 @@ export type Database = {
         Args: { user1_uuid: string; user2_uuid: string }
         Returns: number
       }
-      can_perform_action:
-        | { Args: { action_type: string }; Returns: Record<string, unknown> }
-        | {
-            Args: { action_type: string; user_uuid: string }
-            Returns: Record<string, unknown>
-          }
+      can_perform_action: {
+        Args: { action_type: string }
+        Returns: Record<string, unknown>
+      }
       check_email_exists: { Args: { email_to_check: string }; Returns: boolean }
       cleanup_dead_push_subscriptions: { Args: never; Returns: number }
       cleanup_expired_video_verifications: { Args: never; Returns: number }
@@ -4617,10 +4615,7 @@ export type Database = {
       }
       gettransactionid: { Args: never; Returns: unknown }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
-      increment_usage_count: {
-        Args: { action_type: string; user_uuid: string }
-        Returns: boolean
-      }
+      increment_usage_count: { Args: { action_type: string }; Returns: boolean }
       insert_encrypted_payment: {
         Args: {
           p_amount: number
