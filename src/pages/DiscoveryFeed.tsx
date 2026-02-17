@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useThrottledAction } from '@/hooks/useThrottledAction';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useNavigate } from 'react-router-dom';
 import { getPosts, getStories, likePost, unlikePost, Post, Story, getFollowingPosts, POSTS_PAGE_SIZE } from '@/api/posts';
@@ -113,7 +114,7 @@ const DiscoveryFeed = () => {
   useRealtimePosts({ onPostInserted: loadPosts, onPostUpdated: loadPosts, onPostDeleted: loadPosts });
 
 
-  const handleLike = async (postId: string) => {
+  const handleLikeRaw = useCallback(async (postId: string) => {
     try {
       const post = posts.find(p => p.id === postId);
       if (post?.is_liked) await unlikePost(postId);
@@ -121,7 +122,9 @@ const DiscoveryFeed = () => {
     } catch (error) {
       toast.error('Failed to like post');
     }
-  };
+  }, [posts]);
+
+  const handleLike = useThrottledAction(handleLikeRaw, 500);
 
   const handleComment = (postId: string) => { navigate(`/post/${postId}`); };
   const handleStoryClick = (story: Story) => navigate(`/stories/${story.user_id}`);

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useThrottledAction } from '@/hooks/useThrottledAction';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
@@ -161,13 +162,12 @@ const StoriesView = () => {
     }
   };
 
-  const handleReaction = async (emoji: string) => {
+  const handleReactionRaw = useCallback(async (emoji: string) => {
     if (!user || !stories[currentIndex]) return;
     setReactedEmoji(emoji);
 
     try {
       const currentStory = stories[currentIndex];
-      // Use RPC to add reaction server-side (avoids needing UPDATE permission on stories)
       await (supabase as any).rpc('add_story_reaction', {
         p_story_id: currentStory.id,
         p_user_id: user.id,
@@ -176,7 +176,9 @@ const StoriesView = () => {
     } catch (error) {
       console.error('Error adding reaction:', error);
     }
-  };
+  }, [user, stories, currentIndex]);
+
+  const handleReaction = useThrottledAction(handleReactionRaw, 1000);
 
   const handleDelete = async () => {
     if (!user || !stories[currentIndex]) return;
@@ -199,9 +201,8 @@ const StoriesView = () => {
     }
   };
 
-  const handleReply = async () => {
+  const handleReplyRaw = useCallback(async () => {
     if (!replyText.trim() || !user || !stories[currentIndex]) return;
-    // Send as a message to the story creator
     try {
       await supabase.from('messages').insert({
         sender_id: user.id,
@@ -214,7 +215,9 @@ const StoriesView = () => {
     } catch (error) {
       toast.error(t('stories.failed_reply', 'Failed to send reply'));
     }
-  };
+  }, [replyText, user, stories, currentIndex, t]);
+
+  const handleReply = useThrottledAction(handleReplyRaw, 2000);
 
   const timeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
