@@ -19,7 +19,6 @@ export const checkActionLimit = async (actionType: 'like' | 'super_like' | 'rewi
     if (!session?.user) throw new Error('No user authenticated');
 
     const { data, error } = await supabase.rpc('can_perform_action', {
-      user_uuid: session.user.id,
       action_type: actionType
     });
 
@@ -42,7 +41,6 @@ export const performAction = async (actionType: 'like' | 'super_like' | 'rewind'
     if (!session?.user) throw new Error('No user authenticated');
 
     const { data, error } = await supabase.rpc('increment_usage_count', {
-      user_uuid: session.user.id,
       action_type: actionType
     });
 

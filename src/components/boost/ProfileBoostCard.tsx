@@ -146,7 +146,6 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
     try {
       // Check daily limit
       const { data: canPerform, error } = await supabase.rpc('can_perform_action', {
-        user_uuid: user.id,
         action_type: 'boost'
       });
 
