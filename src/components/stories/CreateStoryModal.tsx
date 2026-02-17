@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, X, Image as ImageIcon, Video } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CreateStoryModalProps {
   open: boolean;
@@ -19,6 +20,7 @@ const CreateStoryModal: React.FC<CreateStoryModalProps> = ({
   userId,
 }) => {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [uploading, setUploading] = useState(false);
@@ -31,8 +33,8 @@ const CreateStoryModal: React.FC<CreateStoryModalProps> = ({
     // Validate file size (max 10MB)
     if (selectedFile.size > 10 * 1024 * 1024) {
       toast({
-        title: 'File too large',
-        description: 'Please select a file smaller than 10MB',
+        title: t('common.error', 'Error'),
+        description: t('stories.file_too_large', 'Please select a file smaller than 10MB'),
         variant: 'destructive',
       });
       return;
@@ -84,8 +86,8 @@ const CreateStoryModal: React.FC<CreateStoryModalProps> = ({
       if (insertError) throw insertError;
 
       toast({
-        title: 'Story created!',
-        description: 'Your story is now live for 24 hours',
+        title: t('stories.created', 'Story created!'),
+        description: t('stories.story_live', 'Your story is now live for 24 hours'),
       });
 
       onStoryCreated();
@@ -94,8 +96,8 @@ const CreateStoryModal: React.FC<CreateStoryModalProps> = ({
     } catch (error) {
       console.error('Error uploading story:', error);
       toast({
-        title: 'Upload failed',
-        description: 'Failed to create story. Please try again.',
+        title: t('common.error', 'Error'),
+        description: t('stories.upload_failed', 'Failed to create story. Please try again.'),
         variant: 'destructive',
       });
     } finally {
@@ -107,7 +109,7 @@ const CreateStoryModal: React.FC<CreateStoryModalProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create Story</DialogTitle>
+          <DialogTitle>{t('stories.create_story', 'Create Story')}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {!preview ? (
@@ -115,9 +117,9 @@ const CreateStoryModal: React.FC<CreateStoryModalProps> = ({
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Upload className="w-12 h-12 mb-3 text-muted-foreground" />
                 <p className="mb-2 text-sm text-muted-foreground">
-                  <span className="font-semibold">Click to upload</span> or drag and drop
+                  <span className="font-semibold">{t('stories.click_upload', 'Click to upload')}</span> {t('stories.drag_drop', 'or drag and drop')}
                 </p>
-                <p className="text-xs text-muted-foreground">Image or Video (Max 10MB)</p>
+                <p className="text-xs text-muted-foreground">{t('stories.max_size', 'Image or Video (Max 10MB)')}</p>
               </div>
               <input
                 type="file"
@@ -156,7 +158,7 @@ const CreateStoryModal: React.FC<CreateStoryModalProps> = ({
               className="flex-1"
               disabled={!file || uploading}
             >
-              {uploading ? 'Uploading...' : 'Post Story'}
+              {uploading ? t('stories.uploading', 'Uploading...') : t('stories.post_story', 'Post Story')}
             </Button>
           </div>
         </div>

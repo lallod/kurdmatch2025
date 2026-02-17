@@ -2,6 +2,7 @@ import React from 'react';
 import { Story } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Plus } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface StoryBubblesProps {
   stories: Story[];
@@ -10,6 +11,7 @@ interface StoryBubblesProps {
 }
 
 const StoryBubbles: React.FC<StoryBubblesProps> = ({ stories, onStoryClick, onAddStory }) => {
+  const { t } = useTranslations();
   const storiesByUser = stories.reduce((acc, story) => {
     if (!acc[story.user_id]) acc[story.user_id] = [];
     acc[story.user_id].push(story);
@@ -30,7 +32,7 @@ const StoryBubbles: React.FC<StoryBubblesProps> = ({ stories, onStoryClick, onAd
             <Plus className="w-6 h-6 text-primary-foreground" />
           </div>
         </div>
-        <span className="text-[10px] font-medium text-muted-foreground">Your Story</span>
+        <span className="text-[10px] font-medium text-muted-foreground">{t('stories.your_story', 'Your Story')}</span>
       </button>
 
       {/* User Stories */}

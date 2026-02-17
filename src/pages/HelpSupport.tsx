@@ -24,61 +24,61 @@ const HelpSupport = () => {
     {
       id: 'getting-started',
       icon: Heart,
-      title: 'Getting Started',
-      description: 'New to KurdMatch? Start here',
+      title: t('help.faq.getting_started.title', 'Getting Started'),
+      description: t('help.faq.getting_started.description', 'New to KurdMatch? Start here'),
       faqs: [
-        { question: 'How do I create an account?', answer: 'Download the app or visit our website, tap "Sign Up", and follow the registration process. You\'ll need to provide basic information, upload photos, and verify your email.', popular: true },
-        { question: 'How does matching work?', answer: 'When you like someone and they like you back, it\'s a match! You can then start chatting with each other. Swipe right to like, left to pass.', popular: true },
-        { question: 'Can I change my profile information?', answer: 'Yes! Go to your profile, tap "Edit Profile" and you can update your photos, bio, and other details at any time.', popular: false },
-        { question: 'How do I verify my profile?', answer: 'Go to Settings > Verification and follow the selfie verification process. A verified badge increases trust and match rates.', popular: true }
+        { question: t('help.faq.getting_started.q1', 'How do I create an account?'), answer: t('help.faq.getting_started.a1', 'Download the app or visit our website, tap "Sign Up", and follow the registration process. You\'ll need to provide basic information, upload photos, and verify your email.'), popular: true },
+        { question: t('help.faq.getting_started.q2', 'How does matching work?'), answer: t('help.faq.getting_started.a2', 'When you like someone and they like you back, it\'s a match! You can then start chatting with each other. Swipe right to like, left to pass.'), popular: true },
+        { question: t('help.faq.getting_started.q3', 'Can I change my profile information?'), answer: t('help.faq.getting_started.a3', 'Yes! Go to your profile, tap "Edit Profile" and you can update your photos, bio, and other details at any time.'), popular: false },
+        { question: t('help.faq.getting_started.q4', 'How do I verify my profile?'), answer: t('help.faq.getting_started.a4', 'Go to Settings > Verification and follow the selfie verification process. A verified badge increases trust and match rates.'), popular: true }
       ]
     },
     {
       id: 'safety',
       icon: Shield,
-      title: 'Safety & Privacy',
-      description: 'Stay safe while dating',
+      title: t('help.faq.safety.title', 'Safety & Privacy'),
+      description: t('help.faq.safety.description', 'Stay safe while dating'),
       faqs: [
-        { question: 'How do I report someone?', answer: 'Open the user\'s profile, tap the three dots menu, and select "Report". Choose a reason and provide details. We review all reports within 24 hours.', popular: true },
-        { question: 'How do I block someone?', answer: 'Open their profile, tap the three dots menu, and select "Block". They won\'t be able to see your profile or contact you.', popular: true },
-        { question: 'Is my personal information safe?', answer: 'Yes, we use industry-standard encryption and never share your personal data with third parties. Your location is approximate and you control what\'s visible on your profile.', popular: false },
-        { question: 'What safety tips should I follow?', answer: 'Never share financial information, meet in public places for first dates, tell a friend where you\'re going, and trust your instincts. Report any suspicious behavior.', popular: false }
+        { question: t('help.faq.safety.q1', 'How do I report someone?'), answer: t('help.faq.safety.a1', 'Open the user\'s profile, tap the three dots menu, and select "Report". Choose a reason and provide details. We review all reports within 24 hours.'), popular: true },
+        { question: t('help.faq.safety.q2', 'How do I block someone?'), answer: t('help.faq.safety.a2', 'Open their profile, tap the three dots menu, and select "Block". They won\'t be able to see your profile or contact you.'), popular: true },
+        { question: t('help.faq.safety.q3', 'Is my personal information safe?'), answer: t('help.faq.safety.a3', 'Yes, we use industry-standard encryption and never share your personal data with third parties. Your location is approximate and you control what\'s visible on your profile.'), popular: false },
+        { question: t('help.faq.safety.q4', 'What safety tips should I follow?'), answer: t('help.faq.safety.a4', 'Never share financial information, meet in public places for first dates, tell a friend where you\'re going, and trust your instincts. Report any suspicious behavior.'), popular: false }
       ]
     },
     {
       id: 'matches',
       icon: Users,
-      title: 'Matches & Messages',
-      description: 'Connecting with others',
+      title: t('help.faq.matches.title', 'Matches & Messages'),
+      description: t('help.faq.matches.description', 'Connecting with others'),
       faqs: [
-        { question: 'Why am I not getting matches?', answer: 'Try adding more photos, completing your profile, and being active daily. Verified profiles get more matches. Consider upgrading to Premium for more visibility.', popular: true },
-        { question: 'Can I unmatch someone?', answer: 'Yes, open the conversation, tap the profile icon, then select "Unmatch". This removes the match and deletes the conversation for both users.', popular: false },
-        { question: 'How do I start a conversation?', answer: 'After matching, open the chat and send a message. Personalized openers based on their profile work best!', popular: false },
-        { question: 'Can I see who liked me?', answer: 'Premium members can see everyone who liked them. Free users see blurred previews and can match by swiping.', popular: true }
+        { question: t('help.faq.matches.q1', 'Why am I not getting matches?'), answer: t('help.faq.matches.a1', 'Try adding more photos, completing your profile, and being active daily. Verified profiles get more matches. Consider upgrading to Premium for more visibility.'), popular: true },
+        { question: t('help.faq.matches.q2', 'Can I unmatch someone?'), answer: t('help.faq.matches.a2', 'Yes, open the conversation, tap the profile icon, then select "Unmatch". This removes the match and deletes the conversation for both users.'), popular: false },
+        { question: t('help.faq.matches.q3', 'How do I start a conversation?'), answer: t('help.faq.matches.a3', 'After matching, open the chat and send a message. Personalized openers based on their profile work best!'), popular: false },
+        { question: t('help.faq.matches.q4', 'Can I see who liked me?'), answer: t('help.faq.matches.a4', 'Premium members can see everyone who liked them. Free users see blurred previews and can match by swiping.'), popular: true }
       ]
     },
     {
       id: 'subscription',
       icon: CreditCard,
-      title: 'Premium & Payments',
-      description: 'Subscription questions',
+      title: t('help.faq.subscription.title', 'Premium & Payments'),
+      description: t('help.faq.subscription.description', 'Subscription questions'),
       faqs: [
-        { question: 'What are the Premium benefits?', answer: 'Premium includes unlimited likes, see who liked you, advanced filters, profile boost, super likes, rewind last swipe, and ad-free experience.', popular: true },
-        { question: 'How do I cancel my subscription?', answer: 'Go to Settings > Subscription > Manage Subscription. You can cancel anytime and keep Premium benefits until the end of your billing period.', popular: true },
-        { question: 'Can I get a refund?', answer: 'Refunds are handled through your app store (Apple/Google) for in-app purchases. Contact us for web purchases within 14 days of subscription.', popular: false },
-        { question: 'How do I upgrade to Premium?', answer: 'Tap the Premium icon or go to Settings > Subscription. Choose your plan (monthly, quarterly, or yearly) and complete the payment.', popular: false }
+        { question: t('help.faq.subscription.q1', 'What are the Premium benefits?'), answer: t('help.faq.subscription.a1', 'Premium includes unlimited likes, see who liked you, advanced filters, profile boost, super likes, rewind last swipe, and ad-free experience.'), popular: true },
+        { question: t('help.faq.subscription.q2', 'How do I cancel my subscription?'), answer: t('help.faq.subscription.a2', 'Go to Settings > Subscription > Manage Subscription. You can cancel anytime and keep Premium benefits until the end of your billing period.'), popular: true },
+        { question: t('help.faq.subscription.q3', 'Can I get a refund?'), answer: t('help.faq.subscription.a3', 'Refunds are handled through your app store (Apple/Google) for in-app purchases. Contact us for web purchases within 14 days of subscription.'), popular: false },
+        { question: t('help.faq.subscription.q4', 'How do I upgrade to Premium?'), answer: t('help.faq.subscription.a4', 'Tap the Premium icon or go to Settings > Subscription. Choose your plan (monthly, quarterly, or yearly) and complete the payment.'), popular: false }
       ]
     },
     {
       id: 'account',
       icon: Settings,
-      title: 'Account Settings',
-      description: 'Manage your account',
+      title: t('help.faq.account.title', 'Account Settings'),
+      description: t('help.faq.account.description', 'Manage your account'),
       faqs: [
-        { question: 'How do I delete my account?', answer: 'Go to Settings > Account > Delete Account. Note: This is permanent and all your data, matches, and messages will be deleted.', popular: true },
-        { question: 'Can I pause my account?', answer: 'Yes, go to Settings > Discovery and toggle "Pause Account". Your profile will be hidden but you keep your matches and messages.', popular: false },
-        { question: 'How do I change my email/phone?', answer: 'Go to Settings > Account to update your email or phone number. You\'ll need to verify the new contact information.', popular: false },
-        { question: 'I forgot my password', answer: 'On the login screen, tap "Forgot Password" and enter your email. We\'ll send you a reset link valid for 24 hours.', popular: true }
+        { question: t('help.faq.account.q1', 'How do I delete my account?'), answer: t('help.faq.account.a1', 'Go to Settings > Account > Delete Account. Note: This is permanent and all your data, matches, and messages will be deleted.'), popular: true },
+        { question: t('help.faq.account.q2', 'Can I pause my account?'), answer: t('help.faq.account.a2', 'Yes, go to Settings > Discovery and toggle "Pause Account". Your profile will be hidden but you keep your matches and messages.'), popular: false },
+        { question: t('help.faq.account.q3', 'How do I change my email/phone?'), answer: t('help.faq.account.a3', 'Go to Settings > Account to update your email or phone number. You\'ll need to verify the new contact information.'), popular: false },
+        { question: t('help.faq.account.q4', 'I forgot my password'), answer: t('help.faq.account.a4', 'On the login screen, tap "Forgot Password" and enter your email. We\'ll send you a reset link valid for 24 hours.'), popular: true }
       ]
     }
   ];

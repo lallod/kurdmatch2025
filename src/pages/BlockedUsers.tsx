@@ -37,7 +37,7 @@ const BlockedUsers = () => {
         .eq('blocker_id', user.id).order('created_at', { ascending: false });
       if (error) throw error;
       setBlockedUsers(data || []);
-    } catch (error) { console.error('Error:', error); toast.error('Failed to load blocked users'); }
+    } catch (error) { console.error('Error:', error); toast.error(t('blocked.load_failed', 'Failed to load blocked users')); }
     finally { setLoading(false); }
   };
 
@@ -46,9 +46,9 @@ const BlockedUsers = () => {
       setUnblockingId(blockId);
       const { error } = await supabase.from('blocked_users').delete().eq('id', blockId);
       if (error) throw error;
-      toast.success('User unblocked');
+      toast.success(t('blocked.unblocked_success', 'User unblocked'));
       loadBlockedUsers();
-    } catch (error) { toast.error('Failed to unblock user'); }
+    } catch (error) { toast.error(t('blocked.unblock_failed', 'Failed to unblock user')); }
     finally { setUnblockingId(null); setShowUnblockDialog(false); setSelectedUser(null); }
   };
 
