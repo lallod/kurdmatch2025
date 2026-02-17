@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import LimitReachedModal from '@/components/modals/LimitReachedModal';
 import MatchModal from '@/components/modals/MatchModal';
-import { supabase } from '@/integrations/supabase/client';
+import { rpcUntyped } from '@/integrations/supabase/untypedClient';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 
 interface ProfileSwipeActionsProps {
@@ -80,8 +80,7 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
     setIsProcessing(true);
 
     try {
-      // Using type assertion for newly created RPC function
-      const { data: limitCheck } = await (supabase as any).rpc('check_action_limit', {
+      const { data: limitCheck } = await rpcUntyped('check_action_limit', {
         p_user_id: user?.id,
         p_action_type: 'super_likes'
       });
@@ -91,7 +90,7 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
         return;
       }
 
-      const { error } = await (supabase as any).rpc('perform_super_like', {
+      const { error } = await rpcUntyped('perform_super_like', {
         p_liker_id: user?.id,
         p_likee_id: profileId
       });

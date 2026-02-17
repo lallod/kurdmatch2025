@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { fromUntyped } from '@/integrations/supabase/untypedClient';
 import { Post, likePost, unlikePost } from '@/api/posts';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -81,8 +82,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
   const checkIfSaved = async () => {
     if (!currentUserId) return;
     try {
-      const { data, error } = await (supabase as any)
-        .from('saved_posts').select('id').eq('user_id', currentUserId).eq('post_id', post.id).maybeSingle();
+      const { data, error } = await fromUntyped('saved_posts').select('id').eq('user_id', currentUserId).eq('post_id', post.id).maybeSingle();
       if (!error && data) setIsSaved(true);
     } catch (error) { console.error('Error checking saved status:', error); }
   };
@@ -91,12 +91,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
     if (!currentUserId) return;
     try {
       if (isSaved) {
-        const { error } = await (supabase as any).from('saved_posts').delete().eq('user_id', currentUserId).eq('post_id', post.id);
+        const { error } = await fromUntyped('saved_posts').delete().eq('user_id', currentUserId).eq('post_id', post.id);
         if (error) throw error;
         setIsSaved(false);
         toast({ description: t('discovery.post_unsaved', 'Post unsaved') });
       } else {
-        const { error } = await (supabase as any).from('saved_posts').insert({ user_id: currentUserId, post_id: post.id });
+        const { error } = await fromUntyped('saved_posts').insert({ user_id: currentUserId, post_id: post.id });
         if (error) throw error;
         setIsSaved(true);
         toast({ description: t('discovery.post_saved', 'Post saved!') });

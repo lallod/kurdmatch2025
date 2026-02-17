@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { fromUntyped } from '@/integrations/supabase/untypedClient';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,8 +30,7 @@ const CreateGroup = () => {
 
     try {
       setLoading(true);
-      const { data, error } = await (supabase as any)
-        .from('groups')
+      const { data, error } = await fromUntyped('groups')
         .insert({
           name: formData.name,
           description: formData.description,

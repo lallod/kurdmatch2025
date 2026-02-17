@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { fromUntyped } from '@/integrations/supabase/untypedClient';
 
 interface SectionStats {
   viewedSections: string[];
@@ -20,9 +20,7 @@ export const useProfileSectionStats = (viewerId: string | undefined, viewedProfi
 
       try {
         setLoading(true);
-        // Using type assertion since table was just created
-        const { data, error } = await (supabase as any)
-          .from('profile_section_views')
+        const { data, error } = await fromUntyped('profile_section_views')
           .select('section_name')
           .eq('viewer_id', viewerId)
           .eq('viewed_profile_id', viewedProfileId);

@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { fromUntyped } from '@/integrations/supabase/untypedClient';
 
 export interface CreateReportInput {
   reported_user_id: string;
@@ -11,8 +12,7 @@ export const createReport = async (payload: CreateReportInput) => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('Not authenticated');
 
-  // Using `any` to bypass typed table restriction if `reports` is not in generated types
-  const { data, error } = await (supabase as any)
+  const { data, error } = await fromUntyped('reports')
     .from('reports')
     .insert({
       reporter_user_id: session.user.id,

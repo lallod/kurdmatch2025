@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useThrottledAction } from '@/hooks/useThrottledAction';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { fromUntyped, rpcUntyped } from '@/integrations/supabase/untypedClient';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -102,8 +103,7 @@ const StoriesView = () => {
   const fetchStories = async () => {
     try {
       setLoading(true);
-      const { data, error } = await (supabase as any)
-        .from('stories')
+      const { data, error } = await fromUntyped('stories')
         .select(`*, profiles (id, name, profile_image, verified)`)
         .eq('user_id', userId)
         .gt('expires_at', new Date().toISOString())
@@ -125,8 +125,7 @@ const StoriesView = () => {
 
   const recordStoryView = async (storyId: string, viewerId: string) => {
     try {
-      await (supabase as any)
-        .from('story_views')
+      await fromUntyped('story_views')
         .upsert({
           story_id: storyId,
           viewer_id: viewerId,
@@ -168,7 +167,7 @@ const StoriesView = () => {
 
     try {
       const currentStory = stories[currentIndex];
-      await (supabase as any).rpc('add_story_reaction', {
+      await rpcUntyped('add_story_reaction', {
         p_story_id: currentStory.id,
         p_user_id: user.id,
         p_emoji: emoji,
@@ -186,7 +185,7 @@ const StoriesView = () => {
     if (currentStory.user_id !== user.id) return;
 
     try {
-      await (supabase as any).from('stories').delete().eq('id', currentStory.id);
+      await fromUntyped('stories').delete().eq('id', currentStory.id);
       toast.success(t('stories.deleted', 'Story deleted'));
 
       const newStories = stories.filter((_, i) => i !== currentIndex);
