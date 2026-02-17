@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { fromUntyped } from '@/integrations/supabase/untypedClient';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,8 +36,7 @@ const Groups = () => {
   const fetchGroups = async () => {
     try {
       setLoading(true);
-      const { data, error } = await (supabase as any)
-        .from('groups')
+      const { data, error } = await fromUntyped('groups')
         .select('*')
         .eq('privacy', 'public')
         .order('created_at', { ascending: false });

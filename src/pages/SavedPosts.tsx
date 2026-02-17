@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Bookmark, Loader2, Trash2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { fromUntyped } from '@/integrations/supabase/untypedClient';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -42,8 +42,7 @@ const SavedPosts = () => {
     if (!user) return;
     try {
       setLoading(true);
-      const { data, error } = await (supabase as any)
-        .from('saved_posts')
+      const { data, error } = await fromUntyped('saved_posts')
         .select('id, post_id, created_at, posts(id, content, media_url, media_type, created_at, user_id, profiles:user_id(name, profile_image))')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -76,8 +75,7 @@ const SavedPosts = () => {
 
   const handleUnsave = async (savedPostId: string) => {
     try {
-      const { error } = await (supabase as any)
-        .from('saved_posts')
+      const { error } = await fromUntyped('saved_posts')
         .delete()
         .eq('id', savedPostId);
 
