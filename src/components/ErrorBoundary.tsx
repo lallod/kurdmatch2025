@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Props {
   children: ReactNode;
@@ -12,6 +13,33 @@ interface State {
   hasError: boolean;
   error: Error | null;
 }
+
+// Wrapper component to use hooks
+const ErrorContent = ({ error, onReset }: { error: Error | null, onReset: () => void }) => {
+  const { t } = useTranslations();
+  
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <Alert variant="destructive" className="max-w-2xl">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>{t('error.something_wrong', 'Something went wrong')}</AlertTitle>
+        <AlertDescription className="mt-4">
+          <p className="mb-4">
+            {error?.message || t('error.unexpected', 'An unexpected error occurred. Please try refreshing the page.')}
+          </p>
+          <Button
+            onClick={onReset}
+            variant="outline"
+            className="gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            {t('error.refresh', 'Refresh Page')}
+          </Button>
+        </AlertDescription>
+      </Alert>
+    </div>
+  );
+};
 
 class ErrorBoundary extends Component<Props, State> {
   public state: State = {
@@ -56,27 +84,7 @@ class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-          <Alert variant="destructive" className="max-w-2xl">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Something went wrong</AlertTitle>
-            <AlertDescription className="mt-4">
-              <p className="mb-4">
-                {this.state.error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
-              </p>
-              <Button
-                onClick={this.handleReset}
-                variant="outline"
-                className="gap-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Refresh Page
-              </Button>
-            </AlertDescription>
-          </Alert>
-        </div>
-      );
+      return <ErrorContent error={this.state.error} onReset={this.handleReset} />;
     }
 
     return this.props.children;

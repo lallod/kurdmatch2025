@@ -79,7 +79,7 @@ const BlockedUsers = () => {
         ) : (
           <div>
             <p className="text-xs text-muted-foreground mb-3">
-              {blockedUsers.length} user{blockedUsers.length !== 1 ? 's' : ''} blocked
+              {t('blocked.users_blocked', `{{count}} user(s) blocked`, { count: blockedUsers.length })}
             </p>
             {blockedUsers.map(blockedUser => (
               <div key={blockedUser.id} className="flex items-center gap-3 py-3 border-b border-border/10">
@@ -92,10 +92,10 @@ const BlockedUsers = () => {
                     {blockedUser.blocked_profile.name}, {blockedUser.blocked_profile.age}
                   </h3>
                   {blockedUser.reason && <p className="text-xs text-muted-foreground">{blockedUser.reason}</p>}
-                  <p className="text-xs text-muted-foreground">Blocked {new Date(blockedUser.created_at).toLocaleDateString()}</p>
+                  <p className="text-xs text-muted-foreground">{t('blocked.blocked_date', 'Blocked')} {new Date(blockedUser.created_at).toLocaleDateString()}</p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => confirmUnblock(blockedUser)} disabled={unblockingId === blockedUser.id} className="text-xs">
-                  {unblockingId === blockedUser.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Unblock'}
+                  {unblockingId === blockedUser.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : t('blocked.unblock', 'Unblock')}
                 </Button>
               </div>
             ))}
@@ -106,14 +106,14 @@ const BlockedUsers = () => {
       <AlertDialog open={showUnblockDialog} onOpenChange={setShowUnblockDialog}>
         <AlertDialogContent className="bg-card border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle>Unblock User?</AlertDialogTitle>
+            <AlertDialogTitle>{t('blocked.unblock_title', 'Unblock User?')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to unblock {selectedUser?.blocked_profile.name}?
+              {selectedUser && t('blocked.unblock_confirm', `Are you sure you want to unblock ${selectedUser.blocked_profile.name}?`, { name: selectedUser.blocked_profile.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => selectedUser && handleUnblock(selectedUser.id)}>Unblock</AlertDialogAction>
+            <AlertDialogCancel>{t('blocked.cancel', 'Cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={() => selectedUser && handleUnblock(selectedUser.id)}>{t('blocked.unblock', 'Unblock')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

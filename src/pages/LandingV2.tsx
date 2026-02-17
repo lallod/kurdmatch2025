@@ -9,6 +9,7 @@ import PhotoGallerySection from '@/components/landing/PhotoGallerySection';
 import { useLanguage, LanguageCode } from '@/contexts/LanguageContext';
 import { useLandingV2Content } from '@/hooks/useLandingV2Content';
 import { isRTL, getTextDirection } from '@/utils/rtl';
+import { useTranslations } from '@/hooks/useTranslations';
 
 // Import generated images
 import heroRomance from '@/assets/landing/hero-romance.jpg';
@@ -44,6 +45,7 @@ const LandingV2 = () => {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const { content, loading } = useLandingV2Content(language);
+  const { t } = useTranslations();
   const textDir = getTextDirection(language);
   const isRtl = isRTL(language);
   const isKurdish = language === 'kurdish_sorani' || language === 'kurdish_kurmanci';
@@ -103,10 +105,10 @@ const LandingV2 = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#home" className="text-foreground hover:text-primary transition-colors font-medium">Home</a>
-              <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
-              <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
-              <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">Contact</a>
+              <a href="#home" className="text-foreground hover:text-primary transition-colors font-medium">{t('landing.nav.home', 'Home')}</a>
+              <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">{t('landing.nav.about', 'About')}</a>
+              <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">{t('landing.nav.features', 'Features')}</a>
+              <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">{t('landing.nav.contact', 'Contact')}</a>
             </nav>
 
             {/* Desktop Language Switcher & Auth Buttons */}
@@ -128,13 +130,13 @@ const LandingV2 = () => {
                 onClick={() => navigate('/auth')}
                 className="text-foreground hover:bg-accent/10"
               >
-                Login
+                {t('landing.nav.login', 'Login')}
               </Button>
               <Button 
                 onClick={() => navigate('/register')}
                 className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600"
               >
-                REGISTER
+                {t('landing.nav.register', 'REGISTER')}
               </Button>
             </div>
 
@@ -206,9 +208,9 @@ const LandingV2 = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              What You Can <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-400">Find</span>
+              {t('landing.what_you_find', 'What You Can')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-400">{t('landing.find', 'Find')}</span>
             </h2>
-            <p className="text-lg text-muted-foreground">Connect with Kurdish community worldwide</p>
+            <p className="text-lg text-muted-foreground">{t('landing.connect_worldwide', 'Connect with Kurdish community worldwide')}</p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -278,7 +280,7 @@ const LandingV2 = () => {
                   <Globe2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className={`text-xl font-bold text-foreground mb-2 ${isKurdish ? 'font-kurdistan' : ''}`}>All Kurdish Dialects Welcome</h3>
+                  <h3 className={`text-xl font-bold text-foreground mb-2 ${isKurdish ? 'font-kurdistan' : ''}`}>{t('landing.all_dialects', 'All Kurdish Dialects Welcome')}</h3>
                   <p className={`text-muted-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>{content.community_dialects.join(', ')} - {content.community_description}</p>
                 </div>
               </div>
@@ -311,7 +313,7 @@ const LandingV2 = () => {
             <h2 className={`text-3xl md:text-4xl font-bold text-foreground mb-4 ${isKurdish ? 'font-kurdistan' : ''}`}>
               {content.how_it_works_title}
             </h2>
-            <p className={`text-lg text-muted-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>Three simple steps to start your journey</p>
+            <p className={`text-lg text-muted-foreground ${isKurdish ? 'font-kurdistan' : ''}`}>{t('landing.three_steps', 'Three simple steps to start your journey')}</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -386,52 +388,52 @@ const LandingV2 = () => {
                 <span className="text-xl font-bold text-foreground">KurdMatch</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Connecting Kurdish hearts worldwide
+                {t('landing.connecting_hearts', 'Connecting Kurdish hearts worldwide')}
               </p>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4 text-white">Company</h4>
+              <h4 className="font-semibold mb-4 text-white">{t('landing.footer.company', 'Company')}</h4>
               <ul className="space-y-2 text-sm text-purple-200">
-                <li><a href="/about" className="hover:text-pink-300 transition-colors">About Us</a></li>
-                <li><a href="#features" className="hover:text-pink-300 transition-colors">Features</a></li>
-                <li><a href="/help" className="hover:text-pink-300 transition-colors">Help & Support</a></li>
-                <li><a href="/community-guidelines" className="hover:text-pink-300 transition-colors">Community Guidelines</a></li>
+                <li><a href="/about" className="hover:text-pink-300 transition-colors">{t('landing.footer.about_us', 'About Us')}</a></li>
+                <li><a href="#features" className="hover:text-pink-300 transition-colors">{t('landing.nav.features', 'Features')}</a></li>
+                <li><a href="/help" className="hover:text-pink-300 transition-colors">{t('landing.footer.help', 'Help & Support')}</a></li>
+                <li><a href="/community-guidelines" className="hover:text-pink-300 transition-colors">{t('landing.footer.guidelines', 'Community Guidelines')}</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4 text-white">Legal</h4>
+              <h4 className="font-semibold mb-4 text-white">{t('landing.footer.legal', 'Legal')}</h4>
               <ul className="space-y-2 text-sm text-purple-200">
-                <li><a href="/privacy-policy" className="hover:text-pink-300 transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-pink-300 transition-colors">Terms of Service</a></li>
-                <li><a href="/cookie-policy" className="hover:text-pink-300 transition-colors">Cookie Policy</a></li>
-                <li><a href="/contact" className="hover:text-pink-300 transition-colors">Contact Us</a></li>
+                <li><a href="/privacy-policy" className="hover:text-pink-300 transition-colors">{t('landing.footer.privacy', 'Privacy Policy')}</a></li>
+                <li><a href="/terms" className="hover:text-pink-300 transition-colors">{t('landing.footer.terms', 'Terms of Service')}</a></li>
+                <li><a href="/cookie-policy" className="hover:text-pink-300 transition-colors">{t('landing.footer.cookie', 'Cookie Policy')}</a></li>
+                <li><a href="/contact" className="hover:text-pink-300 transition-colors">{t('landing.footer.contact', 'Contact Us')}</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4 text-white">Get Started</h4>
+              <h4 className="font-semibold mb-4 text-white">{t('landing.footer.get_started', 'Get Started')}</h4>
               <div className="space-y-2">
                 <Button 
                   onClick={() => navigate('/auth')}
                   variant="outline"
                   className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
                 >
-                  Login
+                  {t('landing.nav.login', 'Login')}
                 </Button>
                 <Button 
                   onClick={() => navigate('/register')}
                   className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
                 >
-                  Register
+                  {t('landing.footer.register', 'Register')}
                 </Button>
               </div>
             </div>
           </div>
 
           <div className={`border-t border-white/20 mt-8 pt-8 text-center text-sm text-purple-200 ${isRtl ? 'font-arabic' : ''}`}>
-            <p>© {new Date().getFullYear()} KurdMatch. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} KurdMatch. {t('landing.footer.all_rights', 'All rights reserved.')}</p>
           </div>
         </div>
       </footer>

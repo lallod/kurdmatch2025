@@ -3,30 +3,24 @@ import { Button } from '@/components/ui/button';
 import { Cookie, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const COOKIE_CONSENT_KEY = 'kurdmatch_cookie_consent';
 
 const CookieConsentBanner = () => {
   const [visible, setVisible] = useState(false);
+  const { t } = useTranslations();
 
   useEffect(() => {
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!consent) {
-      // Show banner after a short delay
       const timer = setTimeout(() => setVisible(true), 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  const accept = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted');
-    setVisible(false);
-  };
-
-  const decline = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'declined');
-    setVisible(false);
-  };
+  const accept = () => { localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted'); setVisible(false); };
+  const decline = () => { localStorage.setItem(COOKIE_CONSENT_KEY, 'declined'); setVisible(false); };
 
   return (
     <AnimatePresence>
@@ -45,20 +39,20 @@ const CookieConsentBanner = () => {
               </div>
               <div className="flex-1 space-y-3">
                 <div>
-                  <h4 className="font-semibold text-sm">We use cookies 🍪</h4>
+                  <h4 className="font-semibold text-sm">{t('cookie_banner.title', 'We use cookies 🍪')}</h4>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                    We use cookies to enhance your experience, keep you logged in, and analyze platform usage.{' '}
+                    {t('cookie_banner.description', 'We use cookies to enhance your experience, keep you logged in, and analyze platform usage.')}{' '}
                     <Link to="/cookie-policy" className="text-primary hover:underline">
-                      Learn more
+                      {t('cookie_banner.learn_more', 'Learn more')}
                     </Link>
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button size="sm" onClick={accept} className="rounded-xl text-xs h-8 px-4 bg-primary text-primary-foreground">
-                    Accept All
+                    {t('cookie_banner.accept_all', 'Accept All')}
                   </Button>
                   <Button size="sm" variant="outline" onClick={decline} className="rounded-xl text-xs h-8 px-4">
-                    Essential Only
+                    {t('cookie_banner.essential_only', 'Essential Only')}
                   </Button>
                 </div>
               </div>

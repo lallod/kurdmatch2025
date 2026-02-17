@@ -47,16 +47,16 @@ const Matches = () => {
   const formatMatchTime = (date: string) => {
     const matchDate = new Date(date); const now = new Date();
     const diffInHours = (now.getTime() - matchDate.getTime()) / (1000 * 60 * 60);
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${Math.floor(diffInHours)}h ago`;
-    if (diffInHours < 48) return 'Yesterday';
-    return `${Math.floor(diffInHours / 24)}d ago`;
+    if (diffInHours < 1) return t('matches.just_now', 'Just now');
+    if (diffInHours < 24) return t('matches.hours_ago', `{{count}}h ago`, { count: Math.floor(diffInHours) });
+    if (diffInHours < 48) return t('matches.yesterday', 'Yesterday');
+    return t('matches.days_ago', `{{count}}d ago`, { count: Math.floor(diffInHours / 24) });
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-muted-foreground text-sm">Loading matches...</div>
+        <div className="text-muted-foreground text-sm">{t('matches.loading', 'Loading matches...')}</div>
       </div>
     );
   }
@@ -68,7 +68,7 @@ const Matches = () => {
         <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
           <h1 className="text-base font-semibold text-foreground">{t('matches.title', 'Matches')}</h1>
           {newMatches.length > 0 && (
-            <Badge className="bg-primary/15 text-primary text-xs">{newMatches.length} New</Badge>
+            <Badge className="bg-primary/15 text-primary text-xs">{newMatches.length} {t('matches.new', 'New')}</Badge>
           )}
         </div>
       </div>

@@ -4,6 +4,7 @@ import { X, LogIn, UserPlus, Info, Mail, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageCode } from '@/contexts/LanguageContext';
 import { useAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MobileSidebarProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const { user } = useAuth();
+  const { t } = useTranslations();
 
   const languages: Array<{ code: LanguageCode; label: string; flag: string }> = [
     { code: 'english', label: 'English', flag: '🇬🇧' },
@@ -24,10 +26,10 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   ];
 
   const menuItems = [
-    { icon: LogIn, label: 'Login', path: '/auth' },
-    { icon: UserPlus, label: 'Registration', path: '/register' },
-    { icon: Info, label: 'About Us', path: '/#about' },
-    { icon: Mail, label: 'Contact Us', path: '/#contact' },
+    { icon: LogIn, label: t('sidebar.login', 'Login'), path: '/auth' },
+    { icon: UserPlus, label: t('sidebar.registration', 'Registration'), path: '/register' },
+    { icon: Info, label: t('sidebar.about', 'About Us'), path: '/#about' },
+    { icon: Mail, label: t('sidebar.contact', 'Contact Us'), path: '/#contact' },
   ];
 
   const handleNavigate = (path: string) => { navigate(path); onClose(); };
@@ -48,7 +50,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><span className="text-2xl">❤️</span></div>
-                    <div><h2 className="text-foreground font-bold text-lg">KurdMatch</h2><p className="text-muted-foreground text-xs">Kurdish Hearts</p></div>
+                    <div><h2 className="text-foreground font-bold text-lg">KurdMatch</h2><p className="text-muted-foreground text-xs">{t('sidebar.kurdish_hearts', 'Kurdish Hearts')}</p></div>
                   </div>
                   <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors"><X className="w-6 h-6" /></button>
                 </div>
@@ -64,7 +66,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
 
               <div className="p-6 border-t border-border/10">
                 <motion.div custom={menuItems.length} variants={itemVariants} initial="hidden" animate="visible" className="space-y-3">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-3"><Globe className="w-4 h-4" /><span className="text-sm font-medium">Language</span></div>
+                  <div className="flex items-center gap-2 text-muted-foreground mb-3"><Globe className="w-4 h-4" /><span className="text-sm font-medium">{t('sidebar.language', 'Language')}</span></div>
                   {languages.map((lang) => (
                     <button key={lang.code} onClick={() => handleLanguageChange(lang.code)} className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${language === lang.code ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}>
                       <span className="text-xl">{lang.flag}</span><span className="text-sm font-medium">{lang.label}</span>

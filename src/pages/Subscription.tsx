@@ -36,15 +36,15 @@ const Subscription = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base">Current Plan</CardTitle>
+                  <CardTitle className="text-base">{t('subscription.current_plan', 'Current Plan')}</CardTitle>
                   <CardDescription className="text-muted-foreground text-sm">
                     {SUBSCRIPTION_PLANS.find(p => p.id === subscription.subscription_type)?.name}
                     {subscription.expires_at && <span className="ml-2">• Expires: {new Date(subscription.expires_at).toLocaleDateString()}</span>}
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isLoading}><RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${isLoading ? "animate-spin" : ""}`} />Refresh</Button>
-                  <Button variant="outline" size="sm" onClick={openCustomerPortal}><Settings className="h-3.5 w-3.5 mr-1.5" />Manage</Button>
+                  <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isLoading}><RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${isLoading ? "animate-spin" : ""}`} />{t('subscription.refresh', 'Refresh')}</Button>
+                  <Button variant="outline" size="sm" onClick={openCustomerPortal}><Settings className="h-3.5 w-3.5 mr-1.5" />{t('subscription.manage', 'Manage')}</Button>
                 </div>
               </div>
             </CardHeader>
@@ -58,10 +58,10 @@ const Subscription = () => {
         <Card className="bg-card/50 border-border/30">
           <CardHeader><CardTitle className="text-sm">{t('subscription.details', 'Subscription Details')}</CardTitle></CardHeader>
           <CardContent className="text-muted-foreground text-xs space-y-1.5">
-            <p>• All subscriptions are billed monthly</p>
-            <p>• Cancel anytime through the management portal</p>
-            <p>• Upgrades take effect immediately</p>
-            <p>• Secure payments powered by Stripe</p>
+            <p>• {t('subscription.billed_monthly', 'All subscriptions are billed monthly')}</p>
+            <p>• {t('subscription.cancel_anytime', 'Cancel anytime through the management portal')}</p>
+            <p>• {t('subscription.upgrades_immediate', 'Upgrades take effect immediately')}</p>
+            <p>• {t('subscription.secure_payments', 'Secure payments powered by Stripe')}</p>
           </CardContent>
         </Card>
       </div>
