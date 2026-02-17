@@ -1,43 +1,76 @@
 
-# QA Report: KurdMatch -- Release Readiness Assessment
 
-## Status: ALL ITEMS RESOLVED ✅
+# Pre-Publishing Checklist for KurdMatch
+
+Here's everything you should check and fix before hitting "Publish."
 
 ---
 
-## Completed Fixes
+## 1. Critical Security Issues (Must Fix)
 
-### P0 - Critical Security
-- ✅ **P0-1**: Super Admin routes secured with auth + role guard
-- ✅ **P0-2**: RLS enabled on all public tables
-- ✅ **P0-3**: Overly permissive RLS policies tightened
+These are flagged as errors in your security scans and **block a safe launch**:
 
-### P1 - High Priority
-- ✅ **P1-1**: Story reactions use `add_story_reaction` RPC (SECURITY DEFINER)
-- ✅ **P1-2**: Admin navigation links directly to `/super-admin`
-- ✅ **P1-3**: Story timer uses ref pattern, no closure bug
+| Issue | What It Means | How to Fix |
+|-------|--------------|------------|
+| **Phone verifications table exposed** | Attackers could steal phone numbers and verification codes | Tighten RLS policies so only the owner can access their record |
+| **Payments table exposure** | Financial data (Stripe IDs, amounts) could be accessed | Ensure RLS restricts access to the payment owner + super admins only |
+| **Scheduled content table too open** | The `USING(true)` policy lets anyone with the anon key read/write | Replace with `is_super_admin(auth.uid())` check |
 
-### P2 - UX
-- ✅ **P2-1**: Debug logging removed/gated
-- ✅ **P2-2**: Hardcoded English strings wrapped in `t()`
-- ✅ **P2-3**: Delete confirmation dialog added for stories
-- ✅ **P2-4**: Forgot password UX improved
+---
 
-### P3
-- ✅ **P3-1**: Shared PageLoader component extracted
+## 2. Important Warnings (Should Fix)
 
-### D - Architecture/Code
-- ✅ **D-3**: Dead code removed (ProfileCompletionGuard, RegisterProtection)
-- ✅ **D-4**: Auth hook usage standardized to `useSupabaseAuth`
-- ✅ **D-5**: Redundant `supabase.auth.getUser()` call removed from DiscoveryFeed
-- ✅ **D-6**: Story replies confirmed using messaging API correctly
+| Issue | How to Fix |
+|-------|------------|
+| **Leaked password protection disabled** | Enable in your Supabase dashboard: Authentication > Settings > turn on leaked password protection |
+| **Postgres version outdated** | Upgrade in Supabase dashboard: Settings > Infrastructure > Upgrade Postgres |
+| **Extensions in public schema** | Move PostGIS to a dedicated schema (low risk, can do post-launch) |
+| **Function search path mutable** | Add `SET search_path = public` to remaining functions |
+| **Usage tracking functions accept user-supplied IDs** | Modify `can_perform_action` and `increment_usage_count` to use `auth.uid()` internally |
 
-### E - Future Risks (Mitigated)
-- ✅ **E-1**: Client-side rate limiting via `useThrottledAction` hook
-- ✅ **E-2**: Infinite scroll pagination on posts feed (20 per page)
-- ✅ **E-4**: Story timer memory leak already mitigated (ref pattern + cleanup)
-- ✅ **E-5**: OAuth sessionStorage fragility accepted (DB is source of truth)
-- ⚠️ **E-3**: WebRTC TURN/STUN — requires external service provider (not a code fix)
+---
 
-### Remaining (D-1)
-- ⚠️ **D-1**: `as any` usage (303 instances) — requires Supabase types regeneration (ongoing)
+## 3. Manual Checks in Supabase Dashboard
+
+These can't be done through code -- you need to do them in the Supabase dashboard:
+
+- **Enable leaked password protection**: Auth > Settings
+- **Upgrade Postgres version**: Settings > Infrastructure
+- **Review all RLS policies**: Table Editor > Policies (spot-check that no table has `USING(true)` without role gating)
+
+---
+
+## 4. App Functionality Checks
+
+Before publishing, manually test these flows:
+
+- **Registration**: Create a new account, complete all steps, upload a photo
+- **Login/Logout**: Email login, session persistence, logout
+- **Discovery**: Browse profiles, like/dislike, match creation
+- **Messaging**: Send and receive messages, real-time updates
+- **Stories**: Create, view, react, delete
+- **Groups**: Create, join, post
+- **Settings**: Edit profile, change preferences, delete account
+- **Admin**: Access super admin dashboard (if applicable)
+- **Mobile**: Test on a phone-sized screen -- navigation, forms, swipe actions
+
+---
+
+## 5. Environment and Data
+
+- **Check Live database for existing data**: If you've previously published, make sure schema changes won't destroy existing user data. Run destructive migrations in Cloud View > Run SQL (with Live selected) first.
+- **Environment variables**: Confirm `VITE_SUPABASE_URL` and keys are correct for production.
+- **Edge functions**: All 20+ edge functions are deployed and configured in `supabase/config.toml`.
+
+---
+
+## Priority Order
+
+1. Fix the 3 critical security errors (phone verifications, payments, scheduled content RLS)
+2. Enable leaked password protection in dashboard
+3. Upgrade Postgres in dashboard
+4. Test the main user flows listed above
+5. Publish
+
+Would you like me to fix the 3 critical security issues now?
+
