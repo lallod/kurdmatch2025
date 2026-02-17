@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 type VerificationType = 'selfie' | 'id_document';
 
@@ -14,6 +15,7 @@ export const VerificationForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const handleImageCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -30,7 +32,7 @@ export const VerificationForm = () => {
     if (!previewImage) {
       toast({
         title: 'Error',
-        description: 'Please capture or upload an image first',
+        description: t('verification.error_no_image', 'Please capture or upload an image first'),
         variant: 'destructive',
       });
       return;
@@ -51,13 +53,13 @@ export const VerificationForm = () => {
       setIsSubmitted(true);
       toast({
         title: 'Success',
-        description: 'Verification request submitted successfully. We will review it shortly.',
+        description: t('verification.success_msg', 'Verification request submitted successfully. We will review it shortly.'),
       });
     } catch (error) {
       console.error('Error submitting verification:', error);
       toast({
         title: 'Error',
-        description: 'Failed to submit verification request',
+        description: t('verification.error_submit', 'Failed to submit verification request'),
         variant: 'destructive',
       });
     } finally {
@@ -71,10 +73,10 @@ export const VerificationForm = () => {
         <CardHeader>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-6 w-6 text-green-500" />
-            <CardTitle>Verification Submitted</CardTitle>
+            <CardTitle>{t('verification.submitted_title', 'Verification Submitted')}</CardTitle>
           </div>
           <CardDescription>
-            Your verification request has been submitted. We'll review it within 24-48 hours and notify you of the result.
+            {t('verification.submitted_desc', "Your verification request has been submitted. We'll review it within 24-48 hours and notify you of the result.")}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -84,9 +86,9 @@ export const VerificationForm = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Verify Your Identity</CardTitle>
+        <CardTitle>{t('verification.title', 'Verify Your Identity')}</CardTitle>
         <CardDescription>
-          Get verified to increase trust and match quality. Choose one of the verification methods below.
+          {t('verification.desc', 'Get verified to increase trust and match quality. Choose one of the verification methods below.')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -101,9 +103,9 @@ export const VerificationForm = () => {
             }`}
           >
             <Camera className="h-8 w-8 mx-auto mb-2" />
-            <p className="font-medium">Selfie Verification</p>
+            <p className="font-medium">{t('verification.selfie', 'Selfie Verification')}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Take a photo of yourself
+              {t('verification.take_photo', 'Take a photo of yourself')}
             </p>
           </button>
 
@@ -116,9 +118,9 @@ export const VerificationForm = () => {
             }`}
           >
             <FileText className="h-8 w-8 mx-auto mb-2" />
-            <p className="font-medium">ID Document</p>
+            <p className="font-medium">{t('verification.id_document', 'ID Document')}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Upload government ID
+              {t('verification.upload_id', 'Upload government ID')}
             </p>
           </button>
         </div>
@@ -142,7 +144,7 @@ export const VerificationForm = () => {
                     }
                   }}
                 >
-                  Retake
+                  {t('verification.retake', 'Retake')}
                 </Button>
               </div>
             ) : (
@@ -150,8 +152,8 @@ export const VerificationForm = () => {
                 <Camera className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground mb-4">
                   {verificationType === 'selfie'
-                    ? 'Take a clear selfie showing your face'
-                    : 'Upload a photo of your government ID'}
+                    ? t('verification.selfie_prompt', 'Take a clear selfie showing your face')
+                    : t('verification.id_prompt', 'Upload a photo of your government ID')}
                 </p>
                 <input
                   ref={fileInputRef}
@@ -166,7 +168,7 @@ export const VerificationForm = () => {
                   variant="outline"
                 >
                   <Camera className="mr-2 h-4 w-4" />
-                  {verificationType === 'selfie' ? 'Take Selfie' : 'Upload ID'}
+                  {verificationType === 'selfie' ? t('verification.take_selfie', 'Take Selfie') : t('verification.upload_id_btn', 'Upload ID')}
                 </Button>
               </div>
             )}
@@ -177,7 +179,7 @@ export const VerificationForm = () => {
             <div className="flex gap-2">
               <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-blue-900 dark:text-blue-100">
-                <p className="font-medium mb-2">Guidelines:</p>
+                <p className="font-medium mb-2">{t('verification.guidelines', 'Guidelines:')}</p>
                 <ul className="list-disc list-inside space-y-1 text-sm">
                   {verificationType === 'selfie' ? (
                     <>
@@ -206,7 +208,7 @@ export const VerificationForm = () => {
           disabled={!previewImage || isSubmitting}
           className="w-full"
         >
-          {isSubmitting ? 'Submitting...' : 'Submit Verification'}
+          {isSubmitting ? t('verification.submitting', 'Submitting...') : t('verification.submit', 'Submit Verification')}
         </Button>
       </CardContent>
     </Card>

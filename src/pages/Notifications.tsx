@@ -45,7 +45,7 @@ const Notifications = () => {
     const { data } = await supabase.from('post_likes').select(`id, created_at, user_id, profiles!post_likes_user_id_fkey (id, name, profile_image)`)
       .eq('post_id', user!.id).order('created_at', { ascending: false }).limit(20);
     return (data || []).map((like: any) => ({
-      id: like.id, type: 'like' as const, title: 'New Like',
+      id: like.id, type: 'like' as const, title: t('notifications.new_like', 'New Like'),
       message: `${like.profiles?.name || 'Someone'} liked your post`, read: false, created_at: like.created_at,
       actor_id: like.user_id, actor_name: like.profiles?.name, actor_image: like.profiles?.profile_image,
     }));
@@ -55,7 +55,7 @@ const Notifications = () => {
     const { data } = await supabase.from('post_comments').select(`id, content, created_at, user_id, post_id, profiles!post_comments_user_id_fkey (id, name, profile_image)`)
       .neq('user_id', user!.id).order('created_at', { ascending: false }).limit(20);
     return (data || []).map((comment: any) => ({
-      id: comment.id, type: 'comment' as const, title: 'New Comment',
+      id: comment.id, type: 'comment' as const, title: t('notifications.new_comment', 'New Comment'),
       message: `${comment.profiles?.name || 'Someone'} commented on your post`, read: false,
       created_at: comment.created_at, action_url: `/post/${comment.post_id}`,
       actor_id: comment.user_id, actor_name: comment.profiles?.name, actor_image: comment.profiles?.profile_image,
@@ -66,7 +66,7 @@ const Notifications = () => {
     const { data } = await supabase.from('profile_views').select(`id, viewed_at, viewer_id, profiles!profile_views_viewer_id_fkey (id, name, profile_image)`)
       .eq('viewed_profile_id', user!.id).order('viewed_at', { ascending: false }).limit(20);
     return (data || []).map((view: any) => ({
-      id: view.id, type: 'view' as const, title: 'Profile View',
+      id: view.id, type: 'view' as const, title: t('notifications.profile_view', 'Profile View'),
       message: `${view.profiles?.name || 'Someone'} viewed your profile`, read: false,
       created_at: view.viewed_at, action_url: `/profile/${view.viewer_id}`,
       actor_id: view.viewer_id, actor_name: view.profiles?.name, actor_image: view.profiles?.profile_image,
@@ -88,11 +88,11 @@ const Notifications = () => {
   };
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    toast('All notifications marked as read');
+    toast(t('notifications.all_read', 'All notifications marked as read'));
   };
   const deleteNotification = async (notificationId: string) => {
     setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    toast('Notification removed');
+    toast(t('notifications.removed', 'Notification removed'));
   };
   const handleNotificationClick = (notification: Notification) => {
     markAsRead(notification.id);
