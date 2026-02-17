@@ -247,7 +247,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       {/* Likes count */}
       {likesCount > 0 && (
         <div className="px-3 pb-0.5">
-          <span className="text-sm font-semibold text-foreground">{likesCount} {likesCount === 1 ? 'like' : 'likes'}</span>
+          <span className="text-sm font-semibold text-foreground">{likesCount === 1 ? t('discovery.like_count_one', '{{count}} like', { count: likesCount }) : t('discovery.likes_count', '{{count}} likes', { count: likesCount })}</span>
         </div>
       )}
 
@@ -260,7 +260,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
           </div>
           {hasMedia && !showFullCaption && post.content.length > 100 && (
             <button onClick={() => setShowFullCaption(true)} className="text-xs text-muted-foreground mt-0.5">
-              more
+              {t('discovery.more', 'more')}
             </button>
           )}
         </div>
@@ -273,7 +273,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
       {commentsCount > 0 && !showComments && (
         <div className="px-3 pb-1">
           <button onClick={() => setShowComments(true)} className="text-sm text-muted-foreground">
-            View all {commentsCount} comments
+            {t('discovery.view_all_comments', 'View all {{count}} comments', { count: commentsCount })}
           </button>
         </div>
       )}

@@ -10,6 +10,7 @@ import { ArrowLeft, Camera, Image as ImageIcon, Type, X, Palette, Upload, Loader
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import browserImageCompression from 'browser-image-compression';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const TEXT_POSITIONS = [
   { id: 'top', label: 'Top', className: 'top-12 left-4 right-4' },
@@ -29,6 +30,7 @@ const BG_GRADIENTS = [
 const CreateStory = () => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,7 @@ const CreateStory = () => {
     if (!file) return;
 
     if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-      toast.error('Please select an image or video file');
+      toast.error(t('stories.select_image_video', 'Please select an image or video file'));
       return;
     }
 
@@ -63,7 +65,7 @@ const CreateStory = () => {
       }
     } else {
       if (file.size > 20 * 1024 * 1024) {
-        toast.error('Video must be under 20MB');
+        toast.error(t('stories.video_too_large', 'Video must be under 20MB'));
         return;
       }
       setSelectedFile(file);
@@ -76,11 +78,11 @@ const CreateStory = () => {
     if (!user) return;
 
     if (mode === 'text' && !textOverlay.trim()) {
-      toast.error('Please enter some text');
+      toast.error(t('stories.enter_text', 'Please enter some text'));
       return;
     }
     if (mode === 'photo' && !selectedFile) {
-      toast.error('Please select a photo or video');
+      toast.error(t('stories.select_photo', 'Please select a photo or video'));
       return;
     }
 
@@ -127,11 +129,11 @@ const CreateStory = () => {
       });
 
       if (error) throw error;
-      toast.success('Story created!');
+      toast.success(t('stories.created', 'Story created!'));
       navigate('/discovery');
     } catch (error: any) {
       console.error('Error creating story:', error);
-      toast.error(error.message || 'Failed to create story');
+      toast.error(error.message || t('stories.failed_create', 'Failed to create story'));
     } finally {
       setLoading(false);
     }
@@ -148,7 +150,7 @@ const CreateStory = () => {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-lg font-semibold">
-          {mode === 'choose' ? 'New Story' : mode === 'photo' ? 'Photo Story' : 'Text Story'}
+          {mode === 'choose' ? t('stories.new_story', 'New Story') : mode === 'photo' ? t('stories.photo_story', 'Photo Story') : t('stories.text_story', 'Text Story')}
         </h1>
         {mode !== 'choose' && (
           <Button
@@ -157,7 +159,7 @@ const CreateStory = () => {
             onClick={handleSubmit}
             className="rounded-full bg-primary text-primary-foreground px-5"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Share'}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('stories.share', 'Share')}
           </Button>
         )}
         {mode === 'choose' && <div className="w-10" />}
@@ -189,7 +191,7 @@ const CreateStory = () => {
             exit={{ opacity: 0, scale: 0.95 }}
             className="flex-1 flex flex-col items-center justify-center gap-6 px-8"
           >
-            <p className="text-muted-foreground text-center">What kind of story do you want to create?</p>
+            <p className="text-muted-foreground text-center">{t('stories.what_kind', 'What kind of story do you want to create?')}</p>
             <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
               <button
                 onClick={() => cameraInputRef.current?.click()}
@@ -198,7 +200,7 @@ const CreateStory = () => {
                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                   <Camera className="h-7 w-7 text-primary" />
                 </div>
-                <span className="font-medium text-xs">Camera</span>
+                <span className="font-medium text-xs">{t('stories.camera', 'Camera')}</span>
               </button>
               <button
                 onClick={() => fileInputRef.current?.click()}
@@ -207,7 +209,7 @@ const CreateStory = () => {
                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                   <ImageIcon className="h-7 w-7 text-primary" />
                 </div>
-                <span className="font-medium text-xs">Gallery</span>
+                <span className="font-medium text-xs">{t('stories.gallery', 'Gallery')}</span>
               </button>
               <button
                 onClick={() => setMode('text')}
@@ -216,7 +218,7 @@ const CreateStory = () => {
                 <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
                   <Type className="h-7 w-7 text-accent" />
                 </div>
-                <span className="font-medium text-xs">Text Story</span>
+                <span className="font-medium text-xs">{t('stories.text_story', 'Text Story')}</span>
               </button>
             </div>
           </motion.div>
@@ -253,7 +255,7 @@ const CreateStory = () => {
                 onClick={() => fileInputRef.current?.click()}
                 className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm text-white rounded-full px-3 py-1.5 text-xs flex items-center gap-1.5"
               >
-                <ImageIcon className="h-3.5 w-3.5" /> Change
+                <ImageIcon className="h-3.5 w-3.5" /> {t('stories.change', 'Change')}
               </button>
             </div>
 
@@ -262,7 +264,7 @@ const CreateStory = () => {
               <div className="flex items-center gap-2">
                 <Type className="h-4 w-4 text-muted-foreground shrink-0" />
                 <Input
-                  placeholder="Add text overlay..."
+                  placeholder={t('stories.add_text_overlay', 'Add text overlay...')}
                   value={textOverlay}
                   onChange={(e) => setTextOverlay(e.target.value)}
                   className="rounded-xl text-sm"
@@ -303,7 +305,7 @@ const CreateStory = () => {
             <div className={`flex-1 relative bg-gradient-to-br ${currentBgGradient.bg} flex items-center justify-center p-8`}>
               <div className={`absolute ${currentTextPos.className} text-center px-6`}>
                 <p className="text-white text-2xl font-bold drop-shadow-lg leading-relaxed">
-                  {textOverlay || 'Type your story...'}
+                  {textOverlay || t('stories.type_your_story', 'Type your story...')}
                 </p>
               </div>
             </div>
@@ -311,7 +313,7 @@ const CreateStory = () => {
             {/* Controls */}
             <div className="p-4 space-y-3 border-t border-border/50">
               <Textarea
-                placeholder="What's on your mind?"
+                placeholder={t('stories.whats_on_mind', "What's on your mind?")}
                 value={textOverlay}
                 onChange={(e) => setTextOverlay(e.target.value)}
                 className="rounded-xl text-sm resize-none"

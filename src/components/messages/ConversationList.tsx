@@ -71,7 +71,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           <div className="flex items-center gap-2">
             {totalUnreadMessages > 0 && (
               <Badge className="bg-primary text-white text-[10px] font-semibold rounded-full px-2.5 py-0.5 shadow-lg shadow-primary/30">
-                {totalUnreadMessages} new
+                {totalUnreadMessages} {t('messages.new_badge', 'new')}
               </Badge>
             )}
           </div>
@@ -111,7 +111,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                       </div>
                       {match.isNew && (
                         <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[7px] rounded-full px-1.5 py-px font-bold z-20 shadow-md uppercase tracking-wider">
-                          New
+                          {t('messages.new_match', 'New')}
                         </div>
                       )}
                     </div>
@@ -130,7 +130,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           <div className="mb-4 mt-3">
             <div className="flex items-center gap-2 mb-2 px-1">
               <BellDot className="w-3.5 h-3.5 text-destructive" />
-              <h2 className="text-xs font-semibold text-destructive uppercase tracking-wider">Priority</h2>
+              <h2 className="text-xs font-semibold text-destructive uppercase tracking-wider">{t('messages.priority', 'Priority')}</h2>
             </div>
             <div className="space-y-1.5">
               {sortedConversations.filter(c => c.priority === 'high' && c.unread).map(conversation => (
@@ -171,7 +171,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           </h2>
           {conversations.filter(c => c.unread).length > 0 && (
             <Badge className="bg-primary/15 text-primary text-[10px] font-medium rounded-full px-2 py-0.5 border-0">
-              {conversations.filter(c => c.unread).length} unread
+              {conversations.filter(c => c.unread).length} {t('messages.unread', 'unread')}
             </Badge>
           )}
         </div>
@@ -221,7 +221,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <p className={`text-[13px] truncate flex-1 ${conversation.unread ? 'text-foreground/90 font-medium' : 'text-muted-foreground'}`}>
-                    {conversation.isTyping ? <span className="italic text-primary">typing...</span> : conversation.lastMessage}
+                    {conversation.isTyping ? <span className="italic text-primary">{t('messages.typing', 'typing...')}</span> : conversation.lastMessage}
                   </p>
                   {(conversation.notifications || []).map((notification: string, index: number) => (
                     <div key={index} className="text-muted-foreground/50 flex-shrink-0" title={notification.replace('_', ' ').toUpperCase()}>
