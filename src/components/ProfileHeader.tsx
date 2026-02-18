@@ -7,6 +7,7 @@ import { Heart, MessageCircle, Verified, X, Palette } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { KurdistanRegion } from '@/types/profile';
+import { useTranslations } from '@/hooks/useTranslations';
 import { 
   Popover,
   PopoverContent,
@@ -59,6 +60,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onBackgroundColorChange
 }) => {
   const isMobile = useIsMobile();
+  const { t } = useTranslations();
   const [localBgColor, setLocalBgColor] = useState(backgroundColor);
   
   const handleMessage = () => {
@@ -82,7 +84,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     if (onBackgroundColorChange) {
       onBackgroundColorChange(color);
     }
-    toast.success("Profile background color updated!");
+    toast.success(t('toast.profile.bg_updated', 'Profile background color updated!'));
   };
   
   return <div className="relative w-full">

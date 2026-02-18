@@ -9,10 +9,12 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserSettings } from '@/hooks/useUserSettings';
+import { useTranslations } from '@/hooks/useTranslations';
 import { PushNotificationSettings } from '@/components/settings/PushNotificationSettings';
 
 const NotificationSettings = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const { settings, loading, updateSettings } = useUserSettings();
 
   const togglePreference = async (field: string) => {
@@ -24,10 +26,10 @@ const NotificationSettings = () => {
     try {
       const { error } = await supabase.from('notifications').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       if (error) throw error;
-      toast.success('All notifications have been deleted');
+      toast.success(t('toast.notifications.cleared', 'All notifications have been deleted'));
     } catch (error) {
       console.error('Error clearing notifications:', error);
-      toast.error('Failed to clear notifications');
+      toast.error(t('toast.notifications.clear_failed', 'Failed to clear notifications'));
     }
   };
 

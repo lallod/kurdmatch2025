@@ -237,10 +237,10 @@ const MyProfile = () => {
         await uploadProfilePhoto(files[0], isPrimary);
         await loadPhotos();
         if (isPrimary) refreshData();
-        toast.success(isPrimary ? 'Profile photo set' : 'Photo uploaded');
+        toast.success(isPrimary ? t('toast.profile.photo_updated', 'Profile photo set') : t('toast.profile.photo_uploaded', 'Photo uploaded'));
       } catch (error) {
         console.error('Photo upload failed:', error);
-        toast.error('Failed to upload photo');
+        toast.error(t('toast.profile.upload_failed', 'Failed to upload photo'));
       }
     }
   };
@@ -250,9 +250,9 @@ const MyProfile = () => {
       await deletePhoto(photoId);
       await loadPhotos();
       refreshData();
-      toast.success('Photo removed');
+      toast.success(t('toast.profile.photo_removed', 'Photo removed'));
     } catch (error) {
-      toast.error('Failed to remove photo');
+      toast.error(t('toast.profile.remove_failed', 'Failed to remove photo'));
     }
   };
 
@@ -261,9 +261,9 @@ const MyProfile = () => {
       await setPhotoPrimary(photoId);
       await loadPhotos();
       refreshData();
-      toast.success('Profile photo updated');
+      toast.success(t('toast.profile.photo_updated', 'Profile photo updated'));
     } catch (error) {
-      toast.error('Failed to set profile photo');
+      toast.error(t('toast.profile.set_primary_failed', 'Failed to set profile photo'));
     }
   };
 
@@ -309,9 +309,9 @@ const MyProfile = () => {
       }
       if (Object.keys(dbUpdates).length > 0) {
         await updateProfileData(dbUpdates);
-        toast.success('Profile updated successfully');
+        toast.success(t('toast.profile.updated', 'Profile updated successfully'));
       }
-    } catch (error) { toast.error('Failed to update profile'); }
+    } catch (error) { toast.error(t('toast.profile.update_failed', 'Failed to update profile')); }
   };
 
   return (

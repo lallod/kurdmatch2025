@@ -8,9 +8,11 @@ import { Shield, Mail, MessageSquare, Camera, Bell, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const ChaperoneMode: React.FC = () => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [enabled, setEnabled] = useState(false);
   const [chaperoneName, setChaperoneName] = useState('');
   const [chaperoneEmail, setChaperoneEmail] = useState('');
@@ -54,7 +56,7 @@ const ChaperoneMode: React.FC = () => {
     if (!user) return;
 
     if (enabled && !chaperoneEmail) {
-      toast.error('Please enter your chaperone\'s email');
+      toast.error(t('toast.chaperone.enter_email', "Please enter your chaperone's email"));
       return;
     }
 
@@ -76,10 +78,10 @@ const ChaperoneMode: React.FC = () => {
         .upsert(payload, { onConflict: 'user_id' });
 
       if (error) throw error;
-      toast.success('Chaperone settings saved');
+      toast.success(t('toast.chaperone.saved', 'Chaperone settings saved'));
     } catch (error) {
       console.error('Error saving:', error);
-      toast.error('Failed to save settings');
+      toast.error(t('toast.chaperone.save_failed', 'Failed to save settings'));
     } finally {
       setSaving(false);
     }

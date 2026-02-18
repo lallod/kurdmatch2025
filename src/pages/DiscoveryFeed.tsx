@@ -55,7 +55,7 @@ const DiscoveryFeed = () => {
       setStories(storiesData);
     } catch (error) {
       console.error('Error loading feed:', error);
-      toast.error('Failed to load feed');
+      toast.error(t('toast.feed.load_failed', 'Failed to load feed'));
     } finally {
       setLoading(false);
     }
@@ -120,7 +120,7 @@ const DiscoveryFeed = () => {
       if (post?.is_liked) await unlikePost(postId);
       else await likePost(postId);
     } catch (error) {
-      toast.error('Failed to like post');
+      toast.error(t('toast.post.like_failed', 'Failed to like post'));
     }
   }, [posts]);
 

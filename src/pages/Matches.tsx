@@ -33,7 +33,7 @@ const Matches = () => {
         setIsLoading(true);
         const [allMatches, recentMatches] = await Promise.all([getMatches(), getNewMatches(5)]);
         setMatches(allMatches); setNewMatches(recentMatches);
-      } catch (error) { toast.error('Failed to load matches'); }
+      } catch (error) { toast.error(t('toast.matches.load_failed', 'Failed to load matches')); }
       finally { setIsLoading(false); }
     };
     loadMatches();

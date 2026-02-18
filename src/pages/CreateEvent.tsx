@@ -8,9 +8,11 @@ import { createEvent } from '@/api/events';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2, Calendar, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
   
   const [title, setTitle] = useState('');
@@ -26,7 +28,7 @@ const CreateEvent = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image must be less than 5MB');
+        toast.error(t('toast.event.image_too_large', 'Image must be less than 5MB'));
         return;
       }
       
@@ -71,7 +73,7 @@ const CreateEvent = () => {
     e.preventDefault();
     
     if (!title.trim() || !description.trim() || !eventDate || !location.trim()) {
-      toast.error('Please fill in all required fields');
+      toast.error(t('toast.event.fill_required', 'Please fill in all required fields'));
       return;
     }
 
@@ -89,11 +91,11 @@ const CreateEvent = () => {
         maxAttendees ? parseInt(maxAttendees) : undefined,
         imageUrl
       );
-      toast.success('Event created successfully!');
+      toast.success(t('toast.event.created', 'Event created successfully!'));
       navigate('/discovery');
     } catch (error) {
       console.error('Error creating event:', error);
-      toast.error('Failed to create event');
+      toast.error(t('toast.event.create_failed', 'Failed to create event'));
     } finally {
       setLoading(false);
     }
