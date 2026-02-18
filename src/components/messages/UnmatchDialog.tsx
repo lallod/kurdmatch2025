@@ -5,6 +5,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface UnmatchDialogProps {
   open: boolean;
@@ -15,6 +16,7 @@ interface UnmatchDialogProps {
 }
 
 const UnmatchDialog = ({ open, onOpenChange, matchId, userName, onUnmatchSuccess }: UnmatchDialogProps) => {
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
 
   const handleUnmatch = async () => {
@@ -27,7 +29,7 @@ const UnmatchDialog = ({ open, onOpenChange, matchId, userName, onUnmatchSuccess
       onOpenChange(false);
     } catch (error) {
       console.error('Error unmatching:', error);
-      toast.error('Failed to unmatch. Please try again.');
+      toast.error(t('toast.unmatch.failed', 'Failed to unmatch. Please try again.'));
     } finally {
       setLoading(false);
     }

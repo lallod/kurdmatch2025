@@ -7,6 +7,7 @@ import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { SuggestionBadge } from '@/components/ui/suggestion-badge';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LifestyleEditorProps {
   profileData: ProfileData;
@@ -17,6 +18,7 @@ interface LifestyleEditorProps {
 }
 
 const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSources = {}, onUpdate, onSaveComplete, onCancel }) => {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     exerciseHabits: profileData.exerciseHabits || '',
     dietaryPreferences: profileData.dietaryPreferences || '',
@@ -36,7 +38,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
   const handleSave = () => {
     onUpdate(formData);
     setHasChanges(false);
-    toast.success('Lifestyle updated successfully!');
+    toast.success(t('toast.profile.lifestyle_updated', 'Lifestyle updated successfully!'));
     onSaveComplete?.();
   };
 

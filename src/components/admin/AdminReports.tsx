@@ -6,6 +6,7 @@ import { AlertTriangle, User, MessageSquare, Image, CheckCircle, XCircle } from 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Report {
   id: string;
@@ -21,6 +22,7 @@ interface Report {
 }
 
 export default function AdminReports() {
+  const { t } = useTranslations();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,10 +58,10 @@ export default function AdminReports() {
         .eq('id', reportId);
 
       if (error) throw error;
-      toast.success('Report resolved');
+      toast.success(t('toast.report.resolved', 'Report resolved'));
       loadReports();
     } catch (error) {
-      toast.error('Failed to resolve report');
+      toast.error(t('toast.report.resolve_failed', 'Failed to resolve report'));
     }
   };
 
@@ -74,10 +76,10 @@ export default function AdminReports() {
         .eq('id', reportId);
 
       if (error) throw error;
-      toast.success('Report dismissed');
+      toast.success(t('toast.report.dismissed', 'Report dismissed'));
       loadReports();
     } catch (error) {
-      toast.error('Failed to dismiss report');
+      toast.error(t('toast.report.dismiss_failed', 'Failed to dismiss report'));
     }
   };
 

@@ -5,6 +5,7 @@ import { checkActionLimit, performAction } from '@/api/usage';
 import { toast } from 'sonner';
 import PremiumFeatureModal from '@/components/modals/PremiumFeatureModal';
 import LimitReachedModal from '@/components/modals/LimitReachedModal';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SwipeActionsProps {
   onRewind: () => void;
@@ -25,6 +26,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
   isRewinding = false,
   remainingRewinds
 }) => {
+  const { t } = useTranslations();
   const [showPremiumModal, setShowPremiumModal] = useState<'super_like' | 'rewind' | 'boost' | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [userLimits, setUserLimits] = useState({
@@ -83,7 +85,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
       // Reload limits after successful action
       await loadUserLimits();
     } else {
-      toast.error('Action failed. Please try again.');
+      toast.error(t('toast.action.failed', 'Action failed. Please try again.'));
     }
   };
 

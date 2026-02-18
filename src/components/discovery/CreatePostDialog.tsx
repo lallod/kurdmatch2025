@@ -11,6 +11,7 @@ import { extractHashtags, updateHashtagUsage } from '@/api/hashtags';
 import { getUserGroups, addPostToGroup } from '@/api/groups';
 import { toast } from 'sonner';
 import { Image, Video, Hash, Users, Loader2 } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CreatePostDialogProps {
   open: boolean;
@@ -19,6 +20,7 @@ interface CreatePostDialogProps {
 }
 
 const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange, onPostCreated }) => {
+  const { t } = useTranslations();
   const [content, setContent] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [mediaType, setMediaType] = useState<'image' | 'video' | undefined>();
@@ -59,7 +61,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
     e.preventDefault();
     
     if (!content.trim()) {
-      toast.error('Please enter some content');
+      toast.error(t('toast.post.enter_content', 'Please enter some content'));
       return;
     }
 
@@ -78,7 +80,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
         );
       }
 
-      toast.success('Post created successfully!');
+      toast.success(t('toast.post.created', 'Post created successfully!'));
       
       setContent('');
       setMediaUrl('');
@@ -87,7 +89,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
       onOpenChange(false);
       onPostCreated?.();
     } catch (error) {
-      toast.error('Failed to create post');
+      toast.error(t('toast.post.create_failed', 'Failed to create post'));
     } finally {
       setLoading(false);
     }

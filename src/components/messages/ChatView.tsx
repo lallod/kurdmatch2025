@@ -76,7 +76,7 @@ const ChatView: React.FC<ChatViewProps> = ({
         setConversationMessages(messages);
         await markMessagesAsRead(conversation.id);
       } catch {
-        toast.error('Failed to load conversation');
+        toast.error(t('toast.conversation.load_failed', 'Failed to load conversation'));
       }
     };
     loadMessages();
@@ -113,12 +113,12 @@ const ChatView: React.FC<ChatViewProps> = ({
       setNewMessage('');
       const messages = await getMessagesByConversation(conversation.id);
       setConversationMessages(messages);
-      toast.success('Message sent!');
+      toast.success(t('toast.message.sent', 'Message sent!'));
     } catch (error: any) {
       if (error?.message?.includes('Rate limit exceeded')) {
-        toast.error('You\'re sending messages too quickly. Please wait a moment.');
+        toast.error(t('toast.message.rate_limit', "You're sending messages too quickly. Please wait a moment."));
       } else {
-        toast.error('Failed to send message');
+        toast.error(t('toast.message.send_failed', 'Failed to send message'));
       }
     }
   };
@@ -130,8 +130,8 @@ const ChatView: React.FC<ChatViewProps> = ({
       const messages = await getMessagesByConversation(conversation.id);
       setConversationMessages(messages);
       setShowGifPicker(false);
-      toast.success('GIF sent!');
-    } catch { toast.error('Failed to send GIF'); }
+      toast.success(t('toast.gif.sent', 'GIF sent!'));
+    } catch { toast.error(t('toast.gif.send_failed', 'Failed to send GIF')); }
   };
 
   const handleSendVoice = async (audioBlob: Blob, duration: number) => {
@@ -146,8 +146,8 @@ const ChatView: React.FC<ChatViewProps> = ({
       const messages = await getMessagesByConversation(conversation.id);
       setConversationMessages(messages);
       setShowVoiceRecorder(false);
-      toast.success('Voice message sent!');
-    } catch { toast.error('Failed to send voice message'); }
+      toast.success(t('toast.voice.sent', 'Voice message sent!'));
+    } catch { toast.error(t('toast.voice.send_failed', 'Failed to send voice message')); }
   };
 
   const handleImageSelect = (file: File) => {
@@ -160,7 +160,7 @@ const ChatView: React.FC<ChatViewProps> = ({
   const handleSendImage = async () => {
     if (!selectedImage || !user) return;
     try {
-      toast.info('Compressing image...');
+      toast.info(t('toast.image.compressing', 'Compressing image...'));
       const compressedImage = await compressImageForChat(selectedImage);
       const fileName = `${user.id}/${Date.now()}_${compressedImage.name}`;
       const { error: uploadError } = await supabase.storage.from('chat-images').upload(fileName, compressedImage);
@@ -172,8 +172,8 @@ const ChatView: React.FC<ChatViewProps> = ({
       setConversationMessages(messages);
       setSelectedImage(null);
       setImagePreviewUrl(null);
-      toast.success('Image sent!');
-    } catch { toast.error('Failed to send image'); }
+      toast.success(t('toast.image.sent', 'Image sent!'));
+    } catch { toast.error(t('toast.image.send_failed', 'Failed to send image')); }
   };
 
   const handleBlockUser = async () => {
@@ -181,10 +181,10 @@ const ChatView: React.FC<ChatViewProps> = ({
     try {
       const { error } = await supabase.from('blocked_users').insert({ blocker_id: user.id, blocked_id: conversation.id, reason: 'Blocked from conversation' });
       if (error) throw error;
-      toast.success('User blocked successfully');
+      toast.success(t('toast.user.blocked', 'User blocked successfully'));
       onBack();
       onConversationsRefresh();
-    } catch { toast.error('Failed to block user'); }
+    } catch { toast.error(t('toast.user.block_failed', 'Failed to block user')); }
   };
 
   const handleUnmatch = async () => {
@@ -193,10 +193,10 @@ const ChatView: React.FC<ChatViewProps> = ({
       const { data: match, error } = await supabase.from('matches').select('id')
         .or(`and(user1_id.eq.${user.id},user2_id.eq.${conversation.id}),and(user1_id.eq.${conversation.id},user2_id.eq.${user.id})`)
         .single();
-      if (error) { toast.error('Could not find match'); return; }
+      if (error) { toast.error(t('toast.match.not_found', 'Could not find match')); return; }
       setCurrentMatchId(match.id);
       setUnmatchDialogOpen(true);
-    } catch { toast.error('Failed to find match'); }
+    } catch { toast.error(t('toast.match.find_failed', 'Failed to find match')); }
   };
 
   const handleUnmatchSuccess = () => {
@@ -214,16 +214,16 @@ const ChatView: React.FC<ChatViewProps> = ({
     try {
       const { data, error } = await supabase.functions.invoke('translate-message', { body: { text, targetLanguage } });
       if (error) {
-        if (error.message?.includes('429')) toast.error("Rate limit reached.");
-        else if (error.message?.includes('402')) toast.error("Service unavailable.");
+        if (error.message?.includes('429')) toast.error(t('toast.translate.rate_limit', 'Rate limit reached.'));
+        else if (error.message?.includes('402')) toast.error(t('toast.translate.unavailable', 'Service unavailable.'));
         else throw error;
         return;
       }
       if (data?.translatedText) {
         setTranslatedMessages(prev => ({ ...prev, [messageId]: data.translatedText }));
-        toast.success("Translation complete");
+        toast.success(t('toast.translate.complete', 'Translation complete'));
       }
-    } catch { toast.error("Unable to translate message."); }
+    } catch { toast.error(t('toast.translate.failed', 'Unable to translate message.')); }
     finally {
       setTranslatingMessages(prev => { const s = new Set(prev); s.delete(messageId); return s; });
     }
