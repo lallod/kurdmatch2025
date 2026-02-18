@@ -9,15 +9,16 @@ import { Search, Eye, Trash2, Mail, MailOpen, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAdminMessages } from '../hooks/useAdminMessages';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const MessagesPage = () => {
+  const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [selectedMessage, setSelectedMessage] = React.useState<any>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = React.useState(false);
   const [filterStatus, setFilterStatus] = React.useState<'all' | 'read' | 'unread'>('all');
   const [currentPage, setCurrentPage] = React.useState(1);
   const { messages, loading, totalCount, fetchMessages, deleteMessage } = useAdminMessages();
-  
 
   React.useEffect(() => {
     fetchMessages(currentPage, 10, searchTerm, filterStatus);
@@ -31,9 +32,9 @@ const MessagesPage = () => {
   const handleDelete = async (messageId: string) => {
     const success = await deleteMessage(messageId);
     if (success) {
-      toast.success("Message deleted successfully");
+      toast.success(t('toast.message.deleted', 'Message deleted successfully'));
     } else {
-      toast.error("Failed to delete message");
+      toast.error(t('toast.message.delete_failed', 'Failed to delete message'));
     }
   };
 
@@ -56,10 +57,10 @@ const MessagesPage = () => {
       <Card className="bg-[#141414] border-white/5">
         <CardHeader>
           <CardTitle className="text-white flex justify-between items-center">
-            <span>Messages Management</span>
+            <span>{t('admin.messages_management', 'Messages Management')}</span>
             <Button onClick={handleRefresh} variant="outline" size="sm" disabled={loading}>
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+              {t('common.refresh', 'Refresh')}
             </Button>
           </CardTitle>
         </CardHeader>
@@ -67,7 +68,7 @@ const MessagesPage = () => {
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1 flex gap-2">
               <Input
-                placeholder="Search by sender, recipient, or content..."
+                placeholder={t('common.search', 'Search') + '...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -75,39 +76,27 @@ const MessagesPage = () => {
               />
               <Button onClick={handleSearch} disabled={loading}>
                 <Search className="h-4 w-4 mr-2" />
-                Search
+                {t('common.search', 'Search')}
               </Button>
             </div>
 
             <div className="flex gap-2">
-              <Button
-                variant={filterStatus === 'all' ? 'default' : 'outline'}
-                onClick={() => { setFilterStatus('all'); setCurrentPage(1); }}
-                disabled={loading}
-              >
-                All
+              <Button variant={filterStatus === 'all' ? 'default' : 'outline'} onClick={() => { setFilterStatus('all'); setCurrentPage(1); }} disabled={loading}>
+                {t('common.all', 'All')}
               </Button>
-              <Button
-                variant={filterStatus === 'read' ? 'default' : 'outline'}
-                onClick={() => { setFilterStatus('read'); setCurrentPage(1); }}
-                disabled={loading}
-              >
+              <Button variant={filterStatus === 'read' ? 'default' : 'outline'} onClick={() => { setFilterStatus('read'); setCurrentPage(1); }} disabled={loading}>
                 <MailOpen className="h-4 w-4 mr-2" />
-                Read
+                {t('common.read', 'Read')}
               </Button>
-              <Button
-                variant={filterStatus === 'unread' ? 'default' : 'outline'}
-                onClick={() => { setFilterStatus('unread'); setCurrentPage(1); }}
-                disabled={loading}
-              >
+              <Button variant={filterStatus === 'unread' ? 'default' : 'outline'} onClick={() => { setFilterStatus('unread'); setCurrentPage(1); }} disabled={loading}>
                 <Mail className="h-4 w-4 mr-2" />
-                Unread
+                {t('common.unread', 'Unread')}
               </Button>
             </div>
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-white/60">Loading messages...</div>
+            <div className="text-center py-12 text-white/60">{t('common.loading', 'Loading...')}</div>
           ) : filteredMessages.length === 0 ? (
             <div className="text-center py-12 text-white/60">No messages found</div>
           ) : (
@@ -115,56 +104,32 @@ const MessagesPage = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="border-white/5 hover:bg-white/5">
-                    <TableHead className="text-white/80">Sender</TableHead>
-                    <TableHead className="text-white/80">Recipient</TableHead>
-                    <TableHead className="text-white/80">Message Preview</TableHead>
-                    <TableHead className="text-white/80">Date</TableHead>
-                    <TableHead className="text-white/80">Status</TableHead>
-                    <TableHead className="text-right text-white/80">Actions</TableHead>
+                    <TableHead className="text-white/80">{t('common.sender', 'Sender')}</TableHead>
+                    <TableHead className="text-white/80">{t('common.recipient', 'Recipient')}</TableHead>
+                    <TableHead className="text-white/80">{t('common.message', 'Message')}</TableHead>
+                    <TableHead className="text-white/80">{t('common.date', 'Date')}</TableHead>
+                    <TableHead className="text-white/80">{t('common.status', 'Status')}</TableHead>
+                    <TableHead className="text-right text-white/80">{t('common.actions', 'Actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredMessages.map((message) => (
                     <TableRow key={message.id} className="border-white/5 hover:bg-white/5">
-                      <TableCell className="font-medium text-white">
-                        {message.sender?.name || 'Unknown'}
-                      </TableCell>
-                      <TableCell className="text-white/80">
-                        {message.recipient?.name || 'Unknown'}
-                      </TableCell>
-                      <TableCell className="max-w-xs truncate text-white/60">
-                        {message.text}
-                      </TableCell>
-                      <TableCell className="text-white/60">
-                        {format(new Date(message.created_at), 'MMM dd, yyyy HH:mm')}
-                      </TableCell>
+                      <TableCell className="font-medium text-white">{message.sender?.name || 'Unknown'}</TableCell>
+                      <TableCell className="text-white/80">{message.recipient?.name || 'Unknown'}</TableCell>
+                      <TableCell className="max-w-xs truncate text-white/60">{message.text}</TableCell>
+                      <TableCell className="text-white/60">{format(new Date(message.created_at), 'MMM dd, yyyy HH:mm')}</TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={message.read ? "secondary" : "default"}
-                          className={message.read ? "bg-white/10 text-white/80" : ""}
-                        >
-                          {message.read ? 'Read' : 'Unread'}
+                        <Badge variant={message.read ? "secondary" : "default"} className={message.read ? "bg-white/10 text-white/80" : ""}>
+                          {message.read ? t('common.read', 'Read') : t('common.unread', 'Unread')}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedMessage(message);
-                              setIsViewDialogOpen(true);
-                            }}
-                            className="text-white/80 hover:text-white hover:bg-white/10"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => { setSelectedMessage(message); setIsViewDialogOpen(true); }} className="text-white/80 hover:text-white hover:bg-white/10">
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(message.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => handleDelete(message.id)} className="text-red-400 hover:text-red-300 hover:bg-red-500/10">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -176,66 +141,43 @@ const MessagesPage = () => {
             </div>
           )}
 
-          {/* Pagination */}
           <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-white/60">
-              Showing {filteredMessages.length} of {totalCount} messages (Page {currentPage} of {totalPages})
-            </p>
+            <p className="text-sm text-white/60">Page {currentPage} of {totalPages}</p>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage === 1 || loading}
-              >
-                Previous
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages || loading}
-              >
-                Next
-              </Button>
+              <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1 || loading}>{t('common.previous', 'Previous')}</Button>
+              <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages || loading}>{t('common.next', 'Next')}</Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* View Message Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="bg-[#141414] border-white/10 text-white">
           <DialogHeader>
-            <DialogTitle className="text-white">Message Details</DialogTitle>
+            <DialogTitle className="text-white">{t('admin.message_details', 'Message Details')}</DialogTitle>
           </DialogHeader>
           {selectedMessage && (
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-white/60">From</p>
+                <p className="text-sm font-medium text-white/60">{t('common.from', 'From')}</p>
                 <p className="text-white">{selectedMessage.sender?.name || 'Unknown'}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-white/60">To</p>
+                <p className="text-sm font-medium text-white/60">{t('common.to', 'To')}</p>
                 <p className="text-white">{selectedMessage.recipient?.name || 'Unknown'}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-white/60">Date</p>
-                <p className="text-white">
-                  {format(new Date(selectedMessage.created_at), 'MMM dd, yyyy HH:mm')}
-                </p>
+                <p className="text-sm font-medium text-white/60">{t('common.date', 'Date')}</p>
+                <p className="text-white">{format(new Date(selectedMessage.created_at), 'MMM dd, yyyy HH:mm')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-white/60">Message</p>
+                <p className="text-sm font-medium text-white/60">{t('common.message', 'Message')}</p>
                 <p className="mt-2 text-white">{selectedMessage.text}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-white/60">Status</p>
-                <Badge 
-                  variant={selectedMessage.read ? "secondary" : "default"}
-                  className={selectedMessage.read ? "bg-white/10 text-white/80" : ""}
-                >
-                  {selectedMessage.read ? 'Read' : 'Unread'}
+                <p className="text-sm font-medium text-white/60">{t('common.status', 'Status')}</p>
+                <Badge variant={selectedMessage.read ? "secondary" : "default"} className={selectedMessage.read ? "bg-white/10 text-white/80" : ""}>
+                  {selectedMessage.read ? t('common.read', 'Read') : t('common.unread', 'Unread')}
                 </Badge>
               </div>
             </div>

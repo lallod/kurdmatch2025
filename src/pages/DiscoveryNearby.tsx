@@ -12,6 +12,7 @@ import DistanceBadge from '@/components/location/DistanceBadge';
 import { useNearbyUsers } from '@/hooks/useNearbyUsers';
 import { getCurrentLocation, getCachedLocation, cacheLocation } from '@/utils/locationUtils';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import {
   Sheet,
   SheetContent,
@@ -23,6 +24,7 @@ import {
 
 const DiscoveryNearby = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   
   const [radiusKm, setRadiusKm] = useState(50);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
@@ -39,7 +41,6 @@ const DiscoveryNearby = () => {
     setIsDetectingLocation(true);
     
     try {
-      // Try cached location first
       const cached = getCachedLocation();
       if (cached) {
         await fetchNearbyUsers(cached);
@@ -47,14 +48,13 @@ const DiscoveryNearby = () => {
         return;
       }
 
-      // Get fresh location
       const coords = await getCurrentLocation();
       cacheLocation(coords);
       await fetchNearbyUsers(coords);
       
-      toast.success(`Searching for matches within ${radiusKm} km`);
+      toast.success(t('toast.nearby.searching', 'Searching for matches within {{radius}} km', { radius: radiusKm }));
     } catch (error) {
-      toast.error('Please enable location access to see nearby matches');
+      toast.error(t('toast.nearby.enable_location', 'Please enable location access to see nearby matches'));
     } finally {
       setIsDetectingLocation(false);
     }
@@ -92,9 +92,9 @@ const DiscoveryNearby = () => {
                 <MapPin className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Nearby</h1>
+                <h1 className="text-2xl font-bold text-foreground">{t('nearby.title', 'Nearby')}</h1>
                 <p className="text-sm text-muted-foreground">
-                  {users.length} matches within {radiusKm} km
+                  {t('nearby.matches_within', '{{count}} matches within {{radius}} km', { count: users.length, radius: radiusKm })}
                 </p>
               </div>
             </div>
@@ -117,16 +117,16 @@ const DiscoveryNearby = () => {
                 </SheetTrigger>
                 <SheetContent>
                   <SheetHeader>
-                    <SheetTitle>Distance Filter</SheetTitle>
+                    <SheetTitle>{t('nearby.distance_filter', 'Distance Filter')}</SheetTitle>
                     <SheetDescription>
-                      Adjust the search radius to find matches
+                      {t('nearby.adjust_radius', 'Adjust the search radius to find matches')}
                     </SheetDescription>
                   </SheetHeader>
                   
                   <div className="space-y-6 mt-6">
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <Label>Search Radius</Label>
+                        <Label>{t('nearby.search_radius', 'Search Radius')}</Label>
                         <span className="text-sm font-medium text-primary">{radiusKm} km</span>
                       </div>
                       <Slider
@@ -155,7 +155,7 @@ const DiscoveryNearby = () => {
         <div className="flex flex-col items-center justify-center py-20">
           <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
           <p className="text-muted-foreground">
-            {isDetectingLocation ? 'Detecting your location...' : 'Finding nearby matches...'}
+            {isDetectingLocation ? t('nearby.detecting_location', 'Detecting your location...') : t('nearby.finding_matches', 'Finding nearby matches...')}
           </p>
         </div>
       )}
@@ -164,12 +164,12 @@ const DiscoveryNearby = () => {
       {!isDetectingLocation && !userLocation && !isLoading && (
         <div className="flex flex-col items-center justify-center py-20 px-4">
           <MapPin className="w-16 h-16 text-muted-foreground mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Location Required</h3>
+          <h3 className="text-xl font-semibold mb-2">{t('nearby.location_required', 'Location Required')}</h3>
           <p className="text-muted-foreground text-center mb-6">
-            We need your location to show nearby matches
+            {t('nearby.need_location', 'We need your location to show nearby matches')}
           </p>
           <Button onClick={initializeLocation}>
-            Enable Location
+            {t('nearby.enable_location', 'Enable Location')}
           </Button>
         </div>
       )}
@@ -220,13 +220,13 @@ const DiscoveryNearby = () => {
       {!isDetectingLocation && !isLoading && userLocation && users.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 px-4">
           <MapPin className="w-16 h-16 text-muted-foreground mb-4" />
-          <h3 className="text-xl font-semibold mb-2">No matches nearby</h3>
+          <h3 className="text-xl font-semibold mb-2">{t('nearby.no_matches', 'No matches nearby')}</h3>
           <p className="text-muted-foreground text-center mb-6">
-            Try increasing your search radius
+            {t('nearby.try_increase_radius', 'Try increasing your search radius')}
           </p>
           <Button onClick={handleRefresh} variant="outline">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+            {t('common.refresh', 'Refresh')}
           </Button>
         </div>
       )}

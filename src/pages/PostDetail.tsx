@@ -70,12 +70,12 @@ const PostDetail = () => {
         setPost({ ...post, is_liked: true, likes_count: post.likes_count + 1 });
       }
     } catch (error) {
-      toast.error('Failed to like post');
+      toast.error(t('toast.post.like_failed', 'Failed to like post'));
     }
   };
 
   const handleComment = () => {
-    toast.info('Comments coming soon!');
+    toast.info(t('toast.post.comments_soon', 'Comments coming soon!'));
   };
 
   if (loading) {

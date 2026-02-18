@@ -8,6 +8,7 @@ import { MessageSquare, Search, Calendar, Archive, ExternalLink } from 'lucide-r
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ConversationMetadata {
   id: string;
@@ -28,6 +29,7 @@ interface MutedConversation {
 }
 
 const ConversationsPage = () => {
+  const { t } = useTranslations();
   const [conversations, setConversations] = useState<ConversationMetadata[]>([]);
   const [mutedConvs, setMutedConvs] = useState<MutedConversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,13 +45,12 @@ const ConversationsPage = () => {
         .select('*', { count: 'exact' })
         .order('last_message_at', { ascending: false })
         .limit(100);
-
       if (error) throw error;
       setConversations(data || []);
       setTotalConvs(count || 0);
     } catch (error) {
       console.error('Error fetching conversations:', error);
-      toast.error('Failed to load conversations');
+      toast.error(t('toast.conversations.load_failed', 'Failed to load conversations'));
     } finally {
       setLoading(false);
     }
@@ -63,13 +64,12 @@ const ConversationsPage = () => {
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
         .limit(100);
-
       if (error) throw error;
       setMutedConvs(data || []);
       setTotalMuted(count || 0);
     } catch (error) {
       console.error('Error fetching muted conversations:', error);
-      toast.error('Failed to load muted conversations');
+      toast.error(t('toast.conversations.muted_failed', 'Failed to load muted conversations'));
     } finally {
       setLoading(false);
     }
@@ -94,21 +94,21 @@ const ConversationsPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Conversations Management</h1>
-          <p className="text-white/60 mt-1">View all conversations and muted chats</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.conversations_management', 'Conversations Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.view_conversations', 'View all conversations and muted chats')}</p>
         </div>
         <Button onClick={() => { fetchConversations(); fetchMutedConversations(); }} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
       <Tabs defaultValue="conversations" className="w-full">
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger value="conversations" className="data-[state=active]:bg-white/10">
-            Conversations ({totalConvs})
+            {t('admin.conversations', 'Conversations')} ({totalConvs})
           </TabsTrigger>
           <TabsTrigger value="muted" className="data-[state=active]:bg-white/10">
-            Muted ({totalMuted})
+            {t('admin.muted', 'Muted')} ({totalMuted})
           </TabsTrigger>
         </TabsList>
 
@@ -117,13 +117,13 @@ const ConversationsPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <MessageSquare className="h-5 w-5 text-blue-500" />
-                All Conversations
+                {t('admin.all_conversations', 'All Conversations')}
               </CardTitle>
               <div className="mt-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
-                    placeholder="Search conversations..."
+                    placeholder={t('common.search', 'Search') + '...'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white"
@@ -133,26 +133,21 @@ const ConversationsPage = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-white/60">Loading conversations...</div>
+                <div className="text-center py-8 text-white/60">{t('common.loading', 'Loading...')}</div>
               ) : filteredConversations.length === 0 ? (
                 <div className="text-center py-8 text-white/60">No conversations found</div>
               ) : (
                 <div className="space-y-3">
                   {filteredConversations.map((conv) => (
-                    <div
-                      key={conv.id}
-                      className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
-                    >
+                    <div key={conv.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
                       <div className="flex items-center gap-4 flex-1">
                         <MessageSquare className="h-5 w-5 text-blue-500" />
-                        
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <p className="text-white font-mono text-sm">{conv.user1_id.substring(0, 8)}...</p>
                             <span className="text-white/40">↔</span>
                             <p className="text-white font-mono text-sm">{conv.user2_id.substring(0, 8)}...</p>
                           </div>
-                          
                           <div className="flex items-center gap-2 flex-wrap">
                             {conv.is_archived && (
                               <Badge variant="outline" className="bg-yellow-500/10 border-yellow-500/20 text-yellow-500">
@@ -170,13 +165,7 @@ const ConversationsPage = () => {
                           </div>
                         </div>
                       </div>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => window.open(`/messages`, '_blank')}
-                        className="text-white/60 hover:text-white hover:bg-white/5"
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => window.open(`/messages`, '_blank')} className="text-white/60 hover:text-white hover:bg-white/5">
                         <ExternalLink className="h-4 w-4" />
                       </Button>
                     </div>
@@ -192,13 +181,13 @@ const ConversationsPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Archive className="h-5 w-5 text-orange-500" />
-                Muted Conversations
+                {t('admin.muted_conversations', 'Muted Conversations')}
               </CardTitle>
               <div className="mt-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
-                    placeholder="Search muted..."
+                    placeholder={t('common.search', 'Search') + '...'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white"
@@ -208,26 +197,21 @@ const ConversationsPage = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-white/60">Loading muted conversations...</div>
+                <div className="text-center py-8 text-white/60">{t('common.loading', 'Loading...')}</div>
               ) : filteredMuted.length === 0 ? (
                 <div className="text-center py-8 text-white/60">No muted conversations found</div>
               ) : (
                 <div className="space-y-3">
                   {filteredMuted.map((muted) => (
-                    <div
-                      key={muted.id}
-                      className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
-                    >
+                    <div key={muted.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
                       <div className="flex items-center gap-4 flex-1">
                         <Archive className="h-5 w-5 text-orange-500" />
-                        
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <p className="text-white font-mono text-sm">{muted.user_id.substring(0, 8)}...</p>
-                            <span className="text-white/40">muted</span>
+                            <span className="text-white/40">{t('admin.muted', 'muted')}</span>
                             <p className="text-white font-mono text-sm">{muted.muted_user_id.substring(0, 8)}...</p>
                           </div>
-                          
                           <div className="flex items-center gap-2">
                             <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                               <Calendar className="h-3 w-3 mr-1" />
