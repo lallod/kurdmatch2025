@@ -8,8 +8,10 @@ import PostCard from '@/components/discovery/PostCard';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const HashtagFeed = () => {
+  const { t } = useTranslations();
   const { hashtag } = useParams<{ hashtag: string }>();
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
@@ -59,7 +61,7 @@ export const HashtagFeed = () => {
 
   const handleLike = async (postId: string) => {
     if (!user) {
-      toast.error('Please log in to like posts');
+      toast.error(t('toast.auth.login_required', 'Please log in to like posts'));
       return;
     }
 
@@ -77,7 +79,7 @@ export const HashtagFeed = () => {
       }
     } catch (error) {
       console.error('Error toggling like:', error);
-      toast.error('Failed to update like');
+      toast.error(t('toast.like.update_failed', 'Failed to update like'));
     }
   };
 

@@ -11,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Camera, Loader2, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import { getCurrentUserProfile, updateProfile, uploadProfilePhoto } from '@/api/profiles';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import type { Profile } from '@/api/profiles';
@@ -21,6 +22,7 @@ interface ComprehensiveProfileSettingsProps {
 
 const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> = ({ onSave }) => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -71,7 +73,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
       });
     } catch (error) {
       console.error('Failed to load profile:', error);
-      toast.error('Failed to load profile');
+      toast.error(t('toast.profile.load_failed', 'Failed to load profile'));
     } finally {
       setLoading(false);
     }
@@ -119,7 +121,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
       toast.success(`${field} updated`, { duration: 2000 });
     } catch (error) {
       console.error('Auto-save failed:', error);
-      toast.error('Failed to save changes');
+      toast.error(t('toast.save_changes.failed', 'Failed to save changes'));
     }
   };
 
@@ -129,11 +131,11 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
     setSaving(true);
     try {
       await updateProfile(user.id, formData);
-      toast.success('Profile updated successfully');
+      toast.success(t('toast.profile.updated', 'Profile updated successfully'));
       onSave?.();
     } catch (error) {
       console.error('Failed to update profile:', error);
-      toast.error('Failed to update profile');
+      toast.error(t('toast.profile.update_failed', 'Failed to update profile'));
     } finally {
       setSaving(false);
     }
@@ -146,11 +148,11 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
     try {
       setSaving(true);
       await uploadProfilePhoto(file, true);
-      toast.success('Profile photo updated');
+      toast.success(t('toast.profile.photo_updated', 'Profile photo updated'));
       loadProfile();
     } catch (error) {
       console.error('Failed to upload photo:', error);
-      toast.error('Failed to upload photo');
+      toast.error(t('toast.photo.upload_failed', 'Failed to upload photo'));
     } finally {
       setSaving(false);
     }

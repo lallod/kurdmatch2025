@@ -7,6 +7,7 @@ import { Bell, Heart, MessageCircle, Users, Eye, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface NotificationPreferences {
   push_new_messages: boolean;
@@ -18,6 +19,7 @@ interface NotificationPreferences {
 
 export const PushNotificationPreferences: React.FC = () => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     push_new_messages: true,
     push_new_matches: true,
@@ -76,10 +78,10 @@ export const PushNotificationPreferences: React.FC = () => {
         .eq('id', user.id);
 
       if (error) throw error;
-      toast.success('Innstillinger oppdatert');
+      toast.success(t('toast.settings.updated', 'Settings updated'));
     } catch (error) {
       console.error('Failed to update preferences:', error);
-      toast.error('Kunne ikke lagre innstillinger');
+      toast.error(t('toast.settings.save_failed', 'Could not save settings'));
       // Revert on error
       setPreferences(preferences);
     }

@@ -3,17 +3,19 @@ import { Lock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPremiumCheckout } from '@/api/payments';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface BlurredProfileOverlayProps {
   onClose?: () => void;
 }
 
 const BlurredProfileOverlay: React.FC<BlurredProfileOverlayProps> = ({ onClose }) => {
+  const { t } = useTranslations();
   const handleUpgrade = async () => {
     try {
       await createPremiumCheckout('premium');
     } catch {
-      toast.error('Failed to start checkout');
+      toast.error(t('toast.checkout.failed', 'Failed to start checkout'));
     }
   };
 

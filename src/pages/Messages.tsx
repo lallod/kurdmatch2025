@@ -5,6 +5,7 @@ import { getStories } from '@/api/posts';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import LoadingState from '@/components/LoadingState';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatView from '@/components/messages/ChatView';
@@ -14,6 +15,7 @@ import IncomingCallSheet from '@/components/calls/IncomingCallSheet';
 
 const Messages = () => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [conversations, setConversations] = useState<any[]>([]);
   const [allMatches, setAllMatches] = useState<any[]>([]);
@@ -58,7 +60,7 @@ const Messages = () => {
       });
       setMatchStories(storyMap);
     } catch {
-      toast.error('Failed to load messages');
+      toast.error(t('toast.messages.load_failed', 'Failed to load messages'));
     } finally {
       setIsLoading(false);
     }

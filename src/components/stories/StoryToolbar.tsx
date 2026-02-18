@@ -1,6 +1,7 @@
 import { Heart, MessageCircle, Share2, Volume2, VolumeX, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface StoryToolbarProps {
   storyId: string;
@@ -19,17 +20,17 @@ export const StoryToolbar = ({
   isMuted,
   onToggleMute,
 }: StoryToolbarProps) => {
+  const { t } = useTranslations();
   const handleReply = () => {
-    // Navigate to messages with this user
     window.location.href = `/messages?user=${userId}`;
   };
 
   const handleShare = () => {
-    toast.success('Story shared!');
+    toast.success(t('toast.story.shared', 'Story shared!'));
   };
 
   const handleInfo = () => {
-    toast.info('Story details');
+    toast.info(t('toast.story.details', 'Story details'));
   };
 
   if (userId === currentUserId) {

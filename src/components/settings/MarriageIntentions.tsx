@@ -8,6 +8,7 @@ import { Heart, CircleDot, Baby, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const INTENTIONS = [
   { value: 'looking_to_marry', label: 'Looking to Marry' },
@@ -34,6 +35,7 @@ const FAMILY_PLANS = [
 
 const MarriageIntentions: React.FC = () => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [intention, setIntention] = useState('');
   const [timeline, setTimeline] = useState('');
   const [familyPlans, setFamilyPlans] = useState('');
@@ -69,7 +71,7 @@ const MarriageIntentions: React.FC = () => {
 
   const handleSave = async () => {
     if (!user || !intention) {
-      toast.error('Please select your marriage intention');
+      toast.error(t('toast.marriage.select_intention', 'Please select your marriage intention'));
       return;
     }
 
@@ -88,10 +90,10 @@ const MarriageIntentions: React.FC = () => {
         .upsert(payload, { onConflict: 'user_id' });
 
       if (error) throw error;
-      toast.success('Marriage intentions saved');
+      toast.success(t('toast.marriage.saved', 'Marriage intentions saved'));
     } catch (error) {
       console.error('Error saving:', error);
-      toast.error('Failed to save');
+      toast.error(t('toast.save.failed', 'Failed to save'));
     } finally {
       setSaving(false);
     }

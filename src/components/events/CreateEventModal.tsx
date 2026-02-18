@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { createEvent } from '@/api/events';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CreateEventModalProps {
   onClose: () => void;
@@ -13,6 +14,7 @@ interface CreateEventModalProps {
 }
 
 export default function CreateEventModal({ onClose, onSuccess }: CreateEventModalProps) {
+  const { t } = useTranslations();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
@@ -26,7 +28,7 @@ export default function CreateEventModal({ onClose, onSuccess }: CreateEventModa
     e.preventDefault();
     
     if (!title || !description || !location || !eventDate) {
-      toast.error('Please fill in all required fields');
+      toast.error(t('toast.event.fill_required', 'Please fill in all required fields'));
       return;
     }
 
@@ -42,7 +44,7 @@ export default function CreateEventModal({ onClose, onSuccess }: CreateEventModa
         maxAttendeesNum,
         imageUrl || undefined
       );
-      toast.success('Event created successfully!');
+      toast.success(t('toast.event.created', 'Event created successfully!'));
       onSuccess();
     } catch (error: any) {
       toast.error(error.message || 'Failed to create event');

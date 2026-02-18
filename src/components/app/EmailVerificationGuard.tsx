@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Mail, Shield, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EmailVerificationGuardProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ interface EmailVerificationGuardProps {
 
 const EmailVerificationGuard: React.FC<EmailVerificationGuardProps> = ({ children }) => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [isResending, setIsResending] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
 
@@ -36,10 +38,10 @@ const EmailVerificationGuard: React.FC<EmailVerificationGuardProps> = ({ childre
 
       if (error) throw error;
 
-      toast.success('Verification email sent! Please check your inbox.');
-      setResendCooldown(60); // 60 second cooldown
+      toast.success(t('toast.email.verification_sent', 'Verification email sent! Please check your inbox.'));
+      setResendCooldown(60);
     } catch (error) {
-      toast.error('Failed to send verification email. Please try again.');
+      toast.error(t('toast.email.verification_failed', 'Failed to send verification email. Please try again.'));
     } finally {
       setIsResending(false);
     }

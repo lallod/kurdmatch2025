@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Event, joinEvent, leaveEvent } from '@/api/events';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EventCardProps {
   event: Event;
@@ -13,14 +14,15 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, onUpdate }: EventCardProps) {
+  const { t } = useTranslations();
   const handleJoinToggle = async () => {
     try {
       if (event.is_attending) {
         await leaveEvent(event.id);
-        toast.success('Left event');
+        toast.success(t('toast.event.left', 'Left event'));
       } else {
         await joinEvent(event.id);
-        toast.success('Joined event!');
+        toast.success(t('toast.event.joined', 'Joined event!'));
       }
       onUpdate?.();
     } catch (error: any) {
