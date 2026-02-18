@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import SocialLogin from './components/SocialLogin';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 import { supabase } from '@/integrations/supabase/client';
 import { SecureInput } from '@/components/security/SecureInput';
 import { emailSchema } from '@/utils/security/input-validation';
@@ -37,6 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const { toast } = useToast();
   const { signIn } = useSupabaseAuth();
   const navigate = useNavigate();
+  const { t } = useTranslations();
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -62,15 +64,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       } else {
         // Default behavior if no callback provided
         toast({
-          title: "Success!",
-          description: "You have been logged in successfully.",
+          title: t('toast.login.success', 'Success!'),
+          description: t('toast.login.success_desc', 'You have been logged in successfully.'),
         });
       }
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to log in. Please try again.",
+        title: t('common.error', 'Error'),
+        description: error.message || t('toast.login.error', 'Failed to log in. Please try again.'),
         variant: "destructive",
       });
     }
@@ -104,7 +106,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t('auth.password', 'Password')}</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -128,7 +130,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
               id="remember" 
               className="h-4 w-4 rounded border-gray-600/50 bg-transparent" 
             />
-            <label htmlFor="remember" className="text-sm text-gray-400">Remember me</label>
+            <label htmlFor="remember" className="text-sm text-gray-400">{t('auth.remember_me', 'Remember me')}</label>
           </div>
           
           <Button 
@@ -138,7 +140,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             onClick={async () => {
               const email = form.getValues('email');
               if (!email) {
-                toast({ title: 'Enter your email', description: 'Please enter your email address first', variant: 'destructive' });
+                toast({ title: t('toast.login.enter_email', 'Enter your email'), description: t('toast.login.enter_email_desc', 'Please enter your email address first'), variant: 'destructive' });
                 return;
               }
               try {
@@ -146,13 +148,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                   redirectTo: `${window.location.origin}/reset-password`,
                 });
                 if (error) throw error;
-                toast({ title: 'Check your email', description: 'We sent you a password reset link.' });
+                toast({ title: t('toast.login.check_email', 'Check your email'), description: t('toast.login.reset_link_sent', 'We sent you a password reset link.') });
               } catch (err: any) {
-                toast({ title: 'Error', description: err.message, variant: 'destructive' });
+                toast({ title: t('common.error', 'Error'), description: err.message, variant: 'destructive' });
               }
             }}
           >
-            Forgot password?
+            {t('auth.forgot_password', 'Forgot password?')}
           </Button>
         </div>
         
@@ -160,10 +162,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
+              {t('auth.signing_in', 'Signing in...')}
             </>
           ) : (
-            "Sign in"
+            t('auth.sign_in', 'Sign in')
           )}
         </Button>
         

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Filter, Sparkles, MapPin, Heart, Briefcase, GraduationCap, Star, ChevronDown, Lock } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
@@ -76,6 +77,7 @@ const REGIONS = [
 
 export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFiltersProps) => {
   const { hasFeature } = useSubscription();
+  const { t } = useTranslations();
   const isPremium = hasFeature('basic');
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
@@ -122,7 +124,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
 
   const applyFilters = () => {
     if (!isPremium) {
-      toast.error('Premium feature', { description: 'Upgrade to use Smart Filters', icon: '⭐' });
+      toast.error(t('toast.filter.premium_required', 'Premium feature'), { description: t('toast.filter.upgrade_desc', 'Upgrade to use Smart Filters'), icon: '⭐' });
       return;
     }
     onFiltersChange(filters);
@@ -167,7 +169,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
       <SheetTrigger asChild>
         <Button variant="outline" size="sm" className="relative">
           <Filter className="h-4 w-4 mr-2" />
-          Filters
+          {t('common.filters', 'Filters')}
           {countActiveFilters() > 0 && (
             <Badge 
               variant="secondary" 
@@ -182,7 +184,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            Smart Filters
+            {t('filter.smart_filters', 'Smart Filters')}
             {!isPremium && (
               <span className="text-xs bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-2 py-0.5 rounded-full font-medium">Premium</span>
             )}
@@ -194,8 +196,8 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
             <div className="flex items-start gap-2">
               <Lock className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold">Premium Feature</p>
-                <p className="text-xs text-muted-foreground mt-1">Upgrade to unlock advanced Smart Filters</p>
+                <p className="text-sm font-semibold">{t('filter.premium_feature', 'Premium Feature')}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('filter.upgrade_unlock', 'Upgrade to unlock advanced Smart Filters')}</p>
               </div>
             </div>
           </div>
@@ -211,14 +213,14 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               <Button variant="ghost" className="w-full justify-between p-3 h-auto">
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  <span>Basic Preferences</span>
+                  <span>{t('filter.basic_preferences', 'Basic Preferences')}</span>
                 </div>
                 <ChevronDown className={`h-4 w-4 transition-transform ${expandedSections.includes('basic') ? 'rotate-180' : ''}`} />
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 p-3">
               <div className="space-y-2">
-                <Label>Age Range: {filters.ageRange[0]} - {filters.ageRange[1]}</Label>
+                <Label>{t('filter.age_range', 'Age Range: {{min}} - {{max}}', { min: filters.ageRange[0], max: filters.ageRange[1] })}</Label>
                 <Slider
                   value={filters.ageRange}
                   onValueChange={(value) => setFilters(prev => ({ ...prev, ageRange: value as [number, number] }))}
@@ -229,7 +231,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               </div>
 
               <div className="space-y-2">
-                <Label>Distance: {filters.distance === 100 ? 'Unlimited' : `${filters.distance} km`}</Label>
+                <Label>{t('filter.distance', 'Distance: {{value}}', { value: filters.distance === 100 ? t('filter.unlimited', 'Unlimited') : `${filters.distance} km` })}</Label>
                 <Slider
                   value={[filters.distance]}
                   onValueChange={(value) => setFilters(prev => ({ ...prev, distance: value[0] }))}
@@ -240,16 +242,16 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               </div>
 
               <div className="space-y-2">
-                <Label>Region</Label>
+                <Label>{t('filter.region', 'Region')}</Label>
                 <Select 
                   value={filters.region} 
                   onValueChange={(value) => setFilters(prev => ({ ...prev, region: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Any region" />
+                    <SelectValue placeholder={t('filter.any_region', 'Any region')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any region</SelectItem>
+                    <SelectItem value="">{t('filter.any_region', 'Any region')}</SelectItem>
                     {REGIONS.map(region => (
                       <SelectItem key={region} value={region}>{region}</SelectItem>
                     ))}
@@ -268,14 +270,14 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               <Button variant="ghost" className="w-full justify-between p-3 h-auto">
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4" />
-                  <span>Verification</span>
+                  <span>{t('filter.verification', 'Verification')}</span>
                 </div>
                 <ChevronDown className={`h-4 w-4 transition-transform ${expandedSections.includes('verification') ? 'rotate-180' : ''}`} />
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 p-3">
               <div className="flex items-center justify-between">
-                <Label htmlFor="verified">Verified profiles only</Label>
+                <Label htmlFor="verified">{t('filter.verified_only', 'Verified profiles only')}</Label>
                 <Switch
                   id="verified"
                   checked={filters.verifiedOnly}
@@ -284,7 +286,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="videoVerified">Video verified only</Label>
+                <Label htmlFor="videoVerified">{t('filter.video_verified', 'Video verified only')}</Label>
                 <Switch
                   id="videoVerified"
                   checked={filters.videoVerifiedOnly}
@@ -293,7 +295,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="recentlyActive">Recently active (24h)</Label>
+                <Label htmlFor="recentlyActive">{t('filter.recently_active', 'Recently active (24h)')}</Label>
                 <Switch
                   id="recentlyActive"
                   checked={filters.recentlyActive}
@@ -312,7 +314,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               <Button variant="ghost" className="w-full justify-between p-3 h-auto">
                 <div className="flex items-center gap-2">
                   <Heart className="h-4 w-4" />
-                  <span>Relationship Goals</span>
+                  <span>{t('filter.relationship_goals', 'Relationship Goals')}</span>
                 </div>
                 <ChevronDown className={`h-4 w-4 transition-transform ${expandedSections.includes('goals') ? 'rotate-180' : ''}`} />
               </Button>
@@ -342,7 +344,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               <Button variant="ghost" className="w-full justify-between p-3 h-auto">
                 <div className="flex items-center gap-2">
                   <GraduationCap className="h-4 w-4" />
-                  <span>Education</span>
+                  <span>{t('filter.education', 'Education')}</span>
                 </div>
                 <ChevronDown className={`h-4 w-4 transition-transform ${expandedSections.includes('career') ? 'rotate-180' : ''}`} />
               </Button>
@@ -372,14 +374,14 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
               <Button variant="ghost" className="w-full justify-between p-3 h-auto">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4" />
-                  <span>AI Compatibility</span>
+                  <span>{t('filter.ai_compatibility', 'AI Compatibility')}</span>
                 </div>
                 <ChevronDown className={`h-4 w-4 transition-transform ${expandedSections.includes('compatibility') ? 'rotate-180' : ''}`} />
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 p-3">
               <div className="space-y-2">
-                <Label>Minimum compatibility: {filters.compatibilityMin}%</Label>
+                <Label>{t('filter.min_compatibility', 'Minimum compatibility: {{value}}%', { value: filters.compatibilityMin })}</Label>
                 <Slider
                   value={[filters.compatibilityMin]}
                   onValueChange={(value) => setFilters(prev => ({ ...prev, compatibilityMin: value[0] }))}
@@ -388,7 +390,7 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
                   step={5}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Only show profiles with at least {filters.compatibilityMin}% AI-calculated compatibility
+                  {t('filter.compatibility_desc', 'Only show profiles with at least {{value}}% AI-calculated compatibility', { value: filters.compatibilityMin })}
                 </p>
               </div>
             </CollapsibleContent>
@@ -397,10 +399,10 @@ export const SmartFilters = ({ onFiltersChange, activeFilterCount = 0 }: SmartFi
 
         <SheetFooter className="flex gap-2">
           <Button variant="outline" onClick={resetFilters} className="flex-1">
-            Reset
+            {t('filter.reset', 'Reset')}
           </Button>
           <Button onClick={applyFilters} className="flex-1" disabled={!isPremium}>
-            {isPremium ? 'Apply Filters' : '⭐ Upgrade to Apply'}
+            {isPremium ? t('filter.apply', 'Apply Filters') : t('filter.upgrade_to_apply', '⭐ Upgrade to Apply')}
           </Button>
         </SheetFooter>
       </SheetContent>

@@ -16,6 +16,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface HeroContent {
   title: string;
@@ -39,6 +40,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const handleLoginSuccess = async (email: string) => {
     try {
@@ -66,14 +68,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
       if (data) {
         navigate('/super-admin');
         toast({
-          title: "Welcome Super Admin",
-          description: "You've been redirected to the admin dashboard",
+          title: t('hero.welcome_admin', 'Welcome Super Admin'),
+          description: t('hero.admin_redirect', 'You\'ve been redirected to the admin dashboard'),
         });
       } else {
         navigate('/app');
         toast({
-          title: "Welcome back!",
-          description: "You've successfully logged in.",
+          title: t('hero.welcome_back', 'Welcome back!'),
+          description: t('hero.login_success', 'You\'ve successfully logged in.'),
         });
       }
     } catch (error) {
@@ -137,7 +139,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-8 py-3 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-200"
                 onClick={() => navigate('/register')}
               >
-                Get Started - It's Free
+                {t('hero.get_started', "Get Started - It's Free")}
               </Button>
               <Button 
                 variant="outline" 
@@ -145,7 +147,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
                 className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-8 py-3 rounded-lg text-lg transition-all duration-200"
                 onClick={() => navigate('/auth')}
               >
-                Sign In
+                {t('hero.sign_in', 'Sign In')}
               </Button>
             </div>
           </div>
@@ -153,9 +155,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
           <div className="flex-1 mt-8 md:mt-0">
             <Card className="w-full max-w-md mx-auto backdrop-blur-md bg-white/10 border-gray-800/50 shadow-xl neo-card">
               <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
+                <CardTitle className="text-2xl text-white">{t('hero.welcome_title', 'Welcome Back')}</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Sign in to continue your journey
+                  {t('hero.welcome_desc', 'Sign in to continue your journey')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -168,11 +170,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
                     className="text-purple-400 hover:text-purple-300"
                     onClick={() => navigate('/register')}
                   >
-                    Don't have an account? Create one now →
+                    {t('hero.no_account', "Don't have an account? Create one now →")}
                   </Button>
                 </div>
                 <div className="text-center text-sm text-gray-500">
-                  By continuing, you agree to our Terms of Service and Privacy Policy
+                  {t('hero.terms', 'By continuing, you agree to our Terms of Service and Privacy Policy')}
                 </div>
               </CardFooter>
             </Card>
@@ -184,7 +186,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
                 ))}
               </div>
               <div>
-                <span className="text-white font-semibold">{content.userCount}</span> Kurdish singles have already joined
+                <span className="text-white font-semibold">{content.userCount}</span> {t('hero.joined_count', '{{count}} Kurdish singles have already joined', { count: '' })}
               </div>
             </div>
           </div>

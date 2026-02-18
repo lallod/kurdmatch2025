@@ -40,7 +40,7 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
       if (selectedLanguages.length < maxLanguages) {
         setSelectedLanguages(prev => [...prev, language]);
       } else {
-        toast.error(`You can select up to ${maxLanguages} languages`);
+        toast.error(t('toast.language.max_reached', 'You can select up to {{max}} languages', { max: maxLanguages }));
       }
     }
   };
@@ -62,19 +62,19 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
     
     // Check max languages
     if (selectedLanguages.length >= maxLanguages) {
-      toast.error(`You can select up to ${maxLanguages} languages`);
+      toast.error(t('toast.language.max_reached', 'You can select up to {{max}} languages', { max: maxLanguages }));
       return;
     }
     
     setSelectedLanguages(prev => [...prev, customLang]);
     setNewLanguage('');
-    toast.success(`Added ${customLang} to your languages`);
+    toast.success(t('toast.language.added', 'Added {{language}} to your languages', { language: customLang }));
   };
 
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold flex items-center gap-2">
-        Languages You Speak
+        {t('language.title', 'Languages You Speak')}
       </h2>
       
       <div className="p-4 bg-gray-50 rounded-lg border">
@@ -94,14 +94,14 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
           ))}
           
           {selectedLanguages.length === 0 && (
-            <p className="w-full text-center text-gray-500 py-2">No languages selected</p>
+            <p className="w-full text-center text-gray-500 py-2">{t('language.no_selected', 'No languages selected')}</p>
           )}
         </div>
       </div>
       
       <div className="flex gap-2 items-center">
         <Input
-          placeholder="Add new languages"
+          placeholder={t('language.add_placeholder', 'Add new languages')}
           value={newLanguage}
           onChange={(e) => setNewLanguage(e.target.value)}
           className="flex-1"
@@ -118,7 +118,7 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
           disabled={!newLanguage.trim() || selectedLanguages.length >= maxLanguages}
         >
           <Plus size={16} />
-          Add
+          {t('common.add', 'Add')}
         </Button>
       </div>
       
@@ -127,7 +127,7 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
           <Search className="h-4 w-4 text-gray-400" />
         </div>
         <Input
-          placeholder="Search languages..."
+          placeholder={t('language.search', 'Search languages...')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -146,7 +146,7 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
       
       {selectedLanguages.length >= maxLanguages && (
         <p className="text-sm text-amber-600 text-center">
-          Maximum of {maxLanguages} languages allowed
+          {t('language.max_warning', 'Maximum of {{max}} languages allowed', { max: maxLanguages })}
         </p>
       )}
       
@@ -155,7 +155,7 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
         onClick={onSave}
       >
         <Check size={16} className="mr-1" />
-        Save Languages
+        {t('language.save', 'Save Languages')}
       </Button>
     </div>
   );

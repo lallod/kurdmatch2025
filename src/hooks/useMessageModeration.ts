@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ModerationResult {
   safe: boolean;
@@ -12,6 +13,7 @@ interface ModerationResult {
 export const useMessageModeration = () => {
   const [isChecking, setIsChecking] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const moderateMessage = async (
     messageText: string,
@@ -28,8 +30,8 @@ export const useMessageModeration = () => {
 
       if (!data.safe) {
         toast({
-          title: "Message flagged",
-          description: data.reason || "This message may violate community guidelines",
+          title: t('toast.moderation.flagged', 'Message flagged'),
+          description: data.reason || t('toast.moderation.flagged_desc', 'This message may violate community guidelines'),
           variant: "destructive",
         });
       }
@@ -38,8 +40,8 @@ export const useMessageModeration = () => {
     } catch (error) {
       console.error('Moderation error:', error);
       toast({
-        title: "Moderation check failed",
-        description: "Unable to verify message safety. Proceeding with caution.",
+        title: t('toast.moderation.failed', 'Moderation check failed'),
+        description: t('toast.moderation.failed_desc', 'Unable to verify message safety. Proceeding with caution.'),
         variant: "destructive",
       });
       

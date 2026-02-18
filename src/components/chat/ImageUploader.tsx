@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Image, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const MAX_IMAGE_SIZE_MB = 10;
 
@@ -10,6 +11,7 @@ interface ImageUploaderProps {
 }
 
 export const ImageUploader = ({ onImageSelect }: ImageUploaderProps) => {
+  const { t } = useTranslations();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
@@ -20,7 +22,7 @@ export const ImageUploader = ({ onImageSelect }: ImageUploaderProps) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
       if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
-        toast.error(`Image too large`, { description: `Max size is ${MAX_IMAGE_SIZE_MB}MB. Your file is ${(file.size / 1024 / 1024).toFixed(1)}MB.` });
+        toast.error(t('toast.image.too_large', 'Image too large'), { description: t('toast.image.max_size', 'Max size is {{max}}MB. Your file is {{size}}MB.', { max: MAX_IMAGE_SIZE_MB, size: (file.size / 1024 / 1024).toFixed(1) }) });
         return;
       }
       onImageSelect(file);
