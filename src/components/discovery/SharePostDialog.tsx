@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Share2, Copy, Facebook, Twitter, Mail, Link2, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SharePostDialogProps {
   open: boolean;
@@ -22,11 +23,12 @@ export const SharePostDialog: React.FC<SharePostDialogProps> = ({
   postId,
   postContent,
 }) => {
+  const { t } = useTranslations();
   const shareUrl = `${window.location.origin}/post/${postId}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareUrl);
-    toast.success('Link copied to clipboard');
+    toast.success(t('toast.share.link_copied', 'Link copied to clipboard'));
   };
 
   const handleShareVia = (platform: string) => {

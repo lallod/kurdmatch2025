@@ -67,7 +67,7 @@ const SavedPosts = () => {
       setSavedPosts(transformed);
     } catch (error) {
       console.error('Error loading saved posts:', error);
-      toast.error('Failed to load saved posts');
+      toast.error(t('toast.saved.load_failed', 'Failed to load saved posts'));
     } finally {
       setLoading(false);
     }
@@ -81,9 +81,9 @@ const SavedPosts = () => {
 
       if (error) throw error;
       setSavedPosts(prev => prev.filter(p => p.id !== savedPostId));
-      toast.success('Post unsaved');
+      toast.success(t('toast.saved.unsaved', 'Post unsaved'));
     } catch (error) {
-      toast.error('Failed to unsave post');
+      toast.error(t('toast.saved.unsave_failed', 'Failed to unsave post'));
     }
   };
 

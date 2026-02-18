@@ -7,6 +7,7 @@ import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Profile } from '@/api/profiles';
 import { followUser, unfollowUser, checkIsFollowing } from '@/api/posts';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import { getKurdistanRegionDisplay, parseLocation } from '@/utils/profileDataNormalizer';
 import { getUserSubscription } from '@/api/usage';
 import { createPremiumCheckout } from '@/api/payments';
@@ -29,6 +30,7 @@ interface ProfileHeaderProps {
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProfile }) => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(stats.followers);
   const [loading, setLoading] = useState(false);
@@ -59,15 +61,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
       if (isFollowing) {
         await unfollowUser(profile.id);
         setFollowersCount(prev => Math.max(0, prev - 1));
-        toast.success('Unfollowed');
+        toast.success(t('toast.follow.unfollowed', 'Unfollowed'));
       } else {
         await followUser(profile.id);
         setFollowersCount(prev => prev + 1);
-        toast.success('Following');
+        toast.success(t('toast.follow.following', 'Following'));
       }
       setIsFollowing(!isFollowing);
     } catch (error) {
-      toast.error('Failed to update follow status');
+      toast.error(t('toast.follow.update_failed', 'Failed to update follow status'));
     } finally {
       setLoading(false);
     }
@@ -85,7 +87,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
     try {
       await createPremiumCheckout('premium');
     } catch (error) {
-      toast.error('Failed to start checkout');
+      toast.error(t('toast.checkout.failed', 'Failed to start checkout'));
     }
   };
 

@@ -8,6 +8,7 @@ import { updateGroup, deleteGroup } from '@/api/groups';
 import type { Group } from '@/api/groups';
 import { toast } from 'sonner';
 import { Settings, Trash2 } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
@@ -31,6 +32,7 @@ const iconOptions = ['🎯', '💼', '🌟', '🎵', '✈️', '📚', '🎨', '
 
 export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: GroupSettingsDialogProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [formData, setFormData] = useState({
@@ -43,7 +45,7 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      toast.error('Please enter a group name');
+      toast.error(t('toast.group.enter_name', 'Please enter a group name'));
       return;
     }
 
@@ -55,12 +57,12 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
         icon: formData.icon,
       });
       
-      toast.success('Group updated successfully!');
+      toast.success(t('toast.group.updated', 'Group updated successfully!'));
       onUpdate();
       onOpenChange(false);
     } catch (error) {
       console.error('Error updating group:', error);
-      toast.error('Failed to update group');
+      toast.error(t('toast.group.update_failed', 'Failed to update group'));
     } finally {
       setLoading(false);
     }
@@ -70,11 +72,11 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
     setLoading(true);
     try {
       await deleteGroup(group.id);
-      toast.success('Group deleted successfully');
+      toast.success(t('toast.group.deleted', 'Group deleted successfully'));
       navigate('/groups');
     } catch (error) {
       console.error('Error deleting group:', error);
-      toast.error('Failed to delete group');
+      toast.error(t('toast.group.delete_failed', 'Failed to delete group'));
     } finally {
       setLoading(false);
     }

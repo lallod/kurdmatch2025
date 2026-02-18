@@ -17,11 +17,11 @@ const Subscription = () => {
   useEffect(() => {
     const success = searchParams.get("success");
     const canceled = searchParams.get("canceled");
-    if (success) { toast.success("Your subscription has been activated. Thank you!"); window.history.replaceState({}, "", "/subscription"); }
-    if (canceled) { toast.error("You can try again whenever you're ready."); window.history.replaceState({}, "", "/subscription"); }
+    if (success) { toast.success(t('toast.subscription.activated', 'Your subscription has been activated')); window.history.replaceState({}, "", "/subscription"); }
+    if (canceled) { toast.error(t('toast.subscription.cancelled', "You can try again whenever you're ready")); window.history.replaceState({}, "", "/subscription"); }
   }, [searchParams]);
 
-  const handleRefresh = () => { checkSubscription(); toast.info("Checking your subscription status"); };
+  const handleRefresh = () => { checkSubscription(); toast.info(t('toast.subscription.checking', 'Checking your subscription status')); };
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">

@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const POPULAR_CITIES = [
   'Hewlêr (Erbil)',
@@ -31,6 +32,7 @@ const POPULAR_CITIES = [
 
 export const TravelModeSettings = () => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const { hasFeature } = useSubscription();
   const isGold = hasFeature('gold');
 
@@ -59,7 +61,7 @@ export const TravelModeSettings = () => {
   const handleSave = async () => {
     if (!user) return;
     if (!isGold) {
-      toast.error('Gold feature', { description: 'Upgrade to Gold to use Travel Mode', icon: '👑' });
+      toast.error(t('toast.travel.gold_feature', 'Gold feature'), { description: t('toast.travel.upgrade_gold', 'Upgrade to Gold to use Travel Mode'), icon: '👑' });
       return;
     }
 
@@ -77,7 +79,7 @@ export const TravelModeSettings = () => {
       toast.success(isActive ? 'Travel Mode activated!' : 'Travel Mode deactivated');
     } catch (error) {
       console.error('Error saving travel mode:', error);
-      toast.error('Failed to save Travel Mode settings');
+      toast.error(t('toast.travel.save_failed', 'Failed to save Travel Mode settings'));
     } finally {
       setIsSaving(false);
     }
@@ -85,7 +87,7 @@ export const TravelModeSettings = () => {
 
   const handleToggle = (checked: boolean) => {
     if (!isGold) {
-      toast.error('Gold feature', { description: 'Upgrade to Gold to use Travel Mode', icon: '👑' });
+      toast.error(t('toast.travel.gold_feature', 'Gold feature'), { description: t('toast.travel.upgrade_gold', 'Upgrade to Gold to use Travel Mode'), icon: '👑' });
       return;
     }
     setIsActive(checked);

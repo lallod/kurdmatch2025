@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface BoostStats {
   viewsIncrease: number;
@@ -21,6 +22,7 @@ interface ProfileBoostCardProps {
 
 export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [isBoostActive, setIsBoostActive] = useState(false);
   const [boostTimeRemaining, setBoostTimeRemaining] = useState(0);
   const [boostStats, setBoostStats] = useState<BoostStats | null>(null);
@@ -150,7 +152,7 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
       });
 
       if (error || !canPerform) {
-        toast.error('You have used all your boosts for today');
+        toast.error(t('toast.boost.all_used', 'You have used all your boosts for today'));
         return;
       }
 
@@ -178,7 +180,7 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
         matchesIncrease: 0,
       });
 
-      toast.success('Profile Boost activated! 🚀', {
+      toast.success(t('toast.boost.activated', 'Profile Boost activated! 🚀'), {
         description: 'Your profile will be shown to more people for 30 minutes',
       });
 
@@ -192,7 +194,7 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
 
     } catch (error) {
       console.error('Boost error:', error);
-      toast.error('Failed to activate boost');
+      toast.error(t('toast.boost.failed', 'Failed to activate boost'));
     } finally {
       setIsLoading(false);
     }

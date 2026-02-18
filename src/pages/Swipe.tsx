@@ -131,7 +131,7 @@ const Swipe = () => {
       setProfiles(transformedProfiles);
     } catch (error) {
       console.error('Failed to load profiles:', error);
-      toast.error('Failed to load profiles');
+      toast.error(t('toast.swipe.load_failed', 'Failed to load profiles'));
     } finally {
       setIsLoading(false);
     }

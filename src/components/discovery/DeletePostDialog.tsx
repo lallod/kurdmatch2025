@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DeletePostDialogProps {
   open: boolean;
@@ -26,6 +27,7 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
   onSuccess
 }) => {
   
+  const { t } = useTranslations();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -36,13 +38,13 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
       const { deletePost } = await import('@/api/posts');
       await deletePost(postId);
       
-      toast.success('Post deleted successfully');
+      toast.success(t('toast.post.deleted', 'Post deleted successfully'));
       
       onSuccess();
       onOpenChange(false);
     } catch (error) {
       console.error('Error deleting post:', error);
-      toast.error('Failed to delete post');
+      toast.error(t('toast.post.delete_failed', 'Failed to delete post'));
     } finally {
       setIsDeleting(false);
     }

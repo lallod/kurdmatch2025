@@ -36,7 +36,7 @@ const LikedMe = () => {
         setLikedProfiles(profiles || []);
       } catch (error) {
         console.error('Failed to load liked profiles:', error);
-        toast.error('Failed to load profiles who liked you');
+        toast.error(t('toast.liked.load_failed', 'Failed to load profiles who liked you'));
       } finally {
         setIsLoading(false);
       }
@@ -49,9 +49,9 @@ const LikedMe = () => {
     try {
       const result = await likeProfile(profileId);
       if (result.match) {
-        toast.success("It's a match! 🎉");
+        toast.success(t('toast.liked.its_a_match', "It's a match! 🎉"));
       } else {
-        toast.success("Liked back!");
+        toast.success(t('toast.liked.liked_back', 'Liked back!'));
       }
       
       setLikedProfiles(profiles => 
@@ -63,7 +63,7 @@ const LikedMe = () => {
       );
     } catch (error) {
       console.error('Error liking profile back:', error);
-      toast.error("Failed to like profile. Please try again.");
+      toast.error(t('toast.liked.like_failed', 'Failed to like profile'));
     }
   };
 

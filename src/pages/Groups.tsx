@@ -45,7 +45,7 @@ const Groups = () => {
       setGroups(data || []);
     } catch (error) {
       console.error('Error fetching groups:', error);
-      toast.error('Failed to load groups');
+      toast.error(t('toast.groups.load_failed', 'Failed to load groups'));
     } finally {
       setLoading(false);
     }

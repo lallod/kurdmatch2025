@@ -9,9 +9,11 @@ import { getUserCoins, getReceivedGifts, getSentGifts, getDateProposals, respond
 import type { SentGift, DateProposal, UserCoins } from '@/api/gifts';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const GiftsAndDatesPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [coins, setCoins] = useState<UserCoins | null>(null);
   const [receivedGifts, setReceivedGifts] = useState<SentGift[]>([]);
   const [sentGifts, setSentGifts] = useState<SentGift[]>([]);
@@ -48,7 +50,7 @@ const GiftsAndDatesPage = () => {
     try {
       await respondToDateProposal(id, status);
       setDates(prev => prev.map(d => d.id === id ? { ...d, status, responded_at: new Date().toISOString() } : d));
-      toast.success(status === 'accepted' ? 'Date accepted! 🎉' : 'Date declined');
+      toast.success(status === 'accepted' ? t('toast.date.accepted', 'Date accepted! 🎉') : t('toast.date.declined', 'Date declined'));
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -58,7 +60,7 @@ const GiftsAndDatesPage = () => {
     try {
       await cancelDateProposal(id);
       setDates(prev => prev.map(d => d.id === id ? { ...d, status: 'cancelled' as const } : d));
-      toast.success('Date cancelled');
+      toast.success(t('toast.date.cancelled', 'Date cancelled'));
     } catch (err: any) {
       toast.error(err.message);
     }
