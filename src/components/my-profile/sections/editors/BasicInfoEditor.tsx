@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { languageCategories, allLanguages } from '@/data/languages';
 import { SuggestionBadge } from '@/components/ui/suggestion-badge';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface BasicInfoEditorProps {
   profileData: ProfileData;
@@ -20,6 +21,7 @@ interface BasicInfoEditorProps {
 }
 
 const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSources = {}, onUpdate, onSaveComplete, onCancel }) => {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     name: profileData.name || '',
     age: profileData.age || 18,
@@ -47,7 +49,7 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
   const handleSave = () => {
     onUpdate(formData);
     setHasChanges(false);
-    toast.success('Basic info updated successfully!');
+    toast.success(t('toast.profile.basic_updated', 'Basic info updated successfully!'));
     onSaveComplete?.();
   };
 

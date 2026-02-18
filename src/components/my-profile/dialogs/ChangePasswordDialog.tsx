@@ -9,6 +9,7 @@ import { Lock, Shield, CheckCircle2 } from 'lucide-react';
 import { changePassword } from '@/api/accountActions';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from '@/hooks/useTranslations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -36,6 +37,7 @@ interface ChangePasswordDialogProps {
 }
 
 const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpenChange }) => {
+  const { t } = useTranslations();
   const form = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
@@ -59,7 +61,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
   const handleSubmit = async (data: ChangePasswordFormValues) => {
     try {
       await changePassword(data.currentPassword, data.newPassword);
-      toast.success('Password changed successfully!');
+      toast.success(t('toast.password.changed', 'Password changed successfully!'));
       form.reset();
       onOpenChange(false);
     } catch (error: any) {

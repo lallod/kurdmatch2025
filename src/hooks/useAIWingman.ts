@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export type WingmanType = 'opener' | 'reply' | 'continue' | 'flirt' | 'deeper';
 
@@ -11,6 +12,7 @@ interface WingmanResult {
 }
 
 export const useAIWingman = () => {
+  const { t } = useTranslations();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastType, setLastType] = useState<WingmanType | null>(null);
@@ -41,11 +43,11 @@ export const useAIWingman = () => {
         console.error('Wingman error:', error);
         
         if (error.message?.includes('429') || error.message?.includes('Rate limit')) {
-          toast.error('Too many requests. Please wait a moment.');
+          toast.error(t('toast.ai.too_many_requests', 'Too many requests'));
         } else if (error.message?.includes('402')) {
-          toast.error('AI credits exhausted. Please add credits.');
+          toast.error(t('toast.ai.credits_exhausted', 'AI credits exhausted'));
         } else {
-          toast.error('Could not generate suggestions');
+          toast.error(t('toast.ai.suggestion_failed', 'Could not generate suggestions'));
         }
         return [];
       }
@@ -56,7 +58,7 @@ export const useAIWingman = () => {
 
     } catch (error) {
       console.error('Wingman error:', error);
-      toast.error('Something went wrong');
+      toast.error(t('toast.ai.something_wrong', 'Something went wrong'));
       return [];
     } finally {
       setIsLoading(false);

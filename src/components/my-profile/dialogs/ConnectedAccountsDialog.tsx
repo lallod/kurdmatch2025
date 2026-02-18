@@ -10,6 +10,7 @@ import { Globe, Plus, Trash2, Instagram, Camera, Share } from 'lucide-react';
 import { getConnectedAccounts, connectSocialAccount, disconnectSocialAccount } from '@/api/accountActions';
 import { ConnectedSocialAccount } from '@/types/account';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ConnectedAccountsDialogProps {
   open: boolean;
@@ -17,6 +18,7 @@ interface ConnectedAccountsDialogProps {
 }
 
 const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open, onOpenChange }) => {
+  const { t } = useTranslations();
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedSocialAccount[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState<'instagram' | 'snapchat' | null>(null);
@@ -34,13 +36,13 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
       setConnectedAccounts(accounts);
     } catch (error) {
       console.error('Failed to load connected accounts:', error);
-      toast.error('Failed to load connected accounts');
+      toast.error(t('toast.accounts.load_failed', 'Failed to load connected accounts'));
     }
   };
 
   const handleConnect = async (platform: 'instagram' | 'snapchat') => {
     if (!formData.username.trim()) {
-      toast.error('Please enter a username');
+      toast.error(t('toast.accounts.enter_username', 'Please enter a username'));
       return;
     }
 
@@ -128,7 +130,7 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
                             onClick={() => {
                               const link = generateShareableLink(account.platform, account.username);
                               navigator.clipboard.writeText(link);
-                              toast.success('Shareable link copied to clipboard!');
+                              toast.success(t('toast.accounts.link_copied', 'Shareable link copied!'));
                             }}
                           >
                             <Share className="w-4 h-4 mr-1" />

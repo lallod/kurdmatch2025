@@ -7,6 +7,7 @@ import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { SuggestionBadge } from '@/components/ui/suggestion-badge';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface InterestsHobbiesEditorProps {
   profileData: ProfileData;
@@ -17,6 +18,7 @@ interface InterestsHobbiesEditorProps {
 }
 
 const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profileData, fieldSources = {}, onUpdate, onSaveComplete, onCancel }) => {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     interests: profileData.interests || [],
     hobbies: Array.isArray(profileData.hobbies) ? profileData.hobbies : [],
@@ -37,7 +39,7 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
   const handleSave = () => {
     onUpdate(formData);
     setHasChanges(false);
-    toast.success('Interests & hobbies updated!');
+    toast.success(t('toast.profile.interests_updated', 'Interests & hobbies updated!'));
     onSaveComplete?.();
   };
 

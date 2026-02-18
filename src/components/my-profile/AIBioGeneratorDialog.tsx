@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Sparkles, RefreshCw, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { ProfileData } from '@/types/profile';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface AIBioGeneratorDialogProps {
   open: boolean;
@@ -37,13 +38,14 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
   onGenerate,
   profileData,
 }) => {
+  const { t } = useTranslations();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedBios, setGeneratedBios] = useState<string[]>([]);
   const [selectedBio, setSelectedBio] = useState<string>('');
 
   const generatePersonalizedBios = async () => {
     setIsGenerating(true);
-    toast.info('AI is crafting 5 personalized bios for you...');
+    toast.info(t('toast.ai_bio.generating', 'AI is crafting 5 personalized bios...'));
     
     try {
       const bios = await Promise.all(bioStyles.map(async (style) => {
@@ -68,10 +70,10 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
       }));
       
       setGeneratedBios(bios);
-      toast.success('5 personalized bios generated!');
+      toast.success(t('toast.ai_bio.generated', '5 personalized bios generated!'));
     } catch (error) {
       console.error(error);
-      toast.error('Failed to generate bios. Please try again.');
+      toast.error(t('toast.ai_bio.failed', 'Failed to generate bios'));
     } finally {
       setIsGenerating(false);
     }
@@ -104,7 +106,7 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
     if (selectedBio) {
       onGenerate(selectedBio);
       onOpenChange(false);
-      toast.success('Bio updated successfully!');
+      toast.success(t('toast.profile.bio_updated', 'Bio updated successfully!'));
     }
   };
 

@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AIBioGeneratorDialog from '../AIBioGeneratorDialog';
 import { toast } from 'sonner';
 import { ProfileData } from '@/types/profile';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EditableAboutMeSectionProps {
   bio: string;
@@ -13,6 +14,7 @@ interface EditableAboutMeSectionProps {
 }
 
 const EditableAboutMeSection: React.FC<EditableAboutMeSectionProps> = ({ bio, onSave, profileData }) => {
+  const { t } = useTranslations();
   const [isEditing, setIsEditing] = useState(false);
   const [editedBio, setEditedBio] = useState(bio);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
@@ -25,7 +27,7 @@ const EditableAboutMeSection: React.FC<EditableAboutMeSectionProps> = ({ bio, on
     onSave(editedBio);
     setIsEditing(false);
     setHasChanges(false);
-    toast.success('Bio updated successfully!');
+    toast.success(t('toast.profile.bio_updated', 'Bio updated successfully!'));
   };
 
   const handleCancel = () => {

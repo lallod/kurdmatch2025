@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Download, FileText, Shield, Clock } from 'lucide-react';
 import { downloadUserData } from '@/api/accountActions';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DownloadDataDialogProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface DownloadDataDialogProps {
 }
 
 const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenChange }) => {
+  const { t } = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -45,11 +47,11 @@ const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenCha
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success('Your data has been downloaded successfully!');
+      toast.success(t('download_data.success', 'Your data has been downloaded successfully!'));
       onOpenChange(false);
     } catch (error) {
       console.error('Download error:', error);
-      toast.error('Failed to download your data. Please try again.');
+      toast.error(t('download_data.error', 'Failed to download your data. Please try again.'));
     } finally {
       setIsLoading(false);
       setProgress(0);
@@ -62,7 +64,7 @@ const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenCha
         <DialogHeader>
           <DialogTitle className="text-white flex items-center">
             <Download className="w-5 h-5 mr-2 text-purple-400" />
-            Download My Data
+            {t('download_data.title', 'Download My Data')}
           </DialogTitle>
         </DialogHeader>
         
@@ -71,14 +73,14 @@ const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenCha
             <CardContent className="p-4">
               <h3 className="text-white font-medium mb-3 flex items-center">
                 <FileText className="w-4 h-4 mr-2 text-blue-400" />
-                What's Included
+                {t('download_data.whats_included', "What's Included")}
               </h3>
               <ul className="space-y-2 text-sm text-gray-300">
-                <li>• Profile information and photos</li>
-                <li>• Match history and conversations</li>
-                <li>• Likes given and received</li>
-                <li>• Connected social accounts</li>
-                <li>• Account activity data</li>
+                <li>• {t('download_data.profile_info', 'Profile information and photos')}</li>
+                <li>• {t('download_data.match_history', 'Match history and conversations')}</li>
+                <li>• {t('download_data.likes', 'Likes given and received')}</li>
+                <li>• {t('download_data.social_accounts', 'Connected social accounts')}</li>
+                <li>• {t('download_data.activity', 'Account activity data')}</li>
               </ul>
             </CardContent>
           </Card>
@@ -88,9 +90,9 @@ const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenCha
               <div className="flex items-start gap-3">
                 <Shield className="w-5 h-5 text-blue-400 mt-0.5" />
                 <div>
-                  <h4 className="text-blue-300 font-medium mb-1">Privacy & Security</h4>
+              <h4 className="text-blue-300 font-medium mb-1">{t('download_data.privacy_title', 'Privacy & Security')}</h4>
                   <p className="text-sm text-blue-200">
-                    Your data is exported securely and includes only information associated with your account.
+                    {t('download_data.privacy_desc', 'Your data is exported securely and includes only information associated with your account.')}
                   </p>
                 </div>
               </div>
@@ -100,7 +102,7 @@ const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenCha
           {isLoading && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-300">Preparing your data...</span>
+                <span className="text-gray-300">{t('download_data.preparing', 'Preparing your data...')}</span>
                 <span className="text-purple-400">{progress}%</span>
               </div>
               <Progress value={progress} className="h-2" />
@@ -114,7 +116,7 @@ const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenCha
               className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
               disabled={isLoading}
             >
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </Button>
             <Button 
               onClick={handleDownload}
@@ -122,7 +124,7 @@ const DownloadDataDialog: React.FC<DownloadDataDialogProps> = ({ open, onOpenCha
               disabled={isLoading}
             >
               <Download className="w-4 h-4 mr-2" />
-              {isLoading ? 'Preparing...' : 'Download'}
+              {isLoading ? t('download_data.preparing', 'Preparing...') : t('common.download', 'Download')}
             </Button>
           </div>
         </div>

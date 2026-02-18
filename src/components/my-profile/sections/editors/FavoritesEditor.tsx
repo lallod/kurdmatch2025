@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X, Plus } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface FavoritesEditorProps {
   profileData: ProfileData;
@@ -16,6 +17,7 @@ interface FavoritesEditorProps {
 }
 
 const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate }) => {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     favoriteBooks: Array.isArray(profileData.favoriteBooks) ? profileData.favoriteBooks : [],
     favoriteMovies: Array.isArray(profileData.favoriteMovies) ? profileData.favoriteMovies : [],
@@ -61,7 +63,7 @@ const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate
   const handleSave = () => {
     onUpdate(formData);
     setHasChanges(false);
-    toast.success('Favorites updated successfully!');
+    toast.success(t('toast.profile.favorites_updated', 'Favorites updated successfully!'));
   };
 
   const handleCancel = () => {

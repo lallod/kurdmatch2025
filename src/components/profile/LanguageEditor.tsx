@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Check, Plus, Search, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import LanguageList from '../language-selector/LanguageList';
 import { allLanguages } from '@/data/languages';
 
@@ -22,6 +23,7 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
   onSave,
   maxLanguages = 5
 }) => {
+  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState('');
   const [newLanguage, setNewLanguage] = useState('');
 
@@ -54,7 +56,7 @@ const LanguageEditor: React.FC<LanguageEditorProps> = ({
     
     // Check if already in the list
     if (selectedLanguages.includes(customLang)) {
-      toast.error("This language is already selected");
+      toast.error(t('toast.language.already_selected', 'This language is already selected'));
       return;
     }
     

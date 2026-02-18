@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Upload, X, Star, Camera, Shield, Sparkles, Eye, Heart, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PhotoManagementProps {
   galleryImages: string[];
@@ -19,6 +20,7 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
   removeImage,
   setAsProfilePic,
 }) => {
+  const { t } = useTranslations();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const maxPhotos = 6;
   const photoCompletion = Math.min((galleryImages.length / maxPhotos) * 100, 100);
@@ -42,12 +44,12 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
 
   const handleRemove = (index: number) => {
     removeImage(index);
-    toast.success('Photo removed successfully');
+    toast.success(t('toast.profile.photo_removed', 'Photo removed successfully'));
   };
 
   const handleSetAsProfile = (index: number) => {
     setAsProfilePic(index);
-    toast.success('Profile photo updated');
+    toast.success(t('toast.profile.photo_updated', 'Profile photo updated'));
   };
 
   return (

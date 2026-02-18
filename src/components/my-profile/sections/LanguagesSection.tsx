@@ -7,6 +7,7 @@ import DetailEditor from '@/components/DetailEditor';
 import ProfileSectionButton from '../ProfileSectionButton';
 import LanguageEditor from '@/components/profile/LanguageEditor';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LanguagesSectionProps {
   profileData: {
@@ -15,12 +16,13 @@ interface LanguagesSectionProps {
 }
 
 const LanguagesSection: React.FC<LanguagesSectionProps> = ({ profileData }) => {
+  const { t } = useTranslations();
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(profileData.languages || []);
   
   const handleSaveLanguages = () => {
     // Here you would typically save to a database
     // For now, we'll just show a toast notification
-    toast.success("Languages updated successfully!");
+    toast.success(t('toast.languages.updated', 'Languages updated successfully!'));
   };
 
   return (

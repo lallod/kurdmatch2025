@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface VideoVerification {
   id: string;
@@ -17,6 +18,7 @@ interface VideoVerification {
 }
 
 export const useVideoVerification = () => {
+  const { t } = useTranslations();
   const { user } = useSupabaseAuth();
   const [verification, setVerification] = useState<VideoVerification | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +50,7 @@ export const useVideoVerification = () => {
 
   const submitVerification = useCallback(async (videoFile: File, thumbnailFile?: File) => {
     if (!user) {
-      toast.error('You must be logged in');
+      toast.error(t('toast.video.must_login', 'You must be logged in'));
       return null;
     }
 
@@ -69,7 +71,7 @@ export const useVideoVerification = () => {
       if (videoError) {
         // If bucket doesn't exist, create it
         if (videoError.message?.includes('not found')) {
-          toast.error('Video storage not configured. Please contact support.');
+          toast.error(t('toast.video.storage_not_configured', 'Video storage not configured'));
           return null;
         }
         throw videoError;
@@ -110,7 +112,7 @@ export const useVideoVerification = () => {
       if (error) throw error;
 
       setVerification(data as VideoVerification);
-      toast.success('Verification submitted! We\'ll review it within 24 hours.');
+      toast.success(t('toast.video.submitted', 'Verification submitted!'));
       return data;
 
     } catch (error: any) {
