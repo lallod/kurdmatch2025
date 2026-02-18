@@ -8,6 +8,7 @@ import { CalendarIcon, MapPin, Loader2, Send } from 'lucide-react';
 import { createDateProposal } from '@/api/gifts';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProposeDateModalProps {
   open: boolean;
@@ -30,6 +31,7 @@ const ACTIVITIES = [
 ];
 
 const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: ProposeDateModalProps) => {
+  const { t } = useTranslations();
   const [activity, setActivity] = useState('');
   const [customActivity, setCustomActivity] = useState('');
   const [date, setDate] = useState('');
@@ -41,7 +43,7 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
   const handleSend = async () => {
     const chosenActivity = activity || customActivity;
     if (!chosenActivity || !date || !time) {
-      toast.error('Please select an activity, date, and time');
+      toast.error(t('toast.date.select_required', 'Please select an activity, date, and time'));
       return;
     }
 
@@ -53,7 +55,7 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
       const proposedDate = new Date(`${date}T${time}`).toISOString();
       await createDateProposal(user.id, recipientId, proposedDate, chosenActivity, location || undefined, message || undefined);
       
-      toast.success(`Date invitation sent to ${recipientName}!`);
+      toast.success(t('toast.date.sent', 'Date invitation sent to {{name}}!', { name: recipientName }));
       onOpenChange(false);
       // Reset
       setActivity('');
@@ -63,7 +65,7 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
       setLocation('');
       setMessage('');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send date proposal');
+      toast.error(err.message || t('toast.date.failed', 'Failed to send date proposal'));
     } finally {
       setSending(false);
     }
@@ -80,14 +82,14 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CalendarIcon className="h-5 w-5 text-primary" />
-            Invite {recipientName} on a Date
+            {t('date.invite_on_date', 'Invite {{name}} on a Date', { name: recipientName })}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Activity picker */}
           <div>
-            <Label className="text-sm font-medium mb-2 block">What would you like to do?</Label>
+            <Label className="text-sm font-medium mb-2 block">{t('date.what_to_do', 'What would you like to do?')}</Label>
             <div className="grid grid-cols-2 gap-2">
               {ACTIVITIES.map(act => (
                 <button
@@ -105,7 +107,7 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
               ))}
             </div>
             <Input
-              placeholder="Or type a custom activity..."
+              placeholder={t('date.custom_activity', 'Or type a custom activity...')}
               value={customActivity}
               onChange={(e) => { setCustomActivity(e.target.value); setActivity(''); }}
               className="mt-2"
@@ -115,7 +117,7 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
           {/* Date & Time */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-sm mb-1 block">Date</Label>
+              <Label className="text-sm mb-1 block">{t('common.date', 'Date')}</Label>
               <Input
                 type="date"
                 value={date}
@@ -124,7 +126,7 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
               />
             </div>
             <div>
-              <Label className="text-sm mb-1 block">Time</Label>
+              <Label className="text-sm mb-1 block">{t('common.time', 'Time')}</Label>
               <Input
                 type="time"
                 value={time}
@@ -135,11 +137,11 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
 
           {/* Location */}
           <div>
-            <Label className="text-sm mb-1 block">Location (optional)</Label>
+            <Label className="text-sm mb-1 block">{t('date.location_optional', 'Location (optional)')}</Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Where should you meet?"
+                placeholder={t('date.where_meet', 'Where should you meet?')}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="pl-10"
@@ -149,9 +151,9 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
 
           {/* Message */}
           <div>
-            <Label className="text-sm mb-1 block">Message (optional)</Label>
+            <Label className="text-sm mb-1 block">{t('date.message_optional', 'Message (optional)')}</Label>
             <Textarea
-              placeholder="Add a personal note..."
+              placeholder={t('date.add_personal_note', 'Add a personal note...')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="resize-none h-16"
@@ -165,7 +167,7 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
             ) : (
               <Send className="h-4 w-4 mr-2" />
             )}
-            Send Date Invitation
+            {t('date.send_invitation', 'Send Date Invitation')}
           </Button>
         </div>
       </DialogContent>
