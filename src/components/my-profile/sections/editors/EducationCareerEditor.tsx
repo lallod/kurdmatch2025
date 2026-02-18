@@ -7,6 +7,7 @@ import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { SuggestionBadge } from '@/components/ui/suggestion-badge';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EducationCareerEditorProps {
   profileData: ProfileData;
@@ -17,6 +18,7 @@ interface EducationCareerEditorProps {
 }
 
 const EducationCareerEditor: React.FC<EducationCareerEditorProps> = ({ profileData, fieldSources = {}, onUpdate, onSaveComplete, onCancel }) => {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     education: profileData.education || '',
     occupation: profileData.occupation || '',
@@ -34,7 +36,7 @@ const EducationCareerEditor: React.FC<EducationCareerEditorProps> = ({ profileDa
   const handleSave = () => {
     onUpdate(formData);
     setHasChanges(false);
-    toast.success('Education & career updated!');
+    toast.success(t('toast.profile.career_updated', 'Education & career updated!'));
     onSaveComplete?.();
   };
 

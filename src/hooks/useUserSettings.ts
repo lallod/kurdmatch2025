@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export interface UserSettings {
   // Notification preferences
@@ -33,6 +34,7 @@ export interface UserSettings {
 }
 
 export const useUserSettings = () => {
+  const { t } = useTranslations();
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -92,7 +94,7 @@ export const useUserSettings = () => {
       }
     } catch (error) {
       console.error('Error loading settings:', error);
-      toast.error('Failed to load settings');
+      toast.error(t('toast.settings.load_failed', 'Failed to load settings'));
     } finally {
       setLoading(false);
     }
@@ -111,10 +113,10 @@ export const useUserSettings = () => {
       if (error) throw error;
 
       setSettings(prev => prev ? { ...prev, ...updates } : null);
-      toast.success('Settings updated successfully');
+      toast.success(t('toast.settings.updated', 'Settings updated successfully'));
     } catch (error) {
       console.error('Error updating settings:', error);
-      toast.error('Failed to update settings');
+      toast.error(t('toast.settings.update_failed', 'Failed to update settings'));
       throw error;
     }
   };

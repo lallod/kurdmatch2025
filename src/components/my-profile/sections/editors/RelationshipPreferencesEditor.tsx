@@ -8,6 +8,7 @@ import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { SuggestionBadge } from '@/components/ui/suggestion-badge';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface RelationshipPreferencesEditorProps {
   profileData: ProfileData;
@@ -18,6 +19,7 @@ interface RelationshipPreferencesEditorProps {
 }
 
 const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps> = ({ profileData, fieldSources = {}, onUpdate, onSaveComplete, onCancel }) => {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     relationshipGoals: profileData.relationshipGoals || '',
     childrenStatus: profileData.childrenStatus || '',
@@ -37,7 +39,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
   const handleSave = () => {
     onUpdate(formData);
     setHasChanges(false);
-    toast.success('Relationship preferences updated!');
+    toast.success(t('toast.profile.relationship_updated', 'Relationship preferences updated!'));
     onSaveComplete?.();
   };
 

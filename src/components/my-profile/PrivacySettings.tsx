@@ -8,8 +8,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const PrivacySettings: React.FC = () => {
+  const { t } = useTranslations();
   const { visibility, blurPhotos, loading, toggleField, setBlurPhotos } = useProfileVisibility();
   const { subscription } = useSubscription();
   const isPremium = subscription.subscription_type !== 'free';
@@ -87,7 +89,7 @@ const PrivacySettings: React.FC = () => {
           .eq('owner_id', session.user.id)
           .eq('shared_with_user_id', userId);
         setSharedWith(prev => ({ ...prev, [userId]: false }));
-        toast.success('Sharing removed');
+        toast.success(t('toast.privacy.sharing_removed', 'Sharing removed'));
       } else {
         await supabase
           .from('profile_sharing')
@@ -97,10 +99,10 @@ const PrivacySettings: React.FC = () => {
             share_type: 'all',
           }, { onConflict: 'owner_id,shared_with_user_id' });
         setSharedWith(prev => ({ ...prev, [userId]: true }));
-        toast.success('Profile shared');
+        toast.success(t('toast.privacy.profile_shared', 'Profile shared'));
       }
     } catch {
-      toast.error('Failed to update sharing');
+      toast.error(t('toast.privacy.update_failed', 'Failed to update sharing'));
     }
   };
 
@@ -216,7 +218,7 @@ const PrivacySettings: React.FC = () => {
                         checked={visibility[field.key] ?? true}
                         onCheckedChange={(checked) => {
                           if (!isPremium) {
-                            toast.error('Field visibility is a Premium feature', { icon: '⭐' });
+                            toast.error(t('toast.privacy.premium_feature', 'Field visibility is a Premium feature'), { icon: '⭐' });
                             return;
                           }
                           toggleField(field.key, checked);

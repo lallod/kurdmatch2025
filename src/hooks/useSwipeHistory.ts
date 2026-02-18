@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Profile } from '@/types/swipe';
 import { useSubscription } from '@/hooks/useSubscription';
 import { 
@@ -28,6 +29,7 @@ interface UseSwipeHistoryReturn {
 }
 
 export const useSwipeHistory = (): UseSwipeHistoryReturn => {
+  const { t } = useTranslations();
   const { subscription } = useSubscription();
   const [isRewinding, setIsRewinding] = useState(false);
   const [todayRewindCount, setTodayRewindCount] = useState<number>(0);
@@ -51,7 +53,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
 
   const rewind = useCallback(async (): Promise<Profile | null> => {
     if (subscription.subscription_type === 'free') {
-      toast.error('Rewind is a premium feature', { icon: '⭐' });
+      toast.error(t('toast.swipe.premium_feature', 'Rewind is a premium feature'), { icon: '⭐' });
       return null;
     }
 
@@ -59,7 +61,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
       if (rewindLimit <= todayRewindCount) {
         toast.error(`You've used all ${rewindLimit} rewinds today`, { icon: '⏰' });
       } else {
-        toast.error('No swipe to undo', { icon: '🔄' });
+        toast.error(t('toast.swipe.no_swipe', 'No swipe to undo'), { icon: '🔄' });
       }
       return null;
     }
@@ -70,7 +72,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
       const swipeToRewind = await getLastSwipe();
       
       if (!swipeToRewind) {
-        toast.error('No swipe to undo', { icon: '🔄' });
+        toast.error(t('toast.swipe.no_swipe', 'No swipe to undo'), { icon: '🔄' });
         return null;
       }
 
@@ -119,7 +121,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
       const newLastSwipe = await getLastSwipe();
       setLastSwipe(newLastSwipe);
 
-      toast.success('Swipe undone!', { icon: '⏪' });
+      toast.success(t('toast.swipe.undone', 'Swipe undone!'), { icon: '⏪' });
 
       // Transform to Profile type
       const profile: Profile = {
@@ -200,7 +202,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
       return profile;
     } catch (error) {
       console.error('Error rewinding swipe:', error);
-      toast.error('Failed to undo swipe');
+      toast.error(t('toast.swipe.undo_failed', 'Failed to undo swipe'));
       return null;
     } finally {
       setIsRewinding(false);

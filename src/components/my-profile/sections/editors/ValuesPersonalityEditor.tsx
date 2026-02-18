@@ -8,6 +8,7 @@ import { ProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { SuggestionBadge } from '@/components/ui/suggestion-badge';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ValuesPersonalityEditorProps {
   profileData: ProfileData;
@@ -18,6 +19,7 @@ interface ValuesPersonalityEditorProps {
 }
 
 const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profileData, fieldSources = {}, onUpdate, onSaveComplete, onCancel }) => {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     religion: profileData.religion || '',
     values: profileData.values || [],
@@ -42,7 +44,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
   const handleSave = () => {
     onUpdate(formData);
     setHasChanges(false);
-    toast.success('Values & personality updated!');
+    toast.success(t('toast.profile.values_updated', 'Values & personality updated!'));
     onSaveComplete?.();
   };
 

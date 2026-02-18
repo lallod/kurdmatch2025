@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export interface SystemSetting {
   id: string;
@@ -13,6 +14,7 @@ export interface SystemSetting {
 }
 
 export const useAdminSettings = (category?: string) => {
+  const { t } = useTranslations();
   const queryClient = useQueryClient();
 
   const { data: settings, isLoading, error } = useQuery({
@@ -48,7 +50,7 @@ export const useAdminSettings = (category?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
-      toast.success('Setting updated successfully');
+      toast.success(t('toast.admin.setting_updated', 'Setting updated'));
     },
     onError: (error: any) => {
       toast.error(`Failed to update setting: ${error.message}`);
@@ -75,7 +77,7 @@ export const useAdminSettings = (category?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
-      toast.success('Settings saved successfully');
+      toast.success(t('toast.admin.settings_saved', 'Settings saved'));
     },
     onError: (error: any) => {
       toast.error(`Failed to save settings: ${error.message}`);
@@ -108,7 +110,7 @@ export const useAdminSettings = (category?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
-      toast.success('Settings reset to defaults');
+      toast.success(t('toast.admin.settings_reset', 'Settings reset to defaults'));
     },
     onError: (error: any) => {
       toast.error(`Failed to reset settings: ${error.message}`);

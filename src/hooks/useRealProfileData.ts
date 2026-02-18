@@ -4,8 +4,10 @@ import { getCurrentUserProfile, updateProfile } from '@/api/profiles';
 import { getUserOnboardingProgress, getRealUserEngagement, CategoryProgress } from '@/utils/realUserEnhancement';
 import { convertDbToUiProfile } from '@/utils/fieldNameMapping';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const useRealProfileData = () => {
+  const { t } = useTranslations();
   const [profileData, setProfileData] = useState<any>(null);
   const [fieldSources, setFieldSources] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,7 @@ export const useRealProfileData = () => {
       }
     } catch (error) {
       console.error('Error loading real profile data:', error);
-      toast.error('Failed to load profile data');
+      toast.error(t('toast.profile.load_failed', 'Failed to load profile data'));
     } finally {
       setLoading(false);
     }
@@ -76,7 +78,7 @@ export const useRealProfileData = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast.error(t('toast.profile.update_failed', 'Failed to update profile'));
     }
   };
 
