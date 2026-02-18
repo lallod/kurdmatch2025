@@ -11,6 +11,7 @@ import { FilterBar } from './FilterBar';
 import { PaymentsTable } from './PaymentsTable';
 import { StatCards } from './StatCards';
 import { Payment } from '../types/payment';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface TransactionsTabProps {
   payments: Payment[];
@@ -55,6 +56,7 @@ export const TransactionsTab = ({
   onProcessRefund,
   resetFilters
 }: TransactionsTabProps) => {
+  const { t } = useTranslations();
   return (
     <>
       <StatCards 
@@ -64,8 +66,8 @@ export const TransactionsTab = ({
       
       <Card>
         <CardHeader>
-          <CardTitle>Payment Transactions</CardTitle>
-          <CardDescription>View and manage all payment transactions</CardDescription>
+          <CardTitle>{t('admin.payment_transactions', 'Payment Transactions')}</CardTitle>
+          <CardDescription>{t('admin.view_manage_transactions', 'View and manage all payment transactions')}</CardDescription>
         </CardHeader>
         <CardContent>
           <FilterBar

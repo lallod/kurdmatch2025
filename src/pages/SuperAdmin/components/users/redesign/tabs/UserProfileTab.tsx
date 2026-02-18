@@ -8,8 +8,10 @@ import UserFilters from '../../UserFilters';
 import EnhancedUsersTable from '../components/EnhancedUsersTable';
 import UserDetailPanel from '../components/UserDetailPanel';
 import { User } from '../../types';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const UserProfileTab: React.FC = () => {
+  const { t } = useTranslations();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const {
     filteredUsers,
@@ -50,7 +52,7 @@ const UserProfileTab: React.FC = () => {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>User Management</CardTitle>
+              <CardTitle>{t('admin.user_management', 'User Management')}</CardTitle>
             </CardHeader>
             <CardContent>
               <UserFilters 
