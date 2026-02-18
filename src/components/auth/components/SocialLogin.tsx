@@ -19,7 +19,7 @@ const SocialLogin = ({ isLoading: isFormLoading = false }: SocialLoginProps) => 
       const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/auth/callback` } });
       if (error) throw error;
     } catch (error: any) {
-      toast({ title: `Login with ${providerName} failed`, description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
+      toast({ title: t('toast.social_login.failed', 'Login with {{provider}} failed', { provider: providerName }), description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
       setLoadingProvider(null);
     }
   };

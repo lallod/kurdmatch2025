@@ -5,6 +5,7 @@ import { checkActionLimit, performAction } from '@/api/usage';
 import { likeProfile } from '@/api/likes';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 import LimitReachedModal from '@/components/modals/LimitReachedModal';
 import MatchModal from '@/components/modals/MatchModal';
 import { rpcUntyped } from '@/integrations/supabase/untypedClient';
@@ -23,13 +24,14 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
+  const { t } = useTranslations();
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [showSuperLikeModal, setShowSuperLikeModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePass = () => {
-    toast.info("Passed");
+    toast.info(t('toast.swipe.passed', 'Passed'));
     navigate('/swipe');
   };
 
@@ -53,7 +55,7 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
       ]);
 
       if (!usageSuccess) {
-        toast.error('Failed to process like. Please try again.');
+        toast.error(t('toast.swipe.like_failed', 'Failed to process like. Please try again.'));
         return;
       }
 
@@ -61,7 +63,7 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
         if (likeResult.match) {
           setShowMatchModal(true);
         } else {
-          toast.success("Liked!");
+          toast.success(t('toast.swipe.liked', 'Liked!'));
           navigate('/swipe');
         }
       } else {
@@ -69,7 +71,7 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
       }
     } catch (error) {
       console.error('Error liking profile:', error);
-      toast.error("Something went wrong");
+      toast.error(t('toast.swipe.something_wrong', 'Something went wrong'));
     } finally {
       setIsProcessing(false);
     }
@@ -97,10 +99,10 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
 
       if (error) throw error;
 
-      toast.success('Super Like sent! ⭐');
+      toast.success(t('toast.swipe.super_like_sent', 'Super Like sent! ⭐'));
       navigate('/swipe');
     } catch (error: any) {
-      toast.error(error.message || 'Failed to send Super Like');
+      toast.error(error.message || t('toast.swipe.super_like_failed', 'Failed to send Super Like'));
     } finally {
       setIsProcessing(false);
     }

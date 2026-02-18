@@ -9,6 +9,7 @@ import { Coins, Send, Loader2 } from 'lucide-react';
 import { VirtualGift, getGiftCatalog, getUserCoins, sendGift } from '@/api/gifts';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SendGiftModalProps {
   open: boolean;
@@ -20,6 +21,7 @@ interface SendGiftModalProps {
 const CATEGORIES = ['all', 'romantic', 'casual', 'compliment', 'fun', 'nature', 'luxury'];
 
 const SendGiftModal = ({ open, onOpenChange, recipientId, recipientName }: SendGiftModalProps) => {
+  const { t } = useTranslations();
   const [gifts, setGifts] = useState<VirtualGift[]>([]);
   const [selectedGift, setSelectedGift] = useState<VirtualGift | null>(null);
   const [message, setMessage] = useState('');
@@ -59,13 +61,13 @@ const SendGiftModal = ({ open, onOpenChange, recipientId, recipientName }: SendG
       if (!user) throw new Error('Not authenticated');
       
       await sendGift(user.id, recipientId, selectedGift.id, message || undefined);
-      toast.success(`${selectedGift.emoji} ${selectedGift.name} sent to ${recipientName}!`);
+      toast.success(t('toast.gift.sent', '{{emoji}} {{name}} sent to {{recipient}}!', { emoji: selectedGift.emoji, name: selectedGift.name, recipient: recipientName }));
       setBalance(prev => prev - selectedGift.price_coins);
       setSelectedGift(null);
       setMessage('');
       onOpenChange(false);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send gift');
+      toast.error(err.message || t('toast.gift.send_failed', 'Failed to send gift'));
     } finally {
       setSending(false);
     }
@@ -78,7 +80,7 @@ const SendGiftModal = ({ open, onOpenChange, recipientId, recipientName }: SendG
       <DialogContent className="max-w-lg max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            <span>Send a Gift to {recipientName}</span>
+            <span>{t('gift.send_title', 'Send a Gift to {{name}}', { name: recipientName })}</span>
             <Badge variant="outline" className="flex items-center gap-1 text-sm">
               <Coins className="h-3.5 w-3.5 text-yellow-500" />
               {balance}
@@ -146,7 +148,7 @@ const SendGiftModal = ({ open, onOpenChange, recipientId, recipientName }: SendG
                   </Badge>
                 </div>
                 <Textarea
-                  placeholder="Add a message (optional)..."
+                  placeholder={t('gift.add_message', 'Add a message (optional)...')}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="resize-none h-16"
@@ -163,7 +165,7 @@ const SendGiftModal = ({ open, onOpenChange, recipientId, recipientName }: SendG
                   ) : (
                     <Send className="h-4 w-4 mr-2" />
                   )}
-                  Send {selectedGift.name}
+                  {t('gift.send_button', 'Send {{name}}', { name: selectedGift.name })}
                 </Button>
               </div>
             )}

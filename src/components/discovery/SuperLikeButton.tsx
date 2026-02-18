@@ -5,6 +5,7 @@ import { checkActionLimit, performAction } from '@/api/usage';
 import { getUserSubscription } from '@/api/usage';
 import { useToast } from '@/hooks/use-toast';
 import { createPremiumCheckout } from '@/api/payments';
+import { useTranslations } from '@/hooks/useTranslations';
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,7 @@ interface SuperLikeButtonProps {
 
 const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSuperLike }) => {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [canSuperLike, setCanSuperLike] = useState(false);
   const [remainingCount, setRemainingCount] = useState(0);
   const [isPremium, setIsPremium] = useState(false);
@@ -46,8 +48,8 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
 
     if (!canSuperLike) {
       toast({
-        title: 'Daily limit reached',
-        description: 'You have used all your super likes for today',
+        title: t('toast.super_like.limit_reached', 'Daily limit reached'),
+        description: t('toast.super_like.limit_desc', 'You have used all your super likes for today'),
         variant: 'destructive'
       });
       return;
@@ -58,8 +60,8 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
       const success = await performAction('super_like');
       if (success) {
         toast({
-          title: 'Super Like sent!',
-          description: 'They will know you really like them ❤️'
+          title: t('toast.super_like.sent', 'Super Like sent!'),
+          description: t('toast.super_like.sent_desc', 'They will know you really like them ❤️')
         });
         await checkSuperLikeLimit();
         onSuperLike?.();
@@ -67,8 +69,8 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
     } catch (error) {
       console.error('Error sending super like:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to send super like',
+        title: t('common.error', 'Error'),
+        description: t('toast.super_like.error', 'Failed to send super like'),
         variant: 'destructive'
       });
     } finally {
@@ -81,8 +83,8 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
       await createPremiumCheckout('premium');
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to start checkout',
+        title: t('common.error', 'Error'),
+        description: t('toast.checkout.error', 'Failed to start checkout'),
         variant: 'destructive'
       });
     }
@@ -130,12 +132,12 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
           <DialogHeader>
             <DialogTitle className="text-foreground text-2xl flex items-center gap-2">
               <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-              Super Like - Premium Feature
+              {t('super_like.premium_title', 'Super Like - Premium Feature')}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground space-y-4">
-              <p>Super Likes are available to Premium and Gold members!</p>
+              <p>{t('super_like.premium_desc', 'Super Likes are available to Premium and Gold members!')}</p>
               <div className="bg-accent/10 backdrop-blur-md rounded-lg p-4 space-y-2">
-                <p className="font-semibold text-foreground">Premium Benefits:</p>
+                <p className="font-semibold text-foreground">{t('super_like.premium_benefits', 'Premium Benefits:')}</p>
                 <ul className="space-y-1 text-sm">
                   <li>✓ 10 Super Likes per day</li>
                   <li>✓ Unlimited regular likes</li>
@@ -148,7 +150,7 @@ const SuperLikeButton: React.FC<SuperLikeButtonProps> = ({ postId, userId, onSup
                 onClick={handleUpgrade}
                 className="w-full bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-600 text-primary-foreground"
               >
-                Upgrade to Premium
+                {t('super_like.upgrade', 'Upgrade to Premium')}
               </Button>
             </DialogDescription>
           </DialogHeader>

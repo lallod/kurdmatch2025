@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { createGroup } from '@/api/groups';
 import { toast } from 'sonner';
 import { Upload, Sparkles } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CreateGroupDialogProps {
   open: boolean;
@@ -26,6 +27,7 @@ const iconOptions = ['🎯', '💼', '🌟', '🎵', '✈️', '📚', '🎨', '
 
 export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -39,7 +41,7 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      toast.error('Please enter a group name');
+      toast.error(t('toast.group.name_required', 'Please enter a group name'));
       return;
     }
 
@@ -53,12 +55,12 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
         privacy: formData.privacy,
       });
       
-      toast.success('Group created successfully!');
+      toast.success(t('toast.group.created', 'Group created successfully!'));
       onOpenChange(false);
       navigate(`/groups/${group.id}`);
     } catch (error) {
       console.error('Error creating group:', error);
-      toast.error('Failed to create group');
+      toast.error(t('toast.group.create_failed', 'Failed to create group'));
     } finally {
       setLoading(false);
     }
@@ -70,22 +72,22 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
-            Create New Group
+            {t('group.create_title', 'Create New Group')}
           </DialogTitle>
           <DialogDescription>
-            Build your community and connect with people who share your interests
+            {t('group.create_desc', 'Build your community and connect with people who share your interests')}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           {/* Group Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">Group Name *</Label>
+            <Label htmlFor="name">{t('group.name_label', 'Group Name *')}</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Kurdish Tech Professionals"
+              placeholder={t('group.name_placeholder', 'e.g., Kurdish Tech Professionals')}
               className="h-12 glass border-border/50"
               maxLength={100}
             />
@@ -93,23 +95,23 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('group.description_label', 'Description')}</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Tell people what your group is about..."
+              placeholder={t('group.description_placeholder', 'Tell people what your group is about...')}
               className="glass border-border/50 min-h-[100px]"
               maxLength={500}
             />
             <p className="text-xs text-muted-foreground">
-              {formData.description.length}/500 characters
+              {formData.description.length}/500
             </p>
           </div>
 
           {/* Category */}
           <div className="space-y-3">
-            <Label>Category *</Label>
+            <Label>{t('group.category_label', 'Category *')}</Label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {categories.map((cat) => (
                 <button
@@ -131,7 +133,7 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
 
           {/* Icon */}
           <div className="space-y-3">
-            <Label>Group Icon</Label>
+            <Label>{t('group.icon_label', 'Group Icon')}</Label>
             <div className="grid grid-cols-5 gap-2">
               {iconOptions.map((icon) => (
                 <button
@@ -152,7 +154,7 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
 
           {/* Privacy */}
           <div className="space-y-3">
-            <Label>Privacy</Label>
+            <Label>{t('group.privacy_label', 'Privacy')}</Label>
             <RadioGroup
               value={formData.privacy}
               onValueChange={(value) => setFormData({ ...formData, privacy: value as 'public' | 'private' })}
@@ -161,8 +163,8 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
                 <RadioGroupItem value="public" id="public" />
                 <Label htmlFor="public" className="flex-1 cursor-pointer">
                   <div>
-                    <div className="font-medium">Public</div>
-                    <div className="text-sm text-muted-foreground">Anyone can see and join</div>
+                    <div className="font-medium">{t('group.public', 'Public')}</div>
+                    <div className="text-sm text-muted-foreground">{t('group.public_desc', 'Anyone can see and join')}</div>
                   </div>
                 </Label>
               </div>
@@ -170,8 +172,8 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
                 <RadioGroupItem value="private" id="private" />
                 <Label htmlFor="private" className="flex-1 cursor-pointer">
                   <div>
-                    <div className="font-medium">Private</div>
-                    <div className="text-sm text-muted-foreground">Only members can see content</div>
+                    <div className="font-medium">{t('group.private', 'Private')}</div>
+                    <div className="text-sm text-muted-foreground">{t('group.private_desc', 'Only members can see content')}</div>
                   </div>
                 </Label>
               </div>
@@ -187,14 +189,14 @@ export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps
               className="flex-1 rounded-full"
               disabled={loading}
             >
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </Button>
             <Button
               type="submit"
               className="flex-1 rounded-full shadow-lg"
               disabled={loading}
             >
-              {loading ? 'Creating...' : 'Create Group'}
+              {loading ? t('group.creating', 'Creating...') : t('group.create_button', 'Create Group')}
             </Button>
           </div>
         </form>

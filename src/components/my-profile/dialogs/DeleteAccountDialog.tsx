@@ -11,6 +11,7 @@ import { AlertTriangle, Clock, Shield, Eye, EyeOff, ArrowLeft, ArrowRight } from
 import { requestAccountDeletion } from '@/api/accountActions';
 import { toast } from 'sonner';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DeleteAccountDialogProps {
   open: boolean;
@@ -18,6 +19,7 @@ interface DeleteAccountDialogProps {
 }
 
 const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenChange }) => {
+  const { t } = useTranslations();
   const [step, setStep] = useState(1);
   const [deletionType, setDeletionType] = useState<'deactivate' | 'delete'>('deactivate');
   const [password, setPassword] = useState('');
@@ -41,7 +43,7 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
 
   const handleFinalConfirmation = async () => {
     if (!password.trim()) {
-      toast.error('Please enter your password to confirm');
+      toast.error(t('toast.account.enter_password', 'Please enter your password to confirm'));
       return;
     }
 
@@ -50,16 +52,16 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
       const result = await requestAccountDeletion(deletionType, reason);
       
       if (result.type === 'deactivated') {
-        toast.success('Account deactivated. You can reactivate by logging in again.');
+        toast.success(t('toast.account.deactivated', 'Account deactivated. You can reactivate by logging in again.'));
         await signOut();
       } else {
-        toast.success('Account deletion scheduled. You have 30 days to cancel this request.');
+        toast.success(t('toast.account.deletion_scheduled', 'Account deletion scheduled. You have 30 days to cancel this request.'));
       }
       
       handleClose();
     } catch (error: any) {
       console.error('Account deletion error:', error);
-      toast.error(error.message || 'Failed to process account deletion request');
+      toast.error(error.message || t('toast.account.deletion_failed', 'Failed to process account deletion request'));
     } finally {
       setIsLoading(false);
     }
@@ -72,9 +74,9 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
             <div>
-              <h4 className="text-red-300 font-medium mb-1">Important Decision</h4>
+              <h4 className="text-red-300 font-medium mb-1">{t('account.important_decision', 'Important Decision')}</h4>
               <p className="text-sm text-red-200">
-                This action will affect your account and data. Please choose carefully.
+                {t('account.important_decision_desc', 'This action will affect your account and data. Please choose carefully.')}
               </p>
             </div>
           </div>
@@ -82,7 +84,7 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
       </Card>
 
       <div className="space-y-4">
-        <Label className="text-white text-base">Choose an action:</Label>
+        <Label className="text-white text-base">{t('account.choose_action', 'Choose an action:')}</Label>
         <RadioGroup value={deletionType} onValueChange={(value: 'deactivate' | 'delete') => setDeletionType(value)}>
           <Card className="bg-gray-800/50 border-gray-600">
             <CardContent className="p-4">
@@ -90,14 +92,14 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
                 <RadioGroupItem value="deactivate" id="deactivate" className="mt-1" />
                 <div className="flex-1">
                   <Label htmlFor="deactivate" className="text-white font-medium cursor-pointer">
-                    Deactivate Account
+                    {t('account.deactivate', 'Deactivate Account')}
                   </Label>
                   <p className="text-sm text-gray-400 mt-1">
-                    Hide your profile temporarily. You can reactivate anytime by logging in again.
+                    {t('account.deactivate_desc', 'Hide your profile temporarily. You can reactivate anytime by logging in again.')}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <Eye className="w-4 h-4 text-orange-400" />
-                    <span className="text-xs text-orange-300">Reversible • Data preserved</span>
+                    <span className="text-xs text-orange-300">{t('account.reversible', 'Reversible • Data preserved')}</span>
                   </div>
                 </div>
               </div>
@@ -110,14 +112,14 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
                 <RadioGroupItem value="delete" id="delete" className="mt-1" />
                 <div className="flex-1">
                   <Label htmlFor="delete" className="text-white font-medium cursor-pointer">
-                    Delete Account
+                    {t('account.delete', 'Delete Account')}
                   </Label>
                   <p className="text-sm text-gray-400 mt-1">
-                    Permanently remove your account. You have 30 days to cancel this request.
+                    {t('account.delete_desc', 'Permanently remove your account. You have 30 days to cancel this request.')}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <Clock className="w-4 h-4 text-red-400" />
-                    <span className="text-xs text-red-300">30-day grace period • Data archived</span>
+                    <span className="text-xs text-red-300">{t('account.grace_period', '30-day grace period • Data archived')}</span>
                   </div>
                 </div>
               </div>
@@ -132,13 +134,13 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
           onClick={handleClose}
           className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
         >
-          Cancel
+          {t('common.cancel', 'Cancel')}
         </Button>
         <Button 
           onClick={() => setStep(2)}
           className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
         >
-          Continue
+          {t('common.continue', 'Continue')}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
@@ -150,12 +152,12 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
       <Card className="bg-blue-500/10 border-blue-500/30">
         <CardContent className="p-4">
           <h4 className="text-blue-300 font-medium mb-2">
-            {deletionType === 'deactivate' ? 'Account Deactivation' : 'Account Deletion'}
+            {deletionType === 'deactivate' ? t('account.deactivate', 'Account Deactivation') : t('account.delete', 'Account Deletion')}
           </h4>
           <p className="text-sm text-blue-200">
             {deletionType === 'deactivate' 
-              ? 'Your profile will be hidden from other users, but all your data will be preserved. You can reactivate at any time by logging in.'
-              : 'Your account will be scheduled for deletion in 30 days. During this time, you can cancel the request by logging in.'
+              ? t('account.deactivate_desc', 'Your profile will be hidden from other users, but all your data will be preserved. You can reactivate at any time by logging in.')
+              : t('account.delete_desc', 'Your account will be scheduled for deletion in 30 days. During this time, you can cancel the request by logging in.')
             }
           </p>
         </CardContent>
@@ -163,24 +165,24 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
 
       <div className="space-y-3">
         <div>
-          <Label className="text-purple-200">Reason (Optional)</Label>
+          <Label className="text-purple-200">{t('account.reason_label', 'Reason (Optional)')}</Label>
           <Textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="Help us improve by sharing why you're leaving..."
+            placeholder={t('account.reason_placeholder', 'Help us improve by sharing why you\'re leaving...')}
             className="bg-gray-800 border-gray-600 text-white"
             rows={3}
           />
         </div>
 
         <div>
-          <Label className="text-purple-200">Confirm Password</Label>
+          <Label className="text-purple-200">{t('account.confirm_password', 'Confirm Password')}</Label>
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password to confirm"
+              placeholder={t('account.password_placeholder', 'Enter your password to confirm')}
               className="bg-gray-800 border-gray-600 text-white pr-10"
               required
             />
@@ -204,14 +206,14 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
           className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          {t('common.back', 'Back')}
         </Button>
         <Button 
           onClick={() => setStep(3)}
           className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
           disabled={!password.trim()}
         >
-          Continue
+          {t('common.continue', 'Continue')}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
@@ -225,11 +227,11 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
           <div className="flex items-start gap-3">
             <Shield className="w-5 h-5 text-red-400 mt-0.5" />
             <div>
-              <h4 className="text-red-300 font-medium mb-1">Final Confirmation</h4>
+              <h4 className="text-red-300 font-medium mb-1">{t('account.final_confirmation', 'Final Confirmation')}</h4>
               <p className="text-sm text-red-200">
                 {deletionType === 'deactivate' 
-                  ? 'Your account will be deactivated immediately. You can reactivate by logging in again.'
-                  : 'Your account will be scheduled for deletion in 30 days. You can cancel this request by logging in before the deadline.'
+                  ? t('account.deactivate_desc', 'Your account will be deactivated immediately. You can reactivate by logging in again.')
+                  : t('account.delete_desc', 'Your account will be scheduled for deletion in 30 days. You can cancel this request by logging in before the deadline.')
                 }
               </p>
             </div>
@@ -239,21 +241,21 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
 
       <Card className="bg-gray-800/50 border-gray-700">
         <CardContent className="p-4">
-          <h4 className="text-white font-medium mb-3">Summary</h4>
+          <h4 className="text-white font-medium mb-3">{t('account.summary', 'Summary')}</h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-400">Action:</span>
+              <span className="text-gray-400">{t('account.action', 'Action:')}</span>
               <span className="text-white capitalize">{deletionType}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Effect:</span>
+              <span className="text-gray-400">{t('account.effect', 'Effect:')}</span>
               <span className="text-white">
-                {deletionType === 'deactivate' ? 'Immediate' : '30-day delay'}
+                {deletionType === 'deactivate' ? t('account.immediate', 'Immediate') : t('account.thirty_day_delay', '30-day delay')}
               </span>
             </div>
             {reason && (
               <div className="flex justify-between">
-                <span className="text-gray-400">Reason:</span>
+                <span className="text-gray-400">{t('account.reason_label', 'Reason:')}</span>
                 <span className="text-white text-right max-w-32 truncate">{reason}</span>
               </div>
             )}
@@ -269,14 +271,14 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
           disabled={isLoading}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          {t('common.back', 'Back')}
         </Button>
         <Button 
           onClick={handleFinalConfirmation}
           className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
           disabled={isLoading}
         >
-          {isLoading ? 'Processing...' : `Confirm ${deletionType === 'deactivate' ? 'Deactivation' : 'Deletion'}`}
+          {isLoading ? t('common.processing', 'Processing...') : (deletionType === 'deactivate' ? t('account.confirm_deactivation', 'Confirm Deactivation') : t('account.confirm_deletion', 'Confirm Deletion'))}
         </Button>
       </div>
     </div>
@@ -288,7 +290,7 @@ const DeleteAccountDialog: React.FC<DeleteAccountDialogProps> = ({ open, onOpenC
         <DialogHeader>
           <DialogTitle className="text-white flex items-center">
             <AlertTriangle className="w-5 h-5 mr-2 text-red-400" />
-            Account Management - Step {step} of 3
+            {t('account.management_step', 'Account Management - Step {{step}} of 3', { step })}
           </DialogTitle>
         </DialogHeader>
         

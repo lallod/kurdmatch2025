@@ -49,13 +49,13 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
     setIsLoading(true);
     try {
       await connectSocialAccount(platform, formData.username, formData.userId || formData.username);
-      toast.success(`${platform} account connected successfully!`);
+      toast.success(t('toast.accounts.connected', '{{platform}} account connected successfully!', { platform }));
       setFormData({ username: '', userId: '' });
       setShowAddForm(null);
       loadConnectedAccounts();
     } catch (error) {
       console.error('Connection error:', error);
-      toast.error(`Failed to connect ${platform} account`);
+      toast.error(t('toast.accounts.connect_failed', 'Failed to connect {{platform}} account', { platform }));
     } finally {
       setIsLoading(false);
     }
@@ -65,11 +65,11 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
     setIsLoading(true);
     try {
       await disconnectSocialAccount(accountId);
-      toast.success(`${platform} account disconnected`);
+      toast.success(t('toast.accounts.disconnected', '{{platform}} account disconnected', { platform }));
       loadConnectedAccounts();
     } catch (error) {
       console.error('Disconnect error:', error);
-      toast.error(`Failed to disconnect ${platform} account`);
+      toast.error(t('toast.accounts.disconnect_failed', 'Failed to disconnect {{platform}} account', { platform }));
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +97,7 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
         <DialogHeader>
           <DialogTitle className="text-white flex items-center">
             <Globe className="w-5 h-5 mr-2 text-purple-400" />
-            Connected Accounts
+            {t('accounts.title', 'Connected Accounts')}
           </DialogTitle>
         </DialogHeader>
         
@@ -155,7 +155,7 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
               <Card className="bg-gray-800/50 border-gray-700">
                 <CardContent className="p-6 text-center">
                   <Globe className="w-8 h-8 text-gray-500 mx-auto mb-2" />
-                  <p className="text-gray-400">No connected accounts</p>
+                  <p className="text-gray-400">{t('accounts.no_accounts', 'No connected accounts')}</p>
                 </CardContent>
               </Card>
             )}
@@ -203,7 +203,7 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
           {/* Add Account Buttons */}
           {!showAddForm && (
             <div className="space-y-2">
-              <h4 className="text-white font-medium">Add New Account</h4>
+              <h4 className="text-white font-medium">{t('accounts.add_new', 'Add New Account')}</h4>
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   variant="outline"
@@ -232,7 +232,7 @@ const ConnectedAccountsDialog: React.FC<ConnectedAccountsDialogProps> = ({ open,
               onClick={() => onOpenChange(false)}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
             >
-              Done
+              {t('common.done', 'Done')}
             </Button>
           </div>
         </div>
