@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, AlertCircle, Shield } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface AdminLoginFormProps {
   email: string;
@@ -28,6 +29,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({
   onPasswordChange,
   onSubmit
 }) => {
+  const { t } = useTranslations();
   return (
     <>
       {errorMessage && (
@@ -39,7 +41,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({
 
       <form onSubmit={onSubmit} className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-gray-300">Email</Label>
+          <Label htmlFor="email" className="text-gray-300">{t('auth.email_label', 'Email')}</Label>
           <Input
             id="email"
             type="email"
@@ -53,7 +55,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-gray-300">Password</Label>
+          <Label htmlFor="password" className="text-gray-300">{t('auth.password_label', 'Password')}</Label>
           <Input
             id="password"
             type="password"
@@ -74,12 +76,12 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Verifying Credentials...
+              {t('auth.verifying_credentials', 'Verifying Credentials...')}
             </>
           ) : (
             <>
               <Shield className="mr-2 h-4 w-4" />
-              Access Dashboard
+              {t('auth.access_dashboard', 'Access Dashboard')}
             </>
           )}
         </Button>

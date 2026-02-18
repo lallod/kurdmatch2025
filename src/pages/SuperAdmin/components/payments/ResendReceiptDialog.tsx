@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Payment } from '../types/payment';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ResendReceiptDialogProps {
   isOpen: boolean;
@@ -24,20 +25,21 @@ export const ResendReceiptDialog = ({
   payment,
   onResend
 }: ResendReceiptDialogProps) => {
+  const { t } = useTranslations();
   if (!payment) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Resend Receipt</DialogTitle>
+          <DialogTitle>{t('admin.resend_receipt', 'Resend Receipt')}</DialogTitle>
           <DialogDescription>
-            Resend the receipt to the customer's email address.
+            {t('admin.resend_receipt_desc', "Resend the receipt to the customer's email address.")}
           </DialogDescription>
         </DialogHeader>
         
         <div className="py-4">
-          <p>Resend receipt for transaction <strong>{payment.invoiceNumber}</strong> to:</p>
+          <p>{t('admin.resend_for_transaction', 'Resend receipt for transaction')} <strong>{payment.invoiceNumber}</strong> {t('common.to', 'to:')}</p>
           <p className="font-medium mt-2">{payment.email}</p>
         </div>
         
@@ -46,13 +48,13 @@ export const ResendReceiptDialog = ({
             variant="outline" 
             onClick={() => setIsOpen(false)}
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           <Button 
             variant="default" 
             onClick={onResend}
           >
-            Send Receipt
+            {t('admin.send_receipt', 'Send Receipt')}
           </Button>
         </DialogFooter>
       </DialogContent>
