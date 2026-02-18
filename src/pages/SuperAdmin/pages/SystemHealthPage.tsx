@@ -1,75 +1,41 @@
 import React, { useState } from 'react';
 import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription 
+  Card, CardContent, CardHeader, CardTitle, CardDescription 
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 import { 
-  Brain, 
-  Bell, 
-  AlertCircle, 
-  CheckCircle, 
-  Clock, 
-  RefreshCw,
-  Loader2,
-  TrendingUp,
-  TrendingDown
+  Brain, Bell, AlertCircle, CheckCircle, Clock, RefreshCw, Loader2, TrendingUp, TrendingDown
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { 
-  ChartContainer, 
-  ChartTooltip, 
-  ChartTooltipContent 
-} from '@/components/ui/chart';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { useAdminSystemHealth } from '@/hooks/useAdminSystemHealth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const SystemHealthPage = () => {
+  const { t } = useTranslations();
   const [timeRange, setTimeRange] = useState('day');
   const { 
-    metrics, 
-    metricsLoading, 
-    apiPerformance, 
-    resourceUsage, 
-    incidents, 
-    systemStatus,
-    userStats,
-    dbStats 
+    metrics, metricsLoading, apiPerformance, resourceUsage, incidents, systemStatus, userStats, dbStats 
   } = useAdminSystemHealth(timeRange);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'healthy':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Healthy</Badge>;
+        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{t('admin.healthy', 'Healthy')}</Badge>;
       case 'warning':
-        return <Badge variant="outline" className="bg-amber-100 text-amber-800 hover:bg-amber-100">Warning</Badge>;
+        return <Badge variant="outline" className="bg-amber-100 text-amber-800 hover:bg-amber-100">{t('admin.warning', 'Warning')}</Badge>;
       case 'critical':
-        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">Critical</Badge>;
+        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">{t('admin.critical', 'Critical')}</Badge>;
       case 'investigating':
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">Investigating</Badge>;
+        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">{t('admin.investigating', 'Investigating')}</Badge>;
       case 'resolved':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Resolved</Badge>;
+        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{t('admin.resolved', 'Resolved')}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -77,11 +43,8 @@ const SystemHealthPage = () => {
 
   const getResourceIndicator = (usage: number) => {
     let color = 'bg-green-500';
-    if (usage > 80) {
-      color = 'bg-red-500';
-    } else if (usage > 60) {
-      color = 'bg-amber-500';
-    }
+    if (usage > 80) color = 'bg-red-500';
+    else if (usage > 60) color = 'bg-amber-500';
     return (
       <div className="w-full">
         <div className="flex justify-between mb-1">
@@ -92,7 +55,6 @@ const SystemHealthPage = () => {
     );
   };
 
-  // Format API performance data for chart
   const chartData = apiPerformance.map(metric => ({
     time: new Date(metric.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     responseTime: metric.metric_data.responseTime,
@@ -111,43 +73,38 @@ const SystemHealthPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">System Health</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('admin.system_health', 'System Health')}</h1>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Clock size={16} />
             <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select time range" />
+                <SelectValue placeholder={t('admin.select_time_range', 'Select time range')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hour">Last hour</SelectItem>
-                <SelectItem value="day">Last 24 hours</SelectItem>
-                <SelectItem value="week">Last 7 days</SelectItem>
-                <SelectItem value="month">Last 30 days</SelectItem>
+                <SelectItem value="hour">{t('admin.last_hour', 'Last hour')}</SelectItem>
+                <SelectItem value="day">{t('admin.last_24_hours', 'Last 24 hours')}</SelectItem>
+                <SelectItem value="week">{t('admin.last_7_days', 'Last 7 days')}</SelectItem>
+                <SelectItem value="month">{t('admin.last_30_days', 'Last 30 days')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Button variant="outline" size="sm" className="gap-2">
             <Bell size={16} />
-            Alerts
+            {t('admin.alerts', 'Alerts')}
           </Button>
         </div>
       </div>
 
-      {/* System Status Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className={systemStatus === 'healthy' ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200' : systemStatus === 'critical' ? 'bg-gradient-to-br from-red-50 to-red-100 border-red-200' : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'}>
           <CardContent className="pt-6">
             <div className="flex justify-between items-center">
               <div>
-                <div className="text-sm font-medium text-gray-800">Overall System</div>
+                <div className="text-sm font-medium text-gray-800">{t('admin.overall_system', 'Overall System')}</div>
                 <div className="text-2xl font-bold text-gray-900 capitalize">{systemStatus}</div>
               </div>
-              {systemStatus === 'healthy' ? (
-                <CheckCircle className="h-8 w-8 text-green-600" />
-              ) : (
-                <AlertCircle className="h-8 w-8 text-amber-600" />
-              )}
+              {systemStatus === 'healthy' ? <CheckCircle className="h-8 w-8 text-green-600" /> : <AlertCircle className="h-8 w-8 text-amber-600" />}
             </div>
           </CardContent>
         </Card>
@@ -156,10 +113,8 @@ const SystemHealthPage = () => {
           <CardContent className="pt-6">
             <div className="flex justify-between items-center">
               <div>
-                <div className="text-sm font-medium text-blue-800">Active Users</div>
-                <div className="text-2xl font-bold text-blue-900">
-                  {userStats?.active || 0} / {userStats?.total || 0}
-                </div>
+                <div className="text-sm font-medium text-blue-800">{t('admin.active_users', 'Active Users')}</div>
+                <div className="text-2xl font-bold text-blue-900">{userStats?.active || 0} / {userStats?.total || 0}</div>
               </div>
               <TrendingUp className="h-8 w-8 text-blue-600" />
             </div>
@@ -170,7 +125,7 @@ const SystemHealthPage = () => {
           <CardContent className="pt-6">
             <div className="flex justify-between items-center">
               <div>
-                <div className="text-sm font-medium text-purple-800">Database Records</div>
+                <div className="text-sm font-medium text-purple-800">{t('admin.database_records', 'Database Records')}</div>
                 <div className="text-2xl font-bold text-purple-900">
                   {((dbStats?.profiles || 0) + (dbStats?.messages || 0) + (dbStats?.posts || 0)).toLocaleString()}
                 </div>
@@ -181,88 +136,62 @@ const SystemHealthPage = () => {
         </Card>
       </div>
 
-      {/* AI banner */}
       <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
         <Brain size={24} className="text-tinder-rose mr-3" />
         <div>
-          <h3 className="font-semibold text-gray-800">AI-Powered System Monitoring</h3>
-          <p className="text-sm text-gray-600">Real-time metrics collection via edge functions every 5 minutes</p>
+          <h3 className="font-semibold text-gray-800">{t('admin.ai_system_monitoring', 'AI-Powered System Monitoring')}</h3>
+          <p className="text-sm text-gray-600">{t('admin.ai_system_monitoring_desc', 'Real-time metrics collection via edge functions every 5 minutes')}</p>
         </div>
       </div>
 
       <Tabs defaultValue="overview">
         <TabsList className="mb-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="api">API Performance</TabsTrigger>
-          <TabsTrigger value="resources">System Resources</TabsTrigger>
-          <TabsTrigger value="incidents">Incidents</TabsTrigger>
+          <TabsTrigger value="overview">{t('admin.overview', 'Overview')}</TabsTrigger>
+          <TabsTrigger value="api">{t('admin.api_performance', 'API Performance')}</TabsTrigger>
+          <TabsTrigger value="resources">{t('admin.system_resources', 'System Resources')}</TabsTrigger>
+          <TabsTrigger value="incidents">{t('admin.incidents', 'Incidents')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* API Performance Chart */}
           {chartData.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>API Performance</CardTitle>
-                <CardDescription>Response time and error rate over time</CardDescription>
+                <CardTitle>{t('admin.api_performance', 'API Performance')}</CardTitle>
+                <CardDescription>{t('admin.response_time_error_rate', 'Response time and error rate over time')}</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer
-                  config={{
-                    responseTime: { color: "#8075FF" },
-                    errorRate: { color: "#FF4B91" }
-                  }}
-                  className="h-80"
-                >
+                <ChartContainer config={{ responseTime: { color: "#8075FF" }, errorRate: { color: "#FF4B91" } }} className="h-80">
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis yAxisId="left" orientation="left" />
                     <YAxis yAxisId="right" orientation="right" />
-                    <ChartTooltip 
-                      content={
-                        <ChartTooltipContent />
-                      }
-                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend />
-                    <Line 
-                      yAxisId="left"
-                      type="monotone" 
-                      dataKey="responseTime" 
-                      name="Response Time (ms)" 
-                      stroke="var(--color-responseTime)" 
-                      activeDot={{ r: 8 }} 
-                    />
-                    <Line 
-                      yAxisId="right"
-                      type="monotone" 
-                      dataKey="errorRate" 
-                      name="Error Rate (%)" 
-                      stroke="var(--color-errorRate)" 
-                    />
+                    <Line yAxisId="left" type="monotone" dataKey="responseTime" name="Response Time (ms)" stroke="var(--color-responseTime)" activeDot={{ r: 8 }} />
+                    <Line yAxisId="right" type="monotone" dataKey="errorRate" name="Error Rate (%)" stroke="var(--color-errorRate)" />
                   </LineChart>
                 </ChartContainer>
               </CardContent>
             </Card>
           )}
 
-          {/* System Resources */}
           {resourceUsage.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>System Resources</CardTitle>
-                <CardDescription>Current resource usage across systems</CardDescription>
+                <CardTitle>{t('admin.system_resources', 'System Resources')}</CardTitle>
+                <CardDescription>{t('admin.current_resource_usage', 'Current resource usage across systems')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border overflow-hidden">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">System</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPU</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Memory</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disk</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.system', 'System')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.status', 'Status')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.cpu', 'CPU')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.memory', 'Memory')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.disk', 'Disk')}</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -282,12 +211,11 @@ const SystemHealthPage = () => {
             </Card>
           )}
 
-          {/* Recent Incidents */}
           {incidents.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Recent Incidents</CardTitle>
-                <CardDescription>System incidents and their status</CardDescription>
+                <CardTitle>{t('admin.recent_incidents', 'Recent Incidents')}</CardTitle>
+                <CardDescription>{t('admin.incidents_status', 'System incidents and their status')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -302,7 +230,7 @@ const SystemHealthPage = () => {
                           <div className="text-sm text-gray-500 mt-1">{new Date(incident.timestamp).toLocaleString()}</div>
                           <div className="text-sm mt-2">{incident.metric_data.impact}</div>
                         </div>
-                        <Button variant="outline" size="sm">View Details</Button>
+                        <Button variant="outline" size="sm">{t('admin.view_details', 'View Details')}</Button>
                       </div>
                     </div>
                   ))}
@@ -311,19 +239,14 @@ const SystemHealthPage = () => {
             </Card>
           )}
 
-          {/* Empty State */}
           {chartData.length === 0 && resourceUsage.length === 0 && incidents.length === 0 && (
             <Card>
               <CardContent className="py-12">
                 <div className="text-center">
                   <Brain className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No Metrics Available</h3>
-                  <p className="text-gray-600 mb-4">
-                    System metrics are collected automatically every 5 minutes via the edge function.
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Waiting for first metric collection...
-                  </p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('admin.no_metrics', 'No Metrics Available')}</h3>
+                  <p className="text-gray-600 mb-4">{t('admin.metrics_collected_auto', 'System metrics are collected automatically every 5 minutes via the edge function.')}</p>
+                  <p className="text-sm text-gray-500">{t('admin.waiting_first_metric', 'Waiting for first metric collection...')}</p>
                 </div>
               </CardContent>
             </Card>
@@ -333,36 +256,30 @@ const SystemHealthPage = () => {
         <TabsContent value="api">
           <Card>
             <CardHeader>
-              <CardTitle>API Performance Details</CardTitle>
-              <CardDescription>Detailed API performance metrics and logs</CardDescription>
+              <CardTitle>{t('admin.api_performance_details', 'API Performance Details')}</CardTitle>
+              <CardDescription>{t('admin.detailed_api_metrics', 'Detailed API performance metrics and logs')}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Detailed API performance content will appear here.</p>
-            </CardContent>
+            <CardContent><p className="text-muted-foreground">Detailed API performance content will appear here.</p></CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="resources">
           <Card>
             <CardHeader>
-              <CardTitle>System Resources Details</CardTitle>
-              <CardDescription>Detailed system resource metrics</CardDescription>
+              <CardTitle>{t('admin.system_resources_details', 'System Resources Details')}</CardTitle>
+              <CardDescription>{t('admin.detailed_resource_metrics', 'Detailed system resource metrics')}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Detailed system resources content will appear here.</p>
-            </CardContent>
+            <CardContent><p className="text-muted-foreground">Detailed system resources content will appear here.</p></CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="incidents">
           <Card>
             <CardHeader>
-              <CardTitle>Incident History</CardTitle>
-              <CardDescription>Complete incident history and resolutions</CardDescription>
+              <CardTitle>{t('admin.incident_history', 'Incident History')}</CardTitle>
+              <CardDescription>{t('admin.complete_incident_history', 'Complete incident history and resolutions')}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Incident history content will appear here.</p>
-            </CardContent>
+            <CardContent><p className="text-muted-foreground">Incident history content will appear here.</p></CardContent>
           </Card>
         </TabsContent>
       </Tabs>
