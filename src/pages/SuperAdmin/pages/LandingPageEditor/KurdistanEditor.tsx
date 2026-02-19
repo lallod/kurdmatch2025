@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { KurdistanSection } from './types';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface KurdistanEditorProps {
   kurdistan: KurdistanSection;
@@ -24,20 +25,21 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
   updateKurdistanSection, 
   updateKurdistanPoint 
 }) => {
+  const { t } = useTranslations();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Heart className="h-5 w-5" />
-          Kurdish Heritage Section
+          {t('admin.kurdish_heritage_section', 'Kurdish Heritage Section')}
         </CardTitle>
         <CardDescription>
-          Edit the content in the Kurdish heritage section
+          {t('admin.kurdish_heritage_desc', 'Edit the content in the Kurdish heritage section')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="kurdistan-title">Section Title</Label>
+          <Label htmlFor="kurdistan-title">{t('admin.section_title', 'Section Title')}</Label>
           <Input 
             id="kurdistan-title" 
             value={kurdistan.title} 
@@ -46,7 +48,7 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="kurdistan-subtitle">Section Subtitle</Label>
+          <Label htmlFor="kurdistan-subtitle">{t('admin.section_subtitle', 'Section Subtitle')}</Label>
           <Textarea 
             id="kurdistan-subtitle" 
             value={kurdistan.subtitle} 
@@ -56,14 +58,13 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Left column */}
           <Card className="bg-gray-50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Left Box</CardTitle>
+              <CardTitle className="text-base">{t('admin.left_box', 'Left Box')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <Label htmlFor="kurdistan-left-title">Title</Label>
+                <Label htmlFor="kurdistan-left-title">{t('admin.title', 'Title')}</Label>
                 <Input 
                   id="kurdistan-left-title" 
                   value={kurdistan.leftTitle} 
@@ -72,7 +73,7 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="kurdistan-left-description">Description</Label>
+                <Label htmlFor="kurdistan-left-description">{t('admin.description', 'Description')}</Label>
                 <Textarea 
                   id="kurdistan-left-description" 
                   value={kurdistan.leftDescription} 
@@ -82,7 +83,7 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
               </div>
               
               <div className="space-y-2">
-                <Label>Bullet Points</Label>
+                <Label>{t('admin.bullet_points', 'Bullet Points')}</Label>
                 {kurdistan.leftPoints.map((point, index) => (
                   <div key={`left-point-${index}`} className="flex gap-2">
                     <Input 
@@ -95,14 +96,13 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
             </CardContent>
           </Card>
           
-          {/* Right column */}
           <Card className="bg-gray-50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Right Box</CardTitle>
+              <CardTitle className="text-base">{t('admin.right_box', 'Right Box')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <Label htmlFor="kurdistan-right-title">Title</Label>
+                <Label htmlFor="kurdistan-right-title">{t('admin.title', 'Title')}</Label>
                 <Input 
                   id="kurdistan-right-title" 
                   value={kurdistan.rightTitle} 
@@ -111,7 +111,7 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="kurdistan-right-description">Description</Label>
+                <Label htmlFor="kurdistan-right-description">{t('admin.description', 'Description')}</Label>
                 <Textarea 
                   id="kurdistan-right-description" 
                   value={kurdistan.rightDescription} 
@@ -121,7 +121,7 @@ const KurdistanEditor: React.FC<KurdistanEditorProps> = ({
               </div>
               
               <div className="space-y-2">
-                <Label>Bullet Points</Label>
+                <Label>{t('admin.bullet_points', 'Bullet Points')}</Label>
                 {kurdistan.rightPoints.map((point, index) => (
                   <div key={`right-point-${index}`} className="flex gap-2">
                     <Input 

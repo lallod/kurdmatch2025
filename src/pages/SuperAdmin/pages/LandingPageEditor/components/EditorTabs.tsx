@@ -6,6 +6,7 @@ import HeroEditor from '../HeroEditor';
 import FeaturesEditor from '../FeaturesEditor';
 import KurdistanEditor from '../KurdistanEditor';
 import FooterEditor from '../FooterEditor';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EditorTabsProps {
   content: LandingPageContent;
@@ -26,21 +27,20 @@ const EditorTabs: React.FC<EditorTabsProps> = ({
   updateKurdistanPoint,
   updateFooter
 }) => {
+  const { t } = useTranslations();
   return (
     <Tabs defaultValue="hero">
       <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="hero">Hero Section</TabsTrigger>
-        <TabsTrigger value="features">Features</TabsTrigger>
-        <TabsTrigger value="kurdistan">Kurdish Heritage</TabsTrigger>
-        <TabsTrigger value="footer">Footer</TabsTrigger>
+        <TabsTrigger value="hero">{t('admin.hero_section', 'Hero Section')}</TabsTrigger>
+        <TabsTrigger value="features">{t('admin.features', 'Features')}</TabsTrigger>
+        <TabsTrigger value="kurdistan">{t('admin.kurdish_heritage', 'Kurdish Heritage')}</TabsTrigger>
+        <TabsTrigger value="footer">{t('admin.footer', 'Footer')}</TabsTrigger>
       </TabsList>
 
-      {/* Hero Section Tab */}
       <TabsContent value="hero" className="space-y-4">
         <HeroEditor hero={content.hero} updateHero={updateHero} />
       </TabsContent>
 
-      {/* Features Tab */}
       <TabsContent value="features" className="space-y-4">
         <FeaturesEditor 
           title={content.features.title} 
@@ -50,7 +50,6 @@ const EditorTabs: React.FC<EditorTabsProps> = ({
         />
       </TabsContent>
 
-      {/* Kurdistan Heritage Tab */}
       <TabsContent value="kurdistan" className="space-y-4">
         <KurdistanEditor 
           kurdistan={content.kurdistan}
@@ -59,7 +58,6 @@ const EditorTabs: React.FC<EditorTabsProps> = ({
         />
       </TabsContent>
 
-      {/* Footer Tab */}
       <TabsContent value="footer" className="space-y-4">
         <FooterEditor footer={content.footer} updateFooter={updateFooter} />
       </TabsContent>
