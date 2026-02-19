@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { languageCategories, getLanguageCategory } from '@/data/languages';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LanguageButtonGridProps {
   selectedValues: string[];
@@ -20,10 +21,10 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
   minSelections = 1,
   maxSelections = 10
 }) => {
+  const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
 
-  // Ensure selectedValues is always an array
   const currentValues = Array.isArray(selectedValues) ? selectedValues : [];
 
   // Get glassmorphism styles matching ButtonGridSelector pattern
@@ -127,7 +128,7 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
           )}>
             <Globe className="w-4 h-4" />
           </div>
-          <Label className="text-white font-semibold">Languages You Speak</Label>
+          <Label className="text-white font-semibold">{t('profile.languages_you_speak', 'Languages You Speak')}</Label>
         </div>
         <div className={cn(
           "px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm",
@@ -170,7 +171,7 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
         <Input
           type="text"
-          placeholder="Search languages..."
+          placeholder={t('profile.search_languages', 'Search languages...')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60"
@@ -180,12 +181,12 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
       {/* Category tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-6 w-full bg-white/5">
-          <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
-          <TabsTrigger value="kurdish" className="text-xs">Kurdish</TabsTrigger>
-          <TabsTrigger value="middleEastern" className="text-xs">Middle East</TabsTrigger>
-          <TabsTrigger value="european" className="text-xs">Europe</TabsTrigger>
-          <TabsTrigger value="asian" className="text-xs">Asia</TabsTrigger>
-          <TabsTrigger value="african" className="text-xs">Africa</TabsTrigger>
+          <TabsTrigger value="all" className="text-xs">{t('common.all', 'All')}</TabsTrigger>
+          <TabsTrigger value="kurdish" className="text-xs">{t('profile.kurdish', 'Kurdish')}</TabsTrigger>
+          <TabsTrigger value="middleEastern" className="text-xs">{t('profile.middle_east', 'Middle East')}</TabsTrigger>
+          <TabsTrigger value="european" className="text-xs">{t('profile.europe', 'Europe')}</TabsTrigger>
+          <TabsTrigger value="asian" className="text-xs">{t('profile.asia', 'Asia')}</TabsTrigger>
+          <TabsTrigger value="african" className="text-xs">{t('profile.africa', 'Africa')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab} className="mt-4">
@@ -242,14 +243,14 @@ const LanguageButtonGrid: React.FC<LanguageButtonGridProps> = ({
       {!hasMinimum && (
         <p className="text-xs text-yellow-400/80 flex items-center gap-2">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-          Select at least {minSelections} language{minSelections > 1 ? 's' : ''}
+          {t('profile.select_min_languages', `Select at least ${minSelections} language${minSelections > 1 ? 's' : ''}`)}
         </p>
       )}
       
       {atMaximum && (
         <p className="text-xs text-green-400/80 flex items-center gap-2">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400" />
-          Maximum {maxSelections} selections reached
+          {t('profile.max_selections_reached', `Maximum ${maxSelections} selections reached`)}
         </p>
       )}
     </div>

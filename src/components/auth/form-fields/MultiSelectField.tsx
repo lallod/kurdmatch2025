@@ -10,6 +10,7 @@ import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questio
 import { UseFormReturn } from 'react-hook-form';
 import { getCategoryIcon } from '../utils/categoryIcons';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MultiSelectFieldProps {
   question: QuestionItem;
@@ -18,6 +19,7 @@ interface MultiSelectFieldProps {
 
 const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
   const [open, setOpen] = React.useState(false);
+  const { t } = useTranslations();
 
   return (
     <FormField
@@ -72,11 +74,11 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
                         </Badge>
                       ))
                     ) : (
-                      <span className="text-muted-foreground">{question.placeholder || "Select options..."}</span>
+                      <span className="text-muted-foreground">{question.placeholder || t('common.select_options', 'Select options...')}</span>
                     )}
                     {field.value && Array.isArray(field.value) && field.value.length > 2 && (
                       <Badge variant="secondary" className="text-xs">
-                        +{field.value.length - 2} more
+                        +{field.value.length - 2} {t('common.more', 'more')}
                       </Badge>
                     )}
                   </div>
@@ -85,9 +87,9 @@ const MultiSelectField = ({ question, form }: MultiSelectFieldProps) => {
               </PopoverTrigger>
               <PopoverContent className="w-full p-0 bg-gray-800 border-gray-700">
                 <Command className="bg-gray-800">
-                  <CommandInput placeholder="Search options..." className="text-white" />
+                  <CommandInput placeholder={t('common.search_options', 'Search options...')} className="text-white" />
                   <CommandList>
-                    <CommandEmpty>No options found.</CommandEmpty>
+                    <CommandEmpty>{t('common.no_options_found', 'No options found.')}</CommandEmpty>
                     <CommandGroup>
                       {question.fieldOptions && Array.isArray(question.fieldOptions) && question.fieldOptions.length > 0 && question.fieldOptions.map((option) => (
                         <CommandItem

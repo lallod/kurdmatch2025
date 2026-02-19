@@ -17,6 +17,7 @@ import ProfilePersonality from './ProfilePersonality';
 import ProfileCreative from './ProfileCreative';
 import ProfileTravel from './ProfileTravel';
 import AccordionSection from './AccordionSection';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DesktopProfileDetailsProps {
   details: any;
@@ -29,11 +30,13 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
   tinderBadgeStyle,
   formatList 
 }) => {
+  const { t } = useTranslations();
+
   return (
     <section className="w-full px-4 pb-20 animate-fade-up" style={{ animationDelay: '0.2s' }}>
       <div className="mb-8">
-        <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">About</span>
-        <h2 className="text-3xl font-light mt-1">Profile Details</h2>
+        <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">{t('profile.about', 'About')}</span>
+        <h2 className="text-3xl font-light mt-1">{t('profile.profile_details', 'Profile Details')}</h2>
       </div>
 
       <div className="space-y-8">
@@ -57,7 +60,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
         <Accordion type="multiple" defaultValue={["basics", "lifestyle", "relationships", "interests", "favorites", "more", "personality", "creative", "travel"]} className="space-y-6">
           <AccordionSection
             value="basics"
-            title="Basics"
+            title={t('profile.section.basics', 'Basics')}
             icon={<User />}
             color="text-tinder-rose"
             gradientClass="bg-gradient-to-r from-tinder-rose/5 to-transparent"
@@ -73,7 +76,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="lifestyle"
-            title="Lifestyle"
+            title={t('profile.section.lifestyle', 'Lifestyle')}
             icon={<Wine />}
             color="text-tinder-orange"
             gradientClass="bg-gradient-to-r from-tinder-orange/5 to-transparent"
@@ -88,7 +91,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="relationships"
-            title="Relationships"
+            title={t('profile.section.relationships', 'Relationships')}
             icon={<Heart />}
             color="text-tinder-peach"
             gradientClass="bg-gradient-to-r from-tinder-peach/5 to-transparent"
@@ -104,7 +107,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="interests"
-            title="Interests & Hobbies"
+            title={t('profile.section.interests_hobbies', 'Interests & Hobbies')}
             icon={<Star />}
             color="text-tinder-orange"
             gradientClass="bg-gradient-to-r from-tinder-orange/5 to-transparent"
@@ -120,7 +123,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="favorites"
-            title="Favorites"
+            title={t('profile.section.favorites', 'Favorites')}
             icon={<BookOpen />}
             color="text-tinder-peach"
             gradientClass="bg-gradient-to-r from-tinder-peach/5 to-transparent"
@@ -136,7 +139,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="more"
-            title="Communication"
+            title={t('profile.section.communication', 'Communication')}
             icon={<Languages />}
             color="text-tinder-rose"
             gradientClass="bg-gradient-to-r from-tinder-rose/5 to-transparent"
@@ -151,7 +154,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="personality"
-            title="Personality & Growth"
+            title={t('profile.section.personality_growth', 'Personality & Growth')}
             icon={<BrainCircuit />}
             color="text-purple-500"
             gradientClass="bg-gradient-to-r from-purple-100 to-transparent"
@@ -167,7 +170,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="creative"
-            title="Creative & Lifestyle"
+            title={t('profile.section.creative_lifestyle', 'Creative & Lifestyle')}
             icon={<Palette />}
             color="text-pink-500"
             gradientClass="bg-gradient-to-r from-pink-100 to-transparent"
@@ -183,7 +186,7 @@ const DesktopProfileDetails: React.FC<DesktopProfileDetailsProps> = ({
           
           <AccordionSection
             value="travel"
-            title="Travel"
+            title={t('profile.section.travel', 'Travel')}
             icon={<Plane />}
             color="text-teal-600"
             gradientClass="bg-gradient-to-r from-teal-100 to-transparent"
