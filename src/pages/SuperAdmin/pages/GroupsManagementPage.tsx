@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations } from '@/hooks/useTranslations';
+import { executeAdminAction } from '@/utils/admin/auditLogger';
 
 interface Group {
   id: string;
@@ -81,8 +82,7 @@ const GroupsManagementPage = () => {
   const deleteGroup = async (id: string) => {
     if (!confirm(t('admin.confirm_delete_group', 'Are you sure you want to delete this group?'))) return;
     try {
-      const { error } = await supabase.from('groups').delete().eq('id', id);
-      if (error) throw error;
+      await executeAdminAction({ action: 'delete_record', table: 'groups', recordId: id });
       toast.success(t('admin.group_deleted', 'Group deleted successfully'));
       fetchGroups();
     } catch (error) {

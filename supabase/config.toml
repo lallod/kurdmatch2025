@@ -65,3 +65,6 @@ verify_jwt = true
 
 [functions.send-push-notification]
 verify_jwt = true
+
+[functions.admin-actions]
+verify_jwt = false
