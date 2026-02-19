@@ -7,9 +7,11 @@ import { useSetupManager } from './hooks/useSetupManager';
 import { useAdminAuth } from './hooks/useAdminAuth';
 import SetupStatus from './components/SetupStatus';
 import AdminLoginForm from './components/AdminLoginForm';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const SuperAdminLogin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   
   const {
     isSettingUp,
@@ -36,10 +38,10 @@ const SuperAdminLogin = () => {
       <div className="w-full max-w-md space-y-8 bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-white">
-            Super Admin Access
+            {t('admin.super_admin_access', 'Super Admin Access')}
           </h1>
           <p className="mt-2 text-sm text-gray-400">
-            Restricted area - Authorized personnel only
+            {t('admin.restricted_area', 'Restricted area - Authorized personnel only')}
           </p>
         </div>
         
@@ -51,7 +53,7 @@ const SuperAdminLogin = () => {
             onClick={() => navigate('/')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Landing Page
+            {t('auth.back_to_landing', 'Back to Landing Page')}
           </Button>
         </div>
 
