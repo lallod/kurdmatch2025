@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { QuestionItem } from './types';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EditQuestionDialogProps {
   question: QuestionItem | null;
@@ -16,35 +17,22 @@ interface EditQuestionDialogProps {
   onSave: (question: QuestionItem) => void;
 }
 
-const EditQuestionDialog: React.FC<EditQuestionDialogProps> = ({ 
-  question, 
-  onOpenChange, 
-  onSave 
-}) => {
+const EditQuestionDialog: React.FC<EditQuestionDialogProps> = ({ question, onOpenChange, onSave }) => {
+  const { t } = useTranslations();
   const [editingQuestion, setEditingQuestion] = React.useState<QuestionItem | null>(question);
 
-  React.useEffect(() => {
-    setEditingQuestion(question);
-  }, [question]);
+  React.useEffect(() => { setEditingQuestion(question); }, [question]);
 
   const handleAddFieldOption = (option: string) => {
     if (!option.trim() || !editingQuestion) return;
-    
-    setEditingQuestion({
-      ...editingQuestion,
-      fieldOptions: [...(editingQuestion.fieldOptions || []), option.trim()]
-    });
+    setEditingQuestion({ ...editingQuestion, fieldOptions: [...(editingQuestion.fieldOptions || []), option.trim()] });
   };
 
   const handleRemoveFieldOption = (index: number) => {
     if (!editingQuestion) return;
-    
     const newOptions = [...(editingQuestion.fieldOptions || [])];
     newOptions.splice(index, 1);
-    setEditingQuestion({
-      ...editingQuestion,
-      fieldOptions: newOptions
-    });
+    setEditingQuestion({ ...editingQuestion, fieldOptions: newOptions });
   };
 
   if (!editingQuestion) return null;
@@ -53,31 +41,20 @@ const EditQuestionDialog: React.FC<EditQuestionDialogProps> = ({
     <Dialog open={!!question} onOpenChange={(open) => !open && onOpenChange(false)}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Edit Registration Question</DialogTitle>
-          <DialogDescription>
-            Make changes to the registration question below
-          </DialogDescription>
+          <DialogTitle>{t('admin.edit_registration_question', 'Edit Registration Question')}</DialogTitle>
+          <DialogDescription>{t('admin.edit_question_desc', 'Make changes to the registration question below')}</DialogDescription>
         </DialogHeader>
         
         <div className="grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-question-text">Question Text</Label>
-              <Input
-                id="edit-question-text"
-                value={editingQuestion.text}
-                onChange={(e) => setEditingQuestion({...editingQuestion, text: e.target.value})}
-              />
+              <Label htmlFor="edit-question-text">{t('admin.question_text', 'Question Text')}</Label>
+              <Input id="edit-question-text" value={editingQuestion.text} onChange={(e) => setEditingQuestion({...editingQuestion, text: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-category">Category</Label>
-              <Select
-                value={editingQuestion.category}
-                onValueChange={(value) => setEditingQuestion({...editingQuestion, category: value})}
-              >
-                <SelectTrigger id="edit-category">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
+              <Label htmlFor="edit-category">{t('admin.category', 'Category')}</Label>
+              <Select value={editingQuestion.category} onValueChange={(value) => setEditingQuestion({...editingQuestion, category: value})}>
+                <SelectTrigger id="edit-category"><SelectValue placeholder="Select category" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Basics">Basics</SelectItem>
                   <SelectItem value="Lifestyle">Lifestyle</SelectItem>
@@ -93,14 +70,9 @@ const EditQuestionDialog: React.FC<EditQuestionDialogProps> = ({
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-field-type">Field Type</Label>
-              <Select
-                value={editingQuestion.fieldType}
-                onValueChange={(value) => setEditingQuestion({...editingQuestion, fieldType: value as any})}
-              >
-                <SelectTrigger id="edit-field-type">
-                  <SelectValue placeholder="Select field type" />
-                </SelectTrigger>
+              <Label htmlFor="edit-field-type">{t('admin.field_type', 'Field Type')}</Label>
+              <Select value={editingQuestion.fieldType} onValueChange={(value) => setEditingQuestion({...editingQuestion, fieldType: value as any})}>
+                <SelectTrigger id="edit-field-type"><SelectValue placeholder="Select field type" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="text">Text</SelectItem>
                   <SelectItem value="textarea">Textarea</SelectItem>
@@ -113,16 +85,9 @@ const EditQuestionDialog: React.FC<EditQuestionDialogProps> = ({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-registration-step">Registration Step</Label>
-              <Select
-                value={editingQuestion.registrationStep}
-                onValueChange={(value: 'Account' | 'Personal' | 'Profile' | 'Preferences') => 
-                  setEditingQuestion({...editingQuestion, registrationStep: value})
-                }
-              >
-                <SelectTrigger id="edit-registration-step">
-                  <SelectValue placeholder="Select registration step" />
-                </SelectTrigger>
+              <Label htmlFor="edit-registration-step">{t('admin.registration_step', 'Registration Step')}</Label>
+              <Select value={editingQuestion.registrationStep} onValueChange={(value: 'Account' | 'Personal' | 'Profile' | 'Preferences') => setEditingQuestion({...editingQuestion, registrationStep: value})}>
+                <SelectTrigger id="edit-registration-step"><SelectValue placeholder="Select registration step" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Account">Account</SelectItem>
                   <SelectItem value="Personal">Personal</SelectItem>
@@ -135,84 +100,40 @@ const EditQuestionDialog: React.FC<EditQuestionDialogProps> = ({
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-placeholder">Placeholder Text</Label>
-              <Input
-                id="edit-placeholder"
-                value={editingQuestion.placeholder}
-                onChange={(e) => setEditingQuestion({...editingQuestion, placeholder: e.target.value})}
-              />
+              <Label htmlFor="edit-placeholder">{t('admin.placeholder_text', 'Placeholder Text')}</Label>
+              <Input id="edit-placeholder" value={editingQuestion.placeholder} onChange={(e) => setEditingQuestion({...editingQuestion, placeholder: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-profile-field">Profile Field Mapping</Label>
-              <Input
-                id="edit-profile-field"
-                value={editingQuestion.profileField}
-                onChange={(e) => setEditingQuestion({...editingQuestion, profileField: e.target.value})}
-              />
+              <Label htmlFor="edit-profile-field">{t('admin.profile_field_mapping', 'Profile Field Mapping')}</Label>
+              <Input id="edit-profile-field" value={editingQuestion.profileField} onChange={(e) => setEditingQuestion({...editingQuestion, profileField: e.target.value})} />
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center space-x-2">
-              <Checkbox
-                id="edit-required"
-                checked={editingQuestion.required}
-                onCheckedChange={(checked) => 
-                  setEditingQuestion({...editingQuestion, required: !!checked})
-                }
-              />
-              <Label htmlFor="edit-required">Required</Label>
+              <Checkbox id="edit-required" checked={editingQuestion.required} onCheckedChange={(checked) => setEditingQuestion({...editingQuestion, required: !!checked})} />
+              <Label htmlFor="edit-required">{t('admin.required', 'Required')}</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox
-                id="edit-enabled"
-                checked={editingQuestion.enabled}
-                onCheckedChange={(checked) => 
-                  setEditingQuestion({...editingQuestion, enabled: !!checked})
-                }
-              />
-              <Label htmlFor="edit-enabled">Enabled</Label>
+              <Checkbox id="edit-enabled" checked={editingQuestion.enabled} onCheckedChange={(checked) => setEditingQuestion({...editingQuestion, enabled: !!checked})} />
+              <Label htmlFor="edit-enabled">{t('admin.enabled', 'Enabled')}</Label>
             </div>
           </div>
           
-          {(editingQuestion.fieldType === 'select' || 
-            editingQuestion.fieldType === 'multi-select' || 
-            editingQuestion.fieldType === 'radio') && (
+          {(editingQuestion.fieldType === 'select' || editingQuestion.fieldType === 'multi-select' || editingQuestion.fieldType === 'radio') && (
             <div className="space-y-2">
-              <Label>Field Options</Label>
+              <Label>{t('admin.field_options', 'Field Options')}</Label>
               <div className="flex space-x-2">
-                <Input
-                  placeholder="Add a new option"
-                  id="edit-field-option"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const input = e.currentTarget;
-                      handleAddFieldOption(input.value);
-                      input.value = '';
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    const input = document.getElementById('edit-field-option') as HTMLInputElement;
-                    handleAddFieldOption(input.value);
-                    input.value = '';
-                  }}
-                >
-                  Add
+                <Input placeholder={t('admin.add_new_option', 'Add a new option')} id="edit-field-option" onKeyDown={(e) => { if (e.key === 'Enter') { handleAddFieldOption(e.currentTarget.value); e.currentTarget.value = ''; } }} />
+                <Button type="button" variant="outline" onClick={() => { const input = document.getElementById('edit-field-option') as HTMLInputElement; handleAddFieldOption(input.value); input.value = ''; }}>
+                  {t('admin.add', 'Add')}
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {editingQuestion.fieldOptions?.map((option, index) => (
                   <Badge key={index} variant="secondary" className="py-1 pl-2 pr-1">
                     {option}
-                    <button
-                      type="button"
-                      className="ml-1 text-muted-foreground hover:text-foreground"
-                      onClick={() => handleRemoveFieldOption(index)}
-                    >
+                    <button type="button" className="ml-1 text-muted-foreground hover:text-foreground" onClick={() => handleRemoveFieldOption(index)}>
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
@@ -223,11 +144,9 @@ const EditQuestionDialog: React.FC<EditQuestionDialogProps> = ({
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('admin.cancel', 'Cancel')}</Button>
           <Button onClick={() => onSave(editingQuestion)}>
-            <Save className="mr-2 h-4 w-4" /> Save Changes
+            <Save className="mr-2 h-4 w-4" /> {t('admin.save_changes', 'Save Changes')}
           </Button>
         </DialogFooter>
       </DialogContent>

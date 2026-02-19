@@ -12,6 +12,7 @@ import { filterRoles } from '../components/roles/RoleUtils';
 import { Role } from '../components/roles/types';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const SYSTEM_ROLES: Record<string, { description: string; permissions: Role['permissions'] }> = {
   super_admin: {
@@ -50,6 +51,7 @@ const SYSTEM_ROLES: Record<string, { description: string; permissions: Role['per
 };
 
 const RolesPage = () => {
+  const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [newRoleOpen, setNewRoleOpen] = useState(false);
@@ -99,7 +101,7 @@ const RolesPage = () => {
       setRoles(builtRoles);
     } catch (error) {
       console.error('Error fetching roles:', error);
-      toast.error('Failed to load roles');
+      toast.error(t('admin.failed_load_roles', 'Failed to load roles'));
     } finally {
       setLoading(false);
     }
@@ -111,7 +113,7 @@ const RolesPage = () => {
 
   const handleDeleteRole = (roleId: string) => {
     console.log(`Deleting role ${roleId}`);
-    toast.success('Role deletion not yet implemented');
+    toast.success(t('admin.role_deletion_not_implemented', 'Role deletion not yet implemented'));
   };
 
   return (

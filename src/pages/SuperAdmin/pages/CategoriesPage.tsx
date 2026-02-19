@@ -405,7 +405,7 @@ const CategoriesPage = () => {
     }));
     
     setCategories(updatedItems);
-    toast.success("Categories reordered successfully");
+    toast.success(t('admin.categories_reordered', 'Categories reordered successfully'));
   };
 
   // Handle drag and drop for items
@@ -431,7 +431,7 @@ const CategoriesPage = () => {
     });
     
     setItems(updatedAllItems);
-    toast.success("Items reordered successfully");
+    toast.success(t('admin.items_reordered', 'Items reordered successfully'));
   };
 
   // Handle sort
@@ -456,7 +456,7 @@ const CategoriesPage = () => {
     
     setIsAddCategoryOpen(false);
     categoryForm.reset();
-    toast.success("Category added successfully");
+    toast.success(t('admin.category_added', 'Category added successfully'));
   };
 
   // Edit category
@@ -472,7 +472,7 @@ const CategoriesPage = () => {
     
     setIsEditCategoryOpen(false);
     setSelectedCategory(null);
-    toast.success("Category updated successfully");
+    toast.success(t('admin.category_updated', 'Category updated successfully'));
   };
 
   // Delete category
@@ -483,7 +483,7 @@ const CategoriesPage = () => {
     
     setIsDeleteCategoryOpen(false);
     setSelectedCategory(null);
-    toast.success("Category deleted successfully");
+    toast.success(t('admin.category_deleted', 'Category deleted successfully'));
   };
 
   // Add new item
@@ -515,7 +515,7 @@ const CategoriesPage = () => {
     setCategories(updatedCategories);
     setIsAddItemOpen(false);
     itemForm.reset();
-    toast.success("Item added successfully");
+    toast.success(t('admin.item_added', 'Item added successfully'));
   };
 
   // Edit item
@@ -539,7 +539,7 @@ const CategoriesPage = () => {
     setItems(updatedItems);
     setIsEditItemOpen(false);
     setSelectedItem(null);
-    toast.success("Item updated successfully");
+    toast.success(t('admin.item_updated', 'Item updated successfully'));
   };
 
   // Delete item
@@ -559,7 +559,7 @@ const CategoriesPage = () => {
     setCategories(updatedCategories);
     setIsDeleteItemOpen(false);
     setSelectedItem(null);
-    toast.success("Item deleted successfully");
+    toast.success(t('admin.item_deleted', 'Item deleted successfully'));
   };
 
   // Open edit category dialog
@@ -632,8 +632,8 @@ const CategoriesPage = () => {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Profile Categories</CardTitle>
-                  <CardDescription>Manage and organize profile categories</CardDescription>
+                  <CardTitle>{t('admin.profile_categories', 'Profile Categories')}</CardTitle>
+                  <CardDescription>{t('admin.manage_organize_categories', 'Manage and organize profile categories')}</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -642,7 +642,7 @@ const CategoriesPage = () => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search categories..."
+                    placeholder={t('admin.search_categories', 'Search categories...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -654,21 +654,21 @@ const CategoriesPage = () => {
                     onClick={() => setStatusFilter('all')}
                     className="w-24"
                   >
-                    All
+                    {t('admin.all', 'All')}
                   </Button>
                   <Button 
                     variant={statusFilter === 'active' ? 'default' : 'outline'} 
                     onClick={() => setStatusFilter('active')}
                     className="w-24"
                   >
-                    Active
+                    {t('admin.active_status', 'Active')}
                   </Button>
                   <Button 
                     variant={statusFilter === 'inactive' ? 'default' : 'outline'} 
                     onClick={() => setStatusFilter('inactive')}
                     className="w-24"
                   >
-                    Inactive
+                    {t('admin.inactive_status', 'Inactive')}
                   </Button>
                 </div>
               </div>
@@ -690,16 +690,16 @@ const CategoriesPage = () => {
                                 onClick={() => handleSort("name")}
                               >
                                 <div className="flex items-center">
-                                  Name
+                                   {t('admin.name', 'Name')}
                                   {sortBy === "name" && (
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                   )}
                                 </div>
                               </TableHead>
-                              <TableHead>Description</TableHead>
+                              <TableHead>{t('admin.description', 'Description')}</TableHead>
                               <TableHead className="cursor-pointer" onClick={() => handleSort("order")}>
                                 <div className="flex items-center">
-                                  Order
+                                   {t('admin.order', 'Order')}
                                   {sortBy === "order" && (
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                   )}
@@ -707,22 +707,22 @@ const CategoriesPage = () => {
                               </TableHead>
                               <TableHead className="cursor-pointer" onClick={() => handleSort("itemCount")}>
                                 <div className="flex items-center">
-                                  Items
+                                   {t('admin.items', 'Items')}
                                   {sortBy === "itemCount" && (
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                   )}
                                 </div>
                               </TableHead>
-                              <TableHead>Status</TableHead>
+                              <TableHead>{t('admin.status', 'Status')}</TableHead>
                               <TableHead className="cursor-pointer" onClick={() => handleSort("updatedAt")}>
                                 <div className="flex items-center">
-                                  Updated
+                                   {t('admin.updated', 'Updated')}
                                   {sortBy === "updatedAt" && (
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                   )}
                                 </div>
                               </TableHead>
-                              <TableHead className="text-right">Actions</TableHead>
+                              <TableHead className="text-right">{t('admin.actions', 'Actions')}</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -764,12 +764,12 @@ const CategoriesPage = () => {
                                         {category.active ? (
                                           <div className="flex items-center">
                                             <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
-                                            <span className="text-sm text-green-600">Active</span>
+                            <span className="text-sm text-green-600">{t('admin.active_status', 'Active')}</span>
                                           </div>
                                         ) : (
                                           <div className="flex items-center">
                                             <XCircle className="h-4 w-4 text-gray-400 mr-1" />
-                                            <span className="text-sm text-gray-500">Inactive</span>
+                            <span className="text-sm text-gray-500">{t('admin.inactive_status', 'Inactive')}</span>
                                           </div>
                                         )}
                                       </TableCell>
@@ -784,7 +784,7 @@ const CategoriesPage = () => {
                                               setActiveTab("items");
                                             }}
                                           >
-                                            View Items
+                                            {t('admin.view_items', 'View Items')}
                                           </Button>
                                           <Button
                                             variant="ghost"
@@ -812,7 +812,7 @@ const CategoriesPage = () => {
                             ) : (
                               <TableRow>
                                 <TableCell colSpan={8} className="text-center py-6">
-                                  No categories found
+                                  {t('admin.no_categories_found', 'No categories found')}
                                 </TableCell>
                               </TableRow>
                             )}

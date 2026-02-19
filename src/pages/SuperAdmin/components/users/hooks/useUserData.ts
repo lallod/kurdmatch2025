@@ -3,8 +3,10 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '../types';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const useUserData = () => {
+  const { t } = useTranslations();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsers, setTotalUsers] = useState(0);
@@ -121,7 +123,7 @@ export const useUserData = () => {
       setUsers(userData);
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast.error('Could not load user data. Please try again.');
+      toast.error(t('admin.could_not_load_users', 'Could not load user data. Please try again.'));
       setUsers([]);
     } finally {
       setLoading(false);

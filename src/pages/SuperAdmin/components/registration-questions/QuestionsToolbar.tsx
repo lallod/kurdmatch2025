@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CardTitle, CardDescription } from '@/components/ui/card';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface QuestionsToolbarProps {
   searchQuery: string;
@@ -24,12 +25,14 @@ const QuestionsToolbar: React.FC<QuestionsToolbarProps> = ({
   onSearchChange,
   onFilterSelect
 }) => {
+  const { t } = useTranslations();
+
   return (
     <div className="flex justify-between items-center">
       <div>
-        <CardTitle className="text-white">Registration Questions</CardTitle>
+        <CardTitle className="text-white">{t('admin.registration_questions', 'Registration Questions')}</CardTitle>
         <CardDescription className="text-white/60">
-          Configure questions users will answer during registration
+          {t('admin.configure_questions', 'Configure questions users will answer during registration')}
         </CardDescription>
       </div>
       <div className="flex items-center space-x-2">
@@ -37,7 +40,7 @@ const QuestionsToolbar: React.FC<QuestionsToolbarProps> = ({
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search questions..."
+            placeholder={t('admin.search_questions', 'Search questions...')}
             className="pl-8 w-[250px]"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -50,19 +53,19 @@ const QuestionsToolbar: React.FC<QuestionsToolbarProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Filter Questions</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('admin.filter_questions', 'Filter Questions')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => onFilterSelect('required')}>
-              Required Questions
+              {t('admin.required_questions', 'Required Questions')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onFilterSelect('optional')}>
-              Optional Questions
+              {t('admin.optional_questions', 'Optional Questions')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onFilterSelect('enabled')}>
-              Enabled Questions
+              {t('admin.enabled_questions', 'Enabled Questions')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onFilterSelect('disabled')}>
-              Disabled Questions
+              {t('admin.disabled_questions', 'Disabled Questions')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

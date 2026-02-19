@@ -2,11 +2,12 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const useBulkUserDelete = (onRefresh: () => void) => {
+  const { t } = useTranslations();
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
 
   const handleDeleteAllUsers = () => {
     setIsDeleteAllDialogOpen(true);
@@ -15,27 +16,18 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
   const confirmDeleteAllUsers = async (role: string) => {
     setIsDeleting(true);
     try {
-      // Get current user's session to avoid deactivating themselves
       const { data: { session } } = await supabase.auth.getSession();
       const currentUserId = session?.user?.id;
       
       if (role === 'all') {
-        // Deactivate all profiles except current user without any query limits
         const { error } = await supabase
           .from('profiles')
-          .update({ 
-            status: 'deactivated',
-            last_active: null,
-            verified: false
-          })
+          .update({ status: 'deactivated', last_active: null, verified: false })
           .neq('id', currentUserId || 'no-id-found');
         
         if (error) throw error;
-        
-        toast.success("All users have been deactivated");
+        toast.success(t('admin.all_users_deactivated', 'All users have been deactivated'));
       } else {
-        // For specific roles, first get all user IDs with the selected role
-        // without any pagination limits
         const { data: userRoles, error: rolesError } = await supabase
           .from('user_roles')
           .select('user_id')
@@ -44,34 +36,26 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
         if (rolesError) throw rolesError;
         
         if (userRoles && userRoles.length > 0) {
-          // Filter out current user ID if present
           const userIds = userRoles
             .map(ur => ur.user_id)
             .filter(id => id !== currentUserId);
           
           if (userIds.length === 0) {
-            toast.info(`No other users with the role "${role}" were found`);
+            toast.info(t('admin.no_other_users_role', `No other users with the role "${role}" were found`, { role }));
             setIsDeleting(false);
             setIsDeleteAllDialogOpen(false);
             return;
           }
           
-          // Update all profiles with the filtered IDs
           const { error } = await supabase
             .from('profiles')
-            .update({ 
-              status: 'deactivated',
-              last_active: null,
-              verified: false
-            })
+            .update({ status: 'deactivated', last_active: null, verified: false })
             .in('id', userIds);
           
           if (error) throw error;
-          
-          toast.success(`All users with role "${role}" have been deactivated`);
+          toast.success(t('admin.role_users_deactivated', `All users with role "${role}" have been deactivated`, { role }));
         } else {
-          // If no users with this role, exit early
-          toast.info(`No users with the role "${role}" were found`);
+          toast.info(t('admin.no_users_role', `No users with the role "${role}" were found`, { role }));
           setIsDeleting(false);
           setIsDeleteAllDialogOpen(false);
           return;
@@ -81,7 +65,7 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
       onRefresh();
     } catch (error) {
       console.error("Error deactivating users:", error);
-      toast.error("There was an error deactivating users");
+      toast.error(t('admin.error_deactivating_users', 'There was an error deactivating users'));
     } finally {
       setIsDeleting(false);
       setIsDeleteAllDialogOpen(false);
@@ -89,10 +73,7 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
   };
 
   return {
-    isDeleteAllDialogOpen,
-    setIsDeleteAllDialogOpen,
-    isDeleting,
-    handleDeleteAllUsers,
-    confirmDeleteAllUsers
+    isDeleteAllDialogOpen, setIsDeleteAllDialogOpen,
+    isDeleting, handleDeleteAllUsers, confirmDeleteAllUsers
   };
 };
