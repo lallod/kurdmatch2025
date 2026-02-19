@@ -98,13 +98,13 @@ const ABTestingPage = () => {
   const handleTestAction = async (testId: string, action: 'start' | 'stop' | 'delete' | 'duplicate') => {
     if (action === 'start') {
       await updateTest(testId, { status: 'active', start_date: new Date().toISOString() });
-      toast.success("Test started successfully");
+      toast.success(t('admin.test_started', 'Test started successfully'));
     } else if (action === 'stop') {
       await updateTest(testId, { status: 'paused' });
-      toast.success("Test stopped");
+      toast.success(t('admin.test_stopped', 'Test stopped'));
     } else if (action === 'delete') {
       await deleteTest(testId);
-      toast.success("Test deleted");
+      toast.success(t('admin.test_deleted', 'Test deleted'));
     }
   };
 
@@ -379,15 +379,15 @@ const ABTestingPage = () => {
           
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <label htmlFor="test-name" className="text-sm font-medium">Test Name</label>
+              <label htmlFor="test-name" className="text-sm font-medium">{t('admin.test_name_label', 'Test Name')}</label>
               <Input id="test-name" placeholder="e.g., Homepage Hero Image Test" />
             </div>
             
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Test Type</label>
+              <label className="text-sm font-medium">{t('admin.test_type', 'Test Type')}</label>
               <Select defaultValue="ui">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select test type" />
+                  <SelectValue placeholder={t('admin.test_type', 'Select test type')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ui">UI Component Test</SelectItem>
@@ -400,23 +400,23 @@ const ABTestingPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Variant A (Control)</label>
+                <label className="text-sm font-medium">{t('admin.variant_a_control', 'Variant A (Control)')}</label>
                 <Input placeholder="e.g., Current Design" />
               </div>
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Variant B (Test)</label>
+                <label className="text-sm font-medium">{t('admin.variant_b_test', 'Variant B (Test)')}</label>
                 <Input placeholder="e.g., New Design" />
               </div>
             </div>
             
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Target Audience</label>
+              <label className="text-sm font-medium">{t('admin.target_audience_label', 'Target Audience')}</label>
               <Select defaultValue="all">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select audience" />
+                  <SelectValue placeholder={t('admin.target_audience_label', 'Select audience')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Users</SelectItem>
+                  <SelectItem value="all">{t('admin.all_users', 'All Users')}</SelectItem>
                   <SelectItem value="new">New Users</SelectItem>
                   <SelectItem value="returning">Returning Users</SelectItem>
                   <SelectItem value="premium">Premium Users</SelectItem>
@@ -426,24 +426,24 @@ const ABTestingPage = () => {
             </div>
             
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Traffic Distribution</label>
+              <label className="text-sm font-medium">{t('admin.traffic_distribution', 'Traffic Distribution')}</label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-gray-500">Variant A: 50%</label>
+                  <label className="text-xs text-gray-500">{t('admin.variant_a_control', 'Variant A')}: 50%</label>
                   <Input type="range" min="10" max="90" defaultValue="50" />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">Variant B: 50%</label>
+                  <label className="text-xs text-gray-500">{t('admin.variant_b_test', 'Variant B')}: 50%</label>
                   <Input type="range" min="10" max="90" defaultValue="50" disabled />
                 </div>
               </div>
             </div>
             
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Success Metrics</label>
+              <label className="text-sm font-medium">{t('admin.success_metrics', 'Success Metrics')}</label>
               <Select defaultValue="conversion">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select primary metric" />
+                  <SelectValue placeholder={t('admin.success_metrics', 'Select primary metric')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="conversion">Conversion Rate</SelectItem>
@@ -456,19 +456,19 @@ const ABTestingPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Start Date</label>
+                <label className="text-sm font-medium">{t('admin.start_date', 'Start Date')}</label>
                 <Input type="date" />
               </div>
               <div className="grid gap-2">
-                <label className="text-sm font-medium">End Date</label>
+                <label className="text-sm font-medium">{t('admin.end_date', 'End Date')}</label>
                 <Input type="date" />
               </div>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setNewTestOpen(false)}>Cancel</Button>
-            <Button>Create Test</Button>
+            <Button variant="outline" onClick={() => setNewTestOpen(false)}>{t('admin.cancel', 'Cancel')}</Button>
+            <Button>{t('admin.create_test', 'Create Test')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

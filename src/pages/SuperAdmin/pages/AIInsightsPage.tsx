@@ -41,7 +41,7 @@ const AIInsightsPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching AI insights:', error);
-      toast.error('Failed to load AI insights');
+      toast.error(t('admin.failed_load_ai_insights', 'Failed to load AI insights'));
     } finally {
       setLoading(false);
     }

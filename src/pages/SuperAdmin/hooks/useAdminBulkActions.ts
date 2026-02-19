@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface BulkActionParams {
   action: string;
@@ -11,6 +12,7 @@ interface BulkActionParams {
 export const useAdminBulkActions = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const executeBulkAction = async ({ action, userIds, data }: BulkActionParams) => {
     setLoading(true);
@@ -26,18 +28,16 @@ export const useAdminBulkActions = () => {
           break;
 
         case "send_notification":
-          // This would typically call an edge function
           toast({
-            title: "Notifications Sent",
-            description: `Sent to ${userIds.length} users`,
+            title: t('admin.notifications_sent', 'Notifications Sent'),
+            description: t('admin.sent_to_users', `Sent to ${userIds.length} users`, { count: userIds.length }),
           });
           return { success: true };
 
         case "export_data":
-          // This would typically call an edge function
           toast({
-            title: "Export Started",
-            description: `Exporting data for ${userIds.length} users`,
+            title: t('admin.export_started', 'Export Started'),
+            description: t('admin.exporting_data_for', `Exporting data for ${userIds.length} users`, { count: userIds.length }),
           });
           return { success: true };
 
@@ -48,7 +48,6 @@ export const useAdminBulkActions = () => {
           break;
 
         case "delete_accounts":
-          // This is dangerous and should require additional confirmation
           result = await supabase
             .from("profiles")
             .delete()
@@ -62,16 +61,16 @@ export const useAdminBulkActions = () => {
       if (result && result.error) throw result.error;
 
       toast({
-        title: "Success",
-        description: `Bulk action completed for ${userIds.length} users`,
+        title: t('admin.success', 'Success'),
+        description: t('admin.bulk_action_completed', `Bulk action completed for ${userIds.length} users`, { count: userIds.length }),
       });
 
       return { success: true };
     } catch (error) {
       console.error("Error executing bulk action:", error);
       toast({
-        title: "Error",
-        description: "Failed to execute bulk action",
+        title: t('admin.error', 'Error'),
+        description: t('admin.failed_bulk_action', 'Failed to execute bulk action'),
         variant: "destructive",
       });
       return { success: false, error };
