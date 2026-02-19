@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertCircle } from 'lucide-react';
 import AccountStep from './AccountStep';
 import LocationStep from './LocationStep';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EnhancedStepRendererProps {
   category: StepCategory;
@@ -27,6 +28,7 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
   locationLoading,
   isStepComplete
 }) => {
+  const { t } = useTranslations();
   const { name, title, description, questions, step } = category;
 
   // Render step header with completion status
@@ -37,12 +39,12 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
         {isStepComplete ? (
           <Badge variant="outline" className="bg-green-900/30 text-green-300 border-green-500/30 flex-shrink-0">
             <CheckCircle size={12} className="mr-1" />
-            Complete
+            {t('reg.complete', 'Complete')}
           </Badge>
         ) : (
           <Badge variant="outline" className="bg-yellow-900/30 text-yellow-300 border-yellow-500/30 flex-shrink-0">
             <AlertCircle size={12} className="mr-1" />
-            Incomplete
+            {t('reg.incomplete', 'Incomplete')}
           </Badge>
         )}
       </div>
@@ -62,7 +64,6 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
 
   // Location step (step 3) - Use enhanced LocationStep with worldwide search
   if (step === 3) {
-    // Filter out location and dreamVacation as they're handled by LocationStep
     const remainingQuestions = questions.filter(
       q => q.profileField !== 'location' && q.id !== 'dreamVacation'
     );
@@ -76,7 +77,6 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
           locationLoading={locationLoading || false} 
         />
         
-        {/* Render remaining Cultural Identity questions */}
         {remainingQuestions.map(question => (
           <DynamicFieldRenderer 
             key={question.id}
@@ -85,18 +85,17 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
           />
         ))}
       
-      {/* Step completion summary */}
       <div className="mt-2 sm:mt-6 p-2 sm:p-4 bg-white/5 rounded-lg border border-white/10">
           <div className="flex items-center gap-2 text-sm">
             {isStepComplete ? (
               <>
                 <CheckCircle size={16} className="text-green-400" />
-                <span className="text-green-300">All required fields completed</span>
+                <span className="text-green-300">{t('reg.all_fields_completed', 'All required fields completed')}</span>
               </>
             ) : (
               <>
                 <AlertCircle size={16} className="text-yellow-400" />
-                <span className="text-yellow-300">Please complete all required fields to continue</span>
+                <span className="text-yellow-300">{t('reg.complete_required_fields', 'Please complete all required fields to continue')}</span>
               </>
             )}
           </div>
@@ -120,7 +119,6 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
     <div className="space-y-2 sm:space-y-4">
       {renderStepHeader()}
       
-      {/* Special handling for location field in basic info */}
       {step === 2 && location !== undefined && (
         <FormField
           control={form.control}
@@ -128,7 +126,7 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel className="text-white flex items-center gap-2">
-                Current Location
+                {t('reg.current_location', 'Current Location')}
                 {field.value && !fieldState.error && (
                   <CheckCircle size={16} className="text-green-400" />
                 )}
@@ -136,7 +134,7 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
               <FormControl>
                 <div className="relative">
                   <Input 
-                    placeholder={locationLoading ? "Detecting location..." : "Enter your city"}
+                    placeholder={locationLoading ? t('reg.detecting_location', 'Detecting location...') : t('reg.enter_city', 'Enter your city')}
                     {...field}
                     value={field.value || location}
                     className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
@@ -154,7 +152,6 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
         />
       )}
       
-      {/* Render all questions for this step */}
       {questions.map(question => (
         <DynamicFieldRenderer 
           key={question.id}
@@ -163,18 +160,17 @@ const EnhancedStepRenderer: React.FC<EnhancedStepRendererProps> = ({
         />
       ))}
       
-      {/* Step completion summary */}
       <div className="mt-2 sm:mt-6 p-2 sm:p-4 bg-white/5 rounded-lg border border-white/10">
         <div className="flex items-center gap-2 text-sm">
           {isStepComplete ? (
             <>
               <CheckCircle size={16} className="text-green-400" />
-              <span className="text-green-300">All required fields completed</span>
+              <span className="text-green-300">{t('reg.all_fields_completed', 'All required fields completed')}</span>
             </>
           ) : (
             <>
               <AlertCircle size={16} className="text-yellow-400" />
-              <span className="text-yellow-300">Please complete all required fields to continue</span>
+              <span className="text-yellow-300">{t('reg.complete_required_fields', 'Please complete all required fields to continue')}</span>
             </>
           )}
         </div>

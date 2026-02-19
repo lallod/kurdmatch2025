@@ -1,6 +1,7 @@
 import React from 'react';
 import { StepCategory } from '../utils/enhancedStepCategories';
 import { CheckCircle, AlertCircle, Circle } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EnhancedStepIndicatorProps {
   categories: StepCategory[];
@@ -13,6 +14,8 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
   currentStep,
   completionStatus
 }) => {
+  const { t } = useTranslations();
+
   return (
     <div className="w-full max-w-4xl mx-auto mb-6">
       {/* Mobile: Simple dot indicators */}
@@ -36,7 +39,7 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
           })}
         </div>
         <div className="text-center text-xs text-white/60 mb-2">
-          Step {currentStep} of {categories.length}: {categories[currentStep - 1]?.name}
+          {t('reg.step_of_name', `Step ${currentStep} of ${categories.length}: ${categories[currentStep - 1]?.name}`, { current: currentStep, total: categories.length, name: categories[currentStep - 1]?.name || '' })}
         </div>
         <div className="w-full bg-white/10 rounded-full h-1.5">
           <div 
@@ -61,7 +64,6 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
             return (
               <div key={category.step} className="contents">
                 <div className="flex flex-col items-center">
-                  {/* Step Circle */}
                   <div className={`
                     relative flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300
                     ${isActive 
@@ -79,7 +81,6 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
                       <Circle size={20} />
                     )}
                     
-                    {/* Completion Status Indicator */}
                     {isActive && (
                       <div className={`
                         absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white
@@ -94,7 +95,6 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
                     )}
                   </div>
                   
-                  {/* Step Label */}
                   <div className="text-center mt-2">
                     <div className={`
                       text-xs font-medium transition-colors duration-300
@@ -104,13 +104,12 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
                     </div>
                     {isActive && (
                       <div className="text-[10px] text-white/40 mt-1">
-                        {isCompleted ? 'Complete' : 'In Progress'}
+                        {isCompleted ? t('reg.complete', 'Complete') : t('reg.in_progress', 'In Progress')}
                       </div>
                     )}
                   </div>
                 </div>
                 
-                {/* Connector Line */}
                 {index < categories.length - 1 && (
                   <div className={`
                     flex-1 h-0.5 mx-2 transition-colors duration-300
@@ -122,7 +121,6 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
           })}
         </div>
         
-        {/* Progress Bar */}
         <div className="w-full bg-white/10 rounded-full h-2 mt-4">
           <div 
             className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
@@ -132,9 +130,8 @@ const EnhancedStepIndicator: React.FC<EnhancedStepIndicatorProps> = ({
           />
         </div>
         
-        {/* Completion Summary */}
         <div className="text-center mt-2 text-xs text-white/60">
-          {Object.values(completionStatus).filter(Boolean).length} of {categories.length} steps completed
+          {t('reg.steps_completed', `${Object.values(completionStatus).filter(Boolean).length} of ${categories.length} steps completed`, { done: Object.values(completionStatus).filter(Boolean).length, total: categories.length })}
         </div>
       </div>
     </div>

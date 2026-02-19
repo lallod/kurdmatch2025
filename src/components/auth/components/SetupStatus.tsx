@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, AlertCircle, CheckCircle, Clock, RefreshCw, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SetupStatusProps {
   isSettingUp: boolean;
@@ -24,12 +25,13 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
   onForceClearCache
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   if (isSettingUp) {
     return (
       <div className="bg-blue-900/50 border border-blue-700 text-blue-200 px-4 py-3 rounded relative flex items-center" role="alert">
         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-        <span>Verifying admin account setup...</span>
+        <span>{t('admin.verifying_setup', 'Verifying admin account setup...')}</span>
       </div>
     );
   }
@@ -56,7 +58,7 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
                   className="text-gray-300 border-gray-600 hover:bg-gray-600"
                 >
                   <Settings className="mr-2 h-4 w-4" />
-                  Configure Supabase Setup
+                  {t('admin.configure_supabase', 'Configure Supabase Setup')}
                 </Button>
               </div>
             )}
@@ -66,7 +68,9 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
         {retryAfter && (
           <div className="flex items-center justify-between bg-gray-700 p-3 rounded">
             <span className="text-gray-300 text-sm">
-              {countdown > 0 ? `Retry available in ${countdown}s` : 'Ready to retry'}
+              {countdown > 0 
+                ? t('admin.retry_in', `Retry available in ${countdown}s`, { seconds: countdown })
+                : t('admin.ready_to_retry', 'Ready to retry')}
             </span>
             <Button
               variant="outline"
@@ -76,7 +80,7 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
               className="text-gray-300 border-gray-600 hover:bg-gray-600"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
-              Retry Setup
+              {t('admin.retry_setup', 'Retry Setup')}
             </Button>
           </div>
         )}
@@ -88,7 +92,7 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
             onClick={onForceClearCache}
             className="w-full text-gray-300 border-gray-600 hover:bg-gray-600"
           >
-            Clear Cache & Retry
+            {t('admin.clear_cache_retry', 'Clear Cache & Retry')}
           </Button>
         )}
       </div>
@@ -99,7 +103,7 @@ const SetupStatus: React.FC<SetupStatusProps> = ({
     return (
       <div className="bg-green-900/50 border border-green-700 text-green-200 px-4 py-3 rounded relative flex items-center" role="alert">
         <CheckCircle className="h-5 w-5 mr-2" />
-        <span>Admin account is ready! You can now log in.</span>
+        <span>{t('admin.account_ready', 'Admin account is ready! You can now log in.')}</span>
       </div>
     );
   }
