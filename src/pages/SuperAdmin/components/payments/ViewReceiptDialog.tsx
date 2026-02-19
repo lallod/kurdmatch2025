@@ -21,6 +21,7 @@ import { Payment } from '../types/payment';
 import { toast } from 'sonner';
 import { paymentStatuses } from './PaymentStatusBadge';
 import { paymentMethods } from './PaymentMethodDisplay';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ViewReceiptDialogProps {
   isOpen: boolean;
@@ -37,15 +38,16 @@ export const ViewReceiptDialog = ({
   formatCurrency,
   onResendReceipt
 }: ViewReceiptDialogProps) => {
+  const { t } = useTranslations();
   if (!payment) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Payment Receipt</DialogTitle>
+          <DialogTitle>{t('admin.payment_receipt', 'Payment Receipt')}</DialogTitle>
           <DialogDescription>
-            Receipt details for transaction
+            {t('admin.receipt_details_for', 'Receipt details for transaction')}
           </DialogDescription>
         </DialogHeader>
         
@@ -53,11 +55,11 @@ export const ViewReceiptDialog = ({
           <div className="border-b pb-4">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-xl font-bold">RECEIPT</h3>
+                <h3 className="text-xl font-bold">{t('admin.receipt', 'RECEIPT')}</h3>
                 <p className="text-muted-foreground">{payment.invoiceNumber}</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold">Company Name</p>
+                <p className="font-semibold">{t('admin.company_name', 'Company Name')}</p>
                 <p className="text-sm text-muted-foreground">123 Business St</p>
                 <p className="text-sm text-muted-foreground">Business City, BC 12345</p>
               </div>
@@ -66,7 +68,7 @@ export const ViewReceiptDialog = ({
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h4 className="text-sm font-medium text-muted-foreground">Billed To</h4>
+              <h4 className="text-sm font-medium text-muted-foreground">{t('admin.billed_to', 'Billed To')}</h4>
               <p className="font-medium">{payment.userName}</p>
               <p className="text-sm">{payment.email}</p>
               {payment.billingAddress && (
@@ -80,12 +82,12 @@ export const ViewReceiptDialog = ({
               )}
             </div>
             <div className="text-right">
-              <h4 className="text-sm font-medium text-muted-foreground">Payment Info</h4>
-              <p><strong>Date:</strong> {payment.date}</p>
-              <p><strong>Status:</strong> {paymentStatuses.find(s => s.id === payment.status)?.label}</p>
-              <p><strong>Method:</strong> {paymentMethods.find(m => m.id === payment.method)?.label}</p>
+              <h4 className="text-sm font-medium text-muted-foreground">{t('admin.payment_info', 'Payment Info')}</h4>
+              <p><strong>{t('common.date', 'Date')}:</strong> {payment.date}</p>
+              <p><strong>{t('common.status', 'Status')}:</strong> {paymentStatuses.find(s => s.id === payment.status)?.label}</p>
+              <p><strong>{t('common.method', 'Method')}:</strong> {paymentMethods.find(m => m.id === payment.method)?.label}</p>
               {payment.cardInfo && (
-                <p><strong>Card:</strong> {payment.cardInfo.type} ending in {payment.cardInfo.last4}</p>
+                <p><strong>{t('admin.card', 'Card')}:</strong> {payment.cardInfo.type} {t('admin.ending_in', 'ending in')} {payment.cardInfo.last4}</p>
               )}
             </div>
           </div>
@@ -94,15 +96,15 @@ export const ViewReceiptDialog = ({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>{t('common.description', 'Description')}</TableHead>
+                  <TableHead className="text-right">{t('common.amount', 'Amount')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
                   <TableCell>
                     <div>
-                      <p className="font-medium">{payment.planName} Subscription</p>
+                      <p className="font-medium">{payment.planName} {t('admin.subscription', 'Subscription')}</p>
                       <p className="text-sm text-muted-foreground">{payment.description}</p>
                     </div>
                   </TableCell>
@@ -114,12 +116,12 @@ export const ViewReceiptDialog = ({
           
           <div className="flex justify-between border-t pt-4">
             <div>
-              <p className="text-sm text-muted-foreground">Thank you for your business!</p>
+              <p className="text-sm text-muted-foreground">{t('admin.thank_you', 'Thank you for your business!')}</p>
             </div>
             <div className="text-right">
-              <p className="text-sm"><strong>Subtotal:</strong> {formatCurrency(payment.amount)}</p>
-              <p className="text-sm"><strong>Tax:</strong> {formatCurrency(0)}</p>
-              <p className="font-bold"><strong>Total:</strong> {formatCurrency(payment.amount)}</p>
+              <p className="text-sm"><strong>{t('admin.subtotal', 'Subtotal')}:</strong> {formatCurrency(payment.amount)}</p>
+              <p className="text-sm"><strong>{t('admin.tax', 'Tax')}:</strong> {formatCurrency(0)}</p>
+              <p className="font-bold"><strong>{t('admin.total', 'Total')}:</strong> {formatCurrency(payment.amount)}</p>
             </div>
           </div>
           
@@ -127,27 +129,27 @@ export const ViewReceiptDialog = ({
             <Button
               variant="outline"
               onClick={() => {
-                toast.success("Receipt printed successfully");
+                toast.success(t('admin.receipt_printed', 'Receipt printed successfully'));
               }}
             >
               <Printer className="mr-2 h-4 w-4" />
-              Print
+              {t('admin.print', 'Print')}
             </Button>
             <Button
               variant="outline"
               onClick={() => {
-                toast.success("Receipt downloaded as PDF");
+                toast.success(t('admin.receipt_downloaded', 'Receipt downloaded as PDF'));
               }}
             >
               <Download className="mr-2 h-4 w-4" />
-              Download PDF
+              {t('admin.download_pdf', 'Download PDF')}
             </Button>
             <Button
               variant="default"
               onClick={onResendReceipt}
             >
               <Mail className="mr-2 h-4 w-4" />
-              Email Receipt
+              {t('admin.email_receipt', 'Email Receipt')}
             </Button>
           </div>
         </div>

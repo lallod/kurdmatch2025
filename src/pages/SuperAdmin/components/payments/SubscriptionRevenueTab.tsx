@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 // Monthly revenue data for chart
 const monthlyRevenue = [
@@ -27,50 +28,51 @@ interface SubscriptionRevenueTabProps {
 }
 
 export const SubscriptionRevenueTab = ({ formatCurrency }: SubscriptionRevenueTabProps) => {
+  const { t } = useTranslations();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Subscription Revenue Overview</CardTitle>
-        <CardDescription>Monthly recurring revenue and subscription metrics</CardDescription>
+        <CardTitle>{t('admin.subscription_revenue_overview', 'Subscription Revenue Overview')}</CardTitle>
+        <CardDescription>{t('admin.mrr_metrics', 'Monthly recurring revenue and subscription metrics')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Monthly Recurring Revenue
+                {t('admin.monthly_recurring_revenue', 'Monthly Recurring Revenue')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(19200)}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                +8.4% from last month
+                {t('admin.mrr_change', '+8.4% from last month')}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Active Subscribers
+                {t('admin.active_subscribers', 'Active Subscribers')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">926</div>
               <p className="text-xs text-muted-foreground mt-1">
-                +23 new subscribers this month
+                {t('admin.new_subscribers_month', '+23 new subscribers this month')}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Average Revenue Per User
+                {t('admin.avg_revenue_per_user', 'Average Revenue Per User')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(20.73)}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                +$1.25 from last month
+                {t('admin.arpu_change', '+$1.25 from last month')}
               </p>
             </CardContent>
           </Card>
@@ -78,9 +80,8 @@ export const SubscriptionRevenueTab = ({ formatCurrency }: SubscriptionRevenueTa
 
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold mb-2">Monthly Revenue (2023)</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('admin.monthly_revenue_year', 'Monthly Revenue (2023)')}</h3>
             <div className="h-[300px] w-full">
-              {/* Chart placeholder - in a real app, use Recharts */}
               <div className="h-full w-full flex flex-col justify-end">
                 <div className="flex h-full items-end gap-2">
                   {monthlyRevenue.map((item) => (
@@ -105,38 +106,38 @@ export const SubscriptionRevenueTab = ({ formatCurrency }: SubscriptionRevenueTa
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-semibold mb-4">Subscription Plans</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('admin.subscription_plans', 'Subscription Plans')}</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <Badge variant="outline" className="bg-amber-50 text-amber-700 mr-2">Premium</Badge>
-                    <span>{formatCurrency(19.99)}/month</span>
+                    <span>{formatCurrency(19.99)}/{t('admin.this_month', 'month').toLowerCase()}</span>
                   </div>
-                  <span>452 subscribers</span>
+                  <span>452 {t('admin.subscribers', 'subscribers')}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 mr-2">Basic</Badge>
-                    <span>{formatCurrency(9.99)}/month</span>
+                    <span>{formatCurrency(9.99)}/{t('admin.this_month', 'month').toLowerCase()}</span>
                   </div>
-                  <span>321 subscribers</span>
+                  <span>321 {t('admin.subscribers', 'subscribers')}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <Badge variant="outline" className="bg-purple-50 text-purple-700 mr-2">Ultimate</Badge>
-                    <span>{formatCurrency(29.99)}/month</span>
+                    <span>{formatCurrency(29.99)}/{t('admin.this_month', 'month').toLowerCase()}</span>
                   </div>
-                  <span>153 subscribers</span>
+                  <span>153 {t('admin.subscribers', 'subscribers')}</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-4">Churn Rate</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('admin.churn_rate', 'Churn Rate')}</h3>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm">Monthly Churn</span>
+                    <span className="text-sm">{t('admin.monthly_churn', 'Monthly Churn')}</span>
                     <span className="text-sm font-semibold">3.2%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -145,7 +146,7 @@ export const SubscriptionRevenueTab = ({ formatCurrency }: SubscriptionRevenueTa
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm">Annual Projection</span>
+                    <span className="text-sm">{t('admin.annual_projection', 'Annual Projection')}</span>
                     <span className="text-sm font-semibold">32.5%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -154,7 +155,7 @@ export const SubscriptionRevenueTab = ({ formatCurrency }: SubscriptionRevenueTa
                 </div>
                 <div className="pt-2">
                   <Badge variant="outline" className="bg-amber-50 text-amber-700">
-                    <AlertTriangle className="h-3 w-3 mr-1" /> Requires attention
+                    <AlertTriangle className="h-3 w-3 mr-1" /> {t('admin.requires_attention', 'Requires attention')}
                   </Badge>
                 </div>
               </div>
