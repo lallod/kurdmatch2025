@@ -4,6 +4,7 @@ import { Globe, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PassportLocationDisplayProps {
   location: string;
@@ -17,12 +18,13 @@ const PassportLocationDisplay: React.FC<PassportLocationDisplayProps> = ({
   onClear
 }) => {
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const handleClear = () => {
     onClear();
     toast({
-      title: "Passport location removed",
-      description: "Your passport location has been reset."
+      title: t('toast.passport.removed', 'Passport location removed'),
+      description: t('toast.passport.removed_desc', 'Your passport location has been reset.')
     });
   };
 
@@ -30,7 +32,7 @@ const PassportLocationDisplay: React.FC<PassportLocationDisplayProps> = ({
     <div className="space-y-3">
       <div className="p-3 bg-muted rounded-md flex items-center">
         <Globe size={16} className="mr-2 text-primary" />
-        {passportLocation || location || "No passport location set"}
+        {passportLocation || location || t('location.no_passport', 'No passport location set')}
       </div>
       
       {passportLocation && (
@@ -44,13 +46,13 @@ const PassportLocationDisplay: React.FC<PassportLocationDisplayProps> = ({
             onClick={handleClear}
           >
             <X size={10} />
-            <span className="sr-only">Remove</span>
+            <span className="sr-only">{t('common.remove', 'Remove')}</span>
           </Button>
         </Badge>
       )}
       
       <p className="text-xs text-muted-foreground mt-1">
-        Virtual location for exploring matches in other cities worldwide.
+        {t('location.passport_desc', 'Virtual location for exploring matches in other cities worldwide.')}
       </p>
     </div>
   );

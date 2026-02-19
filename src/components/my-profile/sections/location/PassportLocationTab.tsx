@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Globe, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 import LocationSearch from './LocationSearch';
 import PassportLocationDisplay from './PassportLocationDisplay';
 import LocationInfoBanner from './LocationInfoBanner';
@@ -19,31 +20,27 @@ const PassportLocationTab: React.FC<PassportLocationTabProps> = ({
 }) => {
   const [recentSearches, setRecentSearches] = useState<any[]>([]);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const handleSelectLocation = (result: any) => {
     onLocationSelect(result);
     
-    // Add to recent searches if not already there
     if (!recentSearches.some(item => item.place_id === result.place_id)) {
       setRecentSearches(prev => [result, ...prev].slice(0, 5));
     }
     
     toast({
-      title: "Location updated",
-      description: `Your passport location is now set to ${formatLocationResult(result)}`
+      title: t('toast.location.updated', 'Location updated'),
+      description: t('toast.location.passport_set', `Your passport location is now set to ${formatLocationResult(result)}`, { location: formatLocationResult(result) })
     });
   };
 
-  // Format the display text for a location search result
   const formatLocationResult = (result: any) => {
     const address = result.address || {};
-    
-    // Try to extract the most relevant location information
     const city = address.city || address.town || address.village || '';
     const state = address.state || address.county || address.region || '';
     const country = address.country || '';
     
-    // Create a well-formatted location string
     if (city && state && country) {
       return `${city}, ${state}, ${country}`;
     } else if (city && (state || country)) {
@@ -53,7 +50,6 @@ const PassportLocationTab: React.FC<PassportLocationTabProps> = ({
     } else if (country) {
       return country;
     } else {
-      // Fallback to display name
       return result.display_name.split(',').slice(0, 3).join(',');
     }
   };
@@ -62,8 +58,8 @@ const PassportLocationTab: React.FC<PassportLocationTabProps> = ({
     <div className="space-y-4">
       <LocationInfoBanner 
         icon={<Globe />}
-        title="Travel Mode"
-        description="Set your location anywhere in the world to match with people from different cities or countries."
+        title={t('location.travel_mode', 'Travel Mode')}
+        description={t('location.travel_mode_desc', 'Set your location anywhere in the world to match with people from different cities or countries.')}
         bgColor="bg-accent/10"
         borderColor="border border-accent/20"
         textColor="text-white"
@@ -71,13 +67,13 @@ const PassportLocationTab: React.FC<PassportLocationTabProps> = ({
       />
       
       <div className="space-y-2">
-        <label className="text-sm font-medium">Explore Location</label>
+        <label className="text-sm font-medium">{t('location.explore', 'Explore Location')}</label>
         
         <LocationSearch 
           onLocationSelect={handleSelectLocation}
-          buttonLabel={search => search || "Search any city in the world..."}
-          searchPlaceholder="Search any city in the world..."
-          emptyMessage="No locations found"
+          buttonLabel={search => search || t('location.search_placeholder', 'Search any city in the world...')}
+          searchPlaceholder={t('location.search_placeholder', 'Search any city in the world...')}
+          emptyMessage={t('location.no_results', 'No locations found')}
           icon={<Globe />}
           width="300px"
           recentSearches={recentSearches}
