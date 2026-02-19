@@ -117,7 +117,7 @@ export const useVideoVerification = () => {
 
     } catch (error: any) {
       console.error('Error submitting verification:', error);
-      toast.error(error.message || 'Failed to submit verification');
+      toast.error(error.message || t('toast.video.submit_failed', 'Failed to submit verification'));
       return null;
     } finally {
       setIsUploading(false);
@@ -125,35 +125,35 @@ export const useVideoVerification = () => {
   }, [user]);
 
   const getVerificationStatus = useCallback(() => {
-    if (!verification) return { status: 'none', message: 'Not verified' };
+    if (!verification) return { status: 'none', message: t('toast.video.not_verified', 'Not verified') };
     
     switch (verification.status) {
       case 'pending':
         return { 
           status: 'pending', 
-          message: 'Verification in review',
+          message: t('toast.video.in_review', 'Verification in review'),
           color: 'yellow'
         };
       case 'approved':
         return { 
           status: 'approved', 
-          message: 'Video verified ✓',
+          message: t('toast.video.verified', 'Video verified ✓'),
           color: 'green'
         };
       case 'rejected':
         return { 
           status: 'rejected', 
-          message: verification.rejection_reason || 'Verification rejected',
+          message: verification.rejection_reason || t('toast.video.rejected', 'Verification rejected'),
           color: 'red'
         };
       case 'expired':
         return { 
           status: 'expired', 
-          message: 'Verification expired - please reverify',
+          message: t('toast.video.expired', 'Verification expired - please reverify'),
           color: 'orange'
         };
       default:
-        return { status: 'none', message: 'Not verified' };
+        return { status: 'none', message: t('toast.video.not_verified', 'Not verified') };
     }
   }, [verification]);
 
