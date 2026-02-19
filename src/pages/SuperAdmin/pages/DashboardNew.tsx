@@ -216,7 +216,7 @@ const DashboardNew = () => {
                   borderRadius: '8px',
                   color: '#fff'
                 }}
-                formatter={(value: number) => [`$${value.toFixed(2)}`, 'Revenue']}
+                formatter={(value: number) => [`$${value.toFixed(2)}`, t('admin.revenue_label', 'Revenue')]}
               />
               <Line type="monotone" dataKey="amount" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} />
             </LineChart>

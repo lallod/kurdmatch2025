@@ -4,6 +4,7 @@ import { Users, MessageSquare, ImageIcon, Activity } from 'lucide-react';
 import StatCard from './StatCard';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface StatsOverviewProps {
   timeRange: string;
@@ -57,6 +58,7 @@ const getDefaultStats = (): DashboardStat[] => [
 ];
 
 const StatsOverview = ({ timeRange }: StatsOverviewProps) => {
+  const { t } = useTranslations();
   const [stats, setStats] = useState<DashboardStat[]>([]);
   const [loading, setLoading] = useState(true);
   

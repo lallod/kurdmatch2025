@@ -52,14 +52,14 @@ const LikesPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching likes:', error);
-      toast.error('Failed to load likes');
+      toast.error(t('admin.failed_load_likes', 'Failed to load likes'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteLike = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this like?')) return;
+    if (!confirm(t('admin.delete_like_confirm', 'Are you sure you want to delete this like?'))) return;
 
     try {
       const { error } = await supabase
@@ -68,11 +68,11 @@ const LikesPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Like deleted successfully');
+      toast.success(t('admin.like_deleted', 'Like deleted successfully'));
       fetchLikes();
     } catch (error) {
       console.error('Error deleting like:', error);
-      toast.error('Failed to delete like');
+      toast.error(t('admin.like_delete_failed', 'Failed to delete like'));
     }
   };
 

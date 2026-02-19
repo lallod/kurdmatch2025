@@ -66,9 +66,9 @@ const SubscribersPage = () => {
               <SelectTrigger className="w-[150px] bg-white/5 border-white/10 text-white"><SelectValue placeholder={t('admin.filter_by_plan', 'Filter by plan')} /></SelectTrigger>
               <SelectContent className="bg-[#1a1a1a] border-white/10">
                 <SelectItem value="all">{t('admin.all_plans', 'All Plans')}</SelectItem>
-                <SelectItem value="basic">Basic</SelectItem>
-                <SelectItem value="premium">Premium</SelectItem>
-                <SelectItem value="ultimate">Ultimate</SelectItem>
+                <SelectItem value="basic">{t('admin.basic', 'Basic')}</SelectItem>
+                <SelectItem value="premium">{t('admin.premium', 'Premium')}</SelectItem>
+                <SelectItem value="ultimate">{t('admin.ultimate', 'Ultimate')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
