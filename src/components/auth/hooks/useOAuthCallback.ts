@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 import { isUserSuperAdmin } from '@/utils/auth/roleUtils';
 import { checkProfileCompleteness } from '@/utils/auth/profileUtils';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,23 +10,21 @@ import { supabase } from '@/integrations/supabase/client';
 export const useOAuthCallback = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
       try {
-        // Check if this is an OAuth callback
         const urlParams = new URLSearchParams(window.location.search);
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         
-        // Handle error cases first
         if (urlParams.has('error')) {
           const errorDescription = urlParams.get('error_description') || urlParams.get('error');
           throw new Error(errorDescription || 'OAuth authentication failed');
         }
         
-        // Handle authorization code flow
         if (urlParams.has('code')) {
           const { data, error: authError } = await supabase.auth.exchangeCodeForSession(window.location.search);
           
@@ -34,7 +33,6 @@ export const useOAuthCallback = () => {
             throw authError;
           }
         }
-        // Handle implicit flow (fallback)
         else if (hashParams.has('access_token')) {
           // For implicit flow, Supabase should automatically handle the session
         }
@@ -42,7 +40,6 @@ export const useOAuthCallback = () => {
           throw new Error('Invalid OAuth callback - missing required parameters');
         }
         
-        // Get the current session immediately after OAuth processing
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -56,34 +53,30 @@ export const useOAuthCallback = () => {
           throw new Error('No user found after OAuth callback');
         }
         
-        // Check if user is super admin first
         const isSuperAdmin = await isUserSuperAdmin(currentUser.id);
         
         if (isSuperAdmin) {
           toast({
-            title: "Welcome back!",
-            description: "Redirecting to super admin dashboard...",
+            title: t('auth.welcome_back', 'Welcome back!'),
+            description: t('auth.redirect_admin', 'Redirecting to super admin dashboard...'),
           });
           navigate('/super-admin', { replace: true });
           return;
         }
 
-        // Check if user has complete profile
         const hasCompleteProfile = await checkProfileCompleteness(currentUser.id);
         
         if (hasCompleteProfile) {
-          // Returning user with complete profile
           toast({
-            title: "Welcome back!",
-            description: "Redirecting to discovery...",
+            title: t('auth.welcome_back', 'Welcome back!'),
+            description: t('auth.redirect_discovery', 'Redirecting to discovery...'),
           });
           navigate('/discovery', { replace: true });
         } else {
-          // New user or incomplete profile - set OAuth flag and redirect to registration wizard
           sessionStorage.setItem('oauth_registration_flow', 'true');
           toast({
-            title: "Welcome!",
-            description: "Let's complete your profile to get started...",
+            title: t('auth.welcome', 'Welcome!'),
+            description: t('auth.complete_profile', "Let's complete your profile to get started..."),
           });
           navigate('/register', { replace: true });
         }
@@ -93,12 +86,11 @@ export const useOAuthCallback = () => {
         setError(error.message || 'Authentication failed');
         
         toast({
-          title: "Authentication failed",
-          description: error.message || "Please try logging in again.",
+          title: t('auth.auth_failed', 'Authentication failed'),
+          description: error.message || t('auth.try_again', 'Please try logging in again.'),
           variant: "destructive",
         });
         
-        // Redirect to auth page after a short delay
         setTimeout(() => {
           navigate('/auth', { replace: true });
         }, 2000);
@@ -107,7 +99,6 @@ export const useOAuthCallback = () => {
       }
     };
 
-    // Only process if we have URL parameters indicating an OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const hasOAuthParams = urlParams.has('code') || urlParams.has('error') || hashParams.has('access_token');
@@ -115,7 +106,6 @@ export const useOAuthCallback = () => {
     if (hasOAuthParams) {
       handleOAuthCallback();
     } else {
-      // No OAuth params, redirect to auth
       navigate('/auth', { replace: true });
       setIsProcessing(false);
     }
