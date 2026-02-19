@@ -10,6 +10,7 @@ import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from '@/hooks/useTranslations';
 import {
   Sheet,
   SheetContent,
@@ -41,6 +42,7 @@ interface SmartNotificationCenterProps {
 export const SmartNotificationCenter = ({ open, onOpenChange }: SmartNotificationCenterProps) => {
   const { user } = useSupabaseAuth();
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -187,13 +189,13 @@ export const SmartNotificationCenter = ({ open, onOpenChange }: SmartNotificatio
           <div className="flex items-center justify-between">
             <SheetTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
-              Notifications
+              {t('notifications.title', 'Notifications')}
             </SheetTitle>
             <div className="flex gap-2">
               {unreadCount > 0 && (
                 <Button variant="ghost" size="sm" onClick={markAllAsRead}>
                   <Check className="h-4 w-4 mr-1" />
-                  Mark all read
+                  {t('notifications.mark_all_read', 'Mark all read')}
                 </Button>
               )}
               <Button 
@@ -213,25 +215,25 @@ export const SmartNotificationCenter = ({ open, onOpenChange }: SmartNotificatio
               value="all" 
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
             >
-              All
+              {t('common.all', 'All')}
             </TabsTrigger>
             <TabsTrigger 
               value="unread"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
             >
-              Unread ({unreadCount})
+              {t('notifications.unread', 'Unread')} ({unreadCount})
             </TabsTrigger>
             <TabsTrigger 
               value="match"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
             >
-              Matches
+              {t('notifications.matches', 'Matches')}
             </TabsTrigger>
             <TabsTrigger 
               value="like"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
             >
-              Likes
+              {t('notifications.likes', 'Likes')}
             </TabsTrigger>
           </TabsList>
 
@@ -289,7 +291,7 @@ export const SmartNotificationCenter = ({ open, onOpenChange }: SmartNotificatio
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Bell className="h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">No notifications yet</p>
+                    <p className="text-muted-foreground">{t('notifications.empty', 'No notifications yet')}</p>
                   </div>
                 )}
               </AnimatePresence>

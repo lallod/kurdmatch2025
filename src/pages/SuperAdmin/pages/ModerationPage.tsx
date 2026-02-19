@@ -120,9 +120,9 @@ const ModerationPage = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a1a1a] border-white/10">
                   <SelectItem value="all">{t('common.all', 'All')}</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                  <SelectItem value="dismissed">Dismissed</SelectItem>
+                  <SelectItem value="pending">{t('common.pending', 'Pending')}</SelectItem>
+                  <SelectItem value="resolved">{t('common.resolved', 'Resolved')}</SelectItem>
+                  <SelectItem value="dismissed">{t('admin.dismissed', 'Dismissed')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -181,7 +181,7 @@ const ModerationPage = () => {
               </div>
 
               <div className="flex items-center justify-between mt-4">
-                <p className="text-sm text-white/60">Page {currentPage} of {totalPages}</p>
+                <p className="text-sm text-white/60">{t('common.page_of', 'Page {{current}} of {{total}}', { current: currentPage, total: totalPages })}</p>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1 || loading}>{t('common.previous', 'Previous')}</Button>
                   <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages || loading}>{t('common.next', 'Next')}</Button>
