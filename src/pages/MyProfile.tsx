@@ -452,7 +452,7 @@ const MyProfile = () => {
 
           {/* Photo Grid */}
           <div className="mx-4">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">Photos</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">{t('profile.photos', 'Photos')}</h3>
             <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-3 border border-border/10">
               <div className="grid grid-cols-3 gap-2">
                 {galleryPhotos.slice(0, 6).map((photo, i) => (
@@ -464,7 +464,7 @@ const MyProfile = () => {
                       </div>
                     )}
                     {/* Action overlay */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       {!photo.is_primary && (
                         <button
                           onClick={() => handleSetPrimary(photo.id)}
@@ -513,49 +513,49 @@ const MyProfile = () => {
           <div className="mx-4">
             <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives", "travel"]} className="w-full space-y-3">
               <EditableAccordionSection
-                value="basics" title="Basics" icon={<User />} color="text-primary"
+                value="basics" title={t('profile.basics', 'Basics')} icon={<User />} color="text-primary"
                 gradientClass="bg-gradient-to-r from-primary/5 to-transparent" borderClass="border-primary/10"
               >
                 <ProfileBasics details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="lifestyle" title="Lifestyle" icon={<Wine />} color="text-orange-500"
+                value="lifestyle" title={t('profile.lifestyle', 'Lifestyle')} icon={<Wine />} color="text-orange-500"
                 gradientClass="bg-gradient-to-r from-orange-500/5 to-transparent" borderClass="border-orange-500/10"
               >
                 <ProfileLifestyle details={details as any} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="interests" title="Interests & Hobbies" icon={<Star />} color="text-amber-500"
+                value="interests" title={t('profile.interests_hobbies', 'Interests & Hobbies')} icon={<Star />} color="text-amber-500"
                 gradientClass="bg-gradient-to-r from-amber-500/5 to-transparent" borderClass="border-amber-500/10"
               >
                 <ProfileInterests details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="more" title="Communication" icon={<Languages />} color="text-primary"
+                value="more" title={t('profile.communication', 'Communication')} icon={<Languages />} color="text-primary"
                 gradientClass="bg-gradient-to-r from-primary/5 to-transparent" borderClass="border-primary/10"
               >
                 <ProfileCommunication details={details as any} tinderBadgeStyle={tinderBadgeStyle} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="personality" title="Personality & Growth" icon={<BrainCircuit />} color="text-purple-500"
+                value="personality" title={t('profile.personality_growth', 'Personality & Growth')} icon={<BrainCircuit />} color="text-purple-500"
                 gradientClass="bg-gradient-to-r from-purple-500/5 to-transparent" borderClass="border-purple-500/10"
               >
                 <ProfilePersonality details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="creatives" title="Creative & Lifestyle" icon={<Palette />} color="text-pink-500"
+                value="creatives" title={t('profile.creative_lifestyle', 'Creative & Lifestyle')} icon={<Palette />} color="text-pink-500"
                 gradientClass="bg-gradient-to-r from-pink-500/5 to-transparent" borderClass="border-pink-500/10"
               >
                 <ProfileCreative details={details as any} tinderBadgeStyle={tinderBadgeStyle} formatList={formatList} isMobile={true} onFieldEdit={handleProfileUpdate} />
               </EditableAccordionSection>
 
               <EditableAccordionSection
-                value="travel" title="Travel" icon={<Plane />} color="text-teal-600"
+                value="travel" title={t('profile.travel', 'Travel')} icon={<Plane />} color="text-teal-600"
                 gradientClass="bg-gradient-to-r from-teal-600/5 to-transparent" borderClass="border-teal-600/10"
               >
                 <ProfileTravel details={details as any} isMobile={true} onFieldEdit={handleProfileUpdate} />
@@ -567,7 +567,7 @@ const MyProfile = () => {
           <div className="mx-4">
             <div className="flex items-center gap-2 px-1 mb-2">
               <Shield className="w-4 h-4 text-muted-foreground" />
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Privacy & Visibility</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{t('profile.privacy_visibility', 'Privacy & Visibility')}</h3>
             </div>
             <PrivacySettings />
           </div>

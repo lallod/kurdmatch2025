@@ -128,7 +128,7 @@ const Profile = () => {
                 <Badge className="bg-primary/80 text-primary-foreground mb-2 sm:mb-3 mr-2 text-xs">{profile.kurdistan_region}</Badge>
               )}
               <div className="text-white/90 text-xs sm:text-sm mb-2">
-                {getDisplayValue(profile.relationship_goals) && <>Looking for: {profile.relationship_goals}</>}
+                {getDisplayValue(profile.relationship_goals) && <>{t('profile.looking_for', 'Looking for')}: {profile.relationship_goals}</>}
               </div>
               {getDisplayValue(profile.occupation) && (
                 <Badge className="bg-accent/80 text-accent-foreground text-xs sm:text-sm">{profile.occupation}</Badge>
@@ -172,11 +172,11 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                    {getDisplayValue(profile.occupation) && <div><span className="text-muted-foreground/70">Occupation:</span> {profile.occupation}</div>}
-                    {getDisplayValue(profile.education) && <div><span className="text-muted-foreground/70">Education:</span> {profile.education}</div>}
-                    {getDisplayValue(profile.company) && <div><span className="text-muted-foreground/70">Company:</span> {profile.company}</div>}
-                    {getDisplayValue(profile.career_ambitions) && <div><span className="text-muted-foreground/70">Goals:</span> {profile.career_ambitions}</div>}
-                    {getDisplayValue(profile.work_environment) && <div><span className="text-muted-foreground/70">Work Style:</span> {profile.work_environment}</div>}
+                    {getDisplayValue(profile.occupation) && <div><span className="text-muted-foreground/70">{t('profile.occupation', 'Occupation')}:</span> {profile.occupation}</div>}
+                    {getDisplayValue(profile.education) && <div><span className="text-muted-foreground/70">{t('profile.education', 'Education')}:</span> {profile.education}</div>}
+                    {getDisplayValue(profile.company) && <div><span className="text-muted-foreground/70">{t('profile.company', 'Company')}:</span> {profile.company}</div>}
+                    {getDisplayValue(profile.career_ambitions) && <div><span className="text-muted-foreground/70">{t('profile.goals', 'Goals')}:</span> {profile.career_ambitions}</div>}
+                    {getDisplayValue(profile.work_environment) && <div><span className="text-muted-foreground/70">{t('profile.work_style', 'Work Style')}:</span> {profile.work_environment}</div>}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -187,15 +187,15 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                    {getDisplayValue(profile.exercise_habits) && <div><span className="text-muted-foreground/70">Exercise:</span> {profile.exercise_habits}</div>}
-                    {getDisplayValue(profile.dietary_preferences) && <div><span className="text-muted-foreground/70">Diet:</span> {profile.dietary_preferences}</div>}
-                    {getDisplayValue(profile.smoking) && <div><span className="text-muted-foreground/70">Smoking:</span> {profile.smoking}</div>}
-                    {getDisplayValue(profile.drinking) && <div><span className="text-muted-foreground/70">Drinking:</span> {profile.drinking}</div>}
-                    {getDisplayValue(profile.sleep_schedule) && <div><span className="text-muted-foreground/70">Sleep:</span> {profile.sleep_schedule}</div>}
-                    {getDisplayValue(profile.have_pets) && <div><span className="text-muted-foreground/70">Pets:</span> {profile.have_pets}</div>}
+                    {getDisplayValue(profile.exercise_habits) && <div><span className="text-muted-foreground/70">{t('profile.exercise', 'Exercise')}:</span> {profile.exercise_habits}</div>}
+                    {getDisplayValue(profile.dietary_preferences) && <div><span className="text-muted-foreground/70">{t('profile.diet', 'Diet')}:</span> {profile.dietary_preferences}</div>}
+                    {getDisplayValue(profile.smoking) && <div><span className="text-muted-foreground/70">{t('profile.smoking', 'Smoking')}:</span> {profile.smoking}</div>}
+                    {getDisplayValue(profile.drinking) && <div><span className="text-muted-foreground/70">{t('profile.drinking', 'Drinking')}:</span> {profile.drinking}</div>}
+                    {getDisplayValue(profile.sleep_schedule) && <div><span className="text-muted-foreground/70">{t('profile.sleep', 'Sleep')}:</span> {profile.sleep_schedule}</div>}
+                    {getDisplayValue(profile.have_pets) && <div><span className="text-muted-foreground/70">{t('profile.pets', 'Pets')}:</span> {profile.have_pets}</div>}
                     {hasRealArrayValues(profile.hobbies) && (
                       <div>
-                        <span className="text-muted-foreground/70">Hobbies:</span>
+                        <span className="text-muted-foreground/70">{t('profile.hobbies', 'Hobbies')}:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {profile.hobbies.map((hobby: string, index: number) => (
                             <Badge key={index} variant="secondary" className="text-xs">{hobby}</Badge>
@@ -213,7 +213,7 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                    {getDisplayValue(profile.political_views) && <div><span className="text-muted-foreground/70">Political Views:</span> {profile.political_views}</div>}
+                    {getDisplayValue(profile.political_views) && <div><span className="text-muted-foreground/70">{t('profile.political_views', 'Political Views')}:</span> {profile.political_views}</div>}
                     {hasRealArrayValues(profile.values) && (
                       <div>
                         <span className="text-muted-foreground/70">Values:</span>
@@ -244,12 +244,12 @@ const Profile = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 sm:px-6 pb-3 sm:pb-4">
                   <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                    {getDisplayValue(profile.relationship_goals) && <div><span className="text-muted-foreground/70">Looking for:</span> {profile.relationship_goals}</div>}
-                    {getDisplayValue(profile.want_children) && <div><span className="text-muted-foreground/70">Children:</span> {profile.want_children}</div>}
-                    {getDisplayValue(profile.love_language) && <div><span className="text-muted-foreground/70">Love Language:</span> {profile.love_language}</div>}
-                    {getDisplayValue(profile.communication_style) && <div><span className="text-muted-foreground/70">Communication:</span> {profile.communication_style}</div>}
-                    {getDisplayValue(profile.ideal_date) && <div><span className="text-muted-foreground/70">Ideal Date:</span> {profile.ideal_date}</div>}
-                    {getDisplayValue(profile.family_closeness) && <div><span className="text-muted-foreground/70">Family:</span> {profile.family_closeness}</div>}
+                    {getDisplayValue(profile.relationship_goals) && <div><span className="text-muted-foreground/70">{t('profile.looking_for', 'Looking for')}:</span> {profile.relationship_goals}</div>}
+                    {getDisplayValue(profile.want_children) && <div><span className="text-muted-foreground/70">{t('profile.children', 'Children')}:</span> {profile.want_children}</div>}
+                    {getDisplayValue(profile.love_language) && <div><span className="text-muted-foreground/70">{t('profile.love_language', 'Love Language')}:</span> {profile.love_language}</div>}
+                    {getDisplayValue(profile.communication_style) && <div><span className="text-muted-foreground/70">{t('profile.communication', 'Communication')}:</span> {profile.communication_style}</div>}
+                    {getDisplayValue(profile.ideal_date) && <div><span className="text-muted-foreground/70">{t('profile.ideal_date', 'Ideal Date')}:</span> {profile.ideal_date}</div>}
+                    {getDisplayValue(profile.family_closeness) && <div><span className="text-muted-foreground/70">{t('profile.family', 'Family')}:</span> {profile.family_closeness}</div>}
                     {hasRealArrayValues(profile.languages) && (() => {
                       const kurdish = profile.languages.filter((l: string) => languageCategories.kurdish.includes(l));
                       const other = profile.languages.filter((l: string) => !languageCategories.kurdish.includes(l));
@@ -257,7 +257,7 @@ const Profile = () => {
                         <div className="space-y-1.5">
                           {kurdish.length > 0 && (
                             <div>
-                              <span className="text-muted-foreground/70 text-[10px] uppercase tracking-wider">Kurdish</span>
+                              <span className="text-muted-foreground/70 text-[10px] uppercase tracking-wider">{t('profile.kurdish', 'Kurdish')}</span>
                               <div className="flex flex-wrap gap-1 mt-0.5">
                                 {kurdish.map((l: string, i: number) => (
                                   <Badge key={i} className="bg-primary/20 text-primary text-xs">{l.replace('Kurdish (', '').replace(')', '')}</Badge>
@@ -267,7 +267,7 @@ const Profile = () => {
                           )}
                           {other.length > 0 && (
                             <div>
-                              <span className="text-muted-foreground/70 text-[10px] uppercase tracking-wider">Languages</span>
+                              <span className="text-muted-foreground/70 text-[10px] uppercase tracking-wider">{t('profile.languages', 'Languages')}</span>
                               <div className="flex flex-wrap gap-1 mt-0.5">
                                 {other.map((l: string, i: number) => (
                                   <Badge key={i} className="bg-primary/20 text-primary text-xs">{l}</Badge>

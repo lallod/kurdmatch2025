@@ -43,7 +43,7 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onRefresh }) => {
             </div>
           )}
 
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+          <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
             <div className="flex items-center gap-1 text-white text-xs font-semibold">
               <Heart className="w-4 h-4 fill-white" />
               {post.likes_count}

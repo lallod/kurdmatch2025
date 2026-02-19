@@ -107,7 +107,7 @@ const PhotoManagement: React.FC<PhotoManagementProps> = ({
             <CardContent className="p-0 relative">
               <img src={image} alt={`${t('photos.photo', 'Photo')} ${index + 1}`} className="w-full h-32 object-cover" />
               
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/50 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                 <div className="flex gap-2">
                   {index !== 0 && (
                     <Button size="sm" onClick={() => handleSetAsProfile(index)} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">

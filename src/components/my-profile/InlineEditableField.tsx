@@ -120,7 +120,7 @@ const InlineEditableField: React.FC<InlineEditableFieldProps> = ({
       ) : (
         <button
           onClick={() => setIsEditing(true)}
-          className="h-5 w-5 rounded-full inline-flex items-center justify-center opacity-0 group-hover/edit:opacity-100 hover:bg-primary/10 transition-all"
+          className="h-5 w-5 rounded-full inline-flex items-center justify-center opacity-100 md:opacity-0 md:group-hover/edit:opacity-100 hover:bg-primary/10 transition-all"
         >
           <Pencil className="h-3 w-3 text-primary" />
         </button>
