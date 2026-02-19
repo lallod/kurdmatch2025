@@ -118,7 +118,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
     
     try {
       await updateProfile(user.id, { [field]: value });
-      toast.success(`${field} updated`, { duration: 2000 });
+      toast.success(t('toast.field_updated', `${field} updated`, { field }), { duration: 2000 });
     } catch (error) {
       console.error('Auto-save failed:', error);
       toast.error(t('toast.save_changes.failed', 'Failed to save changes'));

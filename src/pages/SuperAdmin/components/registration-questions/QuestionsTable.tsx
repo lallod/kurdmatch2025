@@ -116,7 +116,7 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => {
                       onPreview(question);
-                      toast.info(`Previewing: ${question.text}`);
+                      toast.info(t('toast.admin.previewing', `Previewing: ${question.text}`, { text: question.text }));
                     }}>
                       <Eye className="h-4 w-4" />
                     </Button>

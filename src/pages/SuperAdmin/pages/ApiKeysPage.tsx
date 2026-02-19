@@ -82,7 +82,7 @@ const ApiKeysPage = () => {
       toast.success(t('admin.key_saved_success', `${keyConfig.label} saved successfully`, { label: keyConfig.label }));
       setConfigured(prev => ({ ...prev, [keyConfig.key]: true }));
       setValues(prev => ({ ...prev, [keyConfig.key]: '' }));
-    } catch (err: any) { toast.error(`Failed to save: ${err.message}`); }
+    } catch (err: any) { toast.error(t('toast.admin.save_key_failed', `Failed to save: ${err.message}`, { message: err.message })); }
     finally { setSaving(prev => ({ ...prev, [keyConfig.key]: false })); }
   };
 
@@ -94,7 +94,7 @@ const ApiKeysPage = () => {
       if (error) throw error;
       toast.success(t('admin.key_removed', `${keyConfig.label} removed`, { label: keyConfig.label }));
       setConfigured(prev => ({ ...prev, [keyConfig.key]: false }));
-    } catch (err: any) { toast.error(`Failed to remove: ${err.message}`); }
+    } catch (err: any) { toast.error(t('toast.admin.remove_key_failed', `Failed to remove: ${err.message}`, { message: err.message })); }
     finally { setDeleting(prev => ({ ...prev, [keyConfig.key]: false })); }
   };
 

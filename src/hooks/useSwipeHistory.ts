@@ -59,7 +59,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
 
     if (!canRewind) {
       if (rewindLimit <= todayRewindCount) {
-        toast.error(`You've used all ${rewindLimit} rewinds today`, { icon: '⏰' });
+        toast.error(t('toast.swipe.rewinds_used', `You've used all ${rewindLimit} rewinds today`, { limit: rewindLimit }), { icon: '⏰' });
       } else {
         toast.error(t('toast.swipe.no_swipe', 'No swipe to undo'), { icon: '🔄' });
       }

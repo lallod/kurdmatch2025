@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import LanguageList from './LanguageList';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LanguageTabPanelProps {
   selectedLanguages: string[];
@@ -30,6 +31,7 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [customLanguage, setCustomLanguage] = useState('');
   const [displayedLanguages, setDisplayedLanguages] = useState<string[]>(allLanguages);
+  const { t } = useTranslations();
 
   // Update displayed languages when tab or search changes
   useEffect(() => {
@@ -72,25 +74,25 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
     
     // Check if language already exists
     if (allLanguages.some(lang => lang.toLowerCase() === formattedLanguage.toLowerCase())) {
-      toast.error(`${formattedLanguage} already exists in the language list`);
+      toast.error(t('toast.language.already_exists', `${formattedLanguage} already exists in the language list`, { language: formattedLanguage }));
       return;
     }
     
     // Check if already added to selected languages
     if (selectedLanguages.some(lang => lang.toLowerCase() === formattedLanguage.toLowerCase())) {
-      toast.error(`${formattedLanguage} is already selected`);
+      toast.error(t('toast.language.already_selected', `${formattedLanguage} is already selected`, { language: formattedLanguage }));
       return;
     }
     
     // Limit check
     if (selectedLanguages.length >= maxItems) {
-      toast.error(`You can select up to ${maxItems} languages`);
+      toast.error(t('toast.language.max_limit', `You can select up to ${maxItems} languages`, { max: maxItems }));
       return;
     }
     
     toggleLanguage(formattedLanguage);
     setCustomLanguage('');
-    toast.success(`Added ${formattedLanguage} to your languages`);
+    toast.success(t('toast.language.added', `Added ${formattedLanguage} to your languages`, { language: formattedLanguage }));
   };
 
   const handleTabChange = (value: string) => {

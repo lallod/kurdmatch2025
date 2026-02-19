@@ -64,18 +64,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const [localBgColor, setLocalBgColor] = useState(backgroundColor);
   
   const handleMessage = () => {
-    toast.success(`Message sent to ${name}!`);
+    toast.success(t('toast.message_sent', `Message sent to ${name}!`, { name }));
   };
   
   const handleLike = () => {
-    toast.success(`You liked ${name}!`);
+    toast.success(t('toast.liked_user', `You liked ${name}!`, { name }));
   };
   
   const handleDislike = () => {
     if (onDislike) {
       onDislike();
     } else {
-      toast.info(`You passed on ${name}`);
+      toast.info(t('toast.passed_on', `You passed on ${name}`, { name }));
     }
   };
 
