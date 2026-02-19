@@ -53,21 +53,21 @@ const EducationCareerEditor: React.FC<EducationCareerEditorProps> = ({ profileDa
   };
 
   const educationLevels = [
-    { value: 'high-school', label: 'High School' },
-    { value: 'some-college', label: 'Some College' },
-    { value: 'associates', label: "Associate's Degree" },
-    { value: 'bachelors', label: "Bachelor's Degree" },
-    { value: 'masters', label: "Master's Degree" },
-    { value: 'phd', label: 'PhD' },
-    { value: 'trade-school', label: 'Trade School' },
-    { value: 'professional', label: 'Professional Degree' }
+    { value: 'high-school', label: t('profile.high_school', 'High School') },
+    { value: 'some-college', label: t('profile.some_college', 'Some College') },
+    { value: 'associates', label: t('profile.associates', "Associate's Degree") },
+    { value: 'bachelors', label: t('profile.bachelors', "Bachelor's Degree") },
+    { value: 'masters', label: t('profile.masters', "Master's Degree") },
+    { value: 'phd', label: t('profile.phd', 'PhD') },
+    { value: 'trade-school', label: t('profile.trade_school', 'Trade School') },
+    { value: 'professional', label: t('profile.professional_degree', 'Professional Degree') }
   ];
 
   const workLifeBalanceOptions = [
-    { value: 'work-first', label: 'Work comes first' },
-    { value: 'life-first', label: 'Life comes first' },
-    { value: 'balanced', label: 'Balanced approach' },
-    { value: 'situational', label: 'Depends on the situation' }
+    { value: 'work-first', label: t('profile.work_first', 'Work comes first') },
+    { value: 'life-first', label: t('profile.life_first', 'Life comes first') },
+    { value: 'balanced', label: t('profile.balanced', 'Balanced approach') },
+    { value: 'situational', label: t('profile.situational', 'Depends on the situation') }
   ];
 
   const selectClass = "bg-muted/50 border-border text-foreground";
