@@ -1,144 +1,149 @@
 
 
-# Implementation Plan: Missing Admin Pages, Security Hardening, and Audit Logging
+# Plan: Full Admin Control for Categories, Registration Questions, and Multilingual Support
 
-This plan addresses all gaps found in the system audit, organized into 3 sequential steps.
+## Summary
 
----
-
-## Step 1: Security Hardening (Critical Priority)
-
-### 1A. Lock Down Public Admin Routes
-
-The routes `/create-admin` and `/admin-setup` are currently accessible to anyone. They will be wrapped in `SuperAdminGuard` so only authenticated super admins can reach them.
-
-**Files changed:**
-- `src/components/app/routes/publicRoutes.tsx` -- move `/create-admin` and `/admin-setup` routes out of public routes
-- `src/components/app/routes/adminRoutes.tsx` -- add them here, wrapped in `SuperAdminGuard`
-
-### 1B. Create a Secure Admin Actions Edge Function
-
-Currently admin write operations (delete user, unblock, etc.) use the anon client which relies solely on RLS. A new edge function `admin-actions` will:
-- Verify the caller's JWT via `getClaims()`
-- Confirm the caller has `super_admin` role using a service-role query
-- Execute the requested action with the service-role client
-- Write an entry to `admin_audit_log` for every mutation
-
-**Files created:**
-- `supabase/functions/admin-actions/index.ts`
-
-**Supported actions (initial set):** `delete_user`, `unblock_user`, `update_profile`, `toggle_flag`, `delete_content`
-
-### 1C. Add Consistent Audit Logging
-
-A helper utility will be added so every admin page that performs a mutation logs it via the new edge function.
-
-**Files created:**
-- `src/utils/admin/auditLogger.ts` -- a thin wrapper: `logAdminAction(actionType, tableName, recordId, changes)`
+This plan adds full multilingual editing capability to the admin panel for categories and registration questions, so admins can manage all content in all 5 languages (EN, NO, Kurdish Sorani, Kurdish Kurmanci, DE) -- including what users see during registration.
 
 ---
 
-## Step 2: Missing Admin Management Pages (7 New Pages)
+## Step 1: Database -- Add Translation Columns
 
-Each page follows the existing pattern (see `BlockedUsersPage.tsx`): dark theme Card layout, search, table with actions, `useTranslations()` for all strings.
+Add multilingual name/text columns to the existing tables so each question and category can have translations stored directly.
 
-| Page | Route | DB Table | Key Features |
-|------|-------|----------|--------------|
-| **StoriesPage** | `/super-admin/stories` | `stories` | View/delete stories, filter by user, see media preview |
-| **CallsPage** | `/super-admin/calls` | `calls` | View call logs, filter by type/status, duration stats |
-| **DateProposalsPage** | `/super-admin/date-proposals` | `date_proposals` | View proposals, filter by status, admin can cancel |
-| **MarriageIntentionsPage** | `/super-admin/marriage-intentions` | `marriage_intentions` | View intentions, filter by timeline, toggle visibility |
-| **SafetyFlagsPage** | `/super-admin/safety-flags` | `message_safety_flags` | HIGH PRIORITY -- review flagged messages, mark reviewed, take action |
-| **ScheduledContentPage** | `/super-admin/scheduled-content` | `scheduled_content` | View/delete scheduled posts, filter by published status |
-| **ProfileViewsPage** | `/super-admin/profile-views` | `profile_section_views` | Analytics view of profile engagement, top viewed sections |
+### Migration 1: `registration_questions` -- add translation columns
 
-**Files created (7):**
-- `src/pages/SuperAdmin/pages/StoriesPage.tsx`
-- `src/pages/SuperAdmin/pages/CallsPage.tsx`
-- `src/pages/SuperAdmin/pages/DateProposalsPage.tsx`
-- `src/pages/SuperAdmin/pages/MarriageIntentionsPage.tsx`
-- `src/pages/SuperAdmin/pages/SafetyFlagsPage.tsx`
-- `src/pages/SuperAdmin/pages/ScheduledContentPage.tsx`
-- `src/pages/SuperAdmin/pages/ProfileViewsPage.tsx`
+Add these columns:
+- `text_en`, `text_no`, `text_ku_sorani`, `text_ku_kurmanci`, `text_de` (question text per language)
+- `placeholder_en`, `placeholder_no`, `placeholder_ku_sorani`, `placeholder_ku_kurmanci`, `placeholder_de`
+- `field_options_en`, `field_options_no`, `field_options_ku_sorani`, `field_options_ku_kurmanci`, `field_options_de` (ARRAY columns for translated options)
+
+Default: copy existing `text` into `text_en`, `placeholder` into `placeholder_en`, `field_options` into `field_options_en`.
+
+### Migration 2: `content_categories` and `category_items` -- add translation columns
+
+- `content_categories`: add `name_en`, `name_no`, `name_ku_sorani`, `name_ku_kurmanci`, `name_de`, `description_en`, `description_no`, etc.
+- `category_items`: add `name_en`, `name_no`, `name_ku_sorani`, `name_ku_kurmanci`, `name_de`, `description_en` through `description_de`
+
+---
+
+## Step 2: Upgrade Registration Questions Admin Page
+
+### 2A. Connect `useQuestions` to Database
+
+Replace the current in-memory mock approach (`initialQuestions` + `systemQuestions`) with real Supabase queries:
+- Fetch from `registration_questions` table on mount
+- All CRUD operations (add, edit, delete, reorder, toggle) write to the database via `executeAdminAction`
 
 **Files modified:**
-- `src/pages/SuperAdmin/index.tsx` -- add 7 new route entries
-- `src/pages/SuperAdmin/SuperAdminLayout.tsx` -- add 7 new sidebar nav items
+- `src/pages/SuperAdmin/components/registration-questions/useQuestions.ts`
 
-**Database migration:**
-- INSERT ~70 translation keys (7 pages x ~10 keys x 1 row per language, 5 languages = ~350 rows) into `translations` table
+### 2B. Add Multilingual Editing to Question Dialogs
+
+Update `EditQuestionDialog` and `AddQuestionDialog` to include tabs for each language:
+- A language tab bar (EN | NO | Sorani | Kurmanci | DE)
+- Under each tab: editable question text, placeholder, and field options for that language
+- Visual indicator showing which languages are filled vs. empty
+
+**Files modified:**
+- `src/pages/SuperAdmin/components/registration-questions/EditQuestionDialog.tsx`
+- `src/pages/SuperAdmin/components/registration-questions/AddQuestionDialog.tsx`
+- `src/pages/SuperAdmin/components/registration-questions/types.ts` (add translation fields to `QuestionItem`)
+
+### 2C. Update Registration Form to Use Translated Questions
+
+The `EnhancedDynamicRegistrationForm` and its renderer will read the user's current language and display the corresponding `text_XX`, `placeholder_XX`, and `field_options_XX` values.
+
+**Files modified:**
+- `src/components/auth/hooks/useDynamicRegistrationForm.ts` (fetch translated fields)
+- `src/components/auth/components/EnhancedStepRenderer.tsx` (use translated text)
 
 ---
 
-## Step 3: Admin Profile Editor and Wiring Everything Together
+## Step 3: Upgrade Categories Admin Page
 
-### 3A. Admin Profile Editor
+### 3A. Replace Mock Data with Real DB Operations
 
-Add a detailed profile editing capability to the existing `UsersPage` -- an "Edit Profile" dialog that lets admins update:
-- Bio, occupation, location (from `profiles`)
-- Detailed fields from `profile_details` (height, education, religion, etc.)
-- Preference fields from `profile_preferences`
-
-All mutations go through the `admin-actions` edge function (Step 1B) with full audit logging.
-
-**Files created:**
-- `src/pages/SuperAdmin/components/users/AdminProfileEditor.tsx`
+The `CategoriesPage` currently initializes with hardcoded mock categories/items. Replace with the existing `useAdminCategories` hook data (already partially wired) and fix field name mismatches (`order` vs `display_order`, `itemCount` vs `item_count`).
 
 **Files modified:**
-- `src/pages/SuperAdmin/pages/UsersPage.tsx` -- add "Edit" button per row that opens the editor
+- `src/pages/SuperAdmin/pages/CategoriesPage.tsx` (remove mock data, fix field mapping)
 
-### 3B. Wire All Existing Admin Pages to Use Audit Logging
+### 3B. Add Multilingual Editing to Category/Item Dialogs
 
-Update the following existing pages to route their mutations through `admin-actions` (or at minimum call `logAdminAction`):
-- `BlockedUsersPage.tsx` (unblock)
-- `GroupsManagementPage.tsx` (delete group)
-- `VirtualGiftsPage.tsx` (toggle gift)
-- `GhostUsersPage.tsx` (create/delete ghost)
-- `ModerationPage.tsx` (approve/reject)
+Update the Add/Edit dialogs for categories and items to include language tabs, similar to Step 2B.
 
-### 3C. Deploy and Insert Translations
+**Files modified:**
+- `src/pages/SuperAdmin/pages/CategoriesPage.tsx` (update dialog forms to include language tabs)
 
-- Deploy the `admin-actions` edge function
-- Insert all translation entries for the 7 new pages + profile editor strings
+### 3C. Route Category Mutations Through Audit Logger
+
+All create/update/delete operations will use `executeAdminAction` for audit trail.
+
+**Files modified:**
+- `src/pages/SuperAdmin/hooks/useAdminCategories.ts`
+
+---
+
+## Step 4: User Access Management Improvements
+
+Ensure the existing Users Management page has clear access to:
+- View all users with search/filter
+- Edit any user's profile (already done via AdminProfileEditor)
+- Delete/block/unblock users (already wired via admin-actions)
+- View roles and assign roles
+
+No new pages needed -- verify existing wiring works end-to-end.
 
 ---
 
 ## Technical Details
 
-### Edge Function: `admin-actions` (Step 1B)
+### Database Column Strategy
+
+Instead of a separate translations table (which adds JOIN complexity), translation columns are added directly to the source tables. This keeps queries simple and fast. 5 languages x 3 fields = 15 new columns per table, which is manageable.
 
 ```text
-POST /admin-actions
-Body: { action, table, recordId, data }
-
-Flow:
-  1. Verify JWT via getClaims()
-  2. Query user_roles with service-role client to confirm super_admin
-  3. Execute the action (delete/update/insert) with service-role client
-  4. Insert row into admin_audit_log
-  5. Return result
+registration_questions
+  text          -- default/fallback (English)
+  text_en       -- English
+  text_no       -- Norwegian
+  text_ku_sorani    -- Kurdish Sorani
+  text_ku_kurmanci  -- Kurdish Kurmanci
+  text_de       -- German
+  placeholder_en ... placeholder_de
+  field_options_en ... field_options_de (ARRAY)
 ```
 
-### Config update: `supabase/config.toml`
-```text
-[functions.admin-actions]
-verify_jwt = false
-```
-
-### New Sidebar Items (added to menuItems array)
+### Language Tab UI Pattern (reused in both pages)
 
 ```text
-Stories         -> /super-admin/stories         (BookOpen icon)
-Calls           -> /super-admin/calls           (Phone icon)
-Date Proposals  -> /super-admin/date-proposals  (CalendarHeart icon)
-Marriage Intent -> /super-admin/marriage-intentions (Heart icon)
-Safety Flags    -> /super-admin/safety-flags    (AlertTriangle icon)
-Scheduled       -> /super-admin/scheduled-content (Clock icon)
-Profile Views   -> /super-admin/profile-views   (Eye icon)
++----+----+--------+----------+----+
+| EN | NO | Sorani | Kurmanci | DE |
++----+----+--------+----------+----+
+| Question Text: [________________]  |
+| Placeholder:   [________________]  |
+| Options:  [tag1] [tag2] [+Add]     |
++------------------------------------+
 ```
+
+### Files Summary
+
+| Action | File |
+|--------|------|
+| Migration | Add ~30 translation columns across 3 tables |
+| Modify | `useQuestions.ts` -- DB-driven CRUD |
+| Modify | `EditQuestionDialog.tsx` -- language tabs |
+| Modify | `AddQuestionDialog.tsx` -- language tabs |
+| Modify | `types.ts` -- translation fields |
+| Modify | `CategoriesPage.tsx` -- remove mocks, add language tabs |
+| Modify | `useAdminCategories.ts` -- audit logging |
+| Modify | `useDynamicRegistrationForm.ts` -- read translated fields |
+| Modify | `EnhancedStepRenderer.tsx` -- display translated text |
 
 ### Estimated scope
-- Step 1: ~4 files created/modified (security-critical, do first)
-- Step 2: ~10 files created/modified + 1 DB migration
-- Step 3: ~7 files created/modified + 1 DB migration
+- 1 database migration (add columns + backfill)
+- ~9 files modified
+- No new pages needed
 
