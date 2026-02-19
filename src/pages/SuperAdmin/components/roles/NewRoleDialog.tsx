@@ -34,12 +34,12 @@ const NewRoleDialog: React.FC<NewRoleDialogProps> = ({ open, onOpenChange }) => 
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <label htmlFor="role-name" className="text-sm font-medium">{t('admin.role_name', 'Role Name')}</label>
-            <Input id="role-name" placeholder="e.g., Content Manager" />
+            <Input id="role-name" placeholder={t('admin.role_name_placeholder', 'e.g., Content Manager')} />
           </div>
           
           <div className="grid gap-2">
             <label htmlFor="role-description" className="text-sm font-medium">{t('admin.description', 'Description')}</label>
-            <Input id="role-description" placeholder="Describe the purpose of this role" />
+            <Input id="role-description" placeholder={t('admin.role_desc_placeholder', 'Describe the purpose of this role')} />
           </div>
           
           <div className="grid gap-2">
@@ -60,8 +60,8 @@ const NewRoleDialog: React.FC<NewRoleDialogProps> = ({ open, onOpenChange }) => 
             <label className="text-sm font-medium">{t('admin.select_role_to_clone', 'Select Role to Clone')}</label>
             <select className="w-full border rounded-md p-2">
               <option>{t('admin.moderator', 'Moderator')}</option>
-              <option>Support Agent</option>
-              <option>Marketing</option>
+              <option>{t('admin.support_agent', 'Support Agent')}</option>
+              <option>{t('admin.marketing', 'Marketing')}</option>
             </select>
           </div>
           

@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { reportContent, ContentType, ReportReason } from '@/api/moderation';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ReportDialogProps {
   open: boolean;
@@ -23,15 +24,6 @@ interface ReportDialogProps {
   reportedUserId?: string;
 }
 
-const reportReasons: { value: ReportReason; label: string }[] = [
-  { value: 'inappropriate', label: 'Inappropriate Content' },
-  { value: 'spam', label: 'Spam or Misleading' },
-  { value: 'harassment', label: 'Harassment or Bullying' },
-  { value: 'fake_profile', label: 'Fake Profile' },
-  { value: 'violence', label: 'Violence or Threats' },
-  { value: 'other', label: 'Other' },
-];
-
 const ReportDialog: React.FC<ReportDialogProps> = ({
   open,
   onOpenChange,
@@ -39,25 +31,35 @@ const ReportDialog: React.FC<ReportDialogProps> = ({
   contentType,
   reportedUserId,
 }) => {
+  const { t } = useTranslations();
   const [reason, setReason] = useState<ReportReason>('inappropriate');
   const [details, setDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const reportReasons: { value: ReportReason; label: string }[] = [
+    { value: 'inappropriate', label: t('report.inappropriate', 'Inappropriate Content') },
+    { value: 'spam', label: t('report.spam', 'Spam or Misleading') },
+    { value: 'harassment', label: t('report.harassment', 'Harassment or Bullying') },
+    { value: 'fake_profile', label: t('report.fake_profile', 'Fake Profile') },
+    { value: 'violence', label: t('report.violence', 'Violence or Threats') },
+    { value: 'other', label: t('report.other', 'Other') },
+  ];
 
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
       await reportContent(contentId, contentType, reason, details, reportedUserId);
       toast({
-        title: 'Report Submitted',
-        description: 'Thank you for helping keep our community safe.',
+        title: t('report.submitted', 'Report Submitted'),
+        description: t('report.submitted_desc', 'Thank you for helping keep our community safe.'),
       });
       onOpenChange(false);
       setDetails('');
       setReason('inappropriate');
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to submit report',
+        title: t('common.error', 'Error'),
+        description: t('report.submit_failed', 'Failed to submit report'),
         variant: 'destructive',
       });
     } finally {
@@ -69,9 +71,9 @@ const ReportDialog: React.FC<ReportDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Report Content</DialogTitle>
+          <DialogTitle>{t('report.title', 'Report Content')}</DialogTitle>
           <DialogDescription>
-            Help us understand what's wrong with this content.
+            {t('report.description', "Help us understand what's wrong with this content.")}
           </DialogDescription>
         </DialogHeader>
 
@@ -80,15 +82,13 @@ const ReportDialog: React.FC<ReportDialogProps> = ({
             {reportReasons.map((r) => (
               <div key={r.value} className="flex items-center space-x-2">
                 <RadioGroupItem value={r.value} id={r.value} />
-                <Label htmlFor={r.value} className="cursor-pointer">
-                  {r.label}
-                </Label>
+                <Label htmlFor={r.value} className="cursor-pointer">{r.label}</Label>
               </div>
             ))}
           </RadioGroup>
 
           <Textarea
-            placeholder="Additional details (optional)"
+            placeholder={t('report.details_placeholder', 'Additional details (optional)')}
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             className="min-h-[100px]"
@@ -97,11 +97,11 @@ const ReportDialog: React.FC<ReportDialogProps> = ({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={submitting}>
             {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Submit Report
+            {t('report.submit', 'Submit Report')}
           </Button>
         </DialogFooter>
       </DialogContent>

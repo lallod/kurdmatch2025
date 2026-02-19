@@ -13,6 +13,7 @@ import {
 import { likeComment, unlikeComment, deleteComment } from '@/api/comments';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CommentThreadProps {
   comment: Comment;
@@ -27,6 +28,7 @@ const CommentThread: React.FC<CommentThreadProps> = ({
   onDelete,
   currentUserId,
 }) => {
+  const { t } = useTranslations();
   const [isLiked, setIsLiked] = useState(comment.is_liked || false);
   const [likesCount, setLikesCount] = useState(comment.likes_count);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -36,10 +38,6 @@ const CommentThread: React.FC<CommentThreadProps> = ({
     
     try {
       setIsUpdating(true);
-      const previousLiked = isLiked;
-      const previousCount = likesCount;
-      
-      // Optimistic update
       setIsLiked(!isLiked);
       setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
       
@@ -49,13 +47,12 @@ const CommentThread: React.FC<CommentThreadProps> = ({
         await likeComment(comment.id);
       }
     } catch (error) {
-      // Revert on error
       setIsLiked(comment.is_liked || false);
       setLikesCount(comment.likes_count);
       
       toast({
-        title: 'Error',
-        description: 'Failed to update like',
+        title: t('common.error', 'Error'),
+        description: t('comments.like_failed', 'Failed to update like'),
         variant: 'destructive',
       });
     } finally {
@@ -68,13 +65,13 @@ const CommentThread: React.FC<CommentThreadProps> = ({
       await deleteComment(comment.id);
       onDelete(comment.id);
       toast({
-        title: 'Success',
-        description: 'Comment deleted',
+        title: t('common.success', 'Success'),
+        description: t('comments.deleted', 'Comment deleted'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete comment',
+        title: t('common.error', 'Error'),
+        description: t('comments.delete_failed', 'Failed to delete comment'),
         variant: 'destructive',
       });
     }
@@ -117,7 +114,7 @@ const CommentThread: React.FC<CommentThreadProps> = ({
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
             >
               <MessageCircle className="w-3 h-3" />
-              Reply
+              {t('comments.reply', 'Reply')}
             </button>
           )}
 
@@ -131,24 +128,17 @@ const CommentThread: React.FC<CommentThreadProps> = ({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={handleDelete} className="text-destructive">
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
+                  {t('common.delete', 'Delete')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
         </div>
 
-        {/* Render replies */}
         {comment.replies && comment.replies.length > 0 && (
           <div className="mt-2">
             {comment.replies.map((reply) => (
-              <CommentThread
-                key={reply.id}
-                comment={reply}
-                onReply={onReply}
-                onDelete={onDelete}
-                currentUserId={currentUserId}
-              />
+              <CommentThread key={reply.id} comment={reply} onReply={onReply} onDelete={onDelete} currentUserId={currentUserId} />
             ))}
           </div>
         )}

@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/integrations/supabase/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SupportTicket {
   id: string;
@@ -43,6 +44,7 @@ const categoryLabels: Record<string, string> = {
 const MyTickets = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
@@ -115,10 +117,10 @@ const MyTickets = () => {
       if (error) throw error;
 
       toast({
-        title: 'Thank you!',
-        description: 'Your feedback helps us improve our support.',
+        title: t('support.thank_you', 'Thank you!'),
+        description: t('support.feedback_helps', 'Your feedback helps us improve our support.'),
       });
-      
+
       setRatingTicket(null);
       setSelectedRating(0);
       setFeedbackText('');
@@ -126,8 +128,8 @@ const MyTickets = () => {
     } catch (error) {
       console.error('Error submitting rating:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to submit feedback. Please try again.',
+        title: t('common.error', 'Error'),
+        description: t('support.feedback_failed', 'Failed to submit feedback. Please try again.'),
         variant: 'destructive'
       });
     } finally {

@@ -38,7 +38,7 @@ const CreatePost = () => {
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('File is too large (max 10MB)');
+      toast.error(t('social.file_too_large', 'File is too large (max 10MB)'));
       return;
     }
 
@@ -66,7 +66,7 @@ const CreatePost = () => {
       return publicUrl;
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('Failed to upload image');
+      toast.error(t('social.upload_failed', 'Failed to upload image'));
       return undefined;
     } finally {
       setUploading(false);
@@ -75,7 +75,7 @@ const CreatePost = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) { toast.error('Please enter some content'); return; }
+    if (!content.trim()) { toast.error(t('social.enter_content', 'Please enter some content')); return; }
     try {
       setLoading(true);
       let mediaUrl: string | undefined;
