@@ -67,12 +67,12 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="question-text">{t('admin.question_text', 'Question Text')}</Label>
-              <Input id="question-text" value={newQuestion.text} onChange={(e) => setNewQuestion({...newQuestion, text: e.target.value})} placeholder="e.g., What are your favorite hobbies?" />
+              <Input id="question-text" value={newQuestion.text} onChange={(e) => setNewQuestion({...newQuestion, text: e.target.value})} placeholder={t('admin.question_text_placeholder', 'e.g., What are your favorite hobbies?')} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="category">{t('admin.category', 'Category')}</Label>
               <Select value={newQuestion.category} onValueChange={(value) => setNewQuestion({...newQuestion, category: value})}>
-                <SelectTrigger id="category"><SelectValue placeholder="Select category" /></SelectTrigger>
+                <SelectTrigger id="category"><SelectValue placeholder={t('admin.select_category', 'Select category')} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Basics">Basics</SelectItem>
                   <SelectItem value="Lifestyle">Lifestyle</SelectItem>
@@ -90,7 +90,7 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
             <div className="space-y-2">
               <Label htmlFor="field-type">{t('admin.field_type', 'Field Type')}</Label>
               <Select value={newQuestion.fieldType} onValueChange={(value) => setNewQuestion({...newQuestion, fieldType: value as any})}>
-                <SelectTrigger id="field-type"><SelectValue placeholder="Select field type" /></SelectTrigger>
+                <SelectTrigger id="field-type"><SelectValue placeholder={t('admin.select_field_type', 'Select field type')} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="text">Text</SelectItem>
                   <SelectItem value="textarea">Textarea</SelectItem>
@@ -105,7 +105,7 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
             <div className="space-y-2">
               <Label htmlFor="registration-step">{t('admin.registration_step', 'Registration Step')}</Label>
               <Select value={newQuestion.registrationStep} onValueChange={(value: 'Account' | 'Personal' | 'Profile' | 'Preferences') => setNewQuestion({...newQuestion, registrationStep: value})}>
-                <SelectTrigger id="registration-step"><SelectValue placeholder="Select registration step" /></SelectTrigger>
+                <SelectTrigger id="registration-step"><SelectValue placeholder={t('admin.select_registration_step', 'Select registration step')} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Account">Account</SelectItem>
                   <SelectItem value="Personal">Personal</SelectItem>
@@ -119,11 +119,11 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="placeholder">{t('admin.placeholder_text', 'Placeholder Text')}</Label>
-              <Input id="placeholder" value={newQuestion.placeholder} onChange={(e) => setNewQuestion({...newQuestion, placeholder: e.target.value})} placeholder="e.g., Enter your hobbies" />
+              <Input id="placeholder" value={newQuestion.placeholder} onChange={(e) => setNewQuestion({...newQuestion, placeholder: e.target.value})} placeholder={t('admin.placeholder_example', 'e.g., Enter your hobbies')} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="profile-field">{t('admin.profile_field_mapping', 'Profile Field Mapping')}</Label>
-              <Input id="profile-field" value={newQuestion.profileField} onChange={(e) => setNewQuestion({...newQuestion, profileField: e.target.value})} placeholder="e.g., hobbies" />
+              <Input id="profile-field" value={newQuestion.profileField} onChange={(e) => setNewQuestion({...newQuestion, profileField: e.target.value})} placeholder={t('admin.profile_field_example', 'e.g., hobbies')} />
             </div>
           </div>
           
