@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { executeAdminAction } from "@/utils/admin/auditLogger";
 import type { Database } from "@/integrations/supabase/types";
 
 type Category = Database["public"]["Tables"]["content_categories"]["Row"];
@@ -58,12 +59,7 @@ export const useAdminCategories = () => {
 
   const updateCategory = async (id: string, updates: Partial<Category>) => {
     try {
-      const { error } = await supabase
-        .from("content_categories")
-        .update(updates)
-        .eq("id", id);
-
-      if (error) throw error;
+      await executeAdminAction({ action: 'update_record', table: 'content_categories', recordId: id, data: updates });
       await fetchCategories();
       return { success: true };
     } catch (error) {
@@ -74,12 +70,7 @@ export const useAdminCategories = () => {
 
   const deleteCategory = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from("content_categories")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
+      await executeAdminAction({ action: 'delete_record', table: 'content_categories', recordId: id });
       await fetchCategories();
       return { success: true };
     } catch (error) {
@@ -96,7 +87,7 @@ export const useAdminCategories = () => {
 
       if (error) throw error;
       await fetchItems();
-      await fetchCategories(); // Refresh to update item count
+      await fetchCategories();
       return { success: true };
     } catch (error) {
       console.error("Error creating item:", error);
@@ -106,12 +97,7 @@ export const useAdminCategories = () => {
 
   const updateItem = async (id: string, updates: Partial<CategoryItem>) => {
     try {
-      const { error } = await supabase
-        .from("category_items")
-        .update(updates)
-        .eq("id", id);
-
-      if (error) throw error;
+      await executeAdminAction({ action: 'update_record', table: 'category_items', recordId: id, data: updates });
       await fetchItems();
       return { success: true };
     } catch (error) {
@@ -122,14 +108,9 @@ export const useAdminCategories = () => {
 
   const deleteItem = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from("category_items")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
+      await executeAdminAction({ action: 'delete_record', table: 'category_items', recordId: id });
       await fetchItems();
-      await fetchCategories(); // Refresh to update item count
+      await fetchCategories();
       return { success: true };
     } catch (error) {
       console.error("Error deleting item:", error);

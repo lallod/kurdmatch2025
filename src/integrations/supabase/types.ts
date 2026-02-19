@@ -336,10 +336,20 @@ export type Database = {
           category_id: string
           created_at: string
           description: string | null
+          description_de: string | null
+          description_en: string | null
+          description_ku_kurmanci: string | null
+          description_ku_sorani: string | null
+          description_no: string | null
           display_order: number
           id: string
           item_type: string
           name: string
+          name_de: string | null
+          name_en: string | null
+          name_ku_kurmanci: string | null
+          name_ku_sorani: string | null
+          name_no: string | null
           options: string[] | null
           updated_at: string
         }
@@ -348,10 +358,20 @@ export type Database = {
           category_id: string
           created_at?: string
           description?: string | null
+          description_de?: string | null
+          description_en?: string | null
+          description_ku_kurmanci?: string | null
+          description_ku_sorani?: string | null
+          description_no?: string | null
           display_order?: number
           id?: string
           item_type: string
           name: string
+          name_de?: string | null
+          name_en?: string | null
+          name_ku_kurmanci?: string | null
+          name_ku_sorani?: string | null
+          name_no?: string | null
           options?: string[] | null
           updated_at?: string
         }
@@ -360,10 +380,20 @@ export type Database = {
           category_id?: string
           created_at?: string
           description?: string | null
+          description_de?: string | null
+          description_en?: string | null
+          description_ku_kurmanci?: string | null
+          description_ku_sorani?: string | null
+          description_no?: string | null
           display_order?: number
           id?: string
           item_type?: string
           name?: string
+          name_de?: string | null
+          name_en?: string | null
+          name_ku_kurmanci?: string | null
+          name_ku_sorani?: string | null
+          name_no?: string | null
           options?: string[] | null
           updated_at?: string
         }
@@ -477,10 +507,20 @@ export type Database = {
           active: boolean
           created_at: string
           description: string | null
+          description_de: string | null
+          description_en: string | null
+          description_ku_kurmanci: string | null
+          description_ku_sorani: string | null
+          description_no: string | null
           display_order: number
           id: string
           item_count: number
           name: string
+          name_de: string | null
+          name_en: string | null
+          name_ku_kurmanci: string | null
+          name_ku_sorani: string | null
+          name_no: string | null
           slug: string
           updated_at: string
         }
@@ -488,10 +528,20 @@ export type Database = {
           active?: boolean
           created_at?: string
           description?: string | null
+          description_de?: string | null
+          description_en?: string | null
+          description_ku_kurmanci?: string | null
+          description_ku_sorani?: string | null
+          description_no?: string | null
           display_order?: number
           id?: string
           item_count?: number
           name: string
+          name_de?: string | null
+          name_en?: string | null
+          name_ku_kurmanci?: string | null
+          name_ku_sorani?: string | null
+          name_no?: string | null
           slug: string
           updated_at?: string
         }
@@ -499,10 +549,20 @@ export type Database = {
           active?: boolean
           created_at?: string
           description?: string | null
+          description_de?: string | null
+          description_en?: string | null
+          description_ku_kurmanci?: string | null
+          description_ku_sorani?: string | null
+          description_no?: string | null
           display_order?: number
           id?: string
           item_count?: number
           name?: string
+          name_de?: string | null
+          name_en?: string | null
+          name_ku_kurmanci?: string | null
+          name_ku_sorani?: string | null
+          name_no?: string | null
           slug?: string
           updated_at?: string
         }
@@ -2967,42 +3027,87 @@ export type Database = {
           display_order: number
           enabled: boolean | null
           field_options: string[] | null
+          field_options_de: string[] | null
+          field_options_en: string[] | null
+          field_options_ku_kurmanci: string[] | null
+          field_options_ku_sorani: string[] | null
+          field_options_no: string[] | null
           field_type: string
           id: string
           is_system_field: boolean | null
           placeholder: string | null
+          placeholder_de: string | null
+          placeholder_en: string | null
+          placeholder_ku_kurmanci: string | null
+          placeholder_ku_sorani: string | null
+          placeholder_no: string | null
           profile_field: string | null
           registration_step: string
           required: boolean | null
           text: string
+          text_de: string | null
+          text_en: string | null
+          text_ku_kurmanci: string | null
+          text_ku_sorani: string | null
+          text_no: string | null
         }
         Insert: {
           category: string
           display_order: number
           enabled?: boolean | null
           field_options?: string[] | null
+          field_options_de?: string[] | null
+          field_options_en?: string[] | null
+          field_options_ku_kurmanci?: string[] | null
+          field_options_ku_sorani?: string[] | null
+          field_options_no?: string[] | null
           field_type: string
           id: string
           is_system_field?: boolean | null
           placeholder?: string | null
+          placeholder_de?: string | null
+          placeholder_en?: string | null
+          placeholder_ku_kurmanci?: string | null
+          placeholder_ku_sorani?: string | null
+          placeholder_no?: string | null
           profile_field?: string | null
           registration_step: string
           required?: boolean | null
           text: string
+          text_de?: string | null
+          text_en?: string | null
+          text_ku_kurmanci?: string | null
+          text_ku_sorani?: string | null
+          text_no?: string | null
         }
         Update: {
           category?: string
           display_order?: number
           enabled?: boolean | null
           field_options?: string[] | null
+          field_options_de?: string[] | null
+          field_options_en?: string[] | null
+          field_options_ku_kurmanci?: string[] | null
+          field_options_ku_sorani?: string[] | null
+          field_options_no?: string[] | null
           field_type?: string
           id?: string
           is_system_field?: boolean | null
           placeholder?: string | null
+          placeholder_de?: string | null
+          placeholder_en?: string | null
+          placeholder_ku_kurmanci?: string | null
+          placeholder_ku_sorani?: string | null
+          placeholder_no?: string | null
           profile_field?: string | null
           registration_step?: string
           required?: boolean | null
           text?: string
+          text_de?: string | null
+          text_en?: string | null
+          text_ku_kurmanci?: string | null
+          text_ku_sorani?: string | null
+          text_no?: string | null
         }
         Relationships: []
       }

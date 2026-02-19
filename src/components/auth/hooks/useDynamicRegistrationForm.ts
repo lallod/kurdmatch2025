@@ -4,11 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useLocationManager } from '@/components/my-profile/sections/location/useLocationManager';
 import { getRegistrationQuestions } from '@/api/admin';
-import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
+import { QuestionItem, getTranslatedText, getTranslatedOptions } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { createDynamicRegistrationSchema, DynamicRegistrationFormValues } from '../utils/dynamicRegistrationSchema';
 import { getFormDefaultValues } from '../utils/formDefaultValues';
 import { createEnhancedStepCategories } from '../utils/enhancedStepCategories';
@@ -18,6 +19,7 @@ import { generateAIBio } from '../utils/aiBioGenerator';
 export const useDynamicRegistrationForm = () => {
   const { toast } = useToast();
   const { t } = useTranslations();
+  const { language } = useLanguage();
   const { signUp } = useSupabaseAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -50,11 +52,19 @@ export const useDynamicRegistrationForm = () => {
     const loadQuestions = async () => {
       try {
         const enabledQuestions = await getRegistrationQuestions();
-        const filteredQuestions = enabledQuestions.filter(q => q.enabled);
-        setQuestions(filteredQuestions);
+        // Apply translations based on current language
+        const translatedQuestions = enabledQuestions
+          .filter(q => q.enabled)
+          .map(q => ({
+            ...q,
+            text: getTranslatedText(q, 'text', language),
+            placeholder: getTranslatedText(q, 'placeholder', language),
+            fieldOptions: getTranslatedOptions(q, language),
+          }));
+        setQuestions(translatedQuestions);
         
         // Reset form with new default values once questions are loaded
-        const newDefaultValues = getFormDefaultValues(filteredQuestions);
+        const newDefaultValues = getFormDefaultValues(translatedQuestions);
         form.reset(newDefaultValues);
         
         setLoading(false);
