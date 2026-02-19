@@ -1,16 +1,11 @@
 
 import React from 'react';
 import { ListChecks } from 'lucide-react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FooterContent } from './types';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface FooterEditorProps {
   footer: FooterContent;
@@ -18,20 +13,21 @@ interface FooterEditorProps {
 }
 
 const FooterEditor: React.FC<FooterEditorProps> = ({ footer, updateFooter }) => {
+  const { t } = useTranslations();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ListChecks className="h-5 w-5" />
-          Footer Content
+          {t('admin.footer_content', 'Footer Content')}
         </CardTitle>
         <CardDescription>
-          Edit the content displayed in the website footer
+          {t('admin.footer_content_desc', 'Edit the content displayed in the website footer')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="footer-copyright">Copyright Text</Label>
+          <Label htmlFor="footer-copyright">{t('admin.copyright_text', 'Copyright Text')}</Label>
           <Input 
             id="footer-copyright" 
             value={footer.copyright} 

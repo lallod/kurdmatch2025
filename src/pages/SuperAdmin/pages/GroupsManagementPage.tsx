@@ -8,6 +8,7 @@ import { Users, Trash2, Search, Calendar, Lock, Globe, ExternalLink, User } from
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Group {
   id: string;
@@ -31,6 +32,7 @@ interface GroupMember {
 }
 
 const GroupsManagementPage = () => {
+  const { t } = useTranslations();
   const [groups, setGroups] = useState<Group[]>([]);
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,12 +45,9 @@ const GroupsManagementPage = () => {
     try {
       const { data, error, count } = await supabase
         .from('groups')
-        .select(`
-          *
-        `, { count: 'exact' })
+        .select(`*`, { count: 'exact' })
         .order('created_at', { ascending: false })
         .limit(50);
-
       if (error) throw error;
       setGroups(data || []);
       setTotalGroups(count || 0);
@@ -68,7 +67,6 @@ const GroupsManagementPage = () => {
         .select('*', { count: 'exact' })
         .order('joined_at', { ascending: false })
         .limit(100);
-
       if (error) throw error;
       setMembers(data || []);
       setTotalMembers(count || 0);
@@ -81,14 +79,9 @@ const GroupsManagementPage = () => {
   };
 
   const deleteGroup = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this group? This will also delete all members and posts.')) return;
-
+    if (!confirm('Are you sure you want to delete this group?')) return;
     try {
-      const { error } = await supabase
-        .from('groups')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('groups').delete().eq('id', id);
       if (error) throw error;
       toast.success('Group deleted successfully');
       fetchGroups();
@@ -100,13 +93,8 @@ const GroupsManagementPage = () => {
 
   const removeMember = async (id: string) => {
     if (!confirm('Are you sure you want to remove this member?')) return;
-
     try {
-      const { error } = await supabase
-        .from('group_members')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('group_members').delete().eq('id', id);
       if (error) throw error;
       toast.success('Member removed successfully');
       fetchMembers();
@@ -135,12 +123,12 @@ const GroupsManagementPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Groups Management</h1>
-          <p className="text-white/60 mt-1">Manage all groups, members, and posts</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.groups_management', 'Groups Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.groups_desc', 'Manage all groups, members, and posts')}</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={fetchGroups} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-            Refresh
+            {t('admin.refresh', 'Refresh')}
           </Button>
         </div>
       </div>
@@ -148,10 +136,10 @@ const GroupsManagementPage = () => {
       <Tabs defaultValue="groups" className="w-full" onValueChange={(v) => v === 'members' && fetchMembers()}>
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger value="groups" className="data-[state=active]:bg-white/10">
-            Groups ({totalGroups})
+            {t('admin.all_groups', 'Groups')} ({totalGroups})
           </TabsTrigger>
           <TabsTrigger value="members" className="data-[state=active]:bg-white/10">
-            Members ({totalMembers})
+            {t('admin.members', 'Members')} ({totalMembers})
           </TabsTrigger>
         </TabsList>
 
@@ -160,13 +148,13 @@ const GroupsManagementPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Users className="h-5 w-5 text-purple-500" />
-                All Groups
+                {t('admin.all_groups', 'All Groups')}
               </CardTitle>
               <div className="mt-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
-                    placeholder="Search groups..."
+                    placeholder={t('admin.search_groups', 'Search groups...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white"
@@ -176,22 +164,15 @@ const GroupsManagementPage = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-white/60">Loading groups...</div>
+                <div className="text-center py-8 text-white/60">{t('admin.loading_groups', 'Loading groups...')}</div>
               ) : filteredGroups.length === 0 ? (
-                <div className="text-center py-8 text-white/60">No groups found</div>
+                <div className="text-center py-8 text-white/60">{t('admin.no_groups_found', 'No groups found')}</div>
               ) : (
                 <div className="grid gap-4">
                   {filteredGroups.map((group) => (
-                    <div
-                      key={group.id}
-                      className="p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
-                    >
+                    <div key={group.id} className="p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
                       <div className="flex items-start gap-4">
-                        <img
-                          src={group.cover_image || '/placeholder.svg'}
-                          alt={group.name}
-                          className="w-20 h-20 rounded-lg object-cover"
-                        />
+                        <img src={group.cover_image || '/placeholder.svg'} alt={group.name} className="w-20 h-20 rounded-lg object-cover" />
                         <div className="flex-1">
                           <div className="flex items-start justify-between">
                             <div>
@@ -199,20 +180,10 @@ const GroupsManagementPage = () => {
                               <p className="text-white/60 text-sm mt-1 line-clamp-2">{group.description}</p>
                             </div>
                             <div className="flex gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => window.open(`/groups/${group.id}`, '_blank')}
-                                className="text-white/60 hover:text-white hover:bg-white/5"
-                              >
+                              <Button variant="ghost" size="sm" onClick={() => window.open(`/groups/${group.id}`, '_blank')} className="text-white/60 hover:text-white hover:bg-white/5">
                                 <ExternalLink className="h-4 w-4" />
                               </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => deleteGroup(group.id)}
-                                className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                              >
+                              <Button variant="ghost" size="sm" onClick={() => deleteGroup(group.id)} className="text-red-500 hover:text-red-400 hover:bg-red-500/10">
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
@@ -222,22 +193,20 @@ const GroupsManagementPage = () => {
                               {group.privacy === 'public' ? <Globe className="h-3 w-3 mr-1" /> : <Lock className="h-3 w-3 mr-1" />}
                               {group.privacy}
                             </Badge>
-                            <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
-                              {group.category}
-                            </Badge>
+                            <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">{group.category}</Badge>
                             <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                               <Users className="h-3 w-3 mr-1" />
-                              {group.member_count} members
+                              {group.member_count} {t('admin.members', 'members')}
                             </Badge>
                             <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
-                              {group.post_count} posts
+                              {group.post_count} {t('admin.posts', 'posts')}
                             </Badge>
                             <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                               <Calendar className="h-3 w-3 mr-1" />
                               {format(new Date(group.created_at), 'MMM d, yyyy')}
                             </Badge>
                             <span className="text-white/40 text-sm">
-                              Creator: {group.created_by.substring(0, 8)}...
+                              {t('admin.creator', 'Creator')}: {group.created_by.substring(0, 8)}...
                             </span>
                           </div>
                         </div>
@@ -255,13 +224,13 @@ const GroupsManagementPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <User className="h-5 w-5 text-blue-500" />
-                All Group Members
+                {t('admin.all_group_members', 'All Group Members')}
               </CardTitle>
               <div className="mt-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
-                    placeholder="Search members..."
+                    placeholder={t('admin.search_members', 'Search members...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white"
@@ -271,16 +240,13 @@ const GroupsManagementPage = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-white/60">Loading members...</div>
+                <div className="text-center py-8 text-white/60">{t('admin.loading_members', 'Loading members...')}</div>
               ) : filteredMembers.length === 0 ? (
-                <div className="text-center py-8 text-white/60">No members found</div>
+                <div className="text-center py-8 text-white/60">{t('admin.no_members_found', 'No members found')}</div>
               ) : (
                 <div className="space-y-3">
                   {filteredMembers.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
-                    >
+                    <div key={member.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
                       <div className="flex items-center gap-4 flex-1">
                         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
                           <User className="h-5 w-5 text-white/60" />
@@ -289,33 +255,19 @@ const GroupsManagementPage = () => {
                           <p className="text-white font-medium">User: {member.user_id.substring(0, 8)}...</p>
                           <p className="text-white/40 text-sm">Group: {member.group_id.substring(0, 8)}...</p>
                         </div>
-
                         <div className="flex items-center gap-3">
-                          <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60 capitalize">
-                            {member.role}
-                          </Badge>
+                          <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60 capitalize">{member.role}</Badge>
                           <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                             <Calendar className="h-3 w-3 mr-1" />
                             {format(new Date(member.joined_at), 'MMM d, yyyy')}
                           </Badge>
                         </div>
                       </div>
-
                       <div className="flex items-center gap-2 ml-4">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => window.open(`/profile/${member.user_id}`, '_blank')}
-                          className="text-white/60 hover:text-white hover:bg-white/5"
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => window.open(`/profile/${member.user_id}`, '_blank')} className="text-white/60 hover:text-white hover:bg-white/5">
                           <ExternalLink className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeMember(member.id)}
-                          className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => removeMember(member.id)} className="text-red-500 hover:text-red-400 hover:bg-red-500/10">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>

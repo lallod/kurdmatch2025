@@ -3,6 +3,7 @@ import { Users, UserCheck, UserX, Ban, TrendingUp, TrendingDown } from 'lucide-r
 import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MonthlyPayment {
   month: string;
@@ -17,6 +18,7 @@ interface MonthlyRegistration {
 }
 
 const DashboardNew = () => {
+  const { t } = useTranslations();
   const [stats, setStats] = useState({
     online: 0,
     active: 0,
@@ -131,28 +133,28 @@ const DashboardNew = () => {
 
   const statCards = [
     {
-      title: 'Online Users',
+      title: t('admin.online_users', 'Online Users'),
       value: stats.online,
       icon: Users,
       color: 'from-red-500 to-orange-500',
       bgColor: 'bg-red-500/10',
     },
     {
-      title: 'Active Users',
+      title: t('admin.active_users', 'Active Users'),
       value: stats.active,
       icon: UserCheck,
       color: 'from-green-500 to-emerald-500',
       bgColor: 'bg-green-500/10',
     },
     {
-      title: 'Inactive Users',
+      title: t('admin.inactive_users', 'Inactive Users'),
       value: stats.inactive,
       icon: UserX,
       color: 'from-yellow-500 to-orange-500',
       bgColor: 'bg-yellow-500/10',
     },
     {
-      title: 'Blocked Users',
+      title: t('admin.blocked_users', 'Blocked Users'),
       value: stats.blocked,
       icon: Ban,
       color: 'from-red-600 to-pink-600',
@@ -163,8 +165,8 @@ const DashboardNew = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-white/60">Welcome back! Here's what's happening with your app today.</p>
+        <h1 className="text-3xl font-bold text-white mb-2">{t('admin.dashboard', 'Dashboard')}</h1>
+        <p className="text-white/60">{t('admin.dashboard_welcome', "Welcome back! Here's what's happening with your app today.")}</p>
       </div>
 
       {/* Stats Cards */}
@@ -192,13 +194,13 @@ const DashboardNew = () => {
         {/* Earnings Overview */}
         <Card className="bg-[#141414] border-white/5 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">Earning Overview</h3>
+            <h3 className="text-lg font-semibold text-white">{t('admin.earning_overview', 'Earning Overview')}</h3>
           </div>
 
           <div className="mb-4">
             <div className="inline-block bg-white/10 rounded-lg px-3 py-1">
               <span className="text-white font-semibold">${totalEarnings.toFixed(2)}</span>
-              <span className="text-white/40 text-xs ml-1">last 12 months</span>
+              <span className="text-white/40 text-xs ml-1">{t('admin.last_12_months', 'last 12 months')}</span>
             </div>
           </div>
 
@@ -224,19 +226,19 @@ const DashboardNew = () => {
         {/* Registrations Chart */}
         <Card className="bg-[#141414] border-white/5 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">Last 12 Month Registrations</h3>
+            <h3 className="text-lg font-semibold text-white">{t('admin.registrations_chart', 'Last 12 Month Registrations')}</h3>
             <div className="flex items-center gap-4 text-xs">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-white/60" />
-                <span className="text-white/60">Male</span>
+                <span className="text-white/60">{t('admin.male', 'Male')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-red-500" />
-                <span className="text-white/60">Female</span>
+                <span className="text-white/60">{t('admin.female', 'Female')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-gray-600" />
-                <span className="text-white/60">Other</span>
+                <span className="text-white/60">{t('admin.other', 'Other')}</span>
               </div>
             </div>
           </div>

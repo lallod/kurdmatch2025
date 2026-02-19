@@ -3,8 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Search, TrendingDown, Clock, Users } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const UserJourneyTab: React.FC = () => {
+  const { t } = useTranslations();
   const journeySteps = [
     { step: 'Landing Page Visit', users: 1000, completion: 100 },
     { step: 'Registration Started', users: 650, completion: 65 },
@@ -23,7 +25,7 @@ const UserJourneyTab: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.conversion_rate', 'Conversion Rate')}</p>
                 <p className="text-2xl font-bold text-gray-900">18%</p>
               </div>
               <TrendingDown className="h-8 w-8 text-red-600" />
@@ -35,7 +37,7 @@ const UserJourneyTab: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Avg. Journey Time</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.avg_journey_time', 'Avg. Journey Time')}</p>
                 <p className="text-2xl font-bold text-gray-900">3.2d</p>
               </div>
               <Clock className="h-8 w-8 text-blue-600" />
@@ -47,7 +49,7 @@ const UserJourneyTab: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Drop-off Point</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.drop_off_point', 'Drop-off Point')}</p>
                 <p className="text-2xl font-bold text-gray-900">Photos</p>
               </div>
               <Search className="h-8 w-8 text-orange-600" />
@@ -59,7 +61,7 @@ const UserJourneyTab: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.active_users', 'Active Users')}</p>
                 <p className="text-2xl font-bold text-gray-900">180</p>
               </div>
               <Users className="h-8 w-8 text-green-600" />
@@ -70,7 +72,7 @@ const UserJourneyTab: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>User Journey Funnel</CardTitle>
+          <CardTitle>{t('admin.user_journey_funnel', 'User Journey Funnel')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -78,7 +80,7 @@ const UserJourneyTab: React.FC = () => {
               <div key={index} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">{step.step}</span>
-                  <span className="text-sm text-gray-600">{step.users} users ({step.completion}%)</span>
+                  <span className="text-sm text-gray-600">{t('admin.users_count', '{{count}} users ({{pct}}%)', { count: step.users, pct: step.completion })}</span>
                 </div>
                 <Progress value={step.completion} className="h-2" />
               </div>
