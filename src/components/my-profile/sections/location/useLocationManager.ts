@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 import { updateTravelMode } from '@/api/profiles';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -10,6 +11,7 @@ export const useLocationManager = (initialLocation: string) => {
   const [locationMode, setLocationMode] = useState<'current' | 'manual' | 'passport'>('current');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [activeTab, setActiveTab] = useState('current');
   const [passportLocation, setPassportLocation] = useState("");
 
@@ -18,7 +20,6 @@ export const useLocationManager = (initialLocation: string) => {
     const loadTravelMode = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        // Not authenticated (e.g. registration) - don't auto-detect
         setIsUsingCurrentLocation(false);
         return;
       }
@@ -38,12 +39,11 @@ export const useLocationManager = (initialLocation: string) => {
     loadTravelMode();
   }, []);
 
-  // Function to handle real geolocation detection
   const handleLocationDetection = () => {
     if (!navigator.geolocation) {
       toast({
-        title: "Geolocation not supported",
-        description: "Your browser doesn't support geolocation services.",
+        title: t('location.geolocation_not_supported', 'Geolocation not supported'),
+        description: t('location.browser_no_geolocation', "Your browser doesn't support geolocation services."),
         variant: "destructive"
       });
       return;
@@ -55,13 +55,12 @@ export const useLocationManager = (initialLocation: string) => {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          // Use OpenStreetMap Nominatim API for geocoding
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
             { 
               headers: { 
                 'Accept-Language': 'en',
-                'User-Agent': 'KurdMatch App' // Identify the app to the API service
+                'User-Agent': 'KurdMatch App'
               } 
             }
           );
@@ -72,7 +71,6 @@ export const useLocationManager = (initialLocation: string) => {
           
           const data = await response.json();
           
-          // Use a more concise format if available
           const address = data.address || {};
           const city = address.city || address.town || address.village || '';
           const state = address.state || address.county || '';
@@ -86,7 +84,6 @@ export const useLocationManager = (initialLocation: string) => {
           } else if (state && country) {
             formattedLocation = `${state}, ${country}`;
           } else {
-            // Fallback to display name if structured data is incomplete
             formattedLocation = data.display_name.split(',').slice(0, 3).join(',');
           }
           
@@ -94,37 +91,37 @@ export const useLocationManager = (initialLocation: string) => {
           setIsLoading(false);
           
           toast({
-            title: "Location updated",
-            description: "Your current location has been set."
+            title: t('location.location_updated', 'Location updated'),
+            description: t('location.current_location_set', 'Your current location has been set.')
           });
         } catch (error) {
           console.error("Error getting location:", error);
           setIsLoading(false);
           toast({
-            title: "Location error",
-            description: "Could not determine your location. Please try again.",
+            title: t('location.location_error', 'Location error'),
+            description: t('location.could_not_determine', 'Could not determine your location. Please try again.'),
             variant: "destructive"
           });
         }
       },
       (error) => {
         setIsLoading(false);
-        let errorMessage = "Could not determine your location.";
+        let errorMessage = t('location.could_not_determine', 'Could not determine your location.');
         
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = "Location permission denied. Please enable location services in your browser settings.";
+            errorMessage = t('location.permission_denied', 'Location permission denied. Please enable location services in your browser settings.');
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = "Location information is unavailable.";
+            errorMessage = t('location.position_unavailable', 'Location information is unavailable.');
             break;
           case error.TIMEOUT:
-            errorMessage = "Location request timed out.";
+            errorMessage = t('location.request_timeout', 'Location request timed out.');
             break;
         }
         
         toast({
-          title: "Location error",
+          title: t('location.location_error', 'Location error'),
           description: errorMessage,
           variant: "destructive"
         });
@@ -137,7 +134,6 @@ export const useLocationManager = (initialLocation: string) => {
     );
   };
 
-  // Format the display text for a location search result
   const formatLocationResult = (result: any) => {
     const address = result.address || {};
     
@@ -165,8 +161,8 @@ export const useLocationManager = (initialLocation: string) => {
     setIsUsingCurrentLocation(false);
     
     toast({
-      title: "Location updated",
-      description: "Your location has been manually set to " + formattedLocation
+      title: t('location.location_updated', 'Location updated'),
+      description: t('location.manually_set_to', 'Your location has been manually set to {{location}}', { location: formattedLocation })
     });
   };
 
@@ -177,7 +173,6 @@ export const useLocationManager = (initialLocation: string) => {
     setLocationMode('passport');
     setIsUsingCurrentLocation(false);
 
-    // Persist to database
     try {
       const isClearing = !formattedLocation;
       await updateTravelMode(isClearing ? null : formattedLocation, !isClearing);
@@ -186,8 +181,12 @@ export const useLocationManager = (initialLocation: string) => {
     }
     
     toast({
-      title: formattedLocation ? "Passport location set" : "Passport location cleared",
-      description: formattedLocation ? "You're now browsing from " + formattedLocation : "Travel mode deactivated",
+      title: formattedLocation 
+        ? t('location.passport_location_set', 'Passport location set') 
+        : t('location.passport_location_cleared', 'Passport location cleared'),
+      description: formattedLocation 
+        ? t('location.browsing_from', "You're now browsing from {{location}}", { location: formattedLocation }) 
+        : t('location.travel_mode_deactivated', 'Travel mode deactivated'),
       variant: "default"
     });
   };
@@ -199,12 +198,10 @@ export const useLocationManager = (initialLocation: string) => {
       setLocationMode('current');
       setIsUsingCurrentLocation(true);
       handleLocationDetection();
-      // Deactivate travel mode
       updateTravelMode(null, false).catch(console.error);
     } else if (value === 'manual') {
       setLocationMode('manual');
       setIsUsingCurrentLocation(false);
-      // Deactivate travel mode
       updateTravelMode(null, false).catch(console.error);
     } else if (value === 'passport') {
       setLocationMode('passport');
@@ -215,9 +212,6 @@ export const useLocationManager = (initialLocation: string) => {
       }
     }
   };
-
-  // Auto-detect is disabled on mount to prevent error toasts on registration.
-  // Users can click the location button to detect manually.
 
   return {
     location,
