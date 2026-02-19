@@ -123,9 +123,9 @@ const RolesPage = () => {
 
       <Tabs defaultValue="all">
         <TabsList className="mb-4">
-          <TabsTrigger value="all">All Roles</TabsTrigger>
-          <TabsTrigger value="system">System Roles</TabsTrigger>
-          <TabsTrigger value="custom">Custom Roles</TabsTrigger>
+          <TabsTrigger value="all">{t('admin.all_roles', 'All Roles')}</TabsTrigger>
+          <TabsTrigger value="system">{t('admin.system_roles', 'System Roles')}</TabsTrigger>
+          <TabsTrigger value="custom">{t('admin.custom_roles', 'Custom Roles')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
@@ -135,7 +135,7 @@ const RolesPage = () => {
                 <RoleSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
               </div>
               {loading ? (
-                <p className="text-white/60 text-center py-6">Loading roles...</p>
+                <p className="text-white/60 text-center py-6">{t('admin.loading_roles', 'Loading roles...')}</p>
               ) : (
                 <RolesTable
                   roles={filteredRoles}
@@ -151,12 +151,12 @@ const RolesPage = () => {
         <TabsContent value="system">
           <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle className="text-white">System Roles</CardTitle>
-              <CardDescription className="text-white/60">Built-in roles with predefined permissions</CardDescription>
+              <CardTitle className="text-white">{t('admin.system_roles', 'System Roles')}</CardTitle>
+              <CardDescription className="text-white/60">{t('admin.system_roles_desc', 'Built-in roles with predefined permissions')}</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <p className="text-white/60">Loading...</p>
+                <p className="text-white/60">{t('common.loading', 'Loading...')}</p>
               ) : (
                 <RolesTable
                   roles={roles.filter(r => r.isSystem)}
@@ -171,12 +171,12 @@ const RolesPage = () => {
         <TabsContent value="custom">
           <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle className="text-white">Custom Roles</CardTitle>
-              <CardDescription className="text-white/60">User-defined roles with custom permissions</CardDescription>
+              <CardTitle className="text-white">{t('admin.custom_roles', 'Custom Roles')}</CardTitle>
+              <CardDescription className="text-white/60">{t('admin.custom_roles_desc', 'User-defined roles with custom permissions')}</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <p className="text-white/60">Loading...</p>
+                <p className="text-white/60">{t('common.loading', 'Loading...')}</p>
               ) : roles.filter(r => !r.isSystem).length > 0 ? (
                 <RolesTable
                   roles={roles.filter(r => !r.isSystem)}
@@ -184,7 +184,7 @@ const RolesPage = () => {
                   onDeleteRole={handleDeleteRole}
                 />
               ) : (
-                <p className="text-white/60">No custom roles created yet.</p>
+                <p className="text-white/60">{t('admin.no_custom_roles', 'No custom roles created yet.')}</p>
               )}
             </CardContent>
           </Card>

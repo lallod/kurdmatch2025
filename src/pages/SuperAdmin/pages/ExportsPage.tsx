@@ -214,18 +214,18 @@ const ExportsPage = () => {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <label htmlFor="export-name" className="text-sm font-medium">{t('admin.export_name', 'Export Name')}</label>
-              <Input id="export-name" placeholder="e.g., Monthly User Activity Report" />
+              <Input id="export-name" placeholder={t('admin.export_name_placeholder', 'e.g., Monthly User Activity Report')} />
             </div>
             <div className="grid gap-2">
               <label className="text-sm font-medium">{t('admin.data_type', 'Data Type')}</label>
               <Select defaultValue="user-activity">
-                <SelectTrigger><SelectValue placeholder="Select data type" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t('admin.select_data_type', 'Select data type')} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="user-activity">User Activity</SelectItem>
-                  <SelectItem value="user-profiles">User Profiles</SelectItem>
-                  <SelectItem value="messages">Messages</SelectItem>
-                  <SelectItem value="financial">Financial Data</SelectItem>
-                  <SelectItem value="user-registrations">User Registrations</SelectItem>
+                  <SelectItem value="user-activity">{t('admin.user_activity', 'User Activity')}</SelectItem>
+                  <SelectItem value="user-profiles">{t('admin.user_profiles', 'User Profiles')}</SelectItem>
+                  <SelectItem value="messages">{t('admin.messages', 'Messages')}</SelectItem>
+                  <SelectItem value="financial">{t('admin.financial_data', 'Financial Data')}</SelectItem>
+                  <SelectItem value="user-registrations">{t('admin.user_registrations', 'User Registrations')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
