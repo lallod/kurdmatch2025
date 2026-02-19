@@ -31,12 +31,12 @@ const ProviderCard = ({ provider }: { provider: Provider }) => {
     mutationFn: (updates: Partial<Provider>) => updateSocialLoginProvider(provider.id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['socialLoginProviders'] });
-      toast.success(`${provider.id} provider updated`);
+      toast.success(t('admin.provider_updated', '{{provider}} provider updated', { provider: provider.id }));
       setIsEditing(false);
       setClientSecret('');
     },
     onError: (error: Error) => {
-      toast.error(`Failed to update provider: ${error.message}`);
+      toast.error(t('admin.provider_update_failed', 'Failed to update provider: {{message}}', { message: error.message }));
     }
   });
 
