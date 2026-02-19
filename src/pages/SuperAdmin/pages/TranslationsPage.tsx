@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Search, Edit2, Save, X, Plus, Download, Upload, AlertCircle, CheckCircle, ScanSearch, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Translation {
   id: string;
@@ -23,6 +24,7 @@ interface Translation {
 }
 
 const TranslationsPage = () => {
+  const { t } = useTranslations();
   const [translations, setTranslations] = useState<Translation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,7 +75,7 @@ const TranslationsPage = () => {
       setTranslations(data || []);
     } catch (error) {
       console.error('Error fetching translations:', error);
-      toast.error('Failed to load translations');
+      toast.error(t('admin.failed_load_translations', 'Failed to load translations'));
     } finally {
       setLoading(false);
     }
@@ -97,12 +99,12 @@ const TranslationsPage = () => {
 
       if (error) throw error;
 
-      toast.success('Translation updated successfully');
+      toast.success(t('admin.translation_updated', 'Translation updated successfully'));
       setEditingId(null);
       fetchTranslations();
     } catch (error) {
       console.error('Error updating translation:', error);
-      toast.error('Failed to update translation');
+      toast.error(t('admin.failed_update_translation', 'Failed to update translation'));
     }
   };
 
@@ -115,11 +117,11 @@ const TranslationsPage = () => {
 
       if (error) throw error;
 
-      toast.success('Marked as reviewed');
+      toast.success(t('admin.marked_reviewed', 'Marked as reviewed'));
       fetchTranslations();
     } catch (error) {
       console.error('Error marking as reviewed:', error);
-      toast.error('Failed to mark as reviewed');
+      toast.error(t('admin.failed_mark_reviewed', 'Failed to mark as reviewed'));
     }
   };
 
@@ -140,31 +142,31 @@ const TranslationsPage = () => {
       fetchTranslations();
     } catch (error) {
       console.error('Error extracting texts:', error);
-      toast.error('Failed to extract texts from system');
+      toast.error(t('admin.failed_extract_texts', 'Failed to extract texts from system'));
     } finally {
       setExtracting(false);
     }
   };
 
-  const filteredTranslations = translations.filter(t => 
-    t.translation_key.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.translation_value.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTranslations = translations.filter(tr => 
+    tr.translation_key.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tr.translation_value.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const needsReviewCount = translations.filter(t => t.needs_review).length;
+  const needsReviewCount = translations.filter(tr => tr.needs_review).length;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Translation Management</h1>
-          <p className="text-muted-foreground">Manage app translations across all languages</p>
+          <h1 className="text-3xl font-bold">{t('admin.translation_management', 'Translation Management')}</h1>
+          <p className="text-muted-foreground">{t('admin.manage_translations_desc', 'Manage app translations across all languages')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {needsReviewCount > 0 && (
             <Badge variant="destructive" className="gap-1">
               <AlertCircle className="w-3 h-3" />
-              {needsReviewCount} Need Review
+              {needsReviewCount} {t('admin.need_review', 'Need Review')}
             </Badge>
           )}
           <Button 
@@ -176,26 +178,26 @@ const TranslationsPage = () => {
             {extracting ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Extracting...
+                {t('admin.extracting', 'Extracting...')}
               </>
             ) : (
               <>
                 <ScanSearch className="w-4 h-4 mr-2" />
-                Extract All Texts
+                {t('admin.extract_all_texts', 'Extract All Texts')}
               </>
             )}
           </Button>
           <Button variant="outline" size="sm">
             <Download className="w-4 h-4 mr-2" />
-            Export CSV
+            {t('admin.export_csv', 'Export CSV')}
           </Button>
           <Button variant="outline" size="sm">
             <Upload className="w-4 h-4 mr-2" />
-            Import CSV
+            {t('admin.import_csv', 'Import CSV')}
           </Button>
           <Button size="sm">
             <Plus className="w-4 h-4 mr-2" />
-            Add Translation
+            {t('admin.add_translation', 'Add Translation')}
           </Button>
         </div>
       </div>
@@ -207,7 +209,7 @@ const TranslationsPage = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search translations..."
+                placeholder={t('admin.search_translations', 'Search translations...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -216,10 +218,10 @@ const TranslationsPage = () => {
 
             <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
               <SelectTrigger>
-                <SelectValue placeholder="Select language" />
+                <SelectValue placeholder={t('admin.select_language', 'Select language')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Languages</SelectItem>
+                <SelectItem value="all">{t('admin.all_languages', 'All Languages')}</SelectItem>
                 {languages.map(lang => (
                   <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
                 ))}
@@ -228,7 +230,7 @@ const TranslationsPage = () => {
 
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger>
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder={t('admin.select_category', 'Select category')} />
               </SelectTrigger>
               <SelectContent>
                 {categories.map(cat => (
@@ -244,7 +246,7 @@ const TranslationsPage = () => {
               onClick={() => setFilterNeedsReview(!filterNeedsReview)}
             >
               <AlertCircle className="w-4 h-4 mr-2" />
-              Needs Review Only
+              {t('admin.needs_review_only', 'Needs Review Only')}
             </Button>
           </div>
         </CardContent>
@@ -254,7 +256,7 @@ const TranslationsPage = () => {
       <Card>
         <CardHeader>
           <CardTitle>
-            Translations ({filteredTranslations.length})
+            {t('admin.translations_count', 'Translations')} ({filteredTranslations.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -264,7 +266,7 @@ const TranslationsPage = () => {
             </div>
           ) : filteredTranslations.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              No translations found
+              {t('admin.no_translations_found', 'No translations found')}
             </div>
           ) : (
             <div className="space-y-2">
@@ -287,7 +289,7 @@ const TranslationsPage = () => {
                       {translation.needs_review && (
                         <Badge variant="destructive" className="text-xs gap-1">
                           <AlertCircle className="w-3 h-3" />
-                          Needs Review
+                          {t('admin.needs_review', 'Needs Review')}
                         </Badge>
                       )}
                     </div>
@@ -323,7 +325,7 @@ const TranslationsPage = () => {
                               size="sm"
                               variant="ghost"
                               onClick={() => handleMarkReviewed(translation.id)}
-                              title="Mark as reviewed"
+                              title={t('admin.marked_reviewed', 'Mark as reviewed')}
                             >
                               <CheckCircle className="w-4 h-4" />
                             </Button>
@@ -341,7 +343,7 @@ const TranslationsPage = () => {
 
                     {translation.context && (
                       <p className="text-xs text-muted-foreground">
-                        Context: {translation.context}
+                        {t('admin.context_label', 'Context')}: {translation.context}
                       </p>
                     )}
                   </div>
