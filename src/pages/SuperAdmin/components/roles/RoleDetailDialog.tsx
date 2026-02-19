@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Role } from './types';
 import { getRoleIcon } from './RoleUtils';
@@ -22,6 +21,7 @@ import {
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Edit } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface RoleDetailDialogProps {
   role: Role | null;
@@ -30,6 +30,7 @@ interface RoleDetailDialogProps {
 }
 
 const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenChange }) => {
+  const { t } = useTranslations();
   const [editPermissions, setEditPermissions] = useState(false);
   
   if (!role) return null;
@@ -51,9 +52,9 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center">
               <Badge variant={role.isSystem ? "outline" : "default"} className="mr-2">
-                {role.isSystem ? 'System Role' : 'Custom Role'}
+                {role.isSystem ? t('admin.system_role', 'System Role') : t('admin.custom_role', 'Custom Role')}
               </Badge>
-              <span className="text-sm text-gray-500">{role.userCount} users assigned</span>
+              <span className="text-sm text-gray-500">{role.userCount} {t('admin.users_assigned', 'users assigned')}</span>
             </div>
             
             {!editPermissions ? (
@@ -63,15 +64,15 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
                 disabled={role.isSystem && role.name === 'Super Admin'}
               >
                 <Edit size={16} className="mr-2" />
-                Edit Permissions
+                {t('admin.edit_permissions', 'Edit Permissions')}
               </Button>
             ) : (
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setEditPermissions(false)}>
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </Button>
                 <Button>
-                  Save Changes
+                  {t('admin.save_changes', 'Save Changes')}
                 </Button>
               </div>
             )}
@@ -79,22 +80,22 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
           
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-medium mb-4">Permission Settings</h3>
+              <h3 className="text-lg font-medium mb-4">{t('admin.permission_settings', 'Permission Settings')}</h3>
               <div className="rounded-md border overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Module</TableHead>
-                      <TableHead>View</TableHead>
-                      <TableHead>Create</TableHead>
-                      <TableHead>Edit</TableHead>
-                      <TableHead>Delete</TableHead>
-                      <TableHead>Special</TableHead>
+                      <TableHead>{t('admin.module', 'Module')}</TableHead>
+                      <TableHead>{t('admin.view', 'View')}</TableHead>
+                      <TableHead>{t('admin.create', 'Create')}</TableHead>
+                      <TableHead>{t('admin.edit', 'Edit')}</TableHead>
+                      <TableHead>{t('admin.delete', 'Delete')}</TableHead>
+                      <TableHead>{t('admin.special', 'Special')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
-                      <TableCell className="font-medium">Users</TableCell>
+                      <TableCell className="font-medium">{t('admin.users', 'Users')}</TableCell>
                       <TableCell>
                         {editPermissions ? (
                           <Checkbox defaultChecked={role.permissions.users.view} />
@@ -126,7 +127,7 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
                       <TableCell>—</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">Content</TableCell>
+                      <TableCell className="font-medium">{t('admin.content', 'Content')}</TableCell>
                       <TableCell>
                         {editPermissions ? (
                           <Checkbox defaultChecked={role.permissions.content.view} />
@@ -158,7 +159,7 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
                       <TableCell>—</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">Settings</TableCell>
+                      <TableCell className="font-medium">{t('admin.settings', 'Settings')}</TableCell>
                       <TableCell>
                         {editPermissions ? (
                           <Checkbox defaultChecked={role.permissions.settings.view} />
@@ -178,7 +179,7 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
                       <TableCell>—</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">Roles</TableCell>
+                      <TableCell className="font-medium">{t('admin.roles', 'Roles')}</TableCell>
                       <TableCell>
                         {editPermissions ? (
                           <Checkbox defaultChecked={role.permissions.roles.view} />
@@ -210,7 +211,7 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
                       <TableCell>—</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">Reports</TableCell>
+                      <TableCell className="font-medium">{t('admin.reports', 'Reports')}</TableCell>
                       <TableCell>
                         {editPermissions ? (
                           <Checkbox defaultChecked={role.permissions.reports.view} />
@@ -239,7 +240,7 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="font-medium">Billing</TableCell>
+                      <TableCell className="font-medium">{t('admin.billing', 'Billing')}</TableCell>
                       <TableCell>
                         {editPermissions ? (
                           <Checkbox defaultChecked={role.permissions.billing.view} />
@@ -269,7 +270,7 @@ const RoleDetailDialog: React.FC<RoleDetailDialogProps> = ({ role, open, onOpenC
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.close', 'Close')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
