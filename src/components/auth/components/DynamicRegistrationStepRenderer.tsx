@@ -7,6 +7,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { LoadingSpinner } from '@/components/app/LoadingSpinner';
 import PhotoUploadComponent from './PhotoUploadComponent';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DynamicRegistrationStepRendererProps {
   step: number;
@@ -23,6 +24,7 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
   locationLoading,
   questions
 }) => {
+  const { t } = useTranslations();
   const getStepQuestions = (stepNumber: number) => {
     return questions.filter(q => {
       if (stepNumber === 1) {
@@ -48,8 +50,8 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
       return (
         <div className="space-y-4">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Create Account</h2>
-            <p className="text-primary-foreground/80 mt-1">Set up your secure login credentials</p>
+            <h2 className="text-2xl font-bold text-white">{t('reg.create_account', 'Create Account')}</h2>
+            <p className="text-primary-foreground/80 mt-1">{t('reg.setup_credentials', 'Set up your secure login credentials')}</p>
           </div>
           
           <FormField
@@ -57,10 +59,10 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Email</FormLabel>
+                <FormLabel className="text-white">{t('reg.email', 'Email')}</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="your.email@example.com" 
+                    placeholder={t('reg.email_placeholder', 'your.email@example.com')}
                     {...field}
                     className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                   />
@@ -75,7 +77,7 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Password</FormLabel>
+                <FormLabel className="text-white">{t('reg.password', 'Password')}</FormLabel>
                 <FormControl>
                   <Input 
                     type="password"
@@ -94,7 +96,7 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Confirm Password</FormLabel>
+                <FormLabel className="text-white">{t('reg.confirm_password', 'Confirm Password')}</FormLabel>
                 <FormControl>
                   <Input 
                     type="password"
@@ -114,8 +116,8 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
       return (
         <div className="space-y-4">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Tell us about yourself</h2>
-            <p className="text-primary-foreground/80 mt-1">Basic information to create your profile</p>
+            <h2 className="text-2xl font-bold text-white">{t('reg.tell_us_about_yourself', 'Tell us about yourself')}</h2>
+            <p className="text-primary-foreground/80 mt-1">{t('reg.basic_info', 'Basic information to create your profile')}</p>
           </div>
           {stepQuestions.map(question => (
             <DynamicFieldRenderer 
@@ -131,8 +133,8 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
       return (
         <div className="space-y-4">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Location</h2>
-            <p className="text-primary-foreground/80 mt-1">Where are you from?</p>
+            <h2 className="text-2xl font-bold text-white">{t('reg.location', 'Location')}</h2>
+            <p className="text-primary-foreground/80 mt-1">{t('reg.where_are_you_from', 'Where are you from?')}</p>
           </div>
           
           <FormField
@@ -140,11 +142,11 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
             name="location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Current Location</FormLabel>
+                <FormLabel className="text-white">{t('reg.current_location', 'Current Location')}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input 
-                      placeholder={locationLoading ? "Detecting location..." : "Enter your city"}
+                      placeholder={locationLoading ? t('reg.detecting_location', 'Detecting location...') : t('reg.enter_your_city', 'Enter your city')}
                       {...field}
                       value={field.value || location}
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
@@ -175,8 +177,8 @@ const DynamicRegistrationStepRenderer: React.FC<DynamicRegistrationStepRendererP
       return (
         <div className="space-y-4">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Add Photos</h2>
-            <p className="text-primary-foreground/80 mt-1">Show your best self</p>
+            <h2 className="text-2xl font-bold text-white">{t('reg.add_photos', 'Add Photos')}</h2>
+            <p className="text-primary-foreground/80 mt-1">{t('reg.show_your_best_self', 'Show your best self')}</p>
           </div>
           
           <PhotoUploadComponent form={form} />
