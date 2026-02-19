@@ -4,6 +4,7 @@ import { MapPin } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import LocationTabs from './LocationTabs';
 import type { KurdistanRegion } from '@/types/profile';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LocationSectionContentProps {
   location: string;
@@ -28,17 +29,18 @@ const LocationSectionContent: React.FC<LocationSectionContentProps> = ({
   onManualLocationSelect,
   onPassportLocationSelect
 }) => {
+  const { t } = useTranslations();
   return (
     <ScrollArea className="h-[calc(100vh-5rem)]">
       <div className="py-6 pr-6">
-        <h3 className="text-lg font-semibold mb-6">Location Information</h3>
+        <h3 className="text-lg font-semibold mb-6">{t('location.info', 'Location Information')}</h3>
         
         <div className="space-y-4 mb-6">
           <div className="flex items-center gap-2">
             <div className="bg-primary/10 p-2 rounded-full">
               <MapPin size={20} className="text-primary" />
             </div>
-            <h4 className="text-md font-medium">Your Location</h4>
+            <h4 className="text-md font-medium">{t('location.your_location', 'Your Location')}</h4>
           </div>
           
           <LocationTabs 
