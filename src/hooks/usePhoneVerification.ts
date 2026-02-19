@@ -15,7 +15,7 @@ export const usePhoneVerification = () => {
     setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { throw new Error('Not authenticated'); }
+      if (!session) { throw new Error(t('common.not_authenticated', 'Not authenticated')); }
 
       const { data, error } = await supabase.functions.invoke('send-sms-verification', { body: { phoneNumber } });
       if (error) throw error;
@@ -26,7 +26,7 @@ export const usePhoneVerification = () => {
         toast({ title: t('phone.code_sent', 'Code Sent'), description: t('phone.code_sent_desc', 'Verification code has been sent to your phone') });
         return true;
       } else {
-        throw new Error(data.error || 'Failed to send code');
+        throw new Error(data.error || t('phone.send_code_failed', 'Failed to send code'));
       }
     } catch (error: any) {
       console.error('Error sending verification code:', error);
@@ -41,7 +41,7 @@ export const usePhoneVerification = () => {
     setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { throw new Error('Not authenticated'); }
+      if (!session) { throw new Error(t('common.not_authenticated', 'Not authenticated')); }
 
       const { data, error } = await supabase.functions.invoke('verify-phone-code', { body: { code } });
       if (error) throw error;
@@ -51,7 +51,7 @@ export const usePhoneVerification = () => {
         toast({ title: t('phone.verified', 'Verified!'), description: t('phone.verified_desc', 'Your phone number has been verified successfully') });
         return true;
       } else {
-        throw new Error(data.error || 'Failed to verify code');
+        throw new Error(data.error || t('phone.verify_code_failed', 'Failed to verify code'));
       }
     } catch (error: any) {
       console.error('Error verifying code:', error);

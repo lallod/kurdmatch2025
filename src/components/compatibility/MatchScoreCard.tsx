@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MatchScoreBreakdown {
   interests: number;
@@ -41,6 +42,7 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
   const [data, setData] = useState<MatchScoreData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslations();
 
   const fetchMatchScore = async () => {
     setIsLoading(true);
@@ -57,7 +59,7 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
       onScoreLoaded?.(result.score);
     } catch (err: any) {
       console.error('Error fetching match score:', err);
-      setError(err.message || 'Failed to calculate match score');
+      setError(err.message || t('match.calc_failed', 'Failed to calculate match score'));
     } finally {
       setIsLoading(false);
     }
@@ -86,12 +88,12 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 90) return 'Perfect Match';
-    if (score >= 80) return 'Great Match';
-    if (score >= 70) return 'Good Match';
-    if (score >= 60) return 'Potential';
-    if (score >= 50) return 'Worth Exploring';
-    return 'Getting to Know';
+    if (score >= 90) return t('match.perfect', 'Perfect Match');
+    if (score >= 80) return t('match.great', 'Great Match');
+    if (score >= 70) return t('match.good', 'Good Match');
+    if (score >= 60) return t('match.potential', 'Potential');
+    if (score >= 50) return t('match.worth_exploring', 'Worth Exploring');
+    return t('match.getting_to_know', 'Getting to Know');
   };
 
   if (isLoading) {
@@ -99,7 +101,7 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
       <Card className={cn("bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20", className)}>
         <CardContent className="flex items-center justify-center py-8">
           <RefreshCw className="w-5 h-5 animate-spin text-purple-400 mr-2" />
-          <span className="text-purple-300">Calculating compatibility...</span>
+          <span className="text-purple-300">{t('match.calculating', 'Calculating compatibility...')}</span>
         </CardContent>
       </Card>
     );
@@ -117,7 +119,7 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
             className="w-full mt-2 text-red-300 hover:text-red-200"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            Try Again
+            {t('common.try_again', 'Try Again')}
           </Button>
         </CardContent>
       </Card>
@@ -128,28 +130,28 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
 
   const breakdownItems = [
     { 
-      label: 'Shared Interests', 
+      label: t('match.shared_interests', 'Shared Interests'), 
       value: data.breakdown.interests, 
       max: 30, 
       icon: <Heart className="w-4 h-4" />,
       color: 'from-pink-500 to-rose-500'
     },
     { 
-      label: 'Core Values', 
+      label: t('match.core_values', 'Core Values'), 
       value: data.breakdown.values, 
       max: 25, 
       icon: <Star className="w-4 h-4" />,
       color: 'from-purple-500 to-indigo-500'
     },
     { 
-      label: 'Lifestyle Match', 
+      label: t('match.lifestyle_match', 'Lifestyle Match'), 
       value: data.breakdown.lifestyle, 
       max: 25, 
       icon: <Users className="w-4 h-4" />,
       color: 'from-blue-500 to-cyan-500'
     },
     { 
-      label: 'Relationship Goals', 
+      label: t('match.relationship_goals', 'Relationship Goals'), 
       value: data.breakdown.goals, 
       max: 20, 
       icon: <Target className="w-4 h-4" />,
@@ -163,7 +165,7 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-purple-400" />
-            <span className="text-lg">Match Score</span>
+            <span className="text-lg">{t('match.match_score', 'Match Score')}</span>
           </div>
           <Button 
             variant="ghost" 
@@ -206,7 +208,7 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
             </p>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               <TrendingUp className="w-3 h-3" />
-              Based on AI analysis
+              {t('match.based_on_ai', 'Based on AI analysis')}
             </p>
           </div>
         </motion.div>
@@ -245,7 +247,7 @@ export const MatchScoreCard = ({ targetUserId, className, onScoreLoaded }: Match
           <div className="pt-3 border-t border-border/50">
             <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
               <Zap className="w-3 h-3" />
-              What you have in common
+              {t('match.in_common', 'What you have in common')}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {data.commonalities.map((item, index) => (
