@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { setupSuperAdmin } from '@/utils/auth/adminManager';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const useSetupManager = () => {
   const [isSettingUp, setIsSettingUp] = useState(false);
@@ -10,6 +11,7 @@ export const useSetupManager = () => {
   const [retryAfter, setRetryAfter] = useState<number | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   // Countdown timer for retry
   useEffect(() => {
@@ -38,11 +40,11 @@ export const useSetupManager = () => {
         
         if (result.success) {
           toast({
-            title: "Admin Account Ready",
-            description: "Super admin account has been verified successfully.",
+            title: t('admin.account_ready', 'Admin Account Ready'),
+            description: t('admin.account_verified', 'Super admin account has been verified successfully.'),
           });
         } else {
-          const description = result.message || "There was a problem setting up the admin account.";
+          const description = result.message || t('admin.setup_problem', 'There was a problem setting up the admin account.');
           setSetupMessage(description);
           
           if (result.shouldRetry && result.retryAfter) {
@@ -51,7 +53,7 @@ export const useSetupManager = () => {
           }
           
           toast({
-            title: result.shouldRetry ? "Setup Delayed" : "Setup Issue",
+            title: result.shouldRetry ? t('admin.setup_delayed', 'Setup Delayed') : t('admin.setup_issue', 'Setup Issue'),
             description: description,
             variant: result.shouldRetry ? "default" : "destructive",
           });
@@ -60,11 +62,11 @@ export const useSetupManager = () => {
         console.error('Setup manager error:', error);
         setIsSettingUp(false);
         setSetupComplete(false);
-        setSetupMessage(`Unexpected error: ${error.message}`);
+        setSetupMessage(`${t('common.unexpected_error', 'Unexpected error')}: ${error.message}`);
         
         toast({
-          title: "Setup Error",
-          description: `An unexpected error occurred: ${error.message}`,
+          title: t('admin.setup_error', 'Setup Error'),
+          description: `${t('common.unexpected_error', 'An unexpected error occurred')}: ${error.message}`,
           variant: "destructive",
         });
       }
@@ -89,11 +91,11 @@ export const useSetupManager = () => {
       
       if (result.success) {
         toast({
-          title: "Admin Account Ready",
-          description: "Super admin account has been verified successfully.",
+          title: t('admin.account_ready', 'Admin Account Ready'),
+          description: t('admin.account_verified', 'Super admin account has been verified successfully.'),
         });
       } else {
-        const description = result.message || "There was a problem setting up the admin account.";
+        const description = result.message || t('admin.setup_problem', 'There was a problem setting up the admin account.');
         setSetupMessage(description);
         
         if (result.shouldRetry && result.retryAfter) {
@@ -102,7 +104,7 @@ export const useSetupManager = () => {
         }
         
         toast({
-          title: result.shouldRetry ? "Setup Delayed" : "Setup Issue",
+          title: result.shouldRetry ? t('admin.setup_delayed', 'Setup Delayed') : t('admin.setup_issue', 'Setup Issue'),
           description: description,
           variant: result.shouldRetry ? "default" : "destructive",
         });
@@ -111,11 +113,11 @@ export const useSetupManager = () => {
       console.error('Retry setup error:', error);
       setIsSettingUp(false);
       setSetupComplete(false);
-      setSetupMessage(`Retry failed: ${error.message}`);
+      setSetupMessage(`${t('admin.retry_failed', 'Retry failed')}: ${error.message}`);
       
       toast({
-        title: "Retry Failed",
-        description: `Retry failed: ${error.message}`,
+        title: t('admin.retry_failed', 'Retry Failed'),
+        description: `${t('admin.retry_failed', 'Retry failed')}: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -128,8 +130,8 @@ export const useSetupManager = () => {
     setCountdown(0);
     
     toast({
-      title: "Cache Cleared",
-      description: "Setup cache has been cleared. You can now retry the setup.",
+      title: t('admin.cache_cleared', 'Cache Cleared'),
+      description: t('admin.cache_cleared_desc', 'Setup cache has been cleared. You can now retry the setup.'),
     });
   };
 

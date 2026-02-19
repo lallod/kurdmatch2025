@@ -10,9 +10,11 @@ import { useLocationManager } from '@/components/my-profile/sections/location/us
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { registrationSchema, RegistrationFormValues } from '../utils/registrationSchema';
 import { registrationSteps } from '../utils/registrationSteps';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const useRegistrationFormLogic = () => {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const { signUp } = useSupabaseAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -159,8 +161,8 @@ export const useRegistrationFormLogic = () => {
           if (error) {
             console.error('Error checking email:', error);
             toast({
-              title: "Unable to verify email",
-              description: "Please check your connection and try again.",
+              title: t('reg.unable_verify_email', 'Unable to verify email'),
+              description: t('reg.check_connection', 'Please check your connection and try again.'),
               variant: "destructive"
             });
             return;
@@ -172,8 +174,8 @@ export const useRegistrationFormLogic = () => {
               message: 'This email is already registered'
             });
             toast({
-              title: "Email Already Registered",
-              description: "Please use a different email or sign in to your existing account.",
+              title: t('reg.email_already_registered', 'Email Already Registered'),
+              description: t('reg.use_different_email', 'Please use a different email or sign in to your existing account.'),
               variant: "destructive"
             });
             return;
@@ -320,8 +322,8 @@ export const useRegistrationFormLogic = () => {
           if (photoInsertError) {
             console.error("Failed to save photos:", photoInsertError);
             toast({
-              title: "Photo Storage Error",
-              description: "Photos uploaded but failed to save to database",
+              title: t('reg.photo_storage_error', 'Photo Storage Error'),
+              description: t('reg.photos_save_failed', 'Photos uploaded but failed to save to database'),
             });
           }
         }
@@ -330,16 +332,16 @@ export const useRegistrationFormLogic = () => {
       clearSavedData();
       
       toast({
-        title: "Success!",
-        description: "Your account has been created. Please check your email to verify your account.",
+        title: t('reg.success', 'Success!'),
+        description: t('reg.account_created', 'Your account has been created. Please check your email to verify your account.'),
       });
 
       navigate('/auth');
     } catch (error: any) {
       console.error('Registration error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to create account. Please try again.",
+        title: t('common.error', 'Error'),
+        description: error.message || t('reg.create_failed', 'Failed to create account. Please try again.'),
         variant: "destructive",
       });
     }
