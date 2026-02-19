@@ -7,6 +7,7 @@ import { User } from '../../types';
 import { getStatusBadge, getRoleBadge } from '../../UserUtils';
 import TablePagination from '../../TablePagination';
 import { Eye, RefreshCw } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EnhancedUsersTableProps {
   users: User[];
@@ -29,6 +30,8 @@ const EnhancedUsersTable: React.FC<EnhancedUsersTableProps> = ({
   usersPerPage,
   onPageChange
 }) => {
+  const { t } = useTranslations();
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -43,11 +46,11 @@ const EnhancedUsersTable: React.FC<EnhancedUsersTableProps> = ({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="text-sm text-gray-600">
-          Showing {users.length} of {totalUsers} users
+          {t('admin.showing_users', 'Showing {{count}} of {{total}} users', { count: users.length, total: totalUsers })}
         </div>
         <Button variant="outline" size="sm" onClick={onRefresh} className="gap-2">
           <RefreshCw size={14} />
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -55,12 +58,12 @@ const EnhancedUsersTable: React.FC<EnhancedUsersTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Activity</TableHead>
-              <TableHead>Completion</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('common.user', 'User')}</TableHead>
+              <TableHead>{t('common.status', 'Status')}</TableHead>
+              <TableHead>{t('common.role', 'Role')}</TableHead>
+              <TableHead>{t('admin.activity', 'Activity')}</TableHead>
+              <TableHead>{t('admin.completion', 'Completion')}</TableHead>
+              <TableHead className="text-right">{t('common.actions', 'Actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -77,14 +80,14 @@ const EnhancedUsersTable: React.FC<EnhancedUsersTableProps> = ({
                 <TableCell>{getRoleBadge(user.role)}</TableCell>
                 <TableCell>
                   <div className="flex flex-col text-sm">
-                    <span>Joined: {user.joinDate}</span>
-                    <span className="text-gray-500">Last: {user.lastActive}</span>
+                    <span>{t('admin.joined', 'Joined')}: {user.joinDate}</span>
+                    <span className="text-gray-500">{t('admin.last', 'Last')}: {user.lastActive}</span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col text-sm">
-                    <span>{user.photoCount} photos</span>
-                    <span className="text-gray-500">{user.messageCount} messages</span>
+                    <span>{user.photoCount} {t('common.photos', 'photos')}</span>
+                    <span className="text-gray-500">{user.messageCount} {t('common.messages', 'messages')}</span>
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
@@ -95,7 +98,7 @@ const EnhancedUsersTable: React.FC<EnhancedUsersTableProps> = ({
                     className="gap-2"
                   >
                     <Eye size={14} />
-                    View
+                    {t('common.view', 'View')}
                   </Button>
                 </TableCell>
               </TableRow>

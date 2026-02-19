@@ -70,9 +70,9 @@ const AdvancedSearch = () => {
           <div className="flex gap-2">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-              <Input type="text" placeholder="Search by name, bio, or occupation..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()} className="pl-10 bg-card border-border text-foreground placeholder:text-muted-foreground" />
+              <Input type="text" placeholder={t('search.search_placeholder', 'Search by name, bio, or occupation...')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()} className="pl-10 bg-card border-border text-foreground placeholder:text-muted-foreground" />
             </div>
-            <Button onClick={handleSearch} className="bg-primary text-primary-foreground hover:bg-primary/90">Search</Button>
+            <Button onClick={handleSearch} className="bg-primary text-primary-foreground hover:bg-primary/90">{t('common.search', 'Search')}</Button>
             <Button variant="outline" size="icon" onClick={() => setShowFilters(!showFilters)} className="border-border text-foreground hover:bg-muted">
               <Filter className="h-4 w-4" />
             </Button>
@@ -88,15 +88,15 @@ const AdvancedSearch = () => {
         )}
         <div className="space-y-3">
           {loading ? (
-            <div className="text-center py-12 text-foreground"><p>Searching...</p></div>
+            <div className="text-center py-12 text-foreground"><p>{t('common.searching', 'Searching...')}</p></div>
           ) : profiles.length === 0 ? (
             <div className="text-center py-12 text-foreground">
-              <p className="text-muted-foreground">No profiles found</p>
-              <p className="text-sm text-muted-foreground/70 mt-2">Try adjusting your filters</p>
+              <p className="text-muted-foreground">{t('search.no_profiles', 'No profiles found')}</p>
+              <p className="text-sm text-muted-foreground/70 mt-2">{t('search.try_adjusting', 'Try adjusting your filters')}</p>
             </div>
           ) : (
             <>
-              <p className="text-muted-foreground text-sm mb-4">Found {profiles.length} profile{profiles.length !== 1 ? 's' : ''}</p>
+              <p className="text-muted-foreground text-sm mb-4">{t('search.found_profiles', 'Found {{count}} profiles', { count: profiles.length })}</p>
               {profiles.map((profile) => (
                 <div key={profile.id} onClick={() => navigate(`/profile/${profile.id}`)} className="bg-card/50 backdrop-blur-md border border-border/20 rounded-2xl p-4 cursor-pointer hover:bg-card/70 transition-colors">
                   <div className="flex items-start gap-4">
@@ -107,7 +107,7 @@ const AdvancedSearch = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-foreground font-semibold truncate">{profile.name}, {profile.age}</h3>
-                        {profile.verified && <Badge variant="secondary" className="bg-info/20 text-info border-info/30">✓ Verified</Badge>}
+                        {profile.verified && <Badge variant="secondary" className="bg-info/20 text-info border-info/30">✓ {t('common.verified', 'Verified')}</Badge>}
                       </div>
                       <p className="text-muted-foreground text-sm mb-2">{profile.location}</p>
                       {profile.kurdistan_region && <Badge variant="outline" className="border-border text-muted-foreground mb-2">{profile.kurdistan_region}</Badge>}

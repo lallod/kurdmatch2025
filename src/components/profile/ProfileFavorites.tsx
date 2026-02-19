@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   BookOpen, Film, Music, Utensils, Headphones, Pencil, Youtube, ExternalLink
 } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileFavoritesProps {
   details: {
@@ -25,7 +26,8 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
   formatList,
   isMobile
 }) => {
-  // Helper function to determine if a music entry is from Spotify or YouTube
+  const { t } = useTranslations();
+
   const getMusicIcon = (music: string) => {
     const lowerCaseMusic = music.toLowerCase();
     if (lowerCaseMusic.includes('spotify') || lowerCaseMusic.includes('spoti.fi')) {
@@ -42,7 +44,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <BookOpen size={16} className="text-tinder-peach" />
-          <span className="text-sm font-medium">Books</span>
+          <span className="text-sm font-medium">{t('profile.books', 'Books')}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {(details.favoriteBooks || []).map((book, index) => (
@@ -54,7 +56,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Film size={16} className="text-tinder-peach" />
-          <span className="text-sm font-medium">Movies</span>
+          <span className="text-sm font-medium">{t('profile.movies', 'Movies')}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {(details.favoriteMovies || []).map((movie, index) => (
@@ -66,7 +68,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Music size={16} className="text-tinder-peach" />
-          <span className="text-sm font-medium">Music</span>
+          <span className="text-sm font-medium">{t('profile.music', 'Music')}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {(details.favoriteMusic || []).map((music, index) => (
@@ -83,7 +85,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Utensils size={16} className="text-tinder-peach" />
-          <span className="text-sm font-medium">Food</span>
+          <span className="text-sm font-medium">{t('profile.food', 'Food')}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {(details.favoriteFoods || []).map((food, index) => (
@@ -95,7 +97,7 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Headphones size={16} className="text-tinder-peach" />
-          <span className="text-sm font-medium">Podcasts</span>
+          <span className="text-sm font-medium">{t('profile.podcasts', 'Podcasts')}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {Array.isArray(details.favoritePodcasts) ? 
@@ -112,9 +114,9 @@ const ProfileFavorites: React.FC<ProfileFavoritesProps> = ({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Pencil size={16} className="text-tinder-peach" />
-          <span className="text-sm font-medium">Favorite Quote</span>
+          <span className="text-sm font-medium">{t('profile.favorite_quote', 'Favorite Quote')}</span>
         </div>
-        <p className="text-muted-foreground italic">"{details.favoriteQuote || "Not specified"}"</p>
+        <p className="text-muted-foreground italic">"{details.favoriteQuote || t('common.not_specified', 'Not specified')}"</p>
       </div>
     </div>
   );
