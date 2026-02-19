@@ -30,19 +30,9 @@ interface ProfileHeaderProps {
 }
 
 const backgroundColors = [
-  "#F1F0FB", // Soft Gray
-  "#E5DEFF", // Soft Purple
-  "#D3E4FD", // Soft Blue
-  "#FFDEE2", // Soft Pink
-  "#FDE1D3", // Soft Peach
-  "#FEF7CD", // Soft Yellow
-  "#F2FCE2", // Soft Green
-  "#FD297B", // Tinder Rose
-  "#FF5864", // Tinder Orange
-  "#9b87f5", // Primary Purple
-  "#D946EF", // Magenta Pink
-  "#F97316", // Bright Orange
-  "#0EA5E9", // Ocean Blue
+  "#F1F0FB", "#E5DEFF", "#D3E4FD", "#FFDEE2", "#FDE1D3",
+  "#FEF7CD", "#F2FCE2", "#FD297B", "#FF5864", "#9b87f5",
+  "#D946EF", "#F97316", "#0EA5E9",
 ];
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -131,11 +121,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               {location}
             </Badge>
             <Badge variant="outline" className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm">
-              Active {lastActive}
+              {t('profile.active_time', 'Active {{time}}', { time: lastActive })}
             </Badge>
             {distance && (
               <Badge variant="outline" className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm">
-                {distance} miles away
+                {t('profile.miles_away', '{{distance}} miles away', { distance: String(distance) })}
               </Badge>
             )}
             {kurdistanRegion && (
@@ -152,7 +142,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               onClick={handleMessage}
             >
               <MessageCircle size={isMobile ? 14 : 16} />
-              <span>Message</span>
+              <span>{t('common.message', 'Message')}</span>
             </Button>
             <Button 
               size={isMobile ? "default" : "lg"} 
@@ -161,7 +151,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               onClick={handleLike}
             >
               <Heart size={isMobile ? 14 : 16} className="animate-pulse-heart" />
-              <span>Like</span>
+              <span>{t('common.like', 'Like')}</span>
             </Button>
             <Button 
               size={isMobile ? "default" : "lg"} 
@@ -170,7 +160,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               onClick={handleDislike}
             >
               <X size={isMobile ? 14 : 16} />
-              <span>Dislike</span>
+              <span>{t('common.dislike', 'Dislike')}</span>
             </Button>
             
             {onBackgroundColorChange && (
@@ -182,13 +172,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     className="rounded-full bg-white backdrop-blur-sm border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 shadow-md transition-all-slow hover:shadow-lg flex items-center gap-2"
                   >
                     <Palette size={isMobile ? 14 : 16} />
-                    <span>Theme</span>
+                    <span>{t('common.theme', 'Theme')}</span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-64 p-3" align="end">
                   <div className="space-y-2">
-                    <h4 className="font-medium text-sm">Change Background</h4>
-                    <p className="text-xs text-muted-foreground">Pick a color for your profile background</p>
+                    <h4 className="font-medium text-sm">{t('profile.change_background', 'Change Background')}</h4>
+                    <p className="text-xs text-muted-foreground">{t('profile.pick_color', 'Pick a color for your profile background')}</p>
                     <div className="grid grid-cols-5 gap-2 pt-2">
                       {backgroundColors.map((color) => (
                         <button

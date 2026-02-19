@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Calendar } from 'lucide-react';
 import { calculateZodiacSign } from '@/utils/zodiacCalculator';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DateOfBirthSelectorProps {
   day?: string;
@@ -12,24 +13,25 @@ interface DateOfBirthSelectorProps {
 }
 
 const DateOfBirthSelector = ({ day, month, year, onDateChange }: DateOfBirthSelectorProps) => {
+  const { t } = useTranslations();
   const currentYear = new Date().getFullYear();
   const minYear = currentYear - 100;
   const maxYear = currentYear - 18;
 
   const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
   const months = [
-    { value: '1', label: 'January' },
-    { value: '2', label: 'February' },
-    { value: '3', label: 'March' },
-    { value: '4', label: 'April' },
-    { value: '5', label: 'May' },
-    { value: '6', label: 'June' },
-    { value: '7', label: 'July' },
-    { value: '8', label: 'August' },
-    { value: '9', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' }
+    { value: '1', label: t('months.january', 'January') },
+    { value: '2', label: t('months.february', 'February') },
+    { value: '3', label: t('months.march', 'March') },
+    { value: '4', label: t('months.april', 'April') },
+    { value: '5', label: t('months.may', 'May') },
+    { value: '6', label: t('months.june', 'June') },
+    { value: '7', label: t('months.july', 'July') },
+    { value: '8', label: t('months.august', 'August') },
+    { value: '9', label: t('months.september', 'September') },
+    { value: '10', label: t('months.october', 'October') },
+    { value: '11', label: t('months.november', 'November') },
+    { value: '12', label: t('months.december', 'December') }
   ];
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => (maxYear - i).toString());
 
@@ -57,12 +59,12 @@ const DateOfBirthSelector = ({ day, month, year, onDateChange }: DateOfBirthSele
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Calendar className="w-4 h-4 text-purple-400 flex-shrink-0" />
-        <Label className="text-white">Date of Birth</Label>
+        <Label className="text-white">{t('profile.date_of_birth', 'Date of Birth')}</Label>
       </div>
       <div className="grid grid-cols-3 gap-2">
         <Select value={day} onValueChange={(value) => handleChange('day', value)}>
           <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">
-            <SelectValue placeholder="Day" />
+            <SelectValue placeholder={t('common.day', 'Day')} />
           </SelectTrigger>
           <SelectContent className="bg-gray-900 border-gray-700 max-h-60">
             {days.map(d => (
@@ -75,7 +77,7 @@ const DateOfBirthSelector = ({ day, month, year, onDateChange }: DateOfBirthSele
 
         <Select value={month} onValueChange={(value) => handleChange('month', value)}>
           <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">
-            <SelectValue placeholder="Month" />
+            <SelectValue placeholder={t('common.month', 'Month')} />
           </SelectTrigger>
           <SelectContent className="bg-gray-900 border-gray-700 max-h-60">
             {months.map(m => (
@@ -88,7 +90,7 @@ const DateOfBirthSelector = ({ day, month, year, onDateChange }: DateOfBirthSele
 
         <Select value={year} onValueChange={(value) => handleChange('year', value)}>
           <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">
-            <SelectValue placeholder="Year" />
+            <SelectValue placeholder={t('common.year', 'Year')} />
           </SelectTrigger>
           <SelectContent className="bg-gray-900 border-gray-700 max-h-60">
             {years.map(y => (
