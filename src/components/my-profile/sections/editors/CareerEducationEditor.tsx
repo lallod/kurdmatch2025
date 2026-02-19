@@ -64,12 +64,12 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
     <div className="space-y-6">
       <Card className="bg-gray-800/50 border-gray-700">
         <CardHeader>
-          <CardTitle className="text-white">Career & Education</CardTitle>
+          <CardTitle className="text-white">{t('profile.career_education', 'Career & Education')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="occupation" className="text-purple-200">Occupation</Label>
+              <Label htmlFor="occupation" className="text-purple-200">{t('profile.occupation', 'Occupation')}</Label>
               <Input
                 id="occupation"
                 value={formData.occupation}
@@ -80,7 +80,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
             </div>
             
             <div>
-              <Label htmlFor="company" className="text-purple-200">Company</Label>
+              <Label htmlFor="company" className="text-purple-200">{t('profile.company', 'Company')}</Label>
               <Input
                 id="company"
                 value={formData.company}
@@ -91,7 +91,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
             </div>
             
             <div>
-              <Label className="text-purple-200">Education Level</Label>
+              <Label className="text-purple-200">{t('profile.education_level', 'Education Level')}</Label>
               <Select value={formData.education} onValueChange={(value) => handleInputChange('education', value)}>
                 <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
                   <SelectValue placeholder="Select education level" />
@@ -105,7 +105,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
             </div>
             
             <div>
-              <Label className="text-purple-200">Work-Life Balance</Label>
+              <Label className="text-purple-200">{t('profile.work_life_balance', 'Work-Life Balance')}</Label>
               <Select value={formData.workLifeBalance} onValueChange={(value) => handleInputChange('workLifeBalance', value)}>
                 <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
                   <SelectValue placeholder="How do you approach work?" />
@@ -120,7 +120,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
           </div>
           
           <div>
-            <Label htmlFor="career-ambitions" className="text-purple-200">Career Ambitions</Label>
+            <Label htmlFor="career-ambitions" className="text-purple-200">{t('profile.career_ambitions', 'Career Ambitions')}</Label>
             <Textarea
               id="career-ambitions"
               value={formData.careerAmbitions}
@@ -141,14 +141,14 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
             className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
           >
             <X className="mr-2 h-4 w-4" />
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           <Button 
             onClick={handleSave}
             className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
           >
             <Save className="mr-2 h-4 w-4" />
-            Save Changes
+            {t('common.save_changes', 'Save Changes')}
           </Button>
         </div>
       )}

@@ -89,18 +89,18 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="name" className="text-muted-foreground text-xs">Full Name</Label>
+          <Label htmlFor="name" className="text-muted-foreground text-xs">{t('profile.full_name', 'Full Name')}</Label>
           <Input id="name" value={formData.name} onChange={(e) => handleInputChange('name', e.target.value)}
             className="bg-muted/50 border-border text-foreground opacity-60" disabled />
         </div>
         <div>
-          <Label htmlFor="age" className="text-muted-foreground text-xs">Age</Label>
+          <Label htmlFor="age" className="text-muted-foreground text-xs">{t('profile.age', 'Age')}</Label>
           <Input id="age" type="number" min="18" max="100" value={formData.age}
             onChange={(e) => handleInputChange('age', parseInt(e.target.value))}
             className="bg-muted/50 border-border text-foreground opacity-60" disabled />
         </div>
         <div>
-          <Label className="text-muted-foreground text-xs">Height</Label>
+          <Label className="text-muted-foreground text-xs">{t('profile.height', 'Height')}</Label>
           <Select value={formData.height} onValueChange={(value) => handleInputChange('height', value)}>
             <SelectTrigger className="bg-muted/50 border-border text-foreground">
               <SelectValue placeholder="Select height" />
@@ -113,7 +113,7 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
           </Select>
         </div>
         <div>
-          <Label className="text-muted-foreground text-xs">Ethnicity</Label>
+          <Label className="text-muted-foreground text-xs">{t('profile.ethnicity', 'Ethnicity')}</Label>
           <Select value={formData.ethnicity} onValueChange={(value) => handleInputChange('ethnicity', value)}>
             <SelectTrigger className="bg-muted/50 border-border text-foreground">
               <SelectValue placeholder="Select ethnicity" />
@@ -126,12 +126,12 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
           </Select>
         </div>
         <div>
-          <Label className="text-muted-foreground text-xs">Location</Label>
+          <Label className="text-muted-foreground text-xs">{t('profile.location', 'Location')}</Label>
           <Input value={formData.location} onChange={(e) => handleInputChange('location', e.target.value)}
             className="bg-muted/50 border-border text-foreground" placeholder="City, Country" />
         </div>
         <div>
-          <Label className="text-muted-foreground text-xs">Kurdistan Region</Label>
+          <Label className="text-muted-foreground text-xs">{t('profile.kurdistan_region', 'Kurdistan Region')}</Label>
           <Select value={formData.kurdistanRegion} onValueChange={(value) => handleInputChange('kurdistanRegion', value as KurdistanRegion)}>
             <SelectTrigger className="bg-muted/50 border-border text-foreground">
               <SelectValue placeholder="Select region" />
@@ -147,7 +147,7 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
       
       <div className="space-y-3">
         <div>
-          <Label className="text-muted-foreground text-xs uppercase tracking-wider">Kurdish Dialects</Label>
+          <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('profile.kurdish_dialects', 'Kurdish Dialects')}</Label>
           <div className="flex flex-wrap gap-2 mt-2">
             {kurdishDialects.map(language => (
               <Badge key={language}
@@ -165,7 +165,7 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
           </div>
         </div>
         <div>
-          <Label className="text-muted-foreground text-xs uppercase tracking-wider">Languages</Label>
+          <Label className="text-muted-foreground text-xs uppercase tracking-wider">{t('profile.languages', 'Languages')}</Label>
           <div className="flex flex-wrap gap-2 mt-2">
             {commonLanguages.map(language => (
               <Badge key={language}
@@ -199,17 +199,17 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
             onClick={() => setShowAllLanguages(!showAllLanguages)}
             className="text-xs text-primary font-medium hover:underline transition-colors mt-2"
           >
-            {showAllLanguages ? 'See less' : `See more languages (+${remainingLanguages.length})`}
+            {showAllLanguages ? t('common.see_less', 'See less') : t('common.see_more_languages', `See more languages (+${remainingLanguages.length})`, { count: remainingLanguages.length })}
           </button>
         </div>
       </div>
 
       <div className="flex gap-3 pt-2">
         <Button variant="outline" onClick={handleCancel} className="flex-1 h-9 text-sm">
-          <X className="mr-2 h-4 w-4" /> Cancel
+          <X className="mr-2 h-4 w-4" /> {t('common.cancel', 'Cancel')}
         </Button>
         <Button onClick={handleSave} className="flex-1 h-9 text-sm bg-primary hover:bg-primary/90" disabled={!hasChanges}>
-          <Save className="mr-2 h-4 w-4" /> Save
+          <Save className="mr-2 h-4 w-4" /> {t('common.save', 'Save')}
         </Button>
       </div>
     </div>

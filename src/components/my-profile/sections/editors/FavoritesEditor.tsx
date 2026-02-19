@@ -116,19 +116,19 @@ const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate
     <div className="space-y-6">
       <Card className="bg-gray-800/50 border-gray-700">
         <CardHeader>
-          <CardTitle className="text-white">Favorites & Inspirations</CardTitle>
+          <CardTitle className="text-white">{t('profile.favorites_inspirations', 'Favorites & Inspirations')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderFavoriteSection('book', 'Favorite Books', formData.favoriteBooks)}
-            {renderFavoriteSection('movie', 'Favorite Movies', formData.favoriteMovies)}
-            {renderFavoriteSection('music', 'Favorite Music', formData.favoriteMusic)}
-            {renderFavoriteSection('food', 'Favorite Foods', formData.favoriteFoods)}
+            {renderFavoriteSection('book', t('profile.favorite_books', 'Favorite Books'), formData.favoriteBooks)}
+            {renderFavoriteSection('movie', t('profile.favorite_movies', 'Favorite Movies'), formData.favoriteMovies)}
+            {renderFavoriteSection('music', t('profile.favorite_music', 'Favorite Music'), formData.favoriteMusic)}
+            {renderFavoriteSection('food', t('profile.favorite_foods', 'Favorite Foods'), formData.favoriteFoods)}
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="favorite-quote" className="text-purple-200">Favorite Quote</Label>
+              <Label htmlFor="favorite-quote" className="text-purple-200">{t('profile.favorite_quote', 'Favorite Quote')}</Label>
               <Textarea
                 id="favorite-quote"
                 value={formData.favoriteQuote}
@@ -140,7 +140,7 @@ const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate
             </div>
             
             <div>
-              <Label htmlFor="dream-vacation" className="text-purple-200">Dream Vacation</Label>
+              <Label htmlFor="dream-vacation" className="text-purple-200">{t('profile.dream_vacation', 'Dream Vacation')}</Label>
               <Textarea
                 id="dream-vacation"
                 value={formData.dreamVacation}
@@ -162,14 +162,14 @@ const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate
             className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
           >
             <X className="mr-2 h-4 w-4" />
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           <Button 
             onClick={handleSave}
             className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
           >
             <Save className="mr-2 h-4 w-4" />
-            Save Changes
+            {t('common.save_changes', 'Save Changes')}
           </Button>
         </div>
       )}

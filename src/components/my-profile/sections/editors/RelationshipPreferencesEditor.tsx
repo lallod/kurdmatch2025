@@ -66,7 +66,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Relationship Goals</Label>
+            <Label className={labelClass}>{t('profile.relationship_goals', 'Relationship Goals')}</Label>
             <SuggestionBadge show={fieldSources.relationship_goals === 'random'} />
           </div>
           <Select value={formData.relationshipGoals} onValueChange={(v) => handleInputChange('relationshipGoals', v)}>
@@ -84,7 +84,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Children</Label>
+            <Label className={labelClass}>{t('profile.children', 'Children')}</Label>
             <SuggestionBadge show={fieldSources.want_children === 'random'} />
           </div>
           <Select value={formData.wantChildren} onValueChange={(v) => handleInputChange('wantChildren', v)}>
@@ -99,7 +99,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           </Select>
         </div>
         <div>
-          <Label className={labelClass}>Family Closeness</Label>
+          <Label className={labelClass}>{t('profile.family_closeness', 'Family Closeness')}</Label>
           <Select value={formData.familyCloseness} onValueChange={(v) => handleInputChange('familyCloseness', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder="How close to family?" /></SelectTrigger>
             <SelectContent>
@@ -109,7 +109,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Love Language</Label>
+            <Label className={labelClass}>{t('profile.love_language', 'Love Language')}</Label>
             <SuggestionBadge show={fieldSources.love_language === 'random'} />
           </div>
           <Select value={formData.loveLanguage} onValueChange={(v) => handleInputChange('loveLanguage', v)}>
@@ -125,7 +125,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
         </div>
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Communication Style</Label>
+            <Label className={labelClass}>{t('profile.communication_style', 'Communication Style')}</Label>
             <SuggestionBadge show={fieldSources.communication_style === 'random'} />
           </div>
           <Select value={formData.communicationStyle} onValueChange={(v) => handleInputChange('communicationStyle', v)}>
@@ -143,7 +143,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
       </div>
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Label className={labelClass}>Ideal Date</Label>
+          <Label className={labelClass}>{t('profile.ideal_date', 'Ideal Date')}</Label>
           <SuggestionBadge show={fieldSources.ideal_date === 'random'} />
         </div>
         <Textarea value={formData.idealDate} onChange={(e) => handleInputChange('idealDate', e.target.value)}
@@ -152,10 +152,10 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
 
       <div className="flex gap-3 pt-2">
         <Button variant="outline" onClick={handleCancel} className="flex-1 h-9 text-sm">
-          <X className="mr-2 h-4 w-4" /> Cancel
+          <X className="mr-2 h-4 w-4" /> {t('common.cancel', 'Cancel')}
         </Button>
         <Button onClick={handleSave} className="flex-1 h-9 text-sm bg-primary hover:bg-primary/90" disabled={!hasChanges}>
-          <Save className="mr-2 h-4 w-4" /> Save
+          <Save className="mr-2 h-4 w-4" /> {t('common.save', 'Save')}
         </Button>
       </div>
     </div>

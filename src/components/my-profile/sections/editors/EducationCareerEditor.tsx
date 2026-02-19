@@ -78,7 +78,7 @@ const EducationCareerEditor: React.FC<EducationCareerEditorProps> = ({ profileDa
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Education Level</Label>
+            <Label className={labelClass}>{t('profile.education_level', 'Education Level')}</Label>
             <SuggestionBadge show={fieldSources.education === 'random'} />
           </div>
           <Select value={formData.education} onValueChange={(v) => handleInputChange('education', v)}>
@@ -90,7 +90,7 @@ const EducationCareerEditor: React.FC<EducationCareerEditorProps> = ({ profileDa
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Work-Life Balance</Label>
+            <Label className={labelClass}>{t('profile.work_life_balance', 'Work-Life Balance')}</Label>
             <SuggestionBadge show={fieldSources.work_life_balance === 'random'} />
           </div>
           <Select value={formData.workLifeBalance} onValueChange={(v) => handleInputChange('workLifeBalance', v)}>
@@ -101,19 +101,19 @@ const EducationCareerEditor: React.FC<EducationCareerEditorProps> = ({ profileDa
           </Select>
         </div>
         <div>
-          <Label className={labelClass}>Occupation</Label>
+          <Label className={labelClass}>{t('profile.occupation', 'Occupation')}</Label>
           <Input value={formData.occupation} onChange={(e) => handleInputChange('occupation', e.target.value)}
             className={selectClass} placeholder="Your job title" />
         </div>
         <div>
-          <Label className={labelClass}>Company</Label>
+          <Label className={labelClass}>{t('profile.company', 'Company')}</Label>
           <Input value={formData.company} onChange={(e) => handleInputChange('company', e.target.value)}
             className={selectClass} placeholder="Where you work" />
         </div>
       </div>
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Label className={labelClass}>Career Ambitions</Label>
+          <Label className={labelClass}>{t('profile.career_ambitions', 'Career Ambitions')}</Label>
           <SuggestionBadge show={fieldSources.career_ambitions === 'random'} />
         </div>
         <Input value={formData.careerAmbitions} onChange={(e) => handleInputChange('careerAmbitions', e.target.value)}
@@ -122,10 +122,10 @@ const EducationCareerEditor: React.FC<EducationCareerEditorProps> = ({ profileDa
 
       <div className="flex gap-3 pt-2">
         <Button variant="outline" onClick={handleCancel} className="flex-1 h-9 text-sm">
-          <X className="mr-2 h-4 w-4" /> Cancel
+          <X className="mr-2 h-4 w-4" /> {t('common.cancel', 'Cancel')}
         </Button>
         <Button onClick={handleSave} className="flex-1 h-9 text-sm bg-primary hover:bg-primary/90" disabled={!hasChanges}>
-          <Save className="mr-2 h-4 w-4" /> Save
+          <Save className="mr-2 h-4 w-4" /> {t('common.save', 'Save')}
         </Button>
       </div>
     </div>

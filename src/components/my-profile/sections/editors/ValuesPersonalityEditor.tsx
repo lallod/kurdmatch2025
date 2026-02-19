@@ -72,7 +72,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Religion</Label>
+            <Label className={labelClass}>{t('profile.religion', 'Religion')}</Label>
             <SuggestionBadge show={fieldSources.religion === 'random'} />
           </div>
           <Select value={formData.religion} onValueChange={(v) => handleInputChange('religion', v)}>
@@ -93,7 +93,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Political Views</Label>
+            <Label className={labelClass}>{t('profile.political_views', 'Political Views')}</Label>
             <SuggestionBadge show={fieldSources.political_views === 'random'} />
           </div>
           <Select value={formData.politicalViews} onValueChange={(v) => handleInputChange('politicalViews', v)}>
@@ -111,7 +111,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Zodiac Sign</Label>
+            <Label className={labelClass}>{t('profile.zodiac_sign', 'Zodiac Sign')}</Label>
             <SuggestionBadge show={fieldSources.zodiac_sign === 'random'} />
           </div>
           <Select value={formData.zodiacSign} onValueChange={(v) => handleInputChange('zodiacSign', v)}>
@@ -123,7 +123,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Personality Type (MBTI)</Label>
+            <Label className={labelClass}>{t('profile.personality_type', 'Personality Type (MBTI)')}</Label>
             <SuggestionBadge show={fieldSources.personality_type === 'random'} />
           </div>
           <Select value={formData.personalityType} onValueChange={(v) => handleInputChange('personalityType', v)}>
@@ -137,7 +137,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
       
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Label className={labelClass}>Core Values</Label>
+          <Label className={labelClass}>{t('profile.core_values', 'Core Values')}</Label>
           <SuggestionBadge show={fieldSources.values === 'random'} />
         </div>
         <div className="flex flex-wrap gap-2 mt-1">
@@ -159,10 +159,10 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
 
       <div className="flex gap-3 pt-2">
         <Button variant="outline" onClick={handleCancel} className="flex-1 h-9 text-sm">
-          <X className="mr-2 h-4 w-4" /> Cancel
+          <X className="mr-2 h-4 w-4" /> {t('common.cancel', 'Cancel')}
         </Button>
         <Button onClick={handleSave} className="flex-1 h-9 text-sm bg-primary hover:bg-primary/90" disabled={!hasChanges}>
-          <Save className="mr-2 h-4 w-4" /> Save
+          <Save className="mr-2 h-4 w-4" /> {t('common.save', 'Save')}
         </Button>
       </div>
     </div>

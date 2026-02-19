@@ -87,17 +87,17 @@ const InterestsHobbiesEditor: React.FC<InterestsHobbiesEditorProps> = ({ profile
 
   return (
     <div className="space-y-4">
-      {renderBadgeSection('Interests', 'interests', 'interests', commonInterests)}
-      {renderBadgeSection('Hobbies', 'hobbies', 'hobbies', commonHobbies)}
-      {renderBadgeSection('Creative Pursuits', 'creativePursuits', 'creative_pursuits', creativePursuits)}
-      {renderBadgeSection('Weekend Activities', 'weekendActivities', 'weekend_activities', weekendActivities)}
+      {renderBadgeSection(t('profile.interests', 'Interests'), 'interests', 'interests', commonInterests)}
+      {renderBadgeSection(t('profile.hobbies', 'Hobbies'), 'hobbies', 'hobbies', commonHobbies)}
+      {renderBadgeSection(t('profile.creative_pursuits', 'Creative Pursuits'), 'creativePursuits', 'creative_pursuits', creativePursuits)}
+      {renderBadgeSection(t('profile.weekend_activities', 'Weekend Activities'), 'weekendActivities', 'weekend_activities', weekendActivities)}
 
       <div className="flex gap-3 pt-2">
         <Button variant="outline" onClick={handleCancel} className="flex-1 h-9 text-sm">
-          <X className="mr-2 h-4 w-4" /> Cancel
+          <X className="mr-2 h-4 w-4" /> {t('common.cancel', 'Cancel')}
         </Button>
         <Button onClick={handleSave} className="flex-1 h-9 text-sm bg-primary hover:bg-primary/90" disabled={!hasChanges}>
-          <Save className="mr-2 h-4 w-4" /> Save
+          <Save className="mr-2 h-4 w-4" /> {t('common.save', 'Save')}
         </Button>
       </div>
     </div>
