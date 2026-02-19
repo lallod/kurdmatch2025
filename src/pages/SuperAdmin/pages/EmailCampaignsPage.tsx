@@ -284,17 +284,17 @@ const EmailCampaignsPage = () => {
                   <div>
                     <CardTitle>{selectedCampaign.name}</CardTitle>
                     <CardDescription>
-                      Audience: {selectedCampaign.audience}
+                      {t('admin.audience', 'Audience')}: {selectedCampaign.audience}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="gap-2">
                       <Copy size={16} />
-                      Duplicate
+                      {t('admin.duplicate', 'Duplicate')}
                     </Button>
                     <Button variant="outline" size="sm" className="gap-2">
                       <Edit size={16} />
-                      Edit
+                      {t('admin.edit', 'Edit')}
                     </Button>
                   </div>
                 </div>
@@ -304,24 +304,24 @@ const EmailCampaignsPage = () => {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                       <div className="p-4 border rounded-lg bg-white space-y-2">
-                        <div className="text-sm text-gray-500">Status</div>
+                        <div className="text-sm text-gray-500">{t('admin.status', 'Status')}</div>
                         <div className="font-semibold flex items-center">
                           {getStatusBadge(selectedCampaign.status)}
                         </div>
                       </div>
                       <div className="p-4 border rounded-lg bg-white space-y-2">
-                        <div className="text-sm text-gray-500">Last Sent</div>
+                        <div className="text-sm text-gray-500">{t('admin.last_sent', 'Last Sent')}</div>
                         <div className="font-semibold">{selectedCampaign.lastSent}</div>
                       </div>
                       <div className="p-4 border rounded-lg bg-white space-y-2">
-                        <div className="text-sm text-gray-500">Next Send</div>
-                        <div className="font-semibold">{selectedCampaign.nextSend || 'Not scheduled'}</div>
+                        <div className="text-sm text-gray-500">{t('admin.next_send', 'Next Send')}</div>
+                        <div className="font-semibold">{selectedCampaign.nextSend || t('admin.not_scheduled', 'Not scheduled')}</div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                       <div>
-                        <h3 className="text-lg font-semibold mb-4">Campaign Performance</h3>
+                        <h3 className="text-lg font-semibold mb-4">{t('admin.campaign_performance', 'Campaign Performance')}</h3>
                         <div className="h-80">
                           <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -352,7 +352,7 @@ const EmailCampaignsPage = () => {
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold mb-4">Daily Engagement</h3>
+                        <h3 className="text-lg font-semibold mb-4">{t('admin.daily_engagement', 'Daily Engagement')}</h3>
                         <ChartContainer
                           config={{
                             opens: { color: "#8075FF" },
@@ -386,27 +386,25 @@ const EmailCampaignsPage = () => {
                     </div>
 
                     <div className="p-4 border rounded-lg bg-blue-50">
-                      <h4 className="font-semibold text-blue-800 mb-2">AI Recommendations</h4>
+                      <h4 className="font-semibold text-blue-800 mb-2">{t('admin.ai_recommendations', 'AI Recommendations')}</h4>
                       <p className="text-blue-700">
-                        Based on engagement patterns, we recommend sending this campaign on Tuesdays or Wednesdays 
-                        for optimal open rates. Testing a more direct subject line could improve click-through rates, 
-                        as similar campaigns have seen 15% higher engagement with concise subject lines.
+                        {t('admin.ai_recommendations_text', 'Based on engagement patterns, we recommend sending this campaign on Tuesdays or Wednesdays for optimal open rates. Testing a more direct subject line could improve click-through rates, as similar campaigns have seen 15% higher engagement with concise subject lines.')}
                       </p>
                     </div>
                   </>
                 ) : (
                   <div className="text-center py-10">
                     <Mail className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Draft Campaign</h3>
-                    <p className="text-gray-600 mb-6">This campaign hasn't been sent yet. No performance metrics available.</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('admin.draft_campaign', 'Draft Campaign')}</h3>
+                    <p className="text-gray-600 mb-6">{t('admin.draft_no_metrics', "This campaign hasn't been sent yet. No performance metrics available.")}</p>
                     <div className="flex justify-center gap-4">
                       <Button variant="outline" className="gap-2">
                         <Edit size={16} />
-                        Edit Campaign
+                        {t('admin.edit_campaign', 'Edit Campaign')}
                       </Button>
                       <Button className="gap-2">
                         <PlayCircle size={16} />
-                        Schedule Campaign
+                        {t('admin.schedule_campaign', 'Schedule Campaign')}
                       </Button>
                     </div>
                   </div>
@@ -416,11 +414,11 @@ const EmailCampaignsPage = () => {
                 <CardFooter className="border-t p-4 bg-gray-50">
                   <div className="w-full flex justify-between items-center">
                     <span className="text-sm text-gray-500">
-                      Next send: {selectedCampaign.nextSend}
+                      {t('admin.next_send', 'Next Send')}: {selectedCampaign.nextSend}
                     </span>
                     <Button variant="outline" size="sm" className="gap-2 text-amber-600 hover:text-amber-700 border-amber-200 hover:border-amber-300">
                       <PauseCircle size={16} />
-                      Pause Campaign
+                      {t('admin.pause_campaign', 'Pause Campaign')}
                     </Button>
                   </div>
                 </CardFooter>
@@ -432,11 +430,11 @@ const EmailCampaignsPage = () => {
         <TabsContent value="active">
           <Card>
             <CardHeader>
-              <CardTitle>Active Campaigns</CardTitle>
-              <CardDescription>Campaigns that are currently active</CardDescription>
+              <CardTitle>{t('admin.active_campaigns', 'Active Campaigns')}</CardTitle>
+              <CardDescription>{t('admin.active_campaigns_desc', 'Campaigns that are currently active')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Active campaigns content will appear here.</p>
+              <p>{t('admin.active_campaigns_placeholder', 'Active campaigns content will appear here.')}</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -444,11 +442,11 @@ const EmailCampaignsPage = () => {
         <TabsContent value="scheduled">
           <Card>
             <CardHeader>
-              <CardTitle>Scheduled Campaigns</CardTitle>
-              <CardDescription>Campaigns that are scheduled to be sent</CardDescription>
+              <CardTitle>{t('admin.scheduled_campaigns', 'Scheduled Campaigns')}</CardTitle>
+              <CardDescription>{t('admin.scheduled_campaigns_desc', 'Campaigns that are scheduled to be sent')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Scheduled campaigns content will appear here.</p>
+              <p>{t('admin.scheduled_campaigns_placeholder', 'Scheduled campaigns content will appear here.')}</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -456,11 +454,11 @@ const EmailCampaignsPage = () => {
         <TabsContent value="paused">
           <Card>
             <CardHeader>
-              <CardTitle>Paused Campaigns</CardTitle>
-              <CardDescription>Campaigns that have been paused</CardDescription>
+              <CardTitle>{t('admin.paused_campaigns_title', 'Paused Campaigns')}</CardTitle>
+              <CardDescription>{t('admin.paused_campaigns_desc', 'Campaigns that have been paused')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Paused campaigns content will appear here.</p>
+              <p>{t('admin.paused_campaigns_placeholder', 'Paused campaigns content will appear here.')}</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -468,11 +466,11 @@ const EmailCampaignsPage = () => {
         <TabsContent value="draft">
           <Card>
             <CardHeader>
-              <CardTitle>Draft Campaigns</CardTitle>
-              <CardDescription>Campaigns in preparation</CardDescription>
+              <CardTitle>{t('admin.draft_campaigns', 'Draft Campaigns')}</CardTitle>
+              <CardDescription>{t('admin.draft_campaigns_desc', 'Campaigns in preparation')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Draft campaigns content will appear here.</p>
+              <p>{t('admin.draft_campaigns_placeholder', 'Draft campaigns content will appear here.')}</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -482,78 +480,78 @@ const EmailCampaignsPage = () => {
       <Dialog open={newCampaignOpen} onOpenChange={setNewCampaignOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Create New Email Campaign</DialogTitle>
+            <DialogTitle>{t('admin.create_campaign', 'Create New Email Campaign')}</DialogTitle>
             <DialogDescription>
-              Set up a new email campaign to engage with your users.
+              {t('admin.create_campaign_desc', 'Set up a new email campaign to engage with your users.')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <label htmlFor="campaign-name" className="text-sm font-medium">Campaign Name</label>
-              <Input id="campaign-name" placeholder="e.g., Summer Promotion" />
+              <label htmlFor="campaign-name" className="text-sm font-medium">{t('admin.campaign_name', 'Campaign Name')}</label>
+              <Input id="campaign-name" placeholder={t('admin.campaign_name_placeholder', 'e.g., Summer Promotion')} />
             </div>
             
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Target Audience</label>
+              <label className="text-sm font-medium">{t('admin.target_audience', 'Target Audience')}</label>
               <Select defaultValue="all">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select audience" />
+                  <SelectValue placeholder={t('admin.select_audience', 'Select audience')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Users</SelectItem>
-                  <SelectItem value="new">New Users</SelectItem>
-                  <SelectItem value="inactive">Inactive Users</SelectItem>
-                  <SelectItem value="premium">Premium Users</SelectItem>
-                  <SelectItem value="free">Free Users</SelectItem>
+                  <SelectItem value="all">{t('admin.all_users', 'All Users')}</SelectItem>
+                  <SelectItem value="new">{t('admin.new_users', 'New Users')}</SelectItem>
+                  <SelectItem value="inactive">{t('admin.inactive_users', 'Inactive Users')}</SelectItem>
+                  <SelectItem value="premium">{t('admin.premium_users', 'Premium Users')}</SelectItem>
+                  <SelectItem value="free">{t('admin.free_users', 'Free Users')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <div className="grid gap-2">
-              <label htmlFor="subject-line" className="text-sm font-medium">Subject Line</label>
-              <Input id="subject-line" placeholder="Enter email subject line" />
+              <label htmlFor="subject-line" className="text-sm font-medium">{t('admin.subject_line', 'Subject Line')}</label>
+              <Input id="subject-line" placeholder={t('admin.subject_placeholder', 'Enter email subject line')} />
             </div>
             
             <div className="grid gap-2">
-              <label htmlFor="email-content" className="text-sm font-medium">Email Content</label>
+              <label htmlFor="email-content" className="text-sm font-medium">{t('admin.email_content', 'Email Content')}</label>
               <Textarea 
                 id="email-content" 
-                placeholder="Enter email content..." 
+                placeholder={t('admin.email_content_placeholder', 'Enter email content...')} 
                 className="min-h-[150px]"
               />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Send Date</label>
+                <label className="text-sm font-medium">{t('admin.send_date', 'Send Date')}</label>
                 <Input type="date" />
               </div>
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Send Time</label>
+                <label className="text-sm font-medium">{t('admin.send_time', 'Send Time')}</label>
                 <Input type="time" />
               </div>
             </div>
             
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Campaign Type</label>
+              <label className="text-sm font-medium">{t('admin.campaign_type', 'Campaign Type')}</label>
               <Select defaultValue="one-time">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select campaign type" />
+                  <SelectValue placeholder={t('admin.select_type', 'Select campaign type')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="one-time">One-time Campaign</SelectItem>
-                  <SelectItem value="recurring">Recurring Campaign</SelectItem>
-                  <SelectItem value="automated">Automated Trigger Campaign</SelectItem>
+                  <SelectItem value="one-time">{t('admin.one_time', 'One-time Campaign')}</SelectItem>
+                  <SelectItem value="recurring">{t('admin.recurring', 'Recurring Campaign')}</SelectItem>
+                  <SelectItem value="automated">{t('admin.automated', 'Automated Trigger Campaign')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setNewCampaignOpen(false)}>Cancel</Button>
-            <Button variant="outline">Save as Draft</Button>
-            <Button>Schedule Campaign</Button>
+            <Button variant="outline" onClick={() => setNewCampaignOpen(false)}>{t('common.cancel', 'Cancel')}</Button>
+            <Button variant="outline">{t('admin.save_draft', 'Save as Draft')}</Button>
+            <Button>{t('admin.schedule_campaign', 'Schedule Campaign')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

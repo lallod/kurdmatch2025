@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Briefcase, ChevronDown, Check } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SimpleOccupationSelectorProps {
   value?: string;
@@ -53,6 +54,7 @@ const occupations = [
 const SimpleOccupationSelector = ({ value, onChange }: SimpleOccupationSelectorProps) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useTranslations();
 
   // Ensure value is always a string
   const currentValue = value || '';
@@ -83,7 +85,7 @@ const SimpleOccupationSelector = ({ value, onChange }: SimpleOccupationSelectorP
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Briefcase className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Occupation</Label>
+        <Label className="text-white">{t('career.occupation', 'Occupation')}</Label>
       </div>
       
       {/* Occupation selector */}
@@ -94,7 +96,7 @@ const SimpleOccupationSelector = ({ value, onChange }: SimpleOccupationSelectorP
           onClick={() => setOpen(!open)}
         >
           <span className={selectedOccupation ? "text-white" : "text-purple-300"}>
-            {selectedOccupation ? selectedOccupation.name : "Select occupation..."}
+            {selectedOccupation ? selectedOccupation.name : t('occupation.select', 'Select occupation...')}
           </span>
           <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
         </Button>
@@ -104,7 +106,7 @@ const SimpleOccupationSelector = ({ value, onChange }: SimpleOccupationSelectorP
             <div className="p-2 border-b border-gray-700">
               <input
                 type="text"
-                placeholder="Search occupations..."
+                placeholder={t('occupation.search', 'Search occupations...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
@@ -112,7 +114,7 @@ const SimpleOccupationSelector = ({ value, onChange }: SimpleOccupationSelectorP
             </div>
             <div className="max-h-48 overflow-y-auto">
               {filteredOccupations.length === 0 ? (
-                <div className="p-4 text-center text-gray-400">No occupations found</div>
+                <div className="p-4 text-center text-gray-400">{t('occupation.not_found', 'No occupations found')}</div>
               ) : (
                 <>
                   {occupations.map((category) => {
