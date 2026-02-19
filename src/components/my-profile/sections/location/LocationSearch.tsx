@@ -5,6 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LocationSearchProps {
   onLocationSelect: (location: any) => void;
@@ -30,6 +31,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   // Function to search locations using Nominatim API with improved parameters
   const searchLocation = async (query: string) => {
@@ -79,8 +81,8 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
       setIsLoading(false);
       setSearchResults([]);
       toast({
-        title: "Search error",
-        description: "Could not search for locations. Please try again.",
+        title: t('location.search_error', 'Search error'),
+        description: t('location.search_error_desc', 'Could not search for locations. Please try again.'),
         variant: "destructive"
       });
     }
@@ -145,14 +147,14 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
             {isLoading ? (
               <div className="py-6 text-center">
                 <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Searching locations...</p>
+                <p className="text-sm text-muted-foreground">{t('location.searching', 'Searching locations...')}</p>
               </div>
             ) : (
               <>
                 <CommandEmpty>{emptyMessage}</CommandEmpty>
                 
                 {searchResults.length > 0 && (
-                  <CommandGroup heading="Search Results">
+                  <CommandGroup heading={t('location.search_results', 'Search Results')}>
                     {searchResults.map((result) => (
                       <CommandItem
                         key={result.place_id}
@@ -170,7 +172,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
                 )}
                 
                 {recentSearches.length > 0 && searchResults.length === 0 && !search && (
-                  <CommandGroup heading="Recent Searches">
+                  <CommandGroup heading={t('location.recent_searches', 'Recent Searches')}>
                     {recentSearches.map((result) => (
                       <CommandItem
                         key={result.place_id}
