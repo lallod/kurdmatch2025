@@ -1,6 +1,7 @@
 import React from 'react';
 import { TagSelector } from '../fields/TagSelector';
 import { Star, Book, Film } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Step7Data {
   favorite_books?: string[];
@@ -17,6 +18,7 @@ interface Step7FavoritesProps {
 }
 
 export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }) => {
+  const { t } = useTranslations();
   const favoriteBooksOptions = [
     { value: 'kurdish_literature', label: 'Kurdish Literature', emoji: '📚' },
     { value: 'poetry_collections', label: 'Poetry Collections', emoji: '📝' },
@@ -101,79 +103,79 @@ export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }
         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Star className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-white">Let's talk favorites!</h2>
-        <p className="text-purple-200">Share what you love most</p>
+        <h2 className="text-2xl font-bold text-white">{t('wizard.lets_talk_favorites', "Let's talk favorites!")}</h2>
+        <p className="text-purple-200">{t('wizard.share_what_you_love', 'Share what you love most')}</p>
       </div>
 
       <div className="space-y-6">
         {/* Favorite Books */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Favorite Books</h3>
+          <h3 className="text-lg font-medium text-white">{t('profile.favorite_books', 'Favorite Books')}</h3>
           <TagSelector
             options={favoriteBooksOptions}
             value={data.favorite_books || []}
             onChange={(value) => onChange({ ...data, favorite_books: value })}
-            placeholder="What do you love to read?"
+            placeholder={t('wizard.what_love_read', 'What do you love to read?')}
             maxSelections={5}
           />
         </div>
 
         {/* Favorite Movies */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Favorite Movies</h3>
+          <h3 className="text-lg font-medium text-white">{t('profile.favorite_movies', 'Favorite Movies')}</h3>
           <TagSelector
             options={favoriteMoviesOptions}
             value={data.favorite_movies || []}
             onChange={(value) => onChange({ ...data, favorite_movies: value })}
-            placeholder="What genres do you enjoy?"
+            placeholder={t('wizard.what_genres_enjoy', 'What genres do you enjoy?')}
             maxSelections={5}
           />
         </div>
 
         {/* Favorite Music */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Favorite Music</h3>
+          <h3 className="text-lg font-medium text-white">{t('profile.favorite_music', 'Favorite Music')}</h3>
           <TagSelector
             options={favoriteMusicOptions}
             value={data.favorite_music || []}
             onChange={(value) => onChange({ ...data, favorite_music: value })}
-            placeholder="What music do you listen to?"
+            placeholder={t('wizard.what_music_listen', 'What music do you listen to?')}
             maxSelections={5}
           />
         </div>
 
         {/* Favorite Foods */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Favorite Foods</h3>
+          <h3 className="text-lg font-medium text-white">{t('profile.favorite_foods', 'Favorite Foods')}</h3>
           <TagSelector
             options={favoriteFoodsOptions}
             value={data.favorite_foods || []}
             onChange={(value) => onChange({ ...data, favorite_foods: value })}
-            placeholder="What cuisines do you love?"
+            placeholder={t('wizard.what_cuisines_love', 'What cuisines do you love?')}
             maxSelections={5}
           />
         </div>
 
         {/* Favorite Games */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Favorite Games</h3>
+          <h3 className="text-lg font-medium text-white">{t('profile.favorite_games', 'Favorite Games')}</h3>
           <TagSelector
             options={favoriteGamesOptions}
             value={data.favorite_games || []}
             onChange={(value) => onChange({ ...data, favorite_games: value })}
-            placeholder="What games do you enjoy?"
+            placeholder={t('wizard.what_games_enjoy', 'What games do you enjoy?')}
             maxSelections={4}
           />
         </div>
 
         {/* Favorite Podcasts */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Favorite Podcasts</h3>
+          <h3 className="text-lg font-medium text-white">{t('profile.favorite_podcasts', 'Favorite Podcasts')}</h3>
           <TagSelector
             options={favoritePodcastsOptions}
             value={data.favorite_podcasts || []}
             onChange={(value) => onChange({ ...data, favorite_podcasts: value })}
-            placeholder="What podcasts do you listen to?"
+            placeholder={t('wizard.what_podcasts_listen', 'What podcasts do you listen to?')}
             maxSelections={4}
           />
         </div>

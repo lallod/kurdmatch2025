@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Search, User, Ban, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Profile {
   id: string;
@@ -20,6 +21,7 @@ interface Profile {
 }
 
 export default function AdminUsers() {
+  const { t } = useTranslations();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ export default function AdminUsers() {
   );
 
   if (loading) {
-    return <div className="text-white">Loading users...</div>;
+    return <div className="text-white">{t('admin.loading_users', 'Loading users...')}</div>;
   }
 
   return (
@@ -64,7 +66,7 @@ export default function AdminUsers() {
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search users..."
+              placeholder={t('admin.search_users', 'Search users...')}
               className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-purple-200"
             />
           </div>
@@ -76,7 +78,7 @@ export default function AdminUsers() {
         {filteredProfiles.length === 0 ? (
           <Card className="bg-white/10 backdrop-blur border-white/20">
             <CardContent className="p-8 text-center text-white">
-              No users found
+              {t('admin.no_users_found', 'No users found')}
             </CardContent>
           </Card>
         ) : (
@@ -102,13 +104,13 @@ export default function AdminUsers() {
                         {profile.age} • {profile.location}
                       </p>
                       <p className="text-xs text-purple-200">
-                        Joined {format(new Date(profile.created_at), 'PP')}
+                        {t('admin.joined', 'Joined')} {format(new Date(profile.created_at), 'PP')}
                       </p>
                     </div>
                   </div>
                   <Button size="sm" variant="outline" className="gap-2">
                     <Ban className="w-4 h-4" />
-                    Moderate
+                    {t('admin.moderate', 'Moderate')}
                   </Button>
                 </div>
               </CardContent>

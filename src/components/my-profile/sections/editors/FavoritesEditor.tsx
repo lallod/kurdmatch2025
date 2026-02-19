@@ -97,7 +97,7 @@ const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate
         <Input
           value={newItems[category as keyof typeof newItems]}
           onChange={(e) => setNewItems(prev => ({ ...prev, [category]: e.target.value }))}
-          placeholder={`Add favorite ${category}`}
+          placeholder={t(`profile.add_favorite_${category}`, `Add favorite ${category}`)}
           className="bg-gray-700 border-gray-600 text-white"
           onKeyPress={(e) => e.key === 'Enter' && handleAddItem(category, newItems[category as keyof typeof newItems])}
         />
@@ -135,7 +135,7 @@ const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate
                 onChange={(e) => handleInputChange('favoriteQuote', e.target.value)}
                 rows={3}
                 className="bg-gray-700 border-gray-600 text-white"
-                placeholder="A quote that inspires you..."
+                placeholder={t('profile.quote_placeholder', 'A quote that inspires you...')}
               />
             </div>
             
@@ -147,7 +147,7 @@ const FavoritesEditor: React.FC<FavoritesEditorProps> = ({ profileData, onUpdate
                 onChange={(e) => handleInputChange('dreamVacation', e.target.value)}
                 rows={3}
                 className="bg-gray-700 border-gray-600 text-white"
-                placeholder="Where would you love to travel?"
+                placeholder={t('profile.dream_vacation_placeholder', 'Where would you love to travel?')}
               />
             </div>
           </div>

@@ -75,7 +75,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
                 value={formData.occupation}
                 onChange={(e) => handleInputChange('occupation', e.target.value)}
                 className="bg-gray-700 border-gray-600 text-white"
-                placeholder="Your job title"
+                placeholder={t('profile.your_job_title', 'Your job title')}
               />
             </div>
             
@@ -86,7 +86,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
                 value={formData.company}
                 onChange={(e) => handleInputChange('company', e.target.value)}
                 className="bg-gray-700 border-gray-600 text-white"
-                placeholder="Where you work"
+                placeholder={t('profile.where_you_work', 'Where you work')}
               />
             </div>
             
@@ -94,7 +94,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
               <Label className="text-purple-200">{t('profile.education_level', 'Education Level')}</Label>
               <Select value={formData.education} onValueChange={(value) => handleInputChange('education', value)}>
                 <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Select education level" />
+                  <SelectValue placeholder={t('profile.select_education', 'Select education level')} />
                 </SelectTrigger>
                 <SelectContent>
                   {educationLevels.map(level => (
@@ -108,7 +108,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
               <Label className="text-purple-200">{t('profile.work_life_balance', 'Work-Life Balance')}</Label>
               <Select value={formData.workLifeBalance} onValueChange={(value) => handleInputChange('workLifeBalance', value)}>
                 <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="How do you approach work?" />
+                  <SelectValue placeholder={t('profile.how_approach_work', 'How do you approach work?')} />
                 </SelectTrigger>
                 <SelectContent>
                   {workLifeBalanceOptions.map(option => (
@@ -127,7 +127,7 @@ const CareerEducationEditor: React.FC<CareerEducationEditorProps> = ({ profileDa
               onChange={(e) => handleInputChange('careerAmbitions', e.target.value)}
               rows={3}
               className="bg-gray-700 border-gray-600 text-white"
-              placeholder="What are your professional goals and dreams?"
+              placeholder={t('profile.describe_career_goals', 'What are your professional goals and dreams?')}
             />
           </div>
         </CardContent>

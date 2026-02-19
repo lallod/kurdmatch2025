@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Users, Search, Crown, Shield, UserCheck } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MembersDialogProps {
   groupId: string;
@@ -15,6 +16,7 @@ interface MembersDialogProps {
 }
 
 export const MembersDialog = ({ groupId, open, onOpenChange }: MembersDialogProps) => {
+  const { t } = useTranslations();
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -69,13 +71,13 @@ export const MembersDialog = ({ groupId, open, onOpenChange }: MembersDialogProp
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-2">
             <Users className="h-6 w-6 text-primary" />
-            Group Members
+            {t('groups.group_members', 'Group Members')}
             <Badge variant="secondary" className="ml-2">
               {members.length}
             </Badge>
           </DialogTitle>
           <DialogDescription>
-            View and manage group members
+            {t('groups.view_manage_members', 'View and manage group members')}
           </DialogDescription>
         </DialogHeader>
 
@@ -85,7 +87,7 @@ export const MembersDialog = ({ groupId, open, onOpenChange }: MembersDialogProp
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search members..."
+              placeholder={t('groups.search_members', 'Search members...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-12 glass border-border/50"
@@ -110,7 +112,7 @@ export const MembersDialog = ({ groupId, open, onOpenChange }: MembersDialogProp
               <div className="text-center py-12">
                 <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                 <p className="text-muted-foreground">
-                  {searchQuery ? 'No members found' : 'No members yet'}
+                  {searchQuery ? t('groups.no_members_found', 'No members found') : t('groups.no_members_yet', 'No members yet')}
                 </p>
               </div>
             ) : (
@@ -130,7 +132,7 @@ export const MembersDialog = ({ groupId, open, onOpenChange }: MembersDialogProp
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-medium truncate">
-                          {member.profiles?.name || 'Unknown User'}
+                          {member.profiles?.name || t('common.unknown_user', 'Unknown User')}
                         </p>
                         {member.profiles?.verified && (
                           <Badge variant="secondary" className="text-xs">
@@ -139,7 +141,7 @@ export const MembersDialog = ({ groupId, open, onOpenChange }: MembersDialogProp
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Joined {new Date(member.joined_at).toLocaleDateString()}
+                        {t('groups.joined', 'Joined')} {new Date(member.joined_at).toLocaleDateString()}
                       </p>
                     </div>
 
