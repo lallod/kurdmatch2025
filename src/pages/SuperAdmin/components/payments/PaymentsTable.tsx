@@ -25,6 +25,7 @@ import {
 import { PaymentStatusBadge } from './PaymentStatusBadge';
 import { PaymentMethodDisplay } from './PaymentMethodDisplay';
 import { Payment } from '../types/payment';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PaymentsTableProps {
   payments: Payment[];
@@ -47,6 +48,7 @@ export const PaymentsTable = ({
   onResendReceipt,
   onProcessRefund
 }: PaymentsTableProps) => {
+  const { t } = useTranslations();
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
@@ -54,7 +56,7 @@ export const PaymentsTable = ({
           <TableRow>
             <TableHead className="cursor-pointer" onClick={() => handleSort('date')}>
               <div className="flex items-center">
-                Date
+                {t('common.date', 'Date')}
                 {sortBy === 'date' && (
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 )}
@@ -62,32 +64,32 @@ export const PaymentsTable = ({
             </TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort('userName')}>
               <div className="flex items-center">
-                Customer
+                {t('common.customer', 'Customer')}
                 {sortBy === 'userName' && (
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 )}
               </div>
             </TableHead>
-            <TableHead>Invoice</TableHead>
-            <TableHead>Description</TableHead>
+            <TableHead>{t('common.invoice', 'Invoice')}</TableHead>
+            <TableHead>{t('common.description', 'Description')}</TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort('amount')}>
               <div className="flex items-center">
-                Amount
+                {t('common.amount', 'Amount')}
                 {sortBy === 'amount' && (
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 )}
               </div>
             </TableHead>
-            <TableHead>Method</TableHead>
+            <TableHead>{t('common.method', 'Method')}</TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort('status')}>
               <div className="flex items-center">
-                Status
+                {t('common.status', 'Status')}
                 {sortBy === 'status' && (
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 )}
               </div>
             </TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="text-right">{t('common.actions', 'Actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -133,20 +135,20 @@ export const PaymentsTable = ({
                         onClick={() => onViewReceipt(payment)}
                       >
                         <Eye className="mr-2 h-4 w-4" />
-                        View Receipt
+                        {t('admin.view_receipt', 'View Receipt')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => onResendReceipt(payment)}
                       >
                         <Mail className="mr-2 h-4 w-4" />
-                        Resend Receipt
+                        {t('admin.resend_receipt', 'Resend Receipt')}
                       </DropdownMenuItem>
                       {payment.status === 'completed' && (
                         <DropdownMenuItem
                           onClick={() => onProcessRefund(payment)}
                         >
                           <Wallet className="mr-2 h-4 w-4" />
-                          Process Refund
+                          {t('admin.process_refund', 'Process Refund')}
                         </DropdownMenuItem>
                       )}
                     </DropdownMenuContent>
@@ -157,7 +159,7 @@ export const PaymentsTable = ({
           ) : (
             <TableRow>
               <TableCell colSpan={8} className="text-center py-6">
-                No payment transactions found
+                {t('admin.no_payment_transactions', 'No payment transactions found')}
               </TableCell>
             </TableRow>
           )}

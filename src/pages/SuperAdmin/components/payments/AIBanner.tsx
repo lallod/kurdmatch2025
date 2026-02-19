@@ -37,6 +37,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface AIFeature {
   id: string;
@@ -56,6 +57,7 @@ export const AIBanner = ({
   collapsible = false,
   className
 }: AIBannerProps) => {
+  const { t } = useTranslations();
   const [isExpanded, setIsExpanded] = useState(!collapsible);
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
@@ -297,8 +299,8 @@ export const AIBanner = ({
         <div className="flex items-center">
           <Brain size={24} className="text-tinder-rose mr-3" />
           <div>
-            <h3 className="font-semibold text-gray-800">AI-Powered Administration</h3>
-            <p className="text-sm text-gray-600">Our AI systems enhance administration capabilities across the platform</p>
+            <h3 className="font-semibold text-gray-800">{t('admin.ai_powered_admin', 'AI-Powered Administration')}</h3>
+            <p className="text-sm text-gray-600">{t('admin.ai_admin_desc', 'Our AI systems enhance administration capabilities across the platform')}</p>
           </div>
         </div>
         {collapsible && (

@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { useAdminPayments } from '../hooks/useAdminPayments';
+import { useTranslations } from '@/hooks/useTranslations';
 
 // Import our refactored components
 import { PageHeader } from '../components/payments/PageHeader';
@@ -15,9 +15,8 @@ import { ResendReceiptDialog } from '../components/payments/ResendReceiptDialog'
 import { RefundDialog } from '../components/payments/RefundDialog';
 import { Payment } from '../components/types/payment';
 
-// Payment data now comes from useAdminPayments hook
-
 const PaymentsPage = () => {
+  const { t } = useTranslations();
   const { payments: adminPayments, loading, totalCount, stats, fetchPayments, refundPayment } = useAdminPayments();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -119,11 +118,11 @@ const PaymentsPage = () => {
     
     const success = await refundPayment(selectedPayment.id);
     if (success) {
-      toast.success("Payment refunded successfully");
+      toast.success(t('admin.payment_refunded_success', 'Payment refunded successfully'));
       setIsRefundOpen(false);
       setSelectedPayment(null);
     } else {
-      toast.error("Failed to refund payment");
+      toast.error(t('admin.payment_refund_failed', 'Failed to refund payment'));
     }
   };
 
@@ -131,10 +130,9 @@ const PaymentsPage = () => {
   const handleResendReceipt = () => {
     if (!selectedPayment) return;
     
-    // In a real app, this would call an API to resend the receipt
     setIsResendReceiptOpen(false);
     setSelectedPayment(null);
-    toast.success(`Receipt resent to ${selectedPayment.email}`);
+    toast.success(t('admin.receipt_resent_to', 'Receipt resent to {{email}}', { email: selectedPayment.email }));
   };
 
   // Event handlers for dialogs
@@ -168,9 +166,9 @@ const PaymentsPage = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4">
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          <TabsTrigger value="subscriptions">Subscription Revenue</TabsTrigger>
-          <TabsTrigger value="settings">Payment Settings</TabsTrigger>
+          <TabsTrigger value="transactions">{t('admin.transactions', 'Transactions')}</TabsTrigger>
+          <TabsTrigger value="subscriptions">{t('admin.subscription_revenue', 'Subscription Revenue')}</TabsTrigger>
+          <TabsTrigger value="settings">{t('admin.payment_settings', 'Payment Settings')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="transactions">
