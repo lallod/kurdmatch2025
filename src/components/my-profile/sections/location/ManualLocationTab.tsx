@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { MapPin, Search } from 'lucide-react';
 import LocationSearch from './LocationSearch';
 import LocationMap from './LocationMap';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ManualLocationTabProps {
   location: string;
@@ -13,9 +14,9 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
   location,
   onLocationSelect
 }) => {
+  const { t } = useTranslations();
   const [position, setPosition] = useState<[number, number]>([20, 0]);
   
-  // Reverse geocode to get location details from coordinates
   const reverseGeocode = async (lat: number, lng: number) => {
     try {
       const response = await fetch(
@@ -37,7 +38,6 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
     }
   };
 
-  // Handle map click
   const handleMapClick = (lat: number, lng: number) => {
     setPosition([lat, lng]);
     reverseGeocode(lat, lng);
@@ -49,36 +49,33 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
         <div className="flex items-start gap-2">
           <MapPin size={18} className="text-primary mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-medium text-white">Manual Location</p>
+            <p className="text-sm font-medium text-white">{t('location.manual', 'Manual Location')}</p>
             <p className="text-xs text-purple-200">
-              Choose your location by clicking on the map or searching for a city.
+              {t('location.manual_desc', 'Choose your location by clicking on the map or searching for a city.')}
             </p>
           </div>
         </div>
       </div>
       
-      {/* Map container */}
       <LocationMap 
         position={position}
         onClick={handleMapClick}
       />
 
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">Search Location</label>
+        <label className="text-sm font-medium">{t('location.search', 'Search Location')}</label>
         <LocationSearch 
           onLocationSelect={(selected) => {
             onLocationSelect(selected);
-            
-            // Update marker position
             if (selected.lat && selected.lon) {
               const lat = parseFloat(selected.lat);
               const lon = parseFloat(selected.lon);
               setPosition([lat, lon]);
             }
           }}
-          buttonLabel="Search City"
-          searchPlaceholder="Search for a city or country..."
-          emptyMessage="No locations found. Try a different search."
+          buttonLabel={t('location.search_city', 'Search City')}
+          searchPlaceholder={t('location.search_city_placeholder', 'Search for a city or country...')}
+          emptyMessage={t('location.no_results_try', 'No locations found. Try a different search.')}
           icon={<Search />}
           width="300px"
         />
@@ -86,10 +83,10 @@ const ManualLocationTab: React.FC<ManualLocationTabProps> = ({
       
       <div className="p-3 bg-muted rounded-md flex items-center">
         <MapPin size={16} className="mr-2 text-primary" />
-        {location || "No location set"}
+        {location || t('location.no_location', 'No location set')}
       </div>
       <p className="text-xs text-muted-foreground mt-1">
-        Click on the map or search to set your location.
+        {t('location.click_map', 'Click on the map or search to set your location.')}
       </p>
     </div>
   );

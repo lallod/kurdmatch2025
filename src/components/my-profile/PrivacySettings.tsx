@@ -126,8 +126,8 @@ const PrivacySettings: React.FC = () => {
               <ImageOff className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-foreground">Blur Photos</h3>
-              <p className="text-[11px] text-muted-foreground">Hide your face on dating profiles</p>
+              <h3 className="text-sm font-semibold text-foreground">{t('privacy.blur_photos', 'Blur Photos')}</h3>
+              <p className="text-[11px] text-muted-foreground">{t('privacy.blur_desc', 'Hide your face on dating profiles')}</p>
             </div>
           </div>
           <Switch checked={blurPhotos} onCheckedChange={setBlurPhotos} />
@@ -135,7 +135,7 @@ const PrivacySettings: React.FC = () => {
         {blurPhotos && (
           <div className="mt-3 bg-muted/50 rounded-xl p-3">
             <p className="text-[10px] text-muted-foreground">
-              Your photos will appear blurred to other users. You can share clear photos with specific matches below.
+              {t('privacy.blur_info', 'Your photos will appear blurred to other users. You can share clear photos with specific matches below.')}
             </p>
           </div>
         )}
@@ -150,8 +150,8 @@ const PrivacySettings: React.FC = () => {
                 <Eye className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-foreground">Field Visibility</h3>
-                <p className="text-[11px] text-muted-foreground">Control what others see</p>
+                <h3 className="text-sm font-semibold text-foreground">{t('privacy.field_visibility', 'Field Visibility')}</h3>
+                <p className="text-[11px] text-muted-foreground">{t('privacy.control_visible', 'Control what others see')}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -163,14 +163,14 @@ const PrivacySettings: React.FC = () => {
               )}
               {hiddenCount > 0 && isPremium && (
                 <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary rounded-full">
-                  {hiddenCount} hidden
+                  {hiddenCount} {t('privacy.hidden', 'hidden')}
                 </Badge>
               )}
             </div>
           </div>
           {!isPremium && (
             <p className="text-[10px] text-muted-foreground mt-2 ml-[52px]">
-              Upgrade to Premium to control which fields are visible on your profile.
+              {t('privacy.upgrade_premium', 'Upgrade to Premium to control which fields are visible on your profile.')}
             </p>
           )}
         </div>
@@ -188,8 +188,8 @@ const PrivacySettings: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-foreground">{category}</span>
                   {hiddenInCategory > 0 && isPremium && (
-                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 rounded-full border-destructive/30 text-destructive">
-                      {hiddenInCategory} hidden
+                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 rounded-full border-destructive/30 text-destructive">
+                      {hiddenInCategory} {t('privacy.hidden', 'hidden')}
                     </Badge>
                   )}
                 </div>
@@ -246,9 +246,9 @@ const PrivacySettings: React.FC = () => {
               <Share2 className="w-5 h-5 text-primary" />
             </div>
             <div className="text-left">
-              <h3 className="text-sm font-semibold text-foreground">Share With Matches</h3>
+              <h3 className="text-sm font-semibold text-foreground">{t('privacy.share_matches', 'Share With Matches')}</h3>
               <p className="text-[11px] text-muted-foreground">
-                Share hidden info & clear photos with specific people
+                {t('privacy.share_desc', 'Share hidden info & clear photos with specific people')}
               </p>
             </div>
           </div>
@@ -268,9 +268,9 @@ const PrivacySettings: React.FC = () => {
             ) : matches.length === 0 ? (
               <div className="text-center py-6">
                 <Users className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
-                <p className="text-xs text-muted-foreground">No matches yet</p>
+               <p className="text-xs text-muted-foreground">{t('privacy.no_matches', 'No matches yet')}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
-                  Match with people to share your full profile with them
+                  {t('privacy.match_to_share', 'Match with people to share your full profile with them')}
                 </p>
               </div>
             ) : (
@@ -290,7 +290,7 @@ const PrivacySettings: React.FC = () => {
                       className="h-8 rounded-xl text-[11px] px-3"
                       onClick={() => toggleShareWithUser(match.id)}
                     >
-                      {sharedWith[match.id] ? 'Shared ✓' : 'Share'}
+                      {sharedWith[match.id] ? t('privacy.shared', 'Shared ✓') : t('privacy.share', 'Share')}
                     </Button>
                   </div>
                 ))}
