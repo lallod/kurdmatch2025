@@ -57,7 +57,13 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
     onCancel?.();
   };
 
-  const familyClosenessOptions = ['Very close', 'Close', 'Somewhat close', 'Independent', 'Complicated'];
+  const familyClosenessOptions = [
+    { value: 'Very close', label: t('profile.very_close', 'Very close') },
+    { value: 'Close', label: t('profile.close', 'Close') },
+    { value: 'Somewhat close', label: t('profile.somewhat_close', 'Somewhat close') },
+    { value: 'Independent', label: t('profile.independent', 'Independent') },
+    { value: 'Complicated', label: t('profile.complicated', 'Complicated') }
+  ];
   const selectClass = "bg-muted/50 border-border text-foreground";
   const labelClass = "text-muted-foreground text-xs";
 
@@ -72,13 +78,13 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           <Select value={formData.relationshipGoals} onValueChange={(v) => handleInputChange('relationshipGoals', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.looking_for', 'What are you looking for?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="long-term">Long-term relationship</SelectItem>
-              <SelectItem value="marriage">Marriage</SelectItem>
-              <SelectItem value="casual">Casual dating</SelectItem>
-              <SelectItem value="serious">Something serious</SelectItem>
-              <SelectItem value="see-what-happens">Let's see what happens</SelectItem>
-              <SelectItem value="friendship-first">Friendship first</SelectItem>
-              <SelectItem value="taking-slow">Taking things slow</SelectItem>
+              <SelectItem value="long-term">{t('profile.long_term', 'Long-term relationship')}</SelectItem>
+              <SelectItem value="marriage">{t('profile.marriage', 'Marriage')}</SelectItem>
+              <SelectItem value="casual">{t('profile.casual_dating', 'Casual dating')}</SelectItem>
+              <SelectItem value="serious">{t('profile.something_serious', 'Something serious')}</SelectItem>
+              <SelectItem value="see-what-happens">{t('profile.see_what_happens', "Let's see what happens")}</SelectItem>
+              <SelectItem value="friendship-first">{t('profile.friendship_first', 'Friendship first')}</SelectItem>
+              <SelectItem value="taking-slow">{t('profile.taking_slow', 'Taking things slow')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -90,11 +96,11 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           <Select value={formData.wantChildren} onValueChange={(v) => handleInputChange('wantChildren', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.thoughts_children', 'Your thoughts on children?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="want">Want children</SelectItem>
-              <SelectItem value="dont-want">Don't want children</SelectItem>
-              <SelectItem value="open">Open to children</SelectItem>
-              <SelectItem value="have">Already have children</SelectItem>
-              <SelectItem value="undecided">Undecided</SelectItem>
+              <SelectItem value="want">{t('profile.want_children', 'Want children')}</SelectItem>
+              <SelectItem value="dont-want">{t('profile.dont_want_children', "Don't want children")}</SelectItem>
+              <SelectItem value="open">{t('profile.open_to_children', 'Open to children')}</SelectItem>
+              <SelectItem value="have">{t('profile.already_have_children', 'Already have children')}</SelectItem>
+              <SelectItem value="undecided">{t('profile.undecided', 'Undecided')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -103,7 +109,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           <Select value={formData.familyCloseness} onValueChange={(v) => handleInputChange('familyCloseness', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_close_family', 'How close to family?')} /></SelectTrigger>
             <SelectContent>
-              {familyClosenessOptions.map(o => (<SelectItem key={o} value={o}>{o}</SelectItem>))}
+              {familyClosenessOptions.map(o => (<SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>))}
             </SelectContent>
           </Select>
         </div>
@@ -115,11 +121,11 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           <Select value={formData.loveLanguage} onValueChange={(v) => handleInputChange('loveLanguage', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_feel_loved', 'How do you feel loved?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="words-of-affirmation">Words of Affirmation</SelectItem>
-              <SelectItem value="quality-time">Quality Time</SelectItem>
-              <SelectItem value="physical-touch">Physical Touch</SelectItem>
-              <SelectItem value="acts-of-service">Acts of Service</SelectItem>
-              <SelectItem value="receiving-gifts">Receiving Gifts</SelectItem>
+              <SelectItem value="words-of-affirmation">{t('profile.words_of_affirmation', 'Words of Affirmation')}</SelectItem>
+              <SelectItem value="quality-time">{t('profile.quality_time', 'Quality Time')}</SelectItem>
+              <SelectItem value="physical-touch">{t('profile.physical_touch', 'Physical Touch')}</SelectItem>
+              <SelectItem value="acts-of-service">{t('profile.acts_of_service', 'Acts of Service')}</SelectItem>
+              <SelectItem value="receiving-gifts">{t('profile.receiving_gifts', 'Receiving Gifts')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -131,12 +137,12 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           <Select value={formData.communicationStyle} onValueChange={(v) => handleInputChange('communicationStyle', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_communicate', 'How do you communicate?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="direct">Direct</SelectItem>
-              <SelectItem value="diplomatic">Diplomatic</SelectItem>
-              <SelectItem value="expressive">Expressive</SelectItem>
-              <SelectItem value="reserved">Reserved</SelectItem>
-              <SelectItem value="analytical">Analytical</SelectItem>
-              <SelectItem value="empathetic">Empathetic</SelectItem>
+              <SelectItem value="direct">{t('profile.direct', 'Direct')}</SelectItem>
+              <SelectItem value="diplomatic">{t('profile.diplomatic', 'Diplomatic')}</SelectItem>
+              <SelectItem value="expressive">{t('profile.expressive', 'Expressive')}</SelectItem>
+              <SelectItem value="reserved">{t('profile.reserved', 'Reserved')}</SelectItem>
+              <SelectItem value="analytical">{t('profile.analytical', 'Analytical')}</SelectItem>
+              <SelectItem value="empathetic">{t('profile.empathetic', 'Empathetic')}</SelectItem>
             </SelectContent>
           </Select>
         </div>

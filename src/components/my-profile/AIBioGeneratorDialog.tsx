@@ -143,7 +143,7 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Choose Your Style</h3>
+                <h3 className="text-lg font-semibold text-white">{t('profile.choose_your_style', 'Choose Your Style')}</h3>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -151,7 +151,7 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
                   className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  Regenerate
+                  {t('profile.regenerate', 'Regenerate')}
                 </Button>
               </div>
               

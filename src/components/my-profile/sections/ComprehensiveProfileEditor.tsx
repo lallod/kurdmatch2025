@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,15 +22,16 @@ interface ComprehensiveProfileEditorProps {
 }
 
 const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({ profileData, categoryProgress, fieldSources = {}, onUpdateProfile }) => {
+  const { t } = useTranslations();
   const [activeTab, setActiveTab] = useState('basic');
 
   const profileSections = [
-    { id: 'basic', label: 'Basic Info', icon: User, component: BasicInfoEditor, fields: ['name', 'age', 'height', 'ethnicity', 'languages', 'location', 'bodyType', 'kurdistanRegion'] },
-    { id: 'lifestyle', label: 'Lifestyle', icon: Dumbbell, component: LifestyleEditor, fields: ['exerciseHabits', 'dietaryPreferences', 'smoking', 'drinking', 'sleepSchedule', 'havePets', 'travelFrequency'] },
-    { id: 'values', label: 'Values & Beliefs', icon: Star, component: ValuesPersonalityEditor, fields: ['religion', 'values', 'zodiacSign', 'personalityType', 'politicalViews', 'communicationStyle'] },
-    { id: 'interests', label: 'Interests & Hobbies', icon: Heart, component: InterestsHobbiesEditor, fields: ['interests', 'hobbies', 'creativePursuits', 'weekendActivities'] },
-    { id: 'career', label: 'Career & Education', icon: Briefcase, component: EducationCareerEditor, fields: ['occupation', 'education', 'company', 'careerAmbitions', 'workLifeBalance'] },
-    { id: 'relationship', label: 'Relationship Goals', icon: Heart, component: RelationshipPreferencesEditor, fields: ['relationshipGoals', 'wantChildren', 'loveLanguage', 'idealDate'] }
+    { id: 'basic', label: t('profile.basic_info', 'Basic Info'), icon: User, component: BasicInfoEditor, fields: ['name', 'age', 'height', 'ethnicity', 'languages', 'location', 'bodyType', 'kurdistanRegion'] },
+    { id: 'lifestyle', label: t('profile.lifestyle', 'Lifestyle'), icon: Dumbbell, component: LifestyleEditor, fields: ['exerciseHabits', 'dietaryPreferences', 'smoking', 'drinking', 'sleepSchedule', 'havePets', 'travelFrequency'] },
+    { id: 'values', label: t('profile.values_beliefs', 'Values & Beliefs'), icon: Star, component: ValuesPersonalityEditor, fields: ['religion', 'values', 'zodiacSign', 'personalityType', 'politicalViews', 'communicationStyle'] },
+    { id: 'interests', label: t('profile.interests_hobbies', 'Interests & Hobbies'), icon: Heart, component: InterestsHobbiesEditor, fields: ['interests', 'hobbies', 'creativePursuits', 'weekendActivities'] },
+    { id: 'career', label: t('profile.career_education', 'Career & Education'), icon: Briefcase, component: EducationCareerEditor, fields: ['occupation', 'education', 'company', 'careerAmbitions', 'workLifeBalance'] },
+    { id: 'relationship', label: t('profile.relationship_goals', 'Relationship Goals'), icon: Heart, component: RelationshipPreferencesEditor, fields: ['relationshipGoals', 'wantChildren', 'loveLanguage', 'idealDate'] }
   ];
 
   const calculateSectionCompletion = (fields: string[]): number => {
@@ -54,8 +56,8 @@ const ComprehensiveProfileEditor: React.FC<ComprehensiveProfileEditorProps> = ({
     <Card className="backdrop-blur-md bg-card border border-border">
       <CardContent className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-semibold text-foreground">Complete Profile</h3>
-          <Badge className="bg-gradient-to-r from-primary to-pink-500 text-primary-foreground">All Registration Data</Badge>
+          <h3 className="text-xl font-semibold text-foreground">{t('profile.complete_profile', 'Complete Profile')}</h3>
+          <Badge className="bg-gradient-to-r from-primary to-pink-500 text-primary-foreground">{t('profile.all_registration_data', 'All Registration Data')}</Badge>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
