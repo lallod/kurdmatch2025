@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MoreHorizontal, Share2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Profile } from '@/api/profiles';
 import { Post, Story } from '@/api/posts';
 import { getPostsByUserId, getStoriesByUserId, getUserStats } from '@/api/posts';
@@ -15,6 +16,7 @@ import ProfileFans from '@/components/instagram/ProfileFans';
 const InstagramProfile = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
@@ -66,8 +68,8 @@ const InstagramProfile = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-foreground mb-2">Profile not found</h2>
-          <button onClick={() => navigate(-1)} className="text-primary text-sm">Go back</button>
+          <h2 className="text-lg font-semibold text-foreground mb-2">{t('profile.not_found', 'Profile not found')}</h2>
+          <button onClick={() => navigate(-1)} className="text-primary text-sm">{t('common.go_back', 'Go back')}</button>
         </div>
       </div>
     );

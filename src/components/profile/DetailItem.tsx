@@ -177,7 +177,7 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, editable, f
                 ) : (
                   <button
                     onClick={handleStartEdit}
-                    className="h-6 w-6 rounded-full inline-flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-primary/10 transition-all flex-shrink-0"
+                    className="h-6 w-6 rounded-full inline-flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-primary/10 transition-all flex-shrink-0"
                   >
                     <Pencil className="h-3 w-3 text-primary" />
                   </button>
