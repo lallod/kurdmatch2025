@@ -64,7 +64,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Exercise Habits</Label>
+            <Label className={labelClass}>{t('profile.exercise_habits', 'Exercise Habits')}</Label>
             <SuggestionBadge show={fieldSources.exercise_habits === 'random'} />
           </div>
           <Select value={formData.exerciseHabits} onValueChange={(v) => handleInputChange('exerciseHabits', v)}>
@@ -80,7 +80,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Dietary Preferences</Label>
+            <Label className={labelClass}>{t('profile.dietary_preferences', 'Dietary Preferences')}</Label>
             <SuggestionBadge show={fieldSources.dietary_preferences === 'random'} />
           </div>
           <Select value={formData.dietaryPreferences} onValueChange={(v) => handleInputChange('dietaryPreferences', v)}>
@@ -98,7 +98,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Smoking</Label>
+            <Label className={labelClass}>{t('profile.smoking', 'Smoking')}</Label>
             <SuggestionBadge show={fieldSources.smoking === 'random'} />
           </div>
           <Select value={formData.smoking} onValueChange={(v) => handleInputChange('smoking', v)}>
@@ -113,7 +113,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Drinking</Label>
+            <Label className={labelClass}>{t('profile.drinking', 'Drinking')}</Label>
             <SuggestionBadge show={fieldSources.drinking === 'random'} />
           </div>
           <Select value={formData.drinking} onValueChange={(v) => handleInputChange('drinking', v)}>
@@ -128,7 +128,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Sleep Schedule</Label>
+            <Label className={labelClass}>{t('profile.sleep_schedule', 'Sleep Schedule')}</Label>
             <SuggestionBadge show={fieldSources.sleep_schedule === 'random'} />
           </div>
           <Select value={formData.sleepSchedule} onValueChange={(v) => handleInputChange('sleepSchedule', v)}>
@@ -143,7 +143,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Label className={labelClass}>Pets</Label>
+            <Label className={labelClass}>{t('profile.pets', 'Pets')}</Label>
             <SuggestionBadge show={fieldSources.have_pets === 'random'} />
           </div>
           <Select value={formData.havePets} onValueChange={(v) => handleInputChange('havePets', v)}>
@@ -162,10 +162,10 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
 
       <div className="flex gap-3 pt-2">
         <Button variant="outline" onClick={handleCancel} className="flex-1 h-9 text-sm">
-          <X className="mr-2 h-4 w-4" /> Cancel
+          <X className="mr-2 h-4 w-4" /> {t('common.cancel', 'Cancel')}
         </Button>
         <Button onClick={handleSave} className="flex-1 h-9 text-sm bg-primary hover:bg-primary/90" disabled={!hasChanges}>
-          <Save className="mr-2 h-4 w-4" /> Save
+          <Save className="mr-2 h-4 w-4" /> {t('common.save', 'Save')}
         </Button>
       </div>
     </div>
