@@ -70,11 +70,11 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
           <Select value={formData.exerciseHabits} onValueChange={(v) => handleInputChange('exerciseHabits', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_often', 'How often?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="daily">Daily</SelectItem>
-              <SelectItem value="few-times-week">Few times a week</SelectItem>
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="occasionally">Occasionally</SelectItem>
-              <SelectItem value="rarely">Rarely</SelectItem>
+              <SelectItem value="daily">{t('profile.daily', 'Daily')}</SelectItem>
+              <SelectItem value="few-times-week">{t('profile.few_times_week', 'Few times a week')}</SelectItem>
+              <SelectItem value="weekly">{t('profile.weekly', 'Weekly')}</SelectItem>
+              <SelectItem value="occasionally">{t('profile.occasionally', 'Occasionally')}</SelectItem>
+              <SelectItem value="rarely">{t('profile.rarely', 'Rarely')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -86,13 +86,13 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
           <Select value={formData.dietaryPreferences} onValueChange={(v) => handleInputChange('dietaryPreferences', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.diet_type', 'Diet type?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="omnivore">Omnivore</SelectItem>
-              <SelectItem value="vegetarian">Vegetarian</SelectItem>
-              <SelectItem value="vegan">Vegan</SelectItem>
-              <SelectItem value="pescatarian">Pescatarian</SelectItem>
-              <SelectItem value="keto">Keto</SelectItem>
-              <SelectItem value="halal">Halal</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
+              <SelectItem value="omnivore">{t('profile.omnivore', 'Omnivore')}</SelectItem>
+              <SelectItem value="vegetarian">{t('profile.vegetarian', 'Vegetarian')}</SelectItem>
+              <SelectItem value="vegan">{t('profile.vegan', 'Vegan')}</SelectItem>
+              <SelectItem value="pescatarian">{t('profile.pescatarian', 'Pescatarian')}</SelectItem>
+              <SelectItem value="keto">{t('profile.keto', 'Keto')}</SelectItem>
+              <SelectItem value="halal">{t('profile.halal', 'Halal')}</SelectItem>
+              <SelectItem value="other">{t('common.other', 'Other')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -104,10 +104,10 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
           <Select value={formData.smoking} onValueChange={(v) => handleInputChange('smoking', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.do_you_smoke', 'Do you smoke?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="never">Never</SelectItem>
-              <SelectItem value="socially">Socially</SelectItem>
-              <SelectItem value="regularly">Regularly</SelectItem>
-              <SelectItem value="trying-to-quit">Trying to quit</SelectItem>
+              <SelectItem value="never">{t('profile.never', 'Never')}</SelectItem>
+              <SelectItem value="socially">{t('profile.socially', 'Socially')}</SelectItem>
+              <SelectItem value="regularly">{t('profile.regularly', 'Regularly')}</SelectItem>
+              <SelectItem value="trying-to-quit">{t('profile.trying_to_quit', 'Trying to quit')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -119,10 +119,10 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
           <Select value={formData.drinking} onValueChange={(v) => handleInputChange('drinking', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.do_you_drink', 'Do you drink?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="never">Never</SelectItem>
-              <SelectItem value="socially">Socially</SelectItem>
-              <SelectItem value="regularly">Regularly</SelectItem>
-              <SelectItem value="occasionally">Occasionally</SelectItem>
+              <SelectItem value="never">{t('profile.never', 'Never')}</SelectItem>
+              <SelectItem value="socially">{t('profile.socially', 'Socially')}</SelectItem>
+              <SelectItem value="regularly">{t('profile.regularly', 'Regularly')}</SelectItem>
+              <SelectItem value="occasionally">{t('profile.occasionally', 'Occasionally')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -134,10 +134,10 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
           <Select value={formData.sleepSchedule} onValueChange={(v) => handleInputChange('sleepSchedule', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.night_owl_early_bird', 'Night owl or early bird?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="early-bird">Early bird</SelectItem>
-              <SelectItem value="night-owl">Night owl</SelectItem>
-              <SelectItem value="flexible">Flexible</SelectItem>
-              <SelectItem value="depends">Depends on the day</SelectItem>
+              <SelectItem value="early-bird">{t('profile.early_bird', 'Early bird')}</SelectItem>
+              <SelectItem value="night-owl">{t('profile.night_owl', 'Night owl')}</SelectItem>
+              <SelectItem value="flexible">{t('profile.flexible', 'Flexible')}</SelectItem>
+              <SelectItem value="depends">{t('profile.depends_on_day', 'Depends on the day')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -149,12 +149,12 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
           <Select value={formData.havePets} onValueChange={(v) => handleInputChange('havePets', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.do_you_have_pets', 'Do you have pets?')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="yes-dogs">Yes, dogs</SelectItem>
-              <SelectItem value="yes-cats">Yes, cats</SelectItem>
-              <SelectItem value="yes-other">Yes, other pets</SelectItem>
-              <SelectItem value="no-but-love">No, but I love them</SelectItem>
-              <SelectItem value="no-allergic">No, I'm allergic</SelectItem>
-              <SelectItem value="no-not-interested">No, not interested</SelectItem>
+              <SelectItem value="yes-dogs">{t('profile.yes_dogs', 'Yes, dogs')}</SelectItem>
+              <SelectItem value="yes-cats">{t('profile.yes_cats', 'Yes, cats')}</SelectItem>
+              <SelectItem value="yes-other">{t('profile.yes_other_pets', 'Yes, other pets')}</SelectItem>
+              <SelectItem value="no-but-love">{t('profile.no_but_love', 'No, but I love them')}</SelectItem>
+              <SelectItem value="no-allergic">{t('profile.no_allergic', "No, I'm allergic")}</SelectItem>
+              <SelectItem value="no-not-interested">{t('profile.no_not_interested', 'No, not interested')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
