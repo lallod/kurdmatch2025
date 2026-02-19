@@ -81,11 +81,11 @@ const GroupDetail = () => {
       if (isMember) {
         await leaveGroup(id);
         setIsMember(false);
-        toast('Left group');
+        toast(t('groups.left_group', 'Left group'));
       } else {
         await joinGroup(id);
         setIsMember(true);
-        toast('Joined group');
+        toast(t('groups.joined_group', 'Joined group'));
       }
       // Refresh group data to update member count
       const updatedGroup = await getGroupById(id);
@@ -97,7 +97,7 @@ const GroupDetail = () => {
   };
 
   if (loading) {
-    return <LoadingState message="Loading group..." fullScreen />;
+    return <LoadingState message={t('groups.loading', 'Loading group...')} fullScreen />;
   }
 
   if (!group) {
@@ -196,13 +196,13 @@ const GroupDetail = () => {
             <Card>
               <CardContent className="py-4 space-y-2">
                 <div>
-                  <strong>Category:</strong> {group.category}
+                  <strong>{t('groups.category', 'Category')}:</strong> {group.category}
                 </div>
                 <div>
-                  <strong>Privacy:</strong> {group.privacy}
+                  <strong>{t('groups.privacy', 'Privacy')}:</strong> {group.privacy}
                 </div>
                 <div>
-                  <strong>Created:</strong> {new Date(group.created_at).toLocaleDateString()}
+                  <strong>{t('groups.created', 'Created')}:</strong> {new Date(group.created_at).toLocaleDateString()}
                 </div>
               </CardContent>
             </Card>

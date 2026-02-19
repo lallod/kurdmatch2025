@@ -275,8 +275,8 @@ const EventDetail = () => {
               <div>
                 <p className="font-semibold">{t('events.attendees', 'Attendees')}</p>
                 <p className="text-muted-foreground">
-                  {event.attendees_count} going
-                  {event.max_attendees && ` • ${event.max_attendees} max capacity`}
+                  {event.attendees_count} {t('events.going_label', 'going')}
+                  {event.max_attendees && ` • ${event.max_attendees} ${t('events.max_capacity', 'max capacity')}`}
                 </p>
               </div>
             </div>
