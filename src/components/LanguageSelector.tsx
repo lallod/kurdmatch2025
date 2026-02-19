@@ -11,6 +11,7 @@ import { allLanguages, languageCategories } from '@/data/languages';
 import { toast } from 'sonner';
 import SelectedLanguageBadges from './language-selector/SelectedLanguageBadges';
 import LanguageTabPanel from './language-selector/LanguageTabPanel';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LanguageSelectorProps {
   selectedLanguages: string[];
@@ -24,6 +25,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   maxItems = 5
 }) => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslations();
 
   const toggleLanguage = (language: string) => {
     // Language toggled
@@ -33,7 +35,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       if (selectedLanguages.length < maxItems) {
         onChange([...selectedLanguages, language]);
       } else {
-        toast.error(`You can select up to ${maxItems} languages`);
+        toast.error(t('toast.language.max_limit', `You can select up to ${maxItems} languages`, { max: maxItems }));
       }
     }
   };

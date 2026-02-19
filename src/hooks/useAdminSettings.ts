@@ -53,7 +53,7 @@ export const useAdminSettings = (category?: string) => {
       toast.success(t('toast.admin.setting_updated', 'Setting updated'));
     },
     onError: (error: any) => {
-      toast.error(`Failed to update setting: ${error.message}`);
+      toast.error(t('toast.admin.update_failed', `Failed to update setting: ${error.message}`, { message: error.message }));
     },
   });
 
@@ -80,7 +80,7 @@ export const useAdminSettings = (category?: string) => {
       toast.success(t('toast.admin.settings_saved', 'Settings saved'));
     },
     onError: (error: any) => {
-      toast.error(`Failed to save settings: ${error.message}`);
+      toast.error(t('toast.admin.save_failed', `Failed to save settings: ${error.message}`, { message: error.message }));
     },
   });
 
@@ -113,7 +113,7 @@ export const useAdminSettings = (category?: string) => {
       toast.success(t('toast.admin.settings_reset', 'Settings reset to defaults'));
     },
     onError: (error: any) => {
-      toast.error(`Failed to reset settings: ${error.message}`);
+      toast.error(t('toast.admin.reset_failed', `Failed to reset settings: ${error.message}`, { message: error.message }));
     },
   });
 
