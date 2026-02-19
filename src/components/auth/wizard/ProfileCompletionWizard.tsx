@@ -12,6 +12,7 @@ import { Step8FinalTouches } from './steps/Step8FinalTouches';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface WizardData {
   // Step 1 - Updated structure
@@ -71,6 +72,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
 }) => {
   const { user } = useSupabaseAuth();
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState<WizardData>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -84,35 +86,35 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       }
     },
     {
-      title: "Your Lifestyle", 
+      title: t('wizard.your_lifestyle', 'Your Lifestyle'), 
       component: Step2Lifestyle,
       validate: (data: WizardData) => {
         return !!(data.exercise_habits || data.have_pets || data.drinking || data.smoking || data.dietary_preferences || data.sleep_schedule);
       }
     },
     {
-      title: "Values & Beliefs",
+      title: t('wizard.values_beliefs', 'Values & Beliefs'),
       component: Step3Values,
       validate: (data: WizardData) => {
         return !!(data.religion || (data.values && data.values.length > 0) || data.zodiac_sign || data.personality_type);
       }
     },
     {
-      title: "Relationships & Family",
+      title: t('wizard.relationships_family', 'Relationships & Family'),
       component: Step4Relationships,
       validate: (data: WizardData) => {
         return !!(data.relationship_goals || data.want_children || data.children_status || data.family_closeness || (data.love_language && data.love_language.length > 0));
       }
     },
     {
-      title: "Career & Education",
+      title: t('wizard.career_education', 'Career & Education'),
       component: Step5Career,
       validate: (data: WizardData) => {
         return !!(data.education || data.occupation || data.company);
       }
     },
     {
-      title: "Interests & Hobbies",
+      title: t('wizard.interests_hobbies', 'Interests & Hobbies'),
       component: Step6Interests,
       validate: (data: WizardData) => {
         return !!(
@@ -126,7 +128,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       }
     },
     {
-      title: "Your Favorites",
+      title: t('wizard.your_favorites', 'Your Favorites'),
       component: Step7Favorites,
       validate: (data: WizardData) => {
         return !!(
@@ -140,7 +142,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       }
     },
     {
-      title: "Final Touches",
+      title: t('wizard.final_touches', 'Final Touches'),
       component: Step8FinalTouches,
       validate: (data: WizardData) => {
         return !!(data.dream_vacation || data.ideal_date);
@@ -181,8 +183,8 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       if (error) throw error;
 
       toast({
-        title: "Profile completed! 🎉",
-        description: "You're all set to start discovering amazing people!",
+        title: t('wizard.profile_completed', 'Profile completed! 🎉'),
+        description: t('wizard.profile_completed_desc', "You're all set to start discovering amazing people!"),
       });
 
       onComplete();

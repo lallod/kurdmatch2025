@@ -58,7 +58,7 @@ const GroupDetail = () => {
       setIsMember(membershipStatus);
     } catch (error) {
       console.error('Error loading group data:', error);
-      toast.error('Failed to load group');
+      toast.error(t('groups.load_failed', 'Failed to load group'));
     } finally {
       setLoading(false);
     }
@@ -92,7 +92,7 @@ const GroupDetail = () => {
       setGroup(updatedGroup);
     } catch (error) {
       console.error('Error joining/leaving group:', error);
-      toast.error('Failed to update membership');
+      toast.error(t('groups.membership_failed', 'Failed to update membership'));
     }
   };
 

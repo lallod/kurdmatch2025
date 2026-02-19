@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { NearbyUser, Coordinates } from '@/types/location';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface UseNearbyUsersOptions {
   radiusKm?: number;
@@ -10,17 +11,14 @@ interface UseNearbyUsersOptions {
 }
 
 export const useNearbyUsers = (options: UseNearbyUsersOptions = {}) => {
-  const {
-    radiusKm = 50,
-    maxResults = 100,
-    autoFetch = true,
-  } = options;
+  const { radiusKm = 50, maxResults = 100, autoFetch = true } = options;
 
   const [users, setUsers] = useState<NearbyUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const fetchNearbyUsers = async (coords: Coordinates) => {
     setIsLoading(true);
@@ -36,12 +34,8 @@ export const useNearbyUsers = (options: UseNearbyUsersOptions = {}) => {
 
       if (rpcError) throw rpcError;
 
-      // Filter out profiles with placeholder images
       const filteredData = (data || []).filter((user: any) => 
-        user.profile_image && 
-        user.profile_image !== 'https://placehold.co/400' &&
-        user.profile_image !== '/placeholder.svg' &&
-        user.profile_image !== ''
+        user.profile_image && user.profile_image !== 'https://placehold.co/400' && user.profile_image !== '/placeholder.svg' && user.profile_image !== ''
       );
 
       setUsers(filteredData);
@@ -50,11 +44,7 @@ export const useNearbyUsers = (options: UseNearbyUsersOptions = {}) => {
       const error = err as Error;
       setError(error);
       console.error('Error fetching nearby users:', error);
-      toast({
-        title: 'Failed to load nearby users',
-        description: 'Please try again later',
-        variant: 'destructive',
-      });
+      toast({ title: t('location.nearby_failed', 'Failed to load nearby users'), description: t('location.try_again', 'Please try again later'), variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -65,18 +55,8 @@ export const useNearbyUsers = (options: UseNearbyUsersOptions = {}) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          location: locationName,
-        })
-        .eq('id', user.id);
-
+      const { error } = await supabase.from('profiles').update({ latitude: coords.latitude, longitude: coords.longitude, location: locationName }).eq('id', user.id);
       if (error) throw error;
-
-      // Refetch nearby users with new location
       await fetchNearbyUsers(coords);
     } catch (err) {
       console.error('Error updating user location:', err);
@@ -84,18 +64,8 @@ export const useNearbyUsers = (options: UseNearbyUsersOptions = {}) => {
   };
 
   useEffect(() => {
-    if (autoFetch && userLocation) {
-      fetchNearbyUsers(userLocation);
-    }
+    if (autoFetch && userLocation) { fetchNearbyUsers(userLocation); }
   }, [radiusKm, maxResults]);
 
-  return {
-    users,
-    isLoading,
-    error,
-    userLocation,
-    fetchNearbyUsers,
-    updateCurrentUserLocation,
-    refetch: () => userLocation && fetchNearbyUsers(userLocation),
-  };
+  return { users, isLoading, error, userLocation, fetchNearbyUsers, updateCurrentUserLocation, refetch: () => userLocation && fetchNearbyUsers(userLocation) };
 };

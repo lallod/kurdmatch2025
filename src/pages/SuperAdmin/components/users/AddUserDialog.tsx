@@ -24,14 +24,14 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
     try {
       const result = await comprehensiveTestDataCleanup();
       if (result.success) {
-        toast.success("All test data has been removed. Only real users will be shown.");
+        toast.success(t('admin.test_data_removed', 'All test data has been removed. Only real users will be shown.'));
         onUserAdded();
         onOpenChange(false);
       } else {
-        toast.error(result.error || "Failed to clean up test data");
+        toast.error(result.error || t('admin.cleanup_failed', 'Failed to clean up test data'));
       }
     } catch (error) {
-      toast.error("An error occurred during cleanup");
+      toast.error(t('admin.cleanup_error', 'An error occurred during cleanup'));
     } finally {
       setIsCleaningUp(false);
     }

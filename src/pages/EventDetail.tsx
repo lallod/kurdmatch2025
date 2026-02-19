@@ -121,7 +121,7 @@ const EventDetail = () => {
       setAttendees(attendeesData || []);
     } catch (error) {
       console.error('Error fetching event details:', error);
-      toast.error('Failed to load event details');
+      toast.error(t('events.load_failed', 'Failed to load event details'));
     } finally {
       setLoading(false);
     }
@@ -141,7 +141,7 @@ const EventDetail = () => {
 
         if (error) throw error;
 
-        toast.success('You are no longer attending this event');
+        toast.success(t('events.no_longer_attending', 'You are no longer attending this event'));
       } else {
         // Join event
         const { error } = await supabase
@@ -153,13 +153,13 @@ const EventDetail = () => {
 
         if (error) throw error;
 
-        toast.success('You are now attending this event! 🎉');
+        toast.success(t('events.now_attending', 'You are now attending this event! 🎉'));
       }
 
       fetchEventDetails();
     } catch (error) {
       console.error('Error toggling attendance:', error);
-      toast.error('Failed to update attendance');
+      toast.error(t('events.attendance_failed', 'Failed to update attendance'));
     }
   };
 

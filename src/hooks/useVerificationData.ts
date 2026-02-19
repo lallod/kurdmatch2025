@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getVerificationRequests, updateUserVerificationStatus } from '@/api/adminDatabase';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export interface VerificationRequest {
   id: string;
@@ -20,6 +21,7 @@ export const useVerificationData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   const fetchRequests = async () => {
     try {
@@ -29,12 +31,8 @@ export const useVerificationData = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching verification requests:', err);
-      setError('Failed to load verification requests');
-      toast({
-        title: "Error",
-        description: "Failed to load verification requests",
-        variant: "destructive"
-      });
+      setError(t('verification.load_failed', 'Failed to load verification requests'));
+      toast({ title: t('common.error', 'Error'), description: t('verification.load_failed', 'Failed to load verification requests'), variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -44,37 +42,26 @@ export const useVerificationData = () => {
     try {
       const verified = action === 'verify';
       await updateUserVerificationStatus(userId, verified);
-      
-      // Update local state
-      setRequests(prev => prev.map(req => 
-        req.userId === userId 
-          ? { ...req, status: verified ? 'verified' : 'rejected' }
-          : req
-      ));
-
+      setRequests(prev => prev.map(req => req.userId === userId ? { ...req, status: verified ? 'verified' : 'rejected' } : req));
       toast({
-        title: "Success",
-        description: `User ${action === 'verify' ? 'verified' : 'rejected'} successfully`,
+        title: t('common.success', 'Success'),
+        description: action === 'verify' 
+          ? t('verification.user_verified', 'User verified successfully') 
+          : t('verification.user_rejected', 'User rejected successfully'),
       });
     } catch (err) {
       console.error(`Error ${action}ing user:`, err);
       toast({
-        title: "Error",
-        description: `Failed to ${action} user`,
+        title: t('common.error', 'Error'),
+        description: action === 'verify' 
+          ? t('verification.verify_failed', 'Failed to verify user') 
+          : t('verification.reject_failed', 'Failed to reject user'),
         variant: "destructive"
       });
     }
   };
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
+  useEffect(() => { fetchRequests(); }, []);
 
-  return {
-    requests,
-    loading,
-    error,
-    refetch: fetchRequests,
-    handleVerificationAction
-  };
+  return { requests, loading, error, refetch: fetchRequests, handleVerificationAction };
 };

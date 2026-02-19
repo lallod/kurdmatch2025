@@ -49,7 +49,7 @@ const AdvancedSearch = () => {
       setProfiles(data || []);
     } catch (error) {
       console.error('Error searching profiles:', error);
-      toast.error('Failed to search profiles');
+      toast.error(t('search.search_failed', 'Failed to search profiles'));
     } finally { setLoading(false); }
   };
 

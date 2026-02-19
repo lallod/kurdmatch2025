@@ -71,7 +71,7 @@ const LikedMe = () => {
     setLikedProfiles(profiles => 
       profiles.filter(profile => profile.id !== profileId)
     );
-    toast.info("Profile passed");
+    toast.info(t('toast.liked.profile_passed', 'Profile passed'));
   };
 
   const handleProfileClick = (profile: any) => {

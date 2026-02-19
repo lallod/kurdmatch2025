@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { blockUser } from '@/api/moderation';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface BlockUserDialogProps {
   open: boolean;
@@ -29,6 +30,7 @@ const BlockUserDialog: React.FC<BlockUserDialogProps> = ({
   userName,
   onBlocked,
 }) => {
+  const { t } = useTranslations();
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,15 +39,15 @@ const BlockUserDialog: React.FC<BlockUserDialogProps> = ({
       setSubmitting(true);
       await blockUser(userId, reason);
       toast({
-        title: 'User Blocked',
-        description: `You will no longer see content from ${userName}`,
+        title: t('block.user_blocked', 'User Blocked'),
+        description: t('block.user_blocked_desc', `You will no longer see content from ${userName}`, { name: userName }),
       });
       onOpenChange(false);
       onBlocked?.();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to block user',
+        title: t('common.error', 'Error'),
+        description: t('block.block_failed', 'Failed to block user'),
         variant: 'destructive',
       });
     } finally {
@@ -57,24 +59,24 @@ const BlockUserDialog: React.FC<BlockUserDialogProps> = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Block {userName}?</AlertDialogTitle>
+          <AlertDialogTitle>{t('block.confirm_title', `Block ${userName}?`, { name: userName })}</AlertDialogTitle>
           <AlertDialogDescription>
-            You will no longer see posts, comments, or stories from this user, and they won't be able to contact you.
+            {t('block.confirm_desc', "You will no longer see posts, comments, or stories from this user, and they won't be able to contact you.")}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <Textarea
-          placeholder="Reason for blocking (optional)"
+          placeholder={t('block.reason_placeholder', 'Reason for blocking (optional)')}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           className="min-h-[80px]"
         />
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
           <AlertDialogAction onClick={handleBlock} disabled={submitting}>
             {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Block User
+            {t('block.block_user', 'Block User')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

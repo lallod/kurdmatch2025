@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle, UserPlus, UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 import { getUserSubscription } from '@/api/usage';
 import { createPremiumCheckout } from '@/api/payments';
 import {
@@ -28,6 +29,7 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
 }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [isPremium, setIsPremium] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
 
@@ -53,10 +55,10 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
       onFollowToggle();
     }
     toast({
-      title: isFollowing ? 'Unfollowed' : 'Following',
+      title: isFollowing ? t('profile.unfollowed', 'Unfollowed') : t('profile.now_following', 'Following'),
       description: isFollowing 
-        ? `You unfollowed ${userName}` 
-        : `You are now following ${userName}`
+        ? t('profile.you_unfollowed', `You unfollowed ${userName}`, { name: userName })
+        : t('profile.you_following', `You are now following ${userName}`, { name: userName })
     });
   };
 
@@ -65,8 +67,8 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
       await createPremiumCheckout('premium');
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to start checkout',
+        title: t('common.error', 'Error'),
+        description: t('profile.checkout_failed', 'Failed to start checkout'),
         variant: 'destructive'
       });
     }
