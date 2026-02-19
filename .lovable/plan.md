@@ -1,149 +1,87 @@
 
 
-# Plan: Full Admin Control for Categories, Registration Questions, and Multilingual Support
+# Systemfiks: Mobil-UX og Oversettelser
 
-## Summary
+## Hva fikses
 
-This plan adds full multilingual editing capability to the admin panel for categories and registration questions, so admins can manage all content in all 5 languages (EN, NO, Kurdish Sorani, Kurdish Kurmanci, DE) -- including what users see during registration.
-
----
-
-## Step 1: Database -- Add Translation Columns
-
-Add multilingual name/text columns to the existing tables so each question and category can have translations stored directly.
-
-### Migration 1: `registration_questions` -- add translation columns
-
-Add these columns:
-- `text_en`, `text_no`, `text_ku_sorani`, `text_ku_kurmanci`, `text_de` (question text per language)
-- `placeholder_en`, `placeholder_no`, `placeholder_ku_sorani`, `placeholder_ku_kurmanci`, `placeholder_de`
-- `field_options_en`, `field_options_no`, `field_options_ku_sorani`, `field_options_ku_kurmanci`, `field_options_de` (ARRAY columns for translated options)
-
-Default: copy existing `text` into `text_en`, `placeholder` into `placeholder_en`, `field_options` into `field_options_en`.
-
-### Migration 2: `content_categories` and `category_items` -- add translation columns
-
-- `content_categories`: add `name_en`, `name_no`, `name_ku_sorani`, `name_ku_kurmanci`, `name_de`, `description_en`, `description_no`, etc.
-- `category_items`: add `name_en`, `name_no`, `name_ku_sorani`, `name_ku_kurmanci`, `name_de`, `description_en` through `description_de`
+8 filer oppdateres for a fikse to hovedproblemer: usynlige redigeringsknapper pa mobil og hardkodede engelske tekster.
 
 ---
 
-## Step 2: Upgrade Registration Questions Admin Page
+## Del 1: Mobil-redigeringsknapper (P0 -- kritisk)
 
-### 2A. Connect `useQuestions` to Database
+Pa mobil finnes ingen hover-effekt, sa alle knapper med `opacity-0 group-hover:opacity-100` er usynlige. Fiksen: `opacity-100 md:opacity-0 md:group-hover:opacity-100` (alltid synlig pa mobil, hover pa desktop).
 
-Replace the current in-memory mock approach (`initialQuestions` + `systemQuestions`) with real Supabase queries:
-- Fetch from `registration_questions` table on mount
-- All CRUD operations (add, edit, delete, reorder, toggle) write to the database via `executeAdminAction`
+### Filer som endres:
 
-**Files modified:**
-- `src/pages/SuperAdmin/components/registration-questions/useQuestions.ts`
+**1. `src/components/profile/DetailItem.tsx` (linje 180)**
+- Redigeringsblyant for profilfelt
+- Fra: `opacity-0 group-hover:opacity-100`
+- Til: `opacity-100 md:opacity-0 md:group-hover:opacity-100`
 
-### 2B. Add Multilingual Editing to Question Dialogs
+**2. `src/components/profile/ProfileQuickStats.tsx` (linje 70)**
+- Redigeringsknapp pa hurtigstatistikk-kort
+- Samme endring
 
-Update `EditQuestionDialog` and `AddQuestionDialog` to include tabs for each language:
-- A language tab bar (EN | NO | Sorani | Kurmanci | DE)
-- Under each tab: editable question text, placeholder, and field options for that language
-- Visual indicator showing which languages are filled vs. empty
+**3. `src/components/my-profile/InlineEditableField.tsx` (linje 123)**
+- Inline-redigering for tekstfelt
+- Endrer `opacity-0 group-hover/edit:opacity-100` til `opacity-100 md:opacity-0 md:group-hover/edit:opacity-100`
 
-**Files modified:**
-- `src/pages/SuperAdmin/components/registration-questions/EditQuestionDialog.tsx`
-- `src/pages/SuperAdmin/components/registration-questions/AddQuestionDialog.tsx`
-- `src/pages/SuperAdmin/components/registration-questions/types.ts` (add translation fields to `QuestionItem`)
+**4. `src/pages/MyProfile.tsx` (linje 467)**
+- Fotogalleri-overlay med "sett som profilbilde" og "slett"
+- Endrer hele overlay fra `opacity-0 group-hover:opacity-100` til `opacity-100 md:opacity-0 md:group-hover:opacity-100`
 
-### 2C. Update Registration Form to Use Translated Questions
+**5. `src/components/my-profile/PhotoManagement.tsx` (linje 110)**
+- Samme fotooverlay-problem
 
-The `EnhancedDynamicRegistrationForm` and its renderer will read the user's current language and display the corresponding `text_XX`, `placeholder_XX`, and `field_options_XX` values.
-
-**Files modified:**
-- `src/components/auth/hooks/useDynamicRegistrationForm.ts` (fetch translated fields)
-- `src/components/auth/components/EnhancedStepRenderer.tsx` (use translated text)
+**6. `src/components/instagram/PostsGrid.tsx` (linje 46)**
+- Post-statistikk overlay (likes/kommentarer)
 
 ---
 
-## Step 3: Upgrade Categories Admin Page
+## Del 2: Oversettelser -- hardkodede engelske tekster (P1)
 
-### 3A. Replace Mock Data with Real DB Operations
+**7. `src/pages/Profile.tsx`** -- 18 hardkodede feltnavn:
 
-The `CategoriesPage` currently initializes with hardcoded mock categories/items. Replace with the existing `useAdminCategories` hook data (already partially wired) and fix field name mismatches (`order` vs `display_order`, `itemCount` vs `item_count`).
+| Linje | Fra | Til |
+|-------|-----|-----|
+| 131 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
+| 175 | `Occupation:` | `t('profile.occupation', 'Occupation'):` |
+| 176 | `Education:` | `t('profile.education', 'Education'):` |
+| 177 | `Company:` | `t('profile.company', 'Company'):` |
+| 178 | `Goals:` | `t('profile.goals', 'Goals'):` |
+| 179 | `Work Style:` | `t('profile.work_style', 'Work Style'):` |
+| 190 | `Exercise:` | `t('profile.exercise', 'Exercise'):` |
+| 191 | `Diet:` | `t('profile.diet', 'Diet'):` |
+| 192 | `Smoking:` | `t('profile.smoking', 'Smoking'):` |
+| 193 | `Drinking:` | `t('profile.drinking', 'Drinking'):` |
+| 194 | `Sleep:` | `t('profile.sleep', 'Sleep'):` |
+| 195 | `Pets:` | `t('profile.pets', 'Pets'):` |
+| 198 | `Hobbies:` | `t('profile.hobbies', 'Hobbies'):` |
+| 216 | `Political Views:` | `t('profile.political_views', 'Political Views'):` |
+| 247 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
+| 248 | `Children:` | `t('profile.children', 'Children'):` |
+| 249 | `Love Language:` | `t('profile.love_language', 'Love Language'):` |
+| 250 | `Communication:` | `t('profile.communication', 'Communication'):` |
+| 251 | `Ideal Date:` | `t('profile.ideal_date', 'Ideal Date'):` |
+| 252 | `Family:` | `t('profile.family', 'Family'):` |
+| 260 | `Kurdish` | `t('profile.kurdish', 'Kurdish')` |
+| 270 | `Languages` | `t('profile.languages', 'Languages')` |
 
-**Files modified:**
-- `src/pages/SuperAdmin/pages/CategoriesPage.tsx` (remove mock data, fix field mapping)
+**MyProfile.tsx** -- seksjons-titler (linje 455, 516-558, 570):
+- `"Photos"` -> `t('profile.photos', 'Photos')`
+- `"Basics"`, `"Lifestyle"`, `"Interests & Hobbies"`, `"Communication"`, `"Personality & Growth"`, `"Creative & Lifestyle"`, `"Travel"` -- alle pakkes i `t()`
+- `"Privacy & Visibility"` -> `t('profile.privacy_visibility', 'Privacy & Visibility')`
 
-### 3B. Add Multilingual Editing to Category/Item Dialogs
-
-Update the Add/Edit dialogs for categories and items to include language tabs, similar to Step 2B.
-
-**Files modified:**
-- `src/pages/SuperAdmin/pages/CategoriesPage.tsx` (update dialog forms to include language tabs)
-
-### 3C. Route Category Mutations Through Audit Logger
-
-All create/update/delete operations will use `executeAdminAction` for audit trail.
-
-**Files modified:**
-- `src/pages/SuperAdmin/hooks/useAdminCategories.ts`
+**8. `src/pages/InstagramProfile.tsx`** (linje 69-70):
+- `"Profile not found"` -> `t('profile.not_found', 'Profile not found')`
+- `"Go back"` -> `t('common.go_back', 'Go back')`
 
 ---
 
-## Step 4: User Access Management Improvements
+## Teknisk oppsummering
 
-Ensure the existing Users Management page has clear access to:
-- View all users with search/filter
-- Edit any user's profile (already done via AdminProfileEditor)
-- Delete/block/unblock users (already wired via admin-actions)
-- View roles and assign roles
-
-No new pages needed -- verify existing wiring works end-to-end.
-
----
-
-## Technical Details
-
-### Database Column Strategy
-
-Instead of a separate translations table (which adds JOIN complexity), translation columns are added directly to the source tables. This keeps queries simple and fast. 5 languages x 3 fields = 15 new columns per table, which is manageable.
-
-```text
-registration_questions
-  text          -- default/fallback (English)
-  text_en       -- English
-  text_no       -- Norwegian
-  text_ku_sorani    -- Kurdish Sorani
-  text_ku_kurmanci  -- Kurdish Kurmanci
-  text_de       -- German
-  placeholder_en ... placeholder_de
-  field_options_en ... field_options_de (ARRAY)
-```
-
-### Language Tab UI Pattern (reused in both pages)
-
-```text
-+----+----+--------+----------+----+
-| EN | NO | Sorani | Kurmanci | DE |
-+----+----+--------+----------+----+
-| Question Text: [________________]  |
-| Placeholder:   [________________]  |
-| Options:  [tag1] [tag2] [+Add]     |
-+------------------------------------+
-```
-
-### Files Summary
-
-| Action | File |
-|--------|------|
-| Migration | Add ~30 translation columns across 3 tables |
-| Modify | `useQuestions.ts` -- DB-driven CRUD |
-| Modify | `EditQuestionDialog.tsx` -- language tabs |
-| Modify | `AddQuestionDialog.tsx` -- language tabs |
-| Modify | `types.ts` -- translation fields |
-| Modify | `CategoriesPage.tsx` -- remove mocks, add language tabs |
-| Modify | `useAdminCategories.ts` -- audit logging |
-| Modify | `useDynamicRegistrationForm.ts` -- read translated fields |
-| Modify | `EnhancedStepRenderer.tsx` -- display translated text |
-
-### Estimated scope
-- 1 database migration (add columns + backfill)
-- ~9 files modified
-- No new pages needed
-
+- **8 filer endres**
+- **0 nye filer**
+- **0 database-endringer**
+- Alle endringer er CSS-klasser og tekst-wrapping -- ingen logikkendringer
