@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAdminCategories } from '../hooks/useAdminCategories';
+import { useTranslations } from '@/hooks/useTranslations';
 import { 
   Table, 
   TableBody, 
@@ -274,6 +275,7 @@ const itemFormSchema = z.object({
 });
 
 const CategoriesPage = () => {
+  const { t } = useTranslations();
   const { 
     categories: dbCategories, 
     items: dbItems, 
@@ -589,14 +591,14 @@ const CategoriesPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Categories Management</h1>
-          <p className="text-muted-foreground">Manage profile categories and items</p>
+          <h1 className="text-3xl font-bold">{t('admin.categories_management', 'Categories Management')}</h1>
+          <p className="text-muted-foreground">{t('admin.manage_categories_desc', 'Manage profile categories and items')}</p>
         </div>
         <div className="flex space-x-2">
           {activeTab === "categories" ? (
             <Button onClick={() => setIsAddCategoryOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Category
+              {t('admin.add_category', 'Add Category')}
             </Button>
           ) : (
             <Button 
@@ -604,7 +606,7 @@ const CategoriesPage = () => {
               disabled={!selectedCategory}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add Item
+              {t('admin.add_item', 'Add Item')}
             </Button>
           )}
         </div>
@@ -614,15 +616,15 @@ const CategoriesPage = () => {
       <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
         <Brain size={24} className="text-tinder-rose mr-3" />
         <div>
-          <h3 className="font-semibold text-gray-800">AI-Enhanced Categories</h3>
-          <p className="text-sm text-gray-600">Our AI system analyzes user engagement and suggests optimal category organization</p>
+          <h3 className="font-semibold text-gray-800">{t('admin.ai_categories', 'AI-Enhanced Categories')}</h3>
+          <p className="text-sm text-gray-600">{t('admin.ai_categories_desc', 'Our AI system analyzes user engagement and suggests optimal category organization')}</p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4">
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="items">Items</TabsTrigger>
+          <TabsTrigger value="categories">{t('admin.categories', 'Categories')}</TabsTrigger>
+          <TabsTrigger value="items">{t('admin.items', 'Items')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="categories">

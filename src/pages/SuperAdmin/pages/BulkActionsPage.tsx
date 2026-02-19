@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAdminBulkActions } from '../hooks/useAdminBulkActions';
+import { useTranslations } from '@/hooks/useTranslations';
 import { 
   Card, 
   CardContent, 
@@ -62,6 +63,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 const BulkActionsPage = () => {
+  const { t } = useTranslations();
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [refreshing, setRefreshing] = useState(false);
@@ -158,19 +160,19 @@ const BulkActionsPage = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
+        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{t('admin.completed', 'Completed')}</Badge>;
       case 'processing':
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">Processing</Badge>;
+        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">{t('admin.processing', 'Processing')}</Badge>;
       case 'scheduled':
-        return <Badge variant="outline" className="bg-purple-100 text-purple-800 hover:bg-purple-100">Scheduled</Badge>;
+        return <Badge variant="outline" className="bg-purple-100 text-purple-800 hover:bg-purple-100">{t('admin.scheduled', 'Scheduled')}</Badge>;
       case 'failed':
-        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">Failed</Badge>;
+        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">{t('admin.failed', 'Failed')}</Badge>;
       case 'active':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
+        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{t('admin.active', 'Active')}</Badge>;
       case 'inactive':
-        return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">Inactive</Badge>;
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">{t('admin.inactive', 'Inactive')}</Badge>;
       case 'suspended':
-        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">Suspended</Badge>;
+        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">{t('admin.suspended', 'Suspended')}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -243,7 +245,7 @@ const BulkActionsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Bulk User Actions</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('admin.bulk_user_actions', 'Bulk User Actions')}</h1>
         <div className="flex gap-2">
           <Button 
             variant="outline" 
@@ -251,7 +253,7 @@ const BulkActionsPage = () => {
             onClick={() => setBulkImportOpen(true)}
           >
             <Upload size={16} />
-            Import Users
+            {t('admin.import_users', 'Import Users')}
           </Button>
           <Button 
             variant="outline" 
@@ -260,7 +262,7 @@ const BulkActionsPage = () => {
             disabled={refreshing}
           >
             <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
-            {refreshing ? "Refreshing..." : "Refresh"}
+            {refreshing ? t('admin.refreshing', 'Refreshing...') : t('admin.refresh', 'Refresh')}
           </Button>
         </div>
       </div>
@@ -269,16 +271,16 @@ const BulkActionsPage = () => {
       <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
         <Brain size={24} className="text-tinder-rose mr-3" />
         <div>
-          <h3 className="font-semibold text-gray-800">AI-Powered User Segmentation</h3>
-          <p className="text-sm text-gray-600">Our AI system analyzes user behavior patterns to suggest optimal user segments for targeted actions</p>
+          <h3 className="font-semibold text-gray-800">{t('admin.ai_user_segmentation', 'AI-Powered User Segmentation')}</h3>
+          <p className="text-sm text-gray-600">{t('admin.ai_user_segmentation_desc', 'Our AI system analyzes user behavior patterns to suggest optimal user segments for targeted actions')}</p>
         </div>
       </div>
 
       <Tabs defaultValue="history">
         <TabsList className="mb-4">
-          <TabsTrigger value="history">Action History</TabsTrigger>
-          <TabsTrigger value="new">New Bulk Action</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled Actions</TabsTrigger>
+          <TabsTrigger value="history">{t('admin.action_history', 'Action History')}</TabsTrigger>
+          <TabsTrigger value="new">{t('admin.new_bulk_action', 'New Bulk Action')}</TabsTrigger>
+          <TabsTrigger value="scheduled">{t('admin.scheduled_actions', 'Scheduled Actions')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="history" className="space-y-4">

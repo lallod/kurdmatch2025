@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAdminABTests } from '../hooks/useAdminABTests';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import { 
   Card, 
   CardContent, 
@@ -74,6 +75,7 @@ import {
 } from '@/components/ui/chart';
 
 const ABTestingPage = () => {
+  const { t } = useTranslations();
   const [newTestOpen, setNewTestOpen] = useState(false);
   const [selectedTest, setSelectedTest] = useState<any>(null);
   const { tests: abTests, loading, createTest, updateTest, deleteTest } = useAdminABTests();
@@ -83,11 +85,11 @@ const ABTestingPage = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
+        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{t('admin.active', 'Active')}</Badge>;
       case 'completed':
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">Completed</Badge>;
+        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">{t('admin.completed', 'Completed')}</Badge>;
       case 'draft':
-        return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">Draft</Badge>;
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">{t('admin.draft', 'Draft')}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -113,10 +115,10 @@ const ABTestingPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">A/B Testing</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('admin.ab_testing_title', 'A/B Testing')}</h1>
         <Button onClick={() => setNewTestOpen(true)} className="gap-2">
           <Plus size={16} />
-          New Test
+          {t('admin.new_test', 'New Test')}
         </Button>
       </div>
 
@@ -124,17 +126,17 @@ const ABTestingPage = () => {
       <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
         <Brain size={24} className="text-tinder-rose mr-3" />
         <div>
-          <h3 className="font-semibold text-gray-800">AI-Powered Test Analysis</h3>
-          <p className="text-sm text-gray-600">Our AI continuously analyzes test results and provides insights to help optimize your decisions</p>
+          <h3 className="font-semibold text-gray-800">{t('admin.ai_test_analysis', 'AI-Powered Test Analysis')}</h3>
+          <p className="text-sm text-gray-600">{t('admin.ai_test_analysis_desc', 'Our AI continuously analyzes test results and provides insights to help optimize your decisions')}</p>
         </div>
       </div>
 
       <Tabs defaultValue="all">
         <TabsList className="mb-4">
-          <TabsTrigger value="all">All Tests</TabsTrigger>
-          <TabsTrigger value="active">Active (2)</TabsTrigger>
-          <TabsTrigger value="completed">Completed (1)</TabsTrigger>
-          <TabsTrigger value="draft">Draft (1)</TabsTrigger>
+          <TabsTrigger value="all">{t('admin.all_tests', 'All Tests')}</TabsTrigger>
+          <TabsTrigger value="active">{t('admin.active', 'Active')} (2)</TabsTrigger>
+          <TabsTrigger value="completed">{t('admin.completed', 'Completed')} (1)</TabsTrigger>
+          <TabsTrigger value="draft">{t('admin.draft', 'Draft')} (1)</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
@@ -144,12 +146,12 @@ const ABTestingPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Test Name</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Target</TableHead>
-                      <TableHead>Improvement</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('admin.test_name', 'Test Name')}</TableHead>
+                      <TableHead>{t('admin.status', 'Status')}</TableHead>
+                      <TableHead>{t('admin.target', 'Target')}</TableHead>
+                      <TableHead>{t('admin.improvement', 'Improvement')}</TableHead>
+                      <TableHead>{t('admin.duration', 'Duration')}</TableHead>
+                      <TableHead className="text-right">{t('admin.actions', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -160,20 +162,20 @@ const ABTestingPage = () => {
                           <div className="text-xs text-gray-500">Variants: A vs B</div>
                         </TableCell>
                         <TableCell>{getStatusBadge(test.status)}</TableCell>
-                        <TableCell>{test.target_audience || 'All users'}</TableCell>
+                        <TableCell>{test.target_audience || t('admin.all_users', 'All users')}</TableCell>
                         <TableCell>
                           {test.status !== 'draft' ? (
                             <span className="text-muted-foreground">
-                              View details
+                              {t('admin.view_details_link', 'View details')}
                             </span>
                           ) : (
-                            'Not started'
+                            t('admin.not_started', 'Not started')
                           )}
                         </TableCell>
                         <TableCell>
                           {test.status !== 'draft' && test.start_date ? (
                             <span>
-                              {new Date(test.start_date).toLocaleDateString()} to {test.end_date ? new Date(test.end_date).toLocaleDateString() : 'Ongoing'}
+                              {new Date(test.start_date).toLocaleDateString()} to {test.end_date ? new Date(test.end_date).toLocaleDateString() : t('admin.ongoing', 'Ongoing')}
                             </span>
                           ) : (
                             'N/A'
@@ -189,7 +191,7 @@ const ABTestingPage = () => {
                                 onClick={(e) => { e.stopPropagation(); handleTestAction(test.id, 'stop'); }}
                               >
                                 <StopCircle size={16} className="mr-2" />
-                                Stop
+                                {t('admin.stop', 'Stop')}
                               </Button>
                             )}
                             {test.status === 'draft' && (
@@ -200,7 +202,7 @@ const ABTestingPage = () => {
                                 onClick={(e) => { e.stopPropagation(); handleTestAction(test.id, 'start'); }}
                               >
                                 <PlayCircle size={16} className="mr-2" />
-                                Start
+                                {t('admin.start', 'Start')}
                               </Button>
                             )}
                             <Button 
@@ -233,11 +235,11 @@ const ABTestingPage = () => {
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="gap-2">
                       <Copy size={16} />
-                      Duplicate
+                      {t('admin.duplicate', 'Duplicate')}
                     </Button>
                     <Button variant="outline" size="sm" className="gap-2">
                       <Edit size={16} />
-                      Edit
+                      {t('admin.edit', 'Edit')}
                     </Button>
                   </div>
                 </div>
@@ -245,17 +247,17 @@ const ABTestingPage = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <div className="p-4 border rounded-lg bg-white space-y-2">
-                    <div className="text-sm text-gray-500">Status</div>
+                    <div className="text-sm text-gray-500">{t('admin.status', 'Status')}</div>
                     <div className="font-semibold flex items-center">
                       {getStatusBadge(selectedTest.status)}
                     </div>
                   </div>
                   <div className="p-4 border rounded-lg bg-white space-y-2">
-                    <div className="text-sm text-gray-500">Target Audience</div>
+                    <div className="text-sm text-gray-500">{t('admin.target_audience_label', 'Target Audience')}</div>
                     <div className="font-semibold">{selectedTest.target}</div>
                   </div>
                   <div className="p-4 border rounded-lg bg-white space-y-2">
-                    <div className="text-sm text-gray-500">Improvement</div>
+                    <div className="text-sm text-gray-500">{t('admin.improvement', 'Improvement')}</div>
                     <div className={`font-semibold ${selectedTest.conversion.improvement.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
                       {selectedTest.conversion.improvement}
                     </div>
@@ -265,7 +267,7 @@ const ABTestingPage = () => {
                 {selectedTest.status !== 'draft' && (
                   <>
                     <div className="mb-6">
-                      <h3 className="text-lg font-semibold mb-4">Performance Metrics</h3>
+                      <h3 className="text-lg font-semibold mb-4">{t('admin.performance_metrics', 'Performance Metrics')}</h3>
                       <ChartContainer
                         config={{
                           variantA: { color: "#8075FF" },
@@ -301,7 +303,7 @@ const ABTestingPage = () => {
                     </div>
 
                     <div className="p-4 border rounded-lg bg-blue-50">
-                      <h4 className="font-semibold text-blue-800 mb-2">AI Analysis</h4>
+                      <h4 className="font-semibold text-blue-800 mb-2">{t('admin.ai_analysis', 'AI Analysis')}</h4>
                       <p className="text-blue-700">
                         Variant B is showing a statistically significant improvement of {selectedTest.conversion.improvement}. 
                         Based on the current trend, we recommend continuing the test for at least 7 more days to ensure 
@@ -318,8 +320,8 @@ const ABTestingPage = () => {
                       Running for: 14 days (16 days remaining)
                     </span>
                     <Button variant="outline" size="sm" className="gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300">
-                      <StopCircle size={16} />
-                      Stop Test
+                       <StopCircle size={16} />
+                      {t('admin.stop_test', 'Stop Test')}
                     </Button>
                   </div>
                 </CardFooter>
@@ -331,8 +333,8 @@ const ABTestingPage = () => {
         <TabsContent value="active">
           <Card>
             <CardHeader>
-              <CardTitle>Active Tests</CardTitle>
-              <CardDescription>Currently running tests</CardDescription>
+              <CardTitle>{t('admin.active_tests_tab', 'Active Tests')}</CardTitle>
+              <CardDescription>{t('admin.active_tests_desc', 'Currently running tests')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>Active tests content will appear here.</p>
@@ -343,8 +345,8 @@ const ABTestingPage = () => {
         <TabsContent value="completed">
           <Card>
             <CardHeader>
-              <CardTitle>Completed Tests</CardTitle>
-              <CardDescription>Finished tests with results</CardDescription>
+              <CardTitle>{t('admin.completed_tests', 'Completed Tests')}</CardTitle>
+              <CardDescription>{t('admin.completed_tests_desc', 'Finished tests with results')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>Completed tests content will appear here.</p>
@@ -355,8 +357,8 @@ const ABTestingPage = () => {
         <TabsContent value="draft">
           <Card>
             <CardHeader>
-              <CardTitle>Draft Tests</CardTitle>
-              <CardDescription>Tests in preparation</CardDescription>
+              <CardTitle>{t('admin.draft_tests', 'Draft Tests')}</CardTitle>
+              <CardDescription>{t('admin.draft_tests_desc', 'Tests in preparation')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>Draft tests content will appear here.</p>
@@ -369,9 +371,9 @@ const ABTestingPage = () => {
       <Dialog open={newTestOpen} onOpenChange={setNewTestOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Create New A/B Test</DialogTitle>
+            <DialogTitle>{t('admin.create_ab_test', 'Create New A/B Test')}</DialogTitle>
             <DialogDescription>
-              Set up a new test to compare variations and measure their performance.
+              {t('admin.create_ab_test_desc', 'Set up a new test to compare variations and measure their performance.')}
             </DialogDescription>
           </DialogHeader>
           

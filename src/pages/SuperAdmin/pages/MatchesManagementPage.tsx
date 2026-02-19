@@ -7,23 +7,19 @@ import { toast } from 'sonner';
 import { Users, Trash2, Search, Calendar, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Match {
   id: string;
   user1_id: string;
   user2_id: string;
   matched_at: string;
-  user1_profile?: {
-    name: string;
-    profile_image: string;
-  };
-  user2_profile?: {
-    name: string;
-    profile_image: string;
-  };
+  user1_profile?: { name: string; profile_image: string; };
+  user2_profile?: { name: string; profile_image: string; };
 }
 
 const MatchesManagementPage = () => {
+  const { t } = useTranslations();
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,10 +31,7 @@ const MatchesManagementPage = () => {
       const { data, error, count } = await supabase
         .from('matches')
         .select(`
-          id,
-          user1_id,
-          user2_id,
-          matched_at,
+          id, user1_id, user2_id, matched_at,
           user1_profile:profiles!matches_user1_id_fkey(name, profile_image),
           user2_profile:profiles!matches_user2_id_fkey(name, profile_image)
         `, { count: 'exact' })
@@ -58,13 +51,8 @@ const MatchesManagementPage = () => {
 
   const deleteMatch = async (id: string) => {
     if (!confirm('Are you sure you want to delete this match?')) return;
-
     try {
-      const { error } = await supabase
-        .from('matches')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('matches').delete().eq('id', id);
       if (error) throw error;
       toast.success('Match deleted successfully');
       fetchMatches();
@@ -74,9 +62,7 @@ const MatchesManagementPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMatches();
-  }, []);
+  useEffect(() => { fetchMatches(); }, []);
 
   const filteredMatches = matches.filter(match => {
     const user1Name = match.user1_profile?.name?.toLowerCase() || '';
@@ -89,11 +75,11 @@ const MatchesManagementPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Matches Management</h1>
-          <p className="text-white/60 mt-1">View and monitor all user matches ({totalCount} total)</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.matches_management', 'Matches Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.matches_desc', 'View and monitor all user matches ({{count}} total)', { count: totalCount })}</p>
         </div>
         <Button onClick={fetchMatches} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('admin.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -101,13 +87,13 @@ const MatchesManagementPage = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Users className="h-5 w-5 text-green-500" />
-            All Matches
+            {t('admin.all_matches', 'All Matches')}
           </CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search by user name..."
+                placeholder={t('admin.search_by_user', 'Search by user name...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white"
@@ -117,47 +103,33 @@ const MatchesManagementPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-white/60">Loading matches...</div>
+            <div className="text-center py-8 text-white/60">{t('admin.loading_matches', 'Loading matches...')}</div>
           ) : filteredMatches.length === 0 ? (
-            <div className="text-center py-8 text-white/60">No matches found</div>
+            <div className="text-center py-8 text-white/60">{t('admin.no_matches_found', 'No matches found')}</div>
           ) : (
             <div className="space-y-3">
               {filteredMatches.map((match) => (
-                <div
-                  key={match.id}
-                  className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
-                >
+                <div key={match.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="flex items-center gap-4 flex-1">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={match.user1_profile?.profile_image || '/placeholder.svg'}
-                        alt={match.user1_profile?.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
+                      <img src={match.user1_profile?.profile_image || '/placeholder.svg'} alt={match.user1_profile?.name} className="w-10 h-10 rounded-full object-cover" />
                       <div>
-                        <p className="text-white font-medium">{match.user1_profile?.name || 'Unknown'}</p>
-                        <p className="text-white/40 text-sm">User 1</p>
+                        <p className="text-white font-medium">{match.user1_profile?.name || t('admin.unknown', 'Unknown')}</p>
+                        <p className="text-white/40 text-sm">{t('admin.user_1', 'User 1')}</p>
                       </div>
                     </div>
-
                     <div className="flex items-center gap-2 mx-4">
                       <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
                         <Users className="h-4 w-4 text-green-500" />
                       </div>
                     </div>
-
                     <div className="flex items-center gap-3">
-                      <img
-                        src={match.user2_profile?.profile_image || '/placeholder.svg'}
-                        alt={match.user2_profile?.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
+                      <img src={match.user2_profile?.profile_image || '/placeholder.svg'} alt={match.user2_profile?.name} className="w-10 h-10 rounded-full object-cover" />
                       <div>
-                        <p className="text-white font-medium">{match.user2_profile?.name || 'Unknown'}</p>
-                        <p className="text-white/40 text-sm">User 2</p>
+                        <p className="text-white font-medium">{match.user2_profile?.name || t('admin.unknown', 'Unknown')}</p>
+                        <p className="text-white/40 text-sm">{t('admin.user_2', 'User 2')}</p>
                       </div>
                     </div>
-
                     <div className="ml-auto flex items-center gap-4">
                       <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                         <Calendar className="h-3 w-3 mr-1" />
@@ -165,22 +137,11 @@ const MatchesManagementPage = () => {
                       </Badge>
                     </div>
                   </div>
-
                   <div className="flex items-center gap-2 ml-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(`/profile/${match.user1_id}`, '_blank')}
-                      className="text-white/60 hover:text-white hover:bg-white/5"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => window.open(`/profile/${match.user1_id}`, '_blank')} className="text-white/60 hover:text-white hover:bg-white/5">
                       <ExternalLink className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteMatch(match.id)}
-                      className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => deleteMatch(match.id)} className="text-red-500 hover:text-red-400 hover:bg-red-500/10">
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

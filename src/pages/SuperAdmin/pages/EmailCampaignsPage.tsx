@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAdminEmailCampaigns } from '../hooks/useAdminEmailCampaigns';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 import { 
   Table, 
   TableBody, 
@@ -78,12 +79,12 @@ import {
 } from '@/components/ui/chart';
 
 const EmailCampaignsPage = () => {
+  const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
   const [newCampaignOpen, setNewCampaignOpen] = useState(false);
   const { campaigns: emailCampaigns, loading, createCampaign, updateCampaign, deleteCampaign } = useAdminEmailCampaigns();
-  
 
   // Filter campaigns based on search term and status
   const filteredCampaigns = emailCampaigns.filter(campaign => {
@@ -102,13 +103,13 @@ const EmailCampaignsPage = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
+        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{t('admin.active', 'Active')}</Badge>;
       case 'scheduled':
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">Scheduled</Badge>;
+        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">{t('admin.scheduled', 'Scheduled')}</Badge>;
       case 'paused':
-        return <Badge variant="outline" className="bg-amber-100 text-amber-800 hover:bg-amber-100">Paused</Badge>;
+        return <Badge variant="outline" className="bg-amber-100 text-amber-800 hover:bg-amber-100">{t('admin.paused_campaigns', 'Paused')}</Badge>;
       case 'draft':
-        return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">Draft</Badge>;
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">{t('admin.draft', 'Draft')}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -136,10 +137,10 @@ const EmailCampaignsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Email Campaigns</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('admin.email_campaigns_title', 'Email Campaigns')}</h1>
         <Button onClick={() => setNewCampaignOpen(true)} className="gap-2">
           <Plus size={16} />
-          New Campaign
+          {t('admin.new_campaign', 'New Campaign')}
         </Button>
       </div>
 
@@ -147,18 +148,18 @@ const EmailCampaignsPage = () => {
       <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-tinder-rose/5 to-tinder-orange/5 border border-tinder-rose/10 flex items-center">
         <Brain size={24} className="text-tinder-rose mr-3" />
         <div>
-          <h3 className="font-semibold text-gray-800">AI-Powered Email Optimization</h3>
-          <p className="text-sm text-gray-600">Our AI system analyzes campaign performance and suggests optimizations for subject lines, content, and send times</p>
+          <h3 className="font-semibold text-gray-800">{t('admin.ai_email_optimization', 'AI-Powered Email Optimization')}</h3>
+          <p className="text-sm text-gray-600">{t('admin.ai_email_optimization_desc', 'Our AI system analyzes campaign performance and suggests optimizations for subject lines, content, and send times')}</p>
         </div>
       </div>
 
       <Tabs defaultValue="all">
         <TabsList className="mb-4">
-          <TabsTrigger value="all">All Campaigns</TabsTrigger>
-          <TabsTrigger value="active">Active (2)</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled (1)</TabsTrigger>
-          <TabsTrigger value="paused">Paused (1)</TabsTrigger>
-          <TabsTrigger value="draft">Draft (1)</TabsTrigger>
+          <TabsTrigger value="all">{t('admin.all_campaigns', 'All Campaigns')}</TabsTrigger>
+          <TabsTrigger value="active">{t('admin.active', 'Active')} (2)</TabsTrigger>
+          <TabsTrigger value="scheduled">{t('admin.scheduled', 'Scheduled')} (1)</TabsTrigger>
+          <TabsTrigger value="paused">{t('admin.paused_campaigns', 'Paused')} (1)</TabsTrigger>
+          <TabsTrigger value="draft">{t('admin.draft', 'Draft')} (1)</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
@@ -168,7 +169,7 @@ const EmailCampaignsPage = () => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search campaigns..."
+                    placeholder={t('admin.search_campaigns', 'Search campaigns...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -177,14 +178,14 @@ const EmailCampaignsPage = () => {
                 <div className="flex gap-2">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Filter by status" />
+                      <SelectValue placeholder={t('admin.filter_by_status', 'Filter by status')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="scheduled">Scheduled</SelectItem>
-                      <SelectItem value="paused">Paused</SelectItem>
-                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="all">{t('admin.all_statuses', 'All Statuses')}</SelectItem>
+                      <SelectItem value="active">{t('admin.active', 'Active')}</SelectItem>
+                      <SelectItem value="scheduled">{t('admin.scheduled', 'Scheduled')}</SelectItem>
+                      <SelectItem value="paused">{t('admin.paused_campaigns', 'Paused')}</SelectItem>
+                      <SelectItem value="draft">{t('admin.draft', 'Draft')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button variant="outline" size="icon">
@@ -197,14 +198,14 @@ const EmailCampaignsPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Campaign Name</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Audience</TableHead>
-                      <TableHead>Last Sent</TableHead>
-                      <TableHead>Next Send</TableHead>
-                      <TableHead>Opens</TableHead>
-                      <TableHead>Clicks</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('admin.campaign_name', 'Campaign Name')}</TableHead>
+                      <TableHead>{t('admin.status', 'Status')}</TableHead>
+                      <TableHead>{t('admin.audience', 'Audience')}</TableHead>
+                      <TableHead>{t('admin.last_sent', 'Last Sent')}</TableHead>
+                      <TableHead>{t('admin.next_send', 'Next Send')}</TableHead>
+                      <TableHead>{t('admin.opens', 'Opens')}</TableHead>
+                      <TableHead>{t('admin.clicks', 'Clicks')}</TableHead>
+                      <TableHead className="text-right">{t('admin.actions', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -213,7 +214,7 @@ const EmailCampaignsPage = () => {
                         <TableRow key={campaign.id} onClick={() => viewCampaignDetails(campaign)} className="cursor-pointer">
                           <TableCell className="font-medium">{campaign.name}</TableCell>
                           <TableCell>{getStatusBadge(campaign.status)}</TableCell>
-                          <TableCell>{campaign.target_audience || 'All users'}</TableCell>
+                          <TableCell>{campaign.target_audience || t('admin.all_users', 'All users')}</TableCell>
                           <TableCell>{campaign.sent_date ? new Date(campaign.sent_date).toLocaleDateString() : '-'}</TableCell>
                           <TableCell>{campaign.scheduled_date ? new Date(campaign.scheduled_date).toLocaleDateString() : '-'}</TableCell>
                           <TableCell>
@@ -266,7 +267,7 @@ const EmailCampaignsPage = () => {
                     ) : (
                       <TableRow>
                         <TableCell colSpan={8} className="text-center py-6">
-                          No campaigns found
+                          {t('admin.no_campaigns_found', 'No campaigns found')}
                         </TableCell>
                       </TableRow>
                     )}

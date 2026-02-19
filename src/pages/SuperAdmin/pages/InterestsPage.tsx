@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Interest {
   id: string;
@@ -18,6 +19,7 @@ interface Interest {
 }
 
 const InterestsPage = () => {
+  const { t } = useTranslations();
   const [interests, setInterests] = useState<Interest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,21 +29,10 @@ const InterestsPage = () => {
   const [newInterestCategory, setNewInterestCategory] = useState('');
 
   const categories = [
-    'Sports & Fitness',
-    'Arts & Culture',
-    'Music & Dance',
-    'Food & Cooking',
-    'Travel & Adventure',
-    'Technology',
-    'Books & Reading',
-    'Movies & TV',
-    'Games & Gaming',
-    'Outdoor Activities',
-    'Social Causes',
-    'Business & Career',
-    'Health & Wellness',
-    'Fashion & Style',
-    'Other'
+    'Sports & Fitness', 'Arts & Culture', 'Music & Dance', 'Food & Cooking',
+    'Travel & Adventure', 'Technology', 'Books & Reading', 'Movies & TV',
+    'Games & Gaming', 'Outdoor Activities', 'Social Causes', 'Business & Career',
+    'Health & Wellness', 'Fashion & Style', 'Other'
   ];
 
   const fetchInterests = async () => {
@@ -108,24 +99,24 @@ const InterestsPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Interests Management</h1>
-          <p className="text-white/60 mt-1">Manage user interest categories ({totalCount} interests)</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.interests_management', 'Interests Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.manage_interests', 'Manage user interest categories ({{count}} interests)', { count: totalCount })}</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Interest
+                {t('admin.add_interest', 'Add Interest')}
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-[#1a1a1a] border-white/10">
               <DialogHeader>
-                <DialogTitle className="text-white">Add New Interest</DialogTitle>
+                <DialogTitle className="text-white">{t('admin.add_new_interest', 'Add New Interest')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div>
-                  <Label htmlFor="interest-name" className="text-white">Interest Name</Label>
+                  <Label htmlFor="interest-name" className="text-white">{t('admin.interest_name', 'Interest Name')}</Label>
                   <Input
                     id="interest-name"
                     value={newInterestName}
@@ -135,10 +126,10 @@ const InterestsPage = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="interest-category" className="text-white">Category</Label>
+                  <Label htmlFor="interest-category" className="text-white">{t('admin.category', 'Category')}</Label>
                   <Select value={newInterestCategory} onValueChange={setNewInterestCategory}>
                     <SelectTrigger className="bg-white/5 border-white/10 text-white mt-2">
-                      <SelectValue placeholder="Select a category" />
+                      <SelectValue placeholder={t('admin.select_category_label', 'Select a category')} />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1a1a] border-white/10">
                       {categories.map((cat) => (
@@ -150,13 +141,13 @@ const InterestsPage = () => {
                   </Select>
                 </div>
                 <Button onClick={addInterest} className="w-full bg-gradient-to-r from-purple-500 to-pink-600">
-                  Add Interest
+                  {t('admin.add_interest', 'Add Interest')}
                 </Button>
               </div>
             </DialogContent>
           </Dialog>
           <Button onClick={fetchInterests} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-            Refresh
+            {t('admin.refresh', 'Refresh')}
           </Button>
         </div>
       </div>
@@ -165,13 +156,13 @@ const InterestsPage = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-pink-500" />
-            All Interests
+            {t('admin.all_interests', 'All Interests')}
           </CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search interests..."
+                placeholder={t('admin.search_interests', 'Search interests...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white"
@@ -181,9 +172,9 @@ const InterestsPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-white/60">Loading interests...</div>
+            <div className="text-center py-8 text-white/60">{t('admin.loading_interests', 'Loading interests...')}</div>
           ) : Object.keys(groupedInterests).length === 0 ? (
-            <div className="text-center py-8 text-white/60">No interests found</div>
+            <div className="text-center py-8 text-white/60">{t('admin.no_interests_found', 'No interests found')}</div>
           ) : (
             <div className="space-y-6">
               {Object.entries(groupedInterests).map(([category, categoryInterests]) => (
