@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ActivityItem {
   id: string;
@@ -17,37 +18,27 @@ interface ActivityItem {
 }
 
 const RecentActivity = () => {
+  const { t } = useTranslations();
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
-  
 
   useEffect(() => {
     const loadActivities = async () => {
       try {
         setLoading(true);
-        console.log('Fetching recent activities...');
-        
-        // Fetch admin activities from the database
         const { data, error } = await supabase
           .from('admin_activities')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(10);
         
-        if (error) {
-          console.error('Error fetching activities:', error.message);
-          throw error;
-        }
-        
-        console.log('Fetched activities data:', data);
+        if (error) throw error;
         
         if (!data || data.length === 0) {
-          console.log('No activities found in the database');
           setActivities([]);
           return;
         }
         
-        // Transform the data to match the expected structure
         const formattedActivities = data.map(item => ({
           id: item.id,
           activity_type: item.activity_type,
@@ -61,7 +52,7 @@ const RecentActivity = () => {
         setActivities(formattedActivities);
       } catch (error) {
         console.error('Failed to load recent activities:', error);
-        toast.error('Could not load recent activities');
+        toast.error(t('admin.no_recent_activities', 'No recent activities found.'));
         setActivities([]);
       } finally {
         setLoading(false);
@@ -85,27 +76,27 @@ const RecentActivity = () => {
   };
 
   const getActivityTitle = (type: string) => {
-    switch (type) {
-      case 'user_register': return 'New user registration';
-      case 'user_upgrade': return 'User upgraded to premium';
-      case 'photo_upload': return 'New photos uploaded';
-      case 'message_sent': return 'New message sent';
-      case 'profile_update': return 'Profile updated';
-      case 'user_moderation': return 'User moderation';
-      case 'system_update': return 'System update';
-      case 'content_moderation': return 'Content moderation';
-      case 'user_support': return 'User support';
-      case 'system_maintenance': return 'System maintenance';
-      default: return type.replace(/_/g, ' ');
-    }
+    const titles: Record<string, string> = {
+      user_register: t('admin.new_user_registration', 'New user registration'),
+      user_upgrade: t('admin.user_upgraded_premium', 'User upgraded to premium'),
+      photo_upload: t('admin.new_photos_uploaded', 'New photos uploaded'),
+      message_sent: t('admin.new_message_sent', 'New message sent'),
+      profile_update: t('admin.profile_updated', 'Profile updated'),
+      user_moderation: t('admin.user_moderation_activity', 'User moderation'),
+      system_update: t('admin.system_update_activity', 'System update'),
+      content_moderation: t('admin.content_moderation_activity', 'Content moderation'),
+      user_support: t('admin.user_support_activity', 'User support'),
+      system_maintenance: t('admin.system_maintenance_activity', 'System maintenance'),
+    };
+    return titles[type] || type.replace(/_/g, ' ');
   };
 
   if (loading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Latest actions across the platform</CardDescription>
+          <CardTitle>{t('admin.recent_activity', 'Recent Activity')}</CardTitle>
+          <CardDescription>{t('admin.latest_actions', 'Latest actions across the platform')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -121,13 +112,13 @@ const RecentActivity = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
-        <CardDescription>Latest actions across the platform</CardDescription>
+        <CardTitle>{t('admin.recent_activity', 'Recent Activity')}</CardTitle>
+        <CardDescription>{t('admin.latest_actions', 'Latest actions across the platform')}</CardDescription>
       </CardHeader>
       <CardContent>
         {activities.length === 0 ? (
           <div className="p-4 text-center">
-            <p className="text-gray-500">No recent activities found. Add some data to the admin_activities table.</p>
+            <p className="text-gray-500">{t('admin.no_recent_activities', 'No recent activities found.')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -151,7 +142,7 @@ const RecentActivity = () => {
         )}
       </CardContent>
       <CardFooter>
-        <Button variant="outline" size="sm" className="w-full">View All Activity</Button>
+        <Button variant="outline" size="sm" className="w-full">{t('admin.view_all_activity', 'View All Activity')}</Button>
       </CardFooter>
     </Card>
   );

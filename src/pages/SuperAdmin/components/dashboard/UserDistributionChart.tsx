@@ -4,8 +4,10 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const UserDistributionChart = () => {
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(true);
   const [userRoleData, setUserRoleData] = useState<{ name: string; value: number }[]>([]);
   const { toast } = useToast();
@@ -14,15 +16,12 @@ const UserDistributionChart = () => {
     const fetchUserRoles = async () => {
       try {
         setLoading(true);
-        
-        // Get user roles from the database
         const { data, error } = await supabase
           .from('user_roles')
           .select('role');
         
         if (error) throw error;
         
-        // Count the occurrences of each role
         const roleCounts: Record<string, number> = {};
         
         if (data && data.length > 0) {
@@ -31,19 +30,17 @@ const UserDistributionChart = () => {
             roleCounts[role] = (roleCounts[role] || 0) + 1;
           });
           
-          // Transform into the format needed for the chart
           const chartData = Object.entries(roleCounts).map(([name, value]) => ({
             name: name === 'user' ? 'Free Users' : 
                   name === 'premium' ? 'Premium' :
                   name === 'moderator' ? 'Moderators' :
                   name === 'admin' || name === 'super_admin' ? 'Admins' : 
-                  name.charAt(0).toUpperCase() + name.slice(1), // Capitalize other roles
+                  name.charAt(0).toUpperCase() + name.slice(1),
             value
           }));
           
           setUserRoleData(chartData);
         } else {
-          // If no data, provide some default data
           setUserRoleData([
             { name: 'Free Users', value: 0 },
             { name: 'Premium', value: 0 },
@@ -54,12 +51,11 @@ const UserDistributionChart = () => {
       } catch (error) {
         console.error('Error fetching user distribution data:', error);
         toast({
-          title: 'Error loading data',
-          description: 'Could not load user distribution data',
+          title: t('admin.error_loading_data', 'Error loading data'),
+          description: t('admin.could_not_load_distribution', 'Could not load user distribution data'),
           variant: 'destructive',
         });
         
-        // Fallback to sample data
         setUserRoleData([
           { name: 'Free Users', value: 0 },
           { name: 'Premium', value: 0 },
@@ -80,8 +76,8 @@ const UserDistributionChart = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>User Distribution</CardTitle>
-          <CardDescription>Breakdown of user types</CardDescription>
+          <CardTitle>{t('admin.user_distribution', 'User Distribution')}</CardTitle>
+          <CardDescription>{t('admin.breakdown_user_types', 'Breakdown of user types')}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
           <div className="h-[300px] w-full bg-gray-100 animate-pulse rounded-md"></div>
@@ -93,13 +89,13 @@ const UserDistributionChart = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>User Distribution</CardTitle>
-        <CardDescription>Breakdown of user types</CardDescription>
+        <CardTitle>{t('admin.user_distribution', 'User Distribution')}</CardTitle>
+        <CardDescription>{t('admin.breakdown_user_types', 'Breakdown of user types')}</CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
         {userRoleData.length === 0 ? (
           <div className="h-[300px] flex items-center justify-center text-gray-500">
-            No user data available
+            {t('admin.no_user_data', 'No user data available')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
