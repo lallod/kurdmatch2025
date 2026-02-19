@@ -2,7 +2,6 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import { useTranslations } from '@/hooks/useTranslations';
 
 interface Props {
   children: ReactNode;
@@ -15,15 +14,14 @@ interface State {
 }
 
 const ErrorContent = ({ error, onReset }: { error: Error | null, onReset: () => void }) => {
-  const { t } = useTranslations();
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <Alert variant="destructive" className="max-w-2xl">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>{t('error.something_went_wrong', 'Something went wrong')}</AlertTitle>
+        <AlertTitle>Something went wrong</AlertTitle>
         <AlertDescription className="mt-4">
           <p className="mb-4">
-            {error?.message || t('error.unexpected_error', 'An unexpected error occurred. Please try refreshing the page.')}
+            {error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
           </p>
           <Button
             onClick={onReset}
@@ -31,7 +29,7 @@ const ErrorContent = ({ error, onReset }: { error: Error | null, onReset: () => 
             className="gap-2"
           >
             <RefreshCw className="h-4 w-4" />
-            {t('error.refresh_page', 'Refresh Page')}
+            Refresh Page
           </Button>
         </AlertDescription>
       </Alert>
@@ -52,7 +50,6 @@ class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
     
-    // Auto-reload on chunk/module load failures (happens after deployments)
     const isChunkError = 
       error.message?.includes('Failed to fetch dynamically imported module') ||
       error.message?.includes('Importing a module script failed') ||
@@ -60,7 +57,6 @@ class ErrorBoundary extends Component<Props, State> {
       error.message?.includes('ChunkLoadError');
     
     if (isChunkError) {
-      // Only auto-reload once to prevent infinite loops
       const lastReload = sessionStorage.getItem('chunk_error_reload');
       const now = Date.now();
       if (!lastReload || now - parseInt(lastReload) > 10000) {
@@ -81,10 +77,8 @@ class ErrorBoundary extends Component<Props, State> {
       if (this.props.fallback) {
         return this.props.fallback;
       }
-
       return <ErrorContent error={this.state.error} onReset={this.handleReset} />;
     }
-
     return this.props.children;
   }
 }
