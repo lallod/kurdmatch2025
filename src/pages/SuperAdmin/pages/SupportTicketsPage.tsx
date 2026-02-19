@@ -99,7 +99,7 @@ const SupportTicketsPage = () => {
       setTickets(data || []);
     } catch (error) {
       console.error('Error fetching tickets:', error);
-      toast.error('Failed to fetch support tickets');
+      toast.error(t('admin.failed_fetch_tickets', 'Failed to fetch support tickets'));
     } finally {
       setIsLoading(false);
     }
@@ -175,21 +175,21 @@ const SupportTicketsPage = () => {
       // Send notification to user if ticket has user_id
       if (ticket?.user_id) {
         const statusMessages: Record<string, string> = {
-          resolved: 'Your support ticket has been resolved.',
-          closed: 'Your support ticket has been closed.',
-          pending: 'Your support ticket is being reviewed.',
+          resolved: t('admin.ticket_resolved_msg', 'Your support ticket has been resolved.'),
+          closed: t('admin.ticket_closed_msg', 'Your support ticket has been closed.'),
+          pending: t('admin.ticket_pending_msg', 'Your support ticket is being reviewed.'),
         };
         
         await supabase.from('notifications').insert({
           user_id: ticket.user_id,
           type: 'support_status',
-          title: `Ticket ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
-          message: statusMessages[newStatus] || `Your ticket status has been updated to ${newStatus}.`,
+          title: t('admin.ticket_status_title', 'Ticket {{status}}', { status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1) }),
+          message: statusMessages[newStatus] || t('admin.ticket_status_updated_msg', 'Your ticket status has been updated to {{status}}.', { status: newStatus }),
           link: '/help-support',
         });
       }
 
-      toast.success(`Ticket status updated to ${newStatus}`);
+      toast.success(t('admin.ticket_status_updated', 'Ticket status updated to {{status}}', { status: newStatus }));
 
       fetchTickets();
       
@@ -198,7 +198,7 @@ const SupportTicketsPage = () => {
       }
     } catch (error) {
       console.error('Error updating ticket status:', error);
-      toast.error('Failed to update ticket status');
+      toast.error(t('admin.failed_update_ticket', 'Failed to update ticket status'));
     }
   };
 
@@ -230,20 +230,20 @@ const SupportTicketsPage = () => {
         await supabase.from('notifications').insert({
           user_id: selectedTicket.user_id,
           type: 'support_response',
-          title: 'Support Team Responded',
-          message: `Your support ticket "${selectedTicket.subject}" has received a response.`,
+          title: t('admin.support_team_responded', 'Support Team Responded'),
+          message: t('admin.ticket_response_msg', 'Your support ticket "{{subject}}" has received a response.', { subject: selectedTicket.subject }),
           link: '/help-support',
         });
       }
 
-      toast.success('Response sent and user notified');
+      toast.success(t('admin.response_sent', 'Response sent and user notified'));
 
       setAdminResponse('');
       setSelectedTicket({ ...selectedTicket, admin_notes: updatedNotes, status: 'pending' });
       fetchTickets();
     } catch (error) {
       console.error('Error sending response:', error);
-      toast.error('Failed to send response');
+      toast.error(t('admin.failed_send_response', 'Failed to send response'));
     } finally {
       setIsSending(false);
     }

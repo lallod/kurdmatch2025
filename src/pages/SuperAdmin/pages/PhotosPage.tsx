@@ -30,12 +30,12 @@ const PhotosPage = () => {
   const handleDelete = async (photoId: string) => {
     const success = await deletePhoto(photoId);
     if (success) {
-      toast.success("Photo deleted successfully");
+      toast.success(t('admin.photo_deleted_success', 'Photo deleted successfully'));
       if (selectedPhoto?.id === photoId) {
         setSelectedPhoto(null);
       }
     } else {
-      toast.error("Failed to delete photo");
+      toast.error(t('admin.photo_delete_failed', 'Failed to delete photo'));
     }
   };
 

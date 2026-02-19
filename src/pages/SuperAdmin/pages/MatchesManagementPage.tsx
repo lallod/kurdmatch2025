@@ -43,22 +43,22 @@ const MatchesManagementPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching matches:', error);
-      toast.error('Failed to load matches');
+      toast.error(t('admin.failed_load_matches', 'Failed to load matches'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteMatch = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this match?')) return;
+    if (!confirm(t('admin.delete_match_confirm', 'Are you sure you want to delete this match?'))) return;
     try {
       const { error } = await supabase.from('matches').delete().eq('id', id);
       if (error) throw error;
-      toast.success('Match deleted successfully');
+      toast.success(t('admin.match_deleted', 'Match deleted successfully'));
       fetchMatches();
     } catch (error) {
       console.error('Error deleting match:', error);
-      toast.error('Failed to delete match');
+      toast.error(t('admin.match_delete_failed', 'Failed to delete match'));
     }
   };
 

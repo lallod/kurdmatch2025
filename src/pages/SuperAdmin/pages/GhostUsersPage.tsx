@@ -86,7 +86,7 @@ const GhostUsersPage = () => {
   const handlePublish = async () => {
     const result = await publishScheduledContent();
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
-    toast({ title: t('admin.published_content', 'Published Content'), description: result.error ? `Error: ${result.error}` : `Published ${result.published} scheduled items.` });
+    toast({ title: t('admin.published_content', 'Published Content'), description: result.error ? `Error: ${result.error}` : t('admin.published_items', 'Published {{count}} scheduled items.', { count: result.published }) });
   };
 
   const handleRegenerate = async () => {
@@ -94,7 +94,7 @@ const GhostUsersPage = () => {
     if (ids.length === 0) return;
     const result = await regenerateActivity(ids);
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
-    toast({ title: t('admin.activity_regenerated', 'Activity Regenerated'), description: `Scheduled ${result.scheduled} new content items.` });
+    toast({ title: t('admin.activity_regenerated', 'Activity Regenerated'), description: t('admin.scheduled_items', 'Scheduled {{count}} new content items.', { count: result.scheduled }) });
   };
 
   return (

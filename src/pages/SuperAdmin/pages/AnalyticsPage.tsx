@@ -178,20 +178,20 @@ const AnalyticsPage = () => {
         <TabsContent value="growth" className="space-y-4">
           <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle className="text-white">{t('admin.user_growth', 'Detailed User Growth Analysis')}</CardTitle>
-              <CardDescription className="text-white/60">Track user acquisition trends</CardDescription>
+              <CardTitle className="text-white">{t('admin.detailed_growth_analysis', 'Detailed User Growth Analysis')}</CardTitle>
+              <CardDescription className="text-white/60">{t('admin.track_user_acquisition', 'Track user acquisition trends')}</CardDescription>
             </CardHeader>
-            <CardContent><p className="text-white/60">Detailed growth analytics will appear here.</p></CardContent>
+            <CardContent><p className="text-white/60">{t('admin.detailed_growth_placeholder', 'Detailed growth analytics will appear here.')}</p></CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-4">
           <Card className="bg-[#141414] border-white/5">
             <CardHeader>
-              <CardTitle className="text-white">Platform Activity Metrics</CardTitle>
-              <CardDescription className="text-white/60">Monitor user engagement and activity</CardDescription>
+              <CardTitle className="text-white">{t('admin.platform_activity_metrics', 'Platform Activity Metrics')}</CardTitle>
+              <CardDescription className="text-white/60">{t('admin.monitor_engagement', 'Monitor user engagement and activity')}</CardDescription>
             </CardHeader>
-            <CardContent><p className="text-white/60">Activity metrics will appear here.</p></CardContent>
+            <CardContent><p className="text-white/60">{t('admin.activity_placeholder', 'Activity metrics will appear here.')}</p></CardContent>
           </Card>
         </TabsContent>
       </Tabs>
