@@ -1,9 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, LogIn, UserPlus, Info, Mail, Globe } from 'lucide-react';
+import { X, LogIn, UserPlus, Info, Mail, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage, LanguageCode } from '@/contexts/LanguageContext';
-import { useAuth } from '@/integrations/supabase/auth';
 import { useTranslations } from '@/hooks/useTranslations';
 
 interface MobileSidebarProps {
@@ -11,19 +10,18 @@ interface MobileSidebarProps {
   onClose: () => void;
 }
 
+const languages: Array<{ code: LanguageCode; label: string; flag: string }> = [
+  { code: 'english', label: 'English', flag: '🇬🇧' },
+  { code: 'kurdish_sorani', label: 'کوردی', flag: '🟥⚪️🟩' },
+  { code: 'kurdish_kurmanci', label: 'Kurmancî', flag: '🟨🔴🟩' },
+  { code: 'norwegian', label: 'Norsk', flag: '🇳🇴' },
+  { code: 'german', label: 'Deutsch', flag: '🇩🇪' },
+];
+
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
-  const { user } = useAuth();
   const { t } = useTranslations();
-
-  const languages: Array<{ code: LanguageCode; label: string; flag: string }> = [
-    { code: 'english', label: 'English', flag: '🇬🇧' },
-    { code: 'kurdish_sorani', label: 'کوردی (سۆرانی)', flag: '🟥⚪️🟩' },
-    { code: 'kurdish_kurmanci', label: 'Kurdî (Kurmancî)', flag: '🟨🔴🟩' },
-    { code: 'norwegian', label: 'Norsk', flag: '🇳🇴' },
-    { code: 'german', label: 'Deutsch', flag: '🇩🇪' },
-  ];
 
   const menuItems = [
     { icon: LogIn, label: t('sidebar.login', 'Login'), path: '/auth' },
@@ -35,44 +33,67 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   const handleNavigate = (path: string) => { navigate(path); onClose(); };
   const handleLanguageChange = (code: LanguageCode) => { setLanguage(code); onClose(); };
 
-  const overlayVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
-  const sidebarVariants = { hidden: { x: '-100%' }, visible: { x: 0, transition: { type: 'spring' as const, damping: 30, stiffness: 300 } } };
-  const itemVariants = { hidden: { opacity: 0, x: -20 }, visible: (i: number) => ({ opacity: 1, x: 0, transition: { delay: i * 0.05, duration: 0.3 } }) };
-
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" variants={overlayVariants} initial="hidden" animate="visible" exit="hidden" onClick={onClose} />
-          <motion.div className="fixed top-0 left-0 h-full w-80 bg-background z-50 shadow-2xl" variants={sidebarVariants} initial="hidden" animate="visible" exit="hidden">
-            <div className="flex flex-col h-full">
-              <div className="p-6 border-b border-border/10">
-                <div className="flex items-center justify-between">
+          <motion.div
+            className="fixed inset-0 bg-black/40 z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+          <motion.div
+            className="fixed top-0 left-0 h-full w-72 bg-background z-50 shadow-xl flex flex-col"
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <span className="text-foreground font-semibold text-lg">KurdMatch</span>
+              <button onClick={onClose} className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Menu */}
+            <nav className="flex-1 py-3 px-3 space-y-1">
+              {menuItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => handleNavigate(item.path)}
+                  className="w-full flex items-center justify-between px-3 py-3 text-foreground hover:bg-muted rounded-xl transition-colors group"
+                >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><span className="text-2xl">❤️</span></div>
-                    <div><h2 className="text-foreground font-bold text-lg">KurdMatch</h2><p className="text-muted-foreground text-xs">{t('sidebar.kurdish_hearts', 'Kurdish Hearts')}</p></div>
+                    <item.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="text-sm font-medium">{item.label}</span>
                   </div>
-                  <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors"><X className="w-6 h-6" /></button>
-                </div>
-              </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
+                </button>
+              ))}
+            </nav>
 
-              <nav className="flex-1 p-6 space-y-2">
-                {menuItems.map((item, index) => (
-                  <motion.button key={item.path} custom={index} variants={itemVariants} initial="hidden" animate="visible" onClick={() => handleNavigate(item.path)} className="w-full flex items-center gap-4 px-4 py-3 text-foreground hover:bg-muted rounded-xl transition-colors">
-                    <item.icon className="w-5 h-5" /><span className="font-medium">{item.label}</span>
-                  </motion.button>
+            {/* Language Picker */}
+            <div className="px-4 py-4 border-t border-border">
+              <p className="text-xs text-muted-foreground font-medium mb-2 px-1">{t('sidebar.language', 'Language')}</p>
+              <div className="flex flex-wrap gap-2">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => handleLanguageChange(lang.code)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      language === lang.code
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.label}</span>
+                  </button>
                 ))}
-              </nav>
-
-              <div className="p-6 border-t border-border/10">
-                <motion.div custom={menuItems.length} variants={itemVariants} initial="hidden" animate="visible" className="space-y-3">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-3"><Globe className="w-4 h-4" /><span className="text-sm font-medium">{t('sidebar.language', 'Language')}</span></div>
-                  {languages.map((lang) => (
-                    <button key={lang.code} onClick={() => handleLanguageChange(lang.code)} className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${language === lang.code ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'}`}>
-                      <span className="text-xl">{lang.flag}</span><span className="text-sm font-medium">{lang.label}</span>
-                    </button>
-                  ))}
-                </motion.div>
               </div>
             </div>
           </motion.div>
