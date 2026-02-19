@@ -301,14 +301,14 @@ const ChatView: React.FC<ChatViewProps> = ({
                   {message.sender !== 'me' && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 text-foreground hover:bg-muted/20">
+                        <Button variant="ghost" size="icon" className="absolute -right-8 top-1/2 -translate-y-1/2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity h-6 w-6 text-foreground hover:bg-muted/20">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
-                        <DropdownMenuItem onClick={() => { setSelectedMessageId(message.id); setReportDialogOpen(true); }}><Flag className="h-4 w-4 mr-2" />Report Message</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleTranslate(message.id, message.text, 'en')} disabled={translatingMessages.has(message.id)}><Globe className="h-4 w-4 mr-2" />{translatingMessages.has(message.id) ? 'Translating...' : 'Translate to English'}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleTranslate(message.id, message.text, 'no')} disabled={translatingMessages.has(message.id)}><Globe className="h-4 w-4 mr-2" />Translate to Norwegian</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setSelectedMessageId(message.id); setReportDialogOpen(true); }}><Flag className="h-4 w-4 mr-2" />{t('chat.report_message', 'Report Message')}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleTranslate(message.id, message.text, 'en')} disabled={translatingMessages.has(message.id)}><Globe className="h-4 w-4 mr-2" />{translatingMessages.has(message.id) ? t('chat.translating', 'Translating...') : t('chat.translate_english', 'Translate to English')}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleTranslate(message.id, message.text, 'no')} disabled={translatingMessages.has(message.id)}><Globe className="h-4 w-4 mr-2" />{t('chat.translate_norwegian', 'Translate to Norwegian')}</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}

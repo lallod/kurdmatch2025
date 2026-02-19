@@ -161,7 +161,7 @@ export const AIWingmanPanel = ({
                       <p className="text-sm text-white/90 group-hover:text-white">
                         {suggestion}
                       </p>
-                      <p className="text-xs text-purple-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="text-xs text-purple-400 mt-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                         {t('chat.click_to_use', 'Click to use this message')}
                       </p>
                     </motion.button>
