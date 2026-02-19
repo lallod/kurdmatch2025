@@ -68,7 +68,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
             <SuggestionBadge show={fieldSources.exercise_habits === 'random'} />
           </div>
           <Select value={formData.exerciseHabits} onValueChange={(v) => handleInputChange('exerciseHabits', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="How often?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_often', 'How often?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="daily">Daily</SelectItem>
               <SelectItem value="few-times-week">Few times a week</SelectItem>
@@ -84,7 +84,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
             <SuggestionBadge show={fieldSources.dietary_preferences === 'random'} />
           </div>
           <Select value={formData.dietaryPreferences} onValueChange={(v) => handleInputChange('dietaryPreferences', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Diet type?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.diet_type', 'Diet type?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="omnivore">Omnivore</SelectItem>
               <SelectItem value="vegetarian">Vegetarian</SelectItem>
@@ -102,7 +102,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
             <SuggestionBadge show={fieldSources.smoking === 'random'} />
           </div>
           <Select value={formData.smoking} onValueChange={(v) => handleInputChange('smoking', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Do you smoke?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.do_you_smoke', 'Do you smoke?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="never">Never</SelectItem>
               <SelectItem value="socially">Socially</SelectItem>
@@ -117,7 +117,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
             <SuggestionBadge show={fieldSources.drinking === 'random'} />
           </div>
           <Select value={formData.drinking} onValueChange={(v) => handleInputChange('drinking', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Do you drink?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.do_you_drink', 'Do you drink?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="never">Never</SelectItem>
               <SelectItem value="socially">Socially</SelectItem>
@@ -132,7 +132,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
             <SuggestionBadge show={fieldSources.sleep_schedule === 'random'} />
           </div>
           <Select value={formData.sleepSchedule} onValueChange={(v) => handleInputChange('sleepSchedule', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Night owl or early bird?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.night_owl_early_bird', 'Night owl or early bird?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="early-bird">Early bird</SelectItem>
               <SelectItem value="night-owl">Night owl</SelectItem>
@@ -147,7 +147,7 @@ const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ profileData, fieldSou
             <SuggestionBadge show={fieldSources.have_pets === 'random'} />
           </div>
           <Select value={formData.havePets} onValueChange={(v) => handleInputChange('havePets', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Do you have pets?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.do_you_have_pets', 'Do you have pets?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="yes-dogs">Yes, dogs</SelectItem>
               <SelectItem value="yes-cats">Yes, cats</SelectItem>

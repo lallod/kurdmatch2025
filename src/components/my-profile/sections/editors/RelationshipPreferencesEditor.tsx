@@ -70,7 +70,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
             <SuggestionBadge show={fieldSources.relationship_goals === 'random'} />
           </div>
           <Select value={formData.relationshipGoals} onValueChange={(v) => handleInputChange('relationshipGoals', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="What are you looking for?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.looking_for', 'What are you looking for?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="long-term">Long-term relationship</SelectItem>
               <SelectItem value="marriage">Marriage</SelectItem>
@@ -88,7 +88,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
             <SuggestionBadge show={fieldSources.want_children === 'random'} />
           </div>
           <Select value={formData.wantChildren} onValueChange={(v) => handleInputChange('wantChildren', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Your thoughts on children?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.thoughts_children', 'Your thoughts on children?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="want">Want children</SelectItem>
               <SelectItem value="dont-want">Don't want children</SelectItem>
@@ -101,7 +101,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
         <div>
           <Label className={labelClass}>{t('profile.family_closeness', 'Family Closeness')}</Label>
           <Select value={formData.familyCloseness} onValueChange={(v) => handleInputChange('familyCloseness', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="How close to family?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_close_family', 'How close to family?')} /></SelectTrigger>
             <SelectContent>
               {familyClosenessOptions.map(o => (<SelectItem key={o} value={o}>{o}</SelectItem>))}
             </SelectContent>
@@ -113,7 +113,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
             <SuggestionBadge show={fieldSources.love_language === 'random'} />
           </div>
           <Select value={formData.loveLanguage} onValueChange={(v) => handleInputChange('loveLanguage', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="How do you feel loved?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_feel_loved', 'How do you feel loved?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="words-of-affirmation">Words of Affirmation</SelectItem>
               <SelectItem value="quality-time">Quality Time</SelectItem>
@@ -129,7 +129,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
             <SuggestionBadge show={fieldSources.communication_style === 'random'} />
           </div>
           <Select value={formData.communicationStyle} onValueChange={(v) => handleInputChange('communicationStyle', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="How do you communicate?" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.how_communicate', 'How do you communicate?')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="direct">Direct</SelectItem>
               <SelectItem value="diplomatic">Diplomatic</SelectItem>
@@ -147,7 +147,7 @@ const RelationshipPreferencesEditor: React.FC<RelationshipPreferencesEditorProps
           <SuggestionBadge show={fieldSources.ideal_date === 'random'} />
         </div>
         <Textarea value={formData.idealDate} onChange={(e) => handleInputChange('idealDate', e.target.value)}
-          rows={3} className={selectClass} placeholder="Describe your perfect date..." />
+          rows={3} className={selectClass} placeholder={t('profile.describe_perfect_date', 'Describe your perfect date...')} />
       </div>
 
       <div className="flex gap-3 pt-2">

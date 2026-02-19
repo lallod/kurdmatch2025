@@ -76,7 +76,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
             <SuggestionBadge show={fieldSources.religion === 'random'} />
           </div>
           <Select value={formData.religion} onValueChange={(v) => handleInputChange('religion', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Select religion" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.select_religion', 'Select religion')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="muslim">Muslim</SelectItem>
               <SelectItem value="christian">Christian</SelectItem>
@@ -97,7 +97,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
             <SuggestionBadge show={fieldSources.political_views === 'random'} />
           </div>
           <Select value={formData.politicalViews} onValueChange={(v) => handleInputChange('politicalViews', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Select political views" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.select_political_views', 'Select political views')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="liberal">Liberal</SelectItem>
               <SelectItem value="moderate">Moderate</SelectItem>
@@ -115,7 +115,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
             <SuggestionBadge show={fieldSources.zodiac_sign === 'random'} />
           </div>
           <Select value={formData.zodiacSign} onValueChange={(v) => handleInputChange('zodiacSign', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Select zodiac sign" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.select_zodiac', 'Select zodiac sign')} /></SelectTrigger>
             <SelectContent>
               {zodiacSigns.map(sign => (<SelectItem key={sign} value={sign.toLowerCase()}>{sign}</SelectItem>))}
             </SelectContent>
@@ -127,7 +127,7 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
             <SuggestionBadge show={fieldSources.personality_type === 'random'} />
           </div>
           <Select value={formData.personalityType} onValueChange={(v) => handleInputChange('personalityType', v)}>
-            <SelectTrigger className={selectClass}><SelectValue placeholder="Select type" /></SelectTrigger>
+            <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.select_type', 'Select type')} /></SelectTrigger>
             <SelectContent>
               {personalityTypes.map(type => (<SelectItem key={type} value={type}>{type}</SelectItem>))}
             </SelectContent>
