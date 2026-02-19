@@ -99,24 +99,24 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-card border-border max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-foreground text-2xl">Create Post</DialogTitle>
+          <DialogTitle className="text-foreground text-2xl">{t('posts.create_post', 'Create Post')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="content" className="text-foreground">What's on your mind?</Label>
+            <Label htmlFor="content" className="text-foreground">{t('posts.whats_on_mind', "What's on your mind?")}</Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Share your thoughts..."
+              placeholder={t('posts.share_thoughts', 'Share your thoughts...')}
               rows={4}
               className="resize-none bg-accent/10 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="mediaUrl" className="text-foreground">Media URL (optional)</Label>
+            <Label htmlFor="mediaUrl" className="text-foreground">{t('posts.media_url', 'Media URL (optional)')}</Label>
             <Input
               id="mediaUrl"
               type="url"
@@ -129,25 +129,25 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
 
           {mediaUrl && (
             <div className="space-y-2">
-              <Label htmlFor="mediaType" className="text-foreground">Media Type</Label>
+              <Label htmlFor="mediaType" className="text-foreground">{t('posts.media_type', 'Media Type')}</Label>
               <Select
                 value={mediaType}
                 onValueChange={(value: 'image' | 'video') => setMediaType(value)}
               >
                 <SelectTrigger className="bg-accent/10 border-border text-foreground">
-                  <SelectValue placeholder="Select media type" />
+                  <SelectValue placeholder={t('posts.select_media_type', 'Select media type')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="image">
                     <div className="flex items-center gap-2">
                       <Image className="w-4 h-4" />
-                      Image
+                      {t('posts.image', 'Image')}
                     </div>
                   </SelectItem>
                   <SelectItem value="video">
                     <div className="flex items-center gap-2">
                       <Video className="w-4 h-4" />
-                      Video
+                      {t('posts.video', 'Video')}
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -169,7 +169,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
             <div className="space-y-2">
               <Label className="text-foreground flex items-center gap-2">
                 <Hash className="w-4 h-4" />
-                Detected Hashtags
+                {t('posts.detected_hashtags', 'Detected Hashtags')}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {hashtags.map((tag) => (
@@ -188,7 +188,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
             <div className="space-y-2">
               <Label className="text-foreground flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                Post to Groups (Optional)
+                {t('posts.post_to_groups', 'Post to Groups (Optional)')}
               </Label>
               <div className="space-y-2 max-h-32 overflow-y-auto bg-accent/5 rounded-lg p-3 border border-border/10">
                 {userGroups.map((membership: any) => (
@@ -220,10 +220,10 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({ open, onOpenChange,
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
+                {t('posts.creating', 'Creating...')}
               </>
             ) : (
-              'Create Post'
+              t('posts.create_post', 'Create Post')
             )}
           </Button>
         </form>

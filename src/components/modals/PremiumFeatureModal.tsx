@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Crown, Star, Zap, RotateCcw, Heart } from 'lucide-react';
 import PremiumBenefitsList from '@/components/shared/PremiumBenefitsList';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PremiumFeatureModalProps {
   isOpen: boolean;
@@ -20,14 +21,16 @@ const PremiumFeatureModal: React.FC<PremiumFeatureModalProps> = ({
   remaining = 0,
   isPremium = false
 }) => {
+  const { t } = useTranslations();
+
   const getFeatureConfig = () => {
     switch (feature) {
       case 'super_like':
-        return { icon: Star, title: 'Super Like', color: 'text-info', bgColor: 'bg-info/10', description: 'Stand out from the crowd! Super Likes are 3x more likely to get a match.', freeLimit: '1 per day', premiumLimit: '10 per day' };
+        return { icon: Star, title: t('premium.super_like', 'Super Like'), color: 'text-info', bgColor: 'bg-info/10', description: t('premium.super_like_desc', 'Stand out from the crowd! Super Likes are 3x more likely to get a match.'), freeLimit: t('premium.one_per_day', '1 per day'), premiumLimit: t('premium.ten_per_day', '10 per day') };
       case 'rewind':
-        return { icon: RotateCcw, title: 'Rewind', color: 'text-warning', bgColor: 'bg-warning/10', description: 'Made a mistake? Undo your last swipe and get a second chance.', freeLimit: 'Premium only', premiumLimit: '5 per day' };
+        return { icon: RotateCcw, title: t('premium.rewind', 'Rewind'), color: 'text-warning', bgColor: 'bg-warning/10', description: t('premium.rewind_desc', 'Made a mistake? Undo your last swipe and get a second chance.'), freeLimit: t('premium.premium_only', 'Premium only'), premiumLimit: t('premium.five_per_day', '5 per day') };
       case 'boost':
-        return { icon: Zap, title: 'Boost', color: 'text-primary', bgColor: 'bg-primary/10', description: 'Be one of the top profiles in your area for 30 minutes!', freeLimit: 'Premium only', premiumLimit: '3 per day' };
+        return { icon: Zap, title: t('premium.boost', 'Boost'), color: 'text-primary', bgColor: 'bg-primary/10', description: t('premium.boost_desc', 'Be one of the top profiles in your area for 30 minutes!'), freeLimit: t('premium.premium_only', 'Premium only'), premiumLimit: t('premium.three_per_day', '3 per day') };
     }
   };
 
@@ -48,38 +51,38 @@ const PremiumFeatureModal: React.FC<PremiumFeatureModalProps> = ({
         <div className="space-y-4">
           {isPremium && remaining > 0 ? (
             <div className="text-center p-3 bg-success/10 rounded-xl border border-success/20">
-              <p className="text-success font-semibold text-sm">You have {remaining} {config.title.toLowerCase()}s remaining today!</p>
+              <p className="text-success font-semibold text-sm">{t('premium.remaining_today', `You have ${remaining} ${config.title.toLowerCase()}s remaining today!`)}</p>
             </div>
           ) : !isPremium && feature === 'super_like' && remaining > 0 ? (
             <div className="text-center p-3 bg-info/10 rounded-xl border border-info/20">
-              <p className="text-info font-semibold text-sm">You have {remaining} free super like remaining today!</p>
+              <p className="text-info font-semibold text-sm">{t('premium.free_remaining', `You have ${remaining} free super like remaining today!`)}</p>
             </div>
           ) : (
             <div className="text-center p-3 bg-destructive/10 rounded-xl border border-destructive/20">
               <p className="text-destructive font-semibold text-sm">
-                {feature === 'super_like' && !isPremium ? "You've used your free Super Like for today!" : `${config.title} is a premium feature!`}
+                {feature === 'super_like' && !isPremium ? t('premium.used_free_super_like', "You've used your free Super Like for today!") : t('premium.is_premium_feature', `${config.title} is a premium feature!`)}
               </p>
             </div>
           )}
 
           <div className="space-y-2">
             <div className="flex items-center justify-between p-2.5 bg-muted/50 rounded-xl">
-              <div className="flex items-center gap-2"><Heart className="w-4 h-4 text-muted-foreground" /><span className="text-muted-foreground text-sm">Free</span></div>
+              <div className="flex items-center gap-2"><Heart className="w-4 h-4 text-muted-foreground" /><span className="text-muted-foreground text-sm">{t('premium.free', 'Free')}</span></div>
               <Badge variant="outline" className="border-border text-muted-foreground text-xs">{config.freeLimit}</Badge>
             </div>
             <div className="flex items-center justify-between p-2.5 bg-primary/10 rounded-xl border border-primary/20">
-              <div className="flex items-center gap-2"><Crown className="w-4 h-4 text-warning" /><span className="text-foreground font-semibold text-sm">Premium</span></div>
+              <div className="flex items-center gap-2"><Crown className="w-4 h-4 text-warning" /><span className="text-foreground font-semibold text-sm">{t('premium.premium', 'Premium')}</span></div>
               <Badge className="bg-primary text-primary-foreground text-xs">{config.premiumLimit}</Badge>
             </div>
           </div>
 
-          {!isPremium && <PremiumBenefitsList title="Premium Benefits" />}
+          {!isPremium && <PremiumBenefitsList title={t('premium.benefits', 'Premium Benefits')} />}
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={onClose} className="flex-1">Maybe Later</Button>
+            <Button variant="outline" onClick={onClose} className="flex-1">{t('common.maybe_later', 'Maybe Later')}</Button>
             {!isPremium && (
               <Button onClick={() => onClose()} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
-                <Crown className="w-4 h-4 mr-2" />Upgrade Now
+                <Crown className="w-4 h-4 mr-2" />{t('premium.upgrade_now', 'Upgrade Now')}
               </Button>
             )}
           </div>

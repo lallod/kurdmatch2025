@@ -6,6 +6,7 @@ import ProfileSectionButton from '../ProfileSectionButton';
 import type { KurdistanRegion } from '@/types/profile';
 import { useLocationManager } from './location/useLocationManager';
 import LocationSectionContent from './location/LocationSectionContent';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LocationSectionProps {
   profileData: {
@@ -15,6 +16,7 @@ interface LocationSectionProps {
 }
 
 const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
+  const { t } = useTranslations();
   const { 
     location, 
     activeTab, 
@@ -29,8 +31,8 @@ const LocationSection: React.FC<LocationSectionProps> = ({ profileData }) => {
   return (
     <ProfileSectionButton
       icon={<MapPin />}
-      title="Location"
-      description="Where you're from"
+      title={t('profile.location', 'Location')}
+      description={t('profile.location_desc', "Where you're from")}
     >
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <LocationSectionContent

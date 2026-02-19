@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface GifResult {
   id: string;
@@ -19,6 +20,7 @@ interface GifPickerProps {
 }
 
 export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) => {
+  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState('');
   const [gifs, setGifs] = useState<GifResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +54,6 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
     }
   }, []);
 
-  // Load trending on open
   useEffect(() => {
     if (open) {
       fetchGifs('');
@@ -69,14 +70,14 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Choose a GIF</DialogTitle>
+          <DialogTitle>{t('chat.choose_gif', 'Choose a GIF')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search GIFs..."
+              placeholder={t('chat.search_gifs', 'Search GIFs...')}
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               className="pl-10"
@@ -120,7 +121,7 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
               </div>
             ) : (
               <div className="flex items-center justify-center h-40">
-                <p className="text-muted-foreground">No GIFs found</p>
+                <p className="text-muted-foreground">{t('chat.no_gifs_found', 'No GIFs found')}</p>
               </div>
             )}
           </ScrollArea>

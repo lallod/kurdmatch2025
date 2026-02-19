@@ -89,43 +89,40 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
           <DialogHeader>
             <DialogTitle className="text-2xl flex items-center gap-2">
               <Settings className="h-6 w-6 text-primary" />
-              Group Settings
+              {t('groups.settings', 'Group Settings')}
             </DialogTitle>
             <DialogDescription>
-              Manage your group settings and information
+              {t('groups.settings_desc', 'Manage your group settings and information')}
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-            {/* Group Name */}
             <div className="space-y-2">
-              <Label htmlFor="name">Group Name *</Label>
+              <Label htmlFor="name">{t('groups.group_name', 'Group Name')} *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Group name"
+                placeholder={t('groups.group_name_placeholder', 'Group name')}
                 className="h-12 glass border-border/50"
                 maxLength={100}
               />
             </div>
 
-            {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('groups.description', 'Description')}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Group description..."
+                placeholder={t('groups.description_placeholder', 'Group description...')}
                 className="glass border-border/50 min-h-[100px]"
                 maxLength={500}
               />
             </div>
 
-            {/* Icon */}
             <div className="space-y-3">
-              <Label>Group Icon</Label>
+              <Label>{t('groups.group_icon', 'Group Icon')}</Label>
               <div className="grid grid-cols-5 gap-2">
                 {iconOptions.map((icon) => (
                   <button
@@ -144,7 +141,6 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex gap-3 pt-4">
               <Button
                 type="button"
@@ -153,23 +149,22 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
                 className="flex-1 rounded-full"
                 disabled={loading}
               >
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </Button>
               <Button
                 type="submit"
                 className="flex-1 rounded-full shadow-lg"
                 disabled={loading}
               >
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('common.saving', 'Saving...') : t('common.save_changes', 'Save Changes')}
               </Button>
             </div>
 
-            {/* Delete Section */}
             <div className="pt-6 border-t border-border/50">
               <div className="space-y-3">
-                <Label className="text-destructive">Danger Zone</Label>
+                <Label className="text-destructive">{t('groups.danger_zone', 'Danger Zone')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Once you delete a group, there is no going back. Please be certain.
+                  {t('groups.delete_warning', 'Once you delete a group, there is no going back. Please be certain.')}
                 </p>
                 <Button
                   type="button"
@@ -179,7 +174,7 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
                   disabled={loading}
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Group
+                  {t('groups.delete_group', 'Delete Group')}
                 </Button>
               </div>
             </div>
@@ -190,19 +185,18 @@ export const GroupSettingsDialog = ({ group, open, onOpenChange, onUpdate }: Gro
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent className="glass backdrop-blur-xl border-border/50">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('common.are_you_sure', 'Are you absolutely sure?')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the group
-              and remove all associated data including posts and members.
+              {t('groups.delete_confirm', 'This action cannot be undone. This will permanently delete the group and remove all associated data including posts and members.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-full">{t('common.cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="rounded-full bg-destructive hover:bg-destructive/90"
             >
-              Delete Group
+              {t('groups.delete_group', 'Delete Group')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

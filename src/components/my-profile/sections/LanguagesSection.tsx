@@ -20,21 +20,19 @@ const LanguagesSection: React.FC<LanguagesSectionProps> = ({ profileData }) => {
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(profileData.languages || []);
   
   const handleSaveLanguages = () => {
-    // Here you would typically save to a database
-    // For now, we'll just show a toast notification
     toast.success(t('toast.languages.updated', 'Languages updated successfully!'));
   };
 
   return (
     <ProfileSectionButton
       icon={<Languages />}
-      title="Languages"
-      description="Languages you speak"
+      title={t('profile.languages', 'Languages')}
+      description={t('profile.languages_desc', 'Languages you speak')}
     >
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <ScrollArea className="h-[calc(100vh-5rem)]">
           <div className="py-6 pr-6">
-            <h3 className="text-lg font-semibold mb-6">Languages</h3>
+            <h3 className="text-lg font-semibold mb-6">{t('profile.languages', 'Languages')}</h3>
             <LanguageEditor
               selectedLanguages={selectedLanguages}
               setSelectedLanguages={setSelectedLanguages}
