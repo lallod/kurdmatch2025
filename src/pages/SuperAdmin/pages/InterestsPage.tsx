@@ -121,7 +121,7 @@ const InterestsPage = () => {
                     id="interest-name"
                     value={newInterestName}
                     onChange={(e) => setNewInterestName(e.target.value)}
-                    placeholder="e.g., Hiking, Photography, Cooking"
+                    placeholder={t('admin.interest_name_placeholder', 'e.g., Hiking, Photography, Cooking')}
                     className="bg-white/5 border-white/10 text-white mt-2"
                   />
                 </div>

@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Label } from '@/components/ui/label';
 import { MapPin, ChevronsUpDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EnhancedLocationSearchProps {
   value?: string;
@@ -70,14 +71,14 @@ const destinations = [
 const EnhancedLocationSearch = ({ 
   value, 
   onChange, 
-  label = "Dream Vacation Destination" 
+  label
 }: EnhancedLocationSearchProps) => {
+  const { t } = useTranslations();
   const [open, setOpen] = useState(false);
+  const displayLabel = label || t('auth.dream_vacation', 'Dream Vacation Destination');
 
-  // Ensure value is always a string
   const currentValue = value || '';
 
-  // Safely flatten destinations array with defensive checks
   const allLocations = destinations && destinations.length > 0 
     ? destinations.flatMap(category => 
         category && category.locations && Array.isArray(category.locations)
@@ -98,7 +99,7 @@ const EnhancedLocationSearch = ({
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <MapPin className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">{label}</Label>
+        <Label className="text-white">{displayLabel}</Label>
       </div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -108,17 +109,17 @@ const EnhancedLocationSearch = ({
             aria-expanded={open}
             className="w-full justify-between bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
           >
-            {selectedLocation ? selectedLocation.name : "Select destination..."}
+            {selectedLocation ? selectedLocation.name : t('auth.select_destination', 'Select destination...')}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0 bg-gray-900 border-gray-700">
           <Command>
             <CommandInput 
-              placeholder="Search destinations..." 
+              placeholder={t('auth.search_destinations', 'Search destinations...')}
               className="text-white"
             />
-            <CommandEmpty>No destination found.</CommandEmpty>
+            <CommandEmpty>{t('auth.no_destination_found', 'No destination found.')}</CommandEmpty>
             <div className="max-h-60 overflow-auto">
               {destinations && destinations.length > 0 && destinations.map((category) => (
                 category && category.category && category.locations && Array.isArray(category.locations) ? (
