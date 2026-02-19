@@ -8,6 +8,7 @@ import PhotoUploadStep from './PhotoUploadStep';
 import SocialLogin from './SocialLogin';
 import { RegistrationFormValues } from '../utils/registrationSchema';
 import { registrationSteps } from '../utils/registrationSteps';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface RegistrationStepRendererProps {
   step: number;
@@ -22,13 +23,15 @@ const RegistrationStepRenderer = ({
   location, 
   locationLoading 
 }: RegistrationStepRendererProps) => {
+  const { t } = useTranslations();
+  
   switch (step) {
     case 1:
       return (
         <div className="space-y-4 sm:space-y-6">
           <div className="text-center mb-4 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-white">{registrationSteps[0].title}</h2>
-            <p className="text-purple-200 mt-1 text-sm sm:text-base">{registrationSteps[0].description}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{t(registrationSteps[0].titleKey, registrationSteps[0].title)}</h2>
+            <p className="text-purple-200 mt-1 text-sm sm:text-base">{t(registrationSteps[0].descriptionKey, registrationSteps[0].description)}</p>
           </div>
           
           <SocialLogin />
@@ -44,8 +47,8 @@ const RegistrationStepRenderer = ({
       return (
         <div className="space-y-4 sm:space-y-6">
           <div className="text-center mb-4 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-white">{registrationSteps[3].title}</h2>
-            <p className="text-purple-200 mt-1 text-sm sm:text-base">{registrationSteps[3].description}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{t(registrationSteps[3].titleKey, registrationSteps[3].title)}</h2>
+            <p className="text-purple-200 mt-1 text-sm sm:text-base">{t(registrationSteps[3].descriptionKey, registrationSteps[3].description)}</p>
           </div>
           
           <PhotoUploadStep 
