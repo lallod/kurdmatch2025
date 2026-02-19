@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Bell, Trash2, Search, Calendar, CheckCircle, Circle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Notification {
   id: string;
@@ -23,6 +24,7 @@ interface Notification {
 }
 
 const NotificationsPage = () => {
+  const { t } = useTranslations();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,14 +53,14 @@ const NotificationsPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching notifications:', error);
-      toast.error('Failed to load notifications');
+      toast.error(t('admin.failed_load_notifications', 'Failed to load notifications'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteNotification = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this notification?')) return;
+    if (!confirm(t('admin.delete_notification_confirm', 'Are you sure you want to delete this notification?'))) return;
 
     try {
       const { error } = await supabase
@@ -67,11 +69,11 @@ const NotificationsPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Notification deleted successfully');
+      toast.success(t('admin.notification_deleted', 'Notification deleted successfully'));
       fetchNotifications();
     } catch (error) {
       console.error('Error deleting notification:', error);
-      toast.error('Failed to delete notification');
+      toast.error(t('admin.notification_delete_failed', 'Failed to delete notification'));
     }
   };
 
@@ -90,11 +92,11 @@ const NotificationsPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Notifications Management</h1>
-          <p className="text-white/60 mt-1">View and manage all system notifications ({totalCount} total)</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.notifications_management', 'Notifications Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.view_manage_notifications', 'View and manage all system notifications ({{count}} total)', { count: totalCount })}</p>
         </div>
         <Button onClick={fetchNotifications} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -102,39 +104,24 @@ const NotificationsPage = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Bell className="h-5 w-5 text-yellow-500" />
-            All Notifications
+            {t('admin.all_notifications', 'All Notifications')}
           </CardTitle>
           <div className="mt-4 space-y-4">
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant={filter === 'all' ? 'default' : 'outline'}
-                onClick={() => setFilter('all')}
-                className={filter === 'all' ? '' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}
-              >
-                All
+              <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} className={filter === 'all' ? '' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}>
+                {t('common.all', 'All')}
               </Button>
-              <Button
-                size="sm"
-                variant={filter === 'unread' ? 'default' : 'outline'}
-                onClick={() => setFilter('unread')}
-                className={filter === 'unread' ? '' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}
-              >
-                Unread
+              <Button size="sm" variant={filter === 'unread' ? 'default' : 'outline'} onClick={() => setFilter('unread')} className={filter === 'unread' ? '' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}>
+                {t('common.unread', 'Unread')}
               </Button>
-              <Button
-                size="sm"
-                variant={filter === 'read' ? 'default' : 'outline'}
-                onClick={() => setFilter('read')}
-                className={filter === 'read' ? '' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}
-              >
-                Read
+              <Button size="sm" variant={filter === 'read' ? 'default' : 'outline'} onClick={() => setFilter('read')} className={filter === 'read' ? '' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}>
+                {t('common.read', 'Read')}
               </Button>
             </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search notifications..."
+                placeholder={t('admin.search_notifications', 'Search notifications...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white"
@@ -144,25 +131,17 @@ const NotificationsPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-white/60">Loading notifications...</div>
+            <div className="text-center py-8 text-white/60">{t('admin.loading_notifications', 'Loading notifications...')}</div>
           ) : filteredNotifications.length === 0 ? (
-            <div className="text-center py-8 text-white/60">No notifications found</div>
+            <div className="text-center py-8 text-white/60">{t('admin.no_notifications_found', 'No notifications found')}</div>
           ) : (
             <div className="space-y-3">
               {filteredNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="flex items-start justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
-                >
+                <div key={notification.id} className="flex items-start justify-between p-4 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="flex items-start gap-4 flex-1">
                     <div className="mt-1">
-                      {notification.read ? (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <Circle className="h-5 w-5 text-yellow-500" />
-                      )}
+                      {notification.read ? <CheckCircle className="h-5 w-5 text-green-500" /> : <Circle className="h-5 w-5 text-yellow-500" />}
                     </div>
-                    
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div>
@@ -170,28 +149,19 @@ const NotificationsPage = () => {
                           <p className="text-white/60 text-sm mt-1">{notification.message}</p>
                         </div>
                       </div>
-                      
                       <div className="flex items-center gap-2 flex-wrap mt-3">
-                        <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60 capitalize">
-                          {notification.type}
-                        </Badge>
+                        <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60 capitalize">{notification.type}</Badge>
                         <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                           <Calendar className="h-3 w-3 mr-1" />
                           {format(new Date(notification.created_at), 'MMM d, yyyy HH:mm')}
                         </Badge>
                         <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60 font-mono text-xs">
-                          User: {notification.user_id.substring(0, 8)}...
+                          {t('common.user', 'User')}: {notification.user_id.substring(0, 8)}...
                         </Badge>
                       </div>
                     </div>
                   </div>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteNotification(notification.id)}
-                    className="text-red-500 hover:text-red-400 hover:bg-red-500/10 ml-4"
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => deleteNotification(notification.id)} className="text-red-500 hover:text-red-400 hover:bg-red-500/10 ml-4">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
