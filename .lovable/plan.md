@@ -1,122 +1,54 @@
-#  Batch 3: Toast-meldinger og gjenvaerende dialoger
-
-## Oversikt
-
-Det gjenstaar ca. 60+ brukerfacing filer med hardkodede engelske strenger -- hovedsakelig toast-meldinger (`toast.success/error/info`) og noen dialoger. Admin-sider (SuperAdmin) ekskluderes da de kun er for internt bruk.
-
-## Prioritet 1: Profil-redigering og dialoger (~17 filer)
-
-Disse er de mest synlige for brukerne:
 
 
-| Fil                                                             | Hardkodede strenger                                                                                                               |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `my-profile/sections/editors/BasicInfoEditor.tsx`               | "Basic info updated successfully!"                                                                                                |
-| `my-profile/sections/editors/CareerEducationEditor.tsx`         | "Career & education updated successfully!"                                                                                        |
-| `my-profile/sections/editors/ValuesPersonalityEditor.tsx`       | "Values & personality updated!"                                                                                                   |
-| `my-profile/sections/editors/InterestsHobbiesEditor.tsx`        | "Interests & hobbies updated!"                                                                                                    |
-| `my-profile/sections/editors/FavoritesEditor.tsx`               | "Favorites updated successfully!"                                                                                                 |
-| `my-profile/sections/editors/RelationshipPreferencesEditor.tsx` | "Relationship preferences updated!"                                                                                               |
-| `my-profile/sections/EditableAboutMeSection.tsx`                | "Bio updated successfully!"                                                                                                       |
-| `my-profile/PhotoManagement.tsx`                                | "Photo removed successfully", "Profile photo updated"                                                                             |
-| `my-profile/PrivacySettings.tsx`                                | "Sharing removed", "Profile shared", "Failed to update sharing", "Field visibility is a Premium feature"                          |
-| `my-profile/AIBioGeneratorDialog.tsx`                           | "AI is crafting 5 personalized bios...", "5 personalized bios generated!", "Failed to generate bios", "Bio updated successfully!" |
-| `my-profile/dialogs/DownloadDataDialog.tsx`                     | "Download My Data", "What's Included", "Privacy & Security", all list items, buttons, progress text                               |
-| `my-profile/dialogs/ChangePasswordDialog.tsx`                   | "Password changed successfully!"                                                                                                  |
-| `my-profile/dialogs/ConnectedAccountsDialog.tsx`                | "Failed to load connected accounts", "Please enter a username", "Shareable link copied!"                                          |
-| `my-profile/sections/LanguagesSection.tsx`                      | "Languages updated successfully!"                                                                                                 |
+# Batch 18: i18n -- Registration Questions, Categories, Roles, API Keys, Email Campaigns, Social Login, Bulk User Operations
 
+This batch covers the remaining hardcoded strings across SuperAdmin components that still lack `useTranslations` integration.
 
-## Prioritet 2: Hooks (~6 filer)
+## Scope
 
+### Group A: Registration Questions (7 files)
+Files: `QuestionsToolbar.tsx`, `QuestionsTable.tsx`, `AddQuestionDialog.tsx`, `EditQuestionDialog.tsx`, `QuestionPreviewCard.tsx`, `BulkActions.tsx`, `useQuestions.ts`
 
-| Fil                             | Hardkodede strenger                                                                                   |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `hooks/useUserSettings.ts`      | "Failed to load settings", "Settings updated successfully", "Failed to update settings"               |
-| `hooks/useVideoVerification.ts` | "You must be logged in", "Video storage not configured", "Verification submitted!"                    |
-| `hooks/useAIWingman.ts`         | "Too many requests", "AI credits exhausted", "Could not generate suggestions", "Something went wrong" |
-| `hooks/useSwipeHistory.ts`      | "Rewind is a premium feature", "No swipe to undo", "Swipe undone!", "Failed to undo swipe"            |
-| `hooks/useRealProfileData.ts`   | "Failed to load profile data", "Failed to update profile"                                             |
-| `hooks/useAdminSettings.ts`     | "Setting updated", "Settings saved", "Settings reset to defaults"                                     |
+Hardcoded strings include:
+- Toolbar: "Registration Questions", "Configure questions users will answer...", "Search questions...", "Filter Questions", "Required/Optional/Enabled/Disabled Questions"
+- Table headers: "Question", "Category", "Field Type", "Required", "Status", "Registration Step", "Actions", "No questions found", "System field - some operations are restricted", "Maps to:"
+- Table badges: "Required", "Optional", "Enabled", "Disabled"
+- Add dialog: "Add New Registration Question", "Create a new question...", labels (Question Text, Category, Field Type, Registration Step, Placeholder Text, Profile Field Mapping, Required, Enabled, Field Options), "Add a new option", "Cancel", "Add Question"
+- Edit dialog: "Edit Registration Question", "Make changes to...", "Save Changes", same labels
+- Preview card: "Preview", "Mobile", "Desktop", "Registration Preview", "Select a question to preview...", "Continue", "Unsupported field type", "Yes"
+- BulkActions: "questions selected", "Enable", "Disable", "Delete"
+- useQuestions.ts: 6 toast messages ("System fields cannot be modified...", "Question deleted successfully", etc.)
 
+### Group B: Remaining Admin Pages (5 files)
+Files: `CategoriesPage.tsx`, `RolesPage.tsx`, `ApiKeysPage.tsx`, `EmailCampaignsPage.tsx`, `SocialLoginPage.tsx`
 
-## Prioritet 3: Bruker-sider (~15 filer)
+Hardcoded strings:
+- CategoriesPage: ~15 toast messages, table headers ("Name", "Description", "Order", etc.), filter buttons ("All", "Active", "Inactive"), card titles ("Profile Categories"), search placeholders
+- RolesPage: 2 toast messages
+- ApiKeysPage: ~6 toast messages, confirm dialog text
+- EmailCampaignsPage: 3 toast messages ("Campaign started/paused/deleted")
+- SocialLoginPage: 2 toast messages
 
+### Group C: User Hooks (2 files)
+Files: `useUserData.ts`, `useBulkUserDelete.ts`
 
-| Fil                              | Hardkodede strenger                                                                                                    |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `pages/MyProfile.tsx`            | "Failed to upload photo", "Photo removed", "Profile updated successfully"                                              |
-| `pages/DiscoveryFeed.tsx`        | "Failed to load feed", "Failed to like post"                                                                           |
-| `pages/Swipe.tsx`                | "Failed to load profiles"                                                                                              |
-| `pages/LikedMe.tsx`              | "It's a match!", "Liked back!", "Failed to like profile"                                                               |
-| `pages/SavedPosts.tsx`           | "Failed to load saved posts", "Post unsaved"                                                                           |
-| `pages/CreateEvent.tsx`          | "Image must be less than 5MB", "Please fill in all required fields", "Event created successfully!"                     |
-| `pages/Groups.tsx`               | "Failed to load groups"                                                                                                |
-| `pages/GiftsAndDates.tsx`        | "Date cancelled"                                                                                                       |
-| `pages/Subscription.tsx`         | "Your subscription has been activated", "You can try again whenever you're ready", "Checking your subscription status" |
-| `pages/NotificationSettings.tsx` | "All notifications have been deleted", "Failed to clear notifications"                                                 |
-| `pages/Matches.tsx`              | "Failed to load matches"                                                                                               |
+Hardcoded strings:
+- useUserData: 1 toast message
+- useBulkUserDelete: ~6 toast/info messages
 
+## Implementation Steps
 
-## Prioritet 4: Andre komponenter (~10 filer)
+1. **Database migration**: Insert ~80 new translation keys (400+ rows) across 5 languages covering all strings above.
 
+2. **Update Group A files** (registration questions): Add `useTranslations` import and replace all hardcoded strings with `t()` calls. For `useQuestions.ts` (a hook, not a component), the `t` function will need to be passed as a parameter or the hook will need refactoring to accept translations.
 
-| Fil                                          | Hardkodede strenger                                                                                      |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `components/ProfileHeader.tsx`               | "Profile background color updated!"                                                                      |
-| `components/boost/ProfileBoostCard.tsx`      | "You have used all your boosts", "Profile Boost activated!", "Failed to activate boost"                  |
-| `components/settings/TravelModeSettings.tsx` | "Gold feature", "Failed to save Travel Mode settings"                                                    |
-| `components/settings/ChaperoneMode.tsx`      | "Please enter your chaperone's email", "Chaperone settings saved", "Failed to save settings"             |
-| `components/discovery/SharePostDialog.tsx`   | "Link copied to clipboard"                                                                               |
-| `components/discovery/EditPostDialog.tsx`    | "Post content cannot be empty", "Post is too long", "Post updated successfully", "Failed to update post" |
-| `components/discovery/DeletePostDialog.tsx`  | "Post deleted successfully", "Failed to delete post"                                                     |
-| `components/groups/GroupSettingsDialog.tsx`  | "Please enter a group name", "Group updated successfully!", "Group deleted successfully"                 |
-| `components/instagram/ProfileHeader.tsx`     | "Unfollowed", "Following", "Failed to update follow status", "Failed to start checkout"                  |
-| `components/profile/LanguageEditor.tsx`      | "This language is already selected"                                                                      |
+3. **Update Group B files**: Add `useTranslations` where missing (RolesPage) and replace toast messages and remaining UI strings.
 
+4. **Update Group C files**: Since these are hooks (not components), the `t` function will be passed from calling components, or we refactor the toast calls to use translation keys.
 
-## Implementeringssteg
+## Technical Details
 
-### Steg 1: SQL-migrasjon
+- For non-component files (hooks like `useQuestions.ts`, `useBulkUserDelete.ts`, `useUserData.ts`), since React hooks can call other hooks, we can use `useTranslations()` directly inside these custom hooks.
+- All translation keys will follow the existing `admin.*` namespace pattern.
+- The SQL migration will include entries for: english, norwegian, german, kurdish_sorani, kurdish_kurmanji.
 
-Sett inn ca. 120 nye oversettelsesnokler med oversettelser for alle 5 spraak (english, norwegian, kurdish_sorani, kurdish_kurmanci, german). Det gir ca. 600 nye rader i `app_translations`.
-
-Nokkelkonvensjon:
-
-```
-toast.profile.basic_updated       -> "Basic info updated successfully!"
-toast.profile.photo_removed       -> "Photo removed successfully"
-toast.settings.saved              -> "Settings updated successfully"
-toast.swipe.undone                -> "Swipe undone!"
-toast.error.load_failed           -> "Failed to load data"
-download_data.title               -> "Download My Data"
-download_data.whats_included      -> "What's Included"
-...
-```
-
-### Steg 2: Oppdater Prioritet 1-filer (profil-redigering)
-
-- Importer `useTranslations` i filer som mangler det
-- Wrap alle toast-strenger i `t('key', 'English fallback')`
-- Wrap alle UI-strenger i dialoger (f.eks. DownloadDataDialog)
-
-### Steg 3: Oppdater Prioritet 2-filer (hooks)
-
-- For hooks som ikke er React-komponenter: bruk en hjelpefunksjon eller pass `t` som parameter
-- Alternativt: importer `useTranslations` i hooks som allerede er custom hooks
-
-### Steg 4: Oppdater Prioritet 3 og 4 (sider og komponenter)
-
-- Wrap gjenvaerende toast-meldinger i `t()`
-
-## Estimert omfang
-
-- ~120 nye oversettelsesnokler
-- ~600 nye rader i `app_translations` (120 x 5 spraak)
-- ~48 filer aa modifisere
-- 1 SQL-migrasjon
-
-Arbeidet deles i 2 steg grunnet mengden filer:
-
-1. SQL-migrasjon + Prioritet 1 og 2 (23 filer)
-2. Prioritet 3 og 4 (25 filer)
