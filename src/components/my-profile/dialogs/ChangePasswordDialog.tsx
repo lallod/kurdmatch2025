@@ -65,7 +65,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
       form.reset();
       onOpenChange(false);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to change password. Please try again.');
+      toast.error(error.message || t('toast.password.change_failed', 'Failed to change password. Please try again.'));
     }
   };
 
@@ -75,7 +75,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
         <DialogHeader>
           <DialogTitle className="text-white flex items-center">
             <Lock className="w-5 h-5 mr-2 text-purple-400" />
-            Change Password
+            {t('settings.change_password', 'Change Password')}
           </DialogTitle>
         </DialogHeader>
         
@@ -87,12 +87,12 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-purple-200">Current Password</FormLabel>
+                    <FormLabel className="text-purple-200">{t('settings.current_password', 'Current Password')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
-                        placeholder="Enter current password"
+                        placeholder={t('settings.enter_current_password', 'Enter current password')}
                         className="bg-gray-800 border-gray-600 text-white"
                         autoComplete="current-password"
                       />
@@ -107,12 +107,12 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-purple-200">New Password</FormLabel>
+                    <FormLabel className="text-purple-200">{t('settings.new_password', 'New Password')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
-                        placeholder="Enter new password"
+                        placeholder={t('settings.enter_new_password', 'Enter new password')}
                         className="bg-gray-800 border-gray-600 text-white"
                         autoComplete="new-password"
                       />
@@ -127,12 +127,12 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-purple-200">Confirm New Password</FormLabel>
+                    <FormLabel className="text-purple-200">{t('settings.confirm_new_password', 'Confirm New Password')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
-                        placeholder="Confirm new password"
+                        placeholder={t('settings.confirm_new_password_placeholder', 'Confirm new password')}
                         className="bg-gray-800 border-gray-600 text-white"
                         autoComplete="new-password"
                       />
@@ -148,7 +148,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
                 <CardContent className="p-4">
                   <h4 className="text-white font-medium mb-3 flex items-center">
                     <Shield className="w-4 h-4 mr-2 text-green-400" />
-                    Password Requirements
+                    {t('settings.password_requirements', 'Password Requirements')}
                   </h4>
                   <ul className="space-y-1">
                     {passwordRequirements.map((req, index) => (
@@ -174,14 +174,14 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
                 className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </Button>
               <Button 
                 type="submit"
                 disabled={form.formState.isSubmitting}
                 className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
               >
-                {form.formState.isSubmitting ? 'Changing...' : 'Change Password'}
+                {form.formState.isSubmitting ? t('settings.changing_password', 'Changing...') : t('settings.change_password', 'Change Password')}
               </Button>
             </div>
           </form>

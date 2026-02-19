@@ -26,7 +26,7 @@ export default function EventCard({ event, onUpdate }: EventCardProps) {
       }
       onUpdate?.();
     } catch (error: any) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || t('misc.error', 'Something went wrong'));
     }
   };
 
@@ -56,7 +56,7 @@ export default function EventCard({ event, onUpdate }: EventCardProps) {
             )}
           </div>
           {isFull && (
-            <Badge variant="destructive">Full</Badge>
+            <Badge variant="destructive">{t('events.full', 'Full')}</Badge>
           )}
         </div>
 
@@ -73,8 +73,8 @@ export default function EventCard({ event, onUpdate }: EventCardProps) {
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 flex-shrink-0" />
             <span>
-              {event.attendees_count} attending
-              {event.max_attendees && ` (max ${event.max_attendees})`}
+              {event.attendees_count} {t('events.attending', 'attending')}
+              {event.max_attendees && ` (${t('events.max', 'max')} ${event.max_attendees})`}
             </span>
           </div>
         </div>
@@ -91,7 +91,7 @@ export default function EventCard({ event, onUpdate }: EventCardProps) {
             </AvatarFallback>
           </Avatar>
           <span className="text-xs text-muted-foreground">
-            Organized by {event.profiles.name}
+            {t('events.organized_by', 'Organized by')} {event.profiles.name}
           </span>
         </div>
 
@@ -102,7 +102,7 @@ export default function EventCard({ event, onUpdate }: EventCardProps) {
           className="w-full"
           disabled={!event.is_attending && isFull}
         >
-          {event.is_attending ? 'Leave Event' : isFull ? 'Event Full' : 'Join Event'}
+          {event.is_attending ? t('events.leave_event', 'Leave Event') : isFull ? t('events.event_full', 'Event Full') : t('events.join_event', 'Join Event')}
         </Button>
       </CardContent>
     </Card>

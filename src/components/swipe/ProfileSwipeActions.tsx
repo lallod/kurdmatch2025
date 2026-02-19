@@ -67,7 +67,7 @@ const ProfileSwipeActions: React.FC<ProfileSwipeActionsProps> = ({
           navigate('/swipe');
         }
       } else {
-        toast.error(likeResult.error || "Failed to like profile");
+        toast.error(likeResult.error || t('toast.swipe.like_profile_failed', 'Failed to like profile'));
       }
     } catch (error) {
       console.error('Error liking profile:', error);

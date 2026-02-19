@@ -76,7 +76,7 @@ export const TravelModeSettings = () => {
         .eq('id', user.id);
 
       if (error) throw error;
-      toast.success(isActive ? 'Travel Mode activated!' : 'Travel Mode deactivated');
+      toast.success(isActive ? t('toast.travel.activated', 'Travel Mode activated!') : t('toast.travel.deactivated', 'Travel Mode deactivated'));
     } catch (error) {
       console.error('Error saving travel mode:', error);
       toast.error(t('toast.travel.save_failed', 'Failed to save Travel Mode settings'));
@@ -98,7 +98,7 @@ export const TravelModeSettings = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Plane className="h-5 w-5 text-primary" />
-          Travel Mode
+          {t('settings.travel_mode', 'Travel Mode')}
           {!isGold && (
             <span className="text-xs bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
               <Crown className="h-3 w-3" />
@@ -113,15 +113,15 @@ export const TravelModeSettings = () => {
             <div className="flex items-start gap-2">
               <Lock className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold">Gold Feature</p>
-                <p className="text-xs text-muted-foreground mt-1">Upgrade to Gold to appear in other cities while traveling</p>
+                <p className="text-sm font-semibold">{t('settings.gold_feature', 'Gold Feature')}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('settings.travel_upgrade', 'Upgrade to Gold to appear in other cities while traveling')}</p>
               </div>
             </div>
           </div>
         )}
 
         <div className="flex items-center justify-between">
-          <Label htmlFor="travel-mode">Enable Travel Mode</Label>
+          <Label htmlFor="travel-mode">{t('settings.enable_travel', 'Enable Travel Mode')}</Label>
           <Switch
             id="travel-mode"
             checked={isActive}
@@ -133,10 +133,10 @@ export const TravelModeSettings = () => {
         {isActive && (
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label>Select City</Label>
+              <Label>{t('settings.select_city', 'Select City')}</Label>
               <Select value={travelLocation} onValueChange={setTravelLocation}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a city..." />
+                  <SelectValue placeholder={t('settings.choose_city', 'Choose a city...')} />
                 </SelectTrigger>
                 <SelectContent>
                   {POPULAR_CITIES.map(city => (
@@ -152,16 +152,16 @@ export const TravelModeSettings = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Or enter a custom location</Label>
+              <Label>{t('settings.custom_location', 'Or enter a custom location')}</Label>
               <Input
-                placeholder="Enter city name..."
+                placeholder={t('settings.enter_city', 'Enter city name...')}
                 value={travelLocation}
                 onChange={(e) => setTravelLocation(e.target.value)}
               />
             </div>
 
             <p className="text-xs text-muted-foreground">
-              Your profile will appear to users in this location instead of your home city. Your real location stays private.
+              {t('settings.travel_description', 'Your profile will appear to users in this location instead of your home city. Your real location stays private.')}
             </p>
           </div>
         )}
@@ -171,7 +171,7 @@ export const TravelModeSettings = () => {
           disabled={isSaving || !isGold}
           className="w-full"
         >
-          {isSaving ? 'Saving...' : 'Save Travel Mode'}
+          {isSaving ? t('common.saving', 'Saving...') : t('settings.save_travel', 'Save Travel Mode')}
         </Button>
       </CardContent>
     </Card>
