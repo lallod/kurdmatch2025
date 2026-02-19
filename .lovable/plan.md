@@ -1,175 +1,144 @@
 
 
-# Audit: Remaining Hardcoded Strings Not Yet Covered by i18n
+# Implementation Plan: Missing Admin Pages, Security Hardening, and Audit Logging
 
-After a comprehensive search of the entire codebase, here is everything that still has hardcoded English strings needing localization. These were **not included** in any of the 21 completed batches.
-
----
-
-## Summary
-
-There are approximately **~120 hardcoded strings** remaining across **~25 files**, split into two main areas:
-
-1. **SuperAdmin leftovers** (~15 strings across 3 files)
-2. **User-facing components and hooks** (~105 strings across ~22 files)
+This plan addresses all gaps found in the system audit, organized into 3 sequential steps.
 
 ---
 
-## Area 1: SuperAdmin Leftovers (3 files)
+## Step 1: Security Hardening (Critical Priority)
 
-### 1. `GenerateProfilesForm.tsx`
-- No `useTranslations` at all
-- Hardcoded: "Feature Disabled", "Information", "Real Users Only", "How to Add Users", "Processing...", "Close"
+### 1A. Lock Down Public Admin Routes
 
-### 2. `UpdateProfilesForm.tsx`
-- No `useTranslations` at all
-- Hardcoded: "Real Data Mode", "User Profile Management", toast messages, "Close"
+The routes `/create-admin` and `/admin-setup` are currently accessible to anyone. They will be wrapped in `SuperAdminGuard` so only authenticated super admins can reach them.
 
-### 3. `NewRoleDialog.tsx`
-- Already has `useTranslations`, but still has hardcoded placeholders:
-  - `placeholder="e.g., Content Manager"`
-  - `placeholder="Describe the purpose of this role"`
-  - `<option>Support Agent</option>`, `<option>Marketing</option>`
+**Files changed:**
+- `src/components/app/routes/publicRoutes.tsx` -- move `/create-admin` and `/admin-setup` routes out of public routes
+- `src/components/app/routes/adminRoutes.tsx` -- add them here, wrapped in `SuperAdminGuard`
 
----
+### 1B. Create a Secure Admin Actions Edge Function
 
-## Area 2: User-Facing Pages (8 files)
+Currently admin write operations (delete user, unblock, etc.) use the anon client which relies solely on RLS. A new edge function `admin-actions` will:
+- Verify the caller's JWT via `getClaims()`
+- Confirm the caller has `super_admin` role using a service-role query
+- Execute the requested action with the service-role client
+- Write an entry to `admin_audit_log` for every mutation
 
-### 4. `CreatePost.tsx`
-- 3 toast messages: "File is too large", "Failed to upload image", "Please enter some content"
+**Files created:**
+- `supabase/functions/admin-actions/index.ts`
 
-### 5. `EventDetail.tsx`
-- 4 toast messages: "Failed to load event details", "You are no longer attending...", "You are now attending...", "Failed to update attendance"
+**Supported actions (initial set):** `delete_user`, `unblock_user`, `update_profile`, `toggle_flag`, `delete_content`
 
-### 6. `GroupDetail.tsx`
-- 2 toast messages: "Failed to load group", "Failed to update membership"
+### 1C. Add Consistent Audit Logging
 
-### 7. `AdvancedSearch.tsx`
-- 1 toast: "Failed to search profiles"
+A helper utility will be added so every admin page that performs a mutation logs it via the new edge function.
 
-### 8. `LikedMe.tsx`
-- 1 toast: "Profile passed"
-
-### 9. `CreateSuperAdmin.tsx`
-- 1 toast: "Email and password are required"
-
-### 10. `AddUserDialog.tsx` (SuperAdmin)
-- Already has `useTranslations` but 3 `toast.success`/`toast.error` calls still hardcoded
+**Files created:**
+- `src/utils/admin/auditLogger.ts` -- a thin wrapper: `logAdminAction(actionType, tableName, recordId, changes)`
 
 ---
 
-## Area 3: User-Facing Components (~12 files)
+## Step 2: Missing Admin Management Pages (7 New Pages)
 
-### 11. `CommentSection.tsx` (discovery)
-- 3 toasts: "Failed to load comments", "Comment posted", "Failed to post comment"
+Each page follows the existing pattern (see `BlockedUsersPage.tsx`): dark theme Card layout, search, table with actions, `useTranslations()` for all strings.
 
-### 12. `CommentThread.tsx` (discovery)
-- 3 toasts: "Failed to update like", "Comment deleted", "Failed to delete comment"
+| Page | Route | DB Table | Key Features |
+|------|-------|----------|--------------|
+| **StoriesPage** | `/super-admin/stories` | `stories` | View/delete stories, filter by user, see media preview |
+| **CallsPage** | `/super-admin/calls` | `calls` | View call logs, filter by type/status, duration stats |
+| **DateProposalsPage** | `/super-admin/date-proposals` | `date_proposals` | View proposals, filter by status, admin can cancel |
+| **MarriageIntentionsPage** | `/super-admin/marriage-intentions` | `marriage_intentions` | View intentions, filter by timeline, toggle visibility |
+| **SafetyFlagsPage** | `/super-admin/safety-flags` | `message_safety_flags` | HIGH PRIORITY -- review flagged messages, mark reviewed, take action |
+| **ScheduledContentPage** | `/super-admin/scheduled-content` | `scheduled_content` | View/delete scheduled posts, filter by published status |
+| **ProfileViewsPage** | `/super-admin/profile-views` | `profile_section_views` | Analytics view of profile engagement, top viewed sections |
 
-### 13. `ReportDialog.tsx` (discovery)
-- 2 toasts: "Report Submitted", "Failed to submit report"
+**Files created (7):**
+- `src/pages/SuperAdmin/pages/StoriesPage.tsx`
+- `src/pages/SuperAdmin/pages/CallsPage.tsx`
+- `src/pages/SuperAdmin/pages/DateProposalsPage.tsx`
+- `src/pages/SuperAdmin/pages/MarriageIntentionsPage.tsx`
+- `src/pages/SuperAdmin/pages/SafetyFlagsPage.tsx`
+- `src/pages/SuperAdmin/pages/ScheduledContentPage.tsx`
+- `src/pages/SuperAdmin/pages/ProfileViewsPage.tsx`
 
-### 14. `BlockUserDialog.tsx` (discovery)
-- 2 toasts: "User Blocked", "Failed to block user"
+**Files modified:**
+- `src/pages/SuperAdmin/index.tsx` -- add 7 new route entries
+- `src/pages/SuperAdmin/SuperAdminLayout.tsx` -- add 7 new sidebar nav items
 
-### 15. `ContactSupportDialog.tsx` (support)
-- 3 toasts: "Validation Error", "Message Sent", "Failed to send message"
-
-### 16. `MyTickets.tsx` (support)
-- 2 toasts: "Thank you!", "Failed to submit feedback"
-
-### 17. `ProfileActionButtons.tsx` (profile)
-- 2 toasts: "Unfollowed/Following", "Failed to start checkout"
-
-### 18. `MessageTranslation.tsx` (chat)
-- 4 toasts: "Rate limit reached", "Service unavailable", "Translation complete", "Translation failed"
-
-### 19. `AIPhotoStudioDialog.tsx` (shared)
-- 4 toasts: "Feature Migration in Progress", "AI Photo Enhancement", "Photo Enhanced!", "Enhancement Failed"
-
-### 20. `VerificationForm.tsx`
-- Toast `title:` fields ("Error", "Success") are still hardcoded even though descriptions use `t()`
+**Database migration:**
+- INSERT ~70 translation keys (7 pages x ~10 keys x 1 row per language, 5 languages = ~350 rows) into `translations` table
 
 ---
 
-## Area 4: Hooks (~6 files)
+## Step 3: Admin Profile Editor and Wiring Everything Together
 
-### 21. `usePhoneVerification.ts`
-- 4 toasts: "Code Sent", "Verified!", error messages
+### 3A. Admin Profile Editor
 
-### 22. `useSubscription.ts`
-- 3 toasts: "Failed to check subscription", "Failed to start checkout", "Failed to open subscription management"
+Add a detailed profile editing capability to the existing `UsersPage` -- an "Edit Profile" dialog that lets admins update:
+- Bio, occupation, location (from `profiles`)
+- Detailed fields from `profile_details` (height, education, religion, etc.)
+- Preference fields from `profile_preferences`
 
-### 23. `useSecureForm.ts`
-- 4 toasts: "Too Many Attempts", "Success", "Validation Error", "Submission Error"
+All mutations go through the `admin-actions` edge function (Step 1B) with full audit logging.
 
-### 24. `usePushNotifications.ts`
-- 6 toasts: "Not Supported", "Permission Denied", "Success" (enabled/disabled), error messages
+**Files created:**
+- `src/pages/SuperAdmin/components/users/AdminProfileEditor.tsx`
 
-### 25. `useLocationManager.ts` + location files
-- ~7 toasts: "Geolocation not supported", "Location updated", "Location error", "Search error", "Passport location removed"
+**Files modified:**
+- `src/pages/SuperAdmin/pages/UsersPage.tsx` -- add "Edit" button per row that opens the editor
 
-### 26. `useConversationInsights.ts`
-- 2 toasts: "Insights generated", "Failed to generate insights"
+### 3B. Wire All Existing Admin Pages to Use Audit Logging
 
-### 27. `useVerificationData.ts`
-- 3 toasts: "Error" (load), "Success" (verify/reject), "Error" (action)
+Update the following existing pages to route their mutations through `admin-actions` (or at minimum call `logAdminAction`):
+- `BlockedUsersPage.tsx` (unblock)
+- `GroupsManagementPage.tsx` (delete group)
+- `VirtualGiftsPage.tsx` (toggle gift)
+- `GhostUsersPage.tsx` (create/delete ghost)
+- `ModerationPage.tsx` (approve/reject)
 
-### 28. `useNearbyUsers.ts`
-- 1 toast: "Failed to load nearby users"
+### 3C. Deploy and Insert Translations
 
----
-
-## Area 5: Auth / Registration (~4 files)
-
-### 29. `useDynamicRegistrationForm.ts`
-- ~9 toasts: "Error", "Incomplete Fields", "Validation Error", "Registration Failed", "Registration Successful!", "Photo Upload Warning"
-
-### 30. `RegistrationForm.tsx`
-- Step titles: "Account", "Personal", "Profile"
-- 2 toasts: "Success!", "Error"
-
-### 31. `EnhancedDynamicRegistrationForm.tsx`
-- 2 toasts: "Incomplete Registration", "Validation Error"
-
-### 32. `useRegistrationForm.tsx`
-- 4 toasts: "Photo Upload Warning", "Profile Complete!", "Success!", "Error"
-
-### 33. `ProfileCompletionWizard.tsx`
-- Step titles: "About You", "Your Lifestyle", "Values & Beliefs", etc. (8 steps)
-- 2 toasts: "Profile completed!", "Error"
-
-### 34. `SuperAdminSetupForm.tsx`
-- 3 toasts: "Strong password generated", "Copied to clipboard", "Copy failed"
+- Deploy the `admin-actions` edge function
+- Insert all translation entries for the 7 new pages + profile editor strings
 
 ---
 
-## Area 6: Landing Page Defaults
+## Technical Details
 
-### 35. `KurdistanSection.tsx`, `FeaturesSection.tsx`, `useLandingV2Content.ts`
-- These contain hardcoded default/fallback content in English. These are used as fallback when database content is not loaded, so they are somewhat acceptable, but ideally should use `t()`.
+### Edge Function: `admin-actions` (Step 1B)
 
----
+```text
+POST /admin-actions
+Body: { action, table, recordId, data }
 
-## Recommended Batches
+Flow:
+  1. Verify JWT via getClaims()
+  2. Query user_roles with service-role client to confirm super_admin
+  3. Execute the action (delete/update/insert) with service-role client
+  4. Insert row into admin_audit_log
+  5. Return result
+```
 
-| Batch | Scope | Files | Strings |
-|-------|-------|-------|---------|
-| Batch 22 | SuperAdmin leftovers + AddUserDialog fix | 3 files | ~15 |
-| Batch 23 | User-facing pages (CreatePost, EventDetail, GroupDetail, etc.) | 6 files | ~12 |
-| Batch 24 | Discovery + Support + Profile components | 7 files | ~20 |
-| Batch 25 | Chat, Shared, Verification component toast titles | 3 files | ~12 |
-| Batch 26 | Hooks (phone, subscription, secure form, push, location, etc.) | 8 files | ~30 |
-| Batch 27 | Auth/Registration (forms, wizard, setup) | 6 files | ~30 |
+### Config update: `supabase/config.toml`
+```text
+[functions.admin-actions]
+verify_jwt = false
+```
 
-Total: **6 more batches** covering ~25 files and ~120 strings.
+### New Sidebar Items (added to menuItems array)
 
----
+```text
+Stories         -> /super-admin/stories         (BookOpen icon)
+Calls           -> /super-admin/calls           (Phone icon)
+Date Proposals  -> /super-admin/date-proposals  (CalendarHeart icon)
+Marriage Intent -> /super-admin/marriage-intentions (Heart icon)
+Safety Flags    -> /super-admin/safety-flags    (AlertTriangle icon)
+Scheduled       -> /super-admin/scheduled-content (Clock icon)
+Profile Views   -> /super-admin/profile-views   (Eye icon)
+```
 
-## Notes
-
-- `ErrorBoundary.tsx` is intentionally excluded (class component, per project memory).
-- `fieldLabels.ts` internal validation labels are intentionally English-only.
-- Landing page default/fallback content (KurdistanSection, FeaturesSection, useLandingV2Content) could be deferred since the real content comes from the database.
-- The `SocialLoginPage.tsx` toast messages (lines 34, 39) still use template literals without `t()` -- e.g., `` `${provider.id} provider updated` ``. This was missed in Batch 18.
+### Estimated scope
+- Step 1: ~4 files created/modified (security-critical, do first)
+- Step 2: ~10 files created/modified + 1 DB migration
+- Step 3: ~7 files created/modified + 1 DB migration
 
