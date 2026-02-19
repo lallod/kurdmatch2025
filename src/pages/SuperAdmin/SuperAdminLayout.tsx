@@ -5,7 +5,8 @@ import {
   LayoutDashboard, Users, MessageSquare, ImageIcon, Tag, Settings, ChevronLeft, ChevronRight, LogOut,
   ClipboardList, Zap, Brain, UserCheck, Flag, BarChart, TestTube, ServerCrash, Mail, Download, FileText,
   ShieldCheck, UserCog, CreditCard, Facebook, Edit, Loader2, Globe, Heart, MessageCircle, UserPlus,
-  Bell, Hash, Shield, Clock, BarChart3, CalendarIcon, Sparkles, Ticket, Key, Bot
+  Bell, Hash, Shield, Clock, BarChart3, CalendarIcon, Sparkles, Ticket, Key, Bot, BookOpen, Phone,
+  CalendarHeart, AlertTriangle, Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminRoleCheck } from '@/hooks/useAdminRoleCheck';
@@ -107,6 +108,13 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
     { path: '/super-admin/photos', icon: <ImageIcon size={20} />, label: t('admin.nav_photos', 'Photos') },
     { path: '/super-admin/virtual-gifts', icon: <Sparkles size={20} />, label: t('admin.nav_virtual_gifts', 'Virtual Gifts') },
     { path: '/super-admin/api-keys', icon: <Key size={20} />, label: t('admin.nav_api_keys', 'API Keys') },
+    { path: '/super-admin/stories', icon: <BookOpen size={20} />, label: t('admin.nav_stories', 'Stories') },
+    { path: '/super-admin/calls', icon: <Phone size={20} />, label: t('admin.nav_calls', 'Calls') },
+    { path: '/super-admin/date-proposals', icon: <CalendarHeart size={20} />, label: t('admin.nav_date_proposals', 'Date Proposals') },
+    { path: '/super-admin/marriage-intentions', icon: <Heart size={20} />, label: t('admin.nav_marriage_intentions', 'Marriage Intentions') },
+    { path: '/super-admin/safety-flags', icon: <AlertTriangle size={20} />, label: t('admin.nav_safety_flags', 'Safety Flags') },
+    { path: '/super-admin/scheduled-content', icon: <Clock size={20} />, label: t('admin.nav_scheduled_content', 'Scheduled Content') },
+    { path: '/super-admin/profile-views', icon: <Eye size={20} />, label: t('admin.nav_profile_views', 'Profile Views') },
     { path: '/super-admin/settings', icon: <Settings size={20} />, label: t('admin.nav_settings', 'Settings') },
   ];
 

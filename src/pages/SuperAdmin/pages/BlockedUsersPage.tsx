@@ -8,6 +8,7 @@ import { Shield, Trash2, Search, Calendar, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { useTranslations } from '@/hooks/useTranslations';
+import { executeAdminAction } from '@/utils/admin/auditLogger';
 
 interface BlockedUser {
   id: string;
@@ -48,12 +49,7 @@ const BlockedUsersPage = () => {
     if (!confirm(t('admin.confirm_unblock', 'Are you sure you want to remove this block?'))) return;
 
     try {
-      const { error } = await supabase
-        .from('blocked_users')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      await executeAdminAction({ action: 'unblock_user', table: 'blocked_users', recordId: id });
       toast.success(t('toast.block_removed', 'Block removed successfully'));
       fetchBlockedUsers();
     } catch (error) {

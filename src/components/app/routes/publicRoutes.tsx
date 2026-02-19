@@ -8,8 +8,6 @@ const Auth = lazy(() => import('@/pages/Auth'));
 const Register = lazy(() => import('@/pages/Register'));
 const AuthCallback = lazy(() => import('@/components/auth/AuthCallback'));
 const SuperAdminLogin = lazy(() => import('@/components/auth/SuperAdminLogin'));
-const SuperAdminSetup = lazy(() => import('@/components/auth/SuperAdminSetup'));
-const CreateSuperAdmin = lazy(() => import('@/pages/CreateSuperAdmin'));
 const HelpSupport = lazy(() => import('@/pages/HelpSupport'));
 const CommunityGuidelines = lazy(() => import('@/pages/CommunityGuidelines'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
@@ -31,8 +29,6 @@ export const getPublicRoutes = (user: User | null) => (
     <Route path="/register" element={user ? <Navigate to="/discovery" replace /> : <L><Register /></L>} />
     <Route path="/auth/callback" element={<L><AuthCallback /></L>} />
     <Route path="/admin-login" element={<L><SuperAdminLogin /></L>} />
-    <Route path="/admin-setup" element={<L><SuperAdminSetup /></L>} />
-    <Route path="/create-admin" element={<L><CreateSuperAdmin /></L>} />
     <Route path="/help" element={<L><HelpSupport /></L>} />
     <Route path="/community-guidelines" element={<L><CommunityGuidelines /></L>} />
     <Route path="/privacy-policy" element={<L><PrivacyPolicy /></L>} />

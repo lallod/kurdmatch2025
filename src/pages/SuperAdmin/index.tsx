@@ -42,6 +42,13 @@ import SupportTicketsPage from './pages/SupportTicketsPage';
 import ApiKeysPage from './pages/ApiKeysPage';
 import VirtualGiftsPage from './pages/VirtualGiftsPage';
 import GhostUsersPage from './pages/GhostUsersPage';
+import StoriesPage from './pages/StoriesPage';
+import CallsPage from './pages/CallsPage';
+import DateProposalsPage from './pages/DateProposalsPage';
+import MarriageIntentionsPage from './pages/MarriageIntentionsPage';
+import SafetyFlagsPage from './pages/SafetyFlagsPage';
+import ScheduledContentPage from './pages/ScheduledContentPage';
+import ProfileViewsPage from './pages/ProfileViewsPage';
 
 const SuperAdmin = () => {
   return (
@@ -87,6 +94,13 @@ const SuperAdmin = () => {
         <Route path="/api-keys" element={<ApiKeysPage />} />
         <Route path="/virtual-gifts" element={<VirtualGiftsPage />} />
         <Route path="/ghost-users" element={<GhostUsersPage />} />
+        <Route path="/stories" element={<StoriesPage />} />
+        <Route path="/calls" element={<CallsPage />} />
+        <Route path="/date-proposals" element={<DateProposalsPage />} />
+        <Route path="/marriage-intentions" element={<MarriageIntentionsPage />} />
+        <Route path="/safety-flags" element={<SafetyFlagsPage />} />
+        <Route path="/scheduled-content" element={<ScheduledContentPage />} />
+        <Route path="/profile-views" element={<ProfileViewsPage />} />
       </Routes>
     </SuperAdminLayout>
   );

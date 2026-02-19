@@ -11,6 +11,7 @@ import { Gift, Plus, Edit, Loader2, Coins } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
+import { executeAdminAction } from '@/utils/admin/auditLogger';
 
 interface VirtualGift {
   id: string;
@@ -61,8 +62,13 @@ const VirtualGiftsPage = () => {
   };
 
   const toggleActive = async (id: string, active: boolean) => {
-    await supabase.from('virtual_gifts').update({ active: !active }).eq('id', id);
-    setGifts(prev => prev.map(g => g.id === id ? { ...g, active: !active } : g));
+    try {
+      await executeAdminAction({ action: 'toggle_flag', table: 'virtual_gifts', recordId: id, data: { active: !active } });
+      setGifts(prev => prev.map(g => g.id === id ? { ...g, active: !active } : g));
+    } catch (error) {
+      console.error('Error toggling gift:', error);
+      toast.error('Failed to toggle gift');
+    }
   };
 
   const openCreate = () => { setEditGift({ name: '', emoji: '🎁', description: '', price_coins: 10, category: 'general', is_premium: false, active: true, sort_order: gifts.length + 1 }); setDialogOpen(true); };
