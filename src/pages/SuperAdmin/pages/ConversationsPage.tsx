@@ -135,7 +135,7 @@ const ConversationsPage = () => {
               {loading ? (
                 <div className="text-center py-8 text-white/60">{t('common.loading', 'Loading...')}</div>
               ) : filteredConversations.length === 0 ? (
-                <div className="text-center py-8 text-white/60">No conversations found</div>
+                <div className="text-center py-8 text-white/60">{t('admin.no_conversations_found', 'No conversations found')}</div>
               ) : (
                 <div className="space-y-3">
                   {filteredConversations.map((conv) => (
@@ -152,7 +152,7 @@ const ConversationsPage = () => {
                             {conv.is_archived && (
                               <Badge variant="outline" className="bg-yellow-500/10 border-yellow-500/20 text-yellow-500">
                                 <Archive className="h-3 w-3 mr-1" />
-                                Archived
+                                {t('admin.archived', 'Archived')}
                               </Badge>
                             )}
                             <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
@@ -199,7 +199,7 @@ const ConversationsPage = () => {
               {loading ? (
                 <div className="text-center py-8 text-white/60">{t('common.loading', 'Loading...')}</div>
               ) : filteredMuted.length === 0 ? (
-                <div className="text-center py-8 text-white/60">No muted conversations found</div>
+                <div className="text-center py-8 text-white/60">{t('admin.no_muted_found', 'No muted conversations found')}</div>
               ) : (
                 <div className="space-y-3">
                   {filteredMuted.map((muted) => (
@@ -215,7 +215,7 @@ const ConversationsPage = () => {
                           <div className="flex items-center gap-2">
                             <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                               <Calendar className="h-3 w-3 mr-1" />
-                              {muted.muted_until ? `Until: ${format(new Date(muted.muted_until), 'MMM d, yyyy')}` : 'Indefinite'}
+                              {muted.muted_until ? t('admin.until_label', 'Until: {{date}}', { date: format(new Date(muted.muted_until), 'MMM d, yyyy') }) : t('admin.indefinite', 'Indefinite')}
                             </Badge>
                           </div>
                         </div>

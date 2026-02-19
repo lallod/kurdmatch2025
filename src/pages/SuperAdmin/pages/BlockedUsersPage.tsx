@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Shield, Trash2, Search, Calendar, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface BlockedUser {
   id: string;
@@ -17,6 +18,7 @@ interface BlockedUser {
 }
 
 const BlockedUsersPage = () => {
+  const { t } = useTranslations();
   const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,14 +38,14 @@ const BlockedUsersPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching blocked users:', error);
-      toast.error('Failed to load blocked users');
+      toast.error(t('toast.blocked_load_failed', 'Failed to load blocked users'));
     } finally {
       setLoading(false);
     }
   };
 
   const unblockUser = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this block?')) return;
+    if (!confirm(t('admin.confirm_unblock', 'Are you sure you want to remove this block?'))) return;
 
     try {
       const { error } = await supabase
@@ -52,11 +54,11 @@ const BlockedUsersPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Block removed successfully');
+      toast.success(t('toast.block_removed', 'Block removed successfully'));
       fetchBlockedUsers();
     } catch (error) {
       console.error('Error removing block:', error);
-      toast.error('Failed to remove block');
+      toast.error(t('toast.block_remove_failed', 'Failed to remove block'));
     }
   };
 
@@ -75,11 +77,11 @@ const BlockedUsersPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Blocked Users Management</h1>
-          <p className="text-white/60 mt-1">View all user blocks ({totalCount} total)</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.blocked_users_management', 'Blocked Users Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.view_all_blocks', 'View all user blocks ({{count}} total)', { count: totalCount })}</p>
         </div>
         <Button onClick={fetchBlockedUsers} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -87,13 +89,13 @@ const BlockedUsersPage = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Shield className="h-5 w-5 text-red-500" />
-            All Blocked Users
+            {t('admin.all_blocked_users', 'All Blocked Users')}
           </CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search blocks..."
+                placeholder={t('admin.search_blocks', 'Search blocks...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white"
@@ -103,9 +105,9 @@ const BlockedUsersPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-white/60">Loading blocked users...</div>
+            <div className="text-center py-8 text-white/60">{t('admin.loading_blocked', 'Loading blocked users...')}</div>
           ) : filteredBlocks.length === 0 ? (
-            <div className="text-center py-8 text-white/60">No blocked users found</div>
+            <div className="text-center py-8 text-white/60">{t('admin.no_blocked_found', 'No blocked users found')}</div>
           ) : (
             <div className="space-y-3">
               {filteredBlocks.map((block) => (
@@ -121,18 +123,18 @@ const BlockedUsersPage = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <div>
-                          <p className="text-white/60 text-sm">Blocker</p>
+                          <p className="text-white/60 text-sm">{t('admin.blocker', 'Blocker')}</p>
                           <p className="text-white font-mono text-sm">{block.blocker_id.substring(0, 12)}...</p>
                         </div>
                         <Shield className="h-4 w-4 text-red-500" />
                         <div>
-                          <p className="text-white/60 text-sm">Blocked</p>
+                          <p className="text-white/60 text-sm">{t('admin.blocked', 'Blocked')}</p>
                           <p className="text-white font-mono text-sm">{block.blocked_id.substring(0, 12)}...</p>
                         </div>
                       </div>
                       
                       {block.reason && (
-                        <p className="text-white/70 text-sm mb-2 italic">Reason: {block.reason}</p>
+                        <p className="text-white/70 text-sm mb-2 italic">{t('admin.reason_label', 'Reason: {{reason}}', { reason: block.reason })}</p>
                       )}
                       
                       <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">

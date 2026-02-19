@@ -131,7 +131,7 @@ const ModerationPage = () => {
           {loading ? (
             <div className="text-center py-12 text-white/60">{t('common.loading', 'Loading...')}</div>
           ) : filteredReports.length === 0 ? (
-            <div className="text-center py-12 text-white/60">No reports found</div>
+            <div className="text-center py-12 text-white/60">{t('admin.no_reports_found', 'No reports found')}</div>
           ) : (
             <>
               <div className="rounded-md border border-white/5">

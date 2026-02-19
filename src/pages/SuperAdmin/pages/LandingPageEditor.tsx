@@ -7,11 +7,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const LandingPageEditor = () => {
+  const { t } = useTranslations();
   const [retryCount, setRetryCount] = useState(0);
   
-  // Memoize the retry function to prevent it from changing on each render
   const handleRetry = useCallback(() => {
     setRetryCount(prev => prev + 1);
   }, []);
@@ -30,29 +31,27 @@ const LandingPageEditor = () => {
     saveChanges
   } = useLandingPageContent(retryCount);
 
-  // Show loading state while fetching content
   if (loading) {
     return (
       <Card className="w-full">
         <CardContent className="flex flex-col items-center justify-center py-10">
           <Loader2 className="h-10 w-10 text-muted-foreground animate-spin mb-4" />
-          <p className="text-muted-foreground">Loading landing page content...</p>
+          <p className="text-muted-foreground">{t('admin.loading_landing_content', 'Loading landing page content...')}</p>
         </CardContent>
       </Card>
     );
   }
 
-  // Show error state if there was a problem loading the content
   if (error) {
     return (
       <Alert variant="destructive" className="mb-6">
         <AlertCircle className="h-4 w-4 mr-2" />
-        <AlertTitle>Error loading landing page content</AlertTitle>
+        <AlertTitle>{t('admin.error_loading_landing', 'Error loading landing page content')}</AlertTitle>
         <AlertDescription className="mt-2">
           {error}
           <div className="mt-4">
             <Button onClick={handleRetry}>
-              Retry
+              {t('common.retry', 'Retry')}
             </Button>
           </div>
         </AlertDescription>
@@ -60,17 +59,16 @@ const LandingPageEditor = () => {
     );
   }
 
-  // Ensure content is defined before rendering tabs
   if (!content) {
     return (
       <Alert variant="destructive" className="mb-6">
         <AlertCircle className="h-4 w-4 mr-2" />
-        <AlertTitle>Content data is missing</AlertTitle>
+        <AlertTitle>{t('admin.content_missing', 'Content data is missing')}</AlertTitle>
         <AlertDescription className="mt-2">
-          The landing page content could not be loaded properly.
+          {t('admin.content_not_loaded', 'The landing page content could not be loaded properly.')}
           <div className="mt-4">
             <Button onClick={handleRetry}>
-              Retry
+              {t('common.retry', 'Retry')}
             </Button>
           </div>
         </AlertDescription>

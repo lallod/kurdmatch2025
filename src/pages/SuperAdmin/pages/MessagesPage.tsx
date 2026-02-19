@@ -98,7 +98,7 @@ const MessagesPage = () => {
           {loading ? (
             <div className="text-center py-12 text-white/60">{t('common.loading', 'Loading...')}</div>
           ) : filteredMessages.length === 0 ? (
-            <div className="text-center py-12 text-white/60">No messages found</div>
+            <div className="text-center py-12 text-white/60">{t('admin.no_messages_found', 'No messages found')}</div>
           ) : (
             <div className="rounded-md border border-white/5">
               <Table>
