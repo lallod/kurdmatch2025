@@ -118,13 +118,13 @@ const EmailCampaignsPage = () => {
   const handleCampaignAction = async (campaignId: string, action: 'start' | 'pause' | 'duplicate' | 'delete') => {
     if (action === 'start') {
       await updateCampaign(campaignId, { status: 'active' });
-      toast.success("Campaign started");
+      toast.success(t('admin.campaign_started', 'Campaign started'));
     } else if (action === 'pause') {
       await updateCampaign(campaignId, { status: 'paused' });
-      toast.success("Campaign paused");
+      toast.success(t('admin.campaign_paused', 'Campaign paused'));
     } else if (action === 'delete') {
       await deleteCampaign(campaignId);
-      toast.success("Campaign deleted");
+      toast.success(t('admin.campaign_deleted', 'Campaign deleted'));
     }
   };
 

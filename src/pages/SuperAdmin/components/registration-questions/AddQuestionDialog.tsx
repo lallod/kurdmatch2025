@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Plus, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -10,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { QuestionItem } from './types';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface AddQuestionDialogProps {
   isOpen: boolean;
@@ -19,28 +19,17 @@ interface AddQuestionDialogProps {
 }
 
 const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({ 
-  isOpen, 
-  onOpenChange, 
-  onAddQuestion,
-  questionsCount
+  isOpen, onOpenChange, onAddQuestion, questionsCount
 }) => {
-  
+  const { t } = useTranslations();
   const [newQuestion, setNewQuestion] = React.useState<Partial<QuestionItem>>({
-    text: '',
-    category: 'Basics',
-    fieldType: 'text',
-    required: false,
-    enabled: true,
-    registrationStep: 'Personal',
-    displayOrder: questionsCount + 1,
-    placeholder: '',
-    fieldOptions: [],
-    profileField: ''
+    text: '', category: 'Basics', fieldType: 'text', required: false,
+    enabled: true, registrationStep: 'Personal', displayOrder: questionsCount + 1,
+    placeholder: '', fieldOptions: [], profileField: ''
   });
 
   const handleAddFieldOption = (option: string) => {
     if (!option.trim()) return;
-    
     setNewQuestion({
       ...newQuestion,
       fieldOptions: [...(newQuestion.fieldOptions || []), option.trim()]
@@ -50,32 +39,19 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
   const handleRemoveFieldOption = (index: number) => {
     const newOptions = [...(newQuestion.fieldOptions || [])];
     newOptions.splice(index, 1);
-    setNewQuestion({
-      ...newQuestion,
-      fieldOptions: newOptions
-    });
+    setNewQuestion({ ...newQuestion, fieldOptions: newOptions });
   };
 
   const handleSubmit = () => {
     if (!newQuestion.text) {
-      toast.error("Question text is required");
+      toast.error(t('admin.question_text_required', 'Question text is required'));
       return;
     }
-    
     onAddQuestion(newQuestion);
-    
-    // Reset form
     setNewQuestion({
-      text: '',
-      category: 'Basics',
-      fieldType: 'text',
-      required: false,
-      enabled: true,
-      registrationStep: 'Personal',
-      displayOrder: questionsCount + 2,
-      placeholder: '',
-      fieldOptions: [],
-      profileField: ''
+      text: '', category: 'Basics', fieldType: 'text', required: false,
+      enabled: true, registrationStep: 'Personal', displayOrder: questionsCount + 2,
+      placeholder: '', fieldOptions: [], profileField: ''
     });
   };
 
@@ -83,32 +59,20 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Add New Registration Question</DialogTitle>
-          <DialogDescription>
-            Create a new question for the registration process
-          </DialogDescription>
+          <DialogTitle>{t('admin.add_new_registration_question', 'Add New Registration Question')}</DialogTitle>
+          <DialogDescription>{t('admin.create_question_desc', 'Create a new question for the registration process')}</DialogDescription>
         </DialogHeader>
         
         <div className="grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="question-text">Question Text</Label>
-              <Input
-                id="question-text"
-                value={newQuestion.text}
-                onChange={(e) => setNewQuestion({...newQuestion, text: e.target.value})}
-                placeholder="e.g., What are your favorite hobbies?"
-              />
+              <Label htmlFor="question-text">{t('admin.question_text', 'Question Text')}</Label>
+              <Input id="question-text" value={newQuestion.text} onChange={(e) => setNewQuestion({...newQuestion, text: e.target.value})} placeholder="e.g., What are your favorite hobbies?" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select
-                value={newQuestion.category}
-                onValueChange={(value) => setNewQuestion({...newQuestion, category: value})}
-              >
-                <SelectTrigger id="category">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
+              <Label htmlFor="category">{t('admin.category', 'Category')}</Label>
+              <Select value={newQuestion.category} onValueChange={(value) => setNewQuestion({...newQuestion, category: value})}>
+                <SelectTrigger id="category"><SelectValue placeholder="Select category" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Basics">Basics</SelectItem>
                   <SelectItem value="Lifestyle">Lifestyle</SelectItem>
@@ -124,14 +88,9 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="field-type">Field Type</Label>
-              <Select
-                value={newQuestion.fieldType}
-                onValueChange={(value) => setNewQuestion({...newQuestion, fieldType: value as any})}
-              >
-                <SelectTrigger id="field-type">
-                  <SelectValue placeholder="Select field type" />
-                </SelectTrigger>
+              <Label htmlFor="field-type">{t('admin.field_type', 'Field Type')}</Label>
+              <Select value={newQuestion.fieldType} onValueChange={(value) => setNewQuestion({...newQuestion, fieldType: value as any})}>
+                <SelectTrigger id="field-type"><SelectValue placeholder="Select field type" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="text">Text</SelectItem>
                   <SelectItem value="textarea">Textarea</SelectItem>
@@ -144,16 +103,9 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="registration-step">Registration Step</Label>
-              <Select
-                value={newQuestion.registrationStep}
-                onValueChange={(value: 'Account' | 'Personal' | 'Profile' | 'Preferences') => 
-                  setNewQuestion({...newQuestion, registrationStep: value})
-                }
-              >
-                <SelectTrigger id="registration-step">
-                  <SelectValue placeholder="Select registration step" />
-                </SelectTrigger>
+              <Label htmlFor="registration-step">{t('admin.registration_step', 'Registration Step')}</Label>
+              <Select value={newQuestion.registrationStep} onValueChange={(value: 'Account' | 'Personal' | 'Profile' | 'Preferences') => setNewQuestion({...newQuestion, registrationStep: value})}>
+                <SelectTrigger id="registration-step"><SelectValue placeholder="Select registration step" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Account">Account</SelectItem>
                   <SelectItem value="Personal">Personal</SelectItem>
@@ -166,86 +118,40 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="placeholder">Placeholder Text</Label>
-              <Input
-                id="placeholder"
-                value={newQuestion.placeholder}
-                onChange={(e) => setNewQuestion({...newQuestion, placeholder: e.target.value})}
-                placeholder="e.g., Enter your hobbies"
-              />
+              <Label htmlFor="placeholder">{t('admin.placeholder_text', 'Placeholder Text')}</Label>
+              <Input id="placeholder" value={newQuestion.placeholder} onChange={(e) => setNewQuestion({...newQuestion, placeholder: e.target.value})} placeholder="e.g., Enter your hobbies" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="profile-field">Profile Field Mapping</Label>
-              <Input
-                id="profile-field"
-                value={newQuestion.profileField}
-                onChange={(e) => setNewQuestion({...newQuestion, profileField: e.target.value})}
-                placeholder="e.g., hobbies"
-              />
+              <Label htmlFor="profile-field">{t('admin.profile_field_mapping', 'Profile Field Mapping')}</Label>
+              <Input id="profile-field" value={newQuestion.profileField} onChange={(e) => setNewQuestion({...newQuestion, profileField: e.target.value})} placeholder="e.g., hobbies" />
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center space-x-2">
-              <Checkbox
-                id="required"
-                checked={newQuestion.required}
-                onCheckedChange={(checked) => 
-                  setNewQuestion({...newQuestion, required: !!checked})
-                }
-              />
-              <Label htmlFor="required">Required</Label>
+              <Checkbox id="required" checked={newQuestion.required} onCheckedChange={(checked) => setNewQuestion({...newQuestion, required: !!checked})} />
+              <Label htmlFor="required">{t('admin.required', 'Required')}</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox
-                id="enabled"
-                checked={newQuestion.enabled}
-                onCheckedChange={(checked) => 
-                  setNewQuestion({...newQuestion, enabled: !!checked})
-                }
-              />
-              <Label htmlFor="enabled">Enabled</Label>
+              <Checkbox id="enabled" checked={newQuestion.enabled} onCheckedChange={(checked) => setNewQuestion({...newQuestion, enabled: !!checked})} />
+              <Label htmlFor="enabled">{t('admin.enabled', 'Enabled')}</Label>
             </div>
           </div>
           
-          {(newQuestion.fieldType === 'select' || 
-            newQuestion.fieldType === 'multi-select' || 
-            newQuestion.fieldType === 'radio') && (
+          {(newQuestion.fieldType === 'select' || newQuestion.fieldType === 'multi-select' || newQuestion.fieldType === 'radio') && (
             <div className="space-y-2">
-              <Label>Field Options</Label>
+              <Label>{t('admin.field_options', 'Field Options')}</Label>
               <div className="flex space-x-2">
-                <Input
-                  placeholder="Add a new option"
-                  id="field-option"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const input = e.currentTarget;
-                      handleAddFieldOption(input.value);
-                      input.value = '';
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    const input = document.getElementById('field-option') as HTMLInputElement;
-                    handleAddFieldOption(input.value);
-                    input.value = '';
-                  }}
-                >
-                  Add
+                <Input placeholder={t('admin.add_new_option', 'Add a new option')} id="field-option" onKeyDown={(e) => { if (e.key === 'Enter') { handleAddFieldOption(e.currentTarget.value); e.currentTarget.value = ''; } }} />
+                <Button type="button" variant="outline" onClick={() => { const input = document.getElementById('field-option') as HTMLInputElement; handleAddFieldOption(input.value); input.value = ''; }}>
+                  {t('admin.add', 'Add')}
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {newQuestion.fieldOptions?.map((option, index) => (
                   <Badge key={index} variant="secondary" className="py-1 pl-2 pr-1">
                     {option}
-                    <button
-                      type="button"
-                      className="ml-1 text-muted-foreground hover:text-foreground"
-                      onClick={() => handleRemoveFieldOption(index)}
-                    >
+                    <button type="button" className="ml-1 text-muted-foreground hover:text-foreground" onClick={() => handleRemoveFieldOption(index)}>
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
@@ -256,11 +162,9 @@ const AddQuestionDialog: React.FC<AddQuestionDialogProps> = ({
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('admin.cancel', 'Cancel')}</Button>
           <Button onClick={handleSubmit}>
-            <Plus className="mr-2 h-4 w-4" /> Add Question
+            <Plus className="mr-2 h-4 w-4" /> {t('admin.add_question', 'Add Question')}
           </Button>
         </DialogFooter>
       </DialogContent>

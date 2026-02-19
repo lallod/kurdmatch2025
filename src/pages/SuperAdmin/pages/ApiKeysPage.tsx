@@ -74,12 +74,12 @@ const ApiKeysPage = () => {
 
   const handleSave = async (keyConfig: ApiKeyConfig) => {
     const value = values[keyConfig.key];
-    if (!value?.trim()) { toast.error('Please enter a value'); return; }
+    if (!value?.trim()) { toast.error(t('admin.please_enter_value', 'Please enter a value')); return; }
     setSaving(prev => ({ ...prev, [keyConfig.key]: true }));
     try {
       const { data, error } = await supabase.functions.invoke('manage-api-keys', { body: { action: 'set', key: keyConfig.key, value: value.trim() } });
       if (error) throw error;
-      toast.success(`${keyConfig.label} saved successfully`);
+      toast.success(t('admin.key_saved_success', `${keyConfig.label} saved successfully`, { label: keyConfig.label }));
       setConfigured(prev => ({ ...prev, [keyConfig.key]: true }));
       setValues(prev => ({ ...prev, [keyConfig.key]: '' }));
     } catch (err: any) { toast.error(`Failed to save: ${err.message}`); }
@@ -87,12 +87,12 @@ const ApiKeysPage = () => {
   };
 
   const handleDelete = async (keyConfig: ApiKeyConfig) => {
-    if (!confirm(`Remove ${keyConfig.label}? This will disable features that depend on it.`)) return;
+    if (!confirm(t('admin.remove_api_key_confirm', `Remove ${keyConfig.label}? This will disable features that depend on it.`, { label: keyConfig.label }))) return;
     setDeleting(prev => ({ ...prev, [keyConfig.key]: true }));
     try {
       const { data, error } = await supabase.functions.invoke('manage-api-keys', { body: { action: 'delete', key: keyConfig.key } });
       if (error) throw error;
-      toast.success(`${keyConfig.label} removed`);
+      toast.success(t('admin.key_removed', `${keyConfig.label} removed`, { label: keyConfig.label }));
       setConfigured(prev => ({ ...prev, [keyConfig.key]: false }));
     } catch (err: any) { toast.error(`Failed to remove: ${err.message}`); }
     finally { setDeleting(prev => ({ ...prev, [keyConfig.key]: false })); }
