@@ -320,7 +320,7 @@ const SupportTicketsPage = () => {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search by subject, email, or message..."
+                placeholder={t('admin.search_placeholder_tickets', 'Search by subject, email, or message...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -333,11 +333,11 @@ const SupportTicketsPage = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="open">Open</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="resolved">Resolved</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
+                <SelectItem value="all">{t('admin.all_status', 'All Status')}</SelectItem>
+                <SelectItem value="open">{t('admin.open', 'Open')}</SelectItem>
+                <SelectItem value="pending">{t('admin.pending', 'Pending')}</SelectItem>
+                <SelectItem value="resolved">{t('admin.resolved', 'Resolved')}</SelectItem>
+                <SelectItem value="closed">{t('admin.close', 'Closed')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
@@ -345,17 +345,17 @@ const SupportTicketsPage = () => {
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="technical">Technical</SelectItem>
-                <SelectItem value="billing">Billing</SelectItem>
-                <SelectItem value="account">Account</SelectItem>
-                <SelectItem value="safety">Safety</SelectItem>
-                <SelectItem value="feedback">Feedback</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="all">{t('admin.all_categories', 'All Categories')}</SelectItem>
+                <SelectItem value="technical">{t('admin.technical', 'Technical')}</SelectItem>
+                <SelectItem value="billing">{t('admin.billing', 'Billing')}</SelectItem>
+                <SelectItem value="account">{t('admin.account', 'Account')}</SelectItem>
+                <SelectItem value="safety">{t('admin.safety', 'Safety')}</SelectItem>
+                <SelectItem value="feedback">{t('admin.feedback', 'Feedback')}</SelectItem>
+                <SelectItem value="other">{t('admin.other', 'Other')}</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={handleSearch} className="bg-red-500 hover:bg-red-600">
-              Search
+              {t('admin.search', 'Search')}
             </Button>
           </div>
         </CardContent>
@@ -381,12 +381,12 @@ const SupportTicketsPage = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="border-white/10">
-                    <TableHead className="text-white/60">Subject</TableHead>
-                    <TableHead className="text-white/60">Email</TableHead>
-                    <TableHead className="text-white/60">Category</TableHead>
-                    <TableHead className="text-white/60">Status</TableHead>
-                    <TableHead className="text-white/60">Created</TableHead>
-                    <TableHead className="text-white/60">Actions</TableHead>
+                    <TableHead className="text-white/60">{t('admin.subject', 'Subject')}</TableHead>
+                    <TableHead className="text-white/60">{t('admin.email_label', 'Email')}</TableHead>
+                    <TableHead className="text-white/60">{t('admin.category', 'Category')}</TableHead>
+                    <TableHead className="text-white/60">{t('admin.status', 'Status')}</TableHead>
+                    <TableHead className="text-white/60">{t('admin.created', 'Created')}</TableHead>
+                    <TableHead className="text-white/60">{t('admin.actions', 'Actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -457,30 +457,30 @@ const SupportTicketsPage = () => {
               {/* Ticket Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-white/60 text-sm mb-1">Email</p>
+                  <p className="text-white/60 text-sm mb-1">{t('admin.email_label', 'Email')}</p>
                   <p className="text-white">{selectedTicket.email || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-white/60 text-sm mb-1">Category</p>
+                  <p className="text-white/60 text-sm mb-1">{t('admin.category', 'Category')}</p>
                   {getCategoryBadge(selectedTicket.category)}
                 </div>
                 <div>
-                  <p className="text-white/60 text-sm mb-1">Status</p>
+                  <p className="text-white/60 text-sm mb-1">{t('admin.status', 'Status')}</p>
                   {getStatusBadge(selectedTicket.status)}
                 </div>
                 <div>
-                  <p className="text-white/60 text-sm mb-1">Created</p>
+                  <p className="text-white/60 text-sm mb-1">{t('admin.created', 'Created')}</p>
                   <p className="text-white">{format(new Date(selectedTicket.created_at), 'dd MMM yyyy HH:mm')}</p>
                 </div>
               </div>
 
               {/* Subject & Message */}
               <div>
-                <p className="text-white/60 text-sm mb-1">Subject</p>
+                <p className="text-white/60 text-sm mb-1">{t('admin.subject', 'Subject')}</p>
                 <p className="text-white font-medium">{selectedTicket.subject}</p>
               </div>
               <div>
-                <p className="text-white/60 text-sm mb-1">Message</p>
+                <p className="text-white/60 text-sm mb-1">{t('admin.message_label', 'Message')}</p>
                 <div className="bg-white/5 rounded-lg p-4 text-white/90 whitespace-pre-wrap">
                   {selectedTicket.message}
                 </div>
@@ -489,7 +489,7 @@ const SupportTicketsPage = () => {
               {/* Admin Notes */}
               {selectedTicket.admin_notes && (
                 <div>
-                  <p className="text-white/60 text-sm mb-1">Admin Notes / Responses</p>
+                  <p className="text-white/60 text-sm mb-1">{t('admin.admin_notes', 'Admin Notes / Responses')}</p>
                   <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-white/90 whitespace-pre-wrap">
                     {selectedTicket.admin_notes}
                   </div>
@@ -498,18 +498,18 @@ const SupportTicketsPage = () => {
 
               {/* Admin Response */}
               <div>
-                <p className="text-white/60 text-sm mb-2">Add Response</p>
+                <p className="text-white/60 text-sm mb-2">{t('admin.add_response', 'Add Response')}</p>
                 <Textarea
                   value={adminResponse}
                   onChange={(e) => setAdminResponse(e.target.value)}
-                  placeholder="Write your response to the user..."
+                  placeholder={t('admin.write_response', 'Write your response to the user...')}
                   className="bg-white/5 border-white/10 text-white placeholder:text-white/40 min-h-[100px]"
                 />
               </div>
 
               {/* Status Actions */}
               <div className="flex flex-wrap gap-2">
-                <p className="text-white/60 text-sm w-full mb-1">Change Status</p>
+                <p className="text-white/60 text-sm w-full mb-1">{t('admin.change_status', 'Change Status')}</p>
                 {['open', 'pending', 'resolved', 'closed'].map((status) => (
                   <Button
                     key={status}
@@ -534,7 +534,7 @@ const SupportTicketsPage = () => {
               onClick={() => setIsDetailOpen(false)}
               className="border-white/10 text-white hover:bg-white/5"
             >
-              Close
+              {t('admin.close', 'Close')}
             </Button>
             <Button
               onClick={handleSendResponse}
