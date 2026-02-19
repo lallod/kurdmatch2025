@@ -2,6 +2,8 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -13,14 +15,15 @@ interface State {
 }
 
 const ErrorContent = ({ error, onReset }: { error: Error | null, onReset: () => void }) => {
+  const { t } = useTranslations();
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <Alert variant="destructive" className="max-w-2xl">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Something went wrong</AlertTitle>
+        <AlertTitle>{t('error.something_went_wrong', 'Something went wrong')}</AlertTitle>
         <AlertDescription className="mt-4">
           <p className="mb-4">
-            {error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
+            {error?.message || t('error.unexpected_error', 'An unexpected error occurred. Please try refreshing the page.')}
           </p>
           <Button
             onClick={onReset}
@@ -28,7 +31,7 @@ const ErrorContent = ({ error, onReset }: { error: Error | null, onReset: () => 
             className="gap-2"
           >
             <RefreshCw className="h-4 w-4" />
-            Refresh Page
+            {t('error.refresh_page', 'Refresh Page')}
           </Button>
         </AlertDescription>
       </Alert>
