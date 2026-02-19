@@ -8,6 +8,7 @@ import { MessageCircle, Trash2, Search, Calendar, Heart, ExternalLink } from 'lu
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CommentLike {
   id: string;
@@ -21,6 +22,7 @@ interface CommentLike {
 }
 
 const CommentsPage = () => {
+  const { t } = useTranslations();
   const [commentLikes, setCommentLikes] = useState<CommentLike[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -84,18 +86,18 @@ const CommentsPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Comments Management</h1>
-          <p className="text-white/60 mt-1">View and moderate all comment interactions</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.comments_management', 'Comments Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.comments_desc', 'View and moderate all comment interactions')}</p>
         </div>
         <Button onClick={fetchCommentLikes} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('admin.refresh', 'Refresh')}
         </Button>
       </div>
 
       <Tabs defaultValue="likes" className="w-full">
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger value="likes" className="data-[state=active]:bg-white/10">
-            Comment Likes ({totalCount})
+            {t('admin.comment_likes', 'Comment Likes')} ({totalCount})
           </TabsTrigger>
         </TabsList>
 
@@ -104,13 +106,13 @@ const CommentsPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Heart className="h-5 w-5 text-red-500" />
-                All Comment Likes
+                {t('admin.all_comment_likes', 'All Comment Likes')}
               </CardTitle>
               <div className="mt-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
-                    placeholder="Search by user name..."
+                    placeholder={t('admin.search_by_user', 'Search by user name...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white"
@@ -120,9 +122,9 @@ const CommentsPage = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-white/60">Loading comment likes...</div>
+                <div className="text-center py-8 text-white/60">{t('admin.loading_comment_likes', 'Loading comment likes...')}</div>
               ) : filteredLikes.length === 0 ? (
-                <div className="text-center py-8 text-white/60">No comment likes found</div>
+                <div className="text-center py-8 text-white/60">{t('admin.no_comment_likes', 'No comment likes found')}</div>
               ) : (
                 <div className="space-y-3">
                   {filteredLikes.map((like) => (
@@ -137,8 +139,8 @@ const CommentsPage = () => {
                           className="w-10 h-10 rounded-full object-cover"
                         />
                         <div className="flex-1">
-                          <p className="text-white font-medium">{like.user_profile?.name || 'Unknown'}</p>
-                          <p className="text-white/40 text-sm">Liked a comment</p>
+                          <p className="text-white font-medium">{like.user_profile?.name || t('admin.unknown', 'Unknown')}</p>
+                          <p className="text-white/40 text-sm">{t('admin.liked_comment', 'Liked a comment')}</p>
                         </div>
 
                         <div className="flex items-center gap-4">

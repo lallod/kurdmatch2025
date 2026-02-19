@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -60,6 +61,7 @@ interface SupportTicket {
 }
 
 const SupportTicketsPage = () => {
+  const { t } = useTranslations();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -257,9 +259,9 @@ const SupportTicketsPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
             <Ticket className="h-6 w-6 text-red-500" />
-            Support Tickets
+            {t('admin.support_tickets', 'Support Tickets')}
           </h1>
-          <p className="text-white/60 mt-1">Manage and respond to user support requests</p>
+          <p className="text-white/60 mt-1">{t('admin.support_tickets_desc', 'Manage and respond to user support requests')}</p>
         </div>
         <Button
           onClick={fetchTickets}
@@ -267,7 +269,7 @@ const SupportTicketsPage = () => {
           className="border-white/10 text-white hover:bg-white/5"
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Refresh
+          {t('admin.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -276,7 +278,7 @@ const SupportTicketsPage = () => {
         <Card className="bg-[#1a1a1a] border-white/10">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-sm">Total Tickets</p>
+              <p className="text-white/60 text-sm">{t('admin.total_tickets', 'Total Tickets')}</p>
               <p className="text-2xl font-bold text-white">{tickets.length}</p>
             </div>
             <Ticket className="h-8 w-8 text-white/20" />
@@ -285,7 +287,7 @@ const SupportTicketsPage = () => {
         <Card className="bg-[#1a1a1a] border-white/10">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-sm">Open</p>
+              <p className="text-white/60 text-sm">{t('admin.open', 'Open')}</p>
               <p className="text-2xl font-bold text-blue-400">{openTicketCount}</p>
             </div>
             <AlertCircle className="h-8 w-8 text-blue-500/30" />
@@ -294,7 +296,7 @@ const SupportTicketsPage = () => {
         <Card className="bg-[#1a1a1a] border-white/10">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-sm">Pending</p>
+              <p className="text-white/60 text-sm">{t('admin.pending', 'Pending')}</p>
               <p className="text-2xl font-bold text-yellow-400">{pendingTicketCount}</p>
             </div>
             <Clock className="h-8 w-8 text-yellow-500/30" />
@@ -303,7 +305,7 @@ const SupportTicketsPage = () => {
         <Card className="bg-[#1a1a1a] border-white/10">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-sm">Resolved</p>
+              <p className="text-white/60 text-sm">{t('admin.resolved', 'Resolved')}</p>
               <p className="text-2xl font-bold text-green-400">{resolvedTicketCount}</p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-500/30" />
@@ -362,7 +364,7 @@ const SupportTicketsPage = () => {
       {/* Tickets Table */}
       <Card className="bg-[#1a1a1a] border-white/10">
         <CardHeader>
-          <CardTitle className="text-white">Support Tickets</CardTitle>
+          <CardTitle className="text-white">{t('admin.support_tickets', 'Support Tickets')}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -372,7 +374,7 @@ const SupportTicketsPage = () => {
           ) : tickets.length === 0 ? (
             <div className="text-center py-12 text-white/60">
               <Ticket className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No support tickets found</p>
+              <p>{t('admin.no_tickets_found', 'No support tickets found')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -446,7 +448,7 @@ const SupportTicketsPage = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-red-500" />
-              Ticket Details
+              {t('admin.ticket_details', 'Ticket Details')}
             </DialogTitle>
           </DialogHeader>
 
@@ -544,7 +546,7 @@ const SupportTicketsPage = () => {
               ) : (
                 <Send className="h-4 w-4 mr-2" />
               )}
-              Send Response
+              {t('admin.send_response', 'Send Response')}
             </Button>
           </DialogFooter>
         </DialogContent>
