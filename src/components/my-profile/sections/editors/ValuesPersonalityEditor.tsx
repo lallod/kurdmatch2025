@@ -60,7 +60,20 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
     onCancel?.();
   };
 
-  const commonValues = ['Honesty', 'Kindness', 'Growth', 'Balance', 'Adventure', 'Family', 'Career', 'Health', 'Creativity', 'Spirituality', 'Freedom', 'Loyalty'];
+  const commonValues = [
+    { value: 'Honesty', label: t('profile.value_honesty', 'Honesty') },
+    { value: 'Kindness', label: t('profile.value_kindness', 'Kindness') },
+    { value: 'Growth', label: t('profile.value_growth', 'Growth') },
+    { value: 'Balance', label: t('profile.value_balance', 'Balance') },
+    { value: 'Adventure', label: t('profile.value_adventure', 'Adventure') },
+    { value: 'Family', label: t('profile.value_family', 'Family') },
+    { value: 'Career', label: t('profile.value_career', 'Career') },
+    { value: 'Health', label: t('profile.value_health', 'Health') },
+    { value: 'Creativity', label: t('profile.value_creativity', 'Creativity') },
+    { value: 'Spirituality', label: t('profile.value_spirituality', 'Spirituality') },
+    { value: 'Freedom', label: t('profile.value_freedom', 'Freedom') },
+    { value: 'Loyalty', label: t('profile.value_loyalty', 'Loyalty') }
+  ];
   const zodiacSigns = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
   const personalityTypes = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
 
@@ -78,16 +91,16 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
           <Select value={formData.religion} onValueChange={(v) => handleInputChange('religion', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.select_religion', 'Select religion')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="muslim">Muslim</SelectItem>
-              <SelectItem value="christian">Christian</SelectItem>
-              <SelectItem value="jewish">Jewish</SelectItem>
-              <SelectItem value="buddhist">Buddhist</SelectItem>
-              <SelectItem value="hindu">Hindu</SelectItem>
-              <SelectItem value="spiritual">Spiritual but not religious</SelectItem>
-              <SelectItem value="agnostic">Agnostic</SelectItem>
-              <SelectItem value="atheist">Atheist</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-              <SelectItem value="prefer-not-say">Prefer not to say</SelectItem>
+              <SelectItem value="muslim">{t('profile.muslim', 'Muslim')}</SelectItem>
+              <SelectItem value="christian">{t('profile.christian', 'Christian')}</SelectItem>
+              <SelectItem value="jewish">{t('profile.jewish', 'Jewish')}</SelectItem>
+              <SelectItem value="buddhist">{t('profile.buddhist', 'Buddhist')}</SelectItem>
+              <SelectItem value="hindu">{t('profile.hindu', 'Hindu')}</SelectItem>
+              <SelectItem value="spiritual">{t('profile.spiritual', 'Spiritual but not religious')}</SelectItem>
+              <SelectItem value="agnostic">{t('profile.agnostic', 'Agnostic')}</SelectItem>
+              <SelectItem value="atheist">{t('profile.atheist', 'Atheist')}</SelectItem>
+              <SelectItem value="other">{t('common.other', 'Other')}</SelectItem>
+              <SelectItem value="prefer-not-say">{t('common.prefer_not_say', 'Prefer not to say')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -99,13 +112,13 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
           <Select value={formData.politicalViews} onValueChange={(v) => handleInputChange('politicalViews', v)}>
             <SelectTrigger className={selectClass}><SelectValue placeholder={t('profile.select_political_views', 'Select political views')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="liberal">Liberal</SelectItem>
-              <SelectItem value="moderate">Moderate</SelectItem>
-              <SelectItem value="conservative">Conservative</SelectItem>
-              <SelectItem value="progressive">Progressive</SelectItem>
-              <SelectItem value="libertarian">Libertarian</SelectItem>
-              <SelectItem value="apolitical">Apolitical</SelectItem>
-              <SelectItem value="prefer-not-say">Prefer not to say</SelectItem>
+              <SelectItem value="liberal">{t('profile.liberal', 'Liberal')}</SelectItem>
+              <SelectItem value="moderate">{t('profile.moderate', 'Moderate')}</SelectItem>
+              <SelectItem value="conservative">{t('profile.conservative', 'Conservative')}</SelectItem>
+              <SelectItem value="progressive">{t('profile.progressive', 'Progressive')}</SelectItem>
+              <SelectItem value="libertarian">{t('profile.libertarian', 'Libertarian')}</SelectItem>
+              <SelectItem value="apolitical">{t('profile.apolitical', 'Apolitical')}</SelectItem>
+              <SelectItem value="prefer-not-say">{t('common.prefer_not_say', 'Prefer not to say')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -141,17 +154,17 @@ const ValuesPersonalityEditor: React.FC<ValuesPersonalityEditorProps> = ({ profi
           <SuggestionBadge show={fieldSources.values === 'random'} />
         </div>
         <div className="flex flex-wrap gap-2 mt-1">
-          {commonValues.map(value => (
-            <Badge key={value}
-              variant={formData.values.includes(value) ? "default" : "outline"}
+          {commonValues.map(item => (
+            <Badge key={item.value}
+              variant={formData.values.includes(item.value) ? "default" : "outline"}
               className={`cursor-pointer transition-colors ${
-                formData.values.includes(value)
+                formData.values.includes(item.value)
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-muted/50 text-muted-foreground hover:bg-muted'
               }`}
-              onClick={() => handleValueToggle(value)}
+              onClick={() => handleValueToggle(item.value)}
             >
-              {value}
+              {item.label}
             </Badge>
           ))}
         </div>

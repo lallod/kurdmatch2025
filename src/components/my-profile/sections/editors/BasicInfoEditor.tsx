@@ -81,8 +81,14 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
   const heights = Array.from({ length: 66 }, (_, i) => `${145 + i} cm`);
 
   const ethnicities = [
-    'Kurdish', 'Middle Eastern', 'European', 'Asian', 'African', 
-    'Latin American', 'Mixed', 'Other'
+    { value: 'Kurdish', label: t('profile.kurdish', 'Kurdish') },
+    { value: 'Middle Eastern', label: t('profile.middle_eastern', 'Middle Eastern') },
+    { value: 'European', label: t('profile.european', 'European') },
+    { value: 'Asian', label: t('profile.asian', 'Asian') },
+    { value: 'African', label: t('profile.african', 'African') },
+    { value: 'Latin American', label: t('profile.latin_american', 'Latin American') },
+    { value: 'Mixed', label: t('profile.mixed', 'Mixed') },
+    { value: 'Other', label: t('common.other', 'Other') }
   ];
 
   return (
@@ -103,7 +109,7 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
           <Label className="text-muted-foreground text-xs">{t('profile.height', 'Height')}</Label>
           <Select value={formData.height} onValueChange={(value) => handleInputChange('height', value)}>
             <SelectTrigger className="bg-muted/50 border-border text-foreground">
-              <SelectValue placeholder="Select height" />
+              <SelectValue placeholder={t('profile.select_height', 'Select height')} />
             </SelectTrigger>
             <SelectContent>
               {heights.map(height => (
@@ -116,11 +122,11 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
           <Label className="text-muted-foreground text-xs">{t('profile.ethnicity', 'Ethnicity')}</Label>
           <Select value={formData.ethnicity} onValueChange={(value) => handleInputChange('ethnicity', value)}>
             <SelectTrigger className="bg-muted/50 border-border text-foreground">
-              <SelectValue placeholder="Select ethnicity" />
+              <SelectValue placeholder={t('profile.select_ethnicity', 'Select ethnicity')} />
             </SelectTrigger>
             <SelectContent>
               {ethnicities.map(ethnicity => (
-                <SelectItem key={ethnicity} value={ethnicity}>{ethnicity}</SelectItem>
+                <SelectItem key={ethnicity.value} value={ethnicity.value}>{ethnicity.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -128,13 +134,13 @@ const BasicInfoEditor: React.FC<BasicInfoEditorProps> = ({ profileData, fieldSou
         <div>
           <Label className="text-muted-foreground text-xs">{t('profile.location', 'Location')}</Label>
           <Input value={formData.location} onChange={(e) => handleInputChange('location', e.target.value)}
-            className="bg-muted/50 border-border text-foreground" placeholder="City, Country" />
+            className="bg-muted/50 border-border text-foreground" placeholder={t('profile.city_country', 'City, Country')} />
         </div>
         <div>
           <Label className="text-muted-foreground text-xs">{t('profile.kurdistan_region', 'Kurdistan Region')}</Label>
           <Select value={formData.kurdistanRegion} onValueChange={(value) => handleInputChange('kurdistanRegion', value as KurdistanRegion)}>
             <SelectTrigger className="bg-muted/50 border-border text-foreground">
-              <SelectValue placeholder="Select region" />
+              <SelectValue placeholder={t('profile.select_region', 'Select region')} />
             </SelectTrigger>
             <SelectContent>
               {kurdistanRegions.map(region => (
