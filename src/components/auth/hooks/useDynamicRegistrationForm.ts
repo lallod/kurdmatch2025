@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
+import { useTranslations } from '@/hooks/useTranslations';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useLocationManager } from '@/components/my-profile/sections/location/useLocationManager';
@@ -16,6 +17,7 @@ import { generateAIBio } from '../utils/aiBioGenerator';
 
 export const useDynamicRegistrationForm = () => {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const { signUp } = useSupabaseAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -59,8 +61,8 @@ export const useDynamicRegistrationForm = () => {
       } catch (error) {
         console.error('Error loading registration questions:', error);
         toast({
-          title: "Error",
-          description: "Failed to load registration form. Please refresh the page.",
+          title: t('common.error', 'Error'),
+          description: t('reg.failed_load_form', 'Failed to load registration form. Please refresh the page.'),
           variant: "destructive",
         });
       }
@@ -131,16 +133,16 @@ export const useDynamicRegistrationForm = () => {
       } else {
         const errorFields = Object.keys(form.formState.errors);
         toast({
-          title: "Incomplete Fields",
-          description: `Please complete all required fields: ${errorFields.join(', ')}`,
+          title: t('reg.incomplete_fields', 'Incomplete Fields'),
+          description: t('reg.complete_required_fields', `Please complete all required fields: ${errorFields.join(', ')}`),
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error('Error in nextStep:', error);
       toast({
-        title: "Validation Error",
-        description: "There was an error validating the form. Please try again.",
+        title: t('reg.validation_error', 'Validation Error'),
+        description: t('reg.validation_error_desc', 'There was an error validating the form. Please try again.'),
         variant: "destructive",
       });
     }
@@ -179,7 +181,7 @@ export const useDynamicRegistrationForm = () => {
       if (signUpError) {
         console.error('❌ Sign up error:', signUpError);
         toast({
-          title: "Registration Failed",
+          title: t('reg.registration_failed', 'Registration Failed'),
           description: signUpError.message,
           variant: "destructive",
         });
@@ -189,8 +191,8 @@ export const useDynamicRegistrationForm = () => {
       if (!signUpData?.user) {
         console.error('❌ No user returned from sign up');
         toast({
-          title: "Registration Failed", 
-          description: "User creation failed. Please try again.",
+          title: t('reg.registration_failed', 'Registration Failed'), 
+          description: t('reg.user_creation_failed', 'User creation failed. Please try again.'),
           variant: "destructive",
         });
         return;
@@ -226,8 +228,8 @@ export const useDynamicRegistrationForm = () => {
       if (profileError) {
         console.error('❌ Profile creation error:', profileError);
         toast({
-          title: "Profile Creation Failed",
-          description: "Your account was created but profile setup failed. Please complete your profile.",
+          title: t('reg.profile_creation_failed', 'Profile Creation Failed'),
+          description: t('reg.profile_setup_failed', 'Your account was created but profile setup failed. Please complete your profile.'),
           variant: "destructive",
         });
         navigate('/complete-profile');
@@ -248,8 +250,8 @@ export const useDynamicRegistrationForm = () => {
       sessionStorage.removeItem('oauth_registration_flow');
 
       toast({
-        title: "Registration Successful!",
-        description: "Welcome to KurdMatch! Your profile has been created.",
+        title: t('reg.registration_successful', 'Registration Successful!'),
+        description: t('reg.welcome_profile_created', 'Welcome to KurdMatch! Your profile has been created.'),
       });
 
       // Wait for auth state to sync before navigation
@@ -260,8 +262,8 @@ export const useDynamicRegistrationForm = () => {
     } catch (error) {
       console.error('❌ Registration error:', error);
       toast({
-        title: "Registration Failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        title: t('reg.registration_failed', 'Registration Failed'),
+        description: error instanceof Error ? error.message : t('reg.unexpected_error', 'An unexpected error occurred. Please try again.'),
         variant: "destructive",
       });
     }
@@ -303,8 +305,8 @@ export const useDynamicRegistrationForm = () => {
     } catch (error) {
       console.error('Photo upload error:', error);
       toast({
-        title: "Photo Upload Warning",
-        description: "Some photos couldn't be uploaded. You can add them later.",
+        title: t('reg.photo_upload_warning', 'Photo Upload Warning'),
+        description: t('reg.photos_upload_later', "Some photos couldn't be uploaded. You can add them later."),
         variant: "destructive",
       });
     }
