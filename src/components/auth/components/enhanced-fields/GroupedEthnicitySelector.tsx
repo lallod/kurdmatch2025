@@ -2,6 +2,7 @@ import React from 'react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Users } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface GroupedEthnicitySelectorProps {
   value?: string;
@@ -9,15 +10,16 @@ interface GroupedEthnicitySelectorProps {
 }
 
 const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorProps) => {
+  const { t } = useTranslations();
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Users className="w-4 h-4 text-purple-400 flex-shrink-0" />
-        <Label className="text-white text-balance">Ethnicity</Label>
+        <Label className="text-white text-balance">{t('auth.ethnicity', 'Ethnicity')}</Label>
       </div>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="bg-white/10 backdrop-blur border-white/20 text-white">
-          <SelectValue placeholder="Select your ethnicity" />
+          <SelectValue placeholder={t('auth.select_ethnicity', 'Select your ethnicity')} />
         </SelectTrigger>
         <SelectContent className="bg-gray-900 border-gray-700 max-h-96">
           <SelectGroup>

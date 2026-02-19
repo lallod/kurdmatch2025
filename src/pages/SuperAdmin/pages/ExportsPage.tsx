@@ -109,11 +109,11 @@ const ExportsPage = () => {
                     <SelectTrigger className="w-[180px]"><SelectValue placeholder={t('admin.filter_by_type', 'Filter by type')} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('admin.all_types', 'All Types')}</SelectItem>
-                      <SelectItem value="user-activity">User Activity</SelectItem>
-                      <SelectItem value="financial">Financial</SelectItem>
-                      <SelectItem value="user-profiles">User Profiles</SelectItem>
-                      <SelectItem value="messages">Messages</SelectItem>
-                      <SelectItem value="user-registrations">User Registrations</SelectItem>
+                      <SelectItem value="user-activity">{t('admin.user_activity', 'User Activity')}</SelectItem>
+                      <SelectItem value="financial">{t('admin.financial', 'Financial')}</SelectItem>
+                      <SelectItem value="user-profiles">{t('admin.user_profiles', 'User Profiles')}</SelectItem>
+                      <SelectItem value="messages">{t('admin.messages', 'Messages')}</SelectItem>
+                      <SelectItem value="user-registrations">{t('admin.user_registrations', 'User Registrations')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button variant="outline" size="icon"><Filter size={16} /></Button>
@@ -239,7 +239,7 @@ const ExportsPage = () => {
             <div className="grid gap-2">
               <label className="text-sm font-medium">{t('admin.file_format', 'File Format')}</label>
               <Select defaultValue="csv">
-                <SelectTrigger><SelectValue placeholder="Select file format" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t('admin.select_file_format', 'Select file format')} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="csv">CSV</SelectItem>
                   <SelectItem value="xlsx">XLSX</SelectItem>
@@ -269,7 +269,7 @@ const ExportsPage = () => {
             <div className="grid gap-2">
               <label className="text-sm font-medium">{t('admin.scheduling', 'Scheduling')}</label>
               <Select defaultValue="now">
-                <SelectTrigger><SelectValue placeholder="Select schedule" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t('admin.select_schedule', 'Select schedule')} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="now">{t('admin.export_now', 'Export Now')}</SelectItem>
                   <SelectItem value="schedule">{t('admin.schedule_later', 'Schedule for Later')}</SelectItem>

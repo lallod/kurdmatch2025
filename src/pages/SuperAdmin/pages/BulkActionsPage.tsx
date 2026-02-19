@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAdminBulkActions } from '../hooks/useAdminBulkActions';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -199,7 +198,6 @@ const BulkActionsPage = () => {
   // Mock functions
   const handleRefresh = () => {
     setRefreshing(true);
-    // Simulate data reload
     setTimeout(() => setRefreshing(false), 1000);
   };
 
@@ -290,7 +288,7 @@ const BulkActionsPage = () => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search bulk actions..."
+                    placeholder={t('admin.search_bulk_actions', 'Search bulk actions...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -299,14 +297,14 @@ const BulkActionsPage = () => {
                 <div className="flex gap-2">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Filter by status" />
+                      <SelectValue placeholder={t('admin.filter_by_status', 'Filter by status')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="processing">Processing</SelectItem>
-                      <SelectItem value="scheduled">Scheduled</SelectItem>
-                      <SelectItem value="failed">Failed</SelectItem>
+                      <SelectItem value="all">{t('admin.all_statuses', 'All Statuses')}</SelectItem>
+                      <SelectItem value="completed">{t('admin.completed', 'Completed')}</SelectItem>
+                      <SelectItem value="processing">{t('admin.processing', 'Processing')}</SelectItem>
+                      <SelectItem value="scheduled">{t('admin.scheduled', 'Scheduled')}</SelectItem>
+                      <SelectItem value="failed">{t('admin.failed', 'Failed')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button variant="outline" size="icon">
@@ -319,13 +317,13 @@ const BulkActionsPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Job Name</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Affected Users</TableHead>
-                      <TableHead>Created By</TableHead>
-                      <TableHead>Timestamp</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('admin.job_name', 'Job Name')}</TableHead>
+                      <TableHead>{t('admin.type', 'Type')}</TableHead>
+                      <TableHead>{t('admin.status', 'Status')}</TableHead>
+                      <TableHead>{t('admin.affected_users', 'Affected Users')}</TableHead>
+                      <TableHead>{t('admin.created_by', 'Created By')}</TableHead>
+                      <TableHead>{t('admin.timestamp', 'Timestamp')}</TableHead>
+                      <TableHead className="text-right">{t('admin.actions', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -347,11 +345,11 @@ const BulkActionsPage = () => {
                           <TableCell>{job.createdBy}</TableCell>
                           <TableCell>
                             <div>{job.timestamp}</div>
-                            {job.completedAt && <div className="text-xs text-gray-500">Completed: {job.completedAt}</div>}
+                            {job.completedAt && <div className="text-xs text-gray-500">{t('admin.completed', 'Completed')}: {job.completedAt}</div>}
                           </TableCell>
                           <TableCell className="text-right">
                             <Button variant="outline" size="sm">
-                              View Details
+                              {t('admin.view_details', 'View Details')}
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -359,7 +357,7 @@ const BulkActionsPage = () => {
                     ) : (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-6">
-                          No bulk action jobs found
+                          {t('admin.no_bulk_actions_found', 'No bulk action jobs found')}
                         </TableCell>
                       </TableRow>
                     )}
@@ -374,8 +372,8 @@ const BulkActionsPage = () => {
           {!selectedJobType ? (
             <Card>
               <CardHeader>
-                <CardTitle>Select Bulk Action Type</CardTitle>
-                <CardDescription>Choose the type of bulk action you want to perform</CardDescription>
+                <CardTitle>{t('admin.select_bulk_action_type', 'Select Bulk Action Type')}</CardTitle>
+                <CardDescription>{t('admin.choose_bulk_action', 'Choose the type of bulk action you want to perform')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -385,9 +383,9 @@ const BulkActionsPage = () => {
                   >
                     <div className="flex items-center mb-2">
                       <RefreshCw size={20} className="text-blue-500 mr-2" />
-                      <h3 className="font-medium">Status Update</h3>
+                      <h3 className="font-medium">{t('admin.status_update', 'Status Update')}</h3>
                     </div>
-                    <p className="text-sm text-gray-600">Update the status of multiple user accounts</p>
+                    <p className="text-sm text-gray-600">{t('admin.status_update_desc', 'Update the status of multiple user accounts')}</p>
                   </div>
                   <div 
                     className="p-4 border rounded-lg hover:border-purple-300 hover:bg-purple-50 cursor-pointer transition-colors"
@@ -395,9 +393,9 @@ const BulkActionsPage = () => {
                   >
                     <div className="flex items-center mb-2">
                       <Download size={20} className="text-purple-500 mr-2" />
-                      <h3 className="font-medium">Email Notification</h3>
+                      <h3 className="font-medium">{t('admin.email_notification', 'Email Notification')}</h3>
                     </div>
-                    <p className="text-sm text-gray-600">Send an email to multiple users</p>
+                    <p className="text-sm text-gray-600">{t('admin.email_notification_desc', 'Send an email to multiple users')}</p>
                   </div>
                   <div 
                     className="p-4 border rounded-lg hover:border-red-300 hover:bg-red-50 cursor-pointer transition-colors"
@@ -405,9 +403,9 @@ const BulkActionsPage = () => {
                   >
                     <div className="flex items-center mb-2">
                       <XCircle size={20} className="text-red-500 mr-2" />
-                      <h3 className="font-medium">Account Suspension</h3>
+                      <h3 className="font-medium">{t('admin.account_suspension', 'Account Suspension')}</h3>
                     </div>
-                    <p className="text-sm text-gray-600">Suspend multiple user accounts</p>
+                    <p className="text-sm text-gray-600">{t('admin.account_suspension_desc', 'Suspend multiple user accounts')}</p>
                   </div>
                   <div 
                     className="p-4 border rounded-lg hover:border-amber-300 hover:bg-amber-50 cursor-pointer transition-colors"
@@ -415,9 +413,9 @@ const BulkActionsPage = () => {
                   >
                     <div className="flex items-center mb-2">
                       <User size={20} className="text-amber-500 mr-2" />
-                      <h3 className="font-medium">Role Update</h3>
+                      <h3 className="font-medium">{t('admin.role_update', 'Role Update')}</h3>
                     </div>
-                    <p className="text-sm text-gray-600">Change the role of multiple users</p>
+                    <p className="text-sm text-gray-600">{t('admin.role_update_desc', 'Change the role of multiple users')}</p>
                   </div>
                   <div 
                     className="p-4 border rounded-lg hover:border-green-300 hover:bg-green-50 cursor-pointer transition-colors"
@@ -425,9 +423,9 @@ const BulkActionsPage = () => {
                   >
                     <div className="flex items-center mb-2">
                       <FileSpreadsheet size={20} className="text-green-500 mr-2" />
-                      <h3 className="font-medium">Data Update</h3>
+                      <h3 className="font-medium">{t('admin.data_update', 'Data Update')}</h3>
                     </div>
-                    <p className="text-sm text-gray-600">Update specific data fields for multiple users</p>
+                    <p className="text-sm text-gray-600">{t('admin.data_update_desc', 'Update specific data fields for multiple users')}</p>
                   </div>
                   <div 
                     className="p-4 border rounded-lg hover:border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors"
@@ -435,9 +433,9 @@ const BulkActionsPage = () => {
                   >
                     <div className="flex items-center mb-2">
                       <Play size={20} className="text-gray-500 mr-2" />
-                      <h3 className="font-medium">Custom Action</h3>
+                      <h3 className="font-medium">{t('admin.custom_action', 'Custom Action')}</h3>
                     </div>
-                    <p className="text-sm text-gray-600">Define a custom action for multiple users</p>
+                    <p className="text-sm text-gray-600">{t('admin.custom_action_desc', 'Define a custom action for multiple users')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -452,35 +450,35 @@ const BulkActionsPage = () => {
                         {getTypeIcon(selectedJobType)}
                         <span className="ml-2 capitalize">{selectedJobType.replace('-', ' ')}</span>
                       </CardTitle>
-                      <CardDescription>Configure your bulk action settings</CardDescription>
+                      <CardDescription>{t('admin.configure_bulk_action', 'Configure your bulk action settings')}</CardDescription>
                     </div>
                     <Button variant="outline" size="sm" onClick={() => setSelectedJobType(null)}>
-                      Change Action Type
+                      {t('admin.change_action_type', 'Change Action Type')}
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
                     <div className="grid gap-2">
-                      <label htmlFor="action-name" className="text-sm font-medium">Action Name</label>
+                      <label htmlFor="action-name" className="text-sm font-medium">{t('admin.action_name', 'Action Name')}</label>
                       <Input id="action-name" placeholder={`${selectedJobType.replace('-', ' ')} - ${new Date().toLocaleDateString()}`} />
                     </div>
                     
                     {selectedJobType === 'status-update' && (
                       <div className="grid gap-2">
-                        <label className="text-sm font-medium">New Status</label>
+                        <label className="text-sm font-medium">{t('admin.new_status', 'New Status')}</label>
                         <RadioGroup defaultValue="active">
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="active" id="status-active" />
-                            <Label htmlFor="status-active">Active</Label>
+                            <Label htmlFor="status-active">{t('admin.active', 'Active')}</Label>
                           </div>
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="inactive" id="status-inactive" />
-                            <Label htmlFor="status-inactive">Inactive</Label>
+                            <Label htmlFor="status-inactive">{t('admin.inactive', 'Inactive')}</Label>
                           </div>
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="suspended" id="status-suspended" />
-                            <Label htmlFor="status-suspended">Suspended</Label>
+                            <Label htmlFor="status-suspended">{t('admin.suspended', 'Suspended')}</Label>
                           </div>
                         </RadioGroup>
                       </div>
@@ -489,14 +487,14 @@ const BulkActionsPage = () => {
                     {selectedJobType === 'email-notification' && (
                       <div className="space-y-4">
                         <div className="grid gap-2">
-                          <label htmlFor="email-subject" className="text-sm font-medium">Email Subject</label>
-                          <Input id="email-subject" placeholder="Enter email subject" />
+                          <label htmlFor="email-subject" className="text-sm font-medium">{t('admin.email_subject', 'Email Subject')}</label>
+                          <Input id="email-subject" placeholder={t('admin.enter_email_subject', 'Enter email subject')} />
                         </div>
                         <div className="grid gap-2">
-                          <label htmlFor="email-content" className="text-sm font-medium">Email Content</label>
+                          <label htmlFor="email-content" className="text-sm font-medium">{t('admin.email_content', 'Email Content')}</label>
                           <Textarea 
                             id="email-content" 
-                            placeholder="Enter email content..." 
+                            placeholder={t('admin.enter_email_content', 'Enter email content...')} 
                             className="min-h-[150px]"
                           />
                         </div>
@@ -505,31 +503,31 @@ const BulkActionsPage = () => {
                     
                     {selectedJobType === 'role-update' && (
                       <div className="grid gap-2">
-                        <label className="text-sm font-medium">New Role</label>
+                        <label className="text-sm font-medium">{t('admin.new_role', 'New Role')}</label>
                         <Select>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select new role" />
+                            <SelectValue placeholder={t('admin.select_new_role', 'Select new role')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="standard">Standard User</SelectItem>
-                            <SelectItem value="premium">Premium User</SelectItem>
-                            <SelectItem value="moderator">Moderator</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="standard">{t('admin.standard_user', 'Standard User')}</SelectItem>
+                            <SelectItem value="premium">{t('admin.premium_user', 'Premium User')}</SelectItem>
+                            <SelectItem value="moderator">{t('admin.moderator', 'Moderator')}</SelectItem>
+                            <SelectItem value="admin">{t('admin.admin_role', 'Admin')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     )}
                     
                     <div className="grid gap-2">
-                      <label className="text-sm font-medium">Schedule</label>
+                      <label className="text-sm font-medium">{t('admin.schedule', 'Schedule')}</label>
                       <RadioGroup defaultValue="now">
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="now" id="schedule-now" />
-                          <Label htmlFor="schedule-now">Execute immediately</Label>
+                          <Label htmlFor="schedule-now">{t('admin.execute_immediately', 'Execute immediately')}</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="later" id="schedule-later" />
-                          <Label htmlFor="schedule-later">Schedule for later</Label>
+                          <Label htmlFor="schedule-later">{t('admin.schedule_for_later', 'Schedule for later')}</Label>
                         </div>
                       </RadioGroup>
                     </div>
@@ -539,8 +537,8 @@ const BulkActionsPage = () => {
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Select Users</CardTitle>
-                  <CardDescription>Choose which users to apply this action to</CardDescription>
+                  <CardTitle>{t('admin.select_users', 'Select Users')}</CardTitle>
+                  <CardDescription>{t('admin.choose_users_action', 'Choose which users to apply this action to')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border overflow-hidden">
@@ -553,10 +551,10 @@ const BulkActionsPage = () => {
                               onCheckedChange={handleSelectAllProfiles}
                             />
                           </TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Role</TableHead>
+                          <TableHead>{t('admin.name', 'Name')}</TableHead>
+                          <TableHead>{t('admin.email', 'Email')}</TableHead>
+                          <TableHead>{t('admin.status', 'Status')}</TableHead>
+                          <TableHead>{t('admin.role', 'Role')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -584,15 +582,15 @@ const BulkActionsPage = () => {
                   
                   <div className="mt-4 flex justify-between items-center">
                     <div className="text-sm">
-                      {selectedProfiles.length} users selected
+                      {t('admin.users_selected', '{{count}} users selected', { count: selectedProfiles.length })}
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" onClick={() => setSelectedJobType(null)}>Cancel</Button>
+                      <Button variant="outline" onClick={() => setSelectedJobType(null)}>{t('admin.cancel', 'Cancel')}</Button>
                       <Button 
                         onClick={handleStartBulkAction}
                         disabled={selectedProfiles.length === 0}
                       >
-                        Start Bulk Action
+                        {t('admin.start_bulk_action', 'Start Bulk Action')}
                       </Button>
                     </div>
                   </div>
@@ -605,11 +603,11 @@ const BulkActionsPage = () => {
         <TabsContent value="scheduled">
           <Card>
             <CardHeader>
-              <CardTitle>Scheduled Actions</CardTitle>
-              <CardDescription>Actions scheduled to run in the future</CardDescription>
+              <CardTitle>{t('admin.scheduled_actions', 'Scheduled Actions')}</CardTitle>
+              <CardDescription>{t('admin.scheduled_actions_desc', 'Actions scheduled to run in the future')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Scheduled actions content will appear here.</p>
+              <p>{t('admin.scheduled_actions_content', 'Scheduled actions content will appear here.')}</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -619,9 +617,9 @@ const BulkActionsPage = () => {
       <Dialog open={confirmDialog} onOpenChange={setConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Bulk Action</DialogTitle>
+            <DialogTitle>{t('admin.confirm_bulk_action', 'Confirm Bulk Action')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to perform this action on {selectedProfiles.length} users?
+              {t('admin.confirm_bulk_action_desc', 'Are you sure you want to perform this action on {{count}} users?', { count: selectedProfiles.length })}
             </DialogDescription>
           </DialogHeader>
           
@@ -630,23 +628,23 @@ const BulkActionsPage = () => {
               <div className="flex items-start">
                 <AlertTriangle className="text-amber-500 mr-2 h-5 w-5 mt-0.5" />
                 <div>
-                  <h4 className="font-medium text-amber-800">Warning</h4>
+                  <h4 className="font-medium text-amber-800">{t('admin.warning', 'Warning')}</h4>
                   <p className="text-sm text-amber-700">
-                    This action cannot be undone. It will affect {selectedProfiles.length} user accounts.
+                    {t('admin.action_cannot_be_undone', 'This action cannot be undone. It will affect {{count}} user accounts.', { count: selectedProfiles.length })}
                   </p>
                 </div>
               </div>
             </div>
             
             <div className="grid gap-2">
-              <label htmlFor="confirmation" className="text-sm font-medium">Type "CONFIRM" to proceed</label>
+              <label htmlFor="confirmation" className="text-sm font-medium">{t('admin.type_confirm', 'Type "CONFIRM" to proceed')}</label>
               <Input id="confirmation" placeholder="CONFIRM" />
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDialog(false)}>Cancel</Button>
-            <Button onClick={handleConfirmBulkAction}>Confirm Action</Button>
+            <Button variant="outline" onClick={() => setConfirmDialog(false)}>{t('admin.cancel', 'Cancel')}</Button>
+            <Button onClick={handleConfirmBulkAction}>{t('admin.confirm_action', 'Confirm Action')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -655,32 +653,32 @@ const BulkActionsPage = () => {
       <Dialog open={bulkImportOpen} onOpenChange={setBulkImportOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Bulk Import Users</DialogTitle>
+            <DialogTitle>{t('admin.bulk_import_users', 'Bulk Import Users')}</DialogTitle>
             <DialogDescription>
-              Upload a file to import multiple users at once
+              {t('admin.bulk_import_desc', 'Upload a file to import multiple users at once')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Import Type</label>
+              <label className="text-sm font-medium">{t('admin.import_type', 'Import Type')}</label>
               <Select defaultValue="new">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select import type" />
+                  <SelectValue placeholder={t('admin.select_import_type', 'Select import type')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="new">Create New Users</SelectItem>
-                  <SelectItem value="update">Update Existing Users</SelectItem>
-                  <SelectItem value="both">Create and Update Users</SelectItem>
+                  <SelectItem value="new">{t('admin.create_new_users', 'Create New Users')}</SelectItem>
+                  <SelectItem value="update">{t('admin.update_existing_users', 'Update Existing Users')}</SelectItem>
+                  <SelectItem value="both">{t('admin.create_and_update', 'Create and Update Users')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <div className="grid gap-2">
-              <label className="text-sm font-medium">File Format</label>
+              <label className="text-sm font-medium">{t('admin.file_format', 'File Format')}</label>
               <Select defaultValue="csv">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select file format" />
+                  <SelectValue placeholder={t('admin.select_file_format', 'Select file format')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="csv">CSV</SelectItem>
@@ -692,35 +690,35 @@ const BulkActionsPage = () => {
             
             <div className="border-2 border-dashed rounded-lg p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer">
               <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <div className="text-sm font-medium">Click to upload or drag and drop</div>
-              <div className="text-xs text-gray-500 mt-1">Support for CSV, XLSX, JSON</div>
+              <div className="text-sm font-medium">{t('admin.click_upload', 'Click to upload or drag and drop')}</div>
+              <div className="text-xs text-gray-500 mt-1">{t('admin.support_formats', 'Support for CSV, XLSX, JSON')}</div>
               <div className="mt-4">
-                <Button size="sm" variant="outline">Select File</Button>
+                <Button size="sm" variant="outline">{t('admin.select_file', 'Select File')}</Button>
               </div>
             </div>
             
             <div className="grid gap-2">
               <div className="flex items-center space-x-2">
                 <Checkbox id="send-email" />
-                <label htmlFor="send-email" className="text-sm">Send welcome email to new users</label>
+                <label htmlFor="send-email" className="text-sm">{t('admin.send_welcome_email', 'Send welcome email to new users')}</label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox id="override" />
-                <label htmlFor="override" className="text-sm">Override existing data for duplicate users</label>
+                <label htmlFor="override" className="text-sm">{t('admin.override_existing', 'Override existing data for duplicate users')}</label>
               </div>
             </div>
             
             <div className="grid gap-2">
               <Button className="w-full" variant="outline">
                 <Download className="mr-2 h-4 w-4" />
-                Download Template
+                {t('admin.download_template', 'Download Template')}
               </Button>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setBulkImportOpen(false)}>Cancel</Button>
-            <Button>Upload and Start Import</Button>
+            <Button variant="outline" onClick={() => setBulkImportOpen(false)}>{t('admin.cancel', 'Cancel')}</Button>
+            <Button>{t('admin.upload_start_import', 'Upload and Start Import')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

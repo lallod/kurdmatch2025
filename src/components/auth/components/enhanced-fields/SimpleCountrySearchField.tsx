@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Globe, ChevronDown, Check } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SimpleCountrySearchFieldProps {
   value?: string;
@@ -56,6 +56,7 @@ const countries = [
 ];
 
 const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchFieldProps) => {
+  const { t } = useTranslations();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -78,7 +79,7 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Globe className="w-5 h-5 text-purple-600" />
-        <Label className="text-white">Born In (Kurdistan?)</Label>
+        <Label className="text-white">{t('auth.born_in', 'Born In (Kurdistan?)')}</Label>
       </div>
       
       <div className="relative">
@@ -88,7 +89,7 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
           onClick={() => setOpen(!open)}
         >
           <span className={selectedCountry ? "text-white" : "text-purple-300"}>
-            {selectedCountry ? selectedCountry.name : "Select country..."}
+            {selectedCountry ? selectedCountry.name : t('auth.select_country', 'Select country...')}
           </span>
           <ChevronDown className={`ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform ${open ? 'rotate-180' : ''}`} />
         </Button>
@@ -98,7 +99,7 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
             <div className="p-2 border-b border-gray-700">
               <input
                 type="text"
-                placeholder="Search countries..."
+                placeholder={t('auth.search_countries', 'Search countries...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
@@ -106,7 +107,7 @@ const SimpleCountrySearchField = ({ value = '', onChange }: SimpleCountrySearchF
             </div>
             <div className="max-h-48 overflow-y-auto">
               {filteredCountries.length === 0 ? (
-                <div className="p-4 text-center text-gray-400">No country found.</div>
+                <div className="p-4 text-center text-gray-400">{t('auth.no_country_found', 'No country found.')}</div>
               ) : (
                 filteredCountries.map((country) => (
                   <button
