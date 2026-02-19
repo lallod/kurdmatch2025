@@ -3,6 +3,7 @@ import React from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EngagementData } from '@/api/dashboard';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface EngagementChartProps {
   data: EngagementData[];
@@ -10,6 +11,7 @@ interface EngagementChartProps {
 }
 
 const EngagementChart = ({ data, loading = false }: EngagementChartProps) => {
+  const { t } = useTranslations();
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -24,8 +26,8 @@ const EngagementChart = ({ data, loading = false }: EngagementChartProps) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>User Engagement Metrics</CardTitle>
-          <CardDescription>Likes, views, and matches over time</CardDescription>
+          <CardTitle>{t('admin.engagement_metrics', 'User Engagement Metrics')}</CardTitle>
+          <CardDescription>{t('admin.engagement_description', 'Likes, views, and matches over time')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] w-full bg-gray-100 animate-pulse rounded-md"></div>
@@ -37,20 +39,12 @@ const EngagementChart = ({ data, loading = false }: EngagementChartProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>User Engagement Metrics</CardTitle>
-        <CardDescription>Likes, views, and matches over time</CardDescription>
+        <CardTitle>{t('admin.engagement_metrics', 'User Engagement Metrics')}</CardTitle>
+        <CardDescription>{t('admin.engagement_description', 'Likes, views, and matches over time')}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={processedData}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
+          <BarChart data={processedData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
