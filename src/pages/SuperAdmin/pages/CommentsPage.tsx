@@ -48,14 +48,14 @@ const CommentsPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching comment likes:', error);
-      toast.error('Failed to load comment likes');
+      toast.error(t('admin.failed_load_comment_likes', 'Failed to load comment likes'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteCommentLike = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this comment like?')) return;
+    if (!confirm(t('admin.confirm_delete_comment_like', 'Are you sure you want to delete this comment like?'))) return;
 
     try {
       const { error } = await supabase
@@ -64,11 +64,11 @@ const CommentsPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Comment like deleted successfully');
+      toast.success(t('admin.comment_like_deleted', 'Comment like deleted successfully'));
       fetchCommentLikes();
     } catch (error) {
       console.error('Error deleting comment like:', error);
-      toast.error('Failed to delete comment like');
+      toast.error(t('admin.failed_delete_comment_like', 'Failed to delete comment like'));
     }
   };
 

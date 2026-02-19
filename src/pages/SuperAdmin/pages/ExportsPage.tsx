@@ -33,7 +33,7 @@ const ExportsPage = () => {
       case 'completed': return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{t('admin.completed', 'Completed')}</Badge>;
       case 'processing': return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">{t('admin.processing', 'Processing...')}</Badge>;
       case 'scheduled': return <Badge variant="outline" className="bg-purple-100 text-purple-800 hover:bg-purple-100">{t('admin.scheduled', 'Scheduled')}</Badge>;
-      case 'failed': return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">Failed</Badge>;
+      case 'failed': return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">{t('admin.failed_status', 'Failed')}</Badge>;
       default: return <Badge>{status}</Badge>;
     }
   };
@@ -61,7 +61,7 @@ const ExportsPage = () => {
     if (exportJob?.file_url) {
       window.open(exportJob.file_url, '_blank');
     } else {
-      toast.error("File not available");
+      toast.error(t('admin.file_not_available', 'File not available'));
     }
   };
 
@@ -189,7 +189,7 @@ const ExportsPage = () => {
               <CardTitle>{t('admin.scheduled_exports', 'Scheduled Exports')}</CardTitle>
               <CardDescription>{t('admin.scheduled_exports_desc', 'Exports scheduled for future execution')}</CardDescription>
             </CardHeader>
-            <CardContent><p>Scheduled exports content will appear here.</p></CardContent>
+            <CardContent><p>{t('admin.scheduled_exports_content', 'Scheduled exports content will appear here.')}</p></CardContent>
           </Card>
         </TabsContent>
 
@@ -199,7 +199,7 @@ const ExportsPage = () => {
               <CardTitle>{t('admin.export_templates', 'Export Templates')}</CardTitle>
               <CardDescription>{t('admin.reusable_configs', 'Reusable export configurations')}</CardDescription>
             </CardHeader>
-            <CardContent><p>Export templates content will appear here.</p></CardContent>
+            <CardContent><p>{t('admin.templates_content', 'Export templates content will appear here.')}</p></CardContent>
           </Card>
         </TabsContent>
       </Tabs>

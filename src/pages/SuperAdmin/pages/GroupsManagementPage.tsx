@@ -53,7 +53,7 @@ const GroupsManagementPage = () => {
       setTotalGroups(count || 0);
     } catch (error) {
       console.error('Error fetching groups:', error);
-      toast.error('Failed to load groups');
+      toast.error(t('admin.failed_load_groups', 'Failed to load groups'));
     } finally {
       setLoading(false);
     }
@@ -72,35 +72,35 @@ const GroupsManagementPage = () => {
       setTotalMembers(count || 0);
     } catch (error) {
       console.error('Error fetching members:', error);
-      toast.error('Failed to load members');
+      toast.error(t('admin.failed_load_members', 'Failed to load members'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteGroup = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this group?')) return;
+    if (!confirm(t('admin.confirm_delete_group', 'Are you sure you want to delete this group?'))) return;
     try {
       const { error } = await supabase.from('groups').delete().eq('id', id);
       if (error) throw error;
-      toast.success('Group deleted successfully');
+      toast.success(t('admin.group_deleted', 'Group deleted successfully'));
       fetchGroups();
     } catch (error) {
       console.error('Error deleting group:', error);
-      toast.error('Failed to delete group');
+      toast.error(t('admin.failed_delete_group', 'Failed to delete group'));
     }
   };
 
   const removeMember = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this member?')) return;
+    if (!confirm(t('admin.confirm_remove_member', 'Are you sure you want to remove this member?'))) return;
     try {
       const { error } = await supabase.from('group_members').delete().eq('id', id);
       if (error) throw error;
-      toast.success('Member removed successfully');
+      toast.success(t('admin.member_removed', 'Member removed successfully'));
       fetchMembers();
     } catch (error) {
       console.error('Error removing member:', error);
-      toast.error('Failed to remove member');
+      toast.error(t('admin.failed_remove_member', 'Failed to remove member'));
     }
   };
 

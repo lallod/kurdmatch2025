@@ -49,7 +49,7 @@ const InterestsPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching interests:', error);
-      toast.error('Failed to load interests');
+      toast.error(t('admin.failed_load_interests', 'Failed to load interests'));
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ const InterestsPage = () => {
 
   const addInterest = async () => {
     if (!newInterestName || !newInterestCategory) {
-      toast.error('Please fill in all fields');
+      toast.error(t('admin.please_fill_all_fields', 'Please fill in all fields'));
       return;
     }
 
@@ -67,14 +67,14 @@ const InterestsPage = () => {
         .insert([{ name: newInterestName, category: newInterestCategory }]);
 
       if (error) throw error;
-      toast.success('Interest added successfully');
+      toast.success(t('admin.interest_added', 'Interest added successfully'));
       setNewInterestName('');
       setNewInterestCategory('');
       setIsAddDialogOpen(false);
       fetchInterests();
     } catch (error) {
       console.error('Error adding interest:', error);
-      toast.error('Failed to add interest');
+      toast.error(t('admin.failed_add_interest', 'Failed to add interest'));
     }
   };
 

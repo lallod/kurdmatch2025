@@ -52,7 +52,7 @@ const RegistrationQuestionsPage = () => {
           <Button
             variant="outline"
             onClick={() => {
-              toast.success("Questions exported to CSV successfully");
+              toast.success(t('admin.questions_exported', 'Questions exported to CSV successfully'));
             }}
           >
             <Download className="mr-2 h-4 w-4" /> {t('admin.export', 'Export')}
