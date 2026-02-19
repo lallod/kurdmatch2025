@@ -25,21 +25,21 @@ interface SupportTicket {
   user_feedback?: string | null;
 }
 
-const statusConfig = {
-  open: { label: 'Open', icon: AlertCircle, color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' },
-  pending: { label: 'In Progress', icon: Clock, color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-  resolved: { label: 'Resolved', icon: CheckCircle2, color: 'bg-green-500/10 text-green-500 border-green-500/20' },
-  closed: { label: 'Closed', icon: CheckCircle2, color: 'bg-muted text-muted-foreground border-muted' }
-};
+const getStatusConfig = (t: (key: string, fallback: string) => string) => ({
+  open: { label: t('support.status_open', 'Open'), icon: AlertCircle, color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' },
+  pending: { label: t('support.status_pending', 'In Progress'), icon: Clock, color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
+  resolved: { label: t('support.status_resolved', 'Resolved'), icon: CheckCircle2, color: 'bg-green-500/10 text-green-500 border-green-500/20' },
+  closed: { label: t('support.status_closed', 'Closed'), icon: CheckCircle2, color: 'bg-muted text-muted-foreground border-muted' }
+});
 
-const categoryLabels: Record<string, string> = {
-  account: 'Account Issues',
-  billing: 'Billing & Payments',
-  technical: 'Technical Problems',
-  safety: 'Safety Concerns',
-  feedback: 'Feedback & Suggestions',
-  other: 'Other'
-};
+const getCategoryLabels = (t: (key: string, fallback: string) => string): Record<string, string> => ({
+  account: t('support.cat_account', 'Account Issues'),
+  billing: t('support.cat_billing', 'Billing & Payments'),
+  technical: t('support.cat_technical', 'Technical Problems'),
+  safety: t('support.cat_safety', 'Safety Concerns'),
+  feedback: t('support.cat_feedback', 'Feedback & Suggestions'),
+  other: t('support.cat_other', 'Other')
+});
 
 const MyTickets = () => {
   const { user } = useAuth();
@@ -143,6 +143,9 @@ const MyTickets = () => {
     return ticket.status === activeFilter;
   });
 
+  const statusConfig = getStatusConfig(t);
+  const categoryLabels = getCategoryLabels(t);
+
   const getStatusBadge = (status: string) => {
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.open;
     const Icon = config.icon;
@@ -177,7 +180,7 @@ const MyTickets = () => {
       <Card>
         <CardContent className="p-6 text-center">
           <MessageSquare className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-          <p className="text-muted-foreground">Please log in to view your support tickets</p>
+          <p className="text-muted-foreground">{t('support.login_required', 'Please log in to view your support tickets')}</p>
         </CardContent>
       </Card>
     );
@@ -187,7 +190,7 @@ const MyTickets = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">My Support Tickets</CardTitle>
+          <CardTitle className="text-base">{t('support.my_tickets', 'My Support Tickets')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {[1, 2, 3].map(i => (
@@ -208,11 +211,11 @@ const MyTickets = () => {
           <div>
             <CardTitle className="text-base flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-primary" />
-              My Support Tickets
+              {t('support.my_tickets', 'My Support Tickets')}
             </CardTitle>
-            <CardDescription>Track your support requests</CardDescription>
+            <CardDescription>{t('support.track_requests', 'Track your support requests')}</CardDescription>
           </div>
-          <Button variant="ghost" size="icon" onClick={fetchTickets} title="Refresh">
+          <Button variant="ghost" size="icon" onClick={fetchTickets} title={t('common.refresh', 'Refresh')}>
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
@@ -221,9 +224,9 @@ const MyTickets = () => {
         {tickets.length === 0 ? (
           <div className="text-center py-8">
             <MessageSquare className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-            <p className="text-muted-foreground">No support tickets yet</p>
+            <p className="text-muted-foreground">{t('support.no_tickets', 'No support tickets yet')}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Contact support if you need help
+              {t('support.contact_if_help', 'Contact support if you need help')}
             </p>
           </div>
         ) : (
@@ -231,13 +234,13 @@ const MyTickets = () => {
             <Tabs value={activeFilter} onValueChange={setActiveFilter} className="mb-4">
               <TabsList className="w-full justify-start">
                 <TabsTrigger value="all" className="text-xs">
-                  All ({tickets.length})
+                  {t('common.all', 'All')} ({tickets.length})
                 </TabsTrigger>
                 <TabsTrigger value="active" className="text-xs">
-                  Active ({tickets.filter(t => ['open', 'pending'].includes(t.status)).length})
+                  {t('support.active', 'Active')} ({tickets.filter(tk => ['open', 'pending'].includes(tk.status)).length})
                 </TabsTrigger>
                 <TabsTrigger value="resolved" className="text-xs">
-                  Resolved ({tickets.filter(t => t.status === 'resolved').length})
+                  {t('support.resolved', 'Resolved')} ({tickets.filter(tk => tk.status === 'resolved').length})
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -261,7 +264,7 @@ const MyTickets = () => {
                           {ticket.admin_response && (
                             <>
                               <span className="text-xs text-muted-foreground">•</span>
-                              <span className="text-xs text-primary">Has response</span>
+                              <span className="text-xs text-primary">{t('support.has_response', 'Has response')}</span>
                             </>
                           )}
                           {ticket.user_rating && (
@@ -289,7 +292,7 @@ const MyTickets = () => {
                     <div className="px-4 pb-4 border-t bg-muted/30">
                       <div className="pt-4 space-y-3">
                         <div className="bg-background border rounded-lg p-3">
-                          <p className="text-xs font-medium text-muted-foreground mb-1">Your Message:</p>
+                          <p className="text-xs font-medium text-muted-foreground mb-1">{t('support.your_message', 'Your Message:')}</p>
                           <p className="text-sm whitespace-pre-wrap">{ticket.message}</p>
                           <p className="text-xs text-muted-foreground mt-2">
                             {new Date(ticket.created_at).toLocaleString()}
@@ -298,7 +301,7 @@ const MyTickets = () => {
 
                         {ticket.admin_response && (
                           <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
-                            <p className="text-xs font-medium text-primary mb-1">Support Response:</p>
+                            <p className="text-xs font-medium text-primary mb-1">{t('support.support_response', 'Support Response:')}</p>
                             <p className="text-sm whitespace-pre-wrap">{ticket.admin_response}</p>
                           </div>
                         )}
@@ -308,10 +311,10 @@ const MyTickets = () => {
                           <div className="bg-accent/50 border rounded-lg p-4">
                             {ratingTicket === ticket.id ? (
                               <div className="space-y-3">
-                                <p className="text-sm font-medium">How was your support experience?</p>
+                                <p className="text-sm font-medium">{t('support.rate_experience', 'How was your support experience?')}</p>
                                 <StarRating rating={selectedRating} onRate={setSelectedRating} interactive />
                                 <Textarea
-                                  placeholder="Share additional feedback (optional)"
+                                  placeholder={t('support.feedback_placeholder', 'Share additional feedback (optional)')}
                                   value={feedbackText}
                                   onChange={(e) => setFeedbackText(e.target.value)}
                                   className="min-h-[60px]"
@@ -322,7 +325,7 @@ const MyTickets = () => {
                                     onClick={() => handleSubmitRating(ticket.id)}
                                     disabled={selectedRating === 0 || submittingRating}
                                   >
-                                    {submittingRating ? 'Submitting...' : 'Submit Feedback'}
+                                    {submittingRating ? t('common.submitting', 'Submitting...') : t('support.submit_feedback', 'Submit Feedback')}
                                   </Button>
                                   <Button
                                     size="sm"
@@ -333,16 +336,16 @@ const MyTickets = () => {
                                       setFeedbackText('');
                                     }}
                                   >
-                                    Cancel
+                                    {t('common.cancel', 'Cancel')}
                                   </Button>
                                 </div>
                               </div>
                             ) : (
                               <div className="flex items-center justify-between">
-                                <p className="text-sm text-muted-foreground">Was this helpful?</p>
+                                <p className="text-sm text-muted-foreground">{t('support.was_helpful', 'Was this helpful?')}</p>
                                 <Button size="sm" variant="outline" onClick={() => setRatingTicket(ticket.id)}>
                                   <Star className="h-4 w-4 mr-2" />
-                                  Rate Support
+                                  {t('support.rate_support', 'Rate Support')}
                                 </Button>
                               </div>
                             )}
@@ -352,7 +355,7 @@ const MyTickets = () => {
                         {/* Show existing rating */}
                         {ticket.user_rating && (
                           <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-                            <p className="text-xs font-medium text-green-600 mb-2">Your Rating:</p>
+                            <p className="text-xs font-medium text-green-600 mb-2">{t('support.your_rating', 'Your Rating:')}</p>
                             <StarRating rating={ticket.user_rating} />
                             {ticket.user_feedback && (
                               <p className="text-sm mt-2 text-muted-foreground">{ticket.user_feedback}</p>
@@ -361,9 +364,9 @@ const MyTickets = () => {
                         )}
 
                         <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t">
-                          <span>Ticket ID: {ticket.id.slice(0, 8)}</span>
+                          <span>{t('support.ticket_id', 'Ticket ID')}: {ticket.id.slice(0, 8)}</span>
                           {ticket.resolved_at && (
-                            <span>Resolved: {new Date(ticket.resolved_at).toLocaleDateString()}</span>
+                            <span>{t('support.resolved_date', 'Resolved')}: {new Date(ticket.resolved_at).toLocaleDateString()}</span>
                           )}
                         </div>
                       </div>
