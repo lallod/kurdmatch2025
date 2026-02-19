@@ -17,13 +17,13 @@ interface ContactSupportDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const supportCategories = [
-  { value: 'account', label: 'Account Issues' },
-  { value: 'billing', label: 'Billing & Payments' },
-  { value: 'technical', label: 'Technical Problems' },
-  { value: 'safety', label: 'Safety Concerns' },
-  { value: 'feedback', label: 'Feedback & Suggestions' },
-  { value: 'other', label: 'Other' }
+const getSupportCategories = (t: (key: string, fallback: string) => string) => [
+  { value: 'account', label: t('support.cat_account', 'Account Issues') },
+  { value: 'billing', label: t('support.cat_billing', 'Billing & Payments') },
+  { value: 'technical', label: t('support.cat_technical', 'Technical Problems') },
+  { value: 'safety', label: t('support.cat_safety', 'Safety Concerns') },
+  { value: 'feedback', label: t('support.cat_feedback', 'Feedback & Suggestions') },
+  { value: 'other', label: t('support.cat_other', 'Other') }
 ];
 
 const supportTicketSchema = z.object({
@@ -113,7 +113,7 @@ const ContactSupportDialog = ({ open, onOpenChange }: ContactSupportDialogProps)
                 <SelectValue placeholder={t('support.select_category', 'Select a category')} />
               </SelectTrigger>
               <SelectContent>
-                {supportCategories.map(cat => (<SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>))}
+                {getSupportCategories(t).map(cat => (<SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>))}
               </SelectContent>
             </Select>
             {errors.category && <p className="text-xs text-destructive">{errors.category}</p>}

@@ -86,12 +86,12 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
           {isFollowing ? (
             <>
               <UserCheck className="h-5 w-5 mr-2" />
-              Following
+              {t('profile.following', 'Following')}
             </>
           ) : (
             <>
               <UserPlus className="h-5 w-5 mr-2" />
-              Follow
+              {t('profile.follow', 'Follow')}
             </>
           )}
         </Button>
@@ -102,7 +102,7 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
           className="flex-1 max-w-[180px] bg-gradient-to-r from-primary to-primary-glow relative"
         >
           <MessageCircle className="h-5 w-5 mr-2" />
-          Message
+          {t('profile.message', 'Message')}
           {!isPremium && (
             <span className="absolute -top-1 -right-1 bg-accent text-white text-xs px-1.5 py-0.5 rounded-full">
               PRO
@@ -117,25 +117,25 @@ const ProfileActionButtons: React.FC<ProfileActionButtonsProps> = ({
           <DialogHeader>
             <DialogTitle className="text-foreground text-2xl flex items-center gap-2">
               <MessageCircle className="w-6 h-6 text-primary" />
-              PM - Premium Feature
+              {t('profile.pm_premium', 'PM - Premium Feature')}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground space-y-4">
-              <p>Send unlimited messages to Premium and Gold members!</p>
+              <p>{t('profile.send_unlimited', 'Send unlimited messages to Premium and Gold members!')}</p>
               <div className="bg-accent/10 backdrop-blur-md rounded-lg p-4 space-y-2">
-                <p className="font-semibold text-foreground">Premium Benefits:</p>
+                <p className="font-semibold text-foreground">{t('profile.premium_benefits', 'Premium Benefits:')}</p>
                 <ul className="space-y-1 text-sm">
-                  <li>✓ Send messages to anyone</li>
-                  <li>✓ 10 Super Likes per day</li>
-                  <li>✓ Unlimited regular likes</li>
-                  <li>✓ See who liked you</li>
-                  <li>✓ 5 Rewinds per day</li>
+                  <li>✓ {t('profile.benefit_messages', 'Send messages to anyone')}</li>
+                  <li>✓ {t('profile.benefit_super_likes', '10 Super Likes per day')}</li>
+                  <li>✓ {t('profile.benefit_unlimited_likes', 'Unlimited regular likes')}</li>
+                  <li>✓ {t('profile.benefit_see_likes', 'See who liked you')}</li>
+                  <li>✓ {t('profile.benefit_rewinds', '5 Rewinds per day')}</li>
                 </ul>
               </div>
               <Button
                 onClick={handleUpgrade}
                 className="w-full bg-gradient-to-r from-primary to-primary-glow text-white"
               >
-                Upgrade to Premium
+                {t('profile.upgrade_premium', 'Upgrade to Premium')}
               </Button>
             </DialogDescription>
           </DialogHeader>
