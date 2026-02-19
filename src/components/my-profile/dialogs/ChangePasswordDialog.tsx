@@ -51,11 +51,11 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onOpe
   const confirmPassword = form.watch('confirmPassword') || '';
 
   const passwordRequirements = [
-    { text: 'At least 8 characters', met: newPassword.length >= 8 },
-    { text: 'Contains uppercase letter', met: /[A-Z]/.test(newPassword) },
-    { text: 'Contains lowercase letter', met: /[a-z]/.test(newPassword) },
-    { text: 'Contains number', met: /\d/.test(newPassword) },
-    { text: 'Passwords match', met: newPassword === confirmPassword && newPassword.length > 0 }
+    { text: t('settings.pwd_req_min_chars', 'At least 8 characters'), met: newPassword.length >= 8 },
+    { text: t('settings.pwd_req_uppercase', 'Contains uppercase letter'), met: /[A-Z]/.test(newPassword) },
+    { text: t('settings.pwd_req_lowercase', 'Contains lowercase letter'), met: /[a-z]/.test(newPassword) },
+    { text: t('settings.pwd_req_number', 'Contains number'), met: /\d/.test(newPassword) },
+    { text: t('settings.pwd_req_match', 'Passwords match'), met: newPassword === confirmPassword && newPassword.length > 0 }
   ];
 
   const handleSubmit = async (data: ChangePasswordFormValues) => {
