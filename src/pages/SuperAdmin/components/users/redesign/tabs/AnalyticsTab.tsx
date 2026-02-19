@@ -1,10 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Users, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const AnalyticsTab: React.FC = () => {
+  const { t } = useTranslations();
   const registrationSteps = [
     { step: 'Email/Password', completed: 95, abandoned: 5 },
     { step: 'Personal Info', completed: 87, abandoned: 13 },
@@ -40,43 +41,40 @@ const AnalyticsTab: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Avg. Registration Time</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.avg_registration_time', 'Avg. Registration Time')}</p>
                 <p className="text-2xl font-bold text-gray-900">12.5 min</p>
               </div>
               <Clock className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Completion Rate</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.completion_rate', 'Completion Rate')}</p>
                 <p className="text-2xl font-bold text-gray-900">42%</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Drop-off Rate</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.drop_off_rate', 'Drop-off Rate')}</p>
                 <p className="text-2xl font-bold text-gray-900">58%</p>
               </div>
               <TrendingUp className="h-8 w-8 text-red-600" />
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Daily Signups</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.daily_signups', 'Daily Signups')}</p>
                 <p className="text-2xl font-bold text-gray-900">24</p>
               </div>
               <Users className="h-8 w-8 text-purple-600" />
@@ -87,9 +85,7 @@ const AnalyticsTab: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Registration Step Completion</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>{t('admin.reg_step_completion', 'Registration Step Completion')}</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={registrationSteps}>
@@ -103,26 +99,13 @@ const AnalyticsTab: React.FC = () => {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader>
-            <CardTitle>User Status Distribution</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>{t('admin.user_status_distribution', 'User Status Distribution')}</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie
-                  data={userDistribution}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, value }) => `${name}: ${value}%`}
-                >
-                  {userDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
+                <Pie data={userDistribution} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value" label={({ name, value }) => `${name}: ${value}%`}>
+                  {userDistribution.map((entry, index) => (<Cell key={`cell-${index}`} fill={entry.color} />))}
                 </Pie>
                 <Tooltip />
               </PieChart>
@@ -132,9 +115,7 @@ const AnalyticsTab: React.FC = () => {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Profile Section Completion Rates</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle>{t('admin.profile_section_completion', 'Profile Section Completion Rates')}</CardTitle></CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={profileCompletion} layout="horizontal">

@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Heart, Trash2, Search, User, Calendar, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Like {
   id: string;
@@ -24,6 +25,7 @@ interface Like {
 }
 
 const LikesPage = () => {
+  const { t } = useTranslations();
   const [likes, setLikes] = useState<Like[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,11 +91,11 @@ const LikesPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Likes Management</h1>
-          <p className="text-white/60 mt-1">View and manage all user likes ({totalCount} total)</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.likes_management', 'Likes Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.likes_desc', 'View and manage all user likes ({{count}} total)', { count: totalCount })}</p>
         </div>
         <Button onClick={fetchLikes} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('admin.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -101,13 +103,13 @@ const LikesPage = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Heart className="h-5 w-5 text-red-500" />
-            All Likes
+            {t('admin.all_likes', 'All Likes')}
           </CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search by user name..."
+                placeholder={t('admin.search_by_user', 'Search by user name...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white"
@@ -117,9 +119,9 @@ const LikesPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-white/60">Loading likes...</div>
+            <div className="text-center py-8 text-white/60">{t('admin.loading_likes', 'Loading likes...')}</div>
           ) : filteredLikes.length === 0 ? (
-            <div className="text-center py-8 text-white/60">No likes found</div>
+            <div className="text-center py-8 text-white/60">{t('admin.no_likes_found', 'No likes found')}</div>
           ) : (
             <div className="space-y-3">
               {filteredLikes.map((like) => (
@@ -135,8 +137,8 @@ const LikesPage = () => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div>
-                        <p className="text-white font-medium">{like.liker_profile?.name || 'Unknown'}</p>
-                        <p className="text-white/40 text-sm">Liker</p>
+                        <p className="text-white font-medium">{like.liker_profile?.name || t('admin.unknown', 'Unknown')}</p>
+                        <p className="text-white/40 text-sm">{t('admin.liker', 'Liker')}</p>
                       </div>
                     </div>
 
@@ -149,8 +151,8 @@ const LikesPage = () => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div>
-                        <p className="text-white font-medium">{like.likee_profile?.name || 'Unknown'}</p>
-                        <p className="text-white/40 text-sm">Liked</p>
+                        <p className="text-white font-medium">{like.likee_profile?.name || t('admin.unknown', 'Unknown')}</p>
+                        <p className="text-white/40 text-sm">{t('admin.liked', 'Liked')}</p>
                       </div>
                     </div>
 

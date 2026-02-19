@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Download, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -14,9 +13,10 @@ import AddQuestionDialog from '../components/registration-questions/AddQuestionD
 import EditQuestionDialog from '../components/registration-questions/EditQuestionDialog';
 import { QuestionItem } from '../components/registration-questions/types';
 import { useQuestions } from '../components/registration-questions/useQuestions';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const RegistrationQuestionsPage = () => {
-  
+  const { t } = useTranslations();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<QuestionItem | null>(null);
   
@@ -43,9 +43,9 @@ const RegistrationQuestionsPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-white">Registration Questions</h1>
+          <h1 className="text-3xl font-bold text-white">{t('admin.registration_questions', 'Registration Questions')}</h1>
           <p className="text-white/60">
-            Manage the questions users are asked during the registration process
+            {t('admin.reg_questions_desc', 'Manage the questions users are asked during the registration process')}
           </p>
         </div>
         <div className="flex space-x-2">
@@ -55,10 +55,10 @@ const RegistrationQuestionsPage = () => {
               toast.success("Questions exported to CSV successfully");
             }}
           >
-            <Download className="mr-2 h-4 w-4" /> Export
+            <Download className="mr-2 h-4 w-4" /> {t('admin.export', 'Export')}
           </Button>
           <Button onClick={() => setIsAddDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Question
+            <Plus className="mr-2 h-4 w-4" /> {t('admin.add_question', 'Add Question')}
           </Button>
         </div>
       </div>
