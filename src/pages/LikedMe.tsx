@@ -237,7 +237,7 @@ const LikedMe = () => {
                                   <Heart className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent><p>Like back</p></TooltipContent>
+                              <TooltipContent><p>{t('liked_me.like_back', 'Like back')}</p></TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                           
@@ -253,13 +253,13 @@ const LikedMe = () => {
                                   <X className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent><p>Pass</p></TooltipContent>
+                              <TooltipContent><p>{t('liked_me.pass', 'Pass')}</p></TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         </>
                       ) : (
                         <div className="flex flex-col items-center gap-1">
-                          <Badge className="bg-success/20 text-success border-success/30 text-xs">Mutual Like</Badge>
+                          <Badge className="bg-success/20 text-success border-success/30 text-xs">{t('liked_me.mutual_like', 'Mutual Like')}</Badge>
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
@@ -267,7 +267,7 @@ const LikedMe = () => {
                                   <MessageCircle className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent><p>Send message</p></TooltipContent>
+                              <TooltipContent><p>{t('liked_me.send_message', 'Send message')}</p></TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         </div>
@@ -284,7 +284,7 @@ const LikedMe = () => {
                       ))}
                       {profile.interests.length > 3 && (
                         <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
-                          +{profile.interests.length - 3} more
+                          +{profile.interests.length - 3} {t('common.more', 'more')}
                         </Badge>
                       )}
                     </div>
