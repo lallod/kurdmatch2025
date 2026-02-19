@@ -57,7 +57,7 @@ const VirtualGiftsPage = () => {
         toast.success(t('admin.gift_created', 'Gift created'));
       }
       setDialogOpen(false); setEditGift(null); loadGifts();
-    } catch (err: any) { toast.error(err.message); } finally { setSaving(false); }
+    } catch (err: any) { toast.error(err.message || t('admin.save_failed', 'Failed to save')); } finally { setSaving(false); }
   };
 
   const toggleActive = async (id: string, active: boolean) => {

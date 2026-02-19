@@ -93,7 +93,7 @@ export const useQuestions = () => {
       toast.success(t('admin.question_added_success', 'New question added successfully'));
       return true;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to add question");
+      toast.error(error instanceof Error ? error.message : t('admin.add_question_failed', 'Failed to add question'));
       return false;
     }
   };
