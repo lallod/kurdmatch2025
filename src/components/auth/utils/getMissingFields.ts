@@ -1,6 +1,8 @@
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { getFieldLabel, getFieldRequirement } from './fieldLabels';
 
+type TranslateFn = (key: string, fallback: string) => string;
+
 export interface MissingFieldInfo {
   id: string;
   label: string;
@@ -10,7 +12,8 @@ export interface MissingFieldInfo {
 // Get list of missing required fields for a step
 export const getMissingFields = (
   stepQuestions: QuestionItem[],
-  formValues: Record<string, any>
+  formValues: Record<string, any>,
+  t?: TranslateFn
 ): MissingFieldInfo[] => {
   const missingFields: MissingFieldInfo[] = [];
 
@@ -40,14 +43,14 @@ export const getMissingFields = (
         const arrayValue = Array.isArray(value) ? value : [];
         if (arrayValue.length < minRequired) {
           isIncomplete = true;
-          reason = getFieldRequirement(question);
+          reason = getFieldRequirement(question, t);
         }
       }
       // Checkbox validation
       else if (fieldType === 'checkbox') {
         if (value !== true) {
           isIncomplete = true;
-          reason = getFieldRequirement(question);
+          reason = getFieldRequirement(question, t);
         }
       }
       // Age validation
@@ -55,14 +58,14 @@ export const getMissingFields = (
         const age = parseInt(value);
         if (isNaN(age) || age < 18) {
           isIncomplete = true;
-          reason = getFieldRequirement(question);
+          reason = getFieldRequirement(question, t);
         }
       }
       // Date of birth validation (calculate age)
       else if (id === 'date_of_birth') {
         if (!value) {
           isIncomplete = true;
-          reason = 'Please enter your date of birth';
+          reason = t ? t('validation.enter_dob', 'Please enter your date of birth') : 'Please enter your date of birth';
         } else {
           const birthDate = new Date(value);
           const today = new Date();
@@ -73,7 +76,7 @@ export const getMissingFields = (
           }
           if (age < 18) {
             isIncomplete = true;
-            reason = 'Must be 18 or older';
+            reason = t ? t('validation.must_be_18', 'Must be 18 or older') : 'Must be 18 or older';
           }
         }
       }
@@ -92,7 +95,7 @@ export const getMissingFields = (
         
         if (!hasValue) {
           isIncomplete = true;
-          reason = getFieldRequirement(question);
+          reason = getFieldRequirement(question, t);
         }
       }
     }
@@ -100,7 +103,7 @@ export const getMissingFields = (
     if (isIncomplete) {
       missingFields.push({
         id,
-        label: getFieldLabel(id),
+        label: getFieldLabel(id, t),
         reason,
       });
     }

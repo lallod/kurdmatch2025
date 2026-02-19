@@ -2,6 +2,7 @@ import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import { getMissingFields, MissingFieldInfo } from '@/components/auth/utils/getMissingFields';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MissingFieldsSummaryProps {
   stepQuestions: QuestionItem[];
@@ -14,7 +15,8 @@ const MissingFieldsSummary: React.FC<MissingFieldsSummaryProps> = ({
   formValues,
   currentStep,
 }) => {
-  const missingFields = getMissingFields(stepQuestions, formValues);
+  const { t } = useTranslations();
+  const missingFields = getMissingFields(stepQuestions, formValues, t);
   
   if (missingFields.length === 0) return null;
 
@@ -28,12 +30,12 @@ const MissingFieldsSummary: React.FC<MissingFieldsSummaryProps> = ({
         <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
         <div className="flex-1">
           <p className="text-sm font-semibold text-yellow-400">
-            Progress: {completedFields}/{totalFields} fields completed
+            {t('validation.progress', 'Progress')}: {completedFields}/{totalFields} {t('validation.fields_completed', 'fields completed')}
           </p>
           <p className="text-xs text-yellow-300/80 mt-0.5">
             {missingFields.length === 1 
-              ? 'Just 1 more field to go!' 
-              : `${missingFields.length} fields remaining`}
+              ? t('validation.one_more_field', 'Just 1 more field to go!') 
+              : `${missingFields.length} ${t('validation.fields_remaining', 'fields remaining')}`}
           </p>
         </div>
       </div>
