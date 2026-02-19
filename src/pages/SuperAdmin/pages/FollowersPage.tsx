@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { UserPlus, Trash2, Search, Calendar, ExternalLink, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Follower {
   id: string;
@@ -16,6 +17,7 @@ interface Follower {
 }
 
 const FollowersPage = () => {
+  const { t } = useTranslations();
   const [followers, setFollowers] = useState<Follower[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,14 +37,14 @@ const FollowersPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching followers:', error);
-      toast.error('Failed to load followers');
+      toast.error(t('toast.followers_load_failed', 'Failed to load followers'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteFollower = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this follower relationship?')) return;
+    if (!confirm(t('admin.confirm_delete_follower', 'Are you sure you want to delete this follower relationship?'))) return;
 
     try {
       const { error } = await supabase
@@ -51,11 +53,11 @@ const FollowersPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Follower relationship deleted successfully');
+      toast.success(t('toast.follower_deleted', 'Follower relationship deleted successfully'));
       fetchFollowers();
     } catch (error) {
       console.error('Error deleting follower:', error);
-      toast.error('Failed to delete follower');
+      toast.error(t('toast.follower_delete_failed', 'Failed to delete follower'));
     }
   };
 
@@ -72,11 +74,11 @@ const FollowersPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Followers Management</h1>
-          <p className="text-white/60 mt-1">View all follower relationships ({totalCount} total)</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.followers_management', 'Followers Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.view_followers', 'View all follower relationships ({{count}} total)', { count: totalCount })}</p>
         </div>
         <Button onClick={fetchFollowers} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -84,13 +86,13 @@ const FollowersPage = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-blue-500" />
-            All Followers
+            {t('admin.all_followers', 'All Followers')}
           </CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search by user ID..."
+                placeholder={t('admin.search_by_user_id', 'Search by user ID...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white"
@@ -100,9 +102,9 @@ const FollowersPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-white/60">Loading followers...</div>
+            <div className="text-center py-8 text-white/60">{t('admin.loading_followers', 'Loading followers...')}</div>
           ) : filteredFollowers.length === 0 ? (
-            <div className="text-center py-8 text-white/60">No followers found</div>
+            <div className="text-center py-8 text-white/60">{t('admin.no_followers_found', 'No followers found')}</div>
           ) : (
             <div className="space-y-3">
               {filteredFollowers.map((follower) => (
@@ -113,7 +115,7 @@ const FollowersPage = () => {
                   <div className="flex items-center gap-4 flex-1">
                     <div className="flex items-center gap-3">
                       <div className="text-center">
-                        <p className="text-white font-medium text-sm">Follower</p>
+                        <p className="text-white font-medium text-sm">{t('admin.follower', 'Follower')}</p>
                         <p className="text-white/60 text-xs font-mono">{follower.follower_id.substring(0, 8)}...</p>
                       </div>
                     </div>
@@ -122,7 +124,7 @@ const FollowersPage = () => {
 
                     <div className="flex items-center gap-3">
                       <div className="text-center">
-                        <p className="text-white font-medium text-sm">Following</p>
+                        <p className="text-white font-medium text-sm">{t('admin.following', 'Following')}</p>
                         <p className="text-white/60 text-xs font-mono">{follower.following_id.substring(0, 8)}...</p>
                       </div>
                     </div>

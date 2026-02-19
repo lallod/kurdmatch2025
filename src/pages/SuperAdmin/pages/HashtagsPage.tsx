@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Hash, Trash2, Search, TrendingUp, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Hashtag {
   id: string;
@@ -17,6 +18,7 @@ interface Hashtag {
 }
 
 const HashtagsPage = () => {
+  const { t } = useTranslations();
   const [hashtags, setHashtags] = useState<Hashtag[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,14 +38,14 @@ const HashtagsPage = () => {
       setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching hashtags:', error);
-      toast.error('Failed to load hashtags');
+      toast.error(t('toast.hashtags_load_failed', 'Failed to load hashtags'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteHashtag = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this hashtag?')) return;
+    if (!confirm(t('admin.confirm_delete_hashtag', 'Are you sure you want to delete this hashtag?'))) return;
 
     try {
       const { error } = await supabase
@@ -52,11 +54,11 @@ const HashtagsPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Hashtag deleted successfully');
+      toast.success(t('toast.hashtag_deleted', 'Hashtag deleted successfully'));
       fetchHashtags();
     } catch (error) {
       console.error('Error deleting hashtag:', error);
-      toast.error('Failed to delete hashtag');
+      toast.error(t('toast.hashtag_delete_failed', 'Failed to delete hashtag'));
     }
   };
 
@@ -73,11 +75,11 @@ const HashtagsPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Hashtags Management</h1>
-          <p className="text-white/60 mt-1">Manage trending hashtags ({totalCount} total)</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.hashtags_management', 'Hashtags Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.manage_hashtags', 'Manage trending hashtags ({{count}} total)', { count: totalCount })}</p>
         </div>
         <Button onClick={fetchHashtags} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -85,13 +87,13 @@ const HashtagsPage = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Hash className="h-5 w-5 text-purple-500" />
-            All Hashtags
+            {t('admin.all_hashtags', 'All Hashtags')}
           </CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
-                placeholder="Search hashtags..."
+                placeholder={t('admin.search_hashtags', 'Search hashtags...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/5 border-white/10 text-white"
@@ -101,9 +103,9 @@ const HashtagsPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-white/60">Loading hashtags...</div>
+            <div className="text-center py-8 text-white/60">{t('admin.loading_hashtags', 'Loading hashtags...')}</div>
           ) : filteredHashtags.length === 0 ? (
-            <div className="text-center py-8 text-white/60">No hashtags found</div>
+            <div className="text-center py-8 text-white/60">{t('admin.no_hashtags_found', 'No hashtags found')}</div>
           ) : (
             <div className="space-y-3">
               {filteredHashtags.map((hashtag) => (
@@ -121,14 +123,14 @@ const HashtagsPage = () => {
                       <div className="flex items-center gap-3 mt-1">
                         <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                           <TrendingUp className="h-3 w-3 mr-1" />
-                          {hashtag.usage_count} uses
+                          {t('admin.uses_count', '{{count}} uses', { count: hashtag.usage_count })}
                         </Badge>
                         <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                           <Calendar className="h-3 w-3 mr-1" />
-                          Last used: {format(new Date(hashtag.last_used_at), 'MMM d, yyyy')}
+                          {t('admin.last_used', 'Last used: {{date}}', { date: format(new Date(hashtag.last_used_at), 'MMM d, yyyy') })}
                         </Badge>
                         <span className="text-white/40 text-sm">
-                          Created: {format(new Date(hashtag.created_at), 'MMM d, yyyy')}
+                          {t('admin.created_label', 'Created: {{date}}', { date: format(new Date(hashtag.created_at), 'MMM d, yyyy') })}
                         </span>
                       </div>
                     </div>

@@ -8,6 +8,7 @@ import { Calendar, Trash2, Search, MapPin, Users, ExternalLink } from 'lucide-re
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Event {
   id: string;
@@ -31,6 +32,7 @@ interface EventAttendee {
 }
 
 const EventsManagementPage = () => {
+  const { t } = useTranslations();
   const [events, setEvents] = useState<Event[]>([]);
   const [attendees, setAttendees] = useState<EventAttendee[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +54,7 @@ const EventsManagementPage = () => {
       setTotalEvents(count || 0);
     } catch (error) {
       console.error('Error fetching events:', error);
-      toast.error('Failed to load events');
+      toast.error(t('toast.events_load_failed', 'Failed to load events'));
     } finally {
       setLoading(false);
     }
@@ -72,14 +74,14 @@ const EventsManagementPage = () => {
       setTotalAttendees(count || 0);
     } catch (error) {
       console.error('Error fetching attendees:', error);
-      toast.error('Failed to load attendees');
+      toast.error(t('toast.attendees_load_failed', 'Failed to load attendees'));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteEvent = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this event?')) return;
+    if (!confirm(t('admin.confirm_delete_event', 'Are you sure you want to delete this event?'))) return;
 
     try {
       const { error } = await supabase
@@ -88,16 +90,16 @@ const EventsManagementPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Event deleted successfully');
+      toast.success(t('toast.event_deleted', 'Event deleted successfully'));
       fetchEvents();
     } catch (error) {
       console.error('Error deleting event:', error);
-      toast.error('Failed to delete event');
+      toast.error(t('toast.event_delete_failed', 'Failed to delete event'));
     }
   };
 
   const removeAttendee = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this attendee?')) return;
+    if (!confirm(t('admin.confirm_remove_attendee', 'Are you sure you want to remove this attendee?'))) return;
 
     try {
       const { error } = await supabase
@@ -106,11 +108,11 @@ const EventsManagementPage = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Attendee removed successfully');
+      toast.success(t('toast.attendee_removed', 'Attendee removed successfully'));
       fetchAttendees();
     } catch (error) {
       console.error('Error removing attendee:', error);
-      toast.error('Failed to remove attendee');
+      toast.error(t('toast.attendee_remove_failed', 'Failed to remove attendee'));
     }
   };
 
@@ -133,21 +135,21 @@ const EventsManagementPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Events Management</h1>
-          <p className="text-white/60 mt-1">Manage all events and attendees</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.events_management', 'Events Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.manage_events_attendees', 'Manage all events and attendees')}</p>
         </div>
         <Button onClick={() => { fetchEvents(); fetchAttendees(); }} variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
       <Tabs defaultValue="events" className="w-full">
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger value="events" className="data-[state=active]:bg-white/10">
-            Events ({totalEvents})
+            {t('admin.events', 'Events')} ({totalEvents})
           </TabsTrigger>
           <TabsTrigger value="attendees" className="data-[state=active]:bg-white/10">
-            Attendees ({totalAttendees})
+            {t('admin.attendees', 'Attendees')} ({totalAttendees})
           </TabsTrigger>
         </TabsList>
 
@@ -156,13 +158,13 @@ const EventsManagementPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-blue-500" />
-                All Events
+                {t('admin.all_events', 'All Events')}
               </CardTitle>
               <div className="mt-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
-                    placeholder="Search events..."
+                    placeholder={t('admin.search_events', 'Search events...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white"
@@ -172,9 +174,9 @@ const EventsManagementPage = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-white/60">Loading events...</div>
+                <div className="text-center py-8 text-white/60">{t('admin.loading_events', 'Loading events...')}</div>
               ) : filteredEvents.length === 0 ? (
-                <div className="text-center py-8 text-white/60">No events found</div>
+                <div className="text-center py-8 text-white/60">{t('admin.no_events_found', 'No events found')}</div>
               ) : (
                 <div className="grid gap-4">
                   {filteredEvents.map((event) => (
@@ -231,7 +233,7 @@ const EventsManagementPage = () => {
                             )}
                             <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                               <Users className="h-3 w-3 mr-1" />
-                              {event.attendees_count}{event.max_attendees ? `/${event.max_attendees}` : ''} attendees
+                              {event.attendees_count}{event.max_attendees ? `/${event.max_attendees}` : ''} {t('admin.attendees', 'attendees')}
                             </Badge>
                           </div>
                         </div>
@@ -249,13 +251,13 @@ const EventsManagementPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Users className="h-5 w-5 text-green-500" />
-                All Attendees
+                {t('admin.all_attendees', 'All Attendees')}
               </CardTitle>
               <div className="mt-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
-                    placeholder="Search attendees..."
+                    placeholder={t('admin.search_attendees', 'Search attendees...')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white"
@@ -265,9 +267,9 @@ const EventsManagementPage = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-white/60">Loading attendees...</div>
+                <div className="text-center py-8 text-white/60">{t('admin.loading_attendees', 'Loading attendees...')}</div>
               ) : filteredAttendees.length === 0 ? (
-                <div className="text-center py-8 text-white/60">No attendees found</div>
+                <div className="text-center py-8 text-white/60">{t('admin.no_attendees_found', 'No attendees found')}</div>
               ) : (
                 <div className="space-y-3">
                   {filteredAttendees.map((attendee) => (
@@ -277,8 +279,8 @@ const EventsManagementPage = () => {
                     >
                       <div className="flex items-center gap-4 flex-1">
                         <div className="flex-1">
-                          <p className="text-white font-medium">User: {attendee.user_id.substring(0, 12)}...</p>
-                          <p className="text-white/40 text-sm">Event: {attendee.event_id.substring(0, 12)}...</p>
+                          <p className="text-white font-medium">{t('admin.user_label_short', 'User')}: {attendee.user_id.substring(0, 12)}...</p>
+                          <p className="text-white/40 text-sm">{t('admin.event_label', 'Event')}: {attendee.event_id.substring(0, 12)}...</p>
                         </div>
 
                         <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
