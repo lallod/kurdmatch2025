@@ -843,17 +843,17 @@ const CategoriesPage = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <CardTitle>
-                    {selectedCategory ? `Items in ${selectedCategory.name}` : 'All Category Items'}
+                    {selectedCategory ? t('admin.items_in_category', `Items in ${selectedCategory.name}`, { name: selectedCategory.name }) : t('admin.all_category_items', 'All Category Items')}
                   </CardTitle>
                   <CardDescription>
                     {selectedCategory 
-                      ? `Manage items in the "${selectedCategory.name}" category` 
-                      : 'Select a category to manage its items'}
+                      ? t('admin.manage_items_in_category', `Manage items in the "${selectedCategory.name}" category`, { name: selectedCategory.name })
+                      : t('admin.select_category_to_manage', 'Select a category to manage its items')}
                   </CardDescription>
                 </div>
                 {selectedCategory && (
                   <Button variant="outline" onClick={() => setSelectedCategory(null)}>
-                    View All Categories
+                    {t('admin.view_all_categories', 'View All Categories')}
                   </Button>
                 )}
               </div>
@@ -864,7 +864,7 @@ const CategoriesPage = () => {
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder="Search categories..."
+                      placeholder={t('admin.search_categories', 'Search categories...')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -883,7 +883,7 @@ const CategoriesPage = () => {
                           <div className="flex justify-between items-start">
                             <CardTitle className="text-base">{category.name}</CardTitle>
                             <Badge variant="outline" className="bg-gray-100">
-                              {category.itemCount} items
+                              {category.itemCount} {t('admin.items', 'Items').toLowerCase()}
                             </Badge>
                           </div>
                         </CardHeader>
@@ -894,12 +894,12 @@ const CategoriesPage = () => {
                           {category.active ? (
                             <div className="flex items-center">
                               <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
-                              <span className="text-xs text-green-600">Active</span>
+                              <span className="text-xs text-green-600">{t('admin.active_status', 'Active')}</span>
                             </div>
                           ) : (
                             <div className="flex items-center">
                               <XCircle className="h-4 w-4 text-gray-400 mr-1" />
-                              <span className="text-xs text-gray-500">Inactive</span>
+                              <span className="text-xs text-gray-500">{t('admin.inactive_status', 'Inactive')}</span>
                             </div>
                           )}
                         </CardContent>
@@ -913,7 +913,7 @@ const CategoriesPage = () => {
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
-                        placeholder="Search items..."
+                        placeholder={t('admin.search_items', 'Search items...')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
@@ -933,12 +933,12 @@ const CategoriesPage = () => {
                               <TableHeader>
                                 <TableRow>
                                   <TableHead className="w-10"></TableHead>
-                                  <TableHead>Name</TableHead>
-                                  <TableHead>Description</TableHead>
-                                  <TableHead>Type</TableHead>
-                                  <TableHead>Status</TableHead>
-                                  <TableHead>Last Updated</TableHead>
-                                  <TableHead className="text-right">Actions</TableHead>
+                                   <TableHead>{t('admin.name', 'Name')}</TableHead>
+                                  <TableHead>{t('admin.description', 'Description')}</TableHead>
+                                  <TableHead>{t('admin.type', 'Type')}</TableHead>
+                                  <TableHead>{t('admin.status', 'Status')}</TableHead>
+                                  <TableHead>{t('admin.last_updated', 'Last Updated')}</TableHead>
+                                  <TableHead className="text-right">{t('admin.actions', 'Actions')}</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -972,12 +972,12 @@ const CategoriesPage = () => {
                                             {item.active ? (
                                               <div className="flex items-center">
                                                 <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
-                                                <span className="text-sm text-green-600">Active</span>
+                                                <span className="text-sm text-green-600">{t('admin.active_status', 'Active')}</span>
                                               </div>
                                             ) : (
                                               <div className="flex items-center">
                                                 <XCircle className="h-4 w-4 text-gray-400 mr-1" />
-                                                <span className="text-sm text-gray-500">Inactive</span>
+                                                <span className="text-sm text-gray-500">{t('admin.inactive_status', 'Inactive')}</span>
                                               </div>
                                             )}
                                           </TableCell>
@@ -1010,7 +1010,7 @@ const CategoriesPage = () => {
                                 ) : (
                                   <TableRow>
                                     <TableCell colSpan={7} className="text-center py-6">
-                                      No items found in this category
+                                      {t('admin.no_items_in_category', 'No items found in this category')}
                                     </TableCell>
                                   </TableRow>
                                 )}
@@ -1033,9 +1033,9 @@ const CategoriesPage = () => {
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add Category</DialogTitle>
+            <DialogTitle>{t('admin.add_category', 'Add Category')}</DialogTitle>
             <DialogDescription>
-              Create a new profile category
+              {t('admin.create_new_profile_category', 'Create a new profile category')}
             </DialogDescription>
           </DialogHeader>
           <Form {...categoryForm}>
@@ -1045,9 +1045,9 @@ const CategoriesPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category Name</FormLabel>
+                    <FormLabel>{t('admin.category_name', 'Category Name')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter category name" />
+                      <Input {...field} placeholder={t('admin.enter_category_name', 'Enter category name')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1058,9 +1058,9 @@ const CategoriesPage = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t('admin.description', 'Description')}</FormLabel>
                     <FormControl>
-                      <Textarea {...field} placeholder="Enter description" />
+                      <Textarea {...field} placeholder={t('admin.enter_description', 'Enter description')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1071,12 +1071,12 @@ const CategoriesPage = () => {
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Slug</FormLabel>
+                    <FormLabel>{t('admin.slug', 'Slug')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter slug (e.g., basic-info)" />
+                      <Input {...field} placeholder={t('admin.enter_slug', 'Enter slug (e.g., basic-info)')} />
                     </FormControl>
                     <FormDescription>
-                      Used in URLs and as a unique identifier
+                      {t('admin.slug_description', 'Used in URLs and as a unique identifier')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -1088,9 +1088,9 @@ const CategoriesPage = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel>Active</FormLabel>
+                      <FormLabel>{t('admin.active_status', 'Active')}</FormLabel>
                       <FormDescription>
-                        Enable or disable this category
+                        {t('admin.enable_disable_category', 'Enable or disable this category')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -1103,7 +1103,7 @@ const CategoriesPage = () => {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Add Category</Button>
+                <Button type="submit">{t('admin.add_category', 'Add Category')}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -1113,9 +1113,9 @@ const CategoriesPage = () => {
       <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
+            <DialogTitle>{t('admin.edit_category', 'Edit Category')}</DialogTitle>
             <DialogDescription>
-              Make changes to the selected category
+              {t('admin.edit_category_desc', 'Make changes to the selected category')}
             </DialogDescription>
           </DialogHeader>
           <Form {...categoryForm}>
@@ -1125,9 +1125,9 @@ const CategoriesPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category Name</FormLabel>
+                    <FormLabel>{t('admin.category_name', 'Category Name')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter category name" />
+                      <Input {...field} placeholder={t('admin.enter_category_name', 'Enter category name')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1138,9 +1138,9 @@ const CategoriesPage = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t('admin.description', 'Description')}</FormLabel>
                     <FormControl>
-                      <Textarea {...field} placeholder="Enter description" />
+                      <Textarea {...field} placeholder={t('admin.enter_description', 'Enter description')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1151,12 +1151,12 @@ const CategoriesPage = () => {
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Slug</FormLabel>
+                    <FormLabel>{t('admin.slug', 'Slug')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter slug (e.g., basic-info)" />
+                      <Input {...field} placeholder={t('admin.enter_slug', 'Enter slug (e.g., basic-info)')} />
                     </FormControl>
                     <FormDescription>
-                      Used in URLs and as a unique identifier
+                      {t('admin.slug_description', 'Used in URLs and as a unique identifier')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -1168,9 +1168,9 @@ const CategoriesPage = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel>Active</FormLabel>
+                      <FormLabel>{t('admin.active_status', 'Active')}</FormLabel>
                       <FormDescription>
-                        Enable or disable this category
+                        {t('admin.enable_disable_category', 'Enable or disable this category')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -1183,7 +1183,7 @@ const CategoriesPage = () => {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Update Category</Button>
+                <Button type="submit">{t('admin.update_category', 'Update Category')}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -1193,18 +1193,18 @@ const CategoriesPage = () => {
       <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Delete Category</DialogTitle>
+            <DialogTitle>{t('admin.delete_category', 'Delete Category')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this category? This action cannot be undone.
+              {t('admin.delete_category_confirm', 'Are you sure you want to delete this category? This action cannot be undone.')}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             {selectedCategory && (
               <div className="space-y-2">
-                <p><strong>Name:</strong> {selectedCategory.name}</p>
-                <p><strong>Items:</strong> {selectedCategory.itemCount}</p>
+                <p><strong>{t('admin.name', 'Name')}:</strong> {selectedCategory.name}</p>
+                <p><strong>{t('admin.items', 'Items')}:</strong> {selectedCategory.itemCount}</p>
                 <p className="text-red-600 text-sm mt-4">
-                  All items in this category will also be deleted.
+                  {t('admin.all_items_deleted_warning', 'All items in this category will also be deleted.')}
                 </p>
               </div>
             )}
@@ -1214,13 +1214,13 @@ const CategoriesPage = () => {
               variant="outline"
               onClick={() => setIsDeleteCategoryOpen(false)}
             >
-              Cancel
+              {t('admin.cancel', 'Cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteCategory}
             >
-              Delete Category
+              {t('admin.delete_category', 'Delete Category')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1230,9 +1230,9 @@ const CategoriesPage = () => {
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add Item</DialogTitle>
+            <DialogTitle>{t('admin.add_item', 'Add Item')}</DialogTitle>
             <DialogDescription>
-              {selectedCategory ? `Add a new item to the "${selectedCategory.name}" category` : 'Add a new item'}
+              {selectedCategory ? t('admin.add_item_to_category', `Add a new item to the "${selectedCategory.name}" category`, { name: selectedCategory.name }) : t('admin.add_new_item', 'Add a new item')}
             </DialogDescription>
           </DialogHeader>
           <Form {...itemForm}>
@@ -1242,9 +1242,9 @@ const CategoriesPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Item Name</FormLabel>
+                    <FormLabel>{t('admin.item_name', 'Item Name')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter item name" />
+                      <Input {...field} placeholder={t('admin.enter_item_name', 'Enter item name')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1255,9 +1255,9 @@ const CategoriesPage = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t('admin.description', 'Description')}</FormLabel>
                     <FormControl>
-                      <Textarea {...field} placeholder="Enter description" />
+                      <Textarea {...field} placeholder={t('admin.enter_description', 'Enter description')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1268,13 +1268,13 @@ const CategoriesPage = () => {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>{t('admin.type', 'Type')}</FormLabel>
                     <FormControl>
                       <select 
                         className="w-full p-2 border border-gray-300 rounded-md"
                         {...field}
                       >
-                        <option value="">Select type</option>
+                        <option value="">{t('admin.select_type', 'Select type')}</option>
                         <option value="text">Text</option>
                         <option value="textarea">Textarea</option>
                         <option value="number">Number</option>
@@ -1298,12 +1298,12 @@ const CategoriesPage = () => {
                   name="options"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Options</FormLabel>
+                      <FormLabel>{t('admin.options', 'Options')}</FormLabel>
                       <FormControl>
-                        <Textarea {...field} placeholder="Enter options, separated by commas" />
+                        <Textarea {...field} placeholder={t('admin.enter_options_comma', 'Enter options, separated by commas')} />
                       </FormControl>
                       <FormDescription>
-                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
+                        {t('admin.options_comma_desc', 'Enter options separated by commas (e.g., Option 1, Option 2, Option 3)')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -1316,9 +1316,9 @@ const CategoriesPage = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel>Active</FormLabel>
+                      <FormLabel>{t('admin.active_status', 'Active')}</FormLabel>
                       <FormDescription>
-                        Enable or disable this item
+                        {t('admin.enable_disable_item', 'Enable or disable this item')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -1331,7 +1331,7 @@ const CategoriesPage = () => {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Add Item</Button>
+                <Button type="submit">{t('admin.add_item', 'Add Item')}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -1341,9 +1341,9 @@ const CategoriesPage = () => {
       <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Item</DialogTitle>
+            <DialogTitle>{t('admin.edit_item', 'Edit Item')}</DialogTitle>
             <DialogDescription>
-              Make changes to the selected item
+              {t('admin.edit_item_desc', 'Make changes to the selected item')}
             </DialogDescription>
           </DialogHeader>
           <Form {...itemForm}>
@@ -1353,9 +1353,9 @@ const CategoriesPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Item Name</FormLabel>
+                    <FormLabel>{t('admin.item_name', 'Item Name')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter item name" />
+                      <Input {...field} placeholder={t('admin.enter_item_name', 'Enter item name')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1366,9 +1366,9 @@ const CategoriesPage = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t('admin.description', 'Description')}</FormLabel>
                     <FormControl>
-                      <Textarea {...field} placeholder="Enter description" />
+                      <Textarea {...field} placeholder={t('admin.enter_description', 'Enter description')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1379,13 +1379,13 @@ const CategoriesPage = () => {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>{t('admin.type', 'Type')}</FormLabel>
                     <FormControl>
                       <select 
                         className="w-full p-2 border border-gray-300 rounded-md"
                         {...field}
                       >
-                        <option value="">Select type</option>
+                        <option value="">{t('admin.select_type', 'Select type')}</option>
                         <option value="text">Text</option>
                         <option value="textarea">Textarea</option>
                         <option value="number">Number</option>
@@ -1409,12 +1409,12 @@ const CategoriesPage = () => {
                   name="options"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Options</FormLabel>
+                      <FormLabel>{t('admin.options', 'Options')}</FormLabel>
                       <FormControl>
-                        <Textarea {...field} placeholder="Enter options, separated by commas" />
+                        <Textarea {...field} placeholder={t('admin.enter_options_comma', 'Enter options, separated by commas')} />
                       </FormControl>
                       <FormDescription>
-                        Enter options separated by commas (e.g., Option 1, Option 2, Option 3)
+                        {t('admin.options_comma_desc', 'Enter options separated by commas (e.g., Option 1, Option 2, Option 3)')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -1427,9 +1427,9 @@ const CategoriesPage = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                     <div className="space-y-0.5">
-                      <FormLabel>Active</FormLabel>
+                      <FormLabel>{t('admin.active_status', 'Active')}</FormLabel>
                       <FormDescription>
-                        Enable or disable this item
+                        {t('admin.enable_disable_item', 'Enable or disable this item')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -1442,7 +1442,7 @@ const CategoriesPage = () => {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Update Item</Button>
+                <Button type="submit">{t('admin.update_item', 'Update Item')}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -1452,16 +1452,16 @@ const CategoriesPage = () => {
       <Dialog open={isDeleteItemOpen} onOpenChange={setIsDeleteItemOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Delete Item</DialogTitle>
+            <DialogTitle>{t('admin.delete_item', 'Delete Item')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this item? This action cannot be undone.
+              {t('admin.delete_item_confirm', 'Are you sure you want to delete this item? This action cannot be undone.')}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             {selectedItem && (
               <div className="space-y-2">
-                <p><strong>Name:</strong> {selectedItem.name}</p>
-                <p><strong>Type:</strong> {selectedItem.type}</p>
+                <p><strong>{t('admin.name', 'Name')}:</strong> {selectedItem.name}</p>
+                <p><strong>{t('admin.type', 'Type')}:</strong> {selectedItem.type}</p>
               </div>
             )}
           </div>
@@ -1470,13 +1470,13 @@ const CategoriesPage = () => {
               variant="outline"
               onClick={() => setIsDeleteItemOpen(false)}
             >
-              Cancel
+              {t('admin.cancel', 'Cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteItem}
             >
-              Delete Item
+              {t('admin.delete_item', 'Delete Item')}
             </Button>
           </DialogFooter>
         </DialogContent>
