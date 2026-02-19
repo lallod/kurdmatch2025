@@ -6,6 +6,7 @@ import {
   Calendar, Sparkles, Map, Headphones, Puzzle, Heart, Star
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileInterestsProps {
   details: {
@@ -30,11 +31,14 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
   isMobile,
   onFieldEdit
 }) => {
+  const { t } = useTranslations();
+  const notSpecified = t('profile.not_specified', 'Not specified');
+
   return (
     <div className="py-4">
       <div className="space-y-1">
         <DetailItem 
-          icon={<Heart size={18} />} label="Interests" 
+          icon={<Heart size={18} />} label={t('profile.interests', 'Interests')}
           editable={!!onFieldEdit}
           fieldKey="interests"
           fieldType="multi-select"
@@ -50,7 +54,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
         />
         <Separator />
         <DetailItem 
-          icon={<Star size={18} />} label="Hobbies" 
+          icon={<Star size={18} />} label={t('profile.hobbies', 'Hobbies')}
           editable={!!onFieldEdit}
           fieldKey="hobbies"
           fieldType="multi-select"
@@ -62,7 +66,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
                 details.hobbies.map((hobby, i) => (
                   <Badge key={i} variant="outline" className={tinderBadgeStyle}>{hobby}</Badge>
                 )) : 
-                (formatList(details.hobbies) || "Not specified").split(", ").filter(Boolean).map((hobby, i) => (
+                (formatList(details.hobbies) || notSpecified).split(", ").filter(Boolean).map((hobby, i) => (
                   <Badge key={i} variant="outline" className={tinderBadgeStyle}>{hobby}</Badge>
                 ))
               }
@@ -74,7 +78,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
       
       <div className="space-y-1">
         <DetailItem 
-          icon={<Calendar size={18} />} label="Weekend Activities" 
+          icon={<Calendar size={18} />} label={t('profile.weekend_activities', 'Weekend Activities')}
           editable={!!onFieldEdit}
           fieldKey="weekendActivities"
           fieldType="multi-select"
@@ -86,7 +90,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
                 details.weekendActivities.map((act, i) => (
                   <Badge key={i} variant="outline" className={tinderBadgeStyle}>{act}</Badge>
                 )) : 
-                (formatList(details.weekendActivities) || "Not specified").split(", ").filter(Boolean).map((act, i) => (
+                (formatList(details.weekendActivities) || notSpecified).split(", ").filter(Boolean).map((act, i) => (
                   <Badge key={i} variant="outline" className={tinderBadgeStyle}>{act}</Badge>
                 ))
               }
@@ -95,8 +99,8 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
         />
         <Separator />
         <DetailItem 
-          icon={<Sparkles size={18} />} label="Ideal Date" 
-          value={details.idealDate || "Not specified"}
+          icon={<Sparkles size={18} />} label={t('profile.ideal_date', 'Ideal Date')}
+          value={details.idealDate || notSpecified}
           editable={!!onFieldEdit}
           fieldKey="idealDate"
           fieldType="select"
@@ -105,8 +109,8 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
         />
         <Separator />
         <DetailItem 
-          icon={<Map size={18} />} label="Career Ambitions" 
-          value={details.careerAmbitions || "Not specified"}
+          icon={<Map size={18} />} label={t('profile.career_ambitions', 'Career Ambitions')}
+          value={details.careerAmbitions || notSpecified}
           editable={!!onFieldEdit}
           fieldKey="careerAmbitions"
           fieldType="select"
@@ -115,7 +119,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
         />
         <Separator />
         <DetailItem 
-          icon={<Headphones size={18} />} label="Music Instruments" 
+          icon={<Headphones size={18} />} label={t('profile.music_instruments', 'Music Instruments')}
           editable={!!onFieldEdit}
           fieldKey="musicInstruments"
           fieldType="multi-select"
@@ -136,7 +140,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({
         />
         <Separator />
         <DetailItem 
-          icon={<Puzzle size={18} />} label="Favorite Games" 
+          icon={<Puzzle size={18} />} label={t('profile.favorite_games', 'Favorite Games')}
           editable={!!onFieldEdit}
           fieldKey="favoriteGames"
           fieldType="multi-select"

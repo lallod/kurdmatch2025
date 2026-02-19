@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { MapPin, ChevronDown, Check } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 interface SimpleLocationSearchProps {
   value?: string;
   onChange: (value: string) => void;
@@ -218,9 +219,12 @@ const locations = [
 const SimpleLocationSearch = ({
   value = '',
   onChange,
-  label = "Dream Vacation Destination",
-  placeholder = "Where would you love to travel?"
+  label: labelProp,
+  placeholder: placeholderProp
 }: SimpleLocationSearchProps) => {
+  const { t } = useTranslations();
+  const label = labelProp || t('profile.dream_vacation', 'Dream Vacation Destination');
+  const placeholder = placeholderProp || t('profile.dream_vacation_placeholder', 'Where would you love to travel?');
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const currentValue = value || '';
@@ -247,10 +251,10 @@ const SimpleLocationSearch = ({
         
         {open && <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-md shadow-lg z-50 max-h-60 ">
             <div className="p-2 border-b border-gray-700">
-              <input type="text" placeholder="Search destinations..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500" />
+              <input type="text" placeholder={t('profile.search_destinations', 'Search destinations...')} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500" />
             </div>
             <div className="max-h-48 overflow-y-auto">
-              {filteredLocations.length === 0 ? <div className="p-4 text-center text-gray-400">No destinations found.</div> : filteredLocations.map(location => <button key={location.id} className="w-full px-4 py-2 text-left text-white hover:bg-gray-800 flex items-center justify-between" onClick={() => handleSelect(location.display)}>
+              {filteredLocations.length === 0 ? <div className="p-4 text-center text-gray-400">{t('profile.no_destinations', 'No destinations found.')}</div> : filteredLocations.map(location => <button key={location.id} className="w-full px-4 py-2 text-left text-white hover:bg-gray-800 flex items-center justify-between" onClick={() => handleSelect(location.display)}>
                     <div>
                       <span className="font-medium text-white">{location.name}</span>
                       <span className="text-sm text-gray-400 ml-2">{location.country}</span>

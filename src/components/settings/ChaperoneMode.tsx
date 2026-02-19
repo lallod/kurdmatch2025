@@ -87,24 +87,24 @@ const ChaperoneMode: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="text-center py-8 text-muted-foreground">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-muted-foreground">{t('common.loading', 'Loading...')}</div>;
 
   return (
     <Card className="border-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Shield className="w-5 h-5 text-primary" />
-          Chaperone Mode
+          {t('settings.chaperone_mode', 'Chaperone Mode')}
         </CardTitle>
         <CardDescription>
-          Invite a trusted person to oversee your conversations for added safety and cultural respect
+          {t('settings.chaperone_desc', 'Invite a trusted person to oversee your conversations for added safety and cultural respect')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center justify-between p-4 rounded-lg bg-primary/10 border border-primary/20">
           <div>
-            <p className="font-medium">Enable Chaperone Mode</p>
-            <p className="text-sm text-muted-foreground">A trusted person can monitor your interactions</p>
+            <p className="font-medium">{t('settings.enable_chaperone', 'Enable Chaperone Mode')}</p>
+            <p className="text-sm text-muted-foreground">{t('settings.chaperone_monitor', 'A trusted person can monitor your interactions')}</p>
           </div>
           <Switch checked={enabled} onCheckedChange={setEnabled} />
         </div>
@@ -114,12 +114,12 @@ const ChaperoneMode: React.FC = () => {
             <div className="space-y-4 p-4 rounded-lg bg-muted/30 border border-border">
               <h4 className="font-medium flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                Chaperone Details
+                {t('settings.chaperone_details', 'Chaperone Details')}
               </h4>
               <div className="space-y-2">
-                <Label>Name</Label>
+                <Label>{t('common.name', 'Name')}</Label>
                 <Input
-                  placeholder="Chaperone's name"
+                  placeholder={t('settings.chaperone_name_placeholder', "Chaperone's name")}
                   value={chaperoneName}
                   onChange={e => setChaperoneName(e.target.value)}
                 />
@@ -127,11 +127,11 @@ const ChaperoneMode: React.FC = () => {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  Email
+                  {t('common.email', 'Email')}
                 </Label>
                 <Input
                   type="email"
-                  placeholder="Chaperone's email"
+                  placeholder={t('settings.chaperone_email_placeholder', "Chaperone's email")}
                   value={chaperoneEmail}
                   onChange={e => setChaperoneEmail(e.target.value)}
                 />
@@ -139,12 +139,12 @@ const ChaperoneMode: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium">Notification Preferences</h4>
+              <h4 className="font-medium">{t('settings.notification_preferences', 'Notification Preferences')}</h4>
               
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2">
                   <Bell className="w-4 h-4" />
-                  <Label>Notify on new match</Label>
+                  <Label>{t('settings.notify_new_match', 'Notify on new match')}</Label>
                 </div>
                 <Switch checked={notifyOnMatch} onCheckedChange={setNotifyOnMatch} />
               </div>
@@ -152,19 +152,19 @@ const ChaperoneMode: React.FC = () => {
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4" />
-                  <Label>Notify on new message</Label>
+                  <Label>{t('settings.notify_new_message', 'Notify on new message')}</Label>
                 </div>
                 <Switch checked={notifyOnMessage} onCheckedChange={setNotifyOnMessage} />
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium">Access Permissions</h4>
+              <h4 className="font-medium">{t('settings.access_permissions', 'Access Permissions')}</h4>
               
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4" />
-                  <Label>Can view messages</Label>
+                  <Label>{t('settings.can_view_messages', 'Can view messages')}</Label>
                 </div>
                 <Switch checked={canViewMessages} onCheckedChange={setCanViewMessages} />
               </div>
@@ -172,7 +172,7 @@ const ChaperoneMode: React.FC = () => {
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2">
                   <Camera className="w-4 h-4" />
-                  <Label>Can view shared photos</Label>
+                  <Label>{t('settings.can_view_photos', 'Can view shared photos')}</Label>
                 </div>
                 <Switch checked={canViewPhotos} onCheckedChange={setCanViewPhotos} />
               </div>
@@ -181,7 +181,7 @@ const ChaperoneMode: React.FC = () => {
         )}
 
         <Button onClick={handleSave} disabled={saving} className="w-full">
-          {saving ? 'Saving...' : 'Save Settings'}
+          {saving ? t('common.saving', 'Saving...') : t('common.save_settings', 'Save Settings')}
         </Button>
       </CardContent>
     </Card>

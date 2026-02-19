@@ -6,6 +6,7 @@ import {
   User, Church, Award
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileBasicsProps {
   details: {
@@ -29,13 +30,14 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
   isMobile,
   onFieldEdit
 }) => {
+  const { t } = useTranslations();
   const heightDisplay = details.height?.includes('cm') ? details.height : `${details.height} cm`;
 
   return (
     <div className="space-y-1 py-4">
       <DetailItem 
         icon={<User size={18} />} 
-        label="Height"
+        label={t('profile.height', 'Height')}
         value={heightDisplay}
         editable={!!onFieldEdit}
         fieldKey="height"
@@ -46,23 +48,38 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
       <Separator />
       <DetailItem 
         icon={<User size={18} />} 
-        label="Body Type"
+        label={t('profile.body_type', 'Body Type')}
         value={details.bodyType}
         editable={!!onFieldEdit}
         fieldKey="bodyType"
         fieldType="select"
-        fieldOptions={["Slim", "Athletic", "Average", "Curvy", "Plus-size"]}
+        fieldOptions={[
+          t('profile.slim', 'Slim'),
+          t('profile.athletic', 'Athletic'),
+          t('profile.average', 'Average'),
+          t('profile.curvy', 'Curvy'),
+          t('profile.plus_size', 'Plus-size')
+        ]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
       <DetailItem 
         icon={<User size={18} />} 
-        label="Ethnicity"
+        label={t('profile.ethnicity', 'Ethnicity')}
         value={details.ethnicity}
         editable={!!onFieldEdit}
         fieldKey="ethnicity"
         fieldType="select"
-        fieldOptions={["Kurdish", "Middle Eastern", "European", "Asian", "African", "Latin American", "Mixed", "Other"]}
+        fieldOptions={[
+          t('profile.kurdish', 'Kurdish'),
+          t('profile.middle_eastern', 'Middle Eastern'),
+          t('profile.european', 'European'),
+          t('profile.asian', 'Asian'),
+          t('profile.african', 'African'),
+          t('profile.latin_american', 'Latin American'),
+          t('profile.mixed', 'Mixed'),
+          t('profile.other', 'Other')
+        ]}
         onFieldEdit={onFieldEdit}
       />
       
@@ -70,23 +87,39 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
       
       <DetailItem 
         icon={<Church size={18} />} 
-        label="Religion"
+        label={t('profile.religion', 'Religion')}
         value={details.religion}
         editable={!!onFieldEdit}
         fieldKey="religion"
         fieldType="select"
-        fieldOptions={["Islam", "Christianity", "Judaism", "Yazidism", "Zoroastrianism", "Other", "Not religious"]}
+        fieldOptions={[
+          t('profile.islam', 'Islam'),
+          t('profile.christianity', 'Christianity'),
+          t('profile.judaism', 'Judaism'),
+          t('profile.yazidism', 'Yazidism'),
+          t('profile.zoroastrianism', 'Zoroastrianism'),
+          t('profile.other', 'Other'),
+          t('profile.not_religious', 'Not religious')
+        ]}
         onFieldEdit={onFieldEdit}
       />
       <Separator />
       <DetailItem 
         icon={<Church size={18} />} 
-        label="Political Views"
+        label={t('profile.political_views', 'Political Views')}
         value={details.politicalViews}
         editable={!!onFieldEdit}
         fieldKey="politicalViews"
         fieldType="select"
-        fieldOptions={["Liberal", "Conservative", "Moderate", "Progressive", "Libertarian", "Apolitical", "Other"]}
+        fieldOptions={[
+          t('profile.liberal', 'Liberal'),
+          t('profile.conservative', 'Conservative'),
+          t('profile.moderate', 'Moderate'),
+          t('profile.progressive', 'Progressive'),
+          t('profile.libertarian', 'Libertarian'),
+          t('profile.apolitical', 'Apolitical'),
+          t('profile.other', 'Other')
+        ]}
         onFieldEdit={onFieldEdit}
       />
       
@@ -94,11 +127,22 @@ const ProfileBasics: React.FC<ProfileBasicsProps> = ({
       
       <DetailItem 
         icon={<Award size={18} />} 
-        label="Values" 
+        label={t('profile.values', 'Values')}
         editable={!!onFieldEdit}
         fieldKey="values"
         fieldType="multi-select"
-        fieldOptions={["Family", "Honesty", "Loyalty", "Ambition", "Kindness", "Faith", "Freedom", "Education", "Tradition", "Equality"]}
+        fieldOptions={[
+          t('profile.family', 'Family'),
+          t('profile.honesty', 'Honesty'),
+          t('profile.loyalty', 'Loyalty'),
+          t('profile.ambition', 'Ambition'),
+          t('profile.kindness', 'Kindness'),
+          t('profile.faith', 'Faith'),
+          t('profile.freedom', 'Freedom'),
+          t('profile.education', 'Education'),
+          t('profile.tradition', 'Tradition'),
+          t('profile.equality', 'Equality')
+        ]}
         onFieldEdit={onFieldEdit}
         value={
           <div className="flex flex-wrap gap-2 mt-1">

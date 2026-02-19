@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Label } from '@/components/ui/label';
 import { Briefcase, ChevronsUpDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface OccupationSelectorProps {
   value?: string;
@@ -55,12 +56,11 @@ const occupations = [
 ];
 
 const OccupationSelector = ({ value, onChange }: OccupationSelectorProps) => {
+  const { t } = useTranslations();
   const [open, setOpen] = useState(false);
 
-  // Ensure value is always a string
   const currentValue = value || '';
 
-  // Safely flatten occupations array with defensive checks
   const allOccupations = occupations && occupations.length > 0 
     ? occupations.flatMap(category => 
         category && category.jobs && Array.isArray(category.jobs)
@@ -81,7 +81,7 @@ const OccupationSelector = ({ value, onChange }: OccupationSelectorProps) => {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Briefcase className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Occupation</Label>
+        <Label className="text-white">{t('profile.occupation', 'Occupation')}</Label>
       </div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -91,17 +91,17 @@ const OccupationSelector = ({ value, onChange }: OccupationSelectorProps) => {
             aria-expanded={open}
             className="w-full justify-between bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
           >
-            {selectedOccupation ? selectedOccupation.name : "Select occupation..."}
+            {selectedOccupation ? selectedOccupation.name : t('profile.select_occupation', 'Select occupation...')}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0 bg-gray-900 border-gray-700">
           <Command>
             <CommandInput 
-              placeholder="Search occupations..." 
+              placeholder={t('profile.search_occupations', 'Search occupations...')}
               className="text-white"
             />
-            <CommandEmpty>No occupation found.</CommandEmpty>
+            <CommandEmpty>{t('profile.no_occupation_found', 'No occupation found.')}</CommandEmpty>
             <div className="max-h-60 overflow-auto">
               {occupations && occupations.length > 0 && occupations.map((category) => (
                 category && category.category && category.jobs && Array.isArray(category.jobs) ? (
