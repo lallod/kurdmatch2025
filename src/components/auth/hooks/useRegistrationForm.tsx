@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from '@/hooks/useTranslations';
 import { useToast } from '@/hooks/use-toast';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { createDynamicSchema } from '../utils/formSchema';
@@ -16,6 +17,7 @@ import { getFormDefaultValues } from '../utils/formDefaultValues';
 
 export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any[]) => {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const { signUp } = useSupabaseAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,8 +69,8 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
       if (photoErrors.length > 0) {
         console.warn('Photo upload errors:', photoErrors);
         toast({
-          title: "Photo Upload Warning",
-          description: `${photoErrors.length} photo(s) failed to upload. Your profile was still created successfully.`,
+          title: t('reg.photo_upload_warning', 'Photo Upload Warning'),
+          description: t('reg.photos_failed_profile_created', `${photoErrors.length} photo(s) failed to upload. Your profile was still created successfully.`),
         });
       }
 
@@ -118,14 +120,14 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
 
       if (isOAuthUser) {
         toast({
-          title: "Profile Complete!",
-          description: "Your profile has been completed successfully.",
+          title: t('reg.profile_complete', 'Profile Complete!'),
+          description: t('reg.profile_completed_successfully', 'Your profile has been completed successfully.'),
         });
         navigate('/discovery');
       } else {
         toast({
-          title: "Success!",
-          description: "Your account has been created. Please check your email to verify your account before logging in.",
+          title: t('common.success', 'Success!'),
+          description: t('reg.check_email_verify', 'Your account has been created. Please check your email to verify your account before logging in.'),
         });
         navigate('/auth');
       }
@@ -133,8 +135,8 @@ export const useRegistrationForm = (enabledQuestions: QuestionItem[], steps: any
     } catch (error: any) {
       console.error('Registration error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to create account. Please try again.",
+        title: t('common.error', 'Error'),
+        description: error.message || t('reg.failed_create_account', 'Failed to create account. Please try again.'),
         variant: "destructive",
       });
     } finally {

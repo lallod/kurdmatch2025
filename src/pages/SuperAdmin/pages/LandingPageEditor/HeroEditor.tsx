@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { HeroContent } from './types';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface HeroEditorProps {
   hero: HeroContent;
@@ -19,32 +20,33 @@ interface HeroEditorProps {
 }
 
 const HeroEditor: React.FC<HeroEditorProps> = ({ hero, updateHero }) => {
+  const { t } = useTranslations();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <PenLine className="h-5 w-5" />
-          Hero Section Content
+          {t('admin.hero_section_content', 'Hero Section Content')}
         </CardTitle>
         <CardDescription>
-          Edit the main content displayed in the hero section at the top of the landing page
+          {t('admin.hero_section_desc', 'Edit the main content displayed in the hero section at the top of the landing page')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="hero-tagline">Tagline</Label>
+          <Label htmlFor="hero-tagline">{t('admin.tagline', 'Tagline')}</Label>
           <Input 
             id="hero-tagline" 
             value={hero.tagline} 
             onChange={(e) => updateHero('tagline', e.target.value)}
           />
           <p className="text-xs text-muted-foreground">
-            Short tagline displayed above the main title
+            {t('admin.tagline_desc', 'Short tagline displayed above the main title')}
           </p>
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="hero-title">Main Title</Label>
+          <Label htmlFor="hero-title">{t('admin.main_title', 'Main Title')}</Label>
           <Input 
             id="hero-title" 
             value={hero.title} 
@@ -53,7 +55,7 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ hero, updateHero }) => {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="hero-subtitle">Subtitle</Label>
+          <Label htmlFor="hero-subtitle">{t('admin.subtitle', 'Subtitle')}</Label>
           <Textarea 
             id="hero-subtitle" 
             value={hero.subtitle} 
@@ -63,14 +65,14 @@ const HeroEditor: React.FC<HeroEditorProps> = ({ hero, updateHero }) => {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="hero-user-count">User Count</Label>
+          <Label htmlFor="hero-user-count">{t('admin.user_count', 'User Count')}</Label>
           <Input 
             id="hero-user-count" 
             value={hero.userCount} 
             onChange={(e) => updateHero('userCount', e.target.value)}
           />
           <p className="text-xs text-muted-foreground">
-            Number of users shown on the counter (e.g., "10,000+")
+            {t('admin.user_count_desc', 'Number of users shown on the counter (e.g., "10,000+")')}
           </p>
         </div>
       </CardContent>

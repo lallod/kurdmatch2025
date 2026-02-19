@@ -79,7 +79,7 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
 
   const steps = [
     {
-      title: "About You",
+      title: t('wizard.about_you', 'About You'),
       component: Step1AboutYou,
       validate: (data: WizardData) => {
         return !!(data.height || data.ethnicity || data.kurdistan_region || (data.languages && data.languages.length > 0));
@@ -190,8 +190,8 @@ export const ProfileCompletionWizard: React.FC<ProfileCompletionWizardProps> = (
       onComplete();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save your profile. Please try again.",
+        title: t('common.error', 'Error'),
+        description: t('wizard.save_failed', 'Failed to save your profile. Please try again.'),
         variant: "destructive",
       });
     } finally {
