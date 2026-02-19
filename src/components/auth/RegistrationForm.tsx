@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useTranslations } from '@/hooks/useTranslations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,6 +61,7 @@ type RegistrationFormValues = z.infer<typeof registrationSchema>;
 
 const RegistrationForm = () => {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [step, setStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   
@@ -84,9 +86,9 @@ const RegistrationForm = () => {
   const isSubmitting = formState.isSubmitting;
 
   const steps = [
-    { title: "Account", fields: ["email", "password", "confirmPassword"] },
-    { title: "Personal", fields: ["firstName", "lastName", "dateOfBirth", "location"] },
-    { title: "Profile", fields: ["occupation", "aboutMe", "termsAccepted"] },
+    { title: t('reg.step_account', 'Account'), fields: ["email", "password", "confirmPassword"] },
+    { title: t('reg.step_personal', 'Personal'), fields: ["firstName", "lastName", "dateOfBirth", "location"] },
+    { title: t('reg.step_profile', 'Profile'), fields: ["occupation", "aboutMe", "termsAccepted"] },
   ];
 
   const validateStep = async (stepIndex: number) => {
@@ -124,16 +126,16 @@ const RegistrationForm = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
-        title: "Success!",
-        description: "Your account has been created successfully.",
+        title: t('common.success', 'Success!'),
+        description: t('reg.account_created', 'Your account has been created successfully.'),
       });
 
       // In a real app, redirect to login page or dashboard after successful registration
     } catch (error) {
       console.error('Registration error:', error);
       toast({
-        title: "Error",
-        description: "Failed to create account. Please try again.",
+        title: t('common.error', 'Error'),
+        description: t('reg.create_failed', 'Failed to create account. Please try again.'),
         variant: "destructive",
       });
     }
@@ -179,7 +181,7 @@ const RegistrationForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <SecureInput
-                    label="Email"
+                    label={t('reg.email', 'Email')}
                     value={field.value}
                     onChange={field.onChange}
                     type="email"
@@ -198,12 +200,12 @@ const RegistrationForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('reg.password', 'Password')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
-                        placeholder="Create a strong password" 
+                        placeholder={t('reg.create_password', 'Create a strong password')} 
                         className="pl-10" 
                         type="password"
                         {...field} 
@@ -211,7 +213,7 @@ const RegistrationForm = () => {
                     </div>
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number
+                    {t('reg.password_requirements', 'Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -223,12 +225,12 @@ const RegistrationForm = () => {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>{t('reg.confirm_password', 'Confirm Password')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
-                        placeholder="Confirm your password" 
+                        placeholder={t('reg.confirm_password_placeholder', 'Confirm your password')} 
                         className="pl-10" 
                         type="password"
                         {...field} 
@@ -250,7 +252,7 @@ const RegistrationForm = () => {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>{t('reg.first_name', 'First Name')}</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -271,7 +273,7 @@ const RegistrationForm = () => {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>{t('reg.last_name', 'Last Name')}</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Doe" 
@@ -289,7 +291,7 @@ const RegistrationForm = () => {
               name="dateOfBirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
+                  <FormLabel>{t('reg.date_of_birth', 'Date of Birth')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -301,7 +303,7 @@ const RegistrationForm = () => {
                     </div>
                   </FormControl>
                   <FormDescription className="text-xs">
-                    You must be at least 18 years old to register
+                    {t('reg.age_requirement', 'You must be at least 18 years old to register')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -313,12 +315,12 @@ const RegistrationForm = () => {
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Location</FormLabel>
+                  <FormLabel>{t('reg.location', 'Location')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
-                        placeholder="City, Country" 
+                        placeholder={t('reg.location_placeholder', 'City, Country')}
                         className="pl-10" 
                         {...field} 
                       />
@@ -338,12 +340,12 @@ const RegistrationForm = () => {
               name="occupation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Occupation</FormLabel>
+                  <FormLabel>{t('reg.occupation', 'Occupation')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Briefcase className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
-                        placeholder="Software Engineer, Doctor, Artist, etc." 
+                        placeholder={t('reg.occupation_placeholder', 'Software Engineer, Doctor, Artist, etc.')} 
                         className="pl-10" 
                         {...field} 
                       />
@@ -360,11 +362,11 @@ const RegistrationForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <SecureTextArea
-                    label="About Me"
+                    label={t('reg.about_me', 'About Me')}
                     value={field.value || ''}
                     onChange={field.onChange}
                     maxLength={MAX_LENGTHS.BIO}
-                    placeholder="Tell us a bit about yourself..."
+                    placeholder={t('reg.about_me_placeholder', 'Tell us a bit about yourself...')}
                     sanitizationLevel="basic"
                     showCharCount
                     error={form.formState.errors.aboutMe?.message}
@@ -388,7 +390,7 @@ const RegistrationForm = () => {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="text-sm">
-                      I agree to the Terms of Service and Privacy Policy
+                      {t('reg.agree_terms', 'I agree to the Terms of Service and Privacy Policy')}
                     </FormLabel>
                     <FormMessage />
                   </div>
@@ -418,7 +420,7 @@ const RegistrationForm = () => {
               className="gap-2"
             >
               <ChevronLeft size={16} />
-              Back
+              {t('common.back', 'Back')}
             </Button>
           ) : (
             <div></div>
@@ -430,7 +432,7 @@ const RegistrationForm = () => {
               onClick={nextStep}
               className="gap-2"
             >
-              Next
+              {t('common.next', 'Next')}
               <ChevronRight size={16} />
             </Button>
           ) : (
@@ -442,10 +444,10 @@ const RegistrationForm = () => {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Creating Account...
+                  {t('reg.creating_account', 'Creating Account...')}
                 </>
               ) : (
-                "Create Account"
+                t('reg.create_account', 'Create Account')
               )}
             </Button>
           )}
