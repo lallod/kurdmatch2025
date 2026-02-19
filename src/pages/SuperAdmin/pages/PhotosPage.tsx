@@ -8,8 +8,10 @@ import { Search, Eye, Trash2, CheckCircle, XCircle, Image as ImageIcon, RefreshC
 import { format } from 'date-fns';
 import { useAdminPhotos } from '../hooks/useAdminPhotos';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const PhotosPage = () => {
+  const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,12 +54,12 @@ const PhotosPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-white">Photo Management</h1>
-          <p className="text-white/60 mt-1">Manage and moderate user photos</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.photo_management', 'Photo Management')}</h1>
+          <p className="text-white/60 mt-1">{t('admin.manage_moderate_photos', 'Manage and moderate user photos')}</p>
         </div>
         <Button onClick={handleRefresh} variant="outline" size="sm" disabled={loading}>
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
+          {t('common.refresh', 'Refresh')}
         </Button>
       </div>
 
@@ -65,7 +67,7 @@ const PhotosPage = () => {
         <CardContent className="pt-6">
           <div className="flex gap-2 mb-6">
             <Input
-              placeholder="Search by user name..."
+              placeholder={t('admin.search_by_user', 'Search by user name...')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -73,17 +75,17 @@ const PhotosPage = () => {
             />
             <Button onClick={handleSearch} disabled={loading}>
               <Search className="h-4 w-4 mr-2" />
-              Search
+              {t('common.search', 'Search')}
             </Button>
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-white/60">Loading photos...</div>
+            <div className="text-center py-12 text-white/60">{t('admin.loading_photos', 'Loading photos...')}</div>
           ) : filteredPhotos.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-white/60">
               <ImageIcon size={48} className="mb-4 opacity-20" />
-              <h3 className="text-lg font-medium">No photos found</h3>
-              <p className="text-sm">Try adjusting your search query</p>
+              <h3 className="text-lg font-medium">{t('admin.no_photos_found', 'No photos found')}</h3>
+              <p className="text-sm">{t('admin.adjust_search', 'Try adjusting your search query')}</p>
             </div>
           ) : (
             <>
@@ -96,7 +98,7 @@ const PhotosPage = () => {
                     <div className="h-48 relative overflow-hidden">
                       <img 
                         src={photo.url} 
-                        alt={`Photo by ${photo.profile?.name || 'User'}`}
+                        alt={`Photo by ${photo.profile?.name || t('admin.unknown_user', 'User')}`}
                         className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                         onClick={() => setSelectedPhoto(photo)}
                       />
@@ -104,13 +106,13 @@ const PhotosPage = () => {
                     <div className="p-3 flex-1 flex flex-col">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h3 className="font-medium text-sm text-white">{photo.profile?.name || 'Unknown User'}</h3>
+                          <h3 className="font-medium text-sm text-white">{photo.profile?.name || t('admin.unknown_user', 'Unknown User')}</h3>
                           <p className="text-xs text-white/40">
                             {format(new Date(photo.created_at), 'MMM dd, yyyy')}
                           </p>
                         </div>
                         {photo.is_primary && (
-                          <Badge className="bg-blue-500/20 text-blue-300 text-xs">Primary</Badge>
+                          <Badge className="bg-blue-500/20 text-blue-300 text-xs">{t('admin.primary', 'Primary')}</Badge>
                         )}
                       </div>
                       
@@ -121,7 +123,7 @@ const PhotosPage = () => {
                           className="flex-1 text-white/80 hover:text-white hover:bg-white/10"
                           onClick={() => setSelectedPhoto(photo)}
                         >
-                          <Eye size={14} className="mr-1" /> View
+                          <Eye size={14} className="mr-1" /> {t('admin.view', 'View')}
                         </Button>
                         <Button 
                           variant="outline" 
@@ -141,7 +143,7 @@ const PhotosPage = () => {
               {/* Pagination */}
               <div className="flex items-center justify-between mt-6">
                 <p className="text-sm text-white/60">
-                  Showing {filteredPhotos.length} of {totalCount} photos (Page {currentPage} of {totalPages})
+                  {filteredPhotos.length} / {totalCount} ({currentPage} / {totalPages})
                 </p>
                 <div className="flex gap-2">
                   <Button 
@@ -150,7 +152,7 @@ const PhotosPage = () => {
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                     disabled={currentPage === 1 || loading}
                   >
-                    Previous
+                    {t('common.previous', 'Previous')}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -158,7 +160,7 @@ const PhotosPage = () => {
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages || loading}
                   >
-                    Next
+                    {t('common.next', 'Next')}
                   </Button>
                 </div>
               </div>
@@ -171,7 +173,7 @@ const PhotosPage = () => {
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
         <DialogContent className="max-w-3xl bg-[#141414] border-white/10 text-white">
           <DialogHeader>
-            <DialogTitle className="text-white">Photo Details</DialogTitle>
+            <DialogTitle className="text-white">{t('admin.photo_details', 'Photo Details')}</DialogTitle>
           </DialogHeader>
           
           {selectedPhoto && (
@@ -179,38 +181,38 @@ const PhotosPage = () => {
               <div className="rounded-md overflow-hidden border border-white/10">
                 <img 
                   src={selectedPhoto.url} 
-                  alt={`Photo by ${selectedPhoto.profile?.name || 'User'}`}
+                  alt={`Photo by ${selectedPhoto.profile?.name || t('admin.unknown_user', 'User')}`}
                   className="w-full h-auto"
                 />
               </div>
               
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-medium text-white/60">Photo Information</h3>
+                  <h3 className="text-sm font-medium text-white/60">{t('admin.photo_information', 'Photo Information')}</h3>
                   <div className="mt-2 space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-white/80">User:</span>
-                      <span className="text-sm text-white">{selectedPhoto.profile?.name || 'Unknown'}</span>
+                      <span className="text-sm font-medium text-white/80">{t('admin.user_label', 'User:')}</span>
+                      <span className="text-sm text-white">{selectedPhoto.profile?.name || t('admin.unknown_user', 'Unknown')}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-white/80">Upload Date:</span>
+                      <span className="text-sm font-medium text-white/80">{t('admin.upload_date', 'Upload Date:')}</span>
                       <span className="text-sm text-white">
                         {format(new Date(selectedPhoto.created_at), 'MMM dd, yyyy HH:mm')}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-white/80">Status:</span>
+                      <span className="text-sm font-medium text-white/80">{t('common.status', 'Status:')}</span>
                       {selectedPhoto.is_primary ? (
-                        <Badge className="bg-blue-500/20 text-blue-300">Primary Photo</Badge>
+                        <Badge className="bg-blue-500/20 text-blue-300">{t('admin.primary_photo', 'Primary Photo')}</Badge>
                       ) : (
-                        <Badge className="bg-white/10 text-white/80">Additional Photo</Badge>
+                        <Badge className="bg-white/10 text-white/80">{t('admin.additional_photo', 'Additional Photo')}</Badge>
                       )}
                     </div>
                   </div>
                 </div>
                 
                 <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-white/60">Actions</h3>
+                  <h3 className="text-sm font-medium text-white/60">{t('common.actions', 'Actions')}</h3>
                   <Button 
                     className="w-full" 
                     variant="destructive"
@@ -218,7 +220,7 @@ const PhotosPage = () => {
                     disabled={loading}
                   >
                     <Trash2 size={16} className="mr-2" />
-                    Delete Photo
+                    {t('admin.delete_photo', 'Delete Photo')}
                   </Button>
                 </div>
               </div>
@@ -227,7 +229,7 @@ const PhotosPage = () => {
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setSelectedPhoto(null)}>
-              Close
+              {t('common.close', 'Close')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Eye, Trash } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface RolesTableProps {
   roles: Role[];
@@ -21,16 +22,17 @@ interface RolesTableProps {
 }
 
 const RolesTable: React.FC<RolesTableProps> = ({ roles, onViewRole, onDeleteRole }) => {
+  const { t } = useTranslations();
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Role Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Users</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('admin.role_name_header', 'Role Name')}</TableHead>
+            <TableHead>{t('admin.description', 'Description')}</TableHead>
+            <TableHead>{t('admin.users', 'Users')}</TableHead>
+            <TableHead>{t('admin.type', 'Type')}</TableHead>
+            <TableHead className="text-right">{t('common.actions', 'Actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,7 +49,7 @@ const RolesTable: React.FC<RolesTableProps> = ({ roles, onViewRole, onDeleteRole
                 <TableCell>{role.userCount}</TableCell>
                 <TableCell>
                   <Badge variant={role.isSystem ? "outline" : "default"}>
-                    {role.isSystem ? 'System' : 'Custom'}
+                    {role.isSystem ? t('admin.system', 'System') : t('admin.custom', 'Custom')}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
@@ -59,7 +61,7 @@ const RolesTable: React.FC<RolesTableProps> = ({ roles, onViewRole, onDeleteRole
                       onClick={() => onViewRole(role)}
                     >
                       <Eye size={16} />
-                      View
+                      {t('admin.view', 'View')}
                     </Button>
                     {!role.isSystem && (
                       <Button 
@@ -69,7 +71,7 @@ const RolesTable: React.FC<RolesTableProps> = ({ roles, onViewRole, onDeleteRole
                         onClick={() => onDeleteRole(role.id)}
                       >
                         <Trash size={16} />
-                        Delete
+                        {t('admin.delete', 'Delete')}
                       </Button>
                     )}
                   </div>
@@ -79,7 +81,7 @@ const RolesTable: React.FC<RolesTableProps> = ({ roles, onViewRole, onDeleteRole
           ) : (
             <TableRow>
               <TableCell colSpan={5} className="text-center py-6">
-                No roles found
+                {t('admin.no_roles_found', 'No roles found')}
               </TableCell>
             </TableRow>
           )}

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { comprehensiveTestDataCleanup } from '@/utils/comprehensiveDataCleanup';
 import { Loader2, Trash2, Users, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface AddUserDialogProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface AddUserDialogProps {
 }
 
 const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUserAdded }) => {
+  const { t } = useTranslations();
   const [isCleaningUp, setIsCleaningUp] = useState(false);
   
 
@@ -23,7 +25,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
       const result = await comprehensiveTestDataCleanup();
       if (result.success) {
         toast.success("All test data has been removed. Only real users will be shown.");
-        onUserAdded(); // Refresh the user list
+        onUserAdded();
         onOpenChange(false);
       } else {
         toast.error(result.error || "Failed to clean up test data");
@@ -39,19 +41,18 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>User Management</DialogTitle>
+          <DialogTitle>{t('admin.user_management', 'User Management')}</DialogTitle>
           <DialogDescription>
-            Manage real user data and clean up any test/generated content.
+            {t('admin.real_users_dialog_desc', 'Manage real user data and clean up any test/generated content.')}
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
           <Alert>
             <Users className="h-4 w-4" />
-            <AlertTitle>Real Users Only</AlertTitle>
+            <AlertTitle>{t('admin.real_users_only', 'Real Users Only')}</AlertTitle>
             <AlertDescription>
-              This system now only shows real users who registered through the normal app registration process. 
-              All profile generation features have been disabled to ensure data authenticity.
+              {t('admin.real_users_dialog_desc', 'This system now only shows real users who registered through the normal app registration process. All profile generation features have been disabled to ensure data authenticity.')}
             </AlertDescription>
           </Alert>
 
@@ -59,11 +60,10 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
             <div className="border rounded-lg p-4">
               <h3 className="font-medium mb-2 flex items-center gap-2">
                 <Trash2 className="h-4 w-4" />
-                Clean Up Test Data
+                {t('admin.clean_up_test_data', 'Clean Up Test Data')}
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                Remove all automatically generated profiles, mock engagement data, and test content from the database.
-                This will only keep real users who registered through your app.
+                {t('admin.clean_up_desc', 'Remove all automatically generated profiles, mock engagement data, and test content from the database. This will only keep real users who registered through your app.')}
               </p>
               <Button 
                 onClick={handleCleanupTestData}
@@ -74,12 +74,12 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
                 {isCleaningUp ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Cleaning Up Test Data...
+                    {t('admin.cleaning_up', 'Cleaning Up Test Data...')}
                   </>
                 ) : (
                   <>
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Clean Up All Test Data
+                    {t('admin.clean_up_all', 'Clean Up All Test Data')}
                   </>
                 )}
               </Button>
@@ -87,10 +87,9 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onOpenChange, onUse
 
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>How to Add Real Users</AlertTitle>
+              <AlertTitle>{t('admin.how_to_add_real_users', 'How to Add Real Users')}</AlertTitle>
               <AlertDescription>
-                To see users in this admin panel, they need to register through your app's normal registration flow at /register. 
-                Test this by creating accounts through the regular user registration process.
+                {t('admin.how_to_add_desc', 'To see users in this admin panel, they need to register through your app\'s normal registration flow at /register. Test this by creating accounts through the regular user registration process.')}
               </AlertDescription>
             </Alert>
           </div>
