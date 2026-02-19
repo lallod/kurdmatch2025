@@ -54,9 +54,9 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="bg-card border-border">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-foreground">Delete Post</AlertDialogTitle>
+          <AlertDialogTitle className="text-foreground">{t('delete_post.title', 'Delete Post')}</AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground">
-            Are you sure you want to delete this post? This action cannot be undone.
+            {t('delete_post.description', 'Are you sure you want to delete this post? This action cannot be undone.')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -64,7 +64,7 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
             disabled={isDeleting}
             className="bg-accent/10 border-border text-foreground hover:bg-accent/20"
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
@@ -72,7 +72,7 @@ const DeletePostDialog: React.FC<DeletePostDialogProps> = ({
             className="bg-red-500 hover:bg-red-600 text-white"
           >
             {isDeleting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Delete
+            {t('common.delete', 'Delete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

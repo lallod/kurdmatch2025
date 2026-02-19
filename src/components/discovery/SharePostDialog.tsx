@@ -61,65 +61,59 @@ export const SharePostDialog: React.FC<SharePostDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Share2 className="w-5 h-5" />
-            Share Post
+            {t('share.title', 'Share Post')}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3">
-          {/* Copy Link */}
           <Button
             variant="outline"
             className="w-full justify-start gap-3"
             onClick={handleCopyLink}
           >
             <Copy className="w-5 h-5" />
-            Copy Link
+            {t('share.copy_link', 'Copy Link')}
           </Button>
 
-          {/* WhatsApp */}
           <Button
             variant="outline"
             className="w-full justify-start gap-3"
             onClick={() => handleShareVia('whatsapp')}
           >
             <MessageCircle className="w-5 h-5 text-green-500" />
-            Share via WhatsApp
+            {t('share.whatsapp', 'Share via WhatsApp')}
           </Button>
 
-          {/* Facebook */}
           <Button
             variant="outline"
             className="w-full justify-start gap-3"
             onClick={() => handleShareVia('facebook')}
           >
             <Facebook className="w-5 h-5 text-blue-600" />
-            Share on Facebook
+            {t('share.facebook', 'Share on Facebook')}
           </Button>
 
-          {/* Twitter */}
           <Button
             variant="outline"
             className="w-full justify-start gap-3"
             onClick={() => handleShareVia('twitter')}
           >
             <Twitter className="w-5 h-5 text-sky-500" />
-            Share on Twitter
+            {t('share.twitter', 'Share on Twitter')}
           </Button>
 
-          {/* Email */}
           <Button
             variant="outline"
             className="w-full justify-start gap-3"
             onClick={() => handleShareVia('email')}
           >
             <Mail className="w-5 h-5" />
-            Share via Email
+            {t('share.email', 'Share via Email')}
           </Button>
         </div>
 
-        {/* Share URL Display */}
         <div className="mt-4 p-3 bg-muted rounded-lg">
-          <p className="text-sm text-muted-foreground mb-2">Post URL:</p>
+          <p className="text-sm text-muted-foreground mb-2">{t('share.post_url', 'Post URL:')}</p>
           <div className="flex items-center gap-2">
             <div className="flex-1 bg-background px-3 py-2 rounded border text-sm truncate">
               {shareUrl}

@@ -31,7 +31,7 @@ export const VerificationForm = () => {
   const handleSubmit = async () => {
     if (!previewImage) {
       toast({
-        title: 'Error',
+        title: t('common.error', 'Error'),
         description: t('verification.error_no_image', 'Please capture or upload an image first'),
         variant: 'destructive',
       });
@@ -52,13 +52,13 @@ export const VerificationForm = () => {
 
       setIsSubmitted(true);
       toast({
-        title: 'Success',
+        title: t('common.success', 'Success'),
         description: t('verification.success_msg', 'Verification request submitted successfully. We will review it shortly.'),
       });
     } catch (error) {
       console.error('Error submitting verification:', error);
       toast({
-        title: 'Error',
+        title: t('common.error', 'Error'),
         description: t('verification.error_submit', 'Failed to submit verification request'),
         variant: 'destructive',
       });
@@ -183,17 +183,17 @@ export const VerificationForm = () => {
                 <ul className="list-disc list-inside space-y-1 text-sm">
                   {verificationType === 'selfie' ? (
                     <>
-                      <li>Make sure your face is clearly visible</li>
-                      <li>Use good lighting</li>
-                      <li>Remove sunglasses or masks</li>
-                      <li>Look directly at the camera</li>
+                      <li>{t('verification.guideline_face', 'Make sure your face is clearly visible')}</li>
+                      <li>{t('verification.guideline_lighting', 'Use good lighting')}</li>
+                      <li>{t('verification.guideline_no_glasses', 'Remove sunglasses or masks')}</li>
+                      <li>{t('verification.guideline_camera', 'Look directly at the camera')}</li>
                     </>
                   ) : (
                     <>
-                      <li>ID must be valid and not expired</li>
-                      <li>All text should be clearly readable</li>
-                      <li>No glare or shadows on the document</li>
-                      <li>Photo should be original (not a photocopy)</li>
+                      <li>{t('verification.guideline_valid_id', 'ID must be valid and not expired')}</li>
+                      <li>{t('verification.guideline_readable', 'All text should be clearly readable')}</li>
+                      <li>{t('verification.guideline_no_glare', 'No glare or shadows on the document')}</li>
+                      <li>{t('verification.guideline_original', 'Photo should be original (not a photocopy)')}</li>
                     </>
                   )}
                 </ul>

@@ -76,13 +76,13 @@ const RegistrationQuestionsPage = () => {
             <CardContent>
               <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid grid-cols-7 mb-4">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="basic">Basics</TabsTrigger>
-                  <TabsTrigger value="lifestyle">Lifestyle</TabsTrigger>
-                  <TabsTrigger value="beliefs">Beliefs</TabsTrigger>
-                  <TabsTrigger value="relationships">Relationships</TabsTrigger>
-                  <TabsTrigger value="personality">Personality</TabsTrigger>
-                  <TabsTrigger value="interests">Interests</TabsTrigger>
+                  <TabsTrigger value="all">{t('common.all', 'All')}</TabsTrigger>
+                  <TabsTrigger value="basic">{t('admin.basics', 'Basics')}</TabsTrigger>
+                  <TabsTrigger value="lifestyle">{t('admin.lifestyle', 'Lifestyle')}</TabsTrigger>
+                  <TabsTrigger value="beliefs">{t('admin.beliefs', 'Beliefs')}</TabsTrigger>
+                  <TabsTrigger value="relationships">{t('admin.relationships', 'Relationships')}</TabsTrigger>
+                  <TabsTrigger value="personality">{t('admin.personality', 'Personality')}</TabsTrigger>
+                  <TabsTrigger value="interests">{t('admin.interests', 'Interests')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value={activeTab} className="space-y-4">

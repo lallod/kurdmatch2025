@@ -3,12 +3,14 @@ import { Search, TrendingUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { getTrendingHashtags, searchHashtags } from '@/api/hashtags';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const HashtagSearch = () => {
   const [trending, setTrending] = useState<any[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   useEffect(() => {
     loadTrendingHashtags();
@@ -50,7 +52,7 @@ export const HashtagSearch = () => {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Search hashtags..."
+          placeholder={t('hashtag.search_placeholder', 'Search hashtags...')}
           value={searchQuery}
           onChange={(e) => handleSearch(e.target.value)}
           className="pl-10 bg-background/50 backdrop-blur-sm"
@@ -61,7 +63,7 @@ export const HashtagSearch = () => {
         {!searchQuery && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
             <TrendingUp className="h-4 w-4" />
-            <span>Trending Hashtags</span>
+            <span>{t('hashtag.trending', 'Trending Hashtags')}</span>
           </div>
         )}
 

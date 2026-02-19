@@ -24,7 +24,7 @@ const UnmatchDialog = ({ open, onOpenChange, matchId, userName, onUnmatchSuccess
     try {
       const { error: matchError } = await supabase.from('matches').delete().eq('id', matchId);
       if (matchError) throw matchError;
-      toast.success(`You have unmatched with ${userName}`);
+      toast.success(t('toast.unmatch.success', 'You have unmatched with {{name}}', { name: userName }));
       onUnmatchSuccess();
       onOpenChange(false);
     } catch (error) {
@@ -44,18 +44,17 @@ const UnmatchDialog = ({ open, onOpenChange, matchId, userName, onUnmatchSuccess
               <AlertTriangle className="w-6 h-6 text-red-400" />
             </div>
             <AlertDialogTitle className="text-foreground text-xl">
-              Unmatch with {userName}?
+              {t('unmatch.title', 'Unmatch with {{name}}?', { name: userName })}
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-muted-foreground">
-            This action cannot be undone. You will no longer be able to message each other, 
-            and your conversation history will be lost. {userName} will not be notified.
+            {t('unmatch.description', 'This action cannot be undone. You will no longer be able to message each other, and your conversation history will be lost. {{name}} will not be notified.', { name: userName })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="gap-2 sm:gap-0">
-          <AlertDialogCancel className="bg-muted/50 border-border text-foreground hover:bg-muted" disabled={loading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="bg-muted/50 border-border text-foreground hover:bg-muted" disabled={loading}>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
           <AlertDialogAction onClick={handleUnmatch} disabled={loading} className="bg-red-500 hover:bg-red-600 text-white">
-            {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Unmatching...</>) : ('Unmatch')}
+            {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('unmatch.unmatching', 'Unmatching...')}</>) : (t('unmatch.unmatch', 'Unmatch'))}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

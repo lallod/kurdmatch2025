@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { X } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface AdvancedSearchFiltersProps {
   ageRange: [number, number];
@@ -35,10 +36,11 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
   onRegionChange,
   onClear,
 }) => {
+  const { t } = useTranslations();
   return (
     <div className="space-y-4 p-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg">
       <div className="flex items-center justify-between">
-        <h3 className="text-white font-semibold">Advanced Filters</h3>
+        <h3 className="text-white font-semibold">{t('search.advanced_filters', 'Advanced Filters')}</h3>
         <Button
           variant="ghost"
           size="sm"
@@ -46,7 +48,7 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
           className="text-white/70 hover:text-white hover:bg-white/10"
         >
           <X className="w-4 h-4 mr-1" />
-          Clear
+          {t('common.clear', 'Clear')}
         </Button>
       </div>
 
@@ -54,7 +56,7 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
         {/* Age Range */}
         <div className="space-y-2">
           <Label className="text-white text-sm">
-            Age Range: {ageRange[0]} - {ageRange[1]}
+            {t('search.age_range', 'Age Range')}: {ageRange[0]} - {ageRange[1]}
           </Label>
           <Slider
             min={18}
@@ -68,25 +70,25 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
 
         {/* Gender */}
         <div className="space-y-2">
-          <Label className="text-white text-sm">Gender</Label>
+          <Label className="text-white text-sm">{t('search.gender', 'Gender')}</Label>
           <Select value={gender} onValueChange={onGenderChange}>
             <SelectTrigger className="bg-white/10 border-white/20 text-white">
-              <SelectValue placeholder="Select gender" />
+              <SelectValue placeholder={t('search.select_gender', 'Select gender')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
+              <SelectItem value="all">{t('common.all', 'All')}</SelectItem>
+              <SelectItem value="male">{t('common.male', 'Male')}</SelectItem>
+              <SelectItem value="female">{t('common.female', 'Female')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Location */}
         <div className="space-y-2">
-          <Label className="text-white text-sm">Location</Label>
+          <Label className="text-white text-sm">{t('search.location', 'Location')}</Label>
           <Input
             type="text"
-            placeholder="Enter city or country"
+            placeholder={t('search.enter_city', 'Enter city or country')}
             value={location}
             onChange={(e) => onLocationChange(e.target.value)}
             className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
@@ -95,17 +97,17 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
 
         {/* Kurdistan Region */}
         <div className="space-y-2">
-          <Label className="text-white text-sm">Kurdistan Region</Label>
+          <Label className="text-white text-sm">{t('search.kurdistan_region', 'Kurdistan Region')}</Label>
           <Select value={region} onValueChange={onRegionChange}>
             <SelectTrigger className="bg-white/10 border-white/20 text-white">
-              <SelectValue placeholder="Select region" />
+              <SelectValue placeholder={t('search.select_region', 'Select region')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Regions</SelectItem>
-              <SelectItem value="South-Kurdistan">South-Kurdistan</SelectItem>
-              <SelectItem value="North-Kurdistan">North-Kurdistan</SelectItem>
-              <SelectItem value="East-Kurdistan">East-Kurdistan</SelectItem>
-              <SelectItem value="West-Kurdistan">West-Kurdistan</SelectItem>
+              <SelectItem value="all">{t('search.all_regions', 'All Regions')}</SelectItem>
+              <SelectItem value="South-Kurdistan">{t('region.south', 'South-Kurdistan')}</SelectItem>
+              <SelectItem value="North-Kurdistan">{t('region.north', 'North-Kurdistan')}</SelectItem>
+              <SelectItem value="East-Kurdistan">{t('region.east', 'East-Kurdistan')}</SelectItem>
+              <SelectItem value="West-Kurdistan">{t('region.west', 'West-Kurdistan')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
