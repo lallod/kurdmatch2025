@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { User, Wine, Star, Languages, BrainCircuit, Palette, Plane } from 'lucide-react';
@@ -13,6 +12,7 @@ import ProfilePersonality from './ProfilePersonality';
 import ProfileCreative from './ProfileCreative';
 import ProfileTravel from './ProfileTravel';
 import AccordionSection from './AccordionSection';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MobileProfileDetailsProps {
   details: any;
@@ -25,6 +25,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
   tinderBadgeStyle,
   formatList 
 }) => {
+  const { t } = useTranslations();
   return (
     <section className="w-full animate-fade-up px-4 pb-20">
       <ProfileBio about={details.about} isMobile={true} />
@@ -43,7 +44,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
       <Accordion type="multiple" defaultValue={["basics", "lifestyle", "interests", "more", "personality", "creatives", "travel"]} className="w-full space-y-4">
         <AccordionSection
           value="basics"
-          title="Basics"
+          title={t('profile.basics', 'Basics')}
           icon={<User />}
           color="text-tinder-rose"
           gradientClass="bg-gradient-to-r from-tinder-rose/5 to-transparent"
@@ -59,7 +60,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
         
         <AccordionSection
           value="lifestyle"
-          title="Lifestyle"
+          title={t('profile.lifestyle', 'Lifestyle')}
           icon={<Wine />}
           color="text-tinder-orange"
           gradientClass="bg-gradient-to-r from-tinder-orange/5 to-transparent"
@@ -74,7 +75,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
         
         <AccordionSection
           value="interests"
-          title="Interests & Hobbies"
+          title={t('profile.interests_hobbies', 'Interests & Hobbies')}
           icon={<Star />}
           color="text-tinder-orange"
           gradientClass="bg-gradient-to-r from-tinder-orange/5 to-transparent"
@@ -90,7 +91,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
         
         <AccordionSection
           value="more"
-          title="Communication"
+          title={t('profile.communication', 'Communication')}
           icon={<Languages />}
           color="text-tinder-rose"
           gradientClass="bg-gradient-to-r from-tinder-rose/5 to-transparent"
@@ -105,7 +106,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
         
         <AccordionSection
           value="personality"
-          title="Personality & Growth"
+          title={t('profile.personality_growth', 'Personality & Growth')}
           icon={<BrainCircuit />}
           color="text-purple-500"
           gradientClass="bg-gradient-to-r from-purple-100 to-transparent"
@@ -121,7 +122,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
         
         <AccordionSection
           value="creatives"
-          title="Creative & Lifestyle"
+          title={t('profile.creative_lifestyle', 'Creative & Lifestyle')}
           icon={<Palette />}
           color="text-pink-500"
           gradientClass="bg-gradient-to-r from-pink-100 to-transparent"
@@ -137,7 +138,7 @@ const MobileProfileDetails: React.FC<MobileProfileDetailsProps> = ({
         
         <AccordionSection
           value="travel"
-          title="Travel"
+          title={t('profile.travel', 'Travel')}
           icon={<Plane />}
           color="text-teal-600"
           gradientClass="bg-gradient-to-r from-teal-100 to-transparent"

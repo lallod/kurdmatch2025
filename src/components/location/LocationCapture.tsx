@@ -11,6 +11,7 @@ import {
   reverseGeocode,
   searchLocations,
 } from '@/utils/locationUtils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LocationCaptureProps {
   onLocationCapture: (coords: Coordinates, locationName: string) => void;
@@ -29,6 +30,7 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   // Debounced search
   useEffect(() => {
@@ -53,21 +55,18 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
     setIsDetecting(true);
     
     try {
-      // Try browser geolocation first
       const coords = await getCurrentLocation();
       setCoordinates(coords);
       
-      // Get location name
       const location = await reverseGeocode(coords.latitude, coords.longitude);
       setLocationName(location.display_name);
       onLocationCapture(coords, location.display_name);
       
       toast({
-        title: 'Location detected',
-        description: `Your location: ${location.display_name}`,
+        title: t('location.detected', 'Location detected'),
+        description: `${t('location.your_location', 'Your location')}: ${location.display_name}`,
       });
     } catch (error) {
-      // Fallback to IP-based location
       try {
         const coords = await getLocationFromIP();
         setCoordinates(coords);
@@ -77,13 +76,13 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
         onLocationCapture(coords, location.display_name);
         
         toast({
-          title: 'Location detected (approximate)',
-          description: `Based on your IP: ${location.display_name}`,
+          title: t('location.detected_approximate', 'Location detected (approximate)'),
+          description: `${t('location.based_on_ip', 'Based on your IP')}: ${location.display_name}`,
         });
       } catch (ipError) {
         toast({
-          title: 'Location detection failed',
-          description: 'Please select a city from the list',
+          title: t('location.detection_failed', 'Location detection failed'),
+          description: t('location.select_from_list', 'Please select a city from the list'),
           variant: 'destructive',
         });
       }
@@ -105,7 +104,7 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
     onLocationCapture(coords, location.display_name);
     
     toast({
-      title: 'Location set',
+      title: t('location.set', 'Location set'),
       description: location.display_name,
     });
   };
@@ -116,9 +115,9 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
         <div className="w-16 h-16 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
           <MapPin className="w-8 h-8 text-purple-400" />
         </div>
-        <h2 className="text-2xl font-bold text-white">Your Location</h2>
+        <h2 className="text-2xl font-bold text-white">{t('location.your_location_title', 'Your Location')}</h2>
         <p className="text-purple-200">
-          Help us find matches near you
+          {t('location.help_find_matches', 'Help us find matches near you')}
         </p>
       </div>
 
@@ -133,12 +132,12 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
           {isDetecting ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Detecting location...
+              {t('location.detecting', 'Detecting location...')}
             </>
           ) : (
             <>
               <Navigation className="w-4 h-4 mr-2" />
-              Use My Current Location
+              {t('location.use_current', 'Use My Current Location')}
             </>
           )}
         </Button>
@@ -149,19 +148,19 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-[#1a0b2e] px-2 text-purple-300">
-              Or search for your city
+              {t('location.or_search', 'Or search for your city')}
             </span>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="city-search" className="text-white">Search for any city worldwide</Label>
+          <Label htmlFor="city-search" className="text-white">{t('location.search_worldwide', 'Search for any city worldwide')}</Label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" />
             <Input
               id="city-search"
               type="text"
-              placeholder="Type city name..."
+              placeholder={t('location.type_city', 'Type city name...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => searchResults.length > 0 && setShowResults(true)}
@@ -189,7 +188,7 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
           )}
           
           {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
-            <p className="text-sm text-purple-300">No locations found. Try a different search.</p>
+            <p className="text-sm text-purple-300">{t('location.no_results', 'No locations found. Try a different search.')}</p>
           )}
         </div>
 
@@ -197,12 +196,12 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
           <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
             <div className="flex items-center gap-2 text-sm">
               <MapPin className="w-4 h-4 text-green-400" />
-              <span className="font-medium text-green-300">Selected location:</span>
+              <span className="font-medium text-green-300">{t('location.selected', 'Selected location')}:</span>
               <span className="text-green-200">{locationName}</span>
             </div>
             {coordinates && (
               <div className="mt-2 text-xs text-green-300/70">
-                Coordinates: {coordinates.latitude.toFixed(4)}, {coordinates.longitude.toFixed(4)}
+                {t('location.coordinates', 'Coordinates')}: {coordinates.latitude.toFixed(4)}, {coordinates.longitude.toFixed(4)}
               </div>
             )}
           </div>
@@ -210,7 +209,7 @@ const LocationCapture: React.FC<LocationCaptureProps> = ({
       </div>
 
       <div className="text-xs text-purple-300 text-center">
-        Your location is used to find matches near you. You can change this anytime in settings.
+        {t('location.privacy_note', 'Your location is used to find matches near you. You can change this anytime in settings.')}
       </div>
     </div>
   );

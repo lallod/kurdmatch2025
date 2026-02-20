@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,6 +5,7 @@ import { MapPin, Search } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LocationOption {
   id: string;
@@ -23,14 +23,15 @@ interface LocationSearchProps {
 export const LocationSearch: React.FC<LocationSearchProps> = ({
   value = '',
   onChange,
-  placeholder = "Search for a city..."
+  placeholder
 }) => {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState(value);
+  const { t } = useTranslations();
 
-  // Sample location data - in a real app, this would come from an API
+  const defaultPlaceholder = placeholder || t('location.search_city', 'Search for a city...');
+
   const locations: LocationOption[] = [
-    // Kurdish cities
     { id: '1', name: 'Erbil', country: 'Kurdistan', display: 'Erbil, Kurdistan' },
     { id: '2', name: 'Sulaymaniyah', country: 'Kurdistan', display: 'Sulaymaniyah, Kurdistan' },
     { id: '3', name: 'Duhok', country: 'Kurdistan', display: 'Duhok, Kurdistan' },
@@ -41,8 +42,6 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
     { id: '8', name: 'Diyarbakir', country: 'Kurdistan', display: 'Diyarbakir, Kurdistan' },
     { id: '9', name: 'Sanandaj', country: 'Kurdistan', display: 'Sanandaj, Kurdistan' },
     { id: '10', name: 'Mahabad', country: 'Kurdistan', display: 'Mahabad, Kurdistan' },
-    
-    // Major world cities
     { id: '11', name: 'London', country: 'United Kingdom', display: 'London, United Kingdom' },
     { id: '12', name: 'Paris', country: 'France', display: 'Paris, France' },
     { id: '13', name: 'Berlin', country: 'Germany', display: 'Berlin, Germany' },
@@ -75,7 +74,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
 
   return (
     <div className="space-y-3">
-      <Label className="text-lg font-medium">Dream Vacation Destination</Label>
+      <Label className="text-lg font-medium">{t('profile.dream_vacation_destination', 'Dream Vacation Destination')}</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -87,7 +86,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-purple-600" />
               <span className={searchValue ? "text-gray-900" : "text-gray-500"}>
-                {searchValue || placeholder}
+                {searchValue || defaultPlaceholder}
               </span>
             </div>
             <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -96,12 +95,12 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
         <PopoverContent className="w-full p-0" align="start">
           <Command>
             <CommandInput
-              placeholder="Search cities..."
+              placeholder={t('location.search_cities', 'Search cities...')}
               value={searchValue}
               onValueChange={setSearchValue}
             />
             <CommandList>
-              <CommandEmpty>No cities found.</CommandEmpty>
+              <CommandEmpty>{t('location.no_cities_found', 'No cities found.')}</CommandEmpty>
               <CommandGroup>
                 {filteredLocations.slice(0, 10).map((location) => (
                   <CommandItem
@@ -120,7 +119,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
           </Command>
         </PopoverContent>
       </Popover>
-      <p className="text-sm text-gray-500">Choose a destination you've always wanted to visit</p>
+      <p className="text-sm text-gray-500">{t('profile.choose_destination', 'Choose a destination you\'ve always wanted to visit')}</p>
     </div>
   );
 };
