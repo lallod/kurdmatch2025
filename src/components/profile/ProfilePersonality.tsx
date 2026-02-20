@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -6,6 +5,7 @@ import {
   Trophy, Gem, Star, ThermometerSun, Globe, Brain
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfilePersonalityProps {
   details: {
@@ -29,10 +29,13 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
   isMobile,
   onFieldEdit
 }) => {
+  const { t } = useTranslations();
+  const notSpecified = t('common.not_specified', 'Not specified');
+
   const renderBadgeList = (items: string[] | string | undefined) => {
-    if (!items) return <span className="text-muted-foreground">Not specified</span>;
+    if (!items) return <span className="text-muted-foreground">{notSpecified}</span>;
     const itemList = Array.isArray(items) ? items : formatList(items).split(", ");
-    if (itemList.length === 0) return <span className="text-muted-foreground">Not specified</span>;
+    if (itemList.length === 0) return <span className="text-muted-foreground">{notSpecified}</span>;
     return (
       <div className="flex flex-wrap gap-2 mt-1">
         {itemList.map((item, i) => (
@@ -45,7 +48,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
   return (
     <div className="space-y-6 py-4">
       <DetailItem 
-        icon={<Trophy size={18} />} label="Growth Goals" 
+        icon={<Trophy size={18} />} label={t('profile.growth_goals', 'Growth Goals')}
         editable={!!onFieldEdit}
         fieldKey="growthGoals"
         fieldType="multi-select"
@@ -55,7 +58,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Gem size={18} />} label="Hidden Talents" 
+        icon={<Gem size={18} />} label={t('profile.hidden_talents', 'Hidden Talents')}
         editable={!!onFieldEdit}
         fieldKey="hiddenTalents"
         fieldType="multi-select"
@@ -65,8 +68,8 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Star size={18} />} label="Favorite Memory" 
-        value={details.favoriteMemory || "Not specified"}
+        icon={<Star size={18} />} label={t('profile.favorite_memory', 'Favorite Memory')}
+        value={details.favoriteMemory || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="favoriteMemory"
         fieldType="text"
@@ -74,7 +77,7 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<ThermometerSun size={18} />} label="Stress Relievers" 
+        icon={<ThermometerSun size={18} />} label={t('profile.stress_relievers', 'Stress Relievers')}
         editable={!!onFieldEdit}
         fieldKey="stressRelievers"
         fieldType="multi-select"
@@ -84,8 +87,8 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Globe size={18} />} label="Charity Involvement" 
-        value={details.charityInvolvement || "Not specified"}
+        icon={<Globe size={18} />} label={t('profile.charity_involvement', 'Charity Involvement')}
+        value={details.charityInvolvement || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="charityInvolvement"
         fieldType="text"
@@ -93,8 +96,8 @@ const ProfilePersonality: React.FC<ProfilePersonalityProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Brain size={18} />} label="Decision Making Style" 
-        value={details.decisionMakingStyle || "Not specified"}
+        icon={<Brain size={18} />} label={t('profile.decision_making_style', 'Decision Making Style')}
+        value={details.decisionMakingStyle || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="decisionMakingStyle"
         fieldType="select"

@@ -10,12 +10,14 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface NameFieldsProps {
   form: UseFormReturn<any>;
 }
 
 const NameFields = ({ form }: NameFieldsProps) => {
+  const { t } = useTranslations();
   return (
     <div className="grid grid-cols-2 gap-4">
       <FormField
@@ -23,12 +25,12 @@ const NameFields = ({ form }: NameFieldsProps) => {
         name="firstName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">First Name</FormLabel>
+            <FormLabel className="text-white">{t('auth.first_name', 'First Name')}</FormLabel>
             <FormControl>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-primary" />
                 <Input 
-                  placeholder="John" 
+                  placeholder={t('auth.first_name_placeholder', 'John')}
                   className="pl-10 bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20" 
                   autoComplete="given-name"
                   {...field} 
@@ -45,10 +47,10 @@ const NameFields = ({ form }: NameFieldsProps) => {
         name="lastName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-white">Last Name</FormLabel>
+            <FormLabel className="text-white">{t('auth.last_name', 'Last Name')}</FormLabel>
             <FormControl>
               <Input 
-                placeholder="Doe" 
+                placeholder={t('auth.last_name_placeholder', 'Doe')}
                 className="bg-white/10 backdrop-blur border-white/20 text-white placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20" 
                 autoComplete="family-name"
                 {...field} 

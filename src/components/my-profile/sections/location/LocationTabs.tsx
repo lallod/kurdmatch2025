@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CurrentLocationTab from './CurrentLocationTab';
@@ -7,6 +6,7 @@ import PassportLocationTab from './PassportLocationTab';
 import DetailEditor from '@/components/DetailEditor';
 import { MapPin } from 'lucide-react';
 import type { KurdistanRegion } from '@/types/profile';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LocationTabsProps {
   activeTab: string;
@@ -31,6 +31,7 @@ const LocationTabs: React.FC<LocationTabsProps> = ({
   onManualLocationSelect,
   onPassportLocationSelect
 }) => {
+  const { t } = useTranslations();
   return (
     <div className="space-y-4">
       <Tabs defaultValue="current" value={activeTab} onValueChange={onTabChange} className="w-full">
@@ -39,23 +40,22 @@ const LocationTabs: React.FC<LocationTabsProps> = ({
             value="current" 
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary-dark data-[state=active]:to-primary data-[state=active]:text-white text-white/70"
           >
-            Current
+            {t('location.current', 'Current')}
           </TabsTrigger>
           <TabsTrigger 
             value="manual"
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary-dark data-[state=active]:to-primary data-[state=active]:text-white text-white/70"
           >
-            Manual
+            {t('location.manual', 'Manual')}
           </TabsTrigger>
           <TabsTrigger 
             value="passport"
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary-dark data-[state=active]:to-primary data-[state=active]:text-white text-white/70"
           >
-            Passport
+            {t('location.passport', 'Passport')}
           </TabsTrigger>
         </TabsList>
         
-        {/* Current Location Tab */}
         <TabsContent value="current" className="space-y-4 mt-4">
           <CurrentLocationTab 
             location={location}
@@ -64,7 +64,6 @@ const LocationTabs: React.FC<LocationTabsProps> = ({
           />
         </TabsContent>
         
-        {/* Manual Location Tab */}
         <TabsContent value="manual" className="space-y-4 mt-4">
           <ManualLocationTab 
             location={location}
@@ -72,7 +71,6 @@ const LocationTabs: React.FC<LocationTabsProps> = ({
           />
         </TabsContent>
         
-        {/* Passport Tab */}
         <TabsContent value="passport" className="space-y-4 mt-4">
           <PassportLocationTab 
             location={location}
@@ -84,11 +82,11 @@ const LocationTabs: React.FC<LocationTabsProps> = ({
       
       <DetailEditor
         icon={<MapPin size={18} />}
-        title="Kurdistan Region"
+        title={t('profile.kurdistan_region', 'Kurdistan Region')}
         fields={[
           { 
             name: 'kurdistanRegion', 
-            label: 'Kurdistan Region', 
+            label: t('profile.kurdistan_region', 'Kurdistan Region'), 
             value: kurdistanRegion, 
             type: 'select', 
             options: ['West-Kurdistan', 'East-Kurdistan', 'North-Kurdistan', 'South-Kurdistan'] 

@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Separator } from '@/components/ui/separator';
 import { 
   Plane, Palmtree
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileTravelProps {
   details: {
@@ -16,11 +16,14 @@ interface ProfileTravelProps {
 }
 
 const ProfileTravel: React.FC<ProfileTravelProps> = ({ details, isMobile, onFieldEdit }) => {
+  const { t } = useTranslations();
+  const notSpecified = t('common.not_specified', 'Not specified');
+
   return (
     <div className="space-y-6 py-4 animate-fade-in">
       <DetailItem 
         icon={<Plane size={18} />} 
-        label="Travel Frequency" 
+        label={t('profile.travel_frequency', 'Travel Frequency')}
         value={details.travelFrequency}
         editable={!!onFieldEdit}
         fieldKey="travelFrequency"
@@ -31,8 +34,8 @@ const ProfileTravel: React.FC<ProfileTravelProps> = ({ details, isMobile, onFiel
       <Separator />
       <DetailItem 
         icon={<Palmtree size={18} />} 
-        label="Dream Vacation" 
-        value={details.dreamVacation || "Not specified"}
+        label={t('profile.dream_vacation', 'Dream Vacation')}
+        value={details.dreamVacation || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="dreamVacation"
         fieldType="text"

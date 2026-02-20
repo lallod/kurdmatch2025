@@ -14,6 +14,7 @@ import {
 import SimpleLocationSearch from './enhanced-fields/SimpleLocationSearch';
 import LocationCapture from '@/components/location/LocationCapture';
 import { Coordinates } from '@/types/location';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LocationStepProps {
   form: UseFormReturn<any>;
@@ -23,6 +24,7 @@ interface LocationStepProps {
 
 const LocationStep = ({ form, location, locationLoading }: LocationStepProps) => {
   const [showManualInput, setShowManualInput] = useState(false);
+  const { t } = useTranslations();
 
   const handleLocationCapture = (coords: Coordinates, locationName: string) => {
     form.setValue('location', locationName);
@@ -33,8 +35,8 @@ const LocationStep = ({ form, location, locationLoading }: LocationStepProps) =>
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="text-center mb-4 sm:mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-white">Where Do You Live?</h2>
-        <p className="text-purple-200 mt-1 text-sm sm:text-base">Share your location to find matches near you</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-white">{t('auth.where_do_you_live', 'Where Do You Live?')}</h2>
+        <p className="text-purple-200 mt-1 text-sm sm:text-base">{t('auth.share_location', 'Share your location to find matches near you')}</p>
       </div>
       
       <LocationCapture
@@ -51,11 +53,11 @@ const LocationStep = ({ form, location, locationLoading }: LocationStepProps) =>
               <SimpleLocationSearch 
                 value={field.value}
                 onChange={field.onChange}
-                label="Dream Vacation Destination"
+                label={t('profile.dream_vacation_destination', 'Dream Vacation Destination')}
               />
             </FormControl>
             <FormDescription className="text-xs text-purple-300">
-              Where would you love to travel? Includes all parts of Kurdistan and top global destinations.
+              {t('auth.dream_vacation_desc', 'Where would you love to travel? Includes all parts of Kurdistan and top global destinations.')}
             </FormDescription>
             <FormMessage />
           </FormItem>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,7 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronDown, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CountrySearchFieldProps {
   value?: string;
@@ -72,8 +72,8 @@ const countries = [
 
 const CountrySearchField = ({ value = '', onChange }: CountrySearchFieldProps) => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslations();
   
-  // Ensure value is always a string
   const currentValue = value || '';
   const selectedCountry = countries.find(country => country.name === currentValue);
 
@@ -88,7 +88,7 @@ const CountrySearchField = ({ value = '', onChange }: CountrySearchFieldProps) =
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Globe className="w-5 h-5 text-purple-600" />
-        <FormLabel className="text-white">Born In</FormLabel>
+        <FormLabel className="text-white">{t('auth.born_in', 'Born In')}</FormLabel>
       </div>
       
       <Popover open={open} onOpenChange={setOpen}>
@@ -99,18 +99,18 @@ const CountrySearchField = ({ value = '', onChange }: CountrySearchFieldProps) =
             aria-expanded={open}
             className="w-full justify-between bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20 hover:text-white"
           >
-            {selectedCountry ? selectedCountry.name : "Select country..."}
+            {selectedCountry ? selectedCountry.name : t('auth.select_country', 'Select country...')}
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[400px] p-0" align="start">
           <Command>
             <CommandInput 
-              placeholder="Search countries..." 
+              placeholder={t('auth.search_countries', 'Search countries...')}
               className="h-9"
             />
             <CommandList>
-              <CommandEmpty>No country found.</CommandEmpty>
+              <CommandEmpty>{t('auth.no_country_found', 'No country found.')}</CommandEmpty>
               <CommandGroup>
                 {countries && countries.length > 0 && countries.map((country) => (
                   <CommandItem

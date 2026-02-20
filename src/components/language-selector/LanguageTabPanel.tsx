@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Search, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -33,7 +32,6 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
   const [displayedLanguages, setDisplayedLanguages] = useState<string[]>(allLanguages);
   const { t } = useTranslations();
 
-  // Update displayed languages when tab or search changes
   useEffect(() => {
     setDisplayedLanguages(getFilteredLanguages());
   }, [activeTab, searchValue]);
@@ -59,7 +57,6 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
         break;
     }
     
-    // Apply search filter
     return filteredList.filter(language => 
       language.toLowerCase().includes(searchLower)
     );
@@ -72,19 +69,16 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
     
     const formattedLanguage = customLanguage.trim();
     
-    // Check if language already exists
     if (allLanguages.some(lang => lang.toLowerCase() === formattedLanguage.toLowerCase())) {
       toast.error(t('toast.language.already_exists', `${formattedLanguage} already exists in the language list`, { language: formattedLanguage }));
       return;
     }
     
-    // Check if already added to selected languages
     if (selectedLanguages.some(lang => lang.toLowerCase() === formattedLanguage.toLowerCase())) {
       toast.error(t('toast.language.already_selected', `${formattedLanguage} is already selected`, { language: formattedLanguage }));
       return;
     }
     
-    // Limit check
     if (selectedLanguages.length >= maxItems) {
       toast.error(t('toast.language.max_limit', `You can select up to ${maxItems} languages`, { max: maxItems }));
       return;
@@ -98,7 +92,7 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
   const handleTabChange = (value: string) => {
     console.log('Tab changed to:', value);
     setActiveTab(value);
-    setSearchValue(''); // Reset search when changing tabs
+    setSearchValue('');
   };
 
   return (
@@ -109,25 +103,25 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
             value="all" 
             className="data-[state=active]:bg-white data-[state=active]:shadow-[0_2px_0_0_rgba(253,41,123,0.6)] rounded-t-md data-[state=active]:text-tinder-rose transition-all duration-300"
           >
-            All
+            {t('languages.all', 'All')}
           </TabsTrigger>
           <TabsTrigger 
             value="middle-eastern" 
             className="data-[state=active]:bg-white data-[state=active]:shadow-[0_2px_0_0_rgba(253,41,123,0.6)] rounded-t-md data-[state=active]:text-tinder-rose transition-all duration-300"
           >
-            Middle East
+            {t('languages.middle_east', 'Middle East')}
           </TabsTrigger>
           <TabsTrigger 
             value="kurdish" 
             className="data-[state=active]:bg-white data-[state=active]:shadow-[0_2px_0_0_rgba(253,41,123,0.6)] rounded-t-md data-[state=active]:text-tinder-rose transition-all duration-300"
           >
-            Kurdish
+            {t('languages.kurdish', 'Kurdish')}
           </TabsTrigger>
           <TabsTrigger 
             value="european" 
             className="data-[state=active]:bg-white data-[state=active]:shadow-[0_2px_0_0_rgba(253,41,123,0.6)] rounded-t-md data-[state=active]:text-tinder-rose transition-all duration-300"
           >
-            European
+            {t('languages.european', 'European')}
           </TabsTrigger>
         </TabsList>
       </div>
@@ -136,7 +130,7 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
         <div className="flex items-center gap-2 neo-border rounded-md px-2 bg-white">
           <Search className="h-4 w-4 text-tinder-rose/60" />
           <Input 
-            placeholder="Search languages..." 
+            placeholder={t('languages.search', 'Search languages...')}
             className="h-9 flex-1 border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
@@ -154,11 +148,10 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
         </div>
       </div>
       
-      {/* Add custom language section */}
       <div className="p-2 border-b">
         <div className="flex gap-2 items-center">
           <Input
-            placeholder="Add custom language..."
+            placeholder={t('languages.add_custom', 'Add custom language...')}
             value={customLanguage}
             onChange={(e) => setCustomLanguage(e.target.value)}
             className="h-9 neo-border focus-visible:ring-tinder-rose/20"
@@ -175,7 +168,7 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
             className="bg-tinder-rose hover:bg-tinder-rose/90 flex items-center gap-1"
           >
             <Plus size={16} />
-            Add
+            {t('common.add', 'Add')}
           </Button>
         </div>
       </div>
@@ -192,7 +185,7 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
         <div className="p-3 border-t bg-yellow-50/50">
           <p className="text-xs text-amber-700 text-center flex items-center justify-center">
             <Sparkles size={12} className="mr-1 text-amber-500" />
-            Maximum of {maxItems} languages allowed
+            {t('languages.max_allowed', 'Maximum of {{max}} languages allowed', { max: maxItems })}
           </p>
         </div>
       )}

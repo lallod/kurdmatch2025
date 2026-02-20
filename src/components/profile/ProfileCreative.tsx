@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -6,6 +5,7 @@ import {
   Palette, Home, Car, Cpu, Briefcase, MountainSnow, CloudSun
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileCreativeProps {
   details: {
@@ -30,10 +30,13 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
   isMobile,
   onFieldEdit
 }) => {
+  const { t } = useTranslations();
+  const notSpecified = t('common.not_specified', 'Not specified');
+
   const renderBadgeList = (items: string[] | string | undefined) => {
-    if (!items) return <span className="text-muted-foreground">Not specified</span>;
+    if (!items) return <span className="text-muted-foreground">{notSpecified}</span>;
     const itemList = Array.isArray(items) ? items : formatList(items).split(", ");
-    if (itemList.length === 0) return <span className="text-muted-foreground">Not specified</span>;
+    if (itemList.length === 0) return <span className="text-muted-foreground">{notSpecified}</span>;
     return (
       <div className="flex flex-wrap gap-2 mt-1">
         {itemList.map((item, i) => (
@@ -46,7 +49,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
   return (
     <div className="space-y-6 py-4">
       <DetailItem 
-        icon={<Palette size={18} />} label="Creative Pursuits" 
+        icon={<Palette size={18} />} label={t('profile.creative_pursuits', 'Creative Pursuits')}
         editable={!!onFieldEdit}
         fieldKey="creativePursuits"
         fieldType="multi-select"
@@ -56,8 +59,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Home size={18} />} label="Dream Home" 
-        value={details.dreamHome || "Not specified"}
+        icon={<Home size={18} />} label={t('profile.dream_home', 'Dream Home')}
+        value={details.dreamHome || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="dreamHome"
         fieldType="select"
@@ -66,8 +69,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Car size={18} />} label="Transportation" 
-        value={details.transportationPreference || "Not specified"}
+        icon={<Car size={18} />} label={t('profile.transportation', 'Transportation')}
+        value={details.transportationPreference || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="transportationPreference"
         fieldType="select"
@@ -76,7 +79,7 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Cpu size={18} />} label="Tech Skills" 
+        icon={<Cpu size={18} />} label={t('profile.tech_skills', 'Tech Skills')}
         editable={!!onFieldEdit}
         fieldKey="techSkills"
         fieldType="multi-select"
@@ -86,8 +89,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<Briefcase size={18} />} label="Work Environment" 
-        value={details.workEnvironment || "Not specified"}
+        icon={<Briefcase size={18} />} label={t('profile.work_environment', 'Work Environment')}
+        value={details.workEnvironment || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="workEnvironment"
         fieldType="select"
@@ -96,8 +99,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<MountainSnow size={18} />} label="Favorite Season" 
-        value={details.favoriteSeason || "Not specified"}
+        icon={<MountainSnow size={18} />} label={t('profile.favorite_season', 'Favorite Season')}
+        value={details.favoriteSeason || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="favoriteSeason"
         fieldType="select"
@@ -106,8 +109,8 @@ const ProfileCreative: React.FC<ProfileCreativeProps> = ({
       />
       <Separator />
       <DetailItem 
-        icon={<CloudSun size={18} />} label="Ideal Weather" 
-        value={details.idealWeather || "Not specified"}
+        icon={<CloudSun size={18} />} label={t('profile.ideal_weather', 'Ideal Weather')}
+        value={details.idealWeather || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="idealWeather"
         fieldType="select"
