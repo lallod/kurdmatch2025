@@ -149,9 +149,9 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
               <div className="flex items-center justify-between">
                 <Label className={labelCls}>
                   <MapPin className="w-3.5 h-3.5 inline mr-1" />
-                  Near Me
+                  {t('swipe.near_me', 'Near Me')}
                 </Label>
-                <span className="text-xs text-muted-foreground">{maxDistance >= 100 ? 'Any distance' : `${maxDistance} km`}</span>
+                <span className="text-xs text-muted-foreground">{maxDistance >= 100 ? t('swipe.any_distance', 'Any distance') : `${maxDistance} km`}</span>
               </div>
               <Slider
                 value={[maxDistance]}
@@ -162,38 +162,38 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 disabled={dis}
                 className="w-full"
               />
-              <p className="text-[10px] text-muted-foreground">Uses your current GPS location</p>
+              <p className="text-[10px] text-muted-foreground">{t('swipe.uses_gps', 'Uses your current GPS location')}</p>
             </div>
 
             <div className="space-y-1.5">
-              <Label className={labelCls}>Kurdistan Region</Label>
+              <Label className={labelCls}>{t('swipe.kurdistan_region', 'Kurdistan Region')}</Label>
               <Select value={selectVal(kurdistanRegion)} onValueChange={(v) => setKurdistanRegion(fromSelect(v))} disabled={dis}>
-                <SelectTrigger className={inputCls}><SelectValue placeholder="Select region..." /></SelectTrigger>
+                <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select_region', 'Select region...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="North-Kurdistan">Bakur (North Kurdistan)</SelectItem>
-                  <SelectItem value="South-Kurdistan">Bashur (South Kurdistan)</SelectItem>
-                  <SelectItem value="West-Kurdistan">Rojava (West Kurdistan)</SelectItem>
-                  <SelectItem value="East-Kurdistan">Rojhelat (East Kurdistan)</SelectItem>
-                  <SelectItem value="Diaspora">Diaspora</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="North-Kurdistan">{t('swipe.bakur', 'Bakur (North Kurdistan)')}</SelectItem>
+                  <SelectItem value="South-Kurdistan">{t('swipe.bashur', 'Bashur (South Kurdistan)')}</SelectItem>
+                  <SelectItem value="West-Kurdistan">{t('swipe.rojava', 'Rojava (West Kurdistan)')}</SelectItem>
+                  <SelectItem value="East-Kurdistan">{t('swipe.rojhelat', 'Rojhelat (East Kurdistan)')}</SelectItem>
+                  <SelectItem value="Diaspora">{t('swipe.diaspora', 'Diaspora')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Ethnicity */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Ethnicity</Label>
+              <Label className={labelCls}>{t('swipe.ethnicity', 'Ethnicity')}</Label>
               <Select value={selectVal(ethnicity)} onValueChange={(v) => setEthnicity(fromSelect(v))} disabled={dis}>
-                <SelectTrigger className={inputCls}><SelectValue placeholder="Select ethnicity..." /></SelectTrigger>
+                <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select_ethnicity', 'Select ethnicity...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Kurdish">Kurdish</SelectItem>
-                  <SelectItem value="Arab">Arab</SelectItem>
-                  <SelectItem value="Turkish">Turkish</SelectItem>
-                  <SelectItem value="Persian">Persian</SelectItem>
-                  <SelectItem value="Assyrian">Assyrian</SelectItem>
-                  <SelectItem value="Mixed">Mixed</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="Kurdish">{t('ethnicity.kurdish', 'Kurdish')}</SelectItem>
+                  <SelectItem value="Arab">{t('ethnicity.arab', 'Arab')}</SelectItem>
+                  <SelectItem value="Turkish">{t('ethnicity.turkish', 'Turkish')}</SelectItem>
+                  <SelectItem value="Persian">{t('ethnicity.persian', 'Persian')}</SelectItem>
+                  <SelectItem value="Assyrian">{t('ethnicity.assyrian', 'Assyrian')}</SelectItem>
+                  <SelectItem value="Mixed">{t('ethnicity.mixed', 'Mixed')}</SelectItem>
+                  <SelectItem value="Other">{t('ethnicity.other', 'Other')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -205,112 +205,112 @@ export const SwipeFilterSidebar: React.FC<SwipeFilterSidebarProps> = ({ onApplyF
                 <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select_religion', 'Select religion...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
                   <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
-                  <SelectItem value="Islam">Islam</SelectItem>
-                  <SelectItem value="Christianity">Christianity</SelectItem>
-                  <SelectItem value="Judaism">Judaism</SelectItem>
-                  <SelectItem value="Yazidism">Yazidism</SelectItem>
-                  <SelectItem value="Yarsanism">Yarsanism</SelectItem>
-                  <SelectItem value="Zoroastrianism">Zoroastrianism</SelectItem>
-                  <SelectItem value="Spiritual">Spiritual</SelectItem>
-                  <SelectItem value="Non-religious">Non-religious</SelectItem>
+                  <SelectItem value="Islam">{t('religion.islam', 'Islam')}</SelectItem>
+                  <SelectItem value="Christianity">{t('religion.christianity', 'Christianity')}</SelectItem>
+                  <SelectItem value="Judaism">{t('religion.judaism', 'Judaism')}</SelectItem>
+                  <SelectItem value="Yazidism">{t('religion.yazidism', 'Yazidism')}</SelectItem>
+                  <SelectItem value="Yarsanism">{t('religion.yarsanism', 'Yarsanism')}</SelectItem>
+                  <SelectItem value="Zoroastrianism">{t('religion.zoroastrianism', 'Zoroastrianism')}</SelectItem>
+                  <SelectItem value="Spiritual">{t('religion.spiritual', 'Spiritual')}</SelectItem>
+                  <SelectItem value="Non-religious">{t('religion.non_religious', 'Non-religious')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Height Range (cm) */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Height (cm)</Label>
+              <Label className={labelCls}>{t('swipe.height_cm', 'Height (cm)')}</Label>
               <div className="flex gap-2 items-center">
-                <Input type="number" min="140" max="220" placeholder="Min" value={heightMin} onChange={(e) => setHeightMin(e.target.value)} className={inputCls} disabled={dis} />
+                <Input type="number" min="140" max="220" placeholder={t('swipe.min', 'Min')} value={heightMin} onChange={(e) => setHeightMin(e.target.value)} className={inputCls} disabled={dis} />
                 <span className="text-foreground text-sm">{t('swipe.to', 'to')}</span>
-                <Input type="number" min="140" max="220" placeholder="Max" value={heightMax} onChange={(e) => setHeightMax(e.target.value)} className={inputCls} disabled={dis} />
+                <Input type="number" min="140" max="220" placeholder={t('swipe.max', 'Max')} value={heightMax} onChange={(e) => setHeightMax(e.target.value)} className={inputCls} disabled={dis} />
               </div>
             </div>
 
             {/* Body Type */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Body Type</Label>
+              <Label className={labelCls}>{t('swipe.body_type', 'Body Type')}</Label>
               <Select value={selectVal(bodyType)} onValueChange={(v) => setBodyType(fromSelect(v))} disabled={dis}>
-                <SelectTrigger className={inputCls}><SelectValue placeholder="Select body type..." /></SelectTrigger>
+                <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select_body_type', 'Select body type...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Slim">Slim</SelectItem>
-                  <SelectItem value="Athletic">Athletic</SelectItem>
-                  <SelectItem value="Average">Average</SelectItem>
-                  <SelectItem value="Curvy">Curvy</SelectItem>
-                  <SelectItem value="Muscular">Muscular</SelectItem>
-                  <SelectItem value="Full figured">Full figured</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="Slim">{t('body.slim', 'Slim')}</SelectItem>
+                  <SelectItem value="Athletic">{t('body.athletic', 'Athletic')}</SelectItem>
+                  <SelectItem value="Average">{t('body.average', 'Average')}</SelectItem>
+                  <SelectItem value="Curvy">{t('body.curvy', 'Curvy')}</SelectItem>
+                  <SelectItem value="Muscular">{t('body.muscular', 'Muscular')}</SelectItem>
+                  <SelectItem value="Full figured">{t('body.full_figured', 'Full figured')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Smoking */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Smoking</Label>
+              <Label className={labelCls}>{t('swipe.smoking', 'Smoking')}</Label>
               <Select value={selectVal(smoking)} onValueChange={(v) => setSmoking(fromSelect(v))} disabled={dis}>
-                <SelectTrigger className={inputCls}><SelectValue placeholder="Select..." /></SelectTrigger>
+                <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select', 'Select...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Non-smoker">Non-smoker</SelectItem>
-                  <SelectItem value="Social smoker">Social smoker</SelectItem>
-                  <SelectItem value="Regular smoker">Regular smoker</SelectItem>
-                  <SelectItem value="Former smoker">Former smoker</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="Non-smoker">{t('smoking.non_smoker', 'Non-smoker')}</SelectItem>
+                  <SelectItem value="Social smoker">{t('smoking.social', 'Social smoker')}</SelectItem>
+                  <SelectItem value="Regular smoker">{t('smoking.regular', 'Regular smoker')}</SelectItem>
+                  <SelectItem value="Former smoker">{t('smoking.former', 'Former smoker')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Drinking */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Drinking</Label>
+              <Label className={labelCls}>{t('swipe.drinking', 'Drinking')}</Label>
               <Select value={selectVal(drinking)} onValueChange={(v) => setDrinking(fromSelect(v))} disabled={dis}>
-                <SelectTrigger className={inputCls}><SelectValue placeholder="Select..." /></SelectTrigger>
+                <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select', 'Select...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Non-drinker">Non-drinker</SelectItem>
-                  <SelectItem value="Social drinker">Social drinker</SelectItem>
-                  <SelectItem value="Regular drinker">Regular drinker</SelectItem>
-                  <SelectItem value="Former drinker">Former drinker</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="Non-drinker">{t('drinking.non_drinker', 'Non-drinker')}</SelectItem>
+                  <SelectItem value="Social drinker">{t('drinking.social', 'Social drinker')}</SelectItem>
+                  <SelectItem value="Regular drinker">{t('drinking.regular', 'Regular drinker')}</SelectItem>
+                  <SelectItem value="Former drinker">{t('drinking.former', 'Former drinker')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Exercise */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Exercise</Label>
+              <Label className={labelCls}>{t('swipe.exercise', 'Exercise')}</Label>
               <Select value={selectVal(exerciseHabits)} onValueChange={(v) => setExerciseHabits(fromSelect(v))} disabled={dis}>
-                <SelectTrigger className={inputCls}><SelectValue placeholder="Select..." /></SelectTrigger>
+                <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select', 'Select...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="Regular exercise">Regular exercise</SelectItem>
-                  <SelectItem value="Daily fitness routine">Daily fitness routine</SelectItem>
-                  <SelectItem value="Occasional exercise">Occasional exercise</SelectItem>
-                  <SelectItem value="Sports enthusiast">Sports enthusiast</SelectItem>
-                  <SelectItem value="Yoga practitioner">Yoga practitioner</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="Regular exercise">{t('exercise.regular', 'Regular exercise')}</SelectItem>
+                  <SelectItem value="Daily fitness routine">{t('exercise.daily', 'Daily fitness routine')}</SelectItem>
+                  <SelectItem value="Occasional exercise">{t('exercise.occasional', 'Occasional exercise')}</SelectItem>
+                  <SelectItem value="Sports enthusiast">{t('exercise.sports', 'Sports enthusiast')}</SelectItem>
+                  <SelectItem value="Yoga practitioner">{t('exercise.yoga', 'Yoga practitioner')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Education */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Education</Label>
+              <Label className={labelCls}>{t('swipe.education', 'Education')}</Label>
               <Select value={selectVal(education)} onValueChange={(v) => setEducation(fromSelect(v))} disabled={dis}>
-                <SelectTrigger className={inputCls}><SelectValue placeholder="Select..." /></SelectTrigger>
+                <SelectTrigger className={inputCls}><SelectValue placeholder={t('swipe.select', 'Select...')} /></SelectTrigger>
                 <SelectContent className="bg-card border-border max-h-[200px]">
-                  <SelectItem value="any">Any</SelectItem>
-                  <SelectItem value="High School">High School</SelectItem>
-                  <SelectItem value="Bachelors Degree">Bachelor's Degree</SelectItem>
-                  <SelectItem value="Masters Degree">Master's Degree</SelectItem>
-                  <SelectItem value="PhD">PhD</SelectItem>
-                  <SelectItem value="Trade School">Trade School</SelectItem>
-                  <SelectItem value="Self-educated">Self-educated</SelectItem>
+                  <SelectItem value="any">{t('swipe.any', 'Any')}</SelectItem>
+                  <SelectItem value="High School">{t('education.high_school', 'High School')}</SelectItem>
+                  <SelectItem value="Bachelors Degree">{t('education.bachelors', "Bachelor's Degree")}</SelectItem>
+                  <SelectItem value="Masters Degree">{t('education.masters', "Master's Degree")}</SelectItem>
+                  <SelectItem value="PhD">{t('education.phd', 'PhD')}</SelectItem>
+                  <SelectItem value="Trade School">{t('education.trade_school', 'Trade School')}</SelectItem>
+                  <SelectItem value="Self-educated">{t('education.self_educated', 'Self-educated')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Occupation */}
             <div className="space-y-1.5">
-              <Label className={labelCls}>Occupation</Label>
-              <Input type="text" placeholder="e.g. Engineer, Doctor..." value={occupation} onChange={(e) => setOccupation(e.target.value)} className={`${inputCls} placeholder:text-muted-foreground`} disabled={dis} />
+              <Label className={labelCls}>{t('swipe.occupation', 'Occupation')}</Label>
+              <Input type="text" placeholder={t('swipe.occupation_placeholder', 'e.g. Engineer, Doctor...')} value={occupation} onChange={(e) => setOccupation(e.target.value)} className={`${inputCls} placeholder:text-muted-foreground`} disabled={dis} />
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import {
   Heart, Baby, PawPrint, Users, MessageCircle, Sparkles, X
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileRelationshipsProps {
   details: {
@@ -30,11 +31,13 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
   formatList,
   isMobile
 }) => {
+  const { t } = useTranslations();
+  
   return (
     <div className="space-y-1 py-4">
       <DetailItem 
         icon={<Heart size={18} />} 
-        label="Relationship Goals" 
+        label={t('profile.relationship_goals', 'Relationship Goals')} 
         value={details.relationshipGoals} 
       />
       
@@ -42,11 +45,11 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
       
       <DetailItem 
         icon={<Baby size={18} />} 
-        label="Children" 
+        label={t('profile.children', 'Children')} 
         value={
           <div>
-            <div>Future plans: {details.wantChildren}</div>
-            <div>Current: {details.childrenStatus || "Not specified"}</div>
+            <div>{t('profile.future_plans', 'Future plans')}: {details.wantChildren}</div>
+            <div>{t('profile.current', 'Current')}: {details.childrenStatus || t('profile.not_specified', 'Not specified')}</div>
           </div>
         } 
       />
@@ -55,7 +58,7 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
       
       <DetailItem 
         icon={<PawPrint size={18} />} 
-        label="Pets" 
+        label={t('profile.pets', 'Pets')} 
         value={details.havePets} 
       />
       
@@ -63,11 +66,11 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
       
       <DetailItem 
         icon={<Users size={18} />} 
-        label="Family & Friends" 
+        label={t('profile.family_friends', 'Family & Friends')} 
         value={
           <div>
-            <div>Family: {details.familyCloseness || "Not specified"}</div>
-            <div>Friends: {details.friendshipStyle || "Not specified"}</div>
+            <div>{t('profile.family', 'Family')}: {details.familyCloseness || t('profile.not_specified', 'Not specified')}</div>
+            <div>{t('profile.friends', 'Friends')}: {details.friendshipStyle || t('profile.not_specified', 'Not specified')}</div>
           </div>
         } 
       />
@@ -76,23 +79,23 @@ const ProfileRelationships: React.FC<ProfileRelationshipsProps> = ({
       
       <DetailItem 
         icon={<MessageCircle size={18} />} 
-        label="Communication Style" 
-        value={details.communicationStyle || "Not specified"} 
+        label={t('profile.communication_style', 'Communication Style')} 
+        value={details.communicationStyle || t('profile.not_specified', 'Not specified')} 
       />
       
       <Separator />
       
       <DetailItem 
         icon={<Sparkles size={18} />} 
-        label="Love Language" 
-        value={details.loveLanguage || "Not specified"} 
+        label={t('profile.love_language', 'Love Language')} 
+        value={details.loveLanguage || t('profile.not_specified', 'Not specified')} 
       />
       
       <Separator />
       
       <DetailItem 
         icon={<X size={18} />} 
-        label="Pet Peeves" 
+        label={t('profile.pet_peeves', 'Pet Peeves')} 
         value={
           <div className="flex flex-wrap gap-2 mt-1">
             {Array.isArray(details.petPeeves) ? 

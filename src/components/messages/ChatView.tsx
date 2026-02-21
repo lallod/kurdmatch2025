@@ -270,8 +270,8 @@ const ChatView: React.FC<ChatViewProps> = ({
               <Button variant="ghost" size="icon" className="text-foreground hover:bg-muted/20 h-9 w-9" onClick={() => onInitiateCall(conversation.id, 'video')} aria-label="Video call">
                 <Video className="h-4 w-4" />
               </Button>
-              {conversation.notifications?.includes('online') && <Badge className="bg-success/20 text-success border-success/30">Online</Badge>}
-              {conversation.notifications?.includes('viewed_profile') && <Badge className="bg-info/20 text-info border-info/30"><Eye className="w-3 h-3 mr-1" />Viewed</Badge>}
+              {conversation.notifications?.includes('online') && <Badge className="bg-success/20 text-success border-success/30">{t('messages.online', 'Online')}</Badge>}
+              {conversation.notifications?.includes('viewed_profile') && <Badge className="bg-info/20 text-info border-info/30"><Eye className="w-3 h-3 mr-1" />{t('messages.viewed', 'Viewed')}</Badge>}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="text-foreground hover:bg-muted/20" aria-label="More options">

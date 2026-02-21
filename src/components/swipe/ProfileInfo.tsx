@@ -53,7 +53,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, minimal = false, sho
             <span>{kurdistanRegion}</span>
           </>
         )}
-        {profile.height && heightDisplay !== 'Not specified' && (
+        {profile.height && heightDisplay !== 'Not specified' && heightDisplay !== '' && (
           <>
             <span className="text-white/50">•</span>
             <span>{heightDisplay}</span>
