@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Profile } from '@/api/profiles';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { X, Star } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfilePhotosProps {
   profile: Profile;
 }
 
 const ProfilePhotos: React.FC<ProfilePhotosProps> = ({ profile }) => {
+  const { t } = useTranslations();
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   const allPhotos = [
@@ -25,8 +27,8 @@ const ProfilePhotos: React.FC<ProfilePhotosProps> = ({ profile }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
-        <h3 className="text-sm font-semibold text-foreground mb-1">No photos yet</h3>
-        <p className="text-muted-foreground text-xs">Photos will appear here</p>
+        <h3 className="text-sm font-semibold text-foreground mb-1">{t('profile.no_photos', 'No photos yet')}</h3>
+        <p className="text-muted-foreground text-xs">{t('profile.photos_appear_here', 'Photos will appear here')}</p>
       </div>
     );
   }
@@ -42,7 +44,7 @@ const ProfilePhotos: React.FC<ProfilePhotosProps> = ({ profile }) => {
           >
             <img
               src={photo.url}
-              alt={`Photo ${index + 1}`}
+              alt={t('profile.photo_alt', 'Photo {{number}}', { number: index + 1 })}
               className="w-full h-full object-cover"
             />
             {photo.is_primary && (
@@ -65,7 +67,7 @@ const ProfilePhotos: React.FC<ProfilePhotosProps> = ({ profile }) => {
           {selectedPhoto && (
             <img
               src={selectedPhoto}
-              alt="Full size"
+              alt={t('profile.full_size', 'Full size')}
               className="w-full h-auto max-h-[85vh] object-contain"
             />
           )}

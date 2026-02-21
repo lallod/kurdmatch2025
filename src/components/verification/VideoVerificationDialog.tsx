@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Progress } from '@/components/ui/progress';
 import { useVideoVerification } from '@/hooks/useVideoVerification';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface VideoVerificationDialogProps {
   open: boolean;
@@ -23,6 +24,7 @@ const instructions = [
 ];
 
 export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificationDialogProps) => {
+  const { t } = useTranslations();
   const [step, setStep] = useState<Step>('intro');
   const [currentInstruction, setCurrentInstruction] = useState(0);
   const [recordedVideo, setRecordedVideo] = useState<Blob | null>(null);
@@ -154,16 +156,24 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
     onOpenChange(false);
   };
 
+  const translatedInstructions = [
+    t('verification.look_camera', 'Look directly at the camera'),
+    t('verification.turn_left', 'Turn your head slowly to the left'),
+    t('verification.turn_right', 'Turn your head slowly to the right'),
+    t('verification.smile', 'Smile naturally'),
+    t('verification.hold_still', 'Hold still for 2 seconds')
+  ];
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-foreground flex items-center gap-2">
             <Shield className="w-5 h-5 text-green-400" />
-            Video Verification
+            {t('verification.video_title', 'Video Verification')}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Verify your identity to get the trusted badge
+            {t('verification.video_desc', 'Verify your identity to get the trusted badge')}
           </DialogDescription>
         </DialogHeader>
 
@@ -181,14 +191,13 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
                   <Video className="w-10 h-10 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">
-                  Quick Video Selfie
+                  {t('verification.quick_selfie', 'Quick Video Selfie')}
                 </h3>
                 <p className="text-sm text-purple-200 mb-6">
-                  Record a short video following simple prompts to verify you're real.
-                  This protects you and others from fake profiles.
+                  {t('verification.selfie_desc', 'Record a short video following simple prompts to verify you\'re real. This protects you and others from fake profiles.')}
                 </p>
                 <ul className="text-left text-sm text-purple-300 space-y-1 mb-6">
-                  {instructions.map((inst, i) => (
+                  {translatedInstructions.map((inst, i) => (
                     <li key={i} className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-purple-500/30 flex items-center justify-center text-xs">
                         {i + 1}
@@ -202,7 +211,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
                   className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
                 >
                   <Camera className="w-4 h-4 mr-2" />
-                  Start Verification
+                  {t('verification.start', 'Start Verification')}
                 </Button>
               </motion.div>
             )}
@@ -231,7 +240,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center text-white font-medium"
                   >
-                    {instructions[currentInstruction]}
+                    {translatedInstructions[currentInstruction]}
                   </motion.p>
                 </div>
                 <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500">
@@ -264,7 +273,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
                     className="flex-1 border-white/20 text-white hover:bg-white/10"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
-                    Retake
+                    {t('verification.retake', 'Retake')}
                   </Button>
                   <Button
                     onClick={handleSubmit}
@@ -276,7 +285,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
                     ) : (
                       <Check className="w-4 h-4 mr-2" />
                     )}
-                    Submit
+                    {t('common.submit', 'Submit')}
                   </Button>
                 </div>
               </motion.div>
@@ -291,8 +300,8 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
                 className="absolute inset-0 flex flex-col items-center justify-center"
               >
                 <Loader2 className="w-12 h-12 animate-spin text-purple-400 mb-4" />
-                <p className="text-white font-medium">Uploading verification...</p>
-                <p className="text-sm text-purple-300">Please don't close this window</p>
+                <p className="text-white font-medium">{t('verification.uploading', 'Uploading verification...')}</p>
+                <p className="text-sm text-purple-300">{t('verification.dont_close', "Please don't close this window")}</p>
               </motion.div>
             )}
 
@@ -313,10 +322,10 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
                   <Check className="w-10 h-10 text-white" />
                 </motion.div>
                 <h3 className="text-lg font-semibold text-white mb-2">
-                  Verification Submitted!
+                  {t('verification.submitted', 'Verification Submitted!')}
                 </h3>
                 <p className="text-sm text-purple-200 text-center px-6">
-                  We'll review your video within 24 hours. You'll get a notification when approved.
+                  {t('verification.review_notice', "We'll review your video within 24 hours. You'll get a notification when approved.")}
                 </p>
               </motion.div>
             )}
