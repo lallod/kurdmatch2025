@@ -3,6 +3,7 @@ import React from 'react';
 import { Search } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import LanguageItem from './LanguageItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LanguageListProps {
   displayedLanguages: string[];
@@ -19,13 +20,14 @@ const LanguageList: React.FC<LanguageListProps> = ({
   searchValue,
   toggleLanguage
 }) => {
+  const { t } = useTranslations();
   return (
     <ScrollArea className="h-[300px] rounded-b-lg">
       <div className="p-2">
         {displayedLanguages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 px-4 text-gray-500">
             <Search className="h-8 w-8 mb-2 opacity-50 text-tinder-rose/30" />
-            <p className="text-sm text-center">No languages found matching "{searchValue}"</p>
+            <p className="text-sm text-center">{t('language.no_match', 'No languages found matching "{{search}}"', { search: searchValue })}</p>
           </div>
         ) : (
           <div className="space-y-1">

@@ -3,6 +3,7 @@ import { Hash, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { getTrendingHashtags } from '@/api/hashtags';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Hashtag {
   id: string;
@@ -12,6 +13,7 @@ interface Hashtag {
 
 export const CompactTrendingHashtags = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [hashtags, setHashtags] = useState<Hashtag[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,7 +51,7 @@ export const CompactTrendingHashtags = () => {
     <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/20 rounded-lg p-3 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
       <div className="flex items-center gap-1.5 mb-2">
         <TrendingUp className="w-4 h-4 text-pink-400" />
-        <h3 className="text-sm font-semibold text-white">Trending</h3>
+        <h3 className="text-sm font-semibold text-white">{t('discovery.trending', 'Trending')}</h3>
       </div>
 
       <div className="flex flex-wrap gap-1.5">

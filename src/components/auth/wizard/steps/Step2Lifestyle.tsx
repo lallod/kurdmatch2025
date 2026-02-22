@@ -2,6 +2,7 @@
 import React from 'react';
 import { ChoiceChips } from '../fields/ChoiceChips';
 import { Activity, Wine, Cigarette, Heart, Moon, Utensils } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Step2Data {
   exercise_habits?: string;
@@ -18,52 +19,54 @@ interface Step2LifestyleProps {
 }
 
 export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }) => {
+  const { t } = useTranslations();
+
   const exerciseOptions = [
-    { value: 'never', label: 'Never', icon: <Activity className="w-4 h-4" />, description: 'I prefer other activities' },
-    { value: 'rarely', label: 'Rarely', icon: <Activity className="w-4 h-4" />, description: 'Once in a while' },
-    { value: 'few_times_week', label: 'Few times a week', icon: <Activity className="w-4 h-4" />, description: 'I try to stay active' },
-    { value: 'daily', label: 'Daily', icon: <Activity className="w-4 h-4" />, description: 'It\'s part of my routine' },
-    { value: 'fitness_enthusiast', label: 'Fitness enthusiast', icon: <Activity className="w-4 h-4" />, description: 'I live for the gym' }
+    { value: 'never', label: t('lifestyle.never', 'Never'), icon: <Activity className="w-4 h-4" />, description: t('lifestyle.prefer_other', 'I prefer other activities') },
+    { value: 'rarely', label: t('lifestyle.rarely', 'Rarely'), icon: <Activity className="w-4 h-4" />, description: t('lifestyle.once_in_while', 'Once in a while') },
+    { value: 'few_times_week', label: t('lifestyle.few_times_week', 'Few times a week'), icon: <Activity className="w-4 h-4" />, description: t('lifestyle.try_stay_active', 'I try to stay active') },
+    { value: 'daily', label: t('lifestyle.daily', 'Daily'), icon: <Activity className="w-4 h-4" />, description: t('lifestyle.part_of_routine', "It's part of my routine") },
+    { value: 'fitness_enthusiast', label: t('lifestyle.fitness_enthusiast', 'Fitness enthusiast'), icon: <Activity className="w-4 h-4" />, description: t('lifestyle.live_for_gym', 'I live for the gym') }
   ];
 
   const petOptions = [
-    { value: 'no_pets', label: 'No pets', icon: <Heart className="w-4 h-4" /> },
-    { value: 'dog', label: 'Dog', icon: <Heart className="w-4 h-4" /> },
-    { value: 'cat', label: 'Cat', icon: <Heart className="w-4 h-4" /> },
-    { value: 'multiple_pets', label: 'Multiple pets', icon: <Heart className="w-4 h-4" /> },
-    { value: 'want_pets', label: 'Want pets', icon: <Heart className="w-4 h-4" /> },
-    { value: 'allergic_to_pets', label: 'Allergic to pets', icon: <Heart className="w-4 h-4" /> }
+    { value: 'no_pets', label: t('lifestyle.no_pets', 'No pets'), icon: <Heart className="w-4 h-4" /> },
+    { value: 'dog', label: t('lifestyle.dog', 'Dog'), icon: <Heart className="w-4 h-4" /> },
+    { value: 'cat', label: t('lifestyle.cat', 'Cat'), icon: <Heart className="w-4 h-4" /> },
+    { value: 'multiple_pets', label: t('lifestyle.multiple_pets', 'Multiple pets'), icon: <Heart className="w-4 h-4" /> },
+    { value: 'want_pets', label: t('lifestyle.want_pets', 'Want pets'), icon: <Heart className="w-4 h-4" /> },
+    { value: 'allergic_to_pets', label: t('lifestyle.allergic_to_pets', 'Allergic to pets'), icon: <Heart className="w-4 h-4" /> }
   ];
 
   const drinkingOptions = [
-    { value: 'never', label: 'Never', icon: <Wine className="w-4 h-4" /> },
-    { value: 'rarely', label: 'Rarely', icon: <Wine className="w-4 h-4" /> },
-    { value: 'socially', label: 'Socially', icon: <Wine className="w-4 h-4" /> },
-    { value: 'regularly', label: 'Regularly', icon: <Wine className="w-4 h-4" /> },
-    { value: 'prefer_not_to_say', label: 'Prefer not to say', icon: <Wine className="w-4 h-4" /> }
+    { value: 'never', label: t('lifestyle.never', 'Never'), icon: <Wine className="w-4 h-4" /> },
+    { value: 'rarely', label: t('lifestyle.rarely', 'Rarely'), icon: <Wine className="w-4 h-4" /> },
+    { value: 'socially', label: t('lifestyle.socially', 'Socially'), icon: <Wine className="w-4 h-4" /> },
+    { value: 'regularly', label: t('lifestyle.regularly', 'Regularly'), icon: <Wine className="w-4 h-4" /> },
+    { value: 'prefer_not_to_say', label: t('lifestyle.prefer_not_to_say', 'Prefer not to say'), icon: <Wine className="w-4 h-4" /> }
   ];
 
   const smokingOptions = [
-    { value: 'never', label: 'Never', icon: <Cigarette className="w-4 h-4" /> },
-    { value: 'occasionally', label: 'Occasionally', icon: <Cigarette className="w-4 h-4" /> },
-    { value: 'socially', label: 'Socially', icon: <Cigarette className="w-4 h-4" /> },
-    { value: 'regularly', label: 'Regularly', icon: <Cigarette className="w-4 h-4" /> },
-    { value: 'trying_to_quit', label: 'Trying to quit', icon: <Cigarette className="w-4 h-4" /> }
+    { value: 'never', label: t('lifestyle.never', 'Never'), icon: <Cigarette className="w-4 h-4" /> },
+    { value: 'occasionally', label: t('lifestyle.occasionally', 'Occasionally'), icon: <Cigarette className="w-4 h-4" /> },
+    { value: 'socially', label: t('lifestyle.socially', 'Socially'), icon: <Cigarette className="w-4 h-4" /> },
+    { value: 'regularly', label: t('lifestyle.regularly', 'Regularly'), icon: <Cigarette className="w-4 h-4" /> },
+    { value: 'trying_to_quit', label: t('lifestyle.trying_to_quit', 'Trying to quit'), icon: <Cigarette className="w-4 h-4" /> }
   ];
 
   const dietOptions = [
-    { value: 'omnivore', label: 'Omnivore', icon: <Utensils className="w-4 h-4" /> },
-    { value: 'vegetarian', label: 'Vegetarian', icon: <Utensils className="w-4 h-4" /> },
-    { value: 'vegan', label: 'Vegan', icon: <Utensils className="w-4 h-4" /> },
-    { value: 'pescatarian', label: 'Pescatarian', icon: <Utensils className="w-4 h-4" /> },
-    { value: 'halal', label: 'Halal', icon: <Utensils className="w-4 h-4" /> },
-    { value: 'kosher', label: 'Kosher', icon: <Utensils className="w-4 h-4" /> }
+    { value: 'omnivore', label: t('diet.omnivore', 'Omnivore'), icon: <Utensils className="w-4 h-4" /> },
+    { value: 'vegetarian', label: t('diet.vegetarian', 'Vegetarian'), icon: <Utensils className="w-4 h-4" /> },
+    { value: 'vegan', label: t('diet.vegan', 'Vegan'), icon: <Utensils className="w-4 h-4" /> },
+    { value: 'pescatarian', label: t('diet.pescatarian', 'Pescatarian'), icon: <Utensils className="w-4 h-4" /> },
+    { value: 'halal', label: t('diet.halal', 'Halal'), icon: <Utensils className="w-4 h-4" /> },
+    { value: 'kosher', label: t('diet.kosher', 'Kosher'), icon: <Utensils className="w-4 h-4" /> }
   ];
 
   const sleepOptions = [
-    { value: 'early_bird', label: 'Early bird', icon: <Moon className="w-4 h-4" />, description: 'Early to bed, early to rise' },
-    { value: 'night_owl', label: 'Night owl', icon: <Moon className="w-4 h-4" />, description: 'I come alive after dark' },
-    { value: 'depends', label: 'It depends', icon: <Moon className="w-4 h-4" />, description: 'Flexible schedule' }
+    { value: 'early_bird', label: t('lifestyle.early_bird', 'Early bird'), icon: <Moon className="w-4 h-4" />, description: t('lifestyle.early_to_bed', 'Early to bed, early to rise') },
+    { value: 'night_owl', label: t('lifestyle.night_owl', 'Night owl'), icon: <Moon className="w-4 h-4" />, description: t('lifestyle.alive_after_dark', 'I come alive after dark') },
+    { value: 'depends', label: t('lifestyle.it_depends', 'It depends'), icon: <Moon className="w-4 h-4" />, description: t('lifestyle.flexible_schedule', 'Flexible schedule') }
   ];
 
   return (
@@ -72,14 +75,13 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <Activity className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-white">Tell us about your lifestyle</h2>
-        <p className="text-purple-200">Help us find people who match your way of life</p>
+        <h2 className="text-2xl font-bold text-white">{t('wizard.tell_us_lifestyle', 'Tell us about your lifestyle')}</h2>
+        <p className="text-purple-200">{t('wizard.find_matching_people', 'Help us find people who match your way of life')}</p>
       </div>
 
       <div className="space-y-6">
-        {/* Exercise Habits */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">How often do you exercise?</h3>
+          <h3 className="text-lg font-medium text-white">{t('wizard.how_often_exercise', 'How often do you exercise?')}</h3>
           <ChoiceChips
             options={exerciseOptions}
             value={data.exercise_habits}
@@ -88,9 +90,8 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
           />
         </div>
 
-        {/* Pets */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Do you have pets?</h3>
+          <h3 className="text-lg font-medium text-white">{t('wizard.have_pets', 'Do you have pets?')}</h3>
           <ChoiceChips
             options={petOptions}
             value={data.have_pets}
@@ -99,9 +100,8 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
           />
         </div>
 
-        {/* Drinking */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Do you drink alcohol?</h3>
+          <h3 className="text-lg font-medium text-white">{t('wizard.drink_alcohol', 'Do you drink alcohol?')}</h3>
           <ChoiceChips
             options={drinkingOptions}
             value={data.drinking}
@@ -110,9 +110,8 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
           />
         </div>
 
-        {/* Smoking */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Do you smoke?</h3>
+          <h3 className="text-lg font-medium text-white">{t('wizard.do_you_smoke', 'Do you smoke?')}</h3>
           <ChoiceChips
             options={smokingOptions}
             value={data.smoking}
@@ -121,9 +120,8 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
           />
         </div>
 
-        {/* Diet */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Dietary preferences</h3>
+          <h3 className="text-lg font-medium text-white">{t('wizard.dietary_preferences', 'Dietary preferences')}</h3>
           <ChoiceChips
             options={dietOptions}
             value={data.dietary_preferences}
@@ -132,9 +130,8 @@ export const Step2Lifestyle: React.FC<Step2LifestyleProps> = ({ data, onChange }
           />
         </div>
 
-        {/* Sleep Schedule */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium text-white">Are you a morning person or night owl?</h3>
+          <h3 className="text-lg font-medium text-white">{t('wizard.morning_or_night', 'Are you a morning person or night owl?')}</h3>
           <ChoiceChips
             options={sleepOptions}
             value={data.sleep_schedule}
