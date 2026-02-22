@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { getGroups } from '@/api/groups';
 import type { Group } from '@/api/groups';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export const CompactGroups = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +47,7 @@ export const CompactGroups = () => {
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <Users className="w-4 h-4 text-purple-400" />
-          <h3 className="text-sm font-semibold text-white">Groups</h3>
+          <h3 className="text-sm font-semibold text-white">{t('discovery.groups', 'Groups')}</h3>
         </div>
         <Button
           variant="ghost"
@@ -53,7 +55,7 @@ export const CompactGroups = () => {
           onClick={() => navigate('/groups')}
           className="text-xs text-purple-300 hover:text-white h-6 px-1.5"
         >
-          All
+          {t('common.all', 'All')}
         </Button>
       </div>
 

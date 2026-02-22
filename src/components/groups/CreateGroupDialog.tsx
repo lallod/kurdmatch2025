@@ -16,11 +16,11 @@ interface CreateGroupDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const categories = [
-  { value: 'professional', label: 'Professional', icon: '💼' },
-  { value: 'lifestyle', label: 'Lifestyle', icon: '🌟' },
-  { value: 'culture', label: 'Culture', icon: '🎵' },
-  { value: 'travel', label: 'Travel', icon: '✈️' },
+const getCategoryOptions = (t: (key: string, fallback: string) => string) => [
+  { value: 'professional', label: t('group.cat_professional', 'Professional'), icon: '💼' },
+  { value: 'lifestyle', label: t('group.cat_lifestyle', 'Lifestyle'), icon: '🌟' },
+  { value: 'culture', label: t('group.cat_culture', 'Culture'), icon: '🎵' },
+  { value: 'travel', label: t('group.cat_travel', 'Travel'), icon: '✈️' },
 ];
 
 const iconOptions = ['🎯', '💼', '🌟', '🎵', '✈️', '📚', '🎨', '⚽', '🍕', '🎭', '🎬', '🎮', '📱', '💻', '🏋️'];
@@ -28,6 +28,7 @@ const iconOptions = ['🎯', '💼', '🌟', '🎵', '✈️', '📚', '🎨', '
 export const CreateGroupDialog = ({ open, onOpenChange }: CreateGroupDialogProps) => {
   const navigate = useNavigate();
   const { t } = useTranslations();
+  const categories = getCategoryOptions(t);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',

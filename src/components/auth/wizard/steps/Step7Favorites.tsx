@@ -20,81 +20,81 @@ interface Step7FavoritesProps {
 export const Step7Favorites: React.FC<Step7FavoritesProps> = ({ data, onChange }) => {
   const { t } = useTranslations();
   const favoriteBooksOptions = [
-    { value: 'kurdish_literature', label: 'Kurdish Literature', emoji: '📚' },
-    { value: 'poetry_collections', label: 'Poetry Collections', emoji: '📝' },
-    { value: 'historical_novels', label: 'Historical Novels', emoji: '🏛️' },
-    { value: 'political_essays', label: 'Political Essays', emoji: '🗳️' },
-    { value: 'self_help_books', label: 'Self-Help Books', emoji: '📖' },
-    { value: 'world_literature', label: 'World Literature', emoji: '🌍' },
-    { value: 'biographies', label: 'Biographies', emoji: '👤' },
-    { value: 'science_fiction', label: 'Science Fiction', emoji: '🚀' },
-    { value: 'romance', label: 'Romance', emoji: '💕' },
-    { value: 'mystery', label: 'Mystery', emoji: '🔍' }
+    { value: 'kurdish_literature', label: t('books.kurdish_literature', 'Kurdish Literature'), emoji: '📚' },
+    { value: 'poetry_collections', label: t('books.poetry_collections', 'Poetry Collections'), emoji: '📝' },
+    { value: 'historical_novels', label: t('books.historical_novels', 'Historical Novels'), emoji: '🏛️' },
+    { value: 'political_essays', label: t('books.political_essays', 'Political Essays'), emoji: '🗳️' },
+    { value: 'self_help_books', label: t('books.self_help', 'Self-Help Books'), emoji: '📖' },
+    { value: 'world_literature', label: t('books.world_literature', 'World Literature'), emoji: '🌍' },
+    { value: 'biographies', label: t('books.biographies', 'Biographies'), emoji: '👤' },
+    { value: 'science_fiction', label: t('books.science_fiction', 'Science Fiction'), emoji: '🚀' },
+    { value: 'romance', label: t('books.romance', 'Romance'), emoji: '💕' },
+    { value: 'mystery', label: t('books.mystery', 'Mystery'), emoji: '🔍' }
   ];
 
   const favoriteMoviesOptions = [
-    { value: 'kurdish_cinema', label: 'Kurdish Cinema', emoji: '🎬' },
-    { value: 'historical_films', label: 'Historical Films', emoji: '🏛️' },
-    { value: 'documentaries', label: 'Documentaries', emoji: '📹' },
-    { value: 'drama', label: 'Drama', emoji: '🎭' },
-    { value: 'comedy', label: 'Comedy', emoji: '😂' },
-    { value: 'action', label: 'Action', emoji: '💥' },
-    { value: 'romance', label: 'Romance', emoji: '💕' },
-    { value: 'thriller', label: 'Thriller', emoji: '😱' },
-    { value: 'animation', label: 'Animation', emoji: '🎨' },
-    { value: 'foreign_films', label: 'Foreign Films', emoji: '🌍' }
+    { value: 'kurdish_cinema', label: t('movies.kurdish_cinema', 'Kurdish Cinema'), emoji: '🎬' },
+    { value: 'historical_films', label: t('movies.historical_films', 'Historical Films'), emoji: '🏛️' },
+    { value: 'documentaries', label: t('movies.documentaries', 'Documentaries'), emoji: '📹' },
+    { value: 'drama', label: t('movies.drama', 'Drama'), emoji: '🎭' },
+    { value: 'comedy', label: t('movies.comedy', 'Comedy'), emoji: '😂' },
+    { value: 'action', label: t('movies.action', 'Action'), emoji: '💥' },
+    { value: 'romance', label: t('movies.romance', 'Romance'), emoji: '💕' },
+    { value: 'thriller', label: t('movies.thriller', 'Thriller'), emoji: '😱' },
+    { value: 'animation', label: t('movies.animation', 'Animation'), emoji: '🎨' },
+    { value: 'foreign_films', label: t('movies.foreign_films', 'Foreign Films'), emoji: '🌍' }
   ];
 
   const favoriteMusicOptions = [
-    { value: 'traditional_kurdish_music', label: 'Traditional Kurdish Music', emoji: '🎵' },
-    { value: 'modern_kurdish_music', label: 'Modern Kurdish Music', emoji: '🎤' },
-    { value: 'classical_music', label: 'Classical Music', emoji: '🎼' },
-    { value: 'pop', label: 'Pop', emoji: '🎧' },
-    { value: 'folk', label: 'Folk', emoji: '🪕' },
-    { value: 'rock', label: 'Rock', emoji: '🎸' },
-    { value: 'jazz', label: 'Jazz', emoji: '🎺' },
-    { value: 'hip_hop', label: 'Hip Hop', emoji: '🎤' },
-    { value: 'electronic', label: 'Electronic', emoji: '🎛️' },
-    { value: 'world_music', label: 'World Music', emoji: '🌍' }
+    { value: 'traditional_kurdish_music', label: t('music.traditional_kurdish', 'Traditional Kurdish Music'), emoji: '🎵' },
+    { value: 'modern_kurdish_music', label: t('music.modern_kurdish', 'Modern Kurdish Music'), emoji: '🎤' },
+    { value: 'classical_music', label: t('music.classical', 'Classical Music'), emoji: '🎼' },
+    { value: 'pop', label: t('music.pop', 'Pop'), emoji: '🎧' },
+    { value: 'folk', label: t('music.folk', 'Folk'), emoji: '🪕' },
+    { value: 'rock', label: t('music.rock', 'Rock'), emoji: '🎸' },
+    { value: 'jazz', label: t('music.jazz', 'Jazz'), emoji: '🎺' },
+    { value: 'hip_hop', label: t('music.hip_hop', 'Hip Hop'), emoji: '🎤' },
+    { value: 'electronic', label: t('music.electronic', 'Electronic'), emoji: '🎛️' },
+    { value: 'world_music', label: t('music.world_music', 'World Music'), emoji: '🌍' }
   ];
 
   const favoriteFoodsOptions = [
-    { value: 'kurdish_cuisine', label: 'Kurdish Cuisine', emoji: '🥘' },
-    { value: 'persian_dishes', label: 'Persian Dishes', emoji: '🍛' },
-    { value: 'turkish_food', label: 'Turkish Food', emoji: '🥙' },
-    { value: 'arabic_dishes', label: 'Arabic Dishes', emoji: '🍽️' },
-    { value: 'mediterranean_cuisine', label: 'Mediterranean Cuisine', emoji: '🫒' },
-    { value: 'international_food', label: 'International Food', emoji: '🌍' },
-    { value: 'vegetarian_options', label: 'Vegetarian Options', emoji: '🥗' },
-    { value: 'street_food', label: 'Street Food', emoji: '🌮' },
-    { value: 'desserts', label: 'Desserts', emoji: '🍰' },
-    { value: 'tea_coffee', label: 'Tea & Coffee', emoji: '☕' }
+    { value: 'kurdish_cuisine', label: t('food.kurdish_cuisine', 'Kurdish Cuisine'), emoji: '🥘' },
+    { value: 'persian_dishes', label: t('food.persian_dishes', 'Persian Dishes'), emoji: '🍛' },
+    { value: 'turkish_food', label: t('food.turkish_food', 'Turkish Food'), emoji: '🥙' },
+    { value: 'arabic_dishes', label: t('food.arabic_dishes', 'Arabic Dishes'), emoji: '🍽️' },
+    { value: 'mediterranean_cuisine', label: t('food.mediterranean', 'Mediterranean Cuisine'), emoji: '🫒' },
+    { value: 'international_food', label: t('food.international', 'International Food'), emoji: '🌍' },
+    { value: 'vegetarian_options', label: t('food.vegetarian', 'Vegetarian Options'), emoji: '🥗' },
+    { value: 'street_food', label: t('food.street_food', 'Street Food'), emoji: '🌮' },
+    { value: 'desserts', label: t('food.desserts', 'Desserts'), emoji: '🍰' },
+    { value: 'tea_coffee', label: t('food.tea_coffee', 'Tea & Coffee'), emoji: '☕' }
   ];
 
   const favoriteGamesOptions = [
-    { value: 'backgammon', label: 'Backgammon', emoji: '🎲' },
-    { value: 'chess', label: 'Chess', emoji: '♟️' },
-    { value: 'traditional_kurdish_games', label: 'Traditional Kurdish Games', emoji: '🎯' },
-    { value: 'card_games', label: 'Card Games', emoji: '🃏' },
-    { value: 'video_games', label: 'Video Games', emoji: '🎮' },
-    { value: 'mobile_games', label: 'Mobile Games', emoji: '📱' },
-    { value: 'board_games', label: 'Board Games', emoji: '🎲' },
-    { value: 'puzzle_games', label: 'Puzzle Games', emoji: '🧩' },
-    { value: 'sports_games', label: 'Sports Games', emoji: '⚽' },
-    { value: 'strategy_games', label: 'Strategy Games', emoji: '🎯' }
+    { value: 'backgammon', label: t('games.backgammon', 'Backgammon'), emoji: '🎲' },
+    { value: 'chess', label: t('games.chess', 'Chess'), emoji: '♟️' },
+    { value: 'traditional_kurdish_games', label: t('games.traditional_kurdish', 'Traditional Kurdish Games'), emoji: '🎯' },
+    { value: 'card_games', label: t('games.card_games', 'Card Games'), emoji: '🃏' },
+    { value: 'video_games', label: t('games.video_games', 'Video Games'), emoji: '🎮' },
+    { value: 'mobile_games', label: t('games.mobile_games', 'Mobile Games'), emoji: '📱' },
+    { value: 'board_games', label: t('games.board_games', 'Board Games'), emoji: '🎲' },
+    { value: 'puzzle_games', label: t('games.puzzle_games', 'Puzzle Games'), emoji: '🧩' },
+    { value: 'sports_games', label: t('games.sports_games', 'Sports Games'), emoji: '⚽' },
+    { value: 'strategy_games', label: t('games.strategy_games', 'Strategy Games'), emoji: '🎯' }
   ];
 
   const favoritePodcastsOptions = [
-    { value: 'kurdish_cultural_shows', label: 'Kurdish Cultural Shows', emoji: '🎙️' },
-    { value: 'history_podcasts', label: 'History Podcasts', emoji: '🏛️' },
-    { value: 'cultural_discussions', label: 'Cultural Discussions', emoji: '🗣️' },
-    { value: 'political_analysis', label: 'Political Analysis', emoji: '🗳️' },
-    { value: 'self_improvement', label: 'Self-Improvement', emoji: '📈' },
-    { value: 'language_learning', label: 'Language Learning', emoji: '🗣️' },
-    { value: 'comedy_shows', label: 'Comedy Shows', emoji: '😂' },
-    { value: 'true_crime', label: 'True Crime', emoji: '🔍' },
-    { value: 'technology', label: 'Technology', emoji: '💻' },
-    { value: 'health_wellness', label: 'Health & Wellness', emoji: '🧘' }
+    { value: 'kurdish_cultural_shows', label: t('podcasts.kurdish_cultural', 'Kurdish Cultural Shows'), emoji: '🎙️' },
+    { value: 'history_podcasts', label: t('podcasts.history', 'History Podcasts'), emoji: '🏛️' },
+    { value: 'cultural_discussions', label: t('podcasts.cultural_discussions', 'Cultural Discussions'), emoji: '🗣️' },
+    { value: 'political_analysis', label: t('podcasts.political_analysis', 'Political Analysis'), emoji: '🗳️' },
+    { value: 'self_improvement', label: t('podcasts.self_improvement', 'Self-Improvement'), emoji: '📈' },
+    { value: 'language_learning', label: t('podcasts.language_learning', 'Language Learning'), emoji: '🗣️' },
+    { value: 'comedy_shows', label: t('podcasts.comedy_shows', 'Comedy Shows'), emoji: '😂' },
+    { value: 'true_crime', label: t('podcasts.true_crime', 'True Crime'), emoji: '🔍' },
+    { value: 'technology', label: t('podcasts.technology', 'Technology'), emoji: '💻' },
+    { value: 'health_wellness', label: t('podcasts.health_wellness', 'Health & Wellness'), emoji: '🧘' }
   ];
 
   return (
