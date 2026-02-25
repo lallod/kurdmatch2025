@@ -259,7 +259,7 @@ const SystemHealthPage = () => {
               <CardTitle>{t('admin.api_performance_details', 'API Performance Details')}</CardTitle>
               <CardDescription>{t('admin.detailed_api_metrics', 'Detailed API performance metrics and logs')}</CardDescription>
             </CardHeader>
-            <CardContent><p className="text-muted-foreground">Detailed API performance content will appear here.</p></CardContent>
+            <CardContent><p className="text-muted-foreground">{t('admin.api_content_placeholder', 'Detailed API performance content will appear here.')}</p></CardContent>
           </Card>
         </TabsContent>
 
@@ -269,7 +269,7 @@ const SystemHealthPage = () => {
               <CardTitle>{t('admin.system_resources_details', 'System Resources Details')}</CardTitle>
               <CardDescription>{t('admin.detailed_resource_metrics', 'Detailed system resource metrics')}</CardDescription>
             </CardHeader>
-            <CardContent><p className="text-muted-foreground">Detailed system resources content will appear here.</p></CardContent>
+            <CardContent><p className="text-muted-foreground">{t('admin.resources_content_placeholder', 'Detailed system resources content will appear here.')}</p></CardContent>
           </Card>
         </TabsContent>
 
@@ -279,7 +279,7 @@ const SystemHealthPage = () => {
               <CardTitle>{t('admin.incident_history', 'Incident History')}</CardTitle>
               <CardDescription>{t('admin.complete_incident_history', 'Complete incident history and resolutions')}</CardDescription>
             </CardHeader>
-            <CardContent><p className="text-muted-foreground">Incident history content will appear here.</p></CardContent>
+            <CardContent><p className="text-muted-foreground">{t('admin.incidents_content_placeholder', 'Incident history content will appear here.')}</p></CardContent>
           </Card>
         </TabsContent>
       </Tabs>

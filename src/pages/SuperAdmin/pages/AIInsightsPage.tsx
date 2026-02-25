@@ -96,9 +96,9 @@ const AIInsightsPage = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <p className="text-white font-mono text-sm">User: {insight.user_id.substring(0, 10)}...</p>
+                        <p className="text-white font-mono text-sm">{t('admin.user_label', 'User')}: {insight.user_id.substring(0, 10)}...</p>
                         <MessageSquare className="h-4 w-4 text-white/40" />
-                        <p className="text-white font-mono text-sm">Partner: {insight.conversation_partner_id.substring(0, 10)}...</p>
+                        <p className="text-white font-mono text-sm">{t('admin.partner_label', 'Partner')}: {insight.conversation_partner_id.substring(0, 10)}...</p>
                       </div>
                       {insight.conversation_summary && (
                         <div className="mb-3"><p className="text-white/80 text-sm leading-relaxed">{insight.conversation_summary}</p></div>
@@ -141,10 +141,10 @@ const AIInsightsPage = () => {
                       <div className="flex items-center gap-3 mt-3 pt-3 border-t border-white/5">
                         <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
                           <Calendar className="h-3 w-3 mr-1" />
-                          Created: {format(new Date(insight.created_at), 'MMM d, yyyy')}
+                          {t('common.created', 'Created')}: {format(new Date(insight.created_at), 'MMM d, yyyy')}
                         </Badge>
                         <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60">
-                          Updated: {format(new Date(insight.last_updated), 'MMM d, HH:mm')}
+                          {t('common.updated', 'Updated')}: {format(new Date(insight.last_updated), 'MMM d, HH:mm')}
                         </Badge>
                       </div>
                     </div>
