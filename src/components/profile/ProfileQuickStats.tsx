@@ -6,6 +6,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileQuickStatsProps {
   education: string;
@@ -34,6 +35,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
   isMobile,
   onFieldEdit
 }) => {
+  const { t } = useTranslations();
   const [editingField, setEditingField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState('');
   const [saving, setSaving] = useState(false);
@@ -83,7 +85,7 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
       }}
     >
       <SelectTrigger className="h-8 text-xs w-full mt-1">
-        <SelectValue placeholder="Select..." />
+        <SelectValue placeholder={t('common.select', 'Select...')} />
       </SelectTrigger>
       <SelectContent className="bg-popover border border-border z-50">
         {options.map((opt) => (
@@ -124,11 +126,11 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           <div className={iconContainerClass}>
             <GraduationCap size={15} className="text-primary" />
           </div>
-          <h4 className="text-xs font-semibold text-foreground">Education</h4>
+           <h4 className="text-xs font-semibold text-foreground">{t('profile.education', 'Education')}</h4>
         </div>
         {editingField === 'education' 
           ? renderSelectEditor('education', educationOptions)
-          : <p className="text-xs text-muted-foreground leading-relaxed">{educationDisplay || 'Not set'}</p>
+          : <p className="text-xs text-muted-foreground leading-relaxed">{educationDisplay || t('common.not_set', 'Not set')}</p>
         }
       </div>
 
@@ -139,11 +141,11 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           <div className={iconContainerClass}>
             <Briefcase size={15} className="text-primary" />
           </div>
-          <h4 className="text-xs font-semibold text-foreground">Work</h4>
+           <h4 className="text-xs font-semibold text-foreground">{t('profile.work', 'Work')}</h4>
         </div>
         {editingField === 'occupation'
           ? renderTextEditor('occupation')
-          : <p className="text-xs text-muted-foreground leading-relaxed">{occupation || 'Not set'}</p>
+          : <p className="text-xs text-muted-foreground leading-relaxed">{occupation || t('common.not_set', 'Not set')}</p>
         }
       </div>
 
@@ -154,11 +156,11 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           <div className={iconContainerClass}>
             <Heart size={15} className="text-primary" />
           </div>
-          <h4 className="text-xs font-semibold text-foreground">Looking for</h4>
+           <h4 className="text-xs font-semibold text-foreground">{t('profile.looking_for', 'Looking for')}</h4>
         </div>
         {editingField === 'relationshipGoals'
           ? renderSelectEditor('relationshipGoals', relationshipOptions)
-          : <p className="text-xs text-muted-foreground leading-relaxed">{relationshipDisplay || 'Not set'}</p>
+          : <p className="text-xs text-muted-foreground leading-relaxed">{relationshipDisplay || t('common.not_set', 'Not set')}</p>
         }
       </div>
 
@@ -169,13 +171,13 @@ const ProfileQuickStats: React.FC<ProfileQuickStatsProps> = ({
           <div className={iconContainerClass}>
             <Star size={15} className="text-primary" />
           </div>
-          <h4 className="text-xs font-semibold text-foreground">Zodiac</h4>
+           <h4 className="text-xs font-semibold text-foreground">{t('profile.zodiac', 'Zodiac')}</h4>
         </div>
         {editingField === 'zodiacSign'
           ? renderSelectEditor('zodiacSign', zodiacOptions)
           : zodiacSign
             ? <Badge className="bg-primary/15 text-primary border-0 rounded-full text-[11px] px-2.5 py-0.5">{zodiacSign}</Badge>
-            : <p className="text-xs text-muted-foreground">Not set</p>
+            : <p className="text-xs text-muted-foreground">{t('common.not_set', 'Not set')}</p>
         }
       </div>
     </div>

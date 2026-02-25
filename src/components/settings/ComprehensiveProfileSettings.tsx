@@ -170,17 +170,17 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Profile Settings</CardTitle>
+          <CardTitle>{t('settings.profile_settings', 'Profile Settings')}</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="basic" className="space-y-6">
             <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="basic">Basic</TabsTrigger>
-              <TabsTrigger value="lifestyle">Lifestyle</TabsTrigger>
-              <TabsTrigger value="interests">Interests</TabsTrigger>
-              <TabsTrigger value="career">Career</TabsTrigger>
-              <TabsTrigger value="relationship">Relationship</TabsTrigger>
-              <TabsTrigger value="personal">Personal</TabsTrigger>
+              <TabsTrigger value="basic">{t('settings.basic', 'Basic')}</TabsTrigger>
+              <TabsTrigger value="lifestyle">{t('settings.lifestyle', 'Lifestyle')}</TabsTrigger>
+              <TabsTrigger value="interests">{t('settings.interests', 'Interests')}</TabsTrigger>
+              <TabsTrigger value="career">{t('settings.career', 'Career')}</TabsTrigger>
+              <TabsTrigger value="relationship">{t('settings.relationship', 'Relationship')}</TabsTrigger>
+              <TabsTrigger value="personal">{t('settings.personal', 'Personal')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-6">
@@ -205,38 +205,38 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
                   <div>
                     <p className="font-medium">{profile?.name}</p>
-                    <p className="text-sm text-muted-foreground">Change profile photo</p>
+                    <p className="text-sm text-muted-foreground">{t('settings.change_profile_photo', 'Change profile photo')}</p>
                   </div>
                 </div>
 
                 {/* Basic Information */}
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <Label htmlFor="name">Name</Label>
+                   <Label htmlFor="name">{t('settings.name', 'Name')}</Label>
                     <Input
                       id="name"
                       value={formData.name || ''}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      placeholder="Your name"
+                      placeholder={t('settings.your_name', 'Your name')}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="age">Age</Label>
+                   <Label htmlFor="age">{t('settings.age', 'Age')}</Label>
                     <Input
                       id="age"
                       type="number"
                       value={formData.age || ''}
                       onChange={(e) => handleInputChange('age', parseInt(e.target.value))}
-                      placeholder="Your age"
+                      placeholder={t('settings.your_age', 'Your age')}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="height">Height</Label>
+                   <Label htmlFor="height">{t('settings.height', 'Height')}</Label>
                     <Select value={formData.height} onValueChange={(value) => handleInputChange('height', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select height" />
+                        <SelectValue placeholder={t('settings.select_height', 'Select height')} />
                       </SelectTrigger>
                       <SelectContent>
                         {heightOptions.map(height => (
@@ -247,10 +247,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
 
                   <div>
-                    <Label htmlFor="body_type">Body Type</Label>
+                   <Label htmlFor="body_type">{t('settings.body_type', 'Body Type')}</Label>
                     <Select value={formData.body_type} onValueChange={(value) => handleInputChange('body_type', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select body type" />
+                        <SelectValue placeholder={t('settings.select_body_type', 'Select body type')} />
                       </SelectTrigger>
                       <SelectContent>
                         {bodyTypeOptions.map(type => (
@@ -261,10 +261,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
 
                   <div>
-                    <Label htmlFor="ethnicity">Ethnicity</Label>
+                   <Label htmlFor="ethnicity">{t('settings.ethnicity', 'Ethnicity')}</Label>
                     <Select value={formData.ethnicity} onValueChange={(value) => handleInputChange('ethnicity', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select ethnicity" />
+                        <SelectValue placeholder={t('settings.select_ethnicity', 'Select ethnicity')} />
                       </SelectTrigger>
                       <SelectContent>
                         {ethnicityOptions.map(ethnicity => (
@@ -275,20 +275,20 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
 
                   <div>
-                    <Label htmlFor="location">Location</Label>
+                   <Label htmlFor="location">{t('settings.location', 'Location')}</Label>
                     <Input
                       id="location"
                       value={formData.location || ''}
                       onChange={(e) => handleInputChange('location', e.target.value)}
-                      placeholder="Your location"
+                      placeholder={t('settings.your_location', 'Your location')}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="kurdistan_region">Kurdistan Region</Label>
+                   <Label htmlFor="kurdistan_region">{t('settings.kurdistan_region', 'Kurdistan Region')}</Label>
                     <Select value={formData.kurdistan_region} onValueChange={(value) => handleInputChange('kurdistan_region', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Kurdistan region" />
+                        <SelectValue placeholder={t('settings.select_kurdistan_region', 'Select Kurdistan region')} />
                       </SelectTrigger>
                       <SelectContent>
                         {kurdistanRegionOptions.map(region => (
@@ -301,7 +301,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
 
                 {/* Languages */}
                 <div>
-                  <Label>Languages</Label>
+                  <Label>{t('settings.languages', 'Languages')}</Label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {(formData.languages || []).map(lang => (
                       <Badge key={lang} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('languages', lang)}>
@@ -311,7 +311,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
                   <Select onValueChange={(value) => handleArrayAdd('languages', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Add language" />
+                      <SelectValue placeholder={t('settings.add_language', 'Add language')} />
                     </SelectTrigger>
                     <SelectContent>
                       {languageOptions.filter(lang => !(formData.languages || []).includes(lang)).map(lang => (
@@ -322,12 +322,12 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="bio">Bio</Label>
+                  <Label htmlFor="bio">{t('settings.bio', 'Bio')}</Label>
                   <Textarea
                     id="bio"
                     value={formData.bio || ''}
                     onChange={(e) => handleInputChange('bio', e.target.value)}
-                    placeholder="Tell us about yourself..."
+                    placeholder={t('settings.bio_placeholder', 'Tell us about yourself...')}
                     rows={4}
                   />
                 </div>
@@ -337,10 +337,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
             <TabsContent value="lifestyle" className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label htmlFor="exercise_habits">Exercise Habits</Label>
+                   <Label htmlFor="exercise_habits">{t('settings.exercise_habits', 'Exercise Habits')}</Label>
                   <Select value={formData.exercise_habits} onValueChange={(value) => handleInputChange('exercise_habits', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="How often do you exercise?" />
+                      <SelectValue placeholder={t('settings.exercise_placeholder', 'How often do you exercise?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {exerciseOptions.map(option => (
@@ -351,10 +351,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="dietary_preferences">Dietary Preferences</Label>
+                   <Label htmlFor="dietary_preferences">{t('settings.dietary_preferences', 'Dietary Preferences')}</Label>
                   <Select value={formData.dietary_preferences} onValueChange={(value) => handleInputChange('dietary_preferences', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="What's your diet like?" />
+                      <SelectValue placeholder={t('settings.diet_placeholder', "What's your diet like?")} />
                     </SelectTrigger>
                     <SelectContent>
                       {['Halal', 'Vegetarian', 'Omnivore', 'Pescatarian'].map(option => (
@@ -365,10 +365,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="smoking">Smoking</Label>
+                   <Label htmlFor="smoking">{t('settings.smoking', 'Smoking')}</Label>
                   <Select value={formData.smoking} onValueChange={(value) => handleInputChange('smoking', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Do you smoke?" />
+                      <SelectValue placeholder={t('settings.smoking_placeholder', 'Do you smoke?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {smokingOptions.map(option => (
@@ -379,10 +379,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="drinking">Drinking</Label>
+                   <Label htmlFor="drinking">{t('settings.drinking', 'Drinking')}</Label>
                   <Select value={formData.drinking} onValueChange={(value) => handleInputChange('drinking', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Do you drink alcohol?" />
+                      <SelectValue placeholder={t('settings.drinking_placeholder', 'Do you drink alcohol?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {drinkingOptions.map(option => (
@@ -393,10 +393,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="sleep_schedule">Sleep Schedule</Label>
+                   <Label htmlFor="sleep_schedule">{t('settings.sleep_schedule', 'Sleep Schedule')}</Label>
                   <Select value={formData.sleep_schedule} onValueChange={(value) => handleInputChange('sleep_schedule', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Are you a night owl or early bird?" />
+                      <SelectValue placeholder={t('settings.sleep_placeholder', 'Are you a night owl or early bird?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {sleepScheduleOptions.map(option => (
@@ -407,10 +407,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="have_pets">Pets</Label>
+                   <Label htmlFor="have_pets">{t('settings.pets', 'Pets')}</Label>
                   <Select value={formData.have_pets} onValueChange={(value) => handleInputChange('have_pets', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Do you have pets?" />
+                      <SelectValue placeholder={t('settings.pets_placeholder', 'Do you have pets?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {petOptions.map(option => (
@@ -425,7 +425,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
             <TabsContent value="interests" className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <Label>Values</Label>
+                  <Label>{t('settings.values', 'Values')}</Label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {(formData.values || []).map(value => (
                       <Badge key={value} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('values', value)}>
@@ -435,7 +435,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
                   <Select onValueChange={(value) => handleArrayAdd('values', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Add value" />
+                      <SelectValue placeholder={t('settings.add_value', 'Add value')} />
                     </SelectTrigger>
                     <SelectContent>
                       {valueOptions.filter(val => !(formData.values || []).includes(val)).map(val => (
@@ -446,7 +446,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label>Interests</Label>
+                  <Label>{t('settings.interests', 'Interests')}</Label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {(formData.interests || []).map(interest => (
                       <Badge key={interest} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('interests', interest)}>
@@ -456,7 +456,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
                   <Select onValueChange={(value) => handleArrayAdd('interests', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Add interest" />
+                      <SelectValue placeholder={t('settings.add_interest', 'Add interest')} />
                     </SelectTrigger>
                     <SelectContent>
                       {interestOptions.filter(interest => !(formData.interests || []).includes(interest)).map(interest => (
@@ -467,7 +467,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label>Hobbies</Label>
+                  <Label>{t('settings.hobbies', 'Hobbies')}</Label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {(formData.hobbies || []).map(hobby => (
                       <Badge key={hobby} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('hobbies', hobby)}>
@@ -477,7 +477,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
                   <Select onValueChange={(value) => handleArrayAdd('hobbies', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Add hobby" />
+                      <SelectValue placeholder={t('settings.add_hobby', 'Add hobby')} />
                     </SelectTrigger>
                     <SelectContent>
                       {hobbyOptions.filter(hobby => !(formData.hobbies || []).includes(hobby)).map(hobby => (
@@ -488,7 +488,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label>Creative Pursuits</Label>
+                  <Label>{t('settings.creative_pursuits', 'Creative Pursuits')}</Label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {(formData.creative_pursuits || []).map(pursuit => (
                       <Badge key={pursuit} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('creative_pursuits', pursuit)}>
@@ -498,7 +498,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
                   <Select onValueChange={(value) => handleArrayAdd('creative_pursuits', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Add creative pursuit" />
+                      <SelectValue placeholder={t('settings.add_creative_pursuit', 'Add creative pursuit')} />
                     </SelectTrigger>
                     <SelectContent>
                       {creativePursuitOptions.filter(pursuit => !(formData.creative_pursuits || []).includes(pursuit)).map(pursuit => (
@@ -509,7 +509,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label>Weekend Activities</Label>
+                  <Label>{t('settings.weekend_activities', 'Weekend Activities')}</Label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {(formData.weekend_activities || []).map(activity => (
                       <Badge key={activity} variant="secondary" className="cursor-pointer" onClick={() => handleArrayRemove('weekend_activities', activity)}>
@@ -519,7 +519,7 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                   </div>
                   <Select onValueChange={(value) => handleArrayAdd('weekend_activities', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Add weekend activity" />
+                      <SelectValue placeholder={t('settings.add_weekend_activity', 'Add weekend activity')} />
                     </SelectTrigger>
                     <SelectContent>
                       {weekendActivityOptions.filter(activity => !(formData.weekend_activities || []).includes(activity)).map(activity => (
@@ -534,30 +534,30 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
             <TabsContent value="career" className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label htmlFor="occupation">Occupation</Label>
+                   <Label htmlFor="occupation">{t('settings.occupation', 'Occupation')}</Label>
                   <Input
                     id="occupation"
                     value={formData.occupation || ''}
                     onChange={(e) => handleInputChange('occupation', e.target.value)}
-                    placeholder="Your job title"
+                    placeholder={t('settings.job_title_placeholder', 'Your job title')}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="company">Company</Label>
+                   <Label htmlFor="company">{t('settings.company', 'Company')}</Label>
                   <Input
                     id="company"
                     value={formData.company || ''}
                     onChange={(e) => handleInputChange('company', e.target.value)}
-                    placeholder="Where you work"
+                    placeholder={t('settings.company_placeholder', 'Where you work')}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="education">Education Level</Label>
+                   <Label htmlFor="education">{t('settings.education_level', 'Education Level')}</Label>
                   <Select value={formData.education} onValueChange={(value) => handleInputChange('education', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select education level" />
+                      <SelectValue placeholder={t('settings.select_education', 'Select education level')} />
                     </SelectTrigger>
                     <SelectContent>
                       {educationOptions.map(level => (
@@ -568,10 +568,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="work_life_balance">Work-Life Balance</Label>
+                   <Label htmlFor="work_life_balance">{t('settings.work_life_balance', 'Work-Life Balance')}</Label>
                   <Select value={formData.work_life_balance} onValueChange={(value) => handleInputChange('work_life_balance', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="How do you approach work?" />
+                      <SelectValue placeholder={t('settings.work_approach_placeholder', 'How do you approach work?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {['Excellent balance', 'Work-focused', 'Life-focused', 'Flexible approach', 'Still figuring it out'].map(option => (
@@ -582,12 +582,12 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label htmlFor="career_ambitions">Career Ambitions</Label>
+                   <Label htmlFor="career_ambitions">{t('settings.career_ambitions', 'Career Ambitions')}</Label>
                   <Textarea
                     id="career_ambitions"
                     value={formData.career_ambitions || ''}
                     onChange={(e) => handleInputChange('career_ambitions', e.target.value)}
-                    placeholder="What are your professional goals and dreams?"
+                    placeholder={t('settings.career_ambitions_placeholder', 'What are your professional goals and dreams?')}
                     rows={3}
                   />
                 </div>
@@ -597,10 +597,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
             <TabsContent value="relationship" className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label htmlFor="relationship_goals">Relationship Goals</Label>
+                   <Label htmlFor="relationship_goals">{t('settings.relationship_goals', 'Relationship Goals')}</Label>
                   <Select value={formData.relationship_goals} onValueChange={(value) => handleInputChange('relationship_goals', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="What are you looking for?" />
+                      <SelectValue placeholder={t('settings.looking_for_placeholder', 'What are you looking for?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {relationshipGoalOptions.map(goal => (
@@ -611,10 +611,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="want_children">Children</Label>
+                   <Label htmlFor="want_children">{t('settings.children', 'Children')}</Label>
                   <Select value={formData.want_children} onValueChange={(value) => handleInputChange('want_children', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Your thoughts on children?" />
+                      <SelectValue placeholder={t('settings.children_placeholder', 'Your thoughts on children?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {childrenOptions.map(option => (
@@ -625,10 +625,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="family_closeness">Family Closeness</Label>
+                   <Label htmlFor="family_closeness">{t('settings.family_closeness', 'Family Closeness')}</Label>
                   <Select value={formData.family_closeness} onValueChange={(value) => handleInputChange('family_closeness', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="How close are you to family?" />
+                      <SelectValue placeholder={t('settings.family_placeholder', 'How close are you to family?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {['Very close', 'Close', 'Moderately close', 'Independent', 'It\'s complicated'].map(option => (
@@ -639,10 +639,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="love_language">Love Language</Label>
+                   <Label htmlFor="love_language">{t('settings.love_language', 'Love Language')}</Label>
                   <Select value={formData.love_language} onValueChange={(value) => handleInputChange('love_language', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="How do you feel most loved?" />
+                      <SelectValue placeholder={t('settings.love_language_placeholder', 'How do you feel most loved?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {['Words of affirmation', 'Quality time', 'Physical touch', 'Acts of service', 'Receiving gifts'].map(option => (
@@ -653,10 +653,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="communication_style">Communication Style</Label>
+                   <Label htmlFor="communication_style">{t('settings.communication_style', 'Communication Style')}</Label>
                   <Select value={formData.communication_style} onValueChange={(value) => handleInputChange('communication_style', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="How do you communicate?" />
+                      <SelectValue placeholder={t('settings.communication_placeholder', 'How do you communicate?')} />
                     </SelectTrigger>
                     <SelectContent>
                       {['Direct and honest', 'Gentle and caring', 'Humorous and light', 'Deep and meaningful', 'Depends on the situation'].map(option => (
@@ -667,12 +667,12 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="ideal_date">Ideal Date</Label>
+                   <Label htmlFor="ideal_date">{t('settings.ideal_date', 'Ideal Date')}</Label>
                   <Input
                     id="ideal_date"
                     value={formData.ideal_date || ''}
                     onChange={(e) => handleInputChange('ideal_date', e.target.value)}
-                    placeholder="Describe your ideal date"
+                    placeholder={t('settings.ideal_date_placeholder', 'Describe your ideal date')}
                   />
                 </div>
               </div>
@@ -681,10 +681,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
             <TabsContent value="personal" className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label htmlFor="religion">Religion</Label>
+                   <Label htmlFor="religion">{t('settings.religion', 'Religion')}</Label>
                   <Select value={formData.religion} onValueChange={(value) => handleInputChange('religion', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select religion" />
+                      <SelectValue placeholder={t('settings.select_religion', 'Select religion')} />
                     </SelectTrigger>
                     <SelectContent>
                       {religionOptions.map(religion => (
@@ -695,10 +695,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="political_views">Political Views</Label>
+                   <Label htmlFor="political_views">{t('settings.political_views', 'Political Views')}</Label>
                   <Select value={formData.political_views} onValueChange={(value) => handleInputChange('political_views', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select political views" />
+                      <SelectValue placeholder={t('settings.select_political_views', 'Select political views')} />
                     </SelectTrigger>
                     <SelectContent>
                       {politicalViewOptions.map(view => (
@@ -709,10 +709,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="zodiac_sign">Zodiac Sign</Label>
+                   <Label htmlFor="zodiac_sign">{t('settings.zodiac_sign', 'Zodiac Sign')}</Label>
                   <Select value={formData.zodiac_sign} onValueChange={(value) => handleInputChange('zodiac_sign', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select zodiac sign" />
+                      <SelectValue placeholder={t('settings.select_zodiac', 'Select zodiac sign')} />
                     </SelectTrigger>
                     <SelectContent>
                       {['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'].map(sign => (
@@ -723,10 +723,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 </div>
 
                 <div>
-                  <Label htmlFor="personality_type">Personality Type (MBTI)</Label>
+                   <Label htmlFor="personality_type">{t('settings.personality_type', 'Personality Type (MBTI)')}</Label>
                   <Select value={formData.personality_type} onValueChange={(value) => handleInputChange('personality_type', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select personality type" />
+                      <SelectValue placeholder={t('settings.select_personality', 'Select personality type')} />
                     </SelectTrigger>
                     <SelectContent>
                       {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'].map(type => (
@@ -743,10 +743,10 @@ const ComprehensiveProfileSettings: React.FC<ComprehensiveProfileSettingsProps> 
                 {saving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving All Changes...
+                    {t('settings.saving_changes', 'Saving All Changes...')}
                   </>
                 ) : (
-                  'Save All Changes'
+                  t('settings.save_all_changes', 'Save All Changes')
                 )}
               </Button>
             </div>
