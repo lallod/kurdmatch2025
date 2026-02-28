@@ -63,7 +63,7 @@ export default function Events() {
 
         <div className="max-w-lg mx-auto px-4 py-4">
           {loading ? (
-            <div className="text-center py-12 text-muted-foreground text-sm">Loading events...</div>
+            <div className="text-center py-12 text-muted-foreground text-sm">{t('events.loading', 'Loading events...')}</div>
           ) : currentEvents.length > 0 ? (
             <div className="space-y-4">
               {currentEvents.map(event => (

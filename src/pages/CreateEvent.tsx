@@ -113,39 +113,39 @@ const CreateEvent = () => {
             className="gap-2 text-foreground hover:bg-muted"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back
+            {t('common.back', 'Back')}
           </Button>
-          <h1 className="text-xl font-bold text-foreground">Create Event</h1>
+          <h1 className="text-xl font-bold text-foreground">{t('events.create_event', 'Create Event')}</h1>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-foreground">Event Title *</Label>
+            <Label htmlFor="title" className="text-foreground">{t('events.event_title', 'Event Title')} *</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Kurdish Music Night"
+              placeholder={t('events.title_placeholder', 'Kurdish Music Night')}
               className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-foreground">Description *</Label>
+            <Label htmlFor="description" className="text-foreground">{t('common.description', 'Description')} *</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your event..."
+              placeholder={t('events.description_placeholder', 'Describe your event...')}
               rows={4}
               className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground resize-none"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="eventDate" className="text-foreground">Date & Time *</Label>
+            <Label htmlFor="eventDate" className="text-foreground">{t('events.date_time', 'Date & Time')} *</Label>
             <Input
               id="eventDate"
               type="datetime-local"
@@ -156,19 +156,19 @@ const CreateEvent = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="location" className="text-foreground">Location *</Label>
+            <Label htmlFor="location" className="text-foreground">{t('common.location', 'Location')} *</Label>
             <Input
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Erbil Cultural Center"
+              placeholder={t('events.location_placeholder', 'Erbil Cultural Center')}
               className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-foreground">Event Image (optional)</Label>
+            <Label htmlFor="image" className="text-foreground">{t('events.event_image', 'Event Image')} ({t('common.optional', 'optional')})</Label>
             
             {imagePreview ? (
               <div className="relative">
@@ -201,26 +201,26 @@ const CreateEvent = () => {
                   className="cursor-pointer flex flex-col items-center gap-2"
                 >
                   <Upload className="w-8 h-8 text-muted-foreground" />
-                  <p className="text-muted-foreground text-sm">Click to upload event image</p>
-                  <p className="text-muted-foreground/50 text-xs">Max 5MB</p>
+                  <p className="text-muted-foreground text-sm">{t('events.click_upload', 'Click to upload event image')}</p>
+                  <p className="text-muted-foreground/50 text-xs">{t('common.max_5mb', 'Max 5MB')}</p>
                 </label>
               </div>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-foreground">Category (optional)</Label>
+            <Label htmlFor="category" className="text-foreground">{t('common.category', 'Category')} ({t('common.optional', 'optional')})</Label>
             <Input
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Music, Culture, Food, etc."
+              placeholder={t('events.category_placeholder', 'Music, Culture, Food, etc.')}
               className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="maxAttendees" className="text-foreground">Max Attendees (optional)</Label>
+            <Label htmlFor="maxAttendees" className="text-foreground">{t('events.max_attendees', 'Max Attendees')} ({t('common.optional', 'optional')})</Label>
             <Input
               id="maxAttendees"
               type="number"
@@ -239,12 +239,12 @@ const CreateEvent = () => {
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
+                {t('events.creating', 'Creating...')}
               </>
             ) : (
               <>
                 <Calendar className="w-4 h-4 mr-2" />
-                Create Event
+                {t('events.create_event', 'Create Event')}
               </>
             )}
           </Button>
