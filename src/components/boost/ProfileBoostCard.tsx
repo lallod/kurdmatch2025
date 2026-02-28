@@ -181,7 +181,7 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
       });
 
       toast.success(t('toast.boost.activated', 'Profile Boost activated! 🚀'), {
-        description: 'Your profile will be shown to more people for 30 minutes',
+        description: t('toast.boost.activated_desc', 'Your profile will be shown to more people for 30 minutes'),
       });
 
       // Refresh real stats periodically
@@ -213,11 +213,11 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
       <CardHeader className="bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10">
         <CardTitle className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-yellow-500" />
-          Profile Boost
+          {t('boost.title', 'Profile Boost')}
           {isBoostActive && (
             <Badge variant="secondary" className="ml-auto bg-yellow-500/20 text-yellow-600">
               <Sparkles className="h-3 w-3 mr-1" />
-              Active
+              {t('boost.active', 'Active')}
             </Badge>
           )}
         </CardTitle>
@@ -232,7 +232,7 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">Time remaining</span>
+                <span className="text-sm">{t('boost.time_remaining', 'Time remaining')}</span>
               </div>
               <span className="font-mono text-lg font-bold text-primary">
                 {formatTime(boostTimeRemaining)}
@@ -246,17 +246,17 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
                 <div className="text-center p-3 bg-muted/50 rounded-lg">
                   <TrendingUp className="h-5 w-5 text-blue-500 mx-auto mb-1" />
                   <p className="text-2xl font-bold">{boostStats.viewsIncrease}</p>
-                  <p className="text-xs text-muted-foreground">Extra Views</p>
+                  <p className="text-xs text-muted-foreground">{t('boost.extra_views', 'Extra Views')}</p>
                 </div>
                 <div className="text-center p-3 bg-muted/50 rounded-lg">
                   <Zap className="h-5 w-5 text-pink-500 mx-auto mb-1" />
                   <p className="text-2xl font-bold">{boostStats.likesIncrease}</p>
-                  <p className="text-xs text-muted-foreground">New Likes</p>
+                  <p className="text-xs text-muted-foreground">{t('boost.new_likes', 'New Likes')}</p>
                 </div>
                 <div className="text-center p-3 bg-muted/50 rounded-lg">
                   <Sparkles className="h-5 w-5 text-yellow-500 mx-auto mb-1" />
                   <p className="text-2xl font-bold">{boostStats.matchesIncrease}</p>
-                  <p className="text-xs text-muted-foreground">Matches</p>
+                  <p className="text-xs text-muted-foreground">{t('boost.matches', 'Matches')}</p>
                 </div>
               </div>
             )}
@@ -264,11 +264,11 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
         ) : (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Boost your profile to get up to <span className="font-bold text-foreground">10x more views</span> for 30 minutes!
+              {t('boost.description', 'Boost your profile to get up to')} <span className="font-bold text-foreground">{t('boost.ten_x_views', '10x more views')}</span> {t('boost.for_30_min', 'for 30 minutes!')}
             </p>
             
             <div className="flex items-center justify-between text-sm">
-              <span>Daily boosts used</span>
+              <span>{t('boost.daily_used', 'Daily boosts used')}</span>
               <span className="font-medium">{dailyBoostsUsed} / {maxDailyBoosts}</span>
             </div>
             
@@ -278,13 +278,13 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
               <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
                 <Crown className="h-5 w-5 text-yellow-500" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Get more boosts</p>
+                  <p className="text-sm font-medium">{t('boost.get_more', 'Get more boosts')}</p>
                   <p className="text-xs text-muted-foreground">
-                    Upgrade to Premium for 3 daily boosts
+                    {t('boost.upgrade_premium', 'Upgrade to Premium for 3 daily boosts')}
                   </p>
                 </div>
                 <Button size="sm" variant="outline">
-                  Upgrade
+                  {t('common.upgrade', 'Upgrade')}
                 </Button>
               </div>
             ) : (
@@ -294,7 +294,7 @@ export const ProfileBoostCard = ({ onClose }: ProfileBoostCardProps) => {
                 className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
               >
                 <Zap className="h-4 w-4 mr-2" />
-                {isLoading ? 'Activating...' : 'Boost My Profile'}
+                {isLoading ? t('boost.activating', 'Activating...') : t('boost.boost_my_profile', 'Boost My Profile')}
               </Button>
             )}
           </div>

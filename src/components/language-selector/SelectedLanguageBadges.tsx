@@ -3,6 +3,7 @@ import React from 'react';
 import { X, Languages } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SelectedLanguageBadgesProps {
   selectedLanguages: string[];
@@ -13,6 +14,8 @@ const SelectedLanguageBadges: React.FC<SelectedLanguageBadgesProps> = ({
   selectedLanguages,
   removeLanguage
 }) => {
+  const { t } = useTranslations();
+  
   return (
     <div className="glass p-3 rounded-lg border border-tinder-rose/10 shadow-sm">
       <div className="flex flex-wrap gap-2 mb-2">
@@ -38,7 +41,7 @@ const SelectedLanguageBadges: React.FC<SelectedLanguageBadgesProps> = ({
             <div className="ai-icon-container p-2 rounded-md mr-2">
               <Languages className="h-5 w-5" />
             </div>
-            <p className="text-sm futuristic-text">No languages selected yet</p>
+            <p className="text-sm futuristic-text">{t('language.no_selected', 'No languages selected yet')}</p>
           </div>
         )}
       </div>

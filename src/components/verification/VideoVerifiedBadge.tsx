@@ -1,6 +1,7 @@
 import { Shield, ShieldCheck, ShieldAlert, ShieldQuestion } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface VideoVerifiedBadgeProps {
   isVerified?: boolean;
@@ -17,6 +18,7 @@ export const VideoVerifiedBadge = ({
   showTooltip = true,
   className
 }: VideoVerifiedBadgeProps) => {
+  const { t } = useTranslations();
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-5 h-5',
@@ -37,16 +39,16 @@ export const VideoVerifiedBadge = ({
     if (isVerified) {
       return (
         <div className="text-center">
-          <p className="font-medium text-green-400">Video Verified ✓</p>
-          <p className="text-xs text-muted-foreground">Identity confirmed via video selfie</p>
+          <p className="font-medium text-green-400">{t('verification.video_verified', 'Video Verified')} ✓</p>
+          <p className="text-xs text-muted-foreground">{t('verification.identity_confirmed', 'Identity confirmed via video selfie')}</p>
         </div>
       );
     }
     if (isPending) {
       return (
         <div className="text-center">
-          <p className="font-medium text-yellow-400">Verification Pending</p>
-          <p className="text-xs text-muted-foreground">Video is being reviewed</p>
+          <p className="font-medium text-yellow-400">{t('verification.pending', 'Verification Pending')}</p>
+          <p className="text-xs text-muted-foreground">{t('verification.being_reviewed', 'Video is being reviewed')}</p>
         </div>
       );
     }

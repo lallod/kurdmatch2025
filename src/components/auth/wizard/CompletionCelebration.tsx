@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Heart, Star, Sparkles } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CompletionCelebrationProps {
   onStartDiscovering: () => void;
@@ -13,6 +14,8 @@ export const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
   onStartDiscovering,
   userName = "there"
 }) => {
+  const { t } = useTranslations();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center relative overflow-hidden">
@@ -40,10 +43,10 @@ export const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
           {/* Success Message */}
           <div className="space-y-3">
             <h1 className="text-3xl font-bold text-gray-900">
-              You're all set, {userName}! 🎉
+              {t('wizard.all_set', "You're all set, {{name}}! 🎉").replace('{{name}}', userName)}
             </h1>
             <p className="text-gray-600 text-lg">
-              Your profile is now <span className="font-semibold text-purple-600">100% complete</span>
+              {t('wizard.profile_complete', 'Your profile is now')} <span className="font-semibold text-purple-600">100%</span>
             </p>
           </div>
 
@@ -52,17 +55,17 @@ export const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
             <Progress value={100} className="h-3" />
             <div className="flex items-center justify-center gap-2 text-sm font-medium text-green-600">
               <Star className="w-4 h-4" />
-              <span>Profile Strength: Excellent!</span>
+              <span>{t('wizard.profile_strength', 'Profile Strength: Excellent!')}</span>
             </div>
           </div>
 
           {/* Benefits */}
           <div className="bg-purple-50 rounded-2xl p-4 space-y-2">
-            <h3 className="font-semibold text-purple-900">What happens next?</h3>
+            <h3 className="font-semibold text-purple-900">{t('wizard.what_next', 'What happens next?')}</h3>
             <div className="space-y-1 text-sm text-purple-700">
-              <p>✨ 3x more compatible matches</p>
-              <p>💝 Priority in search results</p>
-              <p>🎯 Better match recommendations</p>
+              <p>✨ {t('wizard.benefit_matches', '3x more compatible matches')}</p>
+              <p>💝 {t('wizard.benefit_priority', 'Priority in search results')}</p>
+              <p>🎯 {t('wizard.benefit_recommendations', 'Better match recommendations')}</p>
             </div>
           </div>
 
@@ -72,11 +75,11 @@ export const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
             className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white py-4 rounded-xl font-semibold text-lg shadow-lg transform transition-transform hover:scale-105"
             size="lg"
           >
-            Start Discovering! 🚀
+            {t('wizard.start_discovering', 'Start Discovering!')} 🚀
           </Button>
 
           <p className="text-sm text-gray-500">
-            You are now ready to find amazing connections!
+            {t('wizard.ready_connections', 'You are now ready to find amazing connections!')}
           </p>
         </div>
       </div>
