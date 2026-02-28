@@ -81,7 +81,7 @@ const Groups = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-muted-foreground text-sm">Loading groups...</div>
+          <div className="text-center py-12 text-muted-foreground text-sm">{t('groups.loading', 'Loading groups...')}</div>
         ) : filteredGroups.length === 0 ? (
           <div className="text-center py-16">
             <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
@@ -115,9 +115,9 @@ const Groups = () => {
                   <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Users className="h-3 w-3" />
-                      {group.member_count} members
+                    {group.member_count} {t('groups.members', 'members')}
                     </span>
-                    <span>{group.post_count} posts</span>
+                    <span>{group.post_count} {t('groups.posts', 'posts')}</span>
                   </div>
                 </div>
               </div>

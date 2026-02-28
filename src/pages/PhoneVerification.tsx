@@ -8,9 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { usePhoneVerification } from '@/hooks/usePhoneVerification';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const PhoneVerification = () => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [isAlreadyVerified, setIsAlreadyVerified] = useState(false);
@@ -45,8 +47,8 @@ const PhoneVerification = () => {
           <div className="max-w-md mx-auto px-4 h-12 flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}><ArrowLeft className="h-5 w-5" /></Button>
             <div>
-              <h1 className="text-lg font-bold text-foreground">Phone Verification</h1>
-              <p className="text-xs text-muted-foreground">Verify your phone number</p>
+              <h1 className="text-lg font-bold text-foreground">{t('phone.title', 'Phone Verification')}</h1>
+              <p className="text-xs text-muted-foreground">{t('phone.subtitle', 'Verify your phone number')}</p>
             </div>
           </div>
         </div>
@@ -59,9 +61,9 @@ const PhoneVerification = () => {
                   <div className="h-20 w-20 rounded-full bg-success/20 flex items-center justify-center">
                     <CheckCircle className="h-12 w-12 text-success" />
                   </div>
-                  <h2 className="text-2xl font-bold text-foreground">Phone Verified!</h2>
-                  <p className="text-muted-foreground">Your phone number ({phoneNumber}) has been verified</p>
-                  <Button onClick={() => navigate('/settings')} className="mt-4">Back to Settings</Button>
+                  <h2 className="text-2xl font-bold text-foreground">{t('phone.verified_title', 'Phone Verified!')}</h2>
+                  <p className="text-muted-foreground">{t('phone.verified_desc', 'Your phone number ({{phone}}) has been verified').replace('{{phone}}', phoneNumber)}</p>
+                  <Button onClick={() => navigate('/settings')} className="mt-4">{t('phone.back_to_settings', 'Back to Settings')}</Button>
                 </div>
               </CardContent>
             </Card>
@@ -69,11 +71,11 @@ const PhoneVerification = () => {
             <>
               <Card className="bg-card border-border/20 mb-6">
                 <CardHeader>
-                  <CardTitle className="text-foreground flex items-center gap-2"><Shield className="h-5 w-5 text-primary" />Why Verify Your Phone?</CardTitle>
+                  <CardTitle className="text-foreground flex items-center gap-2"><Shield className="h-5 w-5 text-primary" />{t('phone.why_verify', 'Why Verify Your Phone?')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3 text-muted-foreground">
-                    {['Increase trust with other users', 'Recover your account if you lose access', 'Get important notifications via SMS', 'Unlock premium features'].map((item, i) => (
+                    {[t('phone.benefit_trust', 'Increase trust with other users'), t('phone.benefit_recover', 'Recover your account if you lose access'), t('phone.benefit_sms', 'Get important notifications via SMS'), t('phone.benefit_premium', 'Unlock premium features')].map((item, i) => (
                       <li key={i} className="flex items-start gap-2"><CheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" /><span>{item}</span></li>
                     ))}
                   </ul>
@@ -84,28 +86,28 @@ const PhoneVerification = () => {
                 <CardHeader>
                   <CardTitle className="text-foreground flex items-center gap-2">
                     <Phone className="h-5 w-5 text-primary" />
-                    {codeSent ? 'Enter Verification Code' : 'Enter Your Phone Number'}
+                    {codeSent ? t('phone.enter_code', 'Enter Verification Code') : t('phone.enter_phone', 'Enter Your Phone Number')}
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    {codeSent ? `We sent a 6-digit code to ${phoneNumber}` : 'We will send you a verification code via SMS'}
+                    {codeSent ? t('phone.code_sent_to', 'We sent a 6-digit code to {{phone}}').replace('{{phone}}', phoneNumber) : t('phone.will_send_code', 'We will send you a verification code via SMS')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {!codeSent ? (
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-foreground">Phone Number</Label>
+                        <Label htmlFor="phone" className="text-foreground">{t('phone.phone_number', 'Phone Number')}</Label>
                         <Input id="phone" type="tel" placeholder="+1 234 567 8900" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="text-lg" />
-                        <p className="text-xs text-muted-foreground">Include country code (e.g., +1 for US, +47 for Norway)</p>
+                        <p className="text-xs text-muted-foreground">{t('phone.include_country_code', 'Include country code (e.g., +1 for US, +47 for Norway)')}</p>
                       </div>
                       <Button onClick={handleSendCode} disabled={!phoneNumber || loading} className="w-full">
-                        {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Sending...</> : <><Phone className="mr-2 h-4 w-4" />Send Verification Code</>}
+                        {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('phone.sending', 'Sending...')}</> : <><Phone className="mr-2 h-4 w-4" />{t('phone.send_code', 'Send Verification Code')}</>}
                       </Button>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-foreground">Verification Code</Label>
+                        <Label className="text-foreground">{t('phone.verification_code', 'Verification Code')}</Label>
                         <div className="flex justify-center py-4">
                           <InputOTP maxLength={6} value={code} onChange={(value) => setCode(value)}>
                             <InputOTPGroup>
@@ -116,12 +118,12 @@ const PhoneVerification = () => {
                         {devCode && <p className="text-xs text-warning text-center bg-warning/10 p-2 rounded">Dev mode code: {devCode}</p>}
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" onClick={() => { reset(); setCode(''); }} className="flex-1">Change Number</Button>
+                        <Button variant="outline" onClick={() => { reset(); setCode(''); }} className="flex-1">{t('phone.change_number', 'Change Number')}</Button>
                         <Button onClick={handleVerifyCode} disabled={code.length !== 6 || loading} className="flex-1">
-                          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Verifying...</> : 'Verify Code'}
+                          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('phone.verifying', 'Verifying...')}</> : t('phone.verify_code', 'Verify Code')}
                         </Button>
                       </div>
-                      <Button variant="ghost" onClick={handleSendCode} disabled={loading} className="w-full text-muted-foreground">Resend Code</Button>
+                      <Button variant="ghost" onClick={handleSendCode} disabled={loading} className="w-full text-muted-foreground">{t('phone.resend_code', 'Resend Code')}</Button>
                     </div>
                   )}
                 </CardContent>

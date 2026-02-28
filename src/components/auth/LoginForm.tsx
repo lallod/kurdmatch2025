@@ -87,7 +87,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           render={({ field }) => (
             <FormItem>
               <SecureInput
-                label="Email"
+                label={t('auth.email', 'Email')}
                 value={field.value}
                 onChange={field.onChange}
                 type="email"
