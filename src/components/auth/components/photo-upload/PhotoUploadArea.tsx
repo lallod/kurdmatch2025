@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Image, Sparkles } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PhotoUploadAreaProps {
   photos: string[];
@@ -23,7 +24,9 @@ const PhotoUploadArea = ({
   onDrop,
   onFileChange
 }: PhotoUploadAreaProps) => {
+  const { t } = useTranslations();
   const isDisabled = photos.length >= 5;
+  const remaining = 5 - photos.length;
 
   return (
     <div 
@@ -46,18 +49,18 @@ const PhotoUploadArea = ({
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-white">
             {photos.length === 0 
-              ? 'Upload your photo' 
-              : `Add ${5 - photos.length} more photo${5 - photos.length !== 1 ? 's' : ''}`}
+              ? t('photo.upload_your_photo', 'Upload your photo') 
+              : t('photo.add_more', `Add ${remaining} more photo${remaining !== 1 ? 's' : ''}`)}
           </h4>
           <p className="text-xs text-purple-300">
-            Drag & drop or click to browse
+            {t('photo.drag_drop', 'Drag & drop or click to browse')}
           </p>
           <p className="text-xs text-purple-300">
-            JPG, PNG or GIF (Max. 5MB)
+            {t('photo.formats', 'JPG, PNG or GIF (Max. 5MB)')}
           </p>
           <div className="flex items-center justify-center gap-1 text-xs text-pink-300">
             <Sparkles size={12} />
-            <span>Free AI editing included</span>
+            <span>{t('photo.free_ai', 'Free AI editing included')}</span>
           </div>
         </div>
         <input

@@ -243,18 +243,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
           <DialogHeader>
             <DialogTitle className="text-foreground text-xl flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-primary" />
-              Premium Feature
+              {t('premium.feature_title', 'Premium Feature')}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground space-y-4">
-              <p>Send unlimited messages to Premium and Gold members!</p>
+              <p>{t('premium.unlimited_messages', 'Send unlimited messages to Premium and Gold members!')}</p>
               <div className="bg-muted rounded-2xl p-4 space-y-2">
-                <p className="font-semibold text-foreground text-sm">Premium Benefits:</p>
+                <p className="font-semibold text-foreground text-sm">{t('premium.benefits_title', 'Premium Benefits:')}</p>
                 <ul className="space-y-1 text-xs">
-                  <li>✓ Send messages to anyone</li>
-                  <li>✓ 10 Super Likes per day</li>
-                  <li>✓ Unlimited regular likes</li>
-                  <li>✓ See who liked you</li>
-                  <li>✓ 5 Rewinds per day</li>
+                  <li>✓ {t('premium.send_messages', 'Send messages to anyone')}</li>
+                  <li>✓ {t('premium.super_likes', '10 Super Likes per day')}</li>
+                  <li>✓ {t('premium.unlimited_likes', 'Unlimited regular likes')}</li>
+                  <li>✓ {t('premium.see_likes', 'See who liked you')}</li>
+                  <li>✓ {t('premium.rewinds', '5 Rewinds per day')}</li>
                 </ul>
               </div>
               <Button
@@ -262,7 +262,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
                 className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                Upgrade to Premium
+                {t('premium.upgrade_to_premium', 'Upgrade to Premium')}
               </Button>
             </DialogDescription>
           </DialogHeader>
