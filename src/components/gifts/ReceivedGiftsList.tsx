@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import { Gift, Loader2 } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ReceivedGiftsListProps {
   userId?: string;
@@ -11,6 +12,7 @@ interface ReceivedGiftsListProps {
 }
 
 const ReceivedGiftsList = ({ userId, limit }: ReceivedGiftsListProps) => {
+  const { t } = useTranslations();
   const [gifts, setGifts] = useState<SentGift[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +48,7 @@ const ReceivedGiftsList = ({ userId, limit }: ReceivedGiftsListProps) => {
     return (
       <div className="text-center py-8 text-muted-foreground">
         <Gift className="h-8 w-8 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">No gifts received yet</p>
+        <p className="text-sm">{t('gifts.no_gifts_received', 'No gifts received yet')}</p>
       </div>
     );
   }
@@ -64,10 +66,10 @@ const ReceivedGiftsList = ({ userId, limit }: ReceivedGiftsListProps) => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium truncate">{gift?.name || 'Gift'}</p>
-                {!sg.read && <Badge variant="destructive" className="text-[10px] px-1 py-0">New</Badge>}
+                {!sg.read && <Badge variant="destructive" className="text-[10px] px-1 py-0">{t('common.new', 'New')}</Badge>}
               </div>
               <p className="text-xs text-muted-foreground truncate">
-                From {sender?.name || 'Someone'} · {formatDistanceToNow(new Date(sg.created_at), { addSuffix: true })}
+                {t('gifts.from', 'From')} {sender?.name || t('gifts.someone', 'Someone')} · {formatDistanceToNow(new Date(sg.created_at), { addSuffix: true })}
               </p>
               {sg.message && (
                 <p className="text-xs text-muted-foreground mt-0.5 italic truncate">"{sg.message}"</p>

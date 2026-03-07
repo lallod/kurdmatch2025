@@ -56,7 +56,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           <Button variant="outline" className="w-full justify-between neo-card border-tinder-rose/10 hover:border-tinder-rose/20 fancy-shine">
             <span className="flex items-center">
               <Globe className="mr-2 h-4 w-4 text-tinder-rose" />
-              <span className="futuristic-text">Select languages</span>
+              <span className="futuristic-text">{t('language.select_languages', 'Select languages')}</span>
             </span>
             <Sparkles className="ml-2 h-4 w-4 text-tinder-rose/70" />
           </Button>
