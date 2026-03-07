@@ -142,17 +142,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, stats, isOwnProf
         <div className="flex items-center justify-around">
           <div className="text-center">
             <div className="text-lg font-bold text-foreground">{stats.posts}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Posts</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{t('profile.posts', 'Posts')}</div>
           </div>
           <div className="w-px h-8 bg-border" />
           <div className="text-center">
             <div className="text-lg font-bold text-foreground">{followersCount}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Followers</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{t('profile.followers', 'Followers')}</div>
           </div>
           <div className="w-px h-8 bg-border" />
           <div className="text-center">
             <div className="text-lg font-bold text-foreground">{stats.following}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Following</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{t('profile.following', 'Following')}</div>
           </div>
         </div>
       </div>

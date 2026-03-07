@@ -4,12 +4,14 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Button } from '@/components/ui/button';
 import { ImagePlus, X } from 'lucide-react';
 import { DynamicRegistrationFormValues } from '@/components/auth/utils/dynamicRegistrationSchema';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PhotoUploadComponentProps {
   form: UseFormReturn<DynamicRegistrationFormValues>;
 }
 
 const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({ form }) => {
+  const { t } = useTranslations();
   const [photos, setPhotos] = React.useState<string[]>([]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +46,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({ form }) => 
       name="photos"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-white">Photos (Add at least 1)</FormLabel>
+          <FormLabel className="text-white">{t('auth.photos_label', 'Photos (Add at least 1)')}</FormLabel>
           <FormControl>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -69,7 +71,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({ form }) => 
                   <label className="cursor-pointer">
                     <div className="h-32 border-2 border-dashed border-white/30 rounded-lg flex flex-col items-center justify-center hover:border-white/50 transition-colors">
                       <ImagePlus className="w-8 h-8 text-white/60 mb-2" />
-                      <span className="text-white/60 text-sm">Add Photo</span>
+                      <span className="text-white/60 text-sm">{t('auth.add_photo', 'Add Photo')}</span>
                     </div>
                     <input
                       type="file"
@@ -85,14 +87,14 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({ form }) => 
               {photos.length === 0 && (
                 <div className="text-center py-8">
                   <ImagePlus className="w-12 h-12 text-white/40 mx-auto mb-4" />
-                  <p className="text-white/60 mb-4">Add your best photos to get more matches</p>
+                  <p className="text-white/60 mb-4">{t('auth.add_best_photos', 'Add your best photos to get more matches')}</p>
                   <label className="cursor-pointer">
                     <Button 
                       type="button" 
                       variant="outline" 
                       className="border-white/30 text-white hover:bg-white/10"
                     >
-                      Choose Photos
+                      {t('auth.choose_photos', 'Choose Photos')}
                     </Button>
                     <input
                       type="file"

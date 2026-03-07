@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus } from 'lucide-react';
 import { Story } from '@/api/posts';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface StoryHighlightsProps {
   stories: Story[];
@@ -10,6 +11,7 @@ interface StoryHighlightsProps {
 }
 
 const StoryHighlights: React.FC<StoryHighlightsProps> = ({ stories, isOwnProfile, onAddStory }) => {
+  const { t } = useTranslations();
   const groupedStories = stories.reduce((acc, story) => {
     const category = (story as any).category || 'Recent';
     if (!acc[category]) acc[category] = [];
@@ -28,7 +30,7 @@ const StoryHighlights: React.FC<StoryHighlightsProps> = ({ stories, isOwnProfile
             <div className="w-[60px] h-[60px] rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30">
               <Plus className="w-5 h-5 text-muted-foreground" />
             </div>
-            <span className="text-[10px] text-muted-foreground">Add</span>
+            <span className="text-[10px] text-muted-foreground">{t('story.add', 'Add')}</span>
           </button>
         )}
 

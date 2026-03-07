@@ -29,23 +29,23 @@ const BlurredProfileOverlay: React.FC<BlurredProfileOverlayProps> = ({ onClose }
         <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <Lock className="w-7 h-7 text-primary" />
         </div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Premium Profile</h3>
+        <h3 className="text-lg font-bold text-foreground mb-2">{t('premium.premium_profile', 'Premium Profile')}</h3>
         <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-          Upgrade to see full dating details, compatibility scores, and advanced filters
+          {t('premium.upgrade_description', 'Upgrade to see full dating details, compatibility scores, and advanced filters')}
         </p>
         <Button
           onClick={handleUpgrade}
           className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25"
         >
           <Sparkles className="w-4 h-4 mr-2" />
-          Unlock Premium
+          {t('premium.unlock_premium', 'Unlock Premium')}
         </Button>
         {onClose && (
           <button
             onClick={onClose}
             className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            Maybe later
+            {t('common.maybe_later', 'Maybe later')}
           </button>
         )}
       </div>
