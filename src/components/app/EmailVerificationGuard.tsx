@@ -60,25 +60,25 @@ const EmailVerificationGuard: React.FC<EmailVerificationGuardProps> = ({ childre
           <div className="w-16 h-16 bg-gradient-to-br from-primary-dark to-primary rounded-full flex items-center justify-center mx-auto">
             <Mail className="w-8 h-8 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold">Verify Your Email</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('email.verify_title', 'Verify Your Email')}</CardTitle>
           <p className="text-primary-foreground/80">
-            Please verify your email address to access all features
+            {t('email.verify_description', 'Please verify your email address to access all features')}
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="bg-white/5 rounded-lg p-4 border border-white/10">
             <div className="flex items-center space-x-3 mb-3">
               <Shield className="w-5 h-5 text-primary-light" />
-              <span className="font-medium">Security First</span>
+              <span className="font-medium">{t('email.security_first', 'Security First')}</span>
             </div>
             <p className="text-sm text-primary-foreground/80">
-              Email verification helps keep our community safe and ensures you receive important updates.
+              {t('email.verification_helps', 'Email verification helps keep our community safe and ensures you receive important updates.')}
             </p>
           </div>
 
           <div className="space-y-3">
             <p className="text-sm text-primary-foreground/80">
-              We sent a verification link to:
+              {t('email.sent_link_to', 'We sent a verification link to:')}
             </p>
             <div className="bg-white/5 rounded-lg p-3 border border-white/10">
               <p className="font-medium text-primary-foreground">{user.email}</p>
@@ -92,26 +92,26 @@ const EmailVerificationGuard: React.FC<EmailVerificationGuardProps> = ({ childre
               className="w-full bg-gradient-to-r from-primary-dark to-primary hover:from-primary-dark/80 hover:to-primary/80"
             >
               {isResending ? (
-                'Sending...'
+                t('email.sending', 'Sending...')
               ) : resendCooldown > 0 ? (
-                `Resend in ${resendCooldown}s`
+                t('email.resend_in', 'Resend in {{seconds}}s', { seconds: resendCooldown })
               ) : (
-                'Resend Verification Email'
+                t('email.resend_verification', 'Resend Verification Email')
               )}
             </Button>
 
             <p className="text-xs text-primary-foreground/70 text-center">
-              Check your spam folder if you don't see the email
+              {t('email.check_spam', "Check your spam folder if you don't see the email")}
             </p>
           </div>
 
           <div className="bg-success/10 border border-success/20 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
               <CheckCircle2 className="w-4 h-4 text-success" />
-              <span className="text-sm font-medium text-success-foreground">Already verified?</span>
+              <span className="text-sm font-medium text-success-foreground">{t('email.already_verified', 'Already verified?')}</span>
             </div>
             <p className="text-xs text-success-foreground/80">
-              Refresh this page after clicking the verification link in your email.
+              {t('email.refresh_page', 'Refresh this page after clicking the verification link in your email.')}
             </p>
           </div>
         </CardContent>
