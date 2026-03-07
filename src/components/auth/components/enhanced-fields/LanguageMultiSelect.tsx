@@ -6,6 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
 import { Languages, X, Plus } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LanguageMultiSelectProps {
   value?: string[];
@@ -67,6 +68,7 @@ const kurdishLanguages = [
 ];
 
 const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps) => {
+  const { t } = useTranslations();
   const [open, setOpen] = useState(false);
 
   // Ensure value is always an array
@@ -115,7 +117,7 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
       if (groupEntries.length === 0) {
         return (
           <div className="p-4 text-center text-gray-400">
-            No languages available
+            {t('auth.no_languages_available', 'No languages available')}
           </div>
         );
       }
@@ -153,7 +155,7 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
       console.error('Error rendering command groups:', error);
       return (
         <div className="p-4 text-center text-gray-400">
-          Error loading languages
+          {t('auth.error_loading_languages', 'Error loading languages')}
         </div>
       );
     }
@@ -163,7 +165,7 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Languages className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Languages You Speak</Label>
+        <Label className="text-white">{t('auth.languages_you_speak', 'Languages You Speak')}</Label>
       </div>
       
       {/* Selected languages */}
@@ -201,17 +203,17 @@ const LanguageMultiSelect = ({ value = [], onChange }: LanguageMultiSelectProps)
           >
             <span className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
-              Add Language
+              {t('auth.add_language', 'Add Language')}
             </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0 bg-gray-900 border-gray-700" style={{ zIndex: 9999 }}>
           <Command>
             <CommandInput 
-              placeholder="Search languages..." 
+              placeholder={t('auth.search_languages', 'Search languages...')} 
               className="text-white"
             />
-            <CommandEmpty>No language found.</CommandEmpty>
+            <CommandEmpty>{t('auth.no_language_found', 'No language found.')}</CommandEmpty>
             <div className="max-h-60 overflow-auto">
               {renderCommandGroups()}
             </div>

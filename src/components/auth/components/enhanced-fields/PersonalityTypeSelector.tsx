@@ -4,6 +4,7 @@ import { Brain, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import PersonalityTypeInfoDialog from './PersonalityTypeInfoDialog';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PersonalityTypeSelectorProps {
   value?: string;
@@ -30,12 +31,13 @@ const personalityTypes = [
 ];
 
 const PersonalityTypeSelector = ({ value, onChange }: PersonalityTypeSelectorProps) => {
+  const { t } = useTranslations();
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <Brain className="w-4 h-4 text-purple-400 flex-shrink-0" />
-          <Label className="text-white">Personality Type</Label>
+          <Label className="text-white">{t('auth.personality_type', 'Personality Type')}</Label>
         </div>
         <PersonalityTypeInfoDialog />
       </div>
