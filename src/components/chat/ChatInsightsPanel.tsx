@@ -15,6 +15,7 @@ export const ChatInsightsPanel = ({ partnerId }: ChatInsightsPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { user } = useSupabaseAuth();
   const { insights, isGenerating, generateInsights, fetchStoredInsights } = useConversationInsights();
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (user && partnerId) {
