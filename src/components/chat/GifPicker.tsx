@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useTranslations } from '@/hooks/useTranslations';
+import { supabase } from '@/integrations/supabase/client';
 
 interface GifResult {
   id: string;
@@ -29,22 +30,15 @@ export const GifPicker = ({ open, onOpenChange, onSelectGif }: GifPickerProps) =
   const fetchGifs = useCallback(async (query: string) => {
     setIsLoading(true);
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-gifs`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ q: query.trim(), limit: '20' }),
+      const { data, error } = await supabase.functions.invoke('search-gifs', {
+        body: { q: query.trim(), limit: '20' },
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setGifs(result.gifs || []);
-      } else {
-        console.error('Failed to fetch GIFs:', response.status);
+      if (error) {
+        console.error('Failed to fetch GIFs:', error);
         setGifs([]);
+      } else {
+        setGifs(data?.gifs || []);
       }
     } catch (err) {
       console.error('Error fetching GIFs:', err);
