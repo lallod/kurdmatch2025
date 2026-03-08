@@ -204,7 +204,8 @@ export const deletePhoto = async (photoId: string): Promise<void> => {
   const { error } = await supabase
     .from('photos')
     .delete()
-    .eq('id', photoId);
+    .eq('id', photoId)
+    .eq('profile_id', user.id);
 
   if (error) throw error;
 
