@@ -45,13 +45,14 @@ export const likeProfile = async (profileId: string): Promise<LikeResult> => {
 
     let matchCreated = false;
     if (mutualLike) {
-      // Create match - use correct column names for matches table
+      // Create match with ordered IDs to prevent duplicates
+      const [id1, id2] = [userId, profileId].sort();
       const { error: matchError } = await supabase
         .from('matches')
-        .insert({
-          user1_id: userId,
-          user2_id: profileId
-        });
+        .upsert(
+          { user1_id: id1, user2_id: id2 },
+          { onConflict: 'user1_id,user2_id', ignoreDuplicates: true }
+        );
 
       if (!matchError) {
         matchCreated = true;
