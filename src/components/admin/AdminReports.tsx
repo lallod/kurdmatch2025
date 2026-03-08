@@ -139,12 +139,12 @@ export default function AdminReports() {
 
                   {/* Meta */}
                   <div className="text-xs text-purple-200 space-y-1">
-                    <div>Reporter ID: {report.reporter_user_id}</div>
+                    <div>{t('admin.reporter_id', 'Reporter ID')}: {report.reporter_user_id}</div>
                     {report.reported_user_id && (
-                      <div>Reported User: {report.reported_user_id}</div>
+                      <div>{t('admin.reported_user', 'Reported User')}: {report.reported_user_id}</div>
                     )}
                     {report.content_id && (
-                      <div>Content ID: {report.content_id}</div>
+                      <div>{t('admin.content_id', 'Content ID')}: {report.content_id}</div>
                     )}
                   </div>
                 </div>
