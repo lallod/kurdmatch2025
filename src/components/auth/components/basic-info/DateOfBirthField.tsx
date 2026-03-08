@@ -11,6 +11,7 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DateOfBirthFieldProps {
   form: UseFormReturn<any>;
