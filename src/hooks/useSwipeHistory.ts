@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Profile } from '@/types/swipe';
