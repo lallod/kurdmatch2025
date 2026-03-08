@@ -86,7 +86,11 @@ export const getUserCoins = async (): Promise<UserCoins> => {
   return data as UserCoins;
 };
 
-export const sendGift = async (senderId: string, recipientId: string, giftId: string, message?: string) => {
+export const sendGift = async (recipientId: string, giftId: string, message?: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  if (user.id === recipientId) throw new Error('Cannot send a gift to yourself');
+
   // Get the gift price
   const { data: gift, error: giftError } = await supabase
     .from('virtual_gifts')
@@ -97,7 +101,7 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
 
   // Deduct coins via secure RPC
   const { data: success, error: coinsError } = await supabase.rpc('spend_user_coins', {
-    p_user_id: senderId,
+    p_user_id: user.id,
     p_amount: gift.price_coins
   });
   if (coinsError) throw coinsError;
@@ -106,7 +110,7 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
   // Send gift
   const { data, error } = await supabase
     .from('sent_gifts')
-    .insert({ sender_id: senderId, recipient_id: recipientId, gift_id: giftId, message })
+    .insert({ sender_id: user.id, recipient_id: recipientId, gift_id: giftId, message })
     .select()
     .single();
   if (error) throw error;
@@ -114,7 +118,7 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
   // Create notification
   await supabase.from('notifications').insert({
     user_id: recipientId,
-    actor_id: senderId,
+    actor_id: user.id,
     type: 'gift',
     title: 'New Gift!',
     message: `Someone sent you a ${gift.name}!`,
