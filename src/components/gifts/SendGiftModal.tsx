@@ -41,7 +41,7 @@ const SendGiftModal = ({ open, onOpenChange, recipientId, recipientName }: SendG
         ]);
         setGifts(catalog);
         if (user) {
-          const coins = await getUserCoins(user.id);
+          const coins = await getUserCoins();
           setBalance(coins.balance);
         }
       } catch (err) {
