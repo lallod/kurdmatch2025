@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Languages, X, Plus, ChevronDown } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SimpleLanguageMultiSelectProps {
   value?: string[];
@@ -34,6 +35,7 @@ const kurdishLanguages = [
 const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMultiSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useTranslations();
 
   // Ensure value is always an array
   const currentValue = Array.isArray(value) ? value : [];
@@ -61,7 +63,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Languages className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Languages You Speak</Label>
+        <Label className="text-white">{t('auth.languages_you_speak', 'Languages You Speak')}</Label>
       </div>
       
       {/* Selected languages */}
@@ -99,7 +101,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
         >
           <span className="flex items-center gap-2 text-purple-300">
             <Plus className="h-4 w-4" />
-            Add Language
+            {t('auth.add_language', 'Add Language')}
           </span>
           <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </Button>
@@ -109,7 +111,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
             <div className="p-2 border-b border-gray-700">
               <input
                 type="text"
-                placeholder="Search languages..."
+                placeholder={t('auth.search_languages', 'Search languages...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
@@ -117,7 +119,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
             </div>
             <div className="max-h-48 overflow-y-auto">
               {filteredLanguages.length === 0 ? (
-                <div className="p-4 text-center text-gray-400">No languages found</div>
+                <div className="p-4 text-center text-gray-400">{t('auth.no_languages_found', 'No languages found')}</div>
               ) : (
                 filteredLanguages.map((language) => (
                   <button

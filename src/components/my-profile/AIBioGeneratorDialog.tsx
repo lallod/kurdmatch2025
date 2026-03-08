@@ -121,10 +121,10 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white">
-            <Sparkles className="text-purple-400" /> AI Bio Generator
+            <Sparkles className="text-purple-400" /> {t('profile.ai_bio_generator', 'AI Bio Generator')}
           </DialogTitle>
           <DialogDescription className="text-gray-300">
-            Get 5 personalized bio options crafted from your profile data. Choose your favorite style!
+            {t('profile.ai_bio_desc', 'Get 5 personalized bio options crafted from your profile data. Choose your favorite style!')}
           </DialogDescription>
         </DialogHeader>
         
@@ -137,7 +137,7 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
               >
                 {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Generate 5 Personalized Bios
+                {t('profile.generate_bios', 'Generate 5 Personalized Bios')}
               </Button>
             </div>
           ) : (
@@ -182,7 +182,7 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
                         {generatedBios[index]}
                       </p>
                       <div className="mt-2 text-xs text-gray-400">
-                        {generatedBios[index]?.length || 0} characters
+                        {generatedBios[index]?.length || 0} {t('common.characters', 'characters')}
                       </div>
                     </CardContent>
                   </Card>
@@ -198,14 +198,14 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
             onClick={() => onOpenChange(false)}
             className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           {selectedBio && (
             <Button 
               onClick={handleUseBio}
               className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
             >
-              Use This Bio
+              {t('profile.use_this_bio', 'Use This Bio')}
             </Button>
           )}
         </DialogFooter>

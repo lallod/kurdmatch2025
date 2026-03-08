@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Check, Sparkles, Eye, Heart, MessageCircle } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PremiumPlansDialogProps {
   open: boolean;
@@ -19,48 +20,49 @@ interface PremiumPlansDialogProps {
 }
 
 const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDialogProps) => {
+  const { t } = useTranslations();
   const plans = [
     {
       id: 'basic',
-      name: 'Basic',
+      name: t('premium.basic', 'Basic'),
       price: '$9.99',
-      period: '/month',
+      period: t('premium.per_month', '/month'),
       popular: false,
       features: [
-        'See who likes you',
-        'Unlimited likes',
-        'Advanced filters',
-        '3 Super Likes per day'
+        t('premium.see_who_likes', 'See who likes you'),
+        t('premium.unlimited_likes', 'Unlimited likes'),
+        t('premium.advanced_filters', 'Advanced filters'),
+        t('premium.super_likes_day', '3 Super Likes per day')
       ]
     },
     {
       id: 'premium',
-      name: 'Premium',
+      name: t('premium.premium', 'Premium'),
       price: '$19.99',
-      period: '/month',
+      period: t('premium.per_month', '/month'),
       popular: true,
       features: [
-        'All Basic features',
-        'See who viewed your profile',
-        'Priority support',
-        '10 Super Likes per day',
-        'Read receipts',
-        'Boost your profile'
+        t('premium.all_basic', 'All Basic features'),
+        t('premium.profile_views', 'See who viewed your profile'),
+        t('premium.priority_support', 'Priority support'),
+        t('premium.super_likes_10', '10 Super Likes per day'),
+        t('premium.read_receipts', 'Read receipts'),
+        t('premium.boost_profile', 'Boost your profile')
       ]
     },
     {
       id: 'ultimate',
-      name: 'Ultimate',
+      name: t('premium.ultimate', 'Ultimate'),
       price: '$29.99',
-      period: '/month',
+      period: t('premium.per_month', '/month'),
       popular: false,
       features: [
-        'All Premium features',
-        'Unlimited Super Likes',
-        'Monthly profile boost',
-        'Advanced analytics',
-        'Premium customer support',
-        'Early access to new features'
+        t('premium.all_premium', 'All Premium features'),
+        t('premium.unlimited_super_likes', 'Unlimited Super Likes'),
+        t('premium.monthly_boost', 'Monthly profile boost'),
+        t('premium.advanced_analytics', 'Advanced analytics'),
+        t('premium.premium_support', 'Premium customer support'),
+        t('premium.early_access', 'Early access to new features')
       ]
     }
   ];
@@ -73,10 +75,10 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
             <Crown className="h-7 w-7 sm:h-8 sm:w-8 text-primary-foreground" />
           </div>
           <DialogTitle className="text-2xl sm:text-3xl font-bold text-foreground">
-            Choose Your Premium Plan
+            {t('premium.choose_plan', 'Choose Your Premium Plan')}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-base sm:text-lg">
-            Unlock premium features and boost your dating success
+            {t('premium.unlock_features', 'Unlock premium features and boost your dating success')}
           </DialogDescription>
         </DialogHeader>
 
@@ -94,7 +96,7 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <Badge className="bg-gradient-to-r from-pink-500 to-purple-500 text-white border-0 px-3 sm:px-4 py-0.5 sm:py-1 text-xs sm:text-sm">
                     <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
-                    Most Popular
+                    {t('premium.most_popular', 'Most Popular')}
                   </Badge>
                 </div>
               )}
@@ -130,10 +132,10 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
                   {plan.popular ? (
                     <>
                       <Crown className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
-                      Get Premium
+                      {t('premium.get_premium', 'Get Premium')}
                     </>
                   ) : (
-                    `Choose ${plan.name}`
+                    t('premium.choose_plan_name', 'Choose {{name}}', { name: plan.name })
                   )}
                 </Button>
               </CardContent>
@@ -145,19 +147,19 @@ const PremiumPlansDialog = ({ open, onOpenChange, onSelectPlan }: PremiumPlansDi
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex items-center gap-2 sm:gap-3 justify-center">
               <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-              <span className="text-muted-foreground text-xs sm:text-sm">Profile View Insights</span>
+              <span className="text-muted-foreground text-xs sm:text-sm">{t('premium.profile_view_insights', 'Profile View Insights')}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 justify-center">
               <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-              <span className="text-muted-foreground text-xs sm:text-sm">See Who Likes You</span>
+              <span className="text-muted-foreground text-xs sm:text-sm">{t('premium.see_who_likes', 'See Who Likes You')}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 justify-center">
               <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-blue-300" />
-              <span className="text-muted-foreground text-xs sm:text-sm">Priority Matching</span>
+              <span className="text-muted-foreground text-xs sm:text-sm">{t('premium.priority_matching', 'Priority Matching')}</span>
             </div>
           </div>
           <p className="text-muted-foreground text-xs sm:text-sm">
-            Cancel anytime • Secure payment • 30-day money-back guarantee
+            {t('premium.cancel_anytime', 'Cancel anytime • Secure payment • 30-day money-back guarantee')}
           </p>
         </div>
       </DialogContent>
