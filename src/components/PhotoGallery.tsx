@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from './ui/dialog';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PhotoGalleryProps {
   photos: string[];
