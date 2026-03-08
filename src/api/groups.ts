@@ -113,10 +113,14 @@ export const updateGroup = async (groupId: string, updates: Partial<Group>) => {
  * Delete group
  */
 export const deleteGroup = async (groupId: string) => {
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) throw new Error('Not authenticated');
+
   const { error } = await supabase
     .from('groups')
     .delete()
-    .eq('id', groupId);
+    .eq('id', groupId)
+    .eq('created_by', user.user.id);
 
   if (error) throw error;
 };
