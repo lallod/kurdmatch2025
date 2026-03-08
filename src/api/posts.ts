@@ -363,6 +363,7 @@ export const getUserStats = async (userId: string) => {
 export const followUser = async (userId: string) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
+  if (user.id === userId) throw new Error('Cannot follow yourself');
 
   const { error } = await supabase
     .from('followers')
