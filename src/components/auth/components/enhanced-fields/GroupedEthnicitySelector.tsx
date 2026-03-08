@@ -23,7 +23,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
         </SelectTrigger>
         <SelectContent className="bg-gray-900 border-gray-700 max-h-96">
           <SelectGroup>
-            <SelectLabel className="text-purple-300 font-semibold">🟣 Kurdish (Primary)</SelectLabel>
+            <SelectLabel className="text-purple-300 font-semibold">🟣 {t('ethnicity.kurdish_primary', 'Kurdish (Primary)')}</SelectLabel>
             <SelectItem value="Kurdish – Kurmanji" className="text-white hover:bg-gray-800 pl-6">Kurdish – Kurmanji</SelectItem>
             <SelectItem value="Kurdish – Sorani" className="text-white hover:bg-gray-800 pl-6">Kurdish – Sorani</SelectItem>
             <SelectItem value="Kurdish – Zaza / Dimili" className="text-white hover:bg-gray-800 pl-6">Kurdish – Zaza / Dimili</SelectItem>
@@ -31,7 +31,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-green-300 font-semibold">🟢 Kurdish – Mixed (Middle East & Caucasus)</SelectLabel>
+            <SelectLabel className="text-green-300 font-semibold">🟢 {t('ethnicity.kurdish_mixed_me', 'Kurdish – Mixed (Middle East & Caucasus)')}</SelectLabel>
             <SelectItem value="Kurdish – Arab" className="text-white hover:bg-gray-800 pl-6">Kurdish – Arab</SelectItem>
             <SelectItem value="Kurdish – Turkish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Turkish</SelectItem>
             <SelectItem value="Kurdish – Persian / Iranian" className="text-white hover:bg-gray-800 pl-6">Kurdish – Persian / Iranian</SelectItem>
@@ -40,7 +40,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-blue-300 font-semibold">🔵 Kurdish – European (Western & Central)</SelectLabel>
+            <SelectLabel className="text-blue-300 font-semibold">🔵 {t('ethnicity.kurdish_european_wc', 'Kurdish – European (Western & Central)')}</SelectLabel>
             <SelectItem value="Kurdish – German" className="text-white hover:bg-gray-800 pl-6">Kurdish – German</SelectItem>
             <SelectItem value="Kurdish – French" className="text-white hover:bg-gray-800 pl-6">Kurdish – French</SelectItem>
             <SelectItem value="Kurdish – Dutch" className="text-white hover:bg-gray-800 pl-6">Kurdish – Dutch</SelectItem>
@@ -51,7 +51,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-blue-300 font-semibold">🔵 Kurdish – European (Northern)</SelectLabel>
+            <SelectLabel className="text-blue-300 font-semibold">🔵 {t('ethnicity.kurdish_european_n', 'Kurdish – European (Northern)')}</SelectLabel>
             <SelectItem value="Kurdish – Swedish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Swedish</SelectItem>
             <SelectItem value="Kurdish – Norwegian" className="text-white hover:bg-gray-800 pl-6">Kurdish – Norwegian</SelectItem>
             <SelectItem value="Kurdish – Danish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Danish</SelectItem>
@@ -60,7 +60,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-blue-300 font-semibold">🔵 Kurdish – European (Southern)</SelectLabel>
+            <SelectLabel className="text-blue-300 font-semibold">🔵 {t('ethnicity.kurdish_european_s', 'Kurdish – European (Southern)')}</SelectLabel>
             <SelectItem value="Kurdish – Italian" className="text-white hover:bg-gray-800 pl-6">Kurdish – Italian</SelectItem>
             <SelectItem value="Kurdish – Spanish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Spanish</SelectItem>
             <SelectItem value="Kurdish – Portuguese" className="text-white hover:bg-gray-800 pl-6">Kurdish – Portuguese</SelectItem>
@@ -69,7 +69,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-blue-300 font-semibold">🔵 Kurdish – European (Eastern Europe & Balkans)</SelectLabel>
+            <SelectLabel className="text-blue-300 font-semibold">🔵 {t('ethnicity.kurdish_european_eb', 'Kurdish – European (Eastern Europe & Balkans)')}</SelectLabel>
             <SelectItem value="Kurdish – Polish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Polish</SelectItem>
             <SelectItem value="Kurdish – Czech" className="text-white hover:bg-gray-800 pl-6">Kurdish – Czech</SelectItem>
             <SelectItem value="Kurdish – Slovak" className="text-white hover:bg-gray-800 pl-6">Kurdish – Slovak</SelectItem>
@@ -86,7 +86,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-blue-300 font-semibold">🔵 Kurdish – European (British Isles)</SelectLabel>
+            <SelectLabel className="text-blue-300 font-semibold">🔵 {t('ethnicity.kurdish_european_bi', 'Kurdish – European (British Isles)')}</SelectLabel>
             <SelectItem value="Kurdish – British" className="text-white hover:bg-gray-800 pl-6">Kurdish – British</SelectItem>
             <SelectItem value="Kurdish – Scottish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Scottish</SelectItem>
             <SelectItem value="Kurdish – Welsh" className="text-white hover:bg-gray-800 pl-6">Kurdish – Welsh</SelectItem>
@@ -94,7 +94,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-orange-300 font-semibold">🟠 Kurdish – Other Mixed</SelectLabel>
+            <SelectLabel className="text-orange-300 font-semibold">🟠 {t('ethnicity.kurdish_other_mixed', 'Kurdish – Other Mixed')}</SelectLabel>
             <SelectItem value="Kurdish – Central Asian" className="text-white hover:bg-gray-800 pl-6">Kurdish – Central Asian</SelectItem>
             <SelectItem value="Kurdish – African" className="text-white hover:bg-gray-800 pl-6">Kurdish – African</SelectItem>
             <SelectItem value="Kurdish – American / Canadian / Australian" className="text-white hover:bg-gray-800 pl-6">Kurdish – American / Canadian / Australian</SelectItem>
@@ -102,7 +102,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-gray-300 font-semibold">⚪ Non-Kurdish Options</SelectLabel>
+            <SelectLabel className="text-gray-300 font-semibold">⚪ {t('ethnicity.non_kurdish', 'Non-Kurdish Options')}</SelectLabel>
             <SelectItem value="Arab" className="text-white hover:bg-gray-800 pl-6">Arab</SelectItem>
             <SelectItem value="Turkish" className="text-white hover:bg-gray-800 pl-6">Turkish</SelectItem>
             <SelectItem value="Persian / Iranian" className="text-white hover:bg-gray-800 pl-6">Persian / Iranian</SelectItem>
