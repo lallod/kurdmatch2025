@@ -31,6 +31,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
   const currentStory = stories[currentIndex];
   const duration = currentStory?.duration || 15;
   const isOwnStory = currentUserId === currentStory?.user_id;
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (open && currentStory) {
