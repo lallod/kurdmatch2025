@@ -182,7 +182,7 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
                         {generatedBios[index]}
                       </p>
                       <div className="mt-2 text-xs text-gray-400">
-                        {generatedBios[index]?.length || 0} characters
+                        {generatedBios[index]?.length || 0} {t('common.characters', 'characters')}
                       </div>
                     </CardContent>
                   </Card>
