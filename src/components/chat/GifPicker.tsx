@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useTranslations } from '@/hooks/useTranslations';
+import { supabase } from '@/integrations/supabase/client';
 
 interface GifResult {
   id: string;
