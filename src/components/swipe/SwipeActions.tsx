@@ -128,7 +128,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Like */}
         <button
           onClick={() => handleActionWithLimit('like', onLike)}
-          aria-label="Like this profile"
+          aria-label={t('swipe.like', 'Like this profile')}
           className={`${SWIPE_CONFIG.actions.buttons.large} ${
             userLimits.likes.canPerform 
               ? 'bg-primary hover:bg-primary/90 shadow-[0_0_20px_hsl(336_90%_60%/0.3)]' 
