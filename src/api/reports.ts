@@ -11,6 +11,7 @@ export interface CreateReportInput {
 export const createReport = async (payload: CreateReportInput) => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw new Error('Not authenticated');
+  if (session.user.id === payload.reported_user_id) throw new Error('Cannot report yourself');
 
   const { data, error } = await fromUntyped('reports')
     .from('reports')
