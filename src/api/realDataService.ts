@@ -202,58 +202,47 @@ export const getRealRecentActivities = async (limit: number = 20): Promise<RealA
  */
 export const getRealEngagementData = async (days: number = 30): Promise<RealEngagementData[]> => {
   try {
-    const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
+    const startStr = startDate.toISOString();
 
-    const engagementData: RealEngagementData[] = [];
+    // Fetch all relevant data in parallel with date filter (4 queries instead of 120)
+    const [profilesRes, messagesRes, likesRes, matchesRes] = await Promise.all([
+      supabase.from('profiles').select('created_at').gte('created_at', startStr),
+      supabase.from('messages').select('created_at').gte('created_at', startStr),
+      supabase.from('likes').select('created_at').gte('created_at', startStr),
+      supabase.from('matches').select('matched_at').gte('matched_at', startStr),
+    ]);
 
+    // Build a map of date -> counts
+    const dataMap = new Map<string, RealEngagementData>();
     for (let i = 0; i < days; i++) {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + i);
-      const dateStr = date.toISOString().split('T')[0];
-      const nextDay = new Date(date);
-      nextDay.setDate(nextDay.getDate() + 1);
-
-      // Get daily user registrations
-      const { count: dailyUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', date.toISOString())
-        .lt('created_at', nextDay.toISOString());
-
-      // Get daily messages
-      const { count: dailyMessages } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', date.toISOString())
-        .lt('created_at', nextDay.toISOString());
-
-      // Get daily likes
-      const { count: dailyLikes } = await supabase
-        .from('likes')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', date.toISOString())
-        .lt('created_at', nextDay.toISOString());
-
-      // Get daily matches - using matched_at
-      const { count: dailyMatches } = await supabase
-        .from('matches')
-        .select('*', { count: 'exact', head: true })
-        .gte('matched_at', date.toISOString())
-        .lt('matched_at', nextDay.toISOString());
-
-      engagementData.push({
-        date: dateStr,
-        users: dailyUsers || 0,
-        conversations: dailyMessages || 0,
-        likes: dailyLikes || 0,
-        views: 0, // We don't track views yet
-        matches: dailyMatches || 0
-      });
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      dataMap.set(dateStr, { date: dateStr, users: 0, conversations: 0, likes: 0, views: 0, matches: 0 });
     }
 
-    return engagementData;
+    const toDate = (ts: string | null) => ts?.split('T')[0];
+
+    (profilesRes.data || []).forEach(r => {
+      const d = toDate(r.created_at);
+      if (d && dataMap.has(d)) dataMap.get(d)!.users++;
+    });
+    (messagesRes.data || []).forEach(r => {
+      const d = toDate(r.created_at);
+      if (d && dataMap.has(d)) dataMap.get(d)!.conversations++;
+    });
+    (likesRes.data || []).forEach(r => {
+      const d = toDate(r.created_at);
+      if (d && dataMap.has(d)) dataMap.get(d)!.likes++;
+    });
+    (matchesRes.data || []).forEach(r => {
+      const d = toDate(r.matched_at);
+      if (d && dataMap.has(d)) dataMap.get(d)!.matches++;
+    });
+
+    return Array.from(dataMap.values());
   } catch (error) {
     console.error('Error fetching real engagement data:', error);
     return [];
