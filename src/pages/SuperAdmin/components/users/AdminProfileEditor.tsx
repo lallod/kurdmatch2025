@@ -114,7 +114,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       onSaved?.();
     } catch (error: any) {
       console.error('Error saving preferences:', error);
-      toast.error(error.message || 'Failed to save preferences');
+      toast.error(error.message || t('admin.failed_save_preferences', 'Failed to save preferences'));
     } finally {
       setSaving(false);
     }
