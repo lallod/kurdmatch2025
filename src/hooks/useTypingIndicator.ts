@@ -45,6 +45,21 @@ export const useTypingIndicator = (conversationId: string, currentUserId: string
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
+      // Clean up typing status on unmount
+      if (conversationId && currentUserId) {
+        supabase
+          .from('typing_status')
+          .upsert(
+            {
+              conversation_id: conversationId,
+              user_id: currentUserId,
+              is_typing: false,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'conversation_id,user_id' }
+          )
+          .then(() => {});
+      }
       channel.unsubscribe();
     };
   }, [conversationId, currentUserId]);

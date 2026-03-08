@@ -341,7 +341,7 @@ const ChatView: React.FC<ChatViewProps> = ({
 
         {/* Input Area */}
         <div className="backdrop-blur-md bg-surface-secondary/80 border-t border-border/20 p-3 max-w-4xl mx-auto">
-          {isOtherUserTyping && <div className="px-3 py-2 text-sm text-muted-foreground animate-pulse">{conversation?.name} is typing...</div>}
+          {isOtherUserTyping && <div className="px-3 py-2 text-sm text-muted-foreground animate-pulse">{conversation?.name} {t('messages.is_typing', 'is typing...')}</div>}
           {showVoiceRecorder ? (
             <VoiceRecorder onSendVoice={handleSendVoice} onCancel={() => setShowVoiceRecorder(false)} />
           ) : (

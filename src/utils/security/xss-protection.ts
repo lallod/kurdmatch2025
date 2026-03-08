@@ -71,11 +71,14 @@ export function sanitizeInput(
     });
   }
   
-  const clean = DOMPurify.sanitize(dirty, config);
-  
-  // Remove the hook after use
-  if (level === 'rich') {
-    DOMPurify.removeAllHooks();
+  let clean: string;
+  try {
+    clean = DOMPurify.sanitize(dirty, config);
+  } finally {
+    // Always remove hooks to prevent leaks even on error
+    if (level === 'rich') {
+      DOMPurify.removeAllHooks();
+    }
   }
   
   return clean;
