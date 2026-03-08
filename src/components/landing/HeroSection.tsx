@@ -121,18 +121,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content }) => {
           <div className="flex-1 space-y-8">
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-900/30 border border-purple-700/30 text-sm text-purple-300 backdrop-blur-sm">
               <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
-              <span>{content.tagline}</span>
+              <span>{resolvedContent.tagline}</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-              {content.title.split(" ").slice(0, -1).join(" ")}
+              {resolvedContent.title.split(" ").slice(0, -1).join(" ")}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 ml-2">
-                {content.title.split(" ").slice(-1)[0]}
+                {resolvedContent.title.split(" ").slice(-1)[0]}
               </span>
             </h1>
             
             <p className="text-xl text-gray-300">
-              {content.subtitle}
+              {resolvedContent.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
