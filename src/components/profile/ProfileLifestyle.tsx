@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
   Wine, Cigarette, Dumbbell, AlarmClock, DollarSign,
   Calendar, Clock4, Utensils, Sun, Moon
 } from 'lucide-react';
 import DetailItem from './DetailItem';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProfileLifestyleProps {
   details: {
@@ -32,11 +32,14 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
   isMobile,
   onFieldEdit
 }) => {
+  const { t } = useTranslations();
+  const notSpecified = t('common.not_specified', 'Not specified');
+
   return (
     <div className="space-y-1 py-4 animate-fade-in">
       <DetailItem 
         icon={<Wine size={18} />} 
-        label="Drinking" 
+        label={t('profile.drinking', 'Drinking')}
         value={details.drinking}
         editable={!!onFieldEdit}
         fieldKey="drinking"
@@ -47,7 +50,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<Cigarette size={18} />} 
-        label="Smoking" 
+        label={t('profile.smoking', 'Smoking')}
         value={details.smoking}
         editable={!!onFieldEdit}
         fieldKey="smoking"
@@ -58,7 +61,7 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<Dumbbell size={18} />} 
-        label="Exercise" 
+        label={t('profile.exercise', 'Exercise')}
         value={details.exerciseHabits}
         editable={!!onFieldEdit}
         fieldKey="exerciseHabits"
@@ -69,8 +72,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<AlarmClock size={18} />} 
-        label="Sleep Schedule" 
-        value={details.sleepSchedule || 'Not specified'}
+        label={t('profile.sleep_schedule', 'Sleep Schedule')}
+        value={details.sleepSchedule || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="sleepSchedule"
         fieldType="select"
@@ -80,8 +83,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<DollarSign size={18} />} 
-        label="Financial Habits" 
-        value={details.financialHabits || 'Not specified'}
+        label={t('profile.financial_habits', 'Financial Habits')}
+        value={details.financialHabits || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="financialHabits"
         fieldType="select"
@@ -91,8 +94,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<Calendar size={18} />} 
-        label="Weekend Activities" 
-        value={formatList(details.weekendActivities) || 'Not specified'}
+        label={t('profile.weekend_activities', 'Weekend Activities')}
+        value={formatList(details.weekendActivities) || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="weekendActivities"
         fieldType="multi-select"
@@ -102,8 +105,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<Clock4 size={18} />} 
-        label="Work-Life Balance" 
-        value={details.workLifeBalance || 'Not specified'}
+        label={t('profile.work_life_balance', 'Work-Life Balance')}
+        value={details.workLifeBalance || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="workLifeBalance"
         fieldType="select"
@@ -113,8 +116,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<Utensils size={18} />} 
-        label="Dietary Preferences" 
-        value={details.dietaryPreferences || 'Not specified'}
+        label={t('profile.dietary_preferences', 'Dietary Preferences')}
+        value={details.dietaryPreferences || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="dietaryPreferences"
         fieldType="select"
@@ -124,8 +127,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<Sun size={18} />} 
-        label="Morning Routine" 
-        value={details.morningRoutine || 'Not specified'}
+        label={t('profile.morning_routine', 'Morning Routine')}
+        value={details.morningRoutine || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="morningRoutine"
         fieldType="select"
@@ -135,8 +138,8 @@ const ProfileLifestyle: React.FC<ProfileLifestyleProps> = ({
       <Separator />
       <DetailItem 
         icon={<Moon size={18} />} 
-        label="Evening Routine" 
-        value={details.eveningRoutine || 'Not specified'}
+        label={t('profile.evening_routine', 'Evening Routine')}
+        value={details.eveningRoutine || notSpecified}
         editable={!!onFieldEdit}
         fieldKey="eveningRoutine"
         fieldType="select"

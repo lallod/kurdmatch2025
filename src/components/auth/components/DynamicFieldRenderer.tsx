@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { UseFormReturn } from 'react-hook-form';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { DynamicRegistrationFormValues } from '@/components/auth/utils/dynamicRegistrationSchema';
@@ -28,6 +29,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
   question,
   form
 }) => {
+  const { t } = useTranslations();
   const { id, text, fieldType, required, fieldOptions, placeholder } = question;
   const fieldValue = form.watch(id);
   const fieldState = form.getFieldState(id);
@@ -213,7 +215,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
           <FormItem>
             <FormControl>
               <ButtonGridSelector
-                label="Your Interests"
+                label={t('auth.your_interests', 'Your Interests')}
                 icon={Heart}
                 options={fieldOptions || []}
                 selectedValues={field.value || []}
@@ -239,7 +241,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
           <FormItem>
             <FormControl>
               <ButtonGridSelector
-                label="Your Hobbies"
+                label={t('auth.your_hobbies', 'Your Hobbies')}
                 icon={Coffee}
                 options={fieldOptions || []}
                 selectedValues={field.value || []}
@@ -265,7 +267,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
           <FormItem>
             <FormControl>
               <ButtonGridSelector
-                label="Your Core Values"
+                label={t('auth.your_core_values', 'Your Core Values')}
                 icon={Sparkles}
                 options={fieldOptions || []}
                 selectedValues={field.value || []}
