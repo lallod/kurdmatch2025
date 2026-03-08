@@ -137,7 +137,7 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
               >
                 {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Generate 5 Personalized Bios
+                {t('profile.generate_bios', 'Generate 5 Personalized Bios')}
               </Button>
             </div>
           ) : (
