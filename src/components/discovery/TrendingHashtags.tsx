@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Hash, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface TrendingHashtag { name: string; usage_count: number; }
 
@@ -10,6 +11,7 @@ export const TrendingHashtags: React.FC = () => {
   const navigate = useNavigate();
   const [hashtags, setHashtags] = useState<TrendingHashtag[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslations();
 
   useEffect(() => { loadTrendingHashtags(); }, []);
 
@@ -31,7 +33,7 @@ export const TrendingHashtags: React.FC = () => {
     <div className="bg-card/50 backdrop-blur-md border border-border/20 rounded-2xl p-4">
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp className="w-5 h-5 text-primary" />
-        <h2 className="text-lg font-semibold text-foreground">Trending Hashtags</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t('discovery.trending_hashtags', 'Trending Hashtags')}</h2>
       </div>
       <div className="space-y-2">
         {hashtags.map((hashtag, index) => (
@@ -41,7 +43,7 @@ export const TrendingHashtags: React.FC = () => {
               <Hash className="w-4 h-4 text-primary" />
               <span className="text-foreground font-medium">#{hashtag.name}</span>
             </div>
-            <span className="text-muted-foreground text-sm">{hashtag.usage_count.toLocaleString()} posts</span>
+            <span className="text-muted-foreground text-sm">{t('discovery.posts_count', '{{count}} posts', { count: hashtag.usage_count.toLocaleString() })}</span>
           </Button>
         ))}
       </div>

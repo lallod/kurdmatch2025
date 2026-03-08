@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Heart, MessageCircle, Shield, Zap, Star, Users } from 'lucide-react';
 import { useDynamicCompatibility } from '@/hooks/useDynamicCompatibility';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CompatibilityBadgeProps {
   targetUserId: string;
@@ -25,6 +26,7 @@ export const CompatibilityBadge = ({
   const [score, setScore] = useState(initialScore || 0);
   const [factors, setFactors] = useState<any>(null);
   const [sharedInterests, setSharedInterests] = useState<string[]>([]);
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (targetUserId && !initialScore) {
@@ -49,7 +51,7 @@ export const CompatibilityBadge = ({
   const detailsContent = (
     <div className="space-y-3 p-2 min-w-[200px]">
       <div className="flex items-center justify-between">
-        <span className="font-semibold">Compatibility Score</span>
+        <span className="font-semibold">{t('compatibility.score', 'Compatibility Score')}</span>
         <span className={cn('font-bold text-lg', badge.color)}>{score}%</span>
       </div>
       
@@ -59,31 +61,31 @@ export const CompatibilityBadge = ({
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <Heart className="w-3 h-3" /> Shared Interests
+              <Heart className="w-3 h-3" /> {t('compatibility.shared_interests', 'Shared Interests')}
             </span>
             <span>+{factors.sharedInterests}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <MessageCircle className="w-3 h-3" /> Chat Engagement
+              <MessageCircle className="w-3 h-3" /> {t('compatibility.chat_engagement', 'Chat Engagement')}
             </span>
             <span>+{factors.chatEngagement}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <Shield className="w-3 h-3" /> Verification
+              <Shield className="w-3 h-3" /> {t('compatibility.verification', 'Verification')}
             </span>
             <span>+{factors.verificationBonus}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <Zap className="w-3 h-3" /> Activity
+              <Zap className="w-3 h-3" /> {t('compatibility.activity', 'Activity')}
             </span>
             <span>+{factors.activityScore}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <Users className="w-3 h-3" /> Lifestyle Match
+              <Users className="w-3 h-3" /> {t('compatibility.lifestyle_match', 'Lifestyle Match')}
             </span>
             <span>+{factors.lifestyleMatch}</span>
           </div>
@@ -92,7 +94,7 @@ export const CompatibilityBadge = ({
       
       {sharedInterests.length > 0 && (
         <div className="pt-2 border-t border-border">
-          <p className="text-xs text-muted-foreground mb-1">Shared interests:</p>
+          <p className="text-xs text-muted-foreground mb-1">{t('compatibility.shared_interests_label', 'Shared interests:')}</p>
           <div className="flex flex-wrap gap-1">
             {sharedInterests.slice(0, 5).map((interest, i) => (
               <Badge key={i} variant="secondary" className="text-xs">

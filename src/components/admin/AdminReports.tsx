@@ -168,7 +168,7 @@ export default function AdminReports() {
                       className="gap-2"
                     >
                       <XCircle className="w-4 h-4" />
-                      Dismiss
+                      {t('admin.dismiss', 'Dismiss')}
                     </Button>
                   </div>
                 )}

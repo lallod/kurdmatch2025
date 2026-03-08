@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { usePhoneVerification } from '@/hooks/usePhoneVerification';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PhoneVerificationDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ export const PhoneVerificationDialog = ({
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const { loading, codeSent, verified, devCode, sendVerificationCode, verifyCode, reset } = usePhoneVerification();
+  const { t } = useTranslations();
 
   const handleSendCode = async () => {
     const success = await sendVerificationCode(phoneNumber);
@@ -61,22 +63,22 @@ export const PhoneVerificationDialog = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Phone className="h-5 w-5 text-primary" />
-            Phone Verification
+            {t('verification.phone_verification', 'Phone Verification')}
           </DialogTitle>
           <DialogDescription>
-            Verify your phone number to increase trust and security
+            {t('verification.phone_description', 'Verify your phone number to increase trust and security')}
           </DialogDescription>
         </DialogHeader>
 
         {verified ? (
           <div className="flex flex-col items-center py-8 gap-4">
             <CheckCircle className="h-16 w-16 text-green-500" />
-            <p className="text-lg font-medium text-green-600">Phone Verified!</p>
+            <p className="text-lg font-medium text-green-600">{t('verification.phone_verified', 'Phone Verified!')}</p>
           </div>
         ) : !codeSent ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">{t('verification.phone_number', 'Phone Number')}</Label>
               <Input
                 id="phone"
                 type="tel"
@@ -86,7 +88,7 @@ export const PhoneVerificationDialog = ({
                 className="text-lg"
               />
               <p className="text-xs text-muted-foreground">
-                Include country code (e.g., +1 for US, +44 for UK)
+                {t('verification.include_country_code', 'Include country code (e.g., +1 for US, +44 for UK)')}
               </p>
             </div>
 
@@ -98,17 +100,17 @@ export const PhoneVerificationDialog = ({
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
+                  {t('verification.sending', 'Sending...')}
                 </>
               ) : (
-                'Send Verification Code'
+                t('verification.send_code', 'Send Verification Code')
               )}
             </Button>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Enter 6-digit code</Label>
+              <Label>{t('verification.enter_6_digit', 'Enter 6-digit code')}</Label>
               <div className="flex justify-center">
                 <InputOTP
                   maxLength={6}
@@ -126,7 +128,7 @@ export const PhoneVerificationDialog = ({
                 </InputOTP>
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Code sent to {phoneNumber}
+                {t('verification.code_sent_to', 'Code sent to {{phone}}', { phone: phoneNumber })}
               </p>
               {devCode && (
                 <p className="text-xs text-amber-600 text-center bg-amber-50 dark:bg-amber-900/20 p-2 rounded">
@@ -144,7 +146,7 @@ export const PhoneVerificationDialog = ({
                 }}
                 className="flex-1"
               >
-                Change Number
+                {t('verification.change_number', 'Change Number')}
               </Button>
               <Button 
                 onClick={handleVerifyCode} 
@@ -154,10 +156,10 @@ export const PhoneVerificationDialog = ({
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Verifying...
+                    {t('verification.verifying', 'Verifying...')}
                   </>
                 ) : (
-                  'Verify'
+                  t('verification.verify', 'Verify')
                 )}
               </Button>
             </div>
@@ -168,7 +170,7 @@ export const PhoneVerificationDialog = ({
               disabled={loading}
               className="w-full text-sm"
             >
-              Resend Code
+              {t('verification.resend_code', 'Resend Code')}
             </Button>
           </div>
         )}
