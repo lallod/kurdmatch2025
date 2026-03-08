@@ -51,7 +51,7 @@ const GroupedEthnicitySelector = ({ value, onChange }: GroupedEthnicitySelectorP
           </SelectGroup>
 
           <SelectGroup>
-            <SelectLabel className="text-blue-300 font-semibold">🔵 Kurdish – European (Northern)</SelectLabel>
+            <SelectLabel className="text-blue-300 font-semibold">🔵 {t('ethnicity.kurdish_european_n', 'Kurdish – European (Northern)')}</SelectLabel>
             <SelectItem value="Kurdish – Swedish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Swedish</SelectItem>
             <SelectItem value="Kurdish – Norwegian" className="text-white hover:bg-gray-800 pl-6">Kurdish – Norwegian</SelectItem>
             <SelectItem value="Kurdish – Danish" className="text-white hover:bg-gray-800 pl-6">Kurdish – Danish</SelectItem>
