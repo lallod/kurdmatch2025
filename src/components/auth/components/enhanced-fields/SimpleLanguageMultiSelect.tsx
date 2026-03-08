@@ -101,7 +101,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
         >
           <span className="flex items-center gap-2 text-purple-300">
             <Plus className="h-4 w-4" />
-            Add Language
+            {t('auth.add_language', 'Add Language')}
           </span>
           <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </Button>
