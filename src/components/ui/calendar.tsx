@@ -26,7 +26,7 @@ function Calendar({
     const months = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December",
-    ];
+    ].map((m, i) => new Date(2000, i).toLocaleString(undefined, { month: 'long' }));
     
     return (
       <div className="flex justify-center gap-1">

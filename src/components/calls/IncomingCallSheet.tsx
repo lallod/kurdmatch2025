@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Phone, PhoneOff, Video } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface IncomingCallSheetProps {
   open: boolean;
@@ -23,6 +24,7 @@ const IncomingCallSheet: React.FC<IncomingCallSheetProps> = ({
   onDecline,
 }) => {
   const [callerAvatar, setCallerAvatar] = useState('');
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (callerId) {
@@ -58,7 +60,9 @@ const IncomingCallSheet: React.FC<IncomingCallSheetProps> = ({
           <div className="text-center mt-2">
             <h3 className="text-xl font-bold text-foreground">{callerName}</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Incoming {callType === 'video' ? 'video' : 'voice'} call...
+              {callType === 'video' 
+                ? t('calls.incoming_video', 'Incoming video call...') 
+                : t('calls.incoming_voice', 'Incoming voice call...')}
             </p>
           </div>
 
@@ -69,11 +73,11 @@ const IncomingCallSheet: React.FC<IncomingCallSheetProps> = ({
                 size="icon"
                 className="h-16 w-16 rounded-full bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-lg"
                 onClick={onDecline}
-                aria-label="Decline call"
+                aria-label={t('calls.decline', 'Decline call')}
               >
                 <PhoneOff className="h-7 w-7" />
               </Button>
-              <span className="text-xs text-muted-foreground">Decline</span>
+              <span className="text-xs text-muted-foreground">{t('calls.decline_label', 'Decline')}</span>
             </div>
 
             {/* Accept */}
@@ -82,11 +86,11 @@ const IncomingCallSheet: React.FC<IncomingCallSheetProps> = ({
                 size="icon"
                 className="h-16 w-16 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg"
                 onClick={onAccept}
-                aria-label="Accept call"
+                aria-label={t('calls.accept', 'Accept call')}
               >
                 {callType === 'video' ? <Video className="h-7 w-7" /> : <Phone className="h-7 w-7" />}
               </Button>
-              <span className="text-xs text-muted-foreground">Accept</span>
+              <span className="text-xs text-muted-foreground">{t('calls.accept_label', 'Accept')}</span>
             </div>
           </div>
         </div>

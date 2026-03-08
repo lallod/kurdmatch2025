@@ -169,7 +169,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Boost */}
         <button
           onClick={() => handleActionWithLimit('boost', onBoost)}
-          aria-label="Boost your profile"
+          aria-label={t('swipe.boost', 'Boost your profile')}
           className={`${SWIPE_CONFIG.actions.buttons.small} ${
             userLimits.boosts.canPerform 
               ? 'bg-card hover:bg-card/80 text-primary' 
