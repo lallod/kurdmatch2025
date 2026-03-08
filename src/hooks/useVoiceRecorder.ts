@@ -76,6 +76,11 @@ export const useVoiceRecorder = () => {
 
   const cancelRecording = useCallback(() => {
     if (mediaRecorderRef.current) {
+      // Stop all media tracks to release the microphone
+      const stream = mediaRecorderRef.current.stream;
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
       if (mediaRecorderRef.current.state !== 'inactive') {
         mediaRecorderRef.current.stop();
       }

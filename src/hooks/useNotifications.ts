@@ -101,6 +101,8 @@ export const useNotifications = () => {
   };
 
   useEffect(() => {
+    if (!user) return;
+
     fetchNotificationCounts();
     
     // Refresh counts every 30 seconds
@@ -115,7 +117,7 @@ export const useNotifications = () => {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `recipient_id=eq.${user?.id}`
+          filter: `recipient_id=eq.${user.id}`
         },
         () => {
           fetchNotificationCounts();
@@ -132,7 +134,7 @@ export const useNotifications = () => {
           event: 'INSERT',
           schema: 'public',
           table: 'likes',
-          filter: `likee_id=eq.${user?.id}`
+          filter: `likee_id=eq.${user.id}`
         },
         () => {
           fetchNotificationCounts();

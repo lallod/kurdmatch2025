@@ -90,7 +90,8 @@ const SupportTicketsPage = () => {
       }
 
       if (searchQuery) {
-        query = query.or(`subject.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,message.ilike.%${searchQuery}%`);
+        const sq = searchQuery.replace(/[%_\\'"()]/g, '');
+        if (sq) query = query.or(`subject.ilike.%${sq}%,email.ilike.%${sq}%,message.ilike.%${sq}%`);
       }
 
       const { data, error } = await query;

@@ -277,9 +277,12 @@ export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]>
     .from('profiles')
     .select('*');
 
-  // Text search across name, bio, occupation
+  // Text search across name, bio, occupation (sanitized to prevent injection)
   if (filters.query) {
-    query = query.or(`name.ilike.%${filters.query}%,bio.ilike.%${filters.query}%,occupation.ilike.%${filters.query}%`);
+    const sanitized = filters.query.replace(/[%_\\'"()]/g, '');
+    if (sanitized) {
+      query = query.or(`name.ilike.%${sanitized}%,bio.ilike.%${sanitized}%,occupation.ilike.%${sanitized}%`);
+    }
   }
 
   // Age range
@@ -500,13 +503,16 @@ export const getProfileSuggestions = async (filters?: Record<string, any>): Prom
   if (filters?.heightMax) query = query.lte('height', filters.heightMax.toString());
 
   if (filters?.location) {
-    query = query.or(`location.ilike.%${filters.location}%,travel_location.ilike.%${filters.location}%,kurdistan_region.ilike.%${filters.location}%`);
+    const loc = filters.location.replace(/[%_\\'"()]/g, '');
+    if (loc) query = query.or(`location.ilike.%${loc}%,travel_location.ilike.%${loc}%,kurdistan_region.ilike.%${loc}%`);
   } else if (currentProfile.travel_mode_active && currentProfile.travel_location) {
-    query = query.or(`location.ilike.%${currentProfile.travel_location}%,travel_location.ilike.%${currentProfile.travel_location}%`);
+    const tl = currentProfile.travel_location.replace(/[%_\\'"()]/g, '');
+    if (tl) query = query.or(`location.ilike.%${tl}%,travel_location.ilike.%${tl}%`);
   }
 
   if (filters?.occupation) {
-    query = query.ilike('occupation', `%${filters.occupation}%`);
+    const occ = filters.occupation.replace(/[%_\\'"()]/g, '');
+    if (occ) query = query.ilike('occupation', `%${occ}%`);
   }
 
   const { data, error } = await query.limit(100);
