@@ -44,6 +44,7 @@ export const CompactDiscoveryDropdowns = ({
   const [trendingLoaded, setTrendingLoaded] = useState(false);
   const [exploreLoaded, setExploreLoaded] = useState(false);
   const [groupsLoaded, setGroupsLoaded] = useState(false);
+  const { t } = useTranslations();
 
   const loadTrending = async () => {
     if (trendingLoaded) return;
