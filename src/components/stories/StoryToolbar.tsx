@@ -22,8 +22,9 @@ export const StoryToolbar = ({
   onToggleMute,
 }: StoryToolbarProps) => {
   const { t } = useTranslations();
+  const navigate = useNavigate();
   const handleReply = () => {
-    window.location.href = `/messages?user=${userId}`;
+    navigate(`/messages?user=${userId}`);
   };
 
   const handleShare = () => {
