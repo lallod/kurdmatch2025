@@ -28,10 +28,10 @@ const GiftsAndDatesPage = () => {
       setUserId(user.id);
       try {
         const [c, r, s, d] = await Promise.all([
-          getUserCoins(user.id),
-          getReceivedGifts(user.id),
-          getSentGifts(user.id),
-          getDateProposals(user.id),
+          getUserCoins(),
+          getReceivedGifts(),
+          getSentGifts(),
+          getDateProposals(),
         ]);
         setCoins(c);
         setReceivedGifts(r);

@@ -57,10 +57,7 @@ const SendGiftModal = ({ open, onOpenChange, recipientId, recipientName }: SendG
     if (!selectedGift) return;
     setSending(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
-      
-      await sendGift(user.id, recipientId, selectedGift.id, message || undefined);
+      await sendGift(recipientId, selectedGift.id, message || undefined);
       toast.success(t('toast.gift.sent', '{{emoji}} {{name}} sent to {{recipient}}!', { emoji: selectedGift.emoji, name: selectedGift.name, recipient: recipientName }));
       setBalance(prev => prev - selectedGift.price_coins);
       setSelectedGift(null);

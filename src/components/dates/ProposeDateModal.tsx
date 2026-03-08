@@ -49,11 +49,8 @@ const ProposeDateModal = ({ open, onOpenChange, recipientId, recipientName }: Pr
 
     setSending(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
-
       const proposedDate = new Date(`${date}T${time}`).toISOString();
-      await createDateProposal(user.id, recipientId, proposedDate, chosenActivity, location || undefined, message || undefined);
+      await createDateProposal(recipientId, proposedDate, chosenActivity, location || undefined, message || undefined);
       
       toast.success(t('toast.date.sent', 'Date invitation sent to {{name}}!', { name: recipientName }));
       onOpenChange(false);

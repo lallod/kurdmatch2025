@@ -19,13 +19,7 @@ const ReceivedGiftsList = ({ userId, limit }: ReceivedGiftsListProps) => {
   useEffect(() => {
     const load = async () => {
       try {
-        let uid = userId;
-        if (!uid) {
-          const { data: { user } } = await supabase.auth.getUser();
-          uid = user?.id;
-        }
-        if (!uid) return;
-        const data = await getReceivedGifts(uid);
+        const data = await getReceivedGifts();
         setGifts(limit ? data.slice(0, limit) : data);
       } catch (err) {
         console.error('Failed to load received gifts:', err);
