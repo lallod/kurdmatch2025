@@ -38,7 +38,7 @@ export const ChatInsightsPanel = ({ partnerId }: ChatInsightsPanelProps) => {
       >
         <div className="flex items-center gap-2">
           <Brain className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium">AI Conversation Insights</span>
+          <span className="text-sm font-medium">{t('chat.ai_insights', 'AI Conversation Insights')}</span>
         </div>
         {isExpanded ? (
           <ChevronUp className="h-4 w-4" />

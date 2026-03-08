@@ -119,7 +119,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
             </div>
             <div className="max-h-48 overflow-y-auto">
               {filteredLanguages.length === 0 ? (
-                <div className="p-4 text-center text-gray-400">No languages found</div>
+                <div className="p-4 text-center text-gray-400">{t('auth.no_languages_found', 'No languages found')}</div>
               ) : (
                 filteredLanguages.map((language) => (
                   <button

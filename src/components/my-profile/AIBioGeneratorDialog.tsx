@@ -198,14 +198,14 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
             onClick={() => onOpenChange(false)}
             className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           {selectedBio && (
             <Button 
               onClick={handleUseBio}
               className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
             >
-              Use This Bio
+              {t('profile.use_this_bio', 'Use This Bio')}
             </Button>
           )}
         </DialogFooter>
