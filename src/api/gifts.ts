@@ -92,22 +92,13 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
     .single();
   if (giftError) throw giftError;
 
-  // Check balance
-  const coins = await getUserCoins(senderId);
-  if (coins.balance < gift.price_coins) {
-    throw new Error('Not enough coins to send this gift');
-  }
-
-  // Deduct coins
-  const { error: coinsError } = await supabase
-    .from('user_coins')
-    .update({
-      balance: coins.balance - gift.price_coins,
-      total_spent: coins.total_spent + gift.price_coins,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('user_id', senderId);
+  // Deduct coins via secure RPC
+  const { data: success, error: coinsError } = await supabase.rpc('spend_user_coins', {
+    p_user_id: senderId,
+    p_amount: gift.price_coins
+  });
   if (coinsError) throw coinsError;
+  if (!success) throw new Error('Not enough coins to send this gift');
 
   // Send gift
   const { data, error } = await supabase
