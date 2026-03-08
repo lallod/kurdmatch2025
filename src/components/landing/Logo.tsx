@@ -9,7 +9,7 @@ interface LogoProps {
 }
 
 const Logo: React.FC<LogoProps> = ({ size = 'medium', withText = true }) => {
-  // Define sizes for different variants
+  const { t } = useTranslations();
   const sizes = {
     small: {
       container: 'h-8',
