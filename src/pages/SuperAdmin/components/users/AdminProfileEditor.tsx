@@ -45,7 +45,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       setPreferences(prefsRes.data || {});
     } catch (error) {
       console.error('Error loading profile data:', error);
-      toast.error('Failed to load profile data');
+      toast.error(t('admin.failed_load_profile', 'Failed to load profile data'));
     } finally {
       setLoading(false);
     }
