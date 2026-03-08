@@ -105,7 +105,7 @@ export default function AdminReports() {
       {reports.length === 0 ? (
         <Card className="bg-white/10 backdrop-blur border-white/20">
           <CardContent className="p-8 text-center text-white">
-            No reports to review
+            {t('admin.no_reports', 'No reports to review')}
           </CardContent>
         </Card>
       ) : (
