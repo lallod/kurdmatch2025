@@ -50,7 +50,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content }) => {
       
       if (!userData?.user?.id) {
         console.error('No user ID available after login');
-        navigate('/app');
+        navigate('/discovery');
         return;
       }
       
@@ -74,7 +74,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content }) => {
           description: t('hero.admin_redirect', 'You\'ve been redirected to the admin dashboard'),
         });
       } else {
-        navigate('/app');
+        navigate('/discovery');
         toast({
           title: t('hero.welcome_back', 'Welcome back!'),
           description: t('hero.login_success', 'You\'ve successfully logged in.'),
@@ -82,7 +82,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content }) => {
       }
     } catch (error) {
       console.error('Error checking user role:', error);
-      navigate('/app');
+      navigate('/discovery');
     }
   };
 

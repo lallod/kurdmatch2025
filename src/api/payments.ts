@@ -13,7 +13,7 @@ export const createPremiumCheckout = async (planId: PremiumPlanId = 'premium') =
     const url = (data as any)?.url;
     if (!url) throw new Error('Checkout URL not returned');
 
-    window.location.href = url;
+    window.open(url, '_blank');
   } catch (err: any) {
     console.error('Failed to start checkout:', err);
     throw err;

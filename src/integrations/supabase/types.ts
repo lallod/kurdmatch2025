@@ -71,6 +71,39 @@ export type Database = {
         }
         Relationships: []
       }
+      account_status: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string | null
+          requested_at: string | null
+          scheduled_deletion_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          requested_at?: string | null
+          scheduled_deletion_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          requested_at?: string | null
+          scheduled_deletion_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_activities: {
         Row: {
           activity_type: string
@@ -501,6 +534,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      connected_social_accounts: {
+        Row: {
+          connected_at: string
+          id: string
+          is_active: boolean
+          platform: string
+          platform_user_id: string | null
+          user_id: string
+          username: string
+        }
+        Insert: {
+          connected_at?: string
+          id?: string
+          is_active?: boolean
+          platform: string
+          platform_user_id?: string | null
+          user_id: string
+          username: string
+        }
+        Update: {
+          connected_at?: string
+          id?: string
+          is_active?: boolean
+          platform?: string
+          platform_user_id?: string | null
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
       }
       content_categories: {
         Row: {
