@@ -59,8 +59,31 @@ const getIconComponent = (iconName: string): React.ReactNode => {
   }
 };
 
-const FeaturesSection: React.FC<FeaturesSectionProps> = ({ content = defaultContent }) => {
-  return (
+const FeaturesSection: React.FC<FeaturesSectionProps> = ({ content }) => {
+  const { t } = useTranslations();
+  const resolvedContent = content || {
+    title: t('landing.features_title', 'Connecting Kurdish Hearts'),
+    cards: [
+      {
+        id: "worldwide",
+        icon: "Globe",
+        title: t('landing.feature_worldwide', 'Worldwide Connection'),
+        description: t('landing.feature_worldwide_desc', 'Connect with Kurdish singles from all regions of Kurdistan and across the global diaspora.')
+      },
+      {
+        id: "cultural",
+        icon: "Users",
+        title: t('landing.feature_cultural', 'Cultural Understanding'),
+        description: t('landing.feature_cultural_desc', 'Find someone who shares your Kurdish heritage, traditions, and values.')
+      },
+      {
+        id: "relationships",
+        icon: "Heart",
+        title: t('landing.feature_relationships', 'Meaningful Relationships'),
+        description: t('landing.feature_relationships_desc', 'Build connections based on shared cultural identity and personal compatibility.')
+      }
+    ]
+  };
     <div className="py-16 relative z-10 bg-indigo-950/80 backdrop-blur-lg border-t border-indigo-900">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 text-white">{content.title}</h2>
