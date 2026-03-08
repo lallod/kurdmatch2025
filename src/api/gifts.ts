@@ -57,24 +57,27 @@ export const getGiftCatalog = async (): Promise<VirtualGift[]> => {
   return data as VirtualGift[];
 };
 
-export const getUserCoins = async (userId: string): Promise<UserCoins> => {
+export const getUserCoins = async (): Promise<UserCoins> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('user_coins')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .maybeSingle();
   
   if (error) throw error;
   
   if (!data) {
     // Initialize coins for new user via secure RPC
-    await supabase.rpc('initialize_user_coins', { p_user_id: userId });
+    await supabase.rpc('initialize_user_coins', { p_user_id: user.id });
     
     // Re-fetch
     const { data: newData, error: fetchError } = await supabase
       .from('user_coins')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .maybeSingle();
     if (fetchError) throw fetchError;
     if (!newData) throw new Error('Failed to initialize coins');
