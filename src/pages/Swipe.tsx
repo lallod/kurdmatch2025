@@ -6,7 +6,7 @@ import SwipeActions from '@/components/swipe/SwipeActions';
 import { SwipeFilterSidebar, type SwipeFilters } from '@/components/swipe/SwipeFilters';
 import { Profile, SwipeAction, LastAction } from '@/types/swipe';
 import { getMatchRecommendations } from '@/api/profiles';
-import { likeProfile, unlikeProfile } from '@/api/likes';
+import { likeProfile } from '@/api/likes';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { SWIPE_CONFIG } from '@/config/swipe';
 import { SlidersHorizontal, Bell } from 'lucide-react';
