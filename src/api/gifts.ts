@@ -128,21 +128,27 @@ export const sendGift = async (recipientId: string, giftId: string, message?: st
   return data;
 };
 
-export const getReceivedGifts = async (userId: string): Promise<SentGift[]> => {
+export const getReceivedGifts = async (): Promise<SentGift[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('sent_gifts')
     .select('*, gift:virtual_gifts(*), sender:profiles!sent_gifts_sender_id_fkey(name, photos(url, is_primary))')
-    .eq('recipient_id', userId)
+    .eq('recipient_id', user.id)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data as unknown as SentGift[];
 };
 
-export const getSentGifts = async (userId: string): Promise<SentGift[]> => {
+export const getSentGifts = async (): Promise<SentGift[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('sent_gifts')
     .select('*, gift:virtual_gifts(*)')
-    .eq('sender_id', userId)
+    .eq('sender_id', user.id)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data as unknown as SentGift[];
