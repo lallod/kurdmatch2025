@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Languages, X, Plus, ChevronDown } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SimpleLanguageMultiSelectProps {
   value?: string[];
