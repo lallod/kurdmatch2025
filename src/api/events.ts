@@ -137,19 +137,16 @@ export const leaveEvent = async (eventId: string) => {
 
   if (error) throw error;
 
-  // Decrement attendees count
-  const { data: event } = await supabase
-    .from('events')
-    .select('attendees_count')
-    .eq('id', eventId)
-    .single();
+  // Re-count actual attendees for accuracy
+  const { count } = await supabase
+    .from('event_attendees')
+    .select('*', { count: 'exact', head: true })
+    .eq('event_id', eventId);
 
-  if (event) {
-    await supabase
-      .from('events')
-      .update({ attendees_count: Math.max(0, event.attendees_count - 1) })
-      .eq('id', eventId);
-  }
+  await supabase
+    .from('events')
+    .update({ attendees_count: count || 0 })
+    .eq('id', eventId);
 };
 
 // Get events by category
