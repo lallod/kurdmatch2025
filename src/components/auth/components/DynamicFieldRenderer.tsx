@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from '@/hooks/useTranslations';
 import { UseFormReturn } from 'react-hook-form';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
 import { DynamicRegistrationFormValues } from '@/components/auth/utils/dynamicRegistrationSchema';
