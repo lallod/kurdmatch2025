@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface CompatibilityInsightsLinkProps {
   userId: string;
@@ -18,6 +19,7 @@ export const CompatibilityInsightsLink: React.FC<CompatibilityInsightsLinkProps>
   className,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const handleClick = () => {
     navigate(`/compatibility/${userId}`);
@@ -33,7 +35,7 @@ export const CompatibilityInsightsLink: React.FC<CompatibilityInsightsLinkProps>
         )}
       >
         <Sparkles className="w-3 h-3" />
-        <span>Se kompatibilitet</span>
+        <span>{t('chat.see_compatibility', 'See compatibility')}</span>
       </button>
     );
   }
@@ -50,9 +52,9 @@ export const CompatibilityInsightsLink: React.FC<CompatibilityInsightsLinkProps>
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <div>
-            <p className="text-sm font-medium text-foreground">Kompatibilitetsinnsikt</p>
+            <p className="text-sm font-medium text-foreground">{t('chat.compatibility_insights', 'Compatibility Insights')}</p>
             <p className="text-xs text-muted-foreground">
-              {matchScore ? `${matchScore}% match` : 'Se detaljert analyse'}
+              {matchScore ? `${matchScore}% match` : t('chat.see_detailed_analysis', 'See detailed analysis')}
             </p>
           </div>
         </div>
@@ -72,7 +74,7 @@ export const CompatibilityInsightsLink: React.FC<CompatibilityInsightsLinkProps>
       )}
     >
       <Sparkles className="w-4 h-4" />
-      <span>Se kompatibilitet</span>
+      <span>{t('chat.see_compatibility', 'See compatibility')}</span>
       {matchScore && (
         <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-primary/20 text-primary">
           {matchScore}%

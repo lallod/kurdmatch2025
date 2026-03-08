@@ -45,7 +45,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       setPreferences(prefsRes.data || {});
     } catch (error) {
       console.error('Error loading profile data:', error);
-      toast.error('Failed to load profile data');
+      toast.error(t('admin.failed_load_profile', 'Failed to load profile data'));
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       onSaved?.();
     } catch (error: any) {
       console.error('Error saving profile:', error);
-      toast.error(error.message || 'Failed to save profile');
+      toast.error(error.message || t('admin.failed_save_profile', 'Failed to save profile'));
     } finally {
       setSaving(false);
     }
@@ -93,7 +93,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       onSaved?.();
     } catch (error: any) {
       console.error('Error saving details:', error);
-      toast.error(error.message || 'Failed to save details');
+      toast.error(error.message || t('admin.failed_save_details', 'Failed to save details'));
     } finally {
       setSaving(false);
     }
@@ -114,7 +114,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       onSaved?.();
     } catch (error: any) {
       console.error('Error saving preferences:', error);
-      toast.error(error.message || 'Failed to save preferences');
+      toast.error(error.message || t('admin.failed_save_preferences', 'Failed to save preferences'));
     } finally {
       setSaving(false);
     }
@@ -154,8 +154,8 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
                   <Select value={profile.gender || ''} onValueChange={v => updateProfile('gender', v)}>
                     <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="male">{t('common.male', 'Male')}</SelectItem>
+                      <SelectItem value="female">{t('common.female', 'Female')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

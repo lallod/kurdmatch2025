@@ -2,6 +2,7 @@ import { Lightbulb, MessageSquare, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ConversationInsightsProps {
   sharedInterests: string[];
@@ -20,12 +21,14 @@ export const ConversationInsights = ({
   onRefresh,
   isLoading
 }: ConversationInsightsProps) => {
+  const { t } = useTranslations();
+
   return (
     <Card className="bg-gradient-to-br from-primary/5 to-primary/10">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          AI Conversation Insights
+          {t('chat.ai_conversation_insights', 'AI Conversation Insights')}
         </CardTitle>
         {onRefresh && (
           <Button
@@ -34,7 +37,7 @@ export const ConversationInsights = ({
             onClick={onRefresh}
             disabled={isLoading}
           >
-            {isLoading ? 'Analyzing...' : 'Refresh'}
+            {isLoading ? t('chat.analyzing', 'Analyzing...') : t('chat.refresh', 'Refresh')}
           </Button>
         )}
       </CardHeader>
@@ -43,7 +46,7 @@ export const ConversationInsights = ({
           <div>
             <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
               <Lightbulb className="h-4 w-4" />
-              Shared Interests
+              {t('chat.shared_interests', 'Shared Interests')}
             </h4>
             <div className="flex flex-wrap gap-2">
               {sharedInterests.map((interest, index) => (
@@ -59,7 +62,7 @@ export const ConversationInsights = ({
           <div>
             <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              Suggested Topics
+              {t('chat.suggested_topics', 'Suggested Topics')}
             </h4>
             <div className="flex flex-wrap gap-2">
               {suggestedTopics.map((topic, index) => (
@@ -73,14 +76,14 @@ export const ConversationInsights = ({
 
         {conversationSummary && (
           <div>
-            <h4 className="text-sm font-semibold mb-2">Summary</h4>
+            <h4 className="text-sm font-semibold mb-2">{t('chat.summary', 'Summary')}</h4>
             <p className="text-sm text-muted-foreground">{conversationSummary}</p>
           </div>
         )}
 
         {communicationStyle && (
           <div>
-            <h4 className="text-sm font-semibold mb-2">Communication Style</h4>
+            <h4 className="text-sm font-semibold mb-2">{t('chat.communication_style', 'Communication Style')}</h4>
             <p className="text-sm text-muted-foreground">{communicationStyle}</p>
           </div>
         )}

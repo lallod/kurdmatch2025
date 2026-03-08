@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, MessageCircle, Heart, UserPlus, TrendingUp, TrendingDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Stats {
   totalUsers: number;
@@ -14,6 +15,7 @@ interface Stats {
 }
 
 export default function AdminStats() {
+  const { t } = useTranslations();
   const [stats, setStats] = useState<Stats>({
     totalUsers: 0,
     activeUsers: 0,
@@ -58,42 +60,42 @@ export default function AdminStats() {
 
   const statCards = [
     {
-      title: 'Total Users',
+      title: t('admin.stat_total_users', 'Total Users'),
       value: stats.totalUsers,
       icon: Users,
       trend: stats.userGrowth,
       trendUp: true
     },
     {
-      title: 'Active Users (7d)',
+      title: t('admin.stat_active_users', 'Active Users (7d)'),
       value: stats.activeUsers,
       icon: UserPlus,
       trend: 8.2,
       trendUp: true
     },
     {
-      title: 'Total Matches',
+      title: t('admin.stat_total_matches', 'Total Matches'),
       value: stats.totalMatches,
       icon: Heart,
       trend: 15.3,
       trendUp: true
     },
     {
-      title: 'Messages Sent',
+      title: t('admin.stat_messages_sent', 'Messages Sent'),
       value: stats.totalMessages,
       icon: MessageCircle,
       trend: 23.1,
       trendUp: true
     },
     {
-      title: 'Posts Created',
+      title: t('admin.stat_posts_created', 'Posts Created'),
       value: stats.totalPosts,
       icon: TrendingUp,
       trend: 9.7,
       trendUp: true
     },
     {
-      title: 'Pending Reports',
+      title: t('admin.stat_pending_reports', 'Pending Reports'),
       value: stats.totalReports,
       icon: TrendingDown,
       trend: -5.2,
@@ -102,7 +104,7 @@ export default function AdminStats() {
   ];
 
   if (loading) {
-    return <div className="text-white">Loading stats...</div>;
+    return <div className="text-white">{t('admin.loading_stats', 'Loading stats...')}</div>;
   }
 
   return (
@@ -121,7 +123,7 @@ export default function AdminStats() {
             </div>
             <div className={`text-xs flex items-center gap-1 ${stat.trendUp ? 'text-green-400' : 'text-red-400'}`}>
               {stat.trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {Math.abs(stat.trend)}% from last month
+              {t('admin.trend_from_last_month', '{{percent}}% from last month', { percent: Math.abs(stat.trend) })}
             </div>
           </CardContent>
         </Card>
