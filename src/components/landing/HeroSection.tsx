@@ -29,12 +29,7 @@ interface HeroSectionProps {
   content?: HeroContent;
 }
 
-const defaultContent: HeroContent = {
-  title: "Find Your Kurdish Match",
-  tagline: "Connecting Kurds Worldwide",
-  subtitle: "The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values.",
-  userCount: "10,000+"
-};
+// defaultContent is now generated inside the component using t()
 
 const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) => {
   const navigate = useNavigate();
