@@ -111,12 +111,16 @@ export const getCurrentUserProfile = async (): Promise<Profile | null> => {
   return getProfileById(user.id);
 };
 
-// Update profile
+// Update profile (only own profile)
 export const updateProfile = async (userId: string, updates: Partial<Profile>): Promise<Profile> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  if (user.id !== userId) throw new Error('Cannot update another user\'s profile');
+
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)
-    .eq('id', userId)
+    .eq('id', user.id)
     .select()
     .maybeSingle();
     
@@ -200,7 +204,8 @@ export const deletePhoto = async (photoId: string): Promise<void> => {
   const { error } = await supabase
     .from('photos')
     .delete()
-    .eq('id', photoId);
+    .eq('id', photoId)
+    .eq('profile_id', user.id);
 
   if (error) throw error;
 
@@ -233,17 +238,19 @@ export const setPhotoPrimary = async (photoId: string): Promise<void> => {
     .update({ is_primary: false })
     .eq('profile_id', user.id);
 
-  // Set selected as primary
+  // Set selected as primary (only own photos)
   await supabase
     .from('photos')
     .update({ is_primary: true })
-    .eq('id', photoId);
+    .eq('id', photoId)
+    .eq('profile_id', user.id);
 
   // Get the URL and update profile_image
   const { data: photo } = await supabase
     .from('photos')
     .select('url')
     .eq('id', photoId)
+    .eq('profile_id', user.id)
     .single();
 
   if (photo) {
@@ -273,9 +280,16 @@ export interface SearchFilters {
 
 // Search profiles with advanced filters
 export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
   let query = supabase
     .from('profiles')
     .select('*');
+
+  // Exclude current user from search results
+  if (user) {
+    query = query.neq('id', user.id);
+  }
 
   // Text search across name, bio, occupation (sanitized to prevent injection)
   if (filters.query) {

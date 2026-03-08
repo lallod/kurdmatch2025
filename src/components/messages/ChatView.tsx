@@ -165,6 +165,11 @@ const ChatView: React.FC<ChatViewProps> = ({
 
   const handleSendImage = async () => {
     if (!selectedImage || !user) return;
+    // Enforce 10MB max file size before upload
+    if (selectedImage.size > 10 * 1024 * 1024) {
+      toast.error(t('toast.image.too_large', 'Image must be under 10MB'));
+      return;
+    }
     try {
       toast.info(t('toast.image.compressing', 'Compressing image...'));
       const compressedImage = await compressImageForChat(selectedImage);
