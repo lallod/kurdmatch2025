@@ -63,6 +63,9 @@ export const useWebRTC = ({ userId, onIncomingCall }: UseWebRTCOptions) => {
     };
   }, [userId, callStatus, onIncomingCall]);
 
+  // Use a ref for endCall to avoid stale closures in signaling channel
+  const endCallRef = useRef<() => void>(() => {});
+
   const cleanup = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (localStream.current) {
@@ -107,7 +110,7 @@ export const useWebRTC = ({ userId, onIncomingCall }: UseWebRTCOptions) => {
         }
       })
       .on('broadcast', { event: 'hangup' }, () => {
-        endCall();
+        endCallRef.current();
       })
       .subscribe();
 
