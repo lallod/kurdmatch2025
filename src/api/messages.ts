@@ -60,6 +60,7 @@ export const getConversations = async (): Promise<Conversation[]> => {
   const userId = session.user.id;
 
   // Get all messages involving the current user, with profile info
+  // Fetch only the latest 500 messages to prevent performance issues
   const { data, error } = await supabase
     .from('messages')
     .select(`
@@ -68,7 +69,8 @@ export const getConversations = async (): Promise<Conversation[]> => {
       recipient:profiles!messages_recipient_id_fkey (id, name, profile_image)
     `)
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(500);
 
   if (error) throw error;
 

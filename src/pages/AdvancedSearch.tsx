@@ -41,9 +41,9 @@ const AdvancedSearch = () => {
       setLoading(true);
       let query = supabase.from('profiles').select('id, name, age, location, profile_image, bio, gender, kurdistan_region, verified').gte('age', ageRange[0]).lte('age', ageRange[1]).order('verified', { ascending: false }).order('last_active', { ascending: false }).limit(50);
       if (gender !== 'all') query = query.eq('gender', gender);
-      if (location) query = query.ilike('location', `%${location}%`);
+      if (location) { const loc = location.replace(/[%_\\'"()]/g, ''); if (loc) query = query.ilike('location', `%${loc}%`); }
       if (region !== 'all') query = query.eq('kurdistan_region', region);
-      if (searchQuery) query = query.or(`name.ilike.%${searchQuery}%,bio.ilike.%${searchQuery}%,occupation.ilike.%${searchQuery}%`);
+      if (searchQuery) { const sq = searchQuery.replace(/[%_\\'"()]/g, ''); if (sq) query = query.or(`name.ilike.%${sq}%,bio.ilike.%${sq}%,occupation.ilike.%${sq}%`); }
       const { data, error } = await query;
       if (error) throw error;
       setProfiles(data || []);
