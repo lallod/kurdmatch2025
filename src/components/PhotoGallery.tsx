@@ -109,7 +109,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl font-bold text-white">{name}, {age}</h3>
-          <p className="text-white/80 text-sm">Photo {index + 1} of {photos.length}</p>
+          <p className="text-white/80 text-sm">{t('photos.photo_count', 'Photo {{current}} of {{total}}', { current: index + 1, total: photos.length })}</p>
         </div>
         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white">
           <Info size={18} />
