@@ -88,7 +88,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
           className="gap-2"
         >
           <Filter className="w-4 h-4" />
-          Advanced
+          {t('search.advanced', 'Advanced')}
         </Button>
       </div>
 
