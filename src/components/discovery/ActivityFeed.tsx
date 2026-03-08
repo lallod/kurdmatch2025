@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ActivityItem {
   id: string;
@@ -38,6 +39,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (!user?.id) return;
@@ -94,10 +96,10 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                   id: `like-${like.id}`,
                   type: 'like',
                   userId: profile.id,
-                  userName: profile.name || 'Noen',
+                  userName: profile.name || t('activity.someone', 'Someone'),
                   userAvatar: profile.profile_image || '',
                   timestamp: new Date(like.created_at || Date.now()),
-                  message: 'likte profilen din',
+                  message: t('activity.liked_profile', 'liked your profile'),
                 });
               }
             }
@@ -120,10 +122,10 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                 id: `match-${match.id}`,
                 type: 'match',
                 userId: partnerProfile.id,
-                userName: partnerProfile.name || 'Noen',
+                userName: partnerProfile.name || t('activity.someone', 'Someone'),
                 userAvatar: partnerProfile.profile_image || '',
                 timestamp: new Date(match.matched_at || Date.now()),
-                message: 'matchet med deg!',
+                message: t('activity.matched_with_you', 'matched with you!'),
               });
             }
           }
@@ -293,7 +295,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
         <CardTitle className="text-lg flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          Aktivitet
+          {t('activity.title', 'Activity')}
         </CardTitle>
         {compact && (
           <Button 

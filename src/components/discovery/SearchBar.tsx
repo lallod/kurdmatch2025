@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { searchProfiles, Profile } from '@/api/profiles';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SearchBarProps {
   onResultClick?: (profile: Profile) => void;
@@ -16,6 +17,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   useEffect(() => {
     const searchTimeout = setTimeout(async () => {
@@ -62,7 +64,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search by name, location, or interests..."
+            placeholder={t('search.placeholder', 'Search by name, location, or interests...')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowResults(true)}
@@ -86,7 +88,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
           className="gap-2"
         >
           <Filter className="w-4 h-4" />
-          Advanced
+          {t('search.advanced', 'Advanced')}
         </Button>
       </div>
 
@@ -95,7 +97,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
           {isLoading ? (
             <div className="p-4 flex items-center justify-center">
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span className="ml-2">Searching...</span>
+              <span className="ml-2">{t('search.searching', 'Searching...')}</span>
             </div>
           ) : results.length > 0 ? (
             <div className="divide-y divide-border">
@@ -130,7 +132,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
             </div>
           ) : query.length >= 2 ? (
             <div className="p-4 text-center text-muted-foreground">
-              No profiles found
+              {t('search.no_profiles_found', 'No profiles found')}
             </div>
           ) : null}
         </div>

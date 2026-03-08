@@ -257,7 +257,7 @@ const RegistrationForm = () => {
                       <div className="relative">
                         <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
-                          placeholder="John" 
+                          placeholder={t('reg.first_name_placeholder', 'John')} 
                           className="pl-10" 
                           {...field} 
                         />
@@ -276,7 +276,7 @@ const RegistrationForm = () => {
                     <FormLabel>{t('reg.last_name', 'Last Name')}</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Doe" 
+                        placeholder={t('reg.last_name_placeholder', 'Doe')} 
                         {...field} 
                       />
                     </FormControl>
