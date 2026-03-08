@@ -36,7 +36,26 @@ const defaultContent: KurdistanContent = {
   ]
 };
 
-const KurdistanSection: React.FC<KurdistanSectionProps> = ({ content = defaultContent }) => {
+const KurdistanSection: React.FC<KurdistanSectionProps> = ({ content }) => {
+  const { t } = useTranslations();
+  const resolvedContent = content || {
+    title: t('landing.kurdistan_title', 'Celebrating Kurdish Heritage'),
+    subtitle: t('landing.kurdistan_subtitle', "Whether you're from Bakur, Bashur, Rojava, Rojhelat, or part of the diaspora, our platform helps you find someone who understands your unique background."),
+    leftTitle: t('landing.kurds_everywhere', 'For Kurds Everywhere'),
+    leftDescription: t('landing.kurds_everywhere_desc', 'Our community welcomes Kurdish people from all walks of life and all parts of the world. Whether you were born in Kurdistan or abroad, our platform helps you connect with others who share your heritage.'),
+    leftPoints: [
+      t('landing.connect_regions', 'Connect with Kurds from different regions'),
+      t('landing.share_experiences', 'Share your unique cultural experiences'),
+      t('landing.find_partners', 'Find partners who understand your background')
+    ],
+    rightTitle: t('landing.preserving_culture', 'Preserving Our Culture'),
+    rightDescription: t('landing.preserving_culture_desc', 'We believe that fostering relationships within our community helps preserve and celebrate our rich Kurdish culture, language, and traditions for generations to come.'),
+    rightPoints: [
+      t('landing.filter_dialect', 'Filter by dialect and regional background'),
+      t('landing.share_traditions', 'Share your favorite Kurdish traditions'),
+      t('landing.build_relationships', 'Build relationships based on shared values')
+    ]
+  };
   return (
     <div className="py-16 relative z-10 bg-gradient-to-b from-indigo-950/80 to-purple-950/80">
       <div className="container mx-auto px-4">
