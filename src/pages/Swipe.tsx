@@ -156,7 +156,7 @@ const Swipe = () => {
       
       switch (action) {
         case 'pass':
-          await unlikeProfile(profileId);
+          // Just record the swipe - don't delete any existing likes
           toast(t('swipe.profile_passed', 'Profile passed'), { icon: "👋" });
           break;
         case 'like':

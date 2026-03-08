@@ -112,11 +112,17 @@ export const joinEvent = async (eventId: string) => {
 
   if (error) throw error;
 
-  // Increment attendees count
-  await supabase
-    .from('events')
-    .update({ attendees_count: (event?.attendees_count || 0) + 1 })
-    .eq('id', eventId);
+  // Atomic increment using rpc or raw increment
+  await supabase.rpc('increment_event_attendees', { event_id_param: eventId })
+    .then(({ error: rpcError }) => {
+      // Fallback if RPC doesn't exist
+      if (rpcError) {
+        return supabase
+          .from('events')
+          .update({ attendees_count: (event?.attendees_count || 0) + 1 })
+          .eq('id', eventId);
+      }
+    });
 };
 
 // Leave an event

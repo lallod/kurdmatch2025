@@ -210,10 +210,10 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
   }, [subscription.subscription_type, canRewind, rewindLimit, todayRewindCount]);
 
   // Initialize rewind count on mount
-  useState(() => {
+  useEffect(() => {
     getTodayRewindCount().then(setTodayRewindCount);
     getLastSwipe().then(setLastSwipe);
-  });
+  }, []);
 
   return {
     canRewind,
