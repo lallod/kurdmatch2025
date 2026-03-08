@@ -97,7 +97,7 @@ export default function AdminReports() {
   };
 
   if (loading) {
-    return <div className="text-white">Loading reports...</div>;
+    return <div className="text-white">{t('admin.loading_reports', 'Loading reports...')}</div>;
   }
 
   return (
