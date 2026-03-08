@@ -280,9 +280,16 @@ export interface SearchFilters {
 
 // Search profiles with advanced filters
 export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
   let query = supabase
     .from('profiles')
     .select('*');
+
+  // Exclude current user from search results
+  if (user) {
+    query = query.neq('id', user.id);
+  }
 
   // Text search across name, bio, occupation (sanitized to prevent injection)
   if (filters.query) {
