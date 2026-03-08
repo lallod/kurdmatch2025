@@ -39,7 +39,7 @@ export const useDiscoveryProfiles = (options: UseDiscoveryProfilesOptions = {}) 
 
   useEffect(() => {
     fetchProfiles();
-  }, [options.filters]);
+  }, [JSON.stringify(options.filters)]);
 
   const fetchProfiles = async () => {
     try {
