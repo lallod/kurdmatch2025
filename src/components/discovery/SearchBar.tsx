@@ -64,7 +64,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search by name, location, or interests..."
+            placeholder={t('search.placeholder', 'Search by name, location, or interests...')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowResults(true)}
