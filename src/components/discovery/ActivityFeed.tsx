@@ -96,10 +96,10 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                   id: `like-${like.id}`,
                   type: 'like',
                   userId: profile.id,
-                  userName: profile.name || 'Noen',
+                  userName: profile.name || t('activity.someone', 'Someone'),
                   userAvatar: profile.profile_image || '',
                   timestamp: new Date(like.created_at || Date.now()),
-                  message: 'likte profilen din',
+                  message: t('activity.liked_profile', 'liked your profile'),
                 });
               }
             }
