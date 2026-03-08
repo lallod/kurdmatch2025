@@ -57,24 +57,27 @@ export const getGiftCatalog = async (): Promise<VirtualGift[]> => {
   return data as VirtualGift[];
 };
 
-export const getUserCoins = async (userId: string): Promise<UserCoins> => {
+export const getUserCoins = async (): Promise<UserCoins> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('user_coins')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .maybeSingle();
   
   if (error) throw error;
   
   if (!data) {
     // Initialize coins for new user via secure RPC
-    await supabase.rpc('initialize_user_coins', { p_user_id: userId });
+    await supabase.rpc('initialize_user_coins', { p_user_id: user.id });
     
     // Re-fetch
     const { data: newData, error: fetchError } = await supabase
       .from('user_coins')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .maybeSingle();
     if (fetchError) throw fetchError;
     if (!newData) throw new Error('Failed to initialize coins');
@@ -83,7 +86,11 @@ export const getUserCoins = async (userId: string): Promise<UserCoins> => {
   return data as UserCoins;
 };
 
-export const sendGift = async (senderId: string, recipientId: string, giftId: string, message?: string) => {
+export const sendGift = async (recipientId: string, giftId: string, message?: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  if (user.id === recipientId) throw new Error('Cannot send a gift to yourself');
+
   // Get the gift price
   const { data: gift, error: giftError } = await supabase
     .from('virtual_gifts')
@@ -94,7 +101,7 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
 
   // Deduct coins via secure RPC
   const { data: success, error: coinsError } = await supabase.rpc('spend_user_coins', {
-    p_user_id: senderId,
+    p_user_id: user.id,
     p_amount: gift.price_coins
   });
   if (coinsError) throw coinsError;
@@ -103,7 +110,7 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
   // Send gift
   const { data, error } = await supabase
     .from('sent_gifts')
-    .insert({ sender_id: senderId, recipient_id: recipientId, gift_id: giftId, message })
+    .insert({ sender_id: user.id, recipient_id: recipientId, gift_id: giftId, message })
     .select()
     .single();
   if (error) throw error;
@@ -111,7 +118,7 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
   // Create notification
   await supabase.from('notifications').insert({
     user_id: recipientId,
-    actor_id: senderId,
+    actor_id: user.id,
     type: 'gift',
     title: 'New Gift!',
     message: `Someone sent you a ${gift.name}!`,
@@ -121,21 +128,27 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
   return data;
 };
 
-export const getReceivedGifts = async (userId: string): Promise<SentGift[]> => {
+export const getReceivedGifts = async (): Promise<SentGift[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('sent_gifts')
     .select('*, gift:virtual_gifts(*), sender:profiles!sent_gifts_sender_id_fkey(name, photos(url, is_primary))')
-    .eq('recipient_id', userId)
+    .eq('recipient_id', user.id)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data as unknown as SentGift[];
 };
 
-export const getSentGifts = async (userId: string): Promise<SentGift[]> => {
+export const getSentGifts = async (): Promise<SentGift[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('sent_gifts')
     .select('*, gift:virtual_gifts(*)')
-    .eq('sender_id', userId)
+    .eq('sender_id', user.id)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data as unknown as SentGift[];
@@ -143,17 +156,20 @@ export const getSentGifts = async (userId: string): Promise<SentGift[]> => {
 
 // Date Proposals
 export const createDateProposal = async (
-  proposerId: string,
   recipientId: string,
   proposedDate: string,
   activity: string,
   location?: string,
   message?: string
 ) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  if (user.id === recipientId) throw new Error('Cannot propose a date to yourself');
+
   const { data, error } = await supabase
     .from('date_proposals')
     .insert({
-      proposer_id: proposerId,
+      proposer_id: user.id,
       recipient_id: recipientId,
       proposed_date: proposedDate,
       activity,
@@ -167,7 +183,7 @@ export const createDateProposal = async (
   // Notify recipient
   await supabase.from('notifications').insert({
     user_id: recipientId,
-    actor_id: proposerId,
+    actor_id: user.id,
     type: 'date_proposal',
     title: 'Date Invitation!',
     message: `Someone invited you to ${activity}!`,
@@ -177,11 +193,14 @@ export const createDateProposal = async (
   return data;
 };
 
-export const getDateProposals = async (userId: string): Promise<DateProposal[]> => {
+export const getDateProposals = async (): Promise<DateProposal[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('date_proposals')
     .select('*, proposer:profiles!date_proposals_proposer_id_fkey(name, photos(url, is_primary)), recipient:profiles!date_proposals_recipient_id_fkey(name, photos(url, is_primary))')
-    .or(`proposer_id.eq.${userId},recipient_id.eq.${userId}`)
+    .or(`proposer_id.eq.${user.id},recipient_id.eq.${user.id}`)
     .order('proposed_date', { ascending: true });
   if (error) throw error;
   return data as unknown as DateProposal[];
