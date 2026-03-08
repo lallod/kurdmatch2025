@@ -250,6 +250,7 @@ export const setPhotoPrimary = async (photoId: string): Promise<void> => {
     .from('photos')
     .select('url')
     .eq('id', photoId)
+    .eq('profile_id', user.id)
     .single();
 
   if (photo) {
