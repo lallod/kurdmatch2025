@@ -267,7 +267,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
           <FormItem>
             <FormControl>
               <ButtonGridSelector
-                label="Your Core Values"
+                label={t('auth.your_core_values', 'Your Core Values')}
                 icon={Sparkles}
                 options={fieldOptions || []}
                 selectedValues={field.value || []}
