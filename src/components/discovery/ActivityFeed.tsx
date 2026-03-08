@@ -39,6 +39,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (!user?.id) return;
