@@ -154,8 +154,8 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
                   <Select value={profile.gender || ''} onValueChange={v => updateProfile('gender', v)}>
                     <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="male">{t('common.male', 'Male')}</SelectItem>
+                      <SelectItem value="female">{t('common.female', 'Female')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

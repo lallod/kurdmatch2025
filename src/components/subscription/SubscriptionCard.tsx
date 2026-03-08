@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
 import { SubscriptionPlan } from "@/types/subscription";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface SubscriptionCardProps {
   plan: SubscriptionPlan;
@@ -18,19 +19,21 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   onSubscribe,
   isLoading,
 }) => {
+  const { t } = useTranslations();
+
   return (
     <Card className={`relative ${isCurrentPlan ? "border-primary shadow-lg" : ""}`}>
       {plan.popular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <Badge className="bg-gradient-to-r from-tinder-rose to-tinder-orange">
-            Most Popular
+            {t('subscription.most_popular', 'Most Popular')}
           </Badge>
         </div>
       )}
       
       {isCurrentPlan && (
         <div className="absolute -top-3 right-4">
-          <Badge variant="secondary">Your Plan</Badge>
+          <Badge variant="secondary">{t('subscription.your_plan', 'Your Plan')}</Badge>
         </div>
       )}
 
@@ -38,11 +41,11 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
         <CardTitle className="text-2xl">{plan.name}</CardTitle>
         <CardDescription>
           {plan.price === 0 ? (
-            <span className="text-3xl font-bold">Free</span>
+            <span className="text-3xl font-bold">{t('subscription.free', 'Free')}</span>
           ) : (
             <>
               <span className="text-3xl font-bold">{plan.price}</span>
-              <span className="text-muted-foreground ml-2">{plan.currency}/month</span>
+              <span className="text-muted-foreground ml-2">{plan.currency}/{t('subscription.month', 'month')}</span>
             </>
           )}
         </CardDescription>
@@ -62,11 +65,11 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
       <CardFooter>
         {isCurrentPlan ? (
           <Button variant="outline" className="w-full" disabled>
-            Current Plan
+            {t('subscription.current_plan', 'Current Plan')}
           </Button>
         ) : plan.id === "free" ? (
           <Button variant="outline" className="w-full" disabled>
-            Downgrade via Portal
+            {t('subscription.downgrade_via_portal', 'Downgrade via Portal')}
           </Button>
         ) : (
           <Button
@@ -74,7 +77,7 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
             onClick={() => onSubscribe(plan.priceId)}
             disabled={isLoading}
           >
-            {isLoading ? "Processing..." : "Subscribe"}
+            {isLoading ? t('subscription.processing', 'Processing...') : t('subscription.subscribe', 'Subscribe')}
           </Button>
         )}
       </CardFooter>

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface MatchInsightsHeaderProps {
   matchedUserId: string;
@@ -34,6 +35,7 @@ export const MatchInsightsHeader = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [insights, setInsights] = useState<QuickInsights | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslations();
 
   useEffect(() => {
     const fetchQuickInsights = async () => {
@@ -101,11 +103,11 @@ export const MatchInsightsHeader = ({
           
           {isLoading ? (
             <span className="text-sm text-muted-foreground animate-pulse">
-              Analyzing match...
+              {t('chat.analyzing_match', 'Analyzing match...')}
             </span>
           ) : insights ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Match Insights</span>
+              <span className="text-sm font-medium">{t('chat.match_insights', 'Match Insights')}</span>
               <Badge 
                 variant="outline" 
                 className="text-xs bg-transparent border-purple-500/30"
@@ -136,12 +138,11 @@ export const MatchInsightsHeader = ({
             className="overflow-hidden"
           >
             <div className="px-4 pb-3 space-y-3">
-              {/* Shared Interests */}
               {insights.sharedInterests.length > 0 && (
                 <div>
                   <p className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1">
                     <Heart className="w-3 h-3" />
-                    Things you share with {matchedUserName}
+                    {t('chat.things_you_share', 'Things you share with {{name}}', { name: matchedUserName })}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {insights.sharedInterests.slice(0, 5).map((interest, i) => (
@@ -157,15 +158,14 @@ export const MatchInsightsHeader = ({
                 </div>
               )}
 
-              {/* Conversation Tip */}
               {insights.conversationTip && (
                 <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg p-3">
                   <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                     <Lightbulb className="w-3 h-3" />
-                    Conversation Tip
+                    {t('chat.conversation_tip', 'Conversation Tip')}
                   </p>
                   <p className="text-sm text-foreground">
-                    Try asking about: <span className="text-purple-300">{insights.conversationTip}</span>
+                    {t('chat.try_asking_about', 'Try asking about:')} <span className="text-purple-300">{insights.conversationTip}</span>
                   </p>
                 </div>
               )}

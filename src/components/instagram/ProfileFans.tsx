@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Fan {
   id: string;
@@ -17,6 +18,7 @@ interface ProfileFansProps {
 const ProfileFans: React.FC<ProfileFansProps> = ({ userId }) => {
   const [fans, setFans] = useState<Fan[]>([]);
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   useEffect(() => {
     const fetchFans = async () => {
@@ -46,10 +48,10 @@ const ProfileFans: React.FC<ProfileFansProps> = ({ userId }) => {
       <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-1.5">
           <Heart className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs font-semibold text-foreground">Fans</span>
+          <span className="text-xs font-semibold text-foreground">{t('profile.fans', 'Fans')}</span>
           <span className="text-[10px] text-muted-foreground">({fans.length})</span>
         </div>
-        <button className="text-[10px] text-primary font-medium">See All</button>
+        <button className="text-[10px] text-primary font-medium">{t('common.see_all', 'See All')}</button>
       </div>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
         {fans.map((fan) => (
