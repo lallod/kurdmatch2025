@@ -277,9 +277,12 @@ export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]>
     .from('profiles')
     .select('*');
 
-  // Text search across name, bio, occupation
+  // Text search across name, bio, occupation (sanitized to prevent injection)
   if (filters.query) {
-    query = query.or(`name.ilike.%${filters.query}%,bio.ilike.%${filters.query}%,occupation.ilike.%${filters.query}%`);
+    const sanitized = filters.query.replace(/[%_\\'"()]/g, '');
+    if (sanitized) {
+      query = query.or(`name.ilike.%${sanitized}%,bio.ilike.%${sanitized}%,occupation.ilike.%${sanitized}%`);
+    }
   }
 
   // Age range
