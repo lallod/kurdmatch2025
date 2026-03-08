@@ -111,7 +111,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
             <div className="p-2 border-b border-gray-700">
               <input
                 type="text"
-                placeholder="Search languages..."
+                placeholder={t('auth.search_languages', 'Search languages...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
