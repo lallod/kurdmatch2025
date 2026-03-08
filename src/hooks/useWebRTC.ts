@@ -63,6 +63,9 @@ export const useWebRTC = ({ userId, onIncomingCall }: UseWebRTCOptions) => {
     };
   }, [userId, callStatus, onIncomingCall]);
 
+  // Use a ref for endCall to avoid stale closures in signaling channel
+  const endCallRef = useRef<() => void>(() => {});
+
   const cleanup = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (localStream.current) {
@@ -107,7 +110,7 @@ export const useWebRTC = ({ userId, onIncomingCall }: UseWebRTCOptions) => {
         }
       })
       .on('broadcast', { event: 'hangup' }, () => {
-        endCall();
+        endCallRef.current();
       })
       .subscribe();
 
@@ -285,6 +288,10 @@ export const useWebRTC = ({ userId, onIncomingCall }: UseWebRTCOptions) => {
     setRemoteUserId(null);
   }, [currentCallId, cleanup]);
 
+  // Use ref for callDuration to avoid re-creating endCall every second
+  const callDurationRef = useRef(callDuration);
+  callDurationRef.current = callDuration;
+
   const endCall = useCallback(async () => {
     if (currentCallId) {
       await supabase
@@ -292,7 +299,7 @@ export const useWebRTC = ({ userId, onIncomingCall }: UseWebRTCOptions) => {
         .update({
           status: 'ended',
           ended_at: new Date().toISOString(),
-          duration_seconds: callDuration,
+          duration_seconds: callDurationRef.current,
         })
         .eq('id', currentCallId);
 
@@ -304,7 +311,12 @@ export const useWebRTC = ({ userId, onIncomingCall }: UseWebRTCOptions) => {
     setCallStatus('idle');
     setCurrentCallId(null);
     setRemoteUserId(null);
-  }, [currentCallId, callDuration, cleanup]);
+  }, [currentCallId, cleanup]);
+
+  // Keep endCallRef in sync
+  useEffect(() => {
+    endCallRef.current = endCall;
+  }, [endCall]);
 
   const toggleMute = useCallback(() => {
     if (localStream.current) {

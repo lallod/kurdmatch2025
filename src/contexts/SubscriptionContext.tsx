@@ -80,7 +80,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   useEffect(() => {
     checkSubscription();
-    const interval = setInterval(checkSubscription, 60000);
+    const interval = setInterval(checkSubscription, 300000); // 5 minutes
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(() => { checkSubscription(); });
     return () => { clearInterval(interval); authSubscription.unsubscribe(); };
   }, [checkSubscription]);

@@ -256,10 +256,14 @@ export const getPostComments = async (postId: string) => {
  * Delete a comment
  */
 export const deleteComment = async (commentId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { error } = await supabase
     .from('post_comments')
     .delete()
-    .eq('id', commentId);
+    .eq('id', commentId)
+    .eq('user_id', user.id); // Ensure user owns the comment
 
   if (error) throw error;
 };

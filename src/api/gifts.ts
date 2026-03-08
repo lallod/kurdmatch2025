@@ -188,10 +188,14 @@ export const getDateProposals = async (userId: string): Promise<DateProposal[]> 
 };
 
 export const respondToDateProposal = async (proposalId: string, status: 'accepted' | 'declined') => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('date_proposals')
     .update({ status, responded_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', proposalId)
+    .eq('recipient_id', user.id) // Only recipient can respond
     .select()
     .single();
   if (error) throw error;
@@ -199,10 +203,14 @@ export const respondToDateProposal = async (proposalId: string, status: 'accepte
 };
 
 export const cancelDateProposal = async (proposalId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('date_proposals')
     .update({ status: 'cancelled', updated_at: new Date().toISOString() })
     .eq('id', proposalId)
+    .eq('proposer_id', user.id) // Only proposer can cancel
     .select()
     .single();
   if (error) throw error;
