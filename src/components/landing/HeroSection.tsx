@@ -29,18 +29,20 @@ interface HeroSectionProps {
   content?: HeroContent;
 }
 
-const defaultContent: HeroContent = {
-  title: "Find Your Kurdish Match",
-  tagline: "Connecting Kurds Worldwide",
-  subtitle: "The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values.",
-  userCount: "10,000+"
-};
+// defaultContent is now generated inside the component using t()
 
-const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ content }) => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const { t } = useTranslations();
+  
+  const resolvedContent = content || {
+    title: t('landing.hero_title', 'Find Your Kurdish Match'),
+    tagline: t('landing.hero_tagline', 'Connecting Kurds Worldwide'),
+    subtitle: t('landing.hero_subtitle', 'The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values.'),
+    userCount: "10,000+"
+  };
 
   const handleLoginSuccess = async (email: string) => {
     try {
@@ -119,18 +121,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
           <div className="flex-1 space-y-8">
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-900/30 border border-purple-700/30 text-sm text-purple-300 backdrop-blur-sm">
               <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
-              <span>{content.tagline}</span>
+              <span>{resolvedContent.tagline}</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-              {content.title.split(" ").slice(0, -1).join(" ")}
+              {resolvedContent.title.split(" ").slice(0, -1).join(" ")}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 ml-2">
-                {content.title.split(" ").slice(-1)[0]}
+                {resolvedContent.title.split(" ").slice(-1)[0]}
               </span>
             </h1>
             
             <p className="text-xl text-gray-300">
-              {content.subtitle}
+              {resolvedContent.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -186,7 +188,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) =
                 ))}
               </div>
               <div>
-                <span className="text-white font-semibold">{content.userCount}</span> {t('hero.joined_count', '{{count}} Kurdish singles have already joined', { count: '' })}
+                <span className="text-white font-semibold">{resolvedContent.userCount}</span> {t('hero.joined_count', '{{count}} Kurdish singles have already joined', { count: '' })}
               </div>
             </div>
           </div>

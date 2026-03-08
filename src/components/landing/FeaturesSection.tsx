@@ -2,6 +2,7 @@
 import React from 'react';
 import FeatureCard from './FeatureCard';
 import { Globe, Users, Heart, LucideIcon } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface FeatureCard {
   id: string;
@@ -58,13 +59,37 @@ const getIconComponent = (iconName: string): React.ReactNode => {
   }
 };
 
-const FeaturesSection: React.FC<FeaturesSectionProps> = ({ content = defaultContent }) => {
+const FeaturesSection: React.FC<FeaturesSectionProps> = ({ content }) => {
+  const { t } = useTranslations();
+  const resolvedContent = content || {
+    title: t('landing.features_title', 'Connecting Kurdish Hearts'),
+    cards: [
+      {
+        id: "worldwide",
+        icon: "Globe",
+        title: t('landing.feature_worldwide', 'Worldwide Connection'),
+        description: t('landing.feature_worldwide_desc', 'Connect with Kurdish singles from all regions of Kurdistan and across the global diaspora.')
+      },
+      {
+        id: "cultural",
+        icon: "Users",
+        title: t('landing.feature_cultural', 'Cultural Understanding'),
+        description: t('landing.feature_cultural_desc', 'Find someone who shares your Kurdish heritage, traditions, and values.')
+      },
+      {
+        id: "relationships",
+        icon: "Heart",
+        title: t('landing.feature_relationships', 'Meaningful Relationships'),
+        description: t('landing.feature_relationships_desc', 'Build connections based on shared cultural identity and personal compatibility.')
+      }
+    ]
+  };
   return (
     <div className="py-16 relative z-10 bg-indigo-950/80 backdrop-blur-lg border-t border-indigo-900">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12 text-white">{content.title}</h2>
+        <h2 className="text-3xl font-bold text-center mb-12 text-white">{resolvedContent.title}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {content.cards.map(card => (
+          {resolvedContent.cards.map(card => (
             <FeatureCard 
               key={card.id}
               icon={getIconComponent(card.icon)}

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Heart } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LogoProps {
   size?: 'small' | 'medium' | 'large';
@@ -8,7 +9,7 @@ interface LogoProps {
 }
 
 const Logo: React.FC<LogoProps> = ({ size = 'medium', withText = true }) => {
-  // Define sizes for different variants
+  const { t } = useTranslations();
   const sizes = {
     small: {
       container: 'h-8',
@@ -44,7 +45,7 @@ const Logo: React.FC<LogoProps> = ({ size = 'medium', withText = true }) => {
             KurdMatch
           </span>
           {size === 'large' && (
-            <span className="text-sm text-muted-foreground -mt-1">Connect Kurdish Hearts</span>
+            <span className="text-sm text-muted-foreground -mt-1">{t('landing.tagline', 'Connect Kurdish Hearts')}</span>
           )}
         </div>
       )}
