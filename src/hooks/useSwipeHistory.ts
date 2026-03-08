@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Profile } from '@/types/swipe';
@@ -130,8 +130,8 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
         age: profileData.age || 0,
         location: profileData.location || '',
         avatar: profileData.profile_image || profileData.photos?.[0]?.url || '',
-        distance: Math.floor(Math.random() * 20) + 1,
-        compatibilityScore: 50,
+        distance: 0,
+        compatibilityScore: 0,
         kurdistanRegion: profileData.kurdistan_region || 'South-Kurdistan',
         area: profileData.kurdistan_region || 'South-Kurdistan',
         interests: profileData.interests || [],
@@ -210,10 +210,10 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
   }, [subscription.subscription_type, canRewind, rewindLimit, todayRewindCount]);
 
   // Initialize rewind count on mount
-  useState(() => {
+  useEffect(() => {
     getTodayRewindCount().then(setTodayRewindCount);
     getLastSwipe().then(setLastSwipe);
-  });
+  }, []);
 
   return {
     canRewind,
