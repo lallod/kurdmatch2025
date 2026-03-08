@@ -135,7 +135,7 @@ export const CompactDiscoveryDropdowns = ({
               ))}
             </>
           ) : (
-            <DropdownMenuItem disabled className="text-xs">No data</DropdownMenuItem>
+            <DropdownMenuItem disabled className="text-xs">{t('common.no_data', 'No data')}</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -145,11 +145,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuTrigger asChild>
           <button className={chipClass(!!activeHashtag && trending.some(h => h.name === activeHashtag))}>
             <TrendingUp className="w-3 h-3" />
-            Trending
+            {t('discovery.trending', 'Trending')}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48 bg-card border-border rounded-xl">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">Trending</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-muted-foreground">{t('discovery.trending', 'Trending')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {trendingLoading ? (
             <div className="p-3 text-center">
@@ -158,7 +158,7 @@ export const CompactDiscoveryDropdowns = ({
           ) : trending.length > 0 ? (
             <>
               <DropdownMenuItem onClick={() => onHashtagFilter(null)} className="cursor-pointer text-xs">
-                All Posts
+                {t('discovery.all_posts', 'All Posts')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {trending.map((hashtag) => (
