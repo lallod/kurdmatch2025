@@ -121,10 +121,10 @@ const AIBioGeneratorDialog: React.FC<AIBioGeneratorDialogProps> = ({
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white">
-            <Sparkles className="text-purple-400" /> AI Bio Generator
+            <Sparkles className="text-purple-400" /> {t('profile.ai_bio_generator', 'AI Bio Generator')}
           </DialogTitle>
           <DialogDescription className="text-gray-300">
-            Get 5 personalized bio options crafted from your profile data. Choose your favorite style!
+            {t('profile.ai_bio_desc', 'Get 5 personalized bio options crafted from your profile data. Choose your favorite style!')}
           </DialogDescription>
         </DialogHeader>
         
