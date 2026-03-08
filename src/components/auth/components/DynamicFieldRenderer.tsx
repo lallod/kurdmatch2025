@@ -29,6 +29,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
   question,
   form
 }) => {
+  const { t } = useTranslations();
   const { id, text, fieldType, required, fieldOptions, placeholder } = question;
   const fieldValue = form.watch(id);
   const fieldState = form.getFieldState(id);
