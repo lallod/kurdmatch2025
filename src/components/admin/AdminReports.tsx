@@ -97,7 +97,7 @@ export default function AdminReports() {
   };
 
   if (loading) {
-    return <div className="text-white">Loading reports...</div>;
+    return <div className="text-white">{t('admin.loading_reports', 'Loading reports...')}</div>;
   }
 
   return (
@@ -105,7 +105,7 @@ export default function AdminReports() {
       {reports.length === 0 ? (
         <Card className="bg-white/10 backdrop-blur border-white/20">
           <CardContent className="p-8 text-center text-white">
-            No reports to review
+            {t('admin.no_reports', 'No reports to review')}
           </CardContent>
         </Card>
       ) : (
@@ -139,12 +139,12 @@ export default function AdminReports() {
 
                   {/* Meta */}
                   <div className="text-xs text-purple-200 space-y-1">
-                    <div>Reporter ID: {report.reporter_user_id}</div>
+                    <div>{t('admin.reporter_id', 'Reporter ID')}: {report.reporter_user_id}</div>
                     {report.reported_user_id && (
-                      <div>Reported User: {report.reported_user_id}</div>
+                      <div>{t('admin.reported_user', 'Reported User')}: {report.reported_user_id}</div>
                     )}
                     {report.content_id && (
-                      <div>Content ID: {report.content_id}</div>
+                      <div>{t('admin.content_id', 'Content ID')}: {report.content_id}</div>
                     )}
                   </div>
                 </div>
@@ -159,7 +159,7 @@ export default function AdminReports() {
                       className="gap-2"
                     >
                       <CheckCircle className="w-4 h-4" />
-                      Resolve
+                      {t('admin.resolve', 'Resolve')}
                     </Button>
                     <Button
                       size="sm"
@@ -168,7 +168,7 @@ export default function AdminReports() {
                       className="gap-2"
                     >
                       <XCircle className="w-4 h-4" />
-                      Dismiss
+                      {t('admin.dismiss', 'Dismiss')}
                     </Button>
                   </div>
                 )}

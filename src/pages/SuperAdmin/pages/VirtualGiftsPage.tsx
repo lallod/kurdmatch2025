@@ -67,7 +67,7 @@ const VirtualGiftsPage = () => {
       setGifts(prev => prev.map(g => g.id === id ? { ...g, active: !active } : g));
     } catch (error) {
       console.error('Error toggling gift:', error);
-      toast.error('Failed to toggle gift');
+      toast.error(t('admin.failed_toggle_gift', 'Failed to toggle gift'));
     }
   };
 
