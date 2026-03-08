@@ -111,12 +111,16 @@ export const getCurrentUserProfile = async (): Promise<Profile | null> => {
   return getProfileById(user.id);
 };
 
-// Update profile
+// Update profile (only own profile)
 export const updateProfile = async (userId: string, updates: Partial<Profile>): Promise<Profile> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  if (user.id !== userId) throw new Error('Cannot update another user\'s profile');
+
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)
-    .eq('id', userId)
+    .eq('id', user.id)
     .select()
     .maybeSingle();
     
