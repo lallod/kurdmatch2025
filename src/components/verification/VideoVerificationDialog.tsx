@@ -15,13 +15,7 @@ interface VideoVerificationDialogProps {
 
 type Step = 'intro' | 'recording' | 'preview' | 'uploading' | 'success';
 
-const instructions = [
-  "Look directly at the camera",
-  "Turn your head slowly to the left",
-  "Turn your head slowly to the right", 
-  "Smile naturally",
-  "Hold still for 2 seconds"
-];
+// Instructions are now translated in the component using t()
 
 export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificationDialogProps) => {
   const { t } = useTranslations();

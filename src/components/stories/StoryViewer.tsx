@@ -233,7 +233,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
           {showViewers && isOwnStory && viewers.length > 0 && (
             <div className="absolute bottom-0 left-0 right-0 max-h-72 bg-black/95 backdrop-blur-md rounded-t-3xl p-5 overflow-y-auto animate-in slide-in-from-bottom duration-300">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-white font-semibold text-base">Viewers · {viewers.length}</h3>
+                <h3 className="text-white font-semibold text-base">{t('stories.viewers', 'Viewers')} · {viewers.length}</h3>
                 <button onClick={() => setShowViewers(false)} className="p-1">
                   <X className="w-5 h-5 text-white/70" />
                 </button>

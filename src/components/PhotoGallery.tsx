@@ -278,9 +278,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       
       <Dialog open={photoDialogOpen} onOpenChange={setPhotoDialogOpen}>
         <DialogContent className="max-w-none w-screen h-screen p-0 m-0 border-none bg-black">
-          <DialogTitle className="sr-only">Photo Gallery</DialogTitle>
+          <DialogTitle className="sr-only">{t('photos.gallery', 'Photo Gallery')}</DialogTitle>
           <DialogDescription className="sr-only">
-            View full-size photos
+            {t('photos.view_full_size', 'View full-size photos')}
           </DialogDescription>
           <DialogClose className="absolute right-2 sm:right-4 top-2 sm:top-4 z-50 bg-black/50 p-1.5 sm:p-2 rounded-full text-white hover:bg-black/70">
             <X size={18} className="sm:w-5 sm:h-5" />

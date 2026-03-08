@@ -213,7 +213,7 @@ export const CompactDiscoveryDropdowns = ({
               ))}
             </>
           ) : (
-            <DropdownMenuItem disabled className="text-xs">No data</DropdownMenuItem>
+            <DropdownMenuItem disabled className="text-xs">{t('common.no_data', 'No data')}</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

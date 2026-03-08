@@ -37,7 +37,7 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onRefresh }) => {
             post.media_type === 'video' ? (
               <video src={post.media_url} className="w-full h-full object-cover" muted />
             ) : (
-              <img src={post.media_url} alt="Post" className="w-full h-full object-cover" />
+              <img src={post.media_url} alt={t('posts.post', 'Post')} className="w-full h-full object-cover" />
             )
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/80 to-accent/80 flex items-center justify-center p-2">
