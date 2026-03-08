@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ProfilePhotoGallery from './ProfilePhotoGallery';
 import ProfileInfo from './ProfileInfo';
 import DistanceBadge from '@/components/location/DistanceBadge';
@@ -33,6 +33,8 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+  // Use ref to track current drag position for closure-safe access
+  const dragRef = useRef({ x: 0, y: 0 });
 
   const handleNextPhoto = () => {
     if (isBackground) return;
@@ -56,9 +58,9 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
       const deltaX = moveEvent.clientX - startX;
       const deltaY = moveEvent.clientY - startY;
       
+      dragRef.current = { x: deltaX, y: deltaY };
       setDragPosition({ x: deltaX, y: deltaY });
       
-      // Determine swipe direction
       if (Math.abs(deltaX) > 50) {
         setSwipeDirection(deltaX > 0 ? 'right' : 'left');
       } else {
@@ -69,16 +71,17 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
     const handleMouseUp = () => {
       setIsDragging(false);
       const threshold = SWIPE_CONFIG.animations.threshold;
+      const currentX = dragRef.current.x;
       
-      if (Math.abs(dragPosition.x) > threshold) {
-        if (dragPosition.x > 0) {
+      if (Math.abs(currentX) > threshold) {
+        if (currentX > 0) {
           onSwipeRight();
         } else {
           onSwipeLeft();
         }
       }
       
-      // Reset position
+      dragRef.current = { x: 0, y: 0 };
       setDragPosition({ x: 0, y: 0 });
       setSwipeDirection(null);
       
@@ -102,9 +105,9 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
       const deltaX = touch.clientX - startX;
       const deltaY = touch.clientY - startY;
       
+      dragRef.current = { x: deltaX, y: deltaY };
       setDragPosition({ x: deltaX, y: deltaY });
       
-      // Determine swipe direction
       if (Math.abs(deltaX) > 50) {
         setSwipeDirection(deltaX > 0 ? 'right' : 'left');
       } else {
@@ -115,16 +118,17 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
     const handleTouchEnd = () => {
       setIsDragging(false);
       const threshold = SWIPE_CONFIG.animations.threshold;
+      const currentX = dragRef.current.x;
       
-      if (Math.abs(dragPosition.x) > threshold) {
-        if (dragPosition.x > 0) {
+      if (Math.abs(currentX) > threshold) {
+        if (currentX > 0) {
           onSwipeRight();
         } else {
           onSwipeLeft();
         }
       }
       
-      // Reset position
+      dragRef.current = { x: 0, y: 0 };
       setDragPosition({ x: 0, y: 0 });
       setSwipeDirection(null);
       
@@ -186,7 +190,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({
           </div>
         )}
         
-        {/* Profile info overlay at bottom - Transparent and clickable */}
+        {/* Profile info overlay at bottom */}
         <div 
           className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-16 pb-3 px-4 ${onProfileClick ? 'cursor-pointer' : ''}`}
           onClick={(e) => {
