@@ -64,11 +64,11 @@ export const useOnlinePresence = (options: UseOnlinePresenceOptions = {}) => {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffMinutes < 5) return 'Online nå';
-    if (diffMinutes < 60) return `Aktiv ${diffMinutes} min siden`;
-    if (diffHours < 24) return `Aktiv ${diffHours}t siden`;
-    if (diffDays === 1) return 'Aktiv i går';
-    if (diffDays < 7) return `Aktiv ${diffDays} dager siden`;
+    if (diffMinutes < 5) return 'Online now';
+    if (diffMinutes < 60) return `Active ${diffMinutes}m ago`;
+    if (diffHours < 24) return `Active ${diffHours}h ago`;
+    if (diffDays === 1) return 'Active yesterday';
+    if (diffDays < 7) return `Active ${diffDays}d ago`;
     return 'Offline';
   }, [getLastActive]);
 
