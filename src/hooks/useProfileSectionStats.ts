@@ -21,19 +21,20 @@ export const useProfileSectionStats = (viewerId: string | undefined, viewedProfi
       try {
         setLoading(true);
         const { data, error } = await fromUntyped('profile_section_views')
-          .select('section_name')
+          .select('sections_opened, view_percentage')
           .eq('viewer_id', viewerId)
-          .eq('viewed_profile_id', viewedProfileId);
+          .eq('viewed_profile_id', viewedProfileId)
+          .maybeSingle();
 
         if (error) throw error;
 
-        const uniqueSections = [...new Set(data?.map((d: any) => d.section_name) || [])] as string[];
-        const totalSections = 8; // Total accordion sections in ProfileDetails
+        const sections: string[] = data?.sections_opened || [];
+        const totalSections = 8;
 
         setStats({
-          viewedSections: uniqueSections,
+          viewedSections: sections,
           totalSections,
-          percentage: Math.round((uniqueSections.length / totalSections) * 100)
+          percentage: data?.view_percentage ?? Math.round((sections.length / totalSections) * 100)
         });
       } catch (error) {
         console.error('Error fetching section stats:', error);
