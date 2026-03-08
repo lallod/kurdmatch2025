@@ -93,7 +93,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       onSaved?.();
     } catch (error: any) {
       console.error('Error saving details:', error);
-      toast.error(error.message || 'Failed to save details');
+      toast.error(error.message || t('admin.failed_save_details', 'Failed to save details'));
     } finally {
       setSaving(false);
     }
