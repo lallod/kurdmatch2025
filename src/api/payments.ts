@@ -4,7 +4,7 @@ export type PremiumPlanId = 'basic' | 'premium' | 'ultimate';
 
 export const createPremiumCheckout = async (planId: PremiumPlanId = 'premium') => {
   try {
-    const { data, error } = await supabase.functions.invoke('create-payment', {
+    const { data, error } = await supabase.functions.invoke('create-checkout', {
       body: { planId },
     });
 
