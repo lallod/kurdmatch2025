@@ -12,6 +12,7 @@ import { getTrendingHashtags } from '@/api/hashtags';
 import { getGroups } from '@/api/groups';
 import { supabase } from '@/integrations/supabase/client';
 import type { Group } from '@/api/groups';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Hashtag {
   id: string;
