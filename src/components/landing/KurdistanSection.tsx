@@ -1,6 +1,6 @@
 
 import React from 'react';
-
+import { useTranslations } from '@/hooks/useTranslations';
 interface KurdistanContent {
   title: string;
   subtitle: string;
