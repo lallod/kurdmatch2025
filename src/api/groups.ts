@@ -141,6 +141,14 @@ export const joinGroup = async (groupId: string) => {
     });
 
   if (error) throw error;
+
+  // Recount members to avoid race conditions
+  const { count } = await supabase
+    .from('group_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('group_id', groupId);
+
+  await supabase.from('groups').update({ member_count: count || 0 }).eq('id', groupId);
 };
 
 /**
