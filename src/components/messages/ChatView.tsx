@@ -64,9 +64,15 @@ const ChatView: React.FC<ChatViewProps> = ({
   const [currentMatchId, setCurrentMatchId] = useState<string | null>(null);
 
   const { moderateMessage, isChecking } = useMessageModeration();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const conversationId = user ? [user.id, conversation.id].sort().join('_') : '';
   const { isOtherUserTyping, startTyping, stopTyping } = useTypingIndicator(conversationId, user?.id || '');
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversationMessages]);
 
   // Load messages + realtime
   useEffect(() => {
