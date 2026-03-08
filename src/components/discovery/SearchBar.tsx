@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { searchProfiles, Profile } from '@/api/profiles';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface SearchBarProps {
   onResultClick?: (profile: Profile) => void;
