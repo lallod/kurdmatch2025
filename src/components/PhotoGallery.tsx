@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from './ui/dialog';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PhotoGalleryProps {
   photos: string[];
@@ -26,6 +27,7 @@ interface PhotoGalleryProps {
 }
 
 const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
+  const { t } = useTranslations();
   const [isLoaded, setIsLoaded] = useState<boolean[]>(Array(photos.length).fill(false));
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -107,7 +109,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl font-bold text-white">{name}, {age}</h3>
-          <p className="text-white/80 text-sm">Photo {index + 1} of {photos.length}</p>
+          <p className="text-white/80 text-sm">{t('photos.photo_count', 'Photo {{current}} of {{total}}', { current: index + 1, total: photos.length })}</p>
         </div>
         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white">
           <Info size={18} />
@@ -276,9 +278,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
       
       <Dialog open={photoDialogOpen} onOpenChange={setPhotoDialogOpen}>
         <DialogContent className="max-w-none w-screen h-screen p-0 m-0 border-none bg-black">
-          <DialogTitle className="sr-only">Photo Gallery</DialogTitle>
+          <DialogTitle className="sr-only">{t('photos.gallery', 'Photo Gallery')}</DialogTitle>
           <DialogDescription className="sr-only">
-            View full-size photos
+            {t('photos.view_full_size', 'View full-size photos')}
           </DialogDescription>
           <DialogClose className="absolute right-2 sm:right-4 top-2 sm:top-4 z-50 bg-black/50 p-1.5 sm:p-2 rounded-full text-white hover:bg-black/70">
             <X size={18} className="sm:w-5 sm:h-5" />

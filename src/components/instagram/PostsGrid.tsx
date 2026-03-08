@@ -2,6 +2,7 @@ import React from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
 import { Post } from '@/api/posts';
 import { useNavigate } from 'react-router-dom';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface PostsGridProps {
   posts: Post[];
@@ -10,6 +11,7 @@ interface PostsGridProps {
 
 const PostsGrid: React.FC<PostsGridProps> = ({ posts, onRefresh }) => {
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   if (posts.length === 0) {
     return (
@@ -17,8 +19,8 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onRefresh }) => {
         <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted flex items-center justify-center">
           <Heart className="w-7 h-7 text-muted-foreground" />
         </div>
-        <h3 className="text-sm font-semibold text-foreground mb-1">No posts yet</h3>
-        <p className="text-muted-foreground text-xs">Posts will appear here</p>
+        <h3 className="text-sm font-semibold text-foreground mb-1">{t('posts.no_posts_yet', 'No posts yet')}</h3>
+        <p className="text-muted-foreground text-xs">{t('posts.posts_appear_here', 'Posts will appear here')}</p>
       </div>
     );
   }
@@ -35,7 +37,7 @@ const PostsGrid: React.FC<PostsGridProps> = ({ posts, onRefresh }) => {
             post.media_type === 'video' ? (
               <video src={post.media_url} className="w-full h-full object-cover" muted />
             ) : (
-              <img src={post.media_url} alt="Post" className="w-full h-full object-cover" />
+              <img src={post.media_url} alt={t('posts.post', 'Post')} className="w-full h-full object-cover" />
             )
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/80 to-accent/80 flex items-center justify-center p-2">

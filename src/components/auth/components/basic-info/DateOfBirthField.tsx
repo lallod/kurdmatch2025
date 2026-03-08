@@ -11,19 +11,21 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface DateOfBirthFieldProps {
   form: UseFormReturn<any>;
 }
 
 const DateOfBirthField = ({ form }: DateOfBirthFieldProps) => {
+  const { t } = useTranslations();
   return (
     <FormField
       control={form.control}
       name="dateOfBirth"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-white">Birthday (Month / Day / Year)</FormLabel>
+          <FormLabel className="text-white">{t('auth.birthday', 'Birthday (Month / Day / Year)')}</FormLabel>
           <FormControl>
             <div className="relative">
               <Calendar className="absolute left-3 top-3 h-4 w-4 text-primary" />
@@ -36,7 +38,7 @@ const DateOfBirthField = ({ form }: DateOfBirthFieldProps) => {
             </div>
           </FormControl>
           <FormDescription className="text-xs text-gray-400">
-            You must be at least 18 years old to register
+            {t('auth.age_requirement', 'You must be at least 18 years old to register')}
           </FormDescription>
           <FormMessage />
         </FormItem>

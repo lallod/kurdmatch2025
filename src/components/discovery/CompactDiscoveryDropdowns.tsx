@@ -12,6 +12,7 @@ import { getTrendingHashtags } from '@/api/hashtags';
 import { getGroups } from '@/api/groups';
 import { supabase } from '@/integrations/supabase/client';
 import type { Group } from '@/api/groups';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface Hashtag {
   id: string;
@@ -43,6 +44,7 @@ export const CompactDiscoveryDropdowns = ({
   const [trendingLoaded, setTrendingLoaded] = useState(false);
   const [exploreLoaded, setExploreLoaded] = useState(false);
   const [groupsLoaded, setGroupsLoaded] = useState(false);
+  const { t } = useTranslations();
 
   const loadTrending = async () => {
     if (trendingLoaded) return;
@@ -104,11 +106,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuTrigger asChild>
           <button className={chipClass(!!activeHashtag && explore.some(h => h.name === activeHashtag))}>
             <Hash className="w-3 h-3" />
-            {activeHashtag && explore.some(h => h.name === activeHashtag) ? `#${activeHashtag}` : 'Explore'}
+            {activeHashtag && explore.some(h => h.name === activeHashtag) ? `#${activeHashtag}` : t('discovery.explore', 'Explore')}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48 bg-card border-border rounded-xl">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">Explore</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-muted-foreground">{t('discovery.explore', 'Explore')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {exploreLoading ? (
             <div className="p-3 text-center">
@@ -117,7 +119,7 @@ export const CompactDiscoveryDropdowns = ({
           ) : explore.length > 0 ? (
             <>
               <DropdownMenuItem onClick={() => onHashtagFilter(null)} className="cursor-pointer text-xs">
-                All Posts
+                {t('discovery.all_posts', 'All Posts')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {explore.map((hashtag) => (
@@ -133,7 +135,7 @@ export const CompactDiscoveryDropdowns = ({
               ))}
             </>
           ) : (
-            <DropdownMenuItem disabled className="text-xs">No data</DropdownMenuItem>
+            <DropdownMenuItem disabled className="text-xs">{t('common.no_data', 'No data')}</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -143,11 +145,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuTrigger asChild>
           <button className={chipClass(!!activeHashtag && trending.some(h => h.name === activeHashtag))}>
             <TrendingUp className="w-3 h-3" />
-            Trending
+            {t('discovery.trending', 'Trending')}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48 bg-card border-border rounded-xl">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">Trending</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-muted-foreground">{t('discovery.trending', 'Trending')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {trendingLoading ? (
             <div className="p-3 text-center">
@@ -156,7 +158,7 @@ export const CompactDiscoveryDropdowns = ({
           ) : trending.length > 0 ? (
             <>
               <DropdownMenuItem onClick={() => onHashtagFilter(null)} className="cursor-pointer text-xs">
-                All Posts
+                {t('discovery.all_posts', 'All Posts')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {trending.map((hashtag) => (
@@ -172,7 +174,7 @@ export const CompactDiscoveryDropdowns = ({
               ))}
             </>
           ) : (
-            <DropdownMenuItem disabled className="text-xs">No data</DropdownMenuItem>
+            <DropdownMenuItem disabled className="text-xs">{t('common.no_data', 'No data')}</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -182,11 +184,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuTrigger asChild>
           <button className={chipClass(!!activeGroup)}>
             <Users className="w-3 h-3" />
-            Groups
+            {t('discovery.groups', 'Groups')}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48 bg-card border-border rounded-xl">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">Groups</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-muted-foreground">{t('discovery.groups', 'Groups')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {groupsLoading ? (
             <div className="p-3 text-center">
@@ -195,7 +197,7 @@ export const CompactDiscoveryDropdowns = ({
           ) : groups.length > 0 ? (
             <>
               <DropdownMenuItem onClick={() => onGroupFilter(null)} className="cursor-pointer text-xs">
-                All Posts
+                {t('discovery.all_posts', 'All Posts')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {groups.map((group) => (
@@ -211,7 +213,7 @@ export const CompactDiscoveryDropdowns = ({
               ))}
             </>
           ) : (
-            <DropdownMenuItem disabled className="text-xs">No data</DropdownMenuItem>
+            <DropdownMenuItem disabled className="text-xs">{t('common.no_data', 'No data')}</DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

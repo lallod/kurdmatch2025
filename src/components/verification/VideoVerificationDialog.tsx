@@ -15,13 +15,7 @@ interface VideoVerificationDialogProps {
 
 type Step = 'intro' | 'recording' | 'preview' | 'uploading' | 'success';
 
-const instructions = [
-  "Look directly at the camera",
-  "Turn your head slowly to the left",
-  "Turn your head slowly to the right", 
-  "Smile naturally",
-  "Hold still for 2 seconds"
-];
+const INSTRUCTION_COUNT = 5;
 
 export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificationDialogProps) => {
   const { t } = useTranslations();
@@ -89,7 +83,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
     let instructionIndex = 0;
     const instructionInterval = setInterval(() => {
       instructionIndex++;
-      if (instructionIndex >= instructions.length) {
+      if (instructionIndex >= INSTRUCTION_COUNT) {
         clearInterval(instructionInterval);
         setTimeout(() => {
           mediaRecorder.stop();
@@ -97,7 +91,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
         }, 2000);
       } else {
         setCurrentInstruction(instructionIndex);
-        setProgress((instructionIndex / instructions.length) * 100);
+        setProgress((instructionIndex / INSTRUCTION_COUNT) * 100);
       }
     }, 3000);
     
