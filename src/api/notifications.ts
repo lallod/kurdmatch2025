@@ -52,10 +52,14 @@ export const getUnreadCount = async () => {
  * Mark notification as read
  */
 export const markAsRead = async (notificationId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { error } = await supabase
     .from('notifications')
     .update({ read: true })
-    .eq('id', notificationId);
+    .eq('id', notificationId)
+    .eq('user_id', user.id);
 
   if (error) throw error;
 };
