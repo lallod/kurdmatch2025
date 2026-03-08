@@ -241,7 +241,7 @@ const DynamicFieldRenderer: React.FC<DynamicFieldRendererProps> = ({
           <FormItem>
             <FormControl>
               <ButtonGridSelector
-                label="Your Hobbies"
+                label={t('auth.your_hobbies', 'Your Hobbies')}
                 icon={Coffee}
                 options={fieldOptions || []}
                 selectedValues={field.value || []}
