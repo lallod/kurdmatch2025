@@ -188,7 +188,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ content }) => {
                 ))}
               </div>
               <div>
-                <span className="text-white font-semibold">{content.userCount}</span> {t('hero.joined_count', '{{count}} Kurdish singles have already joined', { count: '' })}
+                <span className="text-white font-semibold">{resolvedContent.userCount}</span> {t('hero.joined_count', '{{count}} Kurdish singles have already joined', { count: '' })}
               </div>
             </div>
           </div>
