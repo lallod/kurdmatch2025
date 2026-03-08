@@ -106,11 +106,11 @@ export const CompactDiscoveryDropdowns = ({
         <DropdownMenuTrigger asChild>
           <button className={chipClass(!!activeHashtag && explore.some(h => h.name === activeHashtag))}>
             <Hash className="w-3 h-3" />
-            {activeHashtag && explore.some(h => h.name === activeHashtag) ? `#${activeHashtag}` : 'Explore'}
+            {activeHashtag && explore.some(h => h.name === activeHashtag) ? `#${activeHashtag}` : t('discovery.explore', 'Explore')}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48 bg-card border-border rounded-xl">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">Explore</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs text-muted-foreground">{t('discovery.explore', 'Explore')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {exploreLoading ? (
             <div className="p-3 text-center">
@@ -119,7 +119,7 @@ export const CompactDiscoveryDropdowns = ({
           ) : explore.length > 0 ? (
             <>
               <DropdownMenuItem onClick={() => onHashtagFilter(null)} className="cursor-pointer text-xs">
-                All Posts
+                {t('discovery.all_posts', 'All Posts')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {explore.map((hashtag) => (
