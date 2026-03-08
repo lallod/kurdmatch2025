@@ -94,10 +94,14 @@ export const createGroup = async (groupData: {
  * Update group
  */
 export const updateGroup = async (groupId: string, updates: Partial<Group>) => {
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('groups')
     .update(updates)
     .eq('id', groupId)
+    .eq('created_by', user.user.id)
     .select()
     .single();
 
