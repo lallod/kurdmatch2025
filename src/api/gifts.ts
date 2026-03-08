@@ -156,17 +156,20 @@ export const getSentGifts = async (): Promise<SentGift[]> => {
 
 // Date Proposals
 export const createDateProposal = async (
-  proposerId: string,
   recipientId: string,
   proposedDate: string,
   activity: string,
   location?: string,
   message?: string
 ) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  if (user.id === recipientId) throw new Error('Cannot propose a date to yourself');
+
   const { data, error } = await supabase
     .from('date_proposals')
     .insert({
-      proposer_id: proposerId,
+      proposer_id: user.id,
       recipient_id: recipientId,
       proposed_date: proposedDate,
       activity,
@@ -180,7 +183,7 @@ export const createDateProposal = async (
   // Notify recipient
   await supabase.from('notifications').insert({
     user_id: recipientId,
-    actor_id: proposerId,
+    actor_id: user.id,
     type: 'date_proposal',
     title: 'Date Invitation!',
     message: `Someone invited you to ${activity}!`,
@@ -190,11 +193,14 @@ export const createDateProposal = async (
   return data;
 };
 
-export const getDateProposals = async (userId: string): Promise<DateProposal[]> => {
+export const getDateProposals = async (): Promise<DateProposal[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('date_proposals')
     .select('*, proposer:profiles!date_proposals_proposer_id_fkey(name, photos(url, is_primary)), recipient:profiles!date_proposals_recipient_id_fkey(name, photos(url, is_primary))')
-    .or(`proposer_id.eq.${userId},recipient_id.eq.${userId}`)
+    .or(`proposer_id.eq.${user.id},recipient_id.eq.${user.id}`)
     .order('proposed_date', { ascending: true });
   if (error) throw error;
   return data as unknown as DateProposal[];
