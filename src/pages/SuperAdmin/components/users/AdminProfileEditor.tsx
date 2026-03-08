@@ -72,7 +72,7 @@ const AdminProfileEditor: React.FC<AdminProfileEditorProps> = ({ userId, open, o
       onSaved?.();
     } catch (error: any) {
       console.error('Error saving profile:', error);
-      toast.error(error.message || 'Failed to save profile');
+      toast.error(error.message || t('admin.failed_save_profile', 'Failed to save profile'));
     } finally {
       setSaving(false);
     }
