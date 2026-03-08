@@ -335,6 +335,7 @@ const ChatView: React.FC<ChatViewProps> = ({
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
         </div>
 
