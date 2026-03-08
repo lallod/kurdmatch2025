@@ -101,15 +101,15 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
         };
       }
 
-      // Profile exists, safe to create subscription record
+      // Profile exists, initialize subscription via secure RPC
+      await supabase.rpc('initialize_user_subscription', { p_user_id: session.user.id });
+      
+      // Re-fetch the newly created subscription
       const { data: newSub, error: createError } = await supabase
         .from('user_subscriptions')
-        .insert({
-          user_id: session.user.id,
-          subscription_type: 'free'
-        })
-        .select()
-        .single();
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
 
       if (createError) {
         console.error('Error creating subscription:', createError);

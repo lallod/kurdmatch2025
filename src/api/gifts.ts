@@ -67,13 +67,17 @@ export const getUserCoins = async (userId: string): Promise<UserCoins> => {
   if (error) throw error;
   
   if (!data) {
-    // Initialize coins for new user
-    const { data: newData, error: insertError } = await supabase
+    // Initialize coins for new user via secure RPC
+    await supabase.rpc('initialize_user_coins', { p_user_id: userId });
+    
+    // Re-fetch
+    const { data: newData, error: fetchError } = await supabase
       .from('user_coins')
-      .insert({ user_id: userId, balance: 100, total_earned: 100, total_spent: 0 })
-      .select()
-      .single();
-    if (insertError) throw insertError;
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (fetchError) throw fetchError;
+    if (!newData) throw new Error('Failed to initialize coins');
     return newData as UserCoins;
   }
   return data as UserCoins;
@@ -88,22 +92,13 @@ export const sendGift = async (senderId: string, recipientId: string, giftId: st
     .single();
   if (giftError) throw giftError;
 
-  // Check balance
-  const coins = await getUserCoins(senderId);
-  if (coins.balance < gift.price_coins) {
-    throw new Error('Not enough coins to send this gift');
-  }
-
-  // Deduct coins
-  const { error: coinsError } = await supabase
-    .from('user_coins')
-    .update({
-      balance: coins.balance - gift.price_coins,
-      total_spent: coins.total_spent + gift.price_coins,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('user_id', senderId);
+  // Deduct coins via secure RPC
+  const { data: success, error: coinsError } = await supabase.rpc('spend_user_coins', {
+    p_user_id: senderId,
+    p_amount: gift.price_coins
+  });
   if (coinsError) throw coinsError;
+  if (!success) throw new Error('Not enough coins to send this gift');
 
   // Send gift
   const { data, error } = await supabase
