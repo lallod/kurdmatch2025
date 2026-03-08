@@ -5,6 +5,7 @@ import { ConversationInsights } from './ConversationInsights';
 import { useConversationInsights } from '@/hooks/useConversationInsights';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ChatInsightsPanelProps {
   partnerId: string;
