@@ -4708,6 +4708,14 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_safe_profile_location: {
+        Args: { target_user_id: string }
+        Returns: {
+          latitude: number
+          longitude: number
+          phone_number: string
+        }[]
+      }
       get_user_trust_score: {
         Args: { target_user_id: string }
         Returns: {
@@ -4721,6 +4729,11 @@ export type Database = {
       gettransactionid: { Args: never; Returns: unknown }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
       increment_usage_count: { Args: { action_type: string }; Returns: boolean }
+      initialize_user_coins: { Args: { p_user_id: string }; Returns: undefined }
+      initialize_user_subscription: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       insert_encrypted_payment: {
         Args: {
           p_amount: number
@@ -4899,6 +4912,10 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      spend_user_coins: {
+        Args: { p_amount: number; p_user_id: string }
+        Returns: boolean
       }
       st_3dclosestpoint: {
         Args: { geom1: unknown; geom2: unknown }
