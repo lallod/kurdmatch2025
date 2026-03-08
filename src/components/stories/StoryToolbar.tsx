@@ -2,6 +2,7 @@ import { Heart, MessageCircle, Share2, Volume2, VolumeX, Info } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useNavigate } from 'react-router-dom';
 
 interface StoryToolbarProps {
   storyId: string;
