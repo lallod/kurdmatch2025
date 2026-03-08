@@ -31,11 +31,18 @@ interface HeroSectionProps {
 
 // defaultContent is now generated inside the component using t()
 
-const HeroSection: React.FC<HeroSectionProps> = ({ content = defaultContent }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ content }) => {
   const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const { t } = useTranslations();
+  
+  const resolvedContent = content || {
+    title: t('landing.hero_title', 'Find Your Kurdish Match'),
+    tagline: t('landing.hero_tagline', 'Connecting Kurds Worldwide'),
+    subtitle: t('landing.hero_subtitle', 'The first dating platform designed exclusively for Kurdish people from all parts of Kurdistan and the diaspora, bringing together singles who share our rich heritage and values.'),
+    userCount: "10,000+"
+  };
 
   const handleLoginSuccess = async (email: string) => {
     try {

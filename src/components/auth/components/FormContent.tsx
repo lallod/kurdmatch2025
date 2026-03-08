@@ -13,16 +13,16 @@ interface FormContentProps {
 }
 
 const FormContent = ({ currentStep, steps, form }: FormContentProps) => {
+  const { t } = useTranslations();
   const currentStepInfo = steps[currentStep];
 
   // The last step is always photos, based on useStepCategories
   if (currentStep === steps.length - 1) {
     const photoQuestion = currentStepInfo?.questions.find(q => q.profileField === 'photos');
-    // If for some reason there's no photo question, show nothing or an error.
     if (photoQuestion) {
       return <PhotoUploadStep form={form} question={photoQuestion} />;
     }
-    return <div>Photo question not configured.</div>;
+    return <div>{t('auth.photo_not_configured', 'Photo question not configured.')}</div>;
   }
 
   // Display the questions for other steps
