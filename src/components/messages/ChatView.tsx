@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Send, ArrowLeft, Mic, Eye, MoreVertical, Flag, Ban, Globe, UserX, Phone, Video } from 'lucide-react';
