@@ -4,6 +4,7 @@ import { UseFormReturn } from 'react-hook-form';
 import FieldRenderer from './FieldRenderer';
 import PhotoUploadStep from './PhotoUploadStep';
 import { QuestionItem } from '@/pages/SuperAdmin/components/registration-questions/types';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface FormContentProps {
   currentStep: number;
