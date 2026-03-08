@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import StoryReactions from './StoryReactions';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { StoryToolbar } from './StoryToolbar';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface StoryViewerProps {
   open: boolean;
