@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Heart } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface LogoProps {
   size?: 'small' | 'medium' | 'large';
