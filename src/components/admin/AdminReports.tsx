@@ -159,7 +159,7 @@ export default function AdminReports() {
                       className="gap-2"
                     >
                       <CheckCircle className="w-4 h-4" />
-                      Resolve
+                      {t('admin.resolve', 'Resolve')}
                     </Button>
                     <Button
                       size="sm"
