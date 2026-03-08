@@ -17,6 +17,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   useEffect(() => {
     const searchTimeout = setTimeout(async () => {
