@@ -83,7 +83,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
     let instructionIndex = 0;
     const instructionInterval = setInterval(() => {
       instructionIndex++;
-      if (instructionIndex >= instructions.length) {
+      if (instructionIndex >= INSTRUCTION_COUNT) {
         clearInterval(instructionInterval);
         setTimeout(() => {
           mediaRecorder.stop();
@@ -91,7 +91,7 @@ export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificatio
         }, 2000);
       } else {
         setCurrentInstruction(instructionIndex);
-        setProgress((instructionIndex / instructions.length) * 100);
+        setProgress((instructionIndex / INSTRUCTION_COUNT) * 100);
       }
     }, 3000);
     
