@@ -122,10 +122,10 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                 id: `match-${match.id}`,
                 type: 'match',
                 userId: partnerProfile.id,
-                userName: partnerProfile.name || 'Noen',
+                userName: partnerProfile.name || t('activity.someone', 'Someone'),
                 userAvatar: partnerProfile.profile_image || '',
                 timestamp: new Date(match.matched_at || Date.now()),
-                message: 'matchet med deg!',
+                message: t('activity.matched_with_you', 'matched with you!'),
               });
             }
           }
