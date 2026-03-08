@@ -94,10 +94,14 @@ export const createGroup = async (groupData: {
  * Update group
  */
 export const updateGroup = async (groupId: string, updates: Partial<Group>) => {
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) throw new Error('Not authenticated');
+
   const { data, error } = await supabase
     .from('groups')
     .update(updates)
     .eq('id', groupId)
+    .eq('created_by', user.user.id)
     .select()
     .single();
 
@@ -109,10 +113,14 @@ export const updateGroup = async (groupId: string, updates: Partial<Group>) => {
  * Delete group
  */
 export const deleteGroup = async (groupId: string) => {
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) throw new Error('Not authenticated');
+
   const { error } = await supabase
     .from('groups')
     .delete()
-    .eq('id', groupId);
+    .eq('id', groupId)
+    .eq('created_by', user.user.id);
 
   if (error) throw error;
 };
@@ -133,6 +141,14 @@ export const joinGroup = async (groupId: string) => {
     });
 
   if (error) throw error;
+
+  // Recount members to avoid race conditions
+  const { count } = await supabase
+    .from('group_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('group_id', groupId);
+
+  await supabase.from('groups').update({ member_count: count || 0 }).eq('id', groupId);
 };
 
 /**
@@ -149,6 +165,14 @@ export const leaveGroup = async (groupId: string) => {
     .eq('user_id', user.user.id);
 
   if (error) throw error;
+
+  // Recount members to avoid race conditions
+  const { count } = await supabase
+    .from('group_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('group_id', groupId);
+
+  await supabase.from('groups').update({ member_count: count || 0 }).eq('id', groupId);
 };
 
 /**
