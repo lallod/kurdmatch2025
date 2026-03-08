@@ -15,7 +15,7 @@ interface VideoVerificationDialogProps {
 
 type Step = 'intro' | 'recording' | 'preview' | 'uploading' | 'success';
 
-// Instructions are now translated in the component using t()
+const INSTRUCTION_COUNT = 5;
 
 export const VideoVerificationDialog = ({ open, onOpenChange }: VideoVerificationDialogProps) => {
   const { t } = useTranslations();
