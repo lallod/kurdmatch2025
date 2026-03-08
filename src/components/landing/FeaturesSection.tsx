@@ -2,6 +2,7 @@
 import React from 'react';
 import FeatureCard from './FeatureCard';
 import { Globe, Users, Heart, LucideIcon } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface FeatureCard {
   id: string;
