@@ -63,7 +63,7 @@ const SimpleLanguageMultiSelect = ({ value = [], onChange }: SimpleLanguageMulti
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Languages className="w-4 h-4 text-purple-400" />
-        <Label className="text-white">Languages You Speak</Label>
+        <Label className="text-white">{t('auth.languages_you_speak', 'Languages You Speak')}</Label>
       </div>
       
       {/* Selected languages */}
