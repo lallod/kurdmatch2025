@@ -165,6 +165,14 @@ export const leaveGroup = async (groupId: string) => {
     .eq('user_id', user.user.id);
 
   if (error) throw error;
+
+  // Recount members to avoid race conditions
+  const { count } = await supabase
+    .from('group_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('group_id', groupId);
+
+  await supabase.from('groups').update({ member_count: count || 0 }).eq('id', groupId);
 };
 
 /**
