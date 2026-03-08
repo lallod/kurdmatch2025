@@ -119,7 +119,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         {/* Pass */}
         <button
           onClick={onPass}
-          aria-label="Pass on this profile"
+          aria-label={t('swipe.pass', 'Pass on this profile')}
           className={`${SWIPE_CONFIG.actions.buttons.large} bg-card hover:bg-card/80 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.2)] transform hover:scale-110 transition-all duration-200 active:scale-95`}
         >
           <X className={`${SWIPE_CONFIG.actions.buttons.iconSize.large} text-destructive`} strokeWidth={3} />
