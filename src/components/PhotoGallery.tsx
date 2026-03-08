@@ -27,6 +27,7 @@ interface PhotoGalleryProps {
 }
 
 const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, name, age }) => {
+  const { t } = useTranslations();
   const [isLoaded, setIsLoaded] = useState<boolean[]>(Array(photos.length).fill(false));
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
