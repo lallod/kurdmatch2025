@@ -96,7 +96,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({
         <button
           onClick={() => handleActionWithLimit('rewind', onRewind)}
           disabled={isRewinding}
-          aria-label="Rewind to previous profile"
+          aria-label={t('swipe.rewind', 'Rewind to previous profile')}
           className={`${SWIPE_CONFIG.actions.buttons.small} ${
             userLimits.rewinds.canPerform && !isRewinding
               ? 'bg-card hover:bg-card/80 text-primary' 
