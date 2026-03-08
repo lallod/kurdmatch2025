@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Send, ArrowLeft, Mic, Eye, MoreVertical, Flag, Ban, Globe, UserX, Phone, Video } from 'lucide-react';
@@ -64,9 +64,15 @@ const ChatView: React.FC<ChatViewProps> = ({
   const [currentMatchId, setCurrentMatchId] = useState<string | null>(null);
 
   const { moderateMessage, isChecking } = useMessageModeration();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const conversationId = user ? [user.id, conversation.id].sort().join('_') : '';
   const { isOtherUserTyping, startTyping, stopTyping } = useTypingIndicator(conversationId, user?.id || '');
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversationMessages]);
 
   // Load messages + realtime
   useEffect(() => {
@@ -329,12 +335,13 @@ const ChatView: React.FC<ChatViewProps> = ({
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
         </div>
 
         {/* Input Area */}
         <div className="backdrop-blur-md bg-surface-secondary/80 border-t border-border/20 p-3 max-w-4xl mx-auto">
-          {isOtherUserTyping && <div className="px-3 py-2 text-sm text-muted-foreground animate-pulse">{conversation?.name} is typing...</div>}
+          {isOtherUserTyping && <div className="px-3 py-2 text-sm text-muted-foreground animate-pulse">{conversation?.name} {t('messages.is_typing', 'is typing...')}</div>}
           {showVoiceRecorder ? (
             <VoiceRecorder onSendVoice={handleSendVoice} onCancel={() => setShowVoiceRecorder(false)} />
           ) : (
