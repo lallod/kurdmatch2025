@@ -132,7 +132,7 @@ export default function SearchBar({ onResultClick }: SearchBarProps) {
             </div>
           ) : query.length >= 2 ? (
             <div className="p-4 text-center text-muted-foreground">
-              No profiles found
+              {t('search.no_profiles_found', 'No profiles found')}
             </div>
           ) : null}
         </div>

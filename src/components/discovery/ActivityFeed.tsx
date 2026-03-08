@@ -295,7 +295,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
         <CardTitle className="text-lg flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          Aktivitet
+          {t('activity.title', 'Activity')}
         </CardTitle>
         {compact && (
           <Button 

@@ -276,7 +276,7 @@ const RegistrationForm = () => {
                     <FormLabel>{t('reg.last_name', 'Last Name')}</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Doe" 
+                        placeholder={t('reg.last_name_placeholder', 'Doe')} 
                         {...field} 
                       />
                     </FormControl>
