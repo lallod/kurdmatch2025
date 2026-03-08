@@ -238,11 +238,12 @@ export const setPhotoPrimary = async (photoId: string): Promise<void> => {
     .update({ is_primary: false })
     .eq('profile_id', user.id);
 
-  // Set selected as primary
+  // Set selected as primary (only own photos)
   await supabase
     .from('photos')
     .update({ is_primary: true })
-    .eq('id', photoId);
+    .eq('id', photoId)
+    .eq('profile_id', user.id);
 
   // Get the URL and update profile_image
   const { data: photo } = await supabase
