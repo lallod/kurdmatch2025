@@ -1,6 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SAFE_PROFILE_COLUMNS, ALL_OWN_PROFILE_COLUMNS } from './constants';
 
+// Cast helper for dynamic column selections that Supabase TS can't infer
+const asProfiles = (data: unknown): Profile[] => (data || []) as Profile[];
+const asProfile = (data: unknown): Profile | null => data as Profile | null;
+
 export interface Profile {
   id: string;
   name: string;
