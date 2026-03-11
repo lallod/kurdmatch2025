@@ -380,7 +380,7 @@ export const getNearbyProfiles = async (
     .limit(50);
 
   if (error) throw error;
-  return data || [];
+  return asProfiles(data);
 };
 
 // Calculate distance between two coordinates (Haversine formula)
