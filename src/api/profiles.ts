@@ -327,7 +327,7 @@ export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]>
 
   // Client-side distance filtering (latitude/longitude not returned to client)
   // Distance filtering now requires the nearby_users RPC instead
-  return data || [];
+  return asProfiles(data);
 };
 
 // Get profile by ID (safe columns only — no PII)
