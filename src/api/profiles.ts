@@ -120,7 +120,7 @@ export const getCurrentUserProfile = async (): Promise<Profile | null> => {
     .maybeSingle();
 
   if (error) throw error;
-  return data;
+  return asProfile(data);
 };
 
 // Update profile (only own profile)
