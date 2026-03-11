@@ -102,7 +102,7 @@ export const updateTravelMode = async (travelLocation: string | null, active: bo
 // Get match recommendations for current user
 export const getMatchRecommendations = async (
   limit?: number, 
-  filters?: Record<string, unknown>
+  filters?: Record<string, unknown> | object
 ): Promise<Profile[]> => {
   const profiles = await getProfileSuggestions(filters);
   return limit ? profiles.slice(0, limit) : profiles;
