@@ -10,8 +10,8 @@ export const getMatches = async () => {
     .from('matches')
     .select(`
       *,
-      profile1: user1_id (id, name, profile_image, age, location),
-      profile2: user2_id (id, name, profile_image, age, location)
+      profile1:profiles!matches_user1_id_fkey (id, name, profile_image, age, location),
+      profile2:profiles!matches_user2_id_fkey (id, name, profile_image, age, location)
     `)
     .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
     .order('matched_at', { ascending: false });

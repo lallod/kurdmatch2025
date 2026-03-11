@@ -505,6 +505,6 @@ export const getProfileSuggestions = async (filters?: Record<string, unknown>): 
   const { data, error } = await query.limit(100);
   if (error) throw error;
   
-  const shuffled = (data || []).sort(() => Math.random() - 0.5);
+  const shuffled = asProfiles(data).sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 50);
 };
