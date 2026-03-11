@@ -344,7 +344,7 @@ export const getProfileById = async (profileId: string): Promise<Profile | null>
     .maybeSingle();
 
   if (error) throw error;
-  return data;
+  return asProfile(data);
 };
 
 // Get nearby profiles based on location — uses RPC, returns safe columns
