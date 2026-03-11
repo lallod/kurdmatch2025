@@ -104,7 +104,7 @@ export const getMatchRecommendations = async (
   limit?: number, 
   filters?: Record<string, unknown> | object
 ): Promise<Profile[]> => {
-  const profiles = await getProfileSuggestions(filters);
+  const profiles = await getProfileSuggestions(filters as Record<string, unknown> | undefined);
   return limit ? profiles.slice(0, limit) : profiles;
 };
 
