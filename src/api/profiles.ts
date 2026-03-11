@@ -138,7 +138,7 @@ export const updateProfile = async (userId: string, updates: Partial<Profile>): 
     
   if (error) throw error;
   if (!data) throw new Error('Profile not found after update');
-  return data;
+  return data as unknown as Profile;
 };
 
 // Upload profile photo and save to photos table
