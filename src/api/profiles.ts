@@ -457,7 +457,7 @@ export const getProfileSuggestions = async (filters?: Record<string, unknown>): 
     const { data: fullProfiles, error: fullError } = await fullQuery.limit(100);
     if (fullError) throw fullError;
 
-    const enriched = (fullProfiles || []).map((p: Profile) => ({
+    const enriched = asProfiles(fullProfiles).map((p: Profile) => ({
       ...p,
       distance_km: distanceMap.get(p.id) || 0,
     }));
