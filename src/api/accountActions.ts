@@ -1,17 +1,16 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { UserDataExport, ConnectedSocialAccount, AccountDeletionRequest } from '@/types/account';
+import { UserDataExport, ConnectedSocialAccount } from '@/types/account';
 
 export const downloadUserData = async (): Promise<UserDataExport> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const [profileData, photosData, messagesData, matchesData, likesData] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', session.user.id).single(),
-    supabase.from('photos').select('*').eq('profile_id', session.user.id),
-    supabase.from('messages').select('*').or(`sender_id.eq.${session.user.id},recipient_id.eq.${session.user.id}`),
-    supabase.from('matches').select('*').or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`),
-    supabase.from('likes').select('*').or(`liker_id.eq.${session.user.id},likee_id.eq.${session.user.id}`)
+    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase.from('photos').select('*').eq('profile_id', user.id),
+    supabase.from('messages').select('*').or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`),
+    supabase.from('matches').select('*').or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`),
+    supabase.from('likes').select('*').or(`liker_id.eq.${user.id},likee_id.eq.${user.id}`)
   ]);
 
   const connectedAccounts = await getConnectedAccounts();
@@ -30,8 +29,14 @@ export const downloadUserData = async (): Promise<UserDataExport> => {
 };
 
 export const changePassword = async (_currentPassword: string, newPassword: string) => {
-  // Note: Supabase updateUser re-authenticates via the current session token,
-  // so currentPassword verification is handled by the active session.
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Validate new password
+  if (!newPassword || newPassword.length < 8) {
+    throw new Error('Password must be at least 8 characters');
+  }
+
   const { error } = await supabase.auth.updateUser({
     password: newPassword
   });
@@ -41,16 +46,20 @@ export const changePassword = async (_currentPassword: string, newPassword: stri
 };
 
 export const connectSocialAccount = async (platform: 'instagram' | 'snapchat', username: string, platformUserId: string) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Input validation
+  if (!username || username.trim().length === 0) throw new Error('Username is required');
+  if (username.length > 100) throw new Error('Username too long');
 
   const { data, error } = await supabase
     .from('connected_social_accounts')
     .upsert({
-      user_id: session.user.id,
+      user_id: user.id,
       platform,
       platform_user_id: platformUserId || username,
-      username,
+      username: username.trim(),
       is_active: true,
     }, { onConflict: 'user_id,platform,username' })
     .select()
@@ -70,27 +79,27 @@ export const connectSocialAccount = async (platform: 'instagram' | 'snapchat', u
 };
 
 export const disconnectSocialAccount = async (accountId: string) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { error } = await supabase
     .from('connected_social_accounts')
     .update({ is_active: false })
     .eq('id', accountId)
-    .eq('user_id', session.user.id);
+    .eq('user_id', user.id);
 
   if (error) throw error;
   return { success: true };
 };
 
 export const getConnectedAccounts = async (): Promise<ConnectedSocialAccount[]> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { data, error } = await supabase
     .from('connected_social_accounts')
-    .select('*')
-    .eq('user_id', session.user.id)
+    .select('id, user_id, platform, platform_user_id, username, connected_at, is_active')
+    .eq('user_id', user.id)
     .eq('is_active', true);
 
   if (error) {
@@ -110,14 +119,14 @@ export const getConnectedAccounts = async (): Promise<ConnectedSocialAccount[]> 
 };
 
 export const requestAccountDeletion = async (deletionType: 'deactivate' | 'delete', reason?: string) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   if (deletionType === 'deactivate') {
     const { error } = await supabase
       .from('account_status')
       .upsert({
-        user_id: session.user.id,
+        user_id: user.id,
         status: 'deactivated',
         reason,
         requested_at: new Date().toISOString(),
@@ -134,7 +143,7 @@ export const requestAccountDeletion = async (deletionType: 'deactivate' | 'delet
     const { error } = await supabase
       .from('account_status')
       .upsert({
-        user_id: session.user.id,
+        user_id: user.id,
         status: 'deletion_requested',
         reason,
         requested_at: new Date().toISOString(),
@@ -152,13 +161,13 @@ export const requestAccountDeletion = async (deletionType: 'deactivate' | 'delet
 };
 
 export const cancelAccountDeletion = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { error } = await supabase
     .from('account_status')
     .upsert({
-      user_id: session.user.id,
+      user_id: user.id,
       status: 'active',
       reason: null,
       requested_at: null,

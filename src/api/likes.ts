@@ -8,10 +8,15 @@ export interface LikeResult {
 
 export const likeProfile = async (profileId: string): Promise<LikeResult> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
-    const userId = session.user.id;
+    const userId = user.id;
+
+    // Prevent self-like
+    if (userId === profileId) {
+      return { success: false, error: 'Cannot like your own profile' };
+    }
 
     // Check if already liked
     const { data: existingLike } = await supabase
@@ -45,7 +50,6 @@ export const likeProfile = async (profileId: string): Promise<LikeResult> => {
 
     let matchCreated = false;
     if (mutualLike) {
-      // Create match with ordered IDs to prevent duplicates
       const [id1, id2] = [userId, profileId].sort();
       const { error: matchError } = await supabase
         .from('matches')
@@ -60,35 +64,37 @@ export const likeProfile = async (profileId: string): Promise<LikeResult> => {
     }
 
     return { success: true, match: matchCreated };
-  } catch (error: any) {
-    console.error('Error liking profile:', error);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error liking profile:', message);
+    return { success: false, error: message };
   }
 };
 
 export const unlikeProfile = async (profileId: string): Promise<{ success: boolean; error?: string }> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
     const { error } = await supabase
       .from('likes')
       .delete()
-      .eq('liker_id', session.user.id)
+      .eq('liker_id', user.id)
       .eq('likee_id', profileId);
 
     if (error) throw error;
 
     return { success: true };
-  } catch (error: any) {
-    console.error('Error unliking profile:', error);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error unliking profile:', message);
+    return { success: false, error: message };
   }
 };
 
 export const getLikedProfiles = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { data, error } = await supabase
     .from('likes')
@@ -98,7 +104,7 @@ export const getLikedProfiles = async () => {
         id, name, profile_image, age, location
       )
     `)
-    .eq('liker_id', session.user.id)
+    .eq('liker_id', user.id)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -106,8 +112,8 @@ export const getLikedProfiles = async () => {
 };
 
 export const getProfilesWhoLikedMe = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { data, error } = await supabase
     .from('likes')
@@ -117,7 +123,7 @@ export const getProfilesWhoLikedMe = async () => {
         id, name, profile_image, age, location
       )
     `)
-    .eq('likee_id', session.user.id)
+    .eq('likee_id', user.id)
     .order('created_at', { ascending: false });
 
   if (error) throw error;

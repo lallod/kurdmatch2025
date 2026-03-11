@@ -1,17 +1,18 @@
 import { supabase } from '@/integrations/supabase/client';
 import { QuestionItem, toDbQuestion, fromDbQuestion } from '@/pages/SuperAdmin/components/registration-questions/types';
+import { SAFE_PROFILE_COLUMNS } from './constants';
 
 export const getUserRoles = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
   
   const { data, error } = await supabase
     .from('user_roles')
-    .select()
-    .eq('user_id', session.user.id);
+    .select('role')
+    .eq('user_id', user.id);
   
   if (error) throw error;
-  return data.map((role: any) => role.role);
+  return data.map((role: { role: string }) => role.role);
 };
 
 export const isUserSuperAdmin = async () => {
@@ -58,31 +59,21 @@ export const deleteRegistrationQuestion = async (id: string) => {
   return true;
 };
 
-// Real User Management for Admin
+// Real User Management for Admin — uses edge function instead of client-side admin API
 export const getAllUsers = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Fetch profiles with safe columns (admin can see all via RLS)
   const { data: profiles, error: profilesError } = await supabase
     .from('profiles')
-    .select('*');
+    .select(SAFE_PROFILE_COLUMNS);
   
   if (profilesError) throw profilesError;
   
-  // Get real email addresses from auth.users
-  const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-  if (authError) {
-    console.warn('Could not fetch auth users:', authError);
-    return profiles;
-  }
-  
-  // Merge profile data with real email addresses
-  const usersWithEmails = profiles?.map(profile => {
-    const authUser = authUsers?.users?.find((user: any) => user.id === profile.id);
-    return {
-      ...profile,
-      email: authUser?.email || `user-${profile.id.substring(0, 8)}@unknown.com`
-    };
-  });
-  
-  return usersWithEmails;
+  // Note: Email addresses should be fetched via admin-actions edge function
+  // auth.admin.listUsers() requires service role key which the client doesn't have
+  return profiles || [];
 };
 
 // Get real user counts and statistics
@@ -94,11 +85,11 @@ export const getUserStatistics = async () => {
   if (error) throw error;
   
   const totalUsers = profiles?.length || 0;
-  const activeUsers = (profiles || []).filter((p: any) => 
+  const activeUsers = (profiles || []).filter((p: { verified: boolean | null; last_active: string | null }) => 
     p.verified && p.last_active && 
     (new Date(p.last_active).getTime() > Date.now() - 86400000 * 7)
   ).length;
-  const pendingUsers = (profiles || []).filter((p: any) => !p.verified).length;
+  const pendingUsers = (profiles || []).filter((p: { verified: boolean | null }) => !p.verified).length;
   const inactiveUsers = totalUsers - activeUsers - pendingUsers;
   
   return {
