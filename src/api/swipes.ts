@@ -14,34 +14,39 @@ export const recordSwipe = async (
   action: 'like' | 'pass' | 'superlike'
 ): Promise<{ success: boolean; error?: string }> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    if (user.id === profileId) {
+      return { success: false, error: 'Cannot swipe on your own profile' };
+    }
 
     const { error } = await supabase
       .from('swipe_history')
       .insert({
-        user_id: session.user.id,
+        user_id: user.id,
         swiped_profile_id: profileId,
         action,
       });
 
     if (error) throw error;
     return { success: true };
-  } catch (error: any) {
-    console.error('Error recording swipe:', error);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error recording swipe:', message);
+    return { success: false, error: message };
   }
 };
 
 export const getLastSwipe = async (): Promise<SwipeHistoryEntry | null> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase
       .from('swipe_history')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .eq('rewound', false)
       .order('created_at', { ascending: false })
       .limit(1)
@@ -57,27 +62,28 @@ export const getLastSwipe = async (): Promise<SwipeHistoryEntry | null> => {
 
 export const markSwipeAsRewound = async (swipeId: string): Promise<{ success: boolean; error?: string }> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
     const { error } = await supabase
       .from('swipe_history')
       .update({ rewound: true })
       .eq('id', swipeId)
-      .eq('user_id', session.user.id);
+      .eq('user_id', user.id);
 
     if (error) throw error;
     return { success: true };
-  } catch (error: any) {
-    console.error('Error marking swipe as rewound:', error);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error marking swipe as rewound:', message);
+    return { success: false, error: message };
   }
 };
 
 export const getTodayRewindCount = async (): Promise<number> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -85,7 +91,7 @@ export const getTodayRewindCount = async (): Promise<number> => {
     const { count, error } = await supabase
       .from('swipe_history')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .eq('rewound', true)
       .gte('created_at', today.toISOString());
 

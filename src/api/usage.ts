@@ -15,8 +15,8 @@ export interface UserSubscription {
 
 export const checkActionLimit = async (actionType: 'like' | 'super_like' | 'rewind' | 'boost'): Promise<UsageLimit> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase.rpc('can_perform_action', {
       action_type: actionType
@@ -29,7 +29,7 @@ export const checkActionLimit = async (actionType: 'like' | 'super_like' | 'rewi
       remainingCount: typeof data?.remaining_count === 'number' ? data.remaining_count : 0,
       isPremium: data?.is_premium === true
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error checking action limit:', error);
     return { canPerform: false, remainingCount: 0, isPremium: false };
   }
@@ -37,8 +37,8 @@ export const checkActionLimit = async (actionType: 'like' | 'super_like' | 'rewi
 
 export const performAction = async (actionType: 'like' | 'super_like' | 'rewind' | 'boost'): Promise<boolean> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase.rpc('increment_usage_count', {
       action_type: actionType
@@ -47,7 +47,7 @@ export const performAction = async (actionType: 'like' | 'super_like' | 'rewind'
     if (error) throw error;
 
     return data === true;
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error performing action:', error);
     return false;
   }
@@ -55,9 +55,8 @@ export const performAction = async (actionType: 'like' | 'super_like' | 'rewind'
 
 export const getUserSubscription = async (): Promise<UserSubscription | null> => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) {
-      // Return default free subscription for non-authenticated users
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       return {
         id: 'guest',
         userId: 'guest',
@@ -67,8 +66,8 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
 
     const { data, error } = await supabase
       .from('user_subscriptions')
-      .select('*')
-      .eq('user_id', session.user.id)
+      .select('id, user_id, subscription_type, expires_at, created_at')
+      .eq('user_id', user.id)
       .or('expires_at.is.null,expires_at.gt.now()')
       .order('created_at', { ascending: false })
       .limit(1)
@@ -76,47 +75,40 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
 
     if (error) {
       console.error('Error querying subscription:', error);
-      // Return default free subscription on error
       return {
-        id: session.user.id,
-        userId: session.user.id,
+        id: user.id,
+        userId: user.id,
         subscriptionType: 'free',
       };
     }
 
     if (!data) {
-      // Check if profile exists first
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .maybeSingle();
 
       if (profileError || !profile) {
-        // Profile doesn't exist yet, return default free subscription without inserting
         return {
-          id: session.user.id,
-          userId: session.user.id,
+          id: user.id,
+          userId: user.id,
           subscriptionType: 'free',
         };
       }
 
-      // Profile exists, initialize subscription via secure RPC
-      await supabase.rpc('initialize_user_subscription', { p_user_id: session.user.id });
+      await supabase.rpc('initialize_user_subscription', { p_user_id: user.id });
       
-      // Re-fetch the newly created subscription
       const { data: newSub, error: createError } = await supabase
         .from('user_subscriptions')
-        .select('*')
-        .eq('user_id', session.user.id)
+        .select('id, user_id, subscription_type, expires_at')
+        .eq('user_id', user.id)
         .maybeSingle();
 
-      if (createError) {
-        console.error('Error creating subscription:', createError);
-        // Return default free subscription on error
+      if (createError || !newSub) {
         return {
-          id: session.user.id,
-          userId: session.user.id,
+          id: user.id,
+          userId: user.id,
           subscriptionType: 'free',
         };
       }
@@ -135,9 +127,8 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
       subscriptionType: data.subscription_type as 'free' | 'premium' | 'gold',
       expiresAt: data.expires_at
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error getting user subscription:', error);
-    // Always return a default free subscription instead of null
     return {
       id: 'default',
       userId: 'default',
@@ -148,13 +139,13 @@ export const getUserSubscription = async (): Promise<UserSubscription | null> =>
 
 export const getDailyUsage = async () => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) throw new Error('No user authenticated');
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase
       .from('daily_usage')
-      .select('*')
-      .eq('user_id', session.user.id)
+      .select('likes_count, super_likes_count, rewinds_count, boosts_count')
+      .eq('user_id', user.id)
       .eq('date', new Date().toISOString().split('T')[0])
       .maybeSingle();
 
@@ -166,7 +157,7 @@ export const getDailyUsage = async () => {
       rewinds_count: 0,
       boosts_count: 0
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error getting daily usage:', error);
     return {
       likes_count: 0,

@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { SAFE_PROFILE_COLUMNS, ALL_OWN_PROFILE_COLUMNS } from './constants';
 
 export interface Profile {
   id: string;
@@ -97,18 +98,25 @@ export const updateTravelMode = async (travelLocation: string | null, active: bo
 // Get match recommendations for current user
 export const getMatchRecommendations = async (
   limit?: number, 
-  filters?: Record<string, any>
+  filters?: Record<string, unknown>
 ): Promise<Profile[]> => {
   const profiles = await getProfileSuggestions(filters);
   return limit ? profiles.slice(0, limit) : profiles;
 };
 
-// Get current user profile
+// Get current user profile (includes PII for own profile)
 export const getCurrentUserProfile = async (): Promise<Profile | null> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
   
-  return getProfileById(user.id);
+  const { data, error } = await supabase
+    .from('profiles')
+    .select(ALL_OWN_PROFILE_COLUMNS)
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
 };
 
 // Update profile (only own profile)
@@ -121,7 +129,7 @@ export const updateProfile = async (userId: string, updates: Partial<Profile>): 
     .from('profiles')
     .update(updates)
     .eq('id', user.id)
-    .select()
+    .select(ALL_OWN_PROFILE_COLUMNS)
     .maybeSingle();
     
   if (error) throw error;
@@ -278,18 +286,15 @@ export interface SearchFilters {
   userLongitude?: number;
 }
 
-// Search profiles with advanced filters
+// Search profiles with advanced filters — requires authentication
 export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]> => {
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   let query = supabase
     .from('profiles')
-    .select('*');
-
-  // Exclude current user from search results
-  if (user) {
-    query = query.neq('id', user.id);
-  }
+    .select(SAFE_PROFILE_COLUMNS)
+    .neq('id', user.id);
 
   // Text search across name, bio, occupation (sanitized to prevent injection)
   if (filters.query) {
@@ -299,53 +304,16 @@ export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]>
     }
   }
 
-  // Age range
-  if (filters.ageMin) {
-    query = query.gte('age', filters.ageMin);
-  }
-  if (filters.ageMax) {
-    query = query.lte('age', filters.ageMax);
-  }
-
-  // Gender filter
-  if (filters.gender) {
-    query = query.eq('gender', filters.gender);
-  }
-
-  // Location filter
-  if (filters.location) {
-    query = query.ilike('location', `%${filters.location}%`);
-  }
-
-  // Kurdistan region filter
-  if (filters.kurdistan_region) {
-    query = query.eq('kurdistan_region', filters.kurdistan_region);
-  }
-
-  // Religion filter
-  if (filters.religion) {
-    query = query.eq('religion', filters.religion);
-  }
-
-  // Body type filter
-  if (filters.body_type) {
-    query = query.eq('body_type', filters.body_type);
-  }
-
-  // Verified only
-  if (filters.verified) {
-    query = query.eq('verified', true);
-  }
-
-  // Languages filter (array contains)
-  if (filters.languages && filters.languages.length > 0) {
-    query = query.contains('languages', filters.languages);
-  }
-
-  // Interests filter (array overlap)
-  if (filters.interests && filters.interests.length > 0) {
-    query = query.overlaps('interests', filters.interests);
-  }
+  if (filters.ageMin) query = query.gte('age', filters.ageMin);
+  if (filters.ageMax) query = query.lte('age', filters.ageMax);
+  if (filters.gender) query = query.eq('gender', filters.gender);
+  if (filters.location) query = query.ilike('location', `%${filters.location}%`);
+  if (filters.kurdistan_region) query = query.eq('kurdistan_region', filters.kurdistan_region);
+  if (filters.religion) query = query.eq('religion', filters.religion);
+  if (filters.body_type) query = query.eq('body_type', filters.body_type);
+  if (filters.verified) query = query.eq('verified', true);
+  if (filters.languages && filters.languages.length > 0) query = query.contains('languages', filters.languages);
+  if (filters.interests && filters.interests.length > 0) query = query.overlaps('interests', filters.interests);
 
   const { data, error } = await query
     .order('last_active', { ascending: false })
@@ -353,28 +321,21 @@ export const searchProfiles = async (filters: SearchFilters): Promise<Profile[]>
 
   if (error) throw error;
 
-  // If distance filter is provided and we have user location
-  if (filters.distance && filters.userLatitude && filters.userLongitude) {
-    return (data || []).filter(profile => {
-      if (!profile.latitude || !profile.longitude) return false;
-      const distance = calculateDistance(
-        filters.userLatitude!,
-        filters.userLongitude!,
-        profile.latitude,
-        profile.longitude
-      );
-      return distance <= filters.distance!;
-    });
-  }
-
+  // Client-side distance filtering (latitude/longitude not returned to client)
+  // Distance filtering now requires the nearby_users RPC instead
   return data || [];
 };
 
-// Get profile by ID
+// Get profile by ID (safe columns only — no PII)
 export const getProfileById = async (profileId: string): Promise<Profile | null> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  // If viewing own profile, return all columns
+  const columns = user?.id === profileId ? ALL_OWN_PROFILE_COLUMNS : SAFE_PROFILE_COLUMNS;
+  
   const { data, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select(columns)
     .eq('id', profileId)
     .maybeSingle();
 
@@ -382,33 +343,45 @@ export const getProfileById = async (profileId: string): Promise<Profile | null>
   return data;
 };
 
-// Get nearby profiles based on location
+// Get nearby profiles based on location — uses RPC, returns safe columns
 export const getNearbyProfiles = async (
   latitude: number,
   longitude: number,
   radiusKm: number = 50
 ): Promise<Profile[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Use the nearby_users RPC to get IDs within radius
+  const { data: nearbyData, error: rpcError } = await supabase.rpc('nearby_users', {
+    current_lat: latitude,
+    current_long: longitude,
+    radius_km: radiusKm,
+    max_results: 100,
+  });
+
+  if (rpcError) throw rpcError;
+
+  const nearbyIds = (nearbyData || [])
+    .map((p: { id: string }) => p.id)
+    .filter((id: string) => id !== user.id);
+
+  if (nearbyIds.length === 0) return [];
+
   const { data, error } = await supabase
     .from('profiles')
-    .select('*')
-    .not('latitude', 'is', null)
-    .not('longitude', 'is', null)
+    .select(SAFE_PROFILE_COLUMNS)
+    .in('id', nearbyIds)
     .order('last_active', { ascending: false })
-    .limit(100);
+    .limit(50);
 
   if (error) throw error;
-
-  // Filter by distance
-  return (data || []).filter(profile => {
-    if (!profile.latitude || !profile.longitude) return false;
-    const distance = calculateDistance(latitude, longitude, profile.latitude, profile.longitude);
-    return distance <= radiusKm;
-  }).slice(0, 50);
+  return data || [];
 };
 
 // Calculate distance between two coordinates (Haversine formula)
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // Earth's radius in km
+  const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
@@ -424,7 +397,7 @@ function toRad(degrees: number): number {
 }
 
 // Get profile suggestions based on current user's profile with gender filtering
-export const getProfileSuggestions = async (filters?: Record<string, any>): Promise<Profile[]> => {
+export const getProfileSuggestions = async (filters?: Record<string, unknown>): Promise<Profile[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
@@ -436,96 +409,92 @@ export const getProfileSuggestions = async (filters?: Record<string, any>): Prom
 
   if (!currentProfile) return [];
 
+  const typedFilters = filters as Record<string, string | number | boolean | undefined> | undefined;
+
   // If maxDistance filter is set and user has coordinates, use nearby_users RPC
-  if (filters?.maxDistance && currentProfile.latitude && currentProfile.longitude) {
+  if (typedFilters?.maxDistance && currentProfile.latitude && currentProfile.longitude) {
     const oppositeGender = currentProfile.gender === 'male' ? 'female' : 'male';
     
     const { data, error } = await supabase.rpc('nearby_users', {
       current_lat: currentProfile.latitude,
       current_long: currentProfile.longitude,
-      radius_km: filters.maxDistance,
+      radius_km: typedFilters.maxDistance as number,
       max_results: 100,
     });
 
     if (error) throw error;
 
-    // Get IDs of nearby users, then fetch full profiles
-    const nearbyIds = (data || []).map((p: any) => p.id).filter((id: string) => id !== user.id);
-    const distanceMap = new Map((data || []).map((p: any) => [p.id, p.distance_km]));
+    const nearbyIds = (data || []).map((p: { id: string }) => p.id).filter((id: string) => id !== user.id);
+    const distanceMap = new Map((data || []).map((p: { id: string; distance_km: number }) => [p.id, p.distance_km]));
     
     if (nearbyIds.length === 0) return [];
 
     let fullQuery = supabase
       .from('profiles')
-      .select('*')
+      .select(SAFE_PROFILE_COLUMNS)
       .in('id', nearbyIds)
       .eq('gender', oppositeGender)
       .eq('dating_profile_visible', true)
       .not('profile_image', 'is', null)
       .neq('profile_image', '');
 
-    // Apply DB-level filters
-    if (filters.ageMin) fullQuery = fullQuery.gte('age', filters.ageMin);
-    if (filters.ageMax) fullQuery = fullQuery.lte('age', filters.ageMax);
-    if (filters.religion) fullQuery = fullQuery.eq('religion', filters.religion);
-    if (filters.ethnicity) fullQuery = fullQuery.eq('ethnicity', filters.ethnicity);
-    if (filters.kurdistanRegion) fullQuery = fullQuery.eq('kurdistan_region', filters.kurdistanRegion);
-    if (filters.bodyType) fullQuery = fullQuery.eq('body_type', filters.bodyType);
-    if (filters.smoking) fullQuery = fullQuery.eq('smoking', filters.smoking);
-    if (filters.drinking) fullQuery = fullQuery.eq('drinking', filters.drinking);
-    if (filters.exerciseHabits) fullQuery = fullQuery.eq('exercise_habits', filters.exerciseHabits);
-    if (filters.education) fullQuery = fullQuery.eq('education', filters.education);
-    if (filters.occupation) fullQuery = fullQuery.ilike('occupation', `%${filters.occupation}%`);
+    if (typedFilters.ageMin) fullQuery = fullQuery.gte('age', typedFilters.ageMin);
+    if (typedFilters.ageMax) fullQuery = fullQuery.lte('age', typedFilters.ageMax);
+    if (typedFilters.religion) fullQuery = fullQuery.eq('religion', typedFilters.religion as string);
+    if (typedFilters.ethnicity) fullQuery = fullQuery.eq('ethnicity', typedFilters.ethnicity as string);
+    if (typedFilters.kurdistanRegion) fullQuery = fullQuery.eq('kurdistan_region', typedFilters.kurdistanRegion as string);
+    if (typedFilters.bodyType) fullQuery = fullQuery.eq('body_type', typedFilters.bodyType as string);
+    if (typedFilters.smoking) fullQuery = fullQuery.eq('smoking', typedFilters.smoking as string);
+    if (typedFilters.drinking) fullQuery = fullQuery.eq('drinking', typedFilters.drinking as string);
+    if (typedFilters.exerciseHabits) fullQuery = fullQuery.eq('exercise_habits', typedFilters.exerciseHabits as string);
+    if (typedFilters.education) fullQuery = fullQuery.eq('education', typedFilters.education as string);
+    if (typedFilters.occupation) fullQuery = fullQuery.ilike('occupation', `%${typedFilters.occupation}%`);
 
     const { data: fullProfiles, error: fullError } = await fullQuery.limit(100);
     if (fullError) throw fullError;
 
-    // Attach distance_km and sort by distance
-    const enriched = (fullProfiles || []).map((p: any) => ({
+    const enriched = (fullProfiles || []).map((p: Profile) => ({
       ...p,
       distance_km: distanceMap.get(p.id) || 0,
     }));
-    enriched.sort((a: any, b: any) => (a.distance_km || 0) - (b.distance_km || 0));
+    enriched.sort((a, b) => ((a as Profile & { distance_km: number }).distance_km || 0) - ((b as Profile & { distance_km: number }).distance_km || 0));
     return enriched.slice(0, 50);
   }
 
-  // Determine opposite gender
   const oppositeGender = currentProfile.gender === 'male' ? 'female' : 'male';
 
-  // Build query with opposite gender filter
   let query = supabase
     .from('profiles')
-    .select('*')
+    .select(SAFE_PROFILE_COLUMNS)
     .neq('id', user.id)
     .eq('gender', oppositeGender)
     .eq('dating_profile_visible', true)
     .not('profile_image', 'is', null)
     .neq('profile_image', '');
 
-  // Apply database-level filters
-  if (filters?.ageMin) query = query.gte('age', filters.ageMin);
-  if (filters?.ageMax) query = query.lte('age', filters.ageMax);
-  if (filters?.religion) query = query.eq('religion', filters.religion);
-  if (filters?.ethnicity) query = query.eq('ethnicity', filters.ethnicity);
-  if (filters?.kurdistanRegion) query = query.eq('kurdistan_region', filters.kurdistanRegion);
-  if (filters?.bodyType) query = query.eq('body_type', filters.bodyType);
-  if (filters?.smoking) query = query.eq('smoking', filters.smoking);
-  if (filters?.drinking) query = query.eq('drinking', filters.drinking);
-  if (filters?.exerciseHabits) query = query.eq('exercise_habits', filters.exerciseHabits);
-  if (filters?.education) query = query.eq('education', filters.education);
-  if (filters?.heightMin) query = query.gte('height', filters.heightMin.toString());
-  if (filters?.heightMax) query = query.lte('height', filters.heightMax.toString());
+  if (typedFilters?.ageMin) query = query.gte('age', typedFilters.ageMin);
+  if (typedFilters?.ageMax) query = query.lte('age', typedFilters.ageMax);
+  if (typedFilters?.religion) query = query.eq('religion', typedFilters.religion as string);
+  if (typedFilters?.ethnicity) query = query.eq('ethnicity', typedFilters.ethnicity as string);
+  if (typedFilters?.kurdistanRegion) query = query.eq('kurdistan_region', typedFilters.kurdistanRegion as string);
+  if (typedFilters?.bodyType) query = query.eq('body_type', typedFilters.bodyType as string);
+  if (typedFilters?.smoking) query = query.eq('smoking', typedFilters.smoking as string);
+  if (typedFilters?.drinking) query = query.eq('drinking', typedFilters.drinking as string);
+  if (typedFilters?.exerciseHabits) query = query.eq('exercise_habits', typedFilters.exerciseHabits as string);
+  if (typedFilters?.education) query = query.eq('education', typedFilters.education as string);
+  if (typedFilters?.heightMin) query = query.gte('height', (typedFilters.heightMin as number).toString());
+  if (typedFilters?.heightMax) query = query.lte('height', (typedFilters.heightMax as number).toString());
 
-  if (filters?.location) {
-    const loc = filters.location.replace(/[%_\\'"()]/g, '');
+  if (typedFilters?.location) {
+    const loc = (typedFilters.location as string).replace(/[%_\\'"()]/g, '');
     if (loc) query = query.or(`location.ilike.%${loc}%,travel_location.ilike.%${loc}%,kurdistan_region.ilike.%${loc}%`);
   } else if (currentProfile.travel_mode_active && currentProfile.travel_location) {
     const tl = currentProfile.travel_location.replace(/[%_\\'"()]/g, '');
     if (tl) query = query.or(`location.ilike.%${tl}%,travel_location.ilike.%${tl}%`);
   }
 
-  if (filters?.occupation) {
-    const occ = filters.occupation.replace(/[%_\\'"()]/g, '');
+  if (typedFilters?.occupation) {
+    const occ = (typedFilters.occupation as string).replace(/[%_\\'"()]/g, '');
     if (occ) query = query.ilike('occupation', `%${occ}%`);
   }
 
@@ -534,23 +503,4 @@ export const getProfileSuggestions = async (filters?: Record<string, any>): Prom
   
   const shuffled = (data || []).sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 50);
-};
-
-// Apply filters that can't be done at DB level (used for nearby_users RPC results)
-const applyClientFilters = (profiles: any[], filters: Record<string, any>): any[] => {
-  return profiles.filter((p: any) => {
-    if (filters.ageMin && p.age < filters.ageMin) return false;
-    if (filters.ageMax && p.age > filters.ageMax) return false;
-    if (filters.religion && p.religion !== filters.religion) return false;
-    if (filters.ethnicity && p.ethnicity !== filters.ethnicity) return false;
-    if (filters.kurdistanRegion && p.kurdistan_region !== filters.kurdistanRegion) return false;
-    if (filters.bodyType && p.body_type !== filters.bodyType) return false;
-    if (filters.smoking && p.smoking !== filters.smoking) return false;
-    if (filters.drinking && p.drinking !== filters.drinking) return false;
-    if (filters.exerciseHabits && p.exercise_habits !== filters.exerciseHabits) return false;
-    if (filters.education && p.education !== filters.education) return false;
-    if (filters.occupation && !p.occupation?.toLowerCase().includes(filters.occupation.toLowerCase())) return false;
-    if (filters.location && !p.location?.toLowerCase().includes(filters.location.toLowerCase())) return false;
-    return true;
-  });
 };

@@ -19,16 +19,25 @@ export interface Conversation {
   isOnline: boolean;
 }
 
+const MAX_MESSAGE_LENGTH = 5000;
+
 export const sendMessage = async (recipientId: string, text: string): Promise<Message> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Input validation
+  if (!text || typeof text !== 'string') throw new Error('Message text is required');
+  const trimmed = text.trim();
+  if (trimmed.length === 0) throw new Error('Message cannot be empty');
+  if (trimmed.length > MAX_MESSAGE_LENGTH) throw new Error(`Message exceeds ${MAX_MESSAGE_LENGTH} characters`);
+  if (user.id === recipientId) throw new Error('Cannot send message to yourself');
 
   const { data, error } = await supabase
     .from('messages')
     .insert({
-      sender_id: session.user.id,
+      sender_id: user.id,
       recipient_id: recipientId,
-      text
+      text: trimmed
     })
     .select()
     .single();
@@ -38,10 +47,10 @@ export const sendMessage = async (recipientId: string, text: string): Promise<Me
 };
 
 export const getMessages = async (otherUserId: string): Promise<Message[]> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
-  const userId = session.user.id;
+  const userId = user.id;
 
   const { data, error } = await supabase
     .from('messages')
@@ -54,13 +63,11 @@ export const getMessages = async (otherUserId: string): Promise<Message[]> => {
 };
 
 export const getConversations = async (): Promise<Conversation[]> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
-  const userId = session.user.id;
+  const userId = user.id;
 
-  // Get all messages involving the current user, with profile info
-  // Fetch only the latest 500 messages to prevent performance issues
   const { data, error } = await supabase
     .from('messages')
     .select(`
@@ -74,10 +81,9 @@ export const getConversations = async (): Promise<Conversation[]> => {
 
   if (error) throw error;
 
-  // Group messages by conversation partner and get latest message per conversation
   const conversationMap = new Map<string, Conversation>();
 
-  data?.forEach((message: any) => {
+  data?.forEach((message: { sender_id: string; recipient_id: string; sender: { id: string; name: string; profile_image: string | null }; recipient: { id: string; name: string; profile_image: string | null }; text: string; created_at: string; read: boolean }) => {
     const isFromMe = message.sender_id === userId;
     const otherUser = isFromMe ? message.recipient : message.sender;
     const conversationId = otherUser.id;
@@ -90,11 +96,10 @@ export const getConversations = async (): Promise<Conversation[]> => {
         lastMessage: message.text,
         lastMessageTime: message.created_at,
         unreadCount: 0,
-        isOnline: false // We don't have online status tracking yet
+        isOnline: false
       });
     }
 
-    // Count unread messages (messages sent to me that aren't read)
     if (!isFromMe && !message.read) {
       const conversation = conversationMap.get(conversationId)!;
       conversation.unreadCount++;
@@ -107,14 +112,14 @@ export const getConversations = async (): Promise<Conversation[]> => {
 };
 
 export const markMessagesAsRead = async (otherUserId: string): Promise<void> => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) throw new Error('No user authenticated');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
 
   const { error } = await supabase
     .from('messages')
     .update({ read: true })
     .eq('sender_id', otherUserId)
-    .eq('recipient_id', session.user.id);
+    .eq('recipient_id', user.id);
 
   if (error) throw error;
 };
