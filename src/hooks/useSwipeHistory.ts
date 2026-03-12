@@ -89,14 +89,13 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
           await supabase
             .from('likes')
             .delete()
-            .eq('liker_id', session.user.id)
+            .eq('liker_id', user.id)
             .eq('likee_id', swipeToRewind.swiped_profile_id);
 
-          // Also remove any match that was created
           await supabase
             .from('matches')
             .delete()
-            .or(`and(user1_id.eq.${session.user.id},user2_id.eq.${swipeToRewind.swiped_profile_id}),and(user1_id.eq.${swipeToRewind.swiped_profile_id},user2_id.eq.${session.user.id})`);
+            .or(`and(user1_id.eq.${user.id},user2_id.eq.${swipeToRewind.swiped_profile_id}),and(user1_id.eq.${swipeToRewind.swiped_profile_id},user2_id.eq.${user.id})`);
         }
       }
 
