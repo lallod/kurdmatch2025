@@ -45,7 +45,7 @@ const PrivacySettings: React.FC = () => {
         if (!matchData) return;
 
         const matchedUserIds = matchData.map(m => 
-          m.user1_id === session.user.id ? m.user2_id : m.user1_id
+          m.user1_id === user.id ? m.user2_id : m.user1_id
         ).filter(Boolean);
 
         if (matchedUserIds.length === 0) return;
