@@ -1,87 +1,48 @@
 
 
-# Systemfiks: Mobil-UX og Oversettelser
+# P2 Security Hardening & Code Quality
 
-## Hva fikses
+## Audit of Remaining Issues
 
-8 filer oppdateres for a fikse to hovedproblemer: usynlige redigeringsknapper pa mobil og hardkodede engelske tekster.
+### Remaining `getSession()` (6 files)
+| File | Verdict |
+|------|---------|
+| `src/integrations/supabase/auth.tsx` | **OK** - Initial session bootstrap, legitimate use |
+| `src/components/auth/hooks/useOAuthCallback.ts` | **OK** - OAuth flow, needs session check |
+| `src/components/auth/hooks/useRegistrationForm.tsx` | **OK** - OAuth registration detection |
+| `src/pages/ResetPassword.tsx` | **OK** - Recovery flow session check |
+| `src/utils/auth/adminManager.ts` | **FIX** - Line 86 verifies session after login, should use `getUser()` |
+| `src/hooks/usePhoneVerification.ts` | **FIX** - Two calls (lines 17, 43) should use `getUser()` |
 
----
+### Remaining `select('*')` on `profiles` (4 locations)
+| File | Context | Risk |
+|------|---------|------|
+| `src/utils/demoDataGenerator.ts` | Admin tool | Medium - admin-only but still leaks pattern |
+| `src/utils/realUserEnhancement.ts` | Admin enhancement tool | Medium |
+| `src/utils/profileGenerator/generators/generators/profileDetails.ts` | Admin profile generator | Medium |
+| `src/pages/SuperAdmin/components/users/AdminProfileEditor.tsx` | Admin panel editing own users | Low - admin needs full data, but should still use explicit columns |
 
-## Del 1: Mobil-redigeringsknapper (P0 -- kritisk)
+### Console.log Cleanup
+610 `console.log` calls in 34 files. These leak internal logic to browser DevTools in production. Rather than removing them all, we should **replace them with a logger utility** that is silent in production.
 
-Pa mobil finnes ingen hover-effekt, sa alle knapper med `opacity-0 group-hover:opacity-100` er usynlige. Fiksen: `opacity-100 md:opacity-0 md:group-hover:opacity-100` (alltid synlig pa mobil, hover pa desktop).
+### `any` Type Usage
+825 instances in 104 files. Too large for one pass. Will skip for now - this is a long-term refactor task.
 
-### Filer som endres:
+## Implementation Plan
 
-**1. `src/components/profile/DetailItem.tsx` (linje 180)**
-- Redigeringsblyant for profilfelt
-- Fra: `opacity-0 group-hover:opacity-100`
-- Til: `opacity-100 md:opacity-0 md:group-hover:opacity-100`
+### Step 1: Fix remaining `getSession()` (2 files)
+- `usePhoneVerification.ts`: Replace both `getSession()` with `getUser()`
+- `adminManager.ts`: Replace session verification at line 86 with `getUser()`
 
-**2. `src/components/profile/ProfileQuickStats.tsx` (linje 70)**
-- Redigeringsknapp pa hurtigstatistikk-kort
-- Samme endring
+### Step 2: Fix remaining `select('*')` on profiles (4 files)
+- Replace with `SAFE_PROFILE_COLUMNS` or `ALL_OWN_PROFILE_COLUMNS` depending on context
+- Admin tools that need full data can use `ALL_OWN_PROFILE_COLUMNS`
 
-**3. `src/components/my-profile/InlineEditableField.tsx` (linje 123)**
-- Inline-redigering for tekstfelt
-- Endrer `opacity-0 group-hover/edit:opacity-100` til `opacity-100 md:opacity-0 md:group-hover/edit:opacity-100`
+### Step 3: Create production logger utility
+Create `src/utils/logger.ts` that wraps `console.log/warn/error` and is silent in production (`import.meta.env.PROD`). Then replace the most security-sensitive `console.log` calls (auth flows, admin manager, API layer) - approximately 15-20 files.
 
-**4. `src/pages/MyProfile.tsx` (linje 467)**
-- Fotogalleri-overlay med "sett som profilbilde" og "slett"
-- Endrer hele overlay fra `opacity-0 group-hover:opacity-100` til `opacity-100 md:opacity-0 md:group-hover:opacity-100`
+### Step 4: Remove sensitive console.log in auth flows
+Priority files: `adminManager.ts`, `assignAdminRole.ts`, `useOAuthCallback.ts`, `useRegistrationForm.tsx` - these log credentials, user IDs, and session data.
 
-**5. `src/components/my-profile/PhotoManagement.tsx` (linje 110)**
-- Samme fotooverlay-problem
+**Estimated files to modify**: ~10 files
 
-**6. `src/components/instagram/PostsGrid.tsx` (linje 46)**
-- Post-statistikk overlay (likes/kommentarer)
-
----
-
-## Del 2: Oversettelser -- hardkodede engelske tekster (P1)
-
-**7. `src/pages/Profile.tsx`** -- 18 hardkodede feltnavn:
-
-| Linje | Fra | Til |
-|-------|-----|-----|
-| 131 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
-| 175 | `Occupation:` | `t('profile.occupation', 'Occupation'):` |
-| 176 | `Education:` | `t('profile.education', 'Education'):` |
-| 177 | `Company:` | `t('profile.company', 'Company'):` |
-| 178 | `Goals:` | `t('profile.goals', 'Goals'):` |
-| 179 | `Work Style:` | `t('profile.work_style', 'Work Style'):` |
-| 190 | `Exercise:` | `t('profile.exercise', 'Exercise'):` |
-| 191 | `Diet:` | `t('profile.diet', 'Diet'):` |
-| 192 | `Smoking:` | `t('profile.smoking', 'Smoking'):` |
-| 193 | `Drinking:` | `t('profile.drinking', 'Drinking'):` |
-| 194 | `Sleep:` | `t('profile.sleep', 'Sleep'):` |
-| 195 | `Pets:` | `t('profile.pets', 'Pets'):` |
-| 198 | `Hobbies:` | `t('profile.hobbies', 'Hobbies'):` |
-| 216 | `Political Views:` | `t('profile.political_views', 'Political Views'):` |
-| 247 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
-| 248 | `Children:` | `t('profile.children', 'Children'):` |
-| 249 | `Love Language:` | `t('profile.love_language', 'Love Language'):` |
-| 250 | `Communication:` | `t('profile.communication', 'Communication'):` |
-| 251 | `Ideal Date:` | `t('profile.ideal_date', 'Ideal Date'):` |
-| 252 | `Family:` | `t('profile.family', 'Family'):` |
-| 260 | `Kurdish` | `t('profile.kurdish', 'Kurdish')` |
-| 270 | `Languages` | `t('profile.languages', 'Languages')` |
-
-**MyProfile.tsx** -- seksjons-titler (linje 455, 516-558, 570):
-- `"Photos"` -> `t('profile.photos', 'Photos')`
-- `"Basics"`, `"Lifestyle"`, `"Interests & Hobbies"`, `"Communication"`, `"Personality & Growth"`, `"Creative & Lifestyle"`, `"Travel"` -- alle pakkes i `t()`
-- `"Privacy & Visibility"` -> `t('profile.privacy_visibility', 'Privacy & Visibility')`
-
-**8. `src/pages/InstagramProfile.tsx`** (linje 69-70):
-- `"Profile not found"` -> `t('profile.not_found', 'Profile not found')`
-- `"Go back"` -> `t('common.go_back', 'Go back')`
-
----
-
-## Teknisk oppsummering
-
-- **8 filer endres**
-- **0 nye filer**
-- **0 database-endringer**
-- Alle endringer er CSS-klasser og tekst-wrapping -- ingen logikkendringer
