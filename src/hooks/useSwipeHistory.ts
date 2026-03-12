@@ -131,7 +131,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
         name: profileData.name || '',
         age: profileData.age || 0,
         location: profileData.location || '',
-        avatar: profileData.profile_image || profileData.photos?.[0]?.url || '',
+        avatar: profileData.profile_image || photosData?.[0]?.url || '',
         distance: 0,
         compatibilityScore: 0,
         kurdistanRegion: profileData.kurdistan_region || 'South-Kurdistan',
