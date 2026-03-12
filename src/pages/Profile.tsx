@@ -47,7 +47,7 @@ const Profile = () => {
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select(SAFE_PROFILE_COLUMNS)
         .eq('id', profileId)
         .neq('profile_image', 'https://placehold.co/400')
         .not('profile_image', 'is', null)
