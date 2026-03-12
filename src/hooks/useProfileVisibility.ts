@@ -56,7 +56,7 @@ export const useProfileVisibility = () => {
       const { data: settings } = await supabase
         .from('profile_visibility_settings')
         .select('field_name, is_visible')
-        .eq('user_id', session.user.id);
+        .eq('user_id', user.id);
 
       const vis: FieldVisibility = {};
       // Default all fields to visible
