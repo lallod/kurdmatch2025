@@ -103,12 +103,14 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
       // Fetch the profile data for the rewound swipe
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select(`
-          ${SAFE_PROFILE_COLUMNS},
-          photos (url)
-        `)
+        .select(SAFE_PROFILE_COLUMNS)
         .eq('id', swipeToRewind.swiped_profile_id)
-        .single();
+        .single() as { data: any; error: any };
+
+      const { data: photosData } = await supabase
+        .from('photos')
+        .select('url')
+        .eq('profile_id', swipeToRewind.swiped_profile_id);
 
       if (profileError || !profileData) {
         throw new Error('Failed to fetch profile');

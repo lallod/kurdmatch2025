@@ -94,7 +94,7 @@ const PrivacySettings: React.FC = () => {
         await supabase
           .from('profile_sharing')
           .upsert({
-            owner_id: session.user.id,
+            owner_id: user.id,
             shared_with_user_id: userId,
             share_type: 'all',
           }, { onConflict: 'owner_id,shared_with_user_id' });

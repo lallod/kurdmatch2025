@@ -16,8 +16,8 @@ export const useBulkUserDelete = (onRefresh: () => void) => {
   const confirmDeleteAllUsers = async (role: string) => {
     setIsDeleting(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const currentUserId = session?.user?.id;
+      const { data: { user } } = await supabase.auth.getUser();
+      const currentUserId = user?.id;
       
       if (role === 'all') {
         const { error } = await supabase
