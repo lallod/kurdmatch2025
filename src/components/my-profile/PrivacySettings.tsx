@@ -33,8 +33,8 @@ const PrivacySettings: React.FC = () => {
     const loadMatches = async () => {
       setLoadingMatches(true);
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) return;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
         const { data: matchData } = await supabase
           .from('matches')
