@@ -49,14 +49,14 @@ export const useProfileVisibility = () => {
   const loadSettings = useCallback(async () => {
     try {
       setLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       // Load visibility settings
       const { data: settings } = await supabase
         .from('profile_visibility_settings')
         .select('field_name, is_visible')
-        .eq('user_id', session.user.id);
+        .eq('user_id', user.id);
 
       const vis: FieldVisibility = {};
       // Default all fields to visible
@@ -69,7 +69,7 @@ export const useProfileVisibility = () => {
       const { data: profile } = await supabase
         .from('profiles')
         .select('blur_photos')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .single();
       setBlurPhotosState(profile?.blur_photos || false);
     } catch (err) {
@@ -83,15 +83,15 @@ export const useProfileVisibility = () => {
 
   const toggleField = async (fieldName: string, isVisible: boolean) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       setVisibility(prev => ({ ...prev, [fieldName]: isVisible }));
 
       const { error } = await supabase
         .from('profile_visibility_settings')
         .upsert({
-          user_id: session.user.id,
+          user_id: user.id,
           field_name: fieldName,
           is_visible: isVisible,
           updated_at: new Date().toISOString(),
@@ -107,15 +107,15 @@ export const useProfileVisibility = () => {
 
   const setBlurPhotos = async (blur: boolean) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       setBlurPhotosState(blur);
 
       const { error } = await supabase
         .from('profiles')
         .update({ blur_photos: blur })
-        .eq('id', session.user.id);
+        .eq('id', user.id);
 
       if (error) throw error;
     } catch (err) {
@@ -146,14 +146,14 @@ export const useProfileVisibility = () => {
   // Check if current user has sharing access to another user's hidden fields
   const hasShareAccess = async (ownerId: string): Promise<{ hasAccess: boolean; shareType: string; sharedFields: string[] }> => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return { hasAccess: false, shareType: '', sharedFields: [] };
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { hasAccess: false, shareType: '', sharedFields: [] };
 
       const { data } = await supabase
         .from('profile_sharing')
         .select('share_type, shared_fields')
         .eq('owner_id', ownerId)
-        .eq('shared_with_user_id', session.user.id)
+        .eq('shared_with_user_id', user.id)
         .maybeSingle();
 
       return {

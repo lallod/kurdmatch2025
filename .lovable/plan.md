@@ -1,53 +1,87 @@
 
 
-# P1 Security Fixes - Continued Hardening
+# Systemfiks: Mobil-UX og Oversettelser
 
-## Remaining Vulnerabilities Found
+## Hva fikses
 
-### 1. Remaining `profiles.select('*')` - PII Leakage (3 locations)
+8 filer oppdateres for a fikse to hovedproblemer: usynlige redigeringsknapper pa mobil og hardkodede engelske tekster.
 
-| File | Line | Risk |
-|------|------|------|
-| `src/pages/Profile.tsx` | 49 | Exposes phone/GPS of **other users** to any visitor |
-| `src/components/settings/PushNotificationPreferences.tsx` | 39 | Own profile - acceptable but should use `ALL_OWN_PROFILE_COLUMNS` |
-| `src/api/accountActions.ts` | 9 | Own profile data export - acceptable but should use `ALL_OWN_PROFILE_COLUMNS` |
+---
 
-**Profile.tsx is critical** - it fetches another user's profile with `select('*')`, leaking PII.
+## Del 1: Mobil-redigeringsknapper (P0 -- kritisk)
 
-### 2. Remaining `getSession()` instead of `getUser()` (8 locations)
+Pa mobil finnes ingen hover-effekt, sa alle knapper med `opacity-0 group-hover:opacity-100` er usynlige. Fiksen: `opacity-100 md:opacity-0 md:group-hover:opacity-100` (alltid synlig pa mobil, hover pa desktop).
 
-These use cached session data instead of server-verified tokens:
+### Filer som endres:
 
-| File | Function |
-|------|----------|
-| `src/hooks/useSwipeHistory.ts` | rewind logic |
-| `src/contexts/SubscriptionContext.tsx` | checkSubscription |
-| `src/hooks/useProfileAccess.ts` | checkMatch |
-| `src/hooks/useProfileVisibility.ts` | 4 functions (fetch, toggle, blur, share) |
-| `src/components/my-profile/PrivacySettings.tsx` | 2 functions |
-| `src/api/reports.ts` | createReport |
-| `src/pages/SuperAdmin/components/users/hooks/useUserDelete.ts` | confirmDeleteUser |
-| `src/pages/SuperAdmin/components/users/hooks/useBulkUserDelete.ts` | confirmDeleteAllUsers |
+**1. `src/components/profile/DetailItem.tsx` (linje 180)**
+- Redigeringsblyant for profilfelt
+- Fra: `opacity-0 group-hover:opacity-100`
+- Til: `opacity-100 md:opacity-0 md:group-hover:opacity-100`
 
-### 3. Input Validation Missing
+**2. `src/components/profile/ProfileQuickStats.tsx` (linje 70)**
+- Redigeringsknapp pa hurtigstatistikk-kort
+- Samme endring
 
-- **`src/api/reports.ts`**: `reason` and `details` fields have no length validation or sanitization - potential XSS/injection via report content.
-- **`src/api/accountActions.ts`**: `downloadUserData` uses `select('*')` on messages, matches, likes - could return massive datasets with no pagination.
+**3. `src/components/my-profile/InlineEditableField.tsx` (linje 123)**
+- Inline-redigering for tekstfelt
+- Endrer `opacity-0 group-hover/edit:opacity-100` til `opacity-100 md:opacity-0 md:group-hover/edit:opacity-100`
 
-## Implementation Plan
+**4. `src/pages/MyProfile.tsx` (linje 467)**
+- Fotogalleri-overlay med "sett som profilbilde" og "slett"
+- Endrer hele overlay fra `opacity-0 group-hover:opacity-100` til `opacity-100 md:opacity-0 md:group-hover:opacity-100`
 
-### Step 1: Fix Profile.tsx PII Leak
-Replace `select('*')` with `select(SAFE_PROFILE_COLUMNS)` for viewing other users' profiles. Use `ALL_OWN_PROFILE_COLUMNS` for own-profile queries.
+**5. `src/components/my-profile/PhotoManagement.tsx` (linje 110)**
+- Samme fotooverlay-problem
 
-### Step 2: Replace all remaining `getSession()` with `getUser()`
-Systematically update all 8 files to use `supabase.auth.getUser()` for server-side token verification.
+**6. `src/components/instagram/PostsGrid.tsx` (linje 46)**
+- Post-statistikk overlay (likes/kommentarer)
 
-### Step 3: Add input validation to reports API
-Add length limits and sanitization to `createReport` (reason max 200 chars, details max 2000 chars).
+---
 
-### Step 4: Fix accountActions data export
-- Use `ALL_OWN_PROFILE_COLUMNS` for own profile export
-- Add row limits to messages/matches/likes queries to prevent memory exhaustion
+## Del 2: Oversettelser -- hardkodede engelske tekster (P1)
 
-**Files to modify**: 10 files across API layer, hooks, and components.
+**7. `src/pages/Profile.tsx`** -- 18 hardkodede feltnavn:
 
+| Linje | Fra | Til |
+|-------|-----|-----|
+| 131 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
+| 175 | `Occupation:` | `t('profile.occupation', 'Occupation'):` |
+| 176 | `Education:` | `t('profile.education', 'Education'):` |
+| 177 | `Company:` | `t('profile.company', 'Company'):` |
+| 178 | `Goals:` | `t('profile.goals', 'Goals'):` |
+| 179 | `Work Style:` | `t('profile.work_style', 'Work Style'):` |
+| 190 | `Exercise:` | `t('profile.exercise', 'Exercise'):` |
+| 191 | `Diet:` | `t('profile.diet', 'Diet'):` |
+| 192 | `Smoking:` | `t('profile.smoking', 'Smoking'):` |
+| 193 | `Drinking:` | `t('profile.drinking', 'Drinking'):` |
+| 194 | `Sleep:` | `t('profile.sleep', 'Sleep'):` |
+| 195 | `Pets:` | `t('profile.pets', 'Pets'):` |
+| 198 | `Hobbies:` | `t('profile.hobbies', 'Hobbies'):` |
+| 216 | `Political Views:` | `t('profile.political_views', 'Political Views'):` |
+| 247 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
+| 248 | `Children:` | `t('profile.children', 'Children'):` |
+| 249 | `Love Language:` | `t('profile.love_language', 'Love Language'):` |
+| 250 | `Communication:` | `t('profile.communication', 'Communication'):` |
+| 251 | `Ideal Date:` | `t('profile.ideal_date', 'Ideal Date'):` |
+| 252 | `Family:` | `t('profile.family', 'Family'):` |
+| 260 | `Kurdish` | `t('profile.kurdish', 'Kurdish')` |
+| 270 | `Languages` | `t('profile.languages', 'Languages')` |
+
+**MyProfile.tsx** -- seksjons-titler (linje 455, 516-558, 570):
+- `"Photos"` -> `t('profile.photos', 'Photos')`
+- `"Basics"`, `"Lifestyle"`, `"Interests & Hobbies"`, `"Communication"`, `"Personality & Growth"`, `"Creative & Lifestyle"`, `"Travel"` -- alle pakkes i `t()`
+- `"Privacy & Visibility"` -> `t('profile.privacy_visibility', 'Privacy & Visibility')`
+
+**8. `src/pages/InstagramProfile.tsx`** (linje 69-70):
+- `"Profile not found"` -> `t('profile.not_found', 'Profile not found')`
+- `"Go back"` -> `t('common.go_back', 'Go back')`
+
+---
+
+## Teknisk oppsummering
+
+- **8 filer endres**
+- **0 nye filer**
+- **0 database-endringer**
+- Alle endringer er CSS-klasser og tekst-wrapping -- ingen logikkendringer

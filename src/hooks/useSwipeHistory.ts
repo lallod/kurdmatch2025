@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Profile } from '@/types/swipe';
+import { SAFE_PROFILE_COLUMNS } from '@/api/constants';
 import { useSubscription } from '@/hooks/useSubscription';
 import { 
   recordSwipe, 
@@ -84,31 +85,32 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
 
       // If it was a like or superlike, remove the like from the database
       if (swipeToRewind.action === 'like' || swipeToRewind.action === 'superlike') {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
           await supabase
             .from('likes')
             .delete()
-            .eq('liker_id', session.user.id)
+            .eq('liker_id', user.id)
             .eq('likee_id', swipeToRewind.swiped_profile_id);
 
-          // Also remove any match that was created
           await supabase
             .from('matches')
             .delete()
-            .or(`and(user1_id.eq.${session.user.id},user2_id.eq.${swipeToRewind.swiped_profile_id}),and(user1_id.eq.${swipeToRewind.swiped_profile_id},user2_id.eq.${session.user.id})`);
+            .or(`and(user1_id.eq.${user.id},user2_id.eq.${swipeToRewind.swiped_profile_id}),and(user1_id.eq.${swipeToRewind.swiped_profile_id},user2_id.eq.${user.id})`);
         }
       }
 
       // Fetch the profile data for the rewound swipe
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          photos (url)
-        `)
+        .select(SAFE_PROFILE_COLUMNS)
         .eq('id', swipeToRewind.swiped_profile_id)
-        .single();
+        .single() as { data: any; error: any };
+
+      const { data: photosData } = await supabase
+        .from('photos')
+        .select('url')
+        .eq('profile_id', swipeToRewind.swiped_profile_id);
 
       if (profileError || !profileData) {
         throw new Error('Failed to fetch profile');
@@ -129,7 +131,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
         name: profileData.name || '',
         age: profileData.age || 0,
         location: profileData.location || '',
-        avatar: profileData.profile_image || profileData.photos?.[0]?.url || '',
+        avatar: profileData.profile_image || photosData?.[0]?.url || '',
         distance: 0,
         compatibilityScore: 0,
         kurdistanRegion: profileData.kurdistan_region || 'South-Kurdistan',
@@ -141,7 +143,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
         languages: profileData.languages || [],
         height: profileData.height || '',
         dietaryPreferences: profileData.dietary_preferences || '',
-        photos: profileData.photos?.map((p: { url: string }) => p.url) || [],
+        photos: photosData?.map((p: { url: string }) => p.url) || [],
         bio: profileData.bio || '',
         relationshipGoals: profileData.relationship_goals || 'Long-term relationship',
         verified: profileData.verified || false,

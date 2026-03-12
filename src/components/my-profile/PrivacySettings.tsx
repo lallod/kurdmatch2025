@@ -33,19 +33,19 @@ const PrivacySettings: React.FC = () => {
     const loadMatches = async () => {
       setLoadingMatches(true);
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) return;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
         const { data: matchData } = await supabase
           .from('matches')
           .select('user1_id, user2_id')
-          .or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`)
+          .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
           .limit(50);
 
         if (!matchData) return;
 
         const matchedUserIds = matchData.map(m => 
-          m.user1_id === session.user.id ? m.user2_id : m.user1_id
+          m.user1_id === user.id ? m.user2_id : m.user1_id
         ).filter(Boolean);
 
         if (matchedUserIds.length === 0) return;
@@ -61,7 +61,7 @@ const PrivacySettings: React.FC = () => {
         const { data: sharingData } = await supabase
           .from('profile_sharing')
           .select('shared_with_user_id')
-          .eq('owner_id', session.user.id);
+          .eq('owner_id', user.id);
 
         const shared: Record<string, boolean> = {};
         sharingData?.forEach(s => { shared[s.shared_with_user_id] = true; });
@@ -77,8 +77,8 @@ const PrivacySettings: React.FC = () => {
 
   const toggleShareWithUser = async (userId: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       const isCurrentlyShared = sharedWith[userId];
 
@@ -86,7 +86,7 @@ const PrivacySettings: React.FC = () => {
         await supabase
           .from('profile_sharing')
           .delete()
-          .eq('owner_id', session.user.id)
+          .eq('owner_id', user.id)
           .eq('shared_with_user_id', userId);
         setSharedWith(prev => ({ ...prev, [userId]: false }));
         toast.success(t('toast.privacy.sharing_removed', 'Sharing removed'));
@@ -94,7 +94,7 @@ const PrivacySettings: React.FC = () => {
         await supabase
           .from('profile_sharing')
           .upsert({
-            owner_id: session.user.id,
+            owner_id: user.id,
             shared_with_user_id: userId,
             share_type: 'all',
           }, { onConflict: 'owner_id,shared_with_user_id' });

@@ -36,7 +36,7 @@ export const PushNotificationPreferences: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('*')
+          .select('notification_preferences')
           .eq('id', user.id)
           .single();
 

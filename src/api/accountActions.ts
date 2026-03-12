@@ -1,16 +1,17 @@
 import { supabase } from '@/integrations/supabase/client';
 import { UserDataExport, ConnectedSocialAccount } from '@/types/account';
+import { ALL_OWN_PROFILE_COLUMNS } from '@/api/constants';
 
 export const downloadUserData = async (): Promise<UserDataExport> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
   const [profileData, photosData, messagesData, matchesData, likesData] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase.from('profiles').select(ALL_OWN_PROFILE_COLUMNS).eq('id', user.id).single(),
     supabase.from('photos').select('*').eq('profile_id', user.id),
-    supabase.from('messages').select('*').or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`),
-    supabase.from('matches').select('*').or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`),
-    supabase.from('likes').select('*').or(`liker_id.eq.${user.id},likee_id.eq.${user.id}`)
+    supabase.from('messages').select('id, text, sender_id, recipient_id, created_at, media_type').or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`).order('created_at', { ascending: false }).limit(500),
+    supabase.from('matches').select('id, user1_id, user2_id, matched_at').or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`).limit(500),
+    supabase.from('likes').select('id, liker_id, likee_id, created_at').or(`liker_id.eq.${user.id},likee_id.eq.${user.id}`).limit(500)
   ]);
 
   const connectedAccounts = await getConnectedAccounts();

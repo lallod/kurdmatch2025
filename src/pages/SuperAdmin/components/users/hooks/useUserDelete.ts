@@ -20,8 +20,8 @@ export const useUserDelete = (onRefresh: () => void) => {
     
     setIsDeleting(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (userToDelete.id === session?.user?.id) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (userToDelete.id === user?.id) {
         throw new Error(t('admin.cannot_delete_own_account', 'You cannot delete your own account'));
       }
 
