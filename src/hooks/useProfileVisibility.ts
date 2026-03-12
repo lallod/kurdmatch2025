@@ -83,8 +83,8 @@ export const useProfileVisibility = () => {
 
   const toggleField = async (fieldName: string, isVisible: boolean) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       setVisibility(prev => ({ ...prev, [fieldName]: isVisible }));
 
