@@ -84,8 +84,8 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
 
       // If it was a like or superlike, remove the like from the database
       if (swipeToRewind.action === 'like' || swipeToRewind.action === 'superlike') {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
           await supabase
             .from('likes')
             .delete()
