@@ -91,7 +91,7 @@ export const useProfileVisibility = () => {
       const { error } = await supabase
         .from('profile_visibility_settings')
         .upsert({
-          user_id: session.user.id,
+          user_id: user.id,
           field_name: fieldName,
           is_visible: isVisible,
           updated_at: new Date().toISOString(),
