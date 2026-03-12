@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { UserDataExport, ConnectedSocialAccount } from '@/types/account';
+import { ALL_OWN_PROFILE_COLUMNS } from '@/api/constants';
 
 export const downloadUserData = async (): Promise<UserDataExport> => {
   const { data: { user } } = await supabase.auth.getUser();
