@@ -146,8 +146,8 @@ export const useProfileVisibility = () => {
   // Check if current user has sharing access to another user's hidden fields
   const hasShareAccess = async (ownerId: string): Promise<{ hasAccess: boolean; shareType: string; sharedFields: string[] }> => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return { hasAccess: false, shareType: '', sharedFields: [] };
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { hasAccess: false, shareType: '', sharedFields: [] };
 
       const { data } = await supabase
         .from('profile_sharing')
