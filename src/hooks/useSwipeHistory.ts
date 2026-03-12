@@ -103,7 +103,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select(`
-          *,
+          ${SAFE_PROFILE_COLUMNS},
           photos (url)
         `)
         .eq('id', swipeToRewind.swiped_profile_id)
