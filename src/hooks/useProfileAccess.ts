@@ -95,7 +95,7 @@ async function checkMatch(targetUserId: string): Promise<boolean> {
     const { data, error } = await supabase
       .from('matches')
       .select('id')
-      .or(`and(user1_id.eq.${session.user.id},user2_id.eq.${targetUserId}),and(user1_id.eq.${targetUserId},user2_id.eq.${session.user.id})`)
+      .or(`and(user1_id.eq.${user.id},user2_id.eq.${targetUserId}),and(user1_id.eq.${targetUserId},user2_id.eq.${user.id})`)
       .limit(1)
       .maybeSingle();
 

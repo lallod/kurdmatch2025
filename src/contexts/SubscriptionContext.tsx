@@ -28,9 +28,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const checkSubscription = useCallback(async () => {
     try {
       setIsLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
       
-      if (!session) {
+      if (!user) {
         setSubscription({ subscription_type: "free", expires_at: null, is_active: true });
         return;
       }

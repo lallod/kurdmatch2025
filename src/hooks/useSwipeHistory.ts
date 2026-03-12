@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Profile } from '@/types/swipe';
+import { SAFE_PROFILE_COLUMNS } from '@/api/constants';
 import { useSubscription } from '@/hooks/useSubscription';
 import { 
   recordSwipe, 

@@ -153,7 +153,7 @@ export const useProfileVisibility = () => {
         .from('profile_sharing')
         .select('share_type, shared_fields')
         .eq('owner_id', ownerId)
-        .eq('shared_with_user_id', session.user.id)
+        .eq('shared_with_user_id', user.id)
         .maybeSingle();
 
       return {
