@@ -61,7 +61,7 @@ const PrivacySettings: React.FC = () => {
         const { data: sharingData } = await supabase
           .from('profile_sharing')
           .select('shared_with_user_id')
-          .eq('owner_id', session.user.id);
+          .eq('owner_id', user.id);
 
         const shared: Record<string, boolean> = {};
         sharingData?.forEach(s => { shared[s.shared_with_user_id] = true; });
