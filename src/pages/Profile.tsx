@@ -10,6 +10,7 @@ import { languageCategories } from '@/data/languages';
 import ProfileSwipeActions from '@/components/swipe/ProfileSwipeActions';
 import ProfileActionButtons from '@/components/profile/ProfileActionButtons';
 import { toast } from 'sonner';
+import { SAFE_PROFILE_COLUMNS } from '@/api/constants';
 import { getDisplayValue, hasRealArrayValues } from '@/utils/profileHelpers';
 import { useCompatibility } from '@/hooks/useCompatibility';
 import { useSupabaseAuth } from '@/integrations/supabase/auth';
