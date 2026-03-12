@@ -143,7 +143,7 @@ export const useSwipeHistory = (): UseSwipeHistoryReturn => {
         languages: profileData.languages || [],
         height: profileData.height || '',
         dietaryPreferences: profileData.dietary_preferences || '',
-        photos: profileData.photos?.map((p: { url: string }) => p.url) || [],
+        photos: photosData?.map((p: { url: string }) => p.url) || [],
         bio: profileData.bio || '',
         relationshipGoals: profileData.relationship_goals || 'Long-term relationship',
         verified: profileData.verified || false,
