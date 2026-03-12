@@ -86,7 +86,7 @@ const PrivacySettings: React.FC = () => {
         await supabase
           .from('profile_sharing')
           .delete()
-          .eq('owner_id', session.user.id)
+          .eq('owner_id', user.id)
           .eq('shared_with_user_id', userId);
         setSharedWith(prev => ({ ...prev, [userId]: false }));
         toast.success(t('toast.privacy.sharing_removed', 'Sharing removed'));
