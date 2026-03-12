@@ -77,8 +77,8 @@ const PrivacySettings: React.FC = () => {
 
   const toggleShareWithUser = async (userId: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       const isCurrentlyShared = sharedWith[userId];
 
