@@ -49,8 +49,8 @@ export const useProfileVisibility = () => {
   const loadSettings = useCallback(async () => {
     try {
       setLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       // Load visibility settings
       const { data: settings } = await supabase
