@@ -69,7 +69,7 @@ export const useProfileVisibility = () => {
       const { data: profile } = await supabase
         .from('profiles')
         .select('blur_photos')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .single();
       setBlurPhotosState(profile?.blur_photos || false);
     } catch (err) {
