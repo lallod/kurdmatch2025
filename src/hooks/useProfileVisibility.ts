@@ -107,8 +107,8 @@ export const useProfileVisibility = () => {
 
   const setBlurPhotos = async (blur: boolean) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       setBlurPhotosState(blur);
 
