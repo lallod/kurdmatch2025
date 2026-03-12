@@ -39,7 +39,7 @@ const PrivacySettings: React.FC = () => {
         const { data: matchData } = await supabase
           .from('matches')
           .select('user1_id, user2_id')
-          .or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`)
+          .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
           .limit(50);
 
         if (!matchData) return;
