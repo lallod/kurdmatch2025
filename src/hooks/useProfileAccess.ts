@@ -89,8 +89,8 @@ export const useProfileAccess = (context: ProfileContext = 'social', targetUserI
 
 async function checkMatch(targetUserId: string): Promise<boolean> {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) return false;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
 
     const { data, error } = await supabase
       .from('matches')
