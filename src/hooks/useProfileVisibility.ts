@@ -115,7 +115,7 @@ export const useProfileVisibility = () => {
       const { error } = await supabase
         .from('profiles')
         .update({ blur_photos: blur })
-        .eq('id', session.user.id);
+        .eq('id', user.id);
 
       if (error) throw error;
     } catch (err) {
