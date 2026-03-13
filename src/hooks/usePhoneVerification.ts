@@ -14,8 +14,8 @@ export const usePhoneVerification = () => {
   const sendVerificationCode = async (phoneNumber: string) => {
     setLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { throw new Error(t('common.not_authenticated', 'Not authenticated')); }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { throw new Error(t('common.not_authenticated', 'Not authenticated')); }
 
       const { data, error } = await supabase.functions.invoke('send-sms-verification', { body: { phoneNumber } });
       if (error) throw error;
