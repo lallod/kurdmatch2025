@@ -405,11 +405,17 @@ export const getProfileSuggestions = async (filters?: Record<string, unknown>): 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
+  // Get non-PII profile data
   const { data: currentProfile } = await supabase
     .from('profiles')
-    .select('gender, interests, values, hobbies, kurdistan_region, travel_mode_active, travel_location, latitude, longitude')
+    .select('gender, interests, values, hobbies, kurdistan_region, travel_mode_active, travel_location')
     .eq('id', user.id)
     .maybeSingle();
+
+  // Get own PII (lat/lng) via secure RPC
+  const { data: piiData } = await supabase.rpc('get_own_profile_pii');
+  const ownLat = piiData?.[0]?.latitude;
+  const ownLng = piiData?.[0]?.longitude;
 
   if (!currentProfile) return [];
 
