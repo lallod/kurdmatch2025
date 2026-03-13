@@ -24,8 +24,15 @@ const PhoneVerification = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase.from('profiles').select('phone_verified, phone_number').eq('id', user.id).single();
-          if (profile?.phone_verified) { setIsAlreadyVerified(true); setPhoneNumber(profile.phone_number || ''); }
+          const { data: profile } = await supabase.from('profiles').select('phone_verified').eq('id', user.id).single();
+          if (profile?.phone_verified) {
+            setIsAlreadyVerified(true);
+            // Get phone_number via secure RPC since column-level grants block it
+            const { data: piiData } = await supabase.rpc('get_own_profile_pii');
+            if (piiData && piiData.length > 0) {
+              setPhoneNumber(piiData[0].phone_number || '');
+            }
+          }
         }
       } catch (error) { console.error('Error checking verification status:', error); }
       finally { setCheckingStatus(false); }

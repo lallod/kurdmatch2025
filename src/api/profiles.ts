@@ -405,23 +405,29 @@ export const getProfileSuggestions = async (filters?: Record<string, unknown>): 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
+  // Get non-PII profile data
   const { data: currentProfile } = await supabase
     .from('profiles')
-    .select('gender, interests, values, hobbies, kurdistan_region, travel_mode_active, travel_location, latitude, longitude')
+    .select('gender, interests, values, hobbies, kurdistan_region, travel_mode_active, travel_location')
     .eq('id', user.id)
     .maybeSingle();
+
+  // Get own PII (lat/lng) via secure RPC
+  const { data: piiData } = await supabase.rpc('get_own_profile_pii');
+  const ownLat = piiData?.[0]?.latitude;
+  const ownLng = piiData?.[0]?.longitude;
 
   if (!currentProfile) return [];
 
   const typedFilters = filters as Record<string, string | number | boolean | undefined> | undefined;
 
   // If maxDistance filter is set and user has coordinates, use nearby_users RPC
-  if (typedFilters?.maxDistance && currentProfile.latitude && currentProfile.longitude) {
+  if (typedFilters?.maxDistance && ownLat && ownLng) {
     const oppositeGender = currentProfile.gender === 'male' ? 'female' : 'male';
     
     const { data, error } = await supabase.rpc('nearby_users', {
-      current_lat: currentProfile.latitude,
-      current_long: currentProfile.longitude,
+      current_lat: ownLat,
+      current_long: ownLng,
       radius_km: typedFilters.maxDistance as number,
       max_results: 100,
     });
