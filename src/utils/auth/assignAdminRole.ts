@@ -1,9 +1,9 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
 
 export const assignAdminRole = async (userId: string) => {
   try {
-    // Check if role already exists
     const { data: existingRole } = await supabase
       .from('user_roles')
       .select('*')
@@ -12,11 +12,10 @@ export const assignAdminRole = async (userId: string) => {
       .maybeSingle();
 
     if (existingRole) {
-      console.log('User already has super admin role');
+      logger.log('User already has super admin role');
       return { success: true, message: 'User already has super admin role' };
     }
 
-    // Insert the super admin role
     const { error } = await supabase
       .from('user_roles')
       .insert({
@@ -25,16 +24,15 @@ export const assignAdminRole = async (userId: string) => {
       });
 
     if (error) {
-      console.error('Error assigning admin role:', error);
+      logger.error('Error assigning admin role:', error.message);
       return { success: false, error: error.message };
     }
 
-    console.log('Super admin role assigned successfully');
+    logger.log('Super admin role assigned successfully');
     return { success: true, message: 'Super admin role assigned successfully' };
-  } catch (error: any) {
-    console.error('Unexpected error:', error);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Unexpected error:', message);
+    return { success: false, error: message };
   }
 };
-
-// Admin role assignment should only be done through the super admin UI or edge functions

@@ -35,7 +35,7 @@ export const enrichProfileWithDetails = async (
     // Get current profile to ensure we don't override the basic details
     const { data: profile, error: profileFetchError } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, name, age, gender, location, bio, occupation, interests, hobbies, values, languages, height, body_type, ethnicity, religion, education, relationship_goals')
       .eq('id', profileId)
       .single();
       
