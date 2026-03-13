@@ -125,7 +125,7 @@ export const getUserOnboardingProgress = async (userId: string, enhancedProfile?
   try {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, name, age, gender, location, bio, occupation, interests, hobbies, values, languages, height, body_type, ethnicity, religion, education, relationship_goals, zodiac_sign, personality_type, exercise_habits, dietary_preferences, smoking, drinking, sleep_schedule, have_pets, want_children, love_language, communication_style, creative_pursuits, weekend_activities, political_views, travel_frequency')
       .eq('id', userId)
       .single();
 

@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
 
 interface AdminSetupResult {
   success: boolean;
@@ -10,18 +11,15 @@ interface AdminSetupResult {
 
 /**
  * Direct admin setup without Edge Function
- * This is a temporary workaround for CORS issues
  */
 export const setupSuperAdmin = async (): Promise<AdminSetupResult> => {
   try {
-    console.log('Starting direct admin setup process...');
+    logger.log('Starting direct admin setup process...');
     
-    // For now, let's just check if we can connect to the database
-    // and return success to allow login attempt
     const { data, error } = await supabase.from('user_roles').select('id').limit(1);
     
     if (error) {
-      console.error('Database connection error:', error);
+      logger.error('Database connection error:', error);
       return {
         success: false,
         message: `Database connection failed: ${error.message}. Please ensure your Supabase project is properly configured.`,
@@ -30,17 +28,18 @@ export const setupSuperAdmin = async (): Promise<AdminSetupResult> => {
       };
     }
 
-    console.log('Database connection successful, admin setup bypassed');
+    logger.log('Database connection successful');
     return {
       success: true,
       message: 'Admin setup bypassed - database connection verified.'
     };
-  } catch (error: any) {
-    console.error('Unexpected error during admin setup:', error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Unexpected error during admin setup:', message);
     
     return {
       success: false,
-      message: `Setup error: ${error.message}. Please check your Supabase configuration.`,
+      message: `Setup error: ${message}. Please check your Supabase configuration.`,
       shouldRetry: true,
       retryAfter: 30000
     };
@@ -52,14 +51,13 @@ export const setupSuperAdmin = async (): Promise<AdminSetupResult> => {
  */
 export const validateAdminCredentials = async (email: string, password: string) => {
   try {
-    console.log('validateAdminCredentials: Attempting admin login with:', email);
+    logger.log('validateAdminCredentials: Attempting admin login');
     
     // Clear any existing session to prevent conflicts
-    const { data: currentSession } = await supabase.auth.getSession();
-    if (currentSession?.session) {
-      console.log('validateAdminCredentials: Clearing existing session to prevent conflicts');
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (currentUser) {
+      logger.log('validateAdminCredentials: Clearing existing session');
       await supabase.auth.signOut();
-      // Wait for sign out to complete
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
@@ -69,7 +67,7 @@ export const validateAdminCredentials = async (email: string, password: string) 
     });
 
     if (error) {
-      console.error('validateAdminCredentials: Sign-in error:', error);
+      logger.error('validateAdminCredentials: Sign-in error:', error.message);
       throw error;
     }
 
@@ -77,19 +75,19 @@ export const validateAdminCredentials = async (email: string, password: string) 
       throw new Error('Authentication failed - no user data received');
     }
 
-    console.log('validateAdminCredentials: User signed in successfully:', data.user.id);
+    logger.log('validateAdminCredentials: User signed in successfully');
 
     // Wait for session to stabilize
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Verify the session is still active
-    const { data: sessionCheck } = await supabase.auth.getSession();
-    if (!sessionCheck?.session) {
+    // Verify the user is still authenticated (server-side)
+    const { data: { user: verifiedUser } } = await supabase.auth.getUser();
+    if (!verifiedUser) {
       throw new Error('Session lost after authentication');
     }
 
     // Check admin role
-    console.log('validateAdminCredentials: Checking admin role for user:', data.user.id);
+    logger.log('validateAdminCredentials: Checking admin role');
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select('role')
@@ -98,22 +96,23 @@ export const validateAdminCredentials = async (email: string, password: string) 
       .maybeSingle();
 
     if (roleError) {
-      console.error('validateAdminCredentials: Error checking admin role:', roleError);
+      logger.error('validateAdminCredentials: Error checking admin role:', roleError.message);
       await supabase.auth.signOut();
       throw new Error('Error verifying admin privileges');
     }
 
     if (!roleData) {
-      console.log('validateAdminCredentials: User does not have super_admin role');
+      logger.log('validateAdminCredentials: User does not have super_admin role');
       await supabase.auth.signOut();
       throw new Error('You do not have permission to access the admin dashboard.');
     }
 
-    console.log('validateAdminCredentials: Admin role verified successfully');
+    logger.log('validateAdminCredentials: Admin role verified successfully');
     
     return { success: true, user: data.user };
-  } catch (error: any) {
-    console.error('validateAdminCredentials: Admin validation error:', error);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('validateAdminCredentials: Admin validation error:', message);
+    return { success: false, error: message };
   }
 };
