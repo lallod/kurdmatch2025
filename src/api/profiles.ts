@@ -422,12 +422,12 @@ export const getProfileSuggestions = async (filters?: Record<string, unknown>): 
   const typedFilters = filters as Record<string, string | number | boolean | undefined> | undefined;
 
   // If maxDistance filter is set and user has coordinates, use nearby_users RPC
-  if (typedFilters?.maxDistance && currentProfile.latitude && currentProfile.longitude) {
+  if (typedFilters?.maxDistance && ownLat && ownLng) {
     const oppositeGender = currentProfile.gender === 'male' ? 'female' : 'male';
     
     const { data, error } = await supabase.rpc('nearby_users', {
-      current_lat: currentProfile.latitude,
-      current_long: currentProfile.longitude,
+      current_lat: ownLat,
+      current_long: ownLng,
       radius_km: typedFilters.maxDistance as number,
       max_results: 100,
     });
