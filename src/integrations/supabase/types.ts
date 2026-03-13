@@ -4771,6 +4771,15 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_own_profile_pii: {
+        Args: never
+        Returns: {
+          geo_location: unknown
+          latitude: number
+          longitude: number
+          phone_number: string
+        }[]
+      }
       get_safe_profile_location: {
         Args: { target_user_id: string }
         Returns: {
