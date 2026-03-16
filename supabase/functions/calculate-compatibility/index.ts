@@ -57,10 +57,17 @@ serve(async (req) => {
 
     console.log(`Calculating compatibility for ${user.id} with ${targetUserId}, mode: ${mode}`);
 
-    // Fetch both user profiles
+    // Fetch both user profiles — explicit safe columns only, no PII
+    const compatColumns = `
+      id, interests, values, hobbies, languages, relationship_goals,
+      love_language, personality_type, smoking, drinking, want_children,
+      bio, occupation, education, height, body_type, religion,
+      verified, video_verified, last_active
+    `.replace(/\s+/g, ' ').trim();
+
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('*')
+      .select(compatColumns)
       .in('id', [user.id, targetUserId]);
 
     if (profilesError || !profiles || profiles.length !== 2) {

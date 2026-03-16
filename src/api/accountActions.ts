@@ -29,13 +29,24 @@ export const downloadUserData = async (): Promise<UserDataExport> => {
   return exportData;
 };
 
-export const changePassword = async (_currentPassword: string, newPassword: string) => {
+export const changePassword = async (currentPassword: string, newPassword: string) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
+  if (!user.email) throw new Error('No email associated with account');
 
   // Validate new password
   if (!newPassword || newPassword.length < 8) {
     throw new Error('Password must be at least 8 characters');
+  }
+
+  // Verify current password by re-authenticating
+  const { error: verifyError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: currentPassword,
+  });
+
+  if (verifyError) {
+    throw new Error('Current password is incorrect');
   }
 
   const { error } = await supabase.auth.updateUser({
