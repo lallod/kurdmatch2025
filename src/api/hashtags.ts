@@ -50,7 +50,7 @@ export const updateHashtagUsage = async (hashtags: string[]): Promise<void> => {
 export const getTrendingHashtags = async (limit: number = 10) => {
   const { data, error } = await supabase
     .from('hashtags')
-    .select('*')
+    .select('id, name, usage_count, last_used_at, created_at')
     .order('usage_count', { ascending: false })
     .limit(limit);
 
