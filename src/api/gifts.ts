@@ -50,7 +50,7 @@ export interface DateProposal {
 export const getGiftCatalog = async (): Promise<VirtualGift[]> => {
   const { data, error } = await supabase
     .from('virtual_gifts')
-    .select('*')
+    .select('id, name, emoji, description, price_coins, category, is_premium, active, sort_order')
     .eq('active', true)
     .order('sort_order');
   if (error) throw error;
