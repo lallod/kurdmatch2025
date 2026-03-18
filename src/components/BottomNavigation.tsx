@@ -63,9 +63,9 @@ const BottomNavigation = () => {
                   {counts.messages > 99 ? '99+' : counts.messages}
                 </span>
               )}
-              {item.path === '/discover' && (counts.views + counts.likes + counts.matches) > 0 && (
+              {item.path === '/discover' && counts.matches > 0 && (
                 <span className="absolute -top-0.5 right-0 bg-primary text-primary-foreground text-[9px] rounded-full h-4 min-w-[16px] flex items-center justify-center font-bold px-1">
-                  {(counts.views + counts.likes + counts.matches) > 99 ? '99+' : counts.views + counts.likes + counts.matches}
+                  {counts.matches > 99 ? '99+' : counts.matches}
                 </span>
               )}
             </Link>
