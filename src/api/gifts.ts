@@ -63,7 +63,7 @@ export const getUserCoins = async (): Promise<UserCoins> => {
 
   const { data, error } = await supabase
     .from('user_coins')
-    .select('*')
+    .select('user_id, balance, total_earned, total_spent')
     .eq('user_id', user.id)
     .maybeSingle();
   
