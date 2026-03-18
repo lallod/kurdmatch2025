@@ -30,7 +30,8 @@ const BottomNavigation = () => {
     { name: t('nav.swipe', 'Swipe'), icon: Heart, path: '/swipe' },
     { name: t('nav.messages', 'Chat'), icon: MessageCircle, path: '/messages' },
     { name: t('nav.discover', 'Discover'), icon: Compass, path: '/discover' },
-    { name: t('nav.profile', 'Profile'), icon: isAdmin ? Shield : UserRound, path: isAdmin ? '/super-admin' : '/my-profile' },
+    { name: t('nav.profile', 'Profile'), icon: UserRound, path: '/my-profile' },
+    ...(isAdmin ? [{ name: t('nav.admin', 'Admin'), icon: Shield, path: '/super-admin' }] : []),
   ];
 
   return (
@@ -62,9 +63,9 @@ const BottomNavigation = () => {
                   {counts.messages > 99 ? '99+' : counts.messages}
                 </span>
               )}
-              {item.path === '/discover' && (counts.views + counts.likes + counts.matches) > 0 && (
+              {item.path === '/discover' && counts.matches > 0 && (
                 <span className="absolute -top-0.5 right-0 bg-primary text-primary-foreground text-[9px] rounded-full h-4 min-w-[16px] flex items-center justify-center font-bold px-1">
-                  {(counts.views + counts.likes + counts.matches) > 99 ? '99+' : counts.views + counts.likes + counts.matches}
+                  {counts.matches > 99 ? '99+' : counts.matches}
                 </span>
               )}
             </Link>

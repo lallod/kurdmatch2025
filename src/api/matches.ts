@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export const getMatches = async () => {
+export const getMatches = async (limit: number = 50, offset: number = 0) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   
@@ -9,12 +9,13 @@ export const getMatches = async () => {
   const { data, error } = await supabase
     .from('matches')
     .select(`
-      *,
+      id, matched_at, user1_id, user2_id,
       profile1:profiles!matches_user1_id_fkey (id, name, profile_image, age, location),
       profile2:profiles!matches_user2_id_fkey (id, name, profile_image, age, location)
     `)
     .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
-    .order('matched_at', { ascending: false });
+    .order('matched_at', { ascending: false })
+    .range(offset, offset + limit - 1);
   
   if (error) throw error;
   

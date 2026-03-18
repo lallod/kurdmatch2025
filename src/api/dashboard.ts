@@ -33,7 +33,7 @@ export interface EngagementData {
 export const fetchDashboardStats = async (): Promise<DashboardStat[]> => {
   const { data, error } = await supabase
     .from('dashboard_stats')
-    .select('*')
+    .select('id, stat_name, stat_value, change_percentage, trend, icon')
     .order('id');
   
   if (error) {
@@ -50,7 +50,7 @@ export const fetchDashboardStats = async (): Promise<DashboardStat[]> => {
 export const fetchRecentActivities = async (limit = 5): Promise<ActivityItem[]> => {
   const { data, error } = await supabase
     .from('admin_activities')
-    .select('*')
+    .select('id, user_id, activity_type, description, created_at')
     .order('created_at', { ascending: false })
     .limit(limit);
   
@@ -96,7 +96,7 @@ export const fetchEngagementData = async (timeRange = 'week'): Promise<Engagemen
   
   const { data, error } = await supabase
     .from('user_engagement')
-    .select('*')
+    .select('date, users, conversations, likes, views, matches')
     .order('date', { ascending: true })
     .limit(daysToFetch);
   

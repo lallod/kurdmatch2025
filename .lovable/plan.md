@@ -1,52 +1,87 @@
 
 
-# Full System Scan: What Remains Before Launch
+# Systemfiks: Mobil-UX og Oversettelser
 
-## Executive Summary
-The app is feature-rich with 50+ user pages, 48 admin pages, 28 edge functions, and full i18n support. However, several areas need attention across design consistency, incomplete admin features, security remnants, and UX polish. This plan covers everything found from scanning all angles.
+## Hva fikses
 
----
-
-## A. CRITICAL FIXES (Must do)
-
-### 1. Admin Bottom Nav Still Replaces Profile
-**Problem**: In `BottomNavigation.tsx` line 33, admins get Shield icon → `/super-admin` instead of Profile. Admins cannot access their own profile from the nav.
-**Fix**: Add a 6th nav item for admin (Shield icon) only when `isAdmin=true`, keep Profile as the 5th item always.
-
-### 2. Ghost User Generator Still in Client Bundle
-**Problem**: `src/utils/ghostUserGenerator.ts` (332 lines) with fake names, bios, photos is bundled in production. Only used by `GhostUsersPage.tsx` (admin-only) but the code is in the client bundle for all users.
-**Fix**: Move ghost generation logic to an edge function. The admin page should call the edge function instead of client-side generation with service role access.
-
-### 3. Remaining `select('*')` in API Files
-**Problem**: 80 instances across `api/` files — `hashtags.ts`, `notifications.ts`, `dashboard.ts`, `reactions.ts`, `gifts.ts`, `moderation.ts`, `swipes.ts`. Non-profile tables but bad practice.
-**Fix**: Replace with explicit columns in each file.
-
-### 4. `getMatches()` Has No Pagination
-**Problem**: `api/matches.ts` fetches ALL matches with no `.limit()`. Will break at scale.
-**Fix**: Add `.limit(50)` and pagination support.
+8 filer oppdateres for a fikse to hovedproblemer: usynlige redigeringsknapper pa mobil og hardkodede engelske tekster.
 
 ---
 
-## B. INCOMPLETE ADMIN FEATURES (Placeholder content found)
+## Del 1: Mobil-redigeringsknapper (P0 -- kritisk)
 
-### 5. Email Campaigns Tabs Are Empty Placeholders
-**Problem**: `EmailCampaignsPage.tsx` lines 437-474 — Active, Scheduled, Paused, Draft tabs all show placeholder text like "Active campaigns content will appear here." No actual campaign data is loaded.
-**Fix**: Either implement the campaign list with real data from a `campaigns` table, or remove the tabs and show a "Coming Soon" card to avoid appearing broken.
+Pa mobil finnes ingen hover-effekt, sa alle knapper med `opacity-0 group-hover:opacity-100` er usynlige. Fiksen: `opacity-100 md:opacity-0 md:group-hover:opacity-100` (alltid synlig pa mobil, hover pa desktop).
 
-### 6. Bulk Actions Download Template Button Does Nothing
-**Problem**: `BulkActionsPage.tsx` line 712 — "Download Template" button has no `onClick` handler.
-**Fix**: Generate and download a CSV template, or disable the button with a tooltip.
+### Filer som endres:
 
-### 7. Social Login Page Stores Secrets in DB
-**Problem**: `SocialLoginPage.tsx` stores OAuth client_id/client_secret in a `social_login_providers` table. This doesn't actually configure Supabase Auth providers — it's a UI-only feature that gives a false sense of control.
-**Fix**: Add a clear note explaining these settings must be configured in Supabase Dashboard, or connect to Supabase Management API.
+**1. `src/components/profile/DetailItem.tsx` (linje 180)**
+- Redigeringsblyant for profilfelt
+- Fra: `opacity-0 group-hover:opacity-100`
+- Til: `opacity-100 md:opacity-0 md:group-hover:opacity-100`
+
+**2. `src/components/profile/ProfileQuickStats.tsx` (linje 70)**
+- Redigeringsknapp pa hurtigstatistikk-kort
+- Samme endring
+
+**3. `src/components/my-profile/InlineEditableField.tsx` (linje 123)**
+- Inline-redigering for tekstfelt
+- Endrer `opacity-0 group-hover/edit:opacity-100` til `opacity-100 md:opacity-0 md:group-hover/edit:opacity-100`
+
+**4. `src/pages/MyProfile.tsx` (linje 467)**
+- Fotogalleri-overlay med "sett som profilbilde" og "slett"
+- Endrer hele overlay fra `opacity-0 group-hover:opacity-100` til `opacity-100 md:opacity-0 md:group-hover:opacity-100`
+
+**5. `src/components/my-profile/PhotoManagement.tsx` (linje 110)**
+- Samme fotooverlay-problem
+
+**6. `src/components/instagram/PostsGrid.tsx` (linje 46)**
+- Post-statistikk overlay (likes/kommentarer)
 
 ---
 
-## C. DESIGN & UX IMPROVEMENTS
+## Del 2: Oversettelser -- hardkodede engelske tekster (P1)
 
-### 8. Inconsistent Header Heights Across Pages
-**Problem**: Headers vary: DiscoverHub uses `h-14`, Settings uses `h-11`, DiscoveryFeed uses custom padding. This creates visual jumps during navigation.
-**Fix**: Standardize all page headers to `h-12` or `h-14` with consistent padding.
+**7. `src/pages/Profile.tsx`** -- 18 hardkodede feltnavn:
 
-### 9. Discover Hub
+| Linje | Fra | Til |
+|-------|-----|-----|
+| 131 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
+| 175 | `Occupation:` | `t('profile.occupation', 'Occupation'):` |
+| 176 | `Education:` | `t('profile.education', 'Education'):` |
+| 177 | `Company:` | `t('profile.company', 'Company'):` |
+| 178 | `Goals:` | `t('profile.goals', 'Goals'):` |
+| 179 | `Work Style:` | `t('profile.work_style', 'Work Style'):` |
+| 190 | `Exercise:` | `t('profile.exercise', 'Exercise'):` |
+| 191 | `Diet:` | `t('profile.diet', 'Diet'):` |
+| 192 | `Smoking:` | `t('profile.smoking', 'Smoking'):` |
+| 193 | `Drinking:` | `t('profile.drinking', 'Drinking'):` |
+| 194 | `Sleep:` | `t('profile.sleep', 'Sleep'):` |
+| 195 | `Pets:` | `t('profile.pets', 'Pets'):` |
+| 198 | `Hobbies:` | `t('profile.hobbies', 'Hobbies'):` |
+| 216 | `Political Views:` | `t('profile.political_views', 'Political Views'):` |
+| 247 | `Looking for:` | `t('profile.looking_for', 'Looking for'):` |
+| 248 | `Children:` | `t('profile.children', 'Children'):` |
+| 249 | `Love Language:` | `t('profile.love_language', 'Love Language'):` |
+| 250 | `Communication:` | `t('profile.communication', 'Communication'):` |
+| 251 | `Ideal Date:` | `t('profile.ideal_date', 'Ideal Date'):` |
+| 252 | `Family:` | `t('profile.family', 'Family'):` |
+| 260 | `Kurdish` | `t('profile.kurdish', 'Kurdish')` |
+| 270 | `Languages` | `t('profile.languages', 'Languages')` |
+
+**MyProfile.tsx** -- seksjons-titler (linje 455, 516-558, 570):
+- `"Photos"` -> `t('profile.photos', 'Photos')`
+- `"Basics"`, `"Lifestyle"`, `"Interests & Hobbies"`, `"Communication"`, `"Personality & Growth"`, `"Creative & Lifestyle"`, `"Travel"` -- alle pakkes i `t()`
+- `"Privacy & Visibility"` -> `t('profile.privacy_visibility', 'Privacy & Visibility')`
+
+**8. `src/pages/InstagramProfile.tsx`** (linje 69-70):
+- `"Profile not found"` -> `t('profile.not_found', 'Profile not found')`
+- `"Go back"` -> `t('common.go_back', 'Go back')`
+
+---
+
+## Teknisk oppsummering
+
+- **8 filer endres**
+- **0 nye filer**
+- **0 database-endringer**
+- Alle endringer er CSS-klasser og tekst-wrapping -- ingen logikkendringer

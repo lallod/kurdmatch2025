@@ -50,7 +50,7 @@ export interface DateProposal {
 export const getGiftCatalog = async (): Promise<VirtualGift[]> => {
   const { data, error } = await supabase
     .from('virtual_gifts')
-    .select('*')
+    .select('id, name, emoji, description, price_coins, category, is_premium, active, sort_order')
     .eq('active', true)
     .order('sort_order');
   if (error) throw error;
@@ -63,7 +63,7 @@ export const getUserCoins = async (): Promise<UserCoins> => {
 
   const { data, error } = await supabase
     .from('user_coins')
-    .select('*')
+    .select('user_id, balance, total_earned, total_spent')
     .eq('user_id', user.id)
     .maybeSingle();
   
@@ -76,7 +76,7 @@ export const getUserCoins = async (): Promise<UserCoins> => {
     // Re-fetch
     const { data: newData, error: fetchError } = await supabase
       .from('user_coins')
-      .select('*')
+      .select('user_id, balance, total_earned, total_spent')
       .eq('user_id', user.id)
       .maybeSingle();
     if (fetchError) throw fetchError;

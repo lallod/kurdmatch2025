@@ -8,7 +8,7 @@ export const downloadUserData = async (): Promise<UserDataExport> => {
 
   const [profileData, photosData, messagesData, matchesData, likesData] = await Promise.all([
     supabase.from('profiles').select(ALL_OWN_PROFILE_COLUMNS).eq('id', user.id).single(),
-    supabase.from('photos').select('*').eq('profile_id', user.id),
+    supabase.from('photos').select('id, profile_id, url, is_primary, created_at').eq('profile_id', user.id),
     supabase.from('messages').select('id, text, sender_id, recipient_id, created_at, media_type').or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`).order('created_at', { ascending: false }).limit(500),
     supabase.from('matches').select('id, user1_id, user2_id, matched_at').or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`).limit(500),
     supabase.from('likes').select('id, liker_id, likee_id, created_at').or(`liker_id.eq.${user.id},likee_id.eq.${user.id}`).limit(500)

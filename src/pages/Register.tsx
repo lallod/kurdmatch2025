@@ -20,13 +20,11 @@ const Register = () => {
         </div>
         
         <div className="text-center pt-12 sm:pt-16 lg:pt-20">
-          <div className="flex items-center justify-center mb-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-primary rounded-full flex items-center justify-center shadow-lg">
-                <Heart className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-primary-foreground fill-primary-foreground" />
-              </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">KurdMatch</h1>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-primary rounded-full flex items-center justify-center shadow-lg">
+              <Heart className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-primary-foreground fill-primary-foreground" />
             </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">KurdMatch</h1>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-2">{t('auth.join_community', 'Join Our Community')}</h2>
           <p className="text-muted-foreground text-base sm:text-lg lg:text-xl px-4">{t('auth.create_account_steps', 'Create your account in just a few simple steps')}</p>
@@ -35,6 +33,13 @@ const Register = () => {
         <div className="backdrop-blur-md bg-card/50 p-4 sm:p-6 lg:p-8 xl:p-10 rounded-3xl shadow-2xl border border-border/20 relative overflow-hidden">
           <div className="relative z-10"><EnhancedDynamicRegistrationForm /></div>
         </div>
+
+        <p className="text-center text-xs text-muted-foreground px-4">
+          {t('auth.agree_terms', 'By signing up, you agree to our')}{' '}
+          <Link to="/terms" className="text-primary hover:underline">{t('auth.terms', 'Terms of Service')}</Link>
+          {' '}{t('auth.and', 'and')}{' '}
+          <Link to="/privacy" className="text-primary hover:underline">{t('auth.privacy', 'Privacy Policy')}</Link>
+        </p>
         
         <div className="text-center text-sm text-muted-foreground border-t border-border/20 pt-6">
           {t('auth.have_account', 'Already have an account?')}{' '}
