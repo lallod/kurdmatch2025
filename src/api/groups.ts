@@ -32,7 +32,7 @@ export const getGroups = async (filters?: {
 }) => {
   let query = supabase
     .from('groups')
-    .select('*')
+    .select('id, name, description, cover_image, icon, category, privacy, member_count, post_count, created_by, created_at')
     .eq('privacy', 'public')
     .order('member_count', { ascending: false });
 
