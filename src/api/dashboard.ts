@@ -50,7 +50,7 @@ export const fetchDashboardStats = async (): Promise<DashboardStat[]> => {
 export const fetchRecentActivities = async (limit = 5): Promise<ActivityItem[]> => {
   const { data, error } = await supabase
     .from('admin_activities')
-    .select('*')
+    .select('id, user_id, activity_type, description, created_at')
     .order('created_at', { ascending: false })
     .limit(limit);
   
