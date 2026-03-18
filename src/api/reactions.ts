@@ -66,7 +66,7 @@ export const removeReaction = async (postId: string) => {
 export const getPostReactions = async (postId: string): Promise<PostReaction[]> => {
   const { data, error } = await supabase
     .from('post_reactions')
-    .select('*')
+    .select('id, post_id, user_id, reaction_type, created_at')
     .eq('post_id', postId);
   
   if (error) throw error;

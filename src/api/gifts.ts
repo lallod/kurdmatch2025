@@ -76,7 +76,7 @@ export const getUserCoins = async (): Promise<UserCoins> => {
     // Re-fetch
     const { data: newData, error: fetchError } = await supabase
       .from('user_coins')
-      .select('*')
+      .select('user_id, balance, total_earned, total_spent')
       .eq('user_id', user.id)
       .maybeSingle();
     if (fetchError) throw fetchError;

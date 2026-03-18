@@ -85,7 +85,7 @@ export const getDashboardStats = async () => {
 export const getUserEngagementData = async () => {
   const { data, error } = await supabase
     .from('user_engagement')
-    .select('*')
+    .select('date, users, conversations, likes, views, matches')
     .order('date', { ascending: true })
     .limit(30);
 

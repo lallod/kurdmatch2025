@@ -30,7 +30,8 @@ const BottomNavigation = () => {
     { name: t('nav.swipe', 'Swipe'), icon: Heart, path: '/swipe' },
     { name: t('nav.messages', 'Chat'), icon: MessageCircle, path: '/messages' },
     { name: t('nav.discover', 'Discover'), icon: Compass, path: '/discover' },
-    { name: t('nav.profile', 'Profile'), icon: isAdmin ? Shield : UserRound, path: isAdmin ? '/super-admin' : '/my-profile' },
+    { name: t('nav.profile', 'Profile'), icon: UserRound, path: '/my-profile' },
+    ...(isAdmin ? [{ name: t('nav.admin', 'Admin'), icon: Shield, path: '/super-admin' }] : []),
   ];
 
   return (

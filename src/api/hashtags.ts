@@ -64,7 +64,7 @@ export const getTrendingHashtags = async (limit: number = 10) => {
 export const searchHashtags = async (query: string) => {
   const { data, error } = await supabase
     .from('hashtags')
-    .select('*')
+    .select('id, name, usage_count, last_used_at')
     .ilike('name', `%${query}%`)
     .order('usage_count', { ascending: false })
     .limit(20);

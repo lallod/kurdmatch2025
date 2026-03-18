@@ -96,7 +96,7 @@ export const fetchEngagementData = async (timeRange = 'week'): Promise<Engagemen
   
   const { data, error } = await supabase
     .from('user_engagement')
-    .select('*')
+    .select('date, users, conversations, likes, views, matches')
     .order('date', { ascending: true })
     .limit(daysToFetch);
   

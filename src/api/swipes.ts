@@ -45,7 +45,7 @@ export const getLastSwipe = async (): Promise<SwipeHistoryEntry | null> => {
 
     const { data, error } = await supabase
       .from('swipe_history')
-      .select('*')
+      .select('id, user_id, swiped_profile_id, action, created_at, rewound')
       .eq('user_id', user.id)
       .eq('rewound', false)
       .order('created_at', { ascending: false })
