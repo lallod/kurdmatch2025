@@ -27,7 +27,7 @@ export const getEvents = async (): Promise<Event[]> => {
   const { data, error } = await supabase
     .from('events')
     .select(`
-      *,
+      id, user_id, title, description, location, event_date, image_url, category, max_attendees, attendees_count, created_at, updated_at,
       profiles (
         id,
         name,
@@ -154,7 +154,7 @@ export const getEventsByCategory = async (category: string): Promise<Event[]> =>
   const { data, error } = await supabase
     .from('events')
     .select(`
-      *,
+      id, user_id, title, description, location, event_date, image_url, category, max_attendees, attendees_count, created_at, updated_at,
       profiles (
         id,
         name,
@@ -186,7 +186,7 @@ export const getUserEvents = async (): Promise<Event[]> => {
   const { data, error } = await supabase
     .from('events')
     .select(`
-      *,
+      id, user_id, title, description, location, event_date, image_url, category, max_attendees, attendees_count, created_at, updated_at,
       profiles (
         id,
         name,

@@ -25,17 +25,13 @@ const BottomNavigation = () => {
     setIsAdmin(!!data);
   };
   
-  const baseNavItems = [
+  const navItems = [
     { name: t('nav.home', 'Home'), icon: Home, path: '/discovery' },
     { name: t('nav.swipe', 'Swipe'), icon: Heart, path: '/swipe' },
     { name: t('nav.messages', 'Chat'), icon: MessageCircle, path: '/messages' },
     { name: t('nav.discover', 'Discover'), icon: Compass, path: '/discover' },
-    { name: t('nav.profile', 'Profile'), icon: UserRound, path: '/my-profile' },
+    { name: t('nav.profile', 'Profile'), icon: isAdmin ? Shield : UserRound, path: isAdmin ? '/super-admin' : '/my-profile' },
   ];
-
-  const navItems = isAdmin 
-    ? [...baseNavItems.slice(0, 4), { name: 'Admin', icon: Shield, path: '/super-admin' }]
-    : baseNavItems;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-card/95 backdrop-blur-xl shadow-[0_-2px_20px_rgba(0,0,0,0.15)]"
