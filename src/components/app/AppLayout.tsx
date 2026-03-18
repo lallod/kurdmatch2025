@@ -16,8 +16,7 @@ const HIDDEN_NAV_ROUTES = [
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const showNav = !HIDDEN_NAV_ROUTES.includes(location.pathname) &&
-    !location.pathname.startsWith('/super-admin');
+  const showNav = !HIDDEN_NAV_ROUTES.includes(location.pathname);
 
   return (
     <div style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>

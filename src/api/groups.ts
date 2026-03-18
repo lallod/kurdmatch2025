@@ -277,8 +277,8 @@ export const getUserGroups = async () => {
   const { data, error } = await supabase
     .from('group_members')
     .select(`
-      *,
-      groups:group_id (*)
+      id, group_id, user_id, role, joined_at,
+      groups:group_id (id, name, description, cover_image, icon, category, privacy, member_count, post_count, created_by)
     `)
     .eq('user_id', user.user.id)
     .order('joined_at', { ascending: false });
