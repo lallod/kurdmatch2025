@@ -17,7 +17,7 @@ export const addReaction = async (postId: string, reactionType: ReactionType) =>
   // Check if user already has a reaction on this post
   const { data: existing } = await supabase
     .from('post_reactions')
-    .select('*')
+    .select('id, reaction_type')
     .eq('post_id', postId)
     .eq('user_id', user.id)
     .maybeSingle();
