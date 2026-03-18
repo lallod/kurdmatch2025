@@ -55,7 +55,7 @@ export const getGroups = async (filters?: {
 export const getGroupById = async (groupId: string) => {
   const { data, error } = await supabase
     .from('groups')
-    .select('*')
+    .select('id, name, description, cover_image, icon, category, privacy, member_count, post_count, created_by, created_at, updated_at')
     .eq('id', groupId)
     .single();
 

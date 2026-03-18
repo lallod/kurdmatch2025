@@ -71,7 +71,7 @@ export const getConversations = async (): Promise<Conversation[]> => {
   const { data, error } = await supabase
     .from('messages')
     .select(`
-      *,
+      id, sender_id, recipient_id, text, read, created_at,
       sender:profiles!messages_sender_id_fkey (id, name, profile_image),
       recipient:profiles!messages_recipient_id_fkey (id, name, profile_image)
     `)
