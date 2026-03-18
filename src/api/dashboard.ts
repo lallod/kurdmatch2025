@@ -33,7 +33,7 @@ export interface EngagementData {
 export const fetchDashboardStats = async (): Promise<DashboardStat[]> => {
   const { data, error } = await supabase
     .from('dashboard_stats')
-    .select('*')
+    .select('id, stat_name, stat_value, change_percentage, trend, icon')
     .order('id');
   
   if (error) {
