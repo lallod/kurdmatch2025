@@ -54,7 +54,7 @@ export const getMessages = async (otherUserId: string): Promise<Message[]> => {
 
   const { data, error } = await supabase
     .from('messages')
-    .select('*')
+    .select('id, sender_id, recipient_id, text, read, created_at, media_type, media_url, media_duration')
     .or(`and(sender_id.eq.${userId},recipient_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},recipient_id.eq.${userId})`)
     .order('created_at', { ascending: true });
 
