@@ -64,8 +64,8 @@ const Matches = () => {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Slim header */}
-      <div className="sticky top-0 z-10 bg-background border-b border-border/30">
-        <div className="max-w-lg mx-auto px-4 h-11 flex items-center justify-between">
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/10">
+        <div className="max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
           <h1 className="text-base font-semibold text-foreground">{t('matches.title', 'Matches')}</h1>
           {newMatches.length > 0 && (
             <Badge className="bg-primary/15 text-primary text-xs">{newMatches.length} {t('matches.new', 'New')}</Badge>
