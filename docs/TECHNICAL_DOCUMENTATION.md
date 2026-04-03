@@ -1,924 +1,853 @@
-# Complete Technical & Design Documentation
+# KurdMatch - Fullstendig Teknisk Dokumentasjon
 
-**App Name:** Kurdish Dating & Social Platform  
-**Stack:** React 18 + TypeScript + Vite + Tailwind CSS + Supabase  
-**Last Updated:** 2026-02-26
-
----
-
-## 1. App Overview
-
-A culturally-focused dating and social networking platform designed for the Kurdish diaspora and homeland communities. Combines Tinder-style swipe matching with Instagram-style social feeds, group communities, events, stories, and real-time messaging. Supports 5 languages (EN, NO, Kurdish Sorani, Kurdish Kurmanji, DE) with full RTL support.
-
-**Published URL:** `https://dating-profile-creator-45.lovable.app`  
-**Supabase Project:** `bqgjfxilcpqosmccextj`
+**App Name:** KurdMatch - Kurdish Dating & Social Platform  
+**Stack:** React 18 + TypeScript 5 + Vite 5 + Tailwind CSS 3 + Supabase  
+**Last Updated:** 2026-04-03
 
 ---
 
-## 2. Target Users
+## 1. OVERSIKT
 
-| Segment | Description |
-|---------|-------------|
-| **Primary** | Kurdish singles (18-45) in diaspora (Norway, Germany, Sweden) seeking culturally compatible partners |
-| **Secondary** | Kurds in homeland (South/North/East/West Kurdistan regions) |
-| **Tertiary** | Non-Kurdish individuals interested in Kurdish culture |
-| **Admin** | Platform operators managing content, users, and moderation |
+### 1.1 Hva appen gjør
+KurdMatch er en dating- og sosial nettverksplattform designet spesifikt for det kurdiske diaspora-samfunnet. Appen kombinerer klassisk dating-funksjonalitet (swipe, matching, chat) med sosiale funksjoner (feed, stories, grupper, events) og kulturelle tilpasninger (Kurdistan-regioner, flerspråklig støtte med kurdisk Sorani/Kurmanci, RTL-støtte).
 
----
+### 1.2 Hvem den er for
+- Kurdere i diaspora (primært Norge, Tyskland, Europa)
+- Aldersgruppe: 18+
+- Brukere som søker romantiske relasjoner, vennskap, eller kulturelt fellesskap
 
-## 3. Full Feature List
-
-### Core Dating
-- Tinder-style swipe cards (like/dislike/super-like/rewind/boost)
-- AI-powered compatibility scoring (`calculate_compatibility` DB function)
-- Match system with mutual-like detection
-- Advanced search with filters (age, location, ethnicity, religion, body type, smoking, drinking, education)
-- "Liked Me" and "Viewed Me" feeds
-- Daily usage limits (likes, super-likes, boosts, rewinds) tied to subscription tier
-
-### Social Layer
-- Instagram-style discovery feed with posts (text + media)
-- Post reactions (like, love, fire, haha, wow, sad, thoughtful, applause)
-- Nested comments with mentions and comment likes
-- Hashtag system with trending hashtags
-- Stories (24h ephemeral content) with reactions and views
-- User following/followers system
-- Saved/bookmarked posts
-
-### Groups & Events
-- Community groups (public/private) with categories
-- Group posts and membership management
-- Events with RSVP/attendance tracking
-- Event categories and max-attendee limits
-
-### Communication
-- Real-time 1:1 messaging (text + media + voice)
-- Typing indicators (`typing_status` table + Supabase Realtime)
-- Voice messages with duration tracking
-- Read receipts
-- Message moderation (AI-powered via `moderate-message` edge function)
-- Muted conversations
-- GIF search integration (`search-gifs` edge function)
-- AI conversation insights (shared interests, suggested topics)
-- Message translation (`translate-message` edge function)
-
-### Audio/Video Calls
-- WebRTC-based calls (`useWebRTC` hook)
-- Call history tracking (`calls` table: voice/video, duration, status)
-
-### Verification & Trust
-- Phone verification via SMS (`send-sms-verification`, `verify-phone-code`)
-- Video selfie verification (`VideoVerificationDialog`, `video_verifications` table)
-- Document-based verification (`verification_requests`)
-- Trust score system (`get_user_trust_score` DB function)
-- Safety flags on messages (`message_safety_flags`)
-
-### Subscription & Monetization
-- Tiered subscriptions (free/premium) via Stripe
-- Stripe Checkout (`create-checkout` edge function)
-- Stripe Webhooks (`stripe-webhook` edge function)
-- Customer portal (`customer-portal` edge function)
-- Virtual gifts/coins economy (`user_coins`, `virtual_gifts` tables)
-- Date proposals feature
-
-### AI Features
-- Bio generation (`generate-bio` edge function)
-- AI Wingman chat assistant (`ai-wingman` edge function)
-- Icebreaker suggestions (`generate-icebreakers`)
-- Compatibility insights (`generate-insights`)
-- Photo moderation (`moderate-photo`)
-
-### Internationalization
-- 5 languages: English, Norwegian, Kurdish Sorani (RTL), Kurdish Kurmanji, German
-- `useTranslations` hook with `t(key, fallback)` pattern
-- RTL layout support via `dir="rtl"` and CSS overrides
-- DB-level translations: `app_translations`, `landing_page_v2_translations`, `registration_questions` (with `_en`, `_no`, `_ku_sorani`, `_ku_kurmanci`, `_de` columns)
-
-### Cultural Features
-- Kurdistan region selector (South/West/East/North Kurdistan)
-- Chaperone mode (`chaperone_settings` table) for conservative users
-- Marriage intentions declaration (`marriage_intentions` table)
-- Religion and political views fields
+### 1.3 Hovedfunksjoner
+1. **Swipe/Matching** - Tinder-lignende swipe-grensesnitt med like/dislike/super-like
+2. **Sosial Feed** - Instagram-lignende innlegg med bilder, likes, kommentarer, hashtags
+3. **Stories** - 24-timers midlertidige bilder/videoer
+4. **Meldinger** - Sanntids chat med typing-indikatorer, lesebekreftelser, GIF-søk, stemmeopptak
+5. **Video/Taleanrop** - WebRTC-baserte anrop mellom matchede brukere
+6. **Grupper** - Fellesskap med medlemskap, innlegg, admin-moderering
+7. **Events** - Opprettelse og deltakelse på arrangementer
+8. **AI-funksjoner** - Bio-generering, kompatibilitetsberegning, icebreakers, samtaleinnsikt, AI Wingman
+9. **Gaver & Coins** - Virtuell valuta-system med gavesending
+10. **Abonnement** - 4-tier subscription (Free/Basic/Premium/Gold) via Stripe
+11. **Verifisering** - Video-verifisering, telefonverifisering, profilverifisering
+12. **Super Admin Panel** - 48-siders administrasjonspanel
 
 ---
 
-## 4. Screen-by-Screen Breakdown
+## 2. ARKITEKTUR
 
-### 4.1 Public Screens (No Auth Required)
+### 2.1 Systemarkitektur
 
-#### `/` — Landing Page (LandingV2)
-- **Purpose:** Marketing/conversion page
-- **Components:** Hero section, features grid, how-it-works steps, community section, gallery, CTA, footer
-- **Backend:** `landing_page_v2_translations` table for CMS content
-- **Navigation:** → `/auth`, → `/register`
-- **Behavior:** Redirects to `/discovery` if authenticated
+```text
+┌──────────────────────────────────────────┐
+│            KLIENT (Browser/PWA)          │
+│  React 18 + Vite 5 + TypeScript 5       │
+│  Tailwind CSS 3 + shadcn/ui + Radix UI  │
+│  Framer Motion (animasjoner)             │
+└──────────────┬───────────────────────────┘
+               │ HTTPS / WSS
+               ▼
+┌──────────────────────────────────────────┐
+│           SUPABASE BACKEND               │
+│  ┌─────────────────────────────────────┐ │
+│  │ Auth (email, Google, Facebook)      │ │
+│  │ PostgreSQL 15 (85 tabeller)         │ │
+│  │ Realtime (WebSocket subscriptions)  │ │
+│  │ Storage (avatarer, bilder, videoer) │ │
+│  │ Edge Functions (28 Deno-funksjoner) │ │
+│  │ Row Level Security (RLS)            │ │
+│  └─────────────────────────────────────┘ │
+└──────────────┬───────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────┐
+│         TREDJEPARTSTJENESTER             │
+│  Stripe (betalinger/abonnement)          │
+│  OpenAI (AI bio, icebreakers, wingman)   │
+│  Twilio (SMS-verifisering)               │
+│  Google STUN (WebRTC)                    │
+│  Tenor/GIPHY (GIF-søk)                   │
+└──────────────────────────────────────────┘
+```
 
-#### `/auth` — Login
-- **Purpose:** Email/password authentication
-- **Components:** Auth form, social login buttons, forgot password link
-- **Backend:** `supabase.auth.signInWithPassword()`, `supabase.auth.signInWithOAuth()`
-- **Navigation:** → `/discovery` (on success), → `/register`, → `/reset-password`
+### 2.2 Hvordan komponentene henger sammen
+- **Frontend** kommuniserer med Supabase via `@supabase/supabase-js` SDK
+- **Auth** håndteres av Supabase Auth med JWT-tokens lagret i localStorage
+- **Realtime** bruker Supabase Channels for live-oppdateringer på meldinger, innlegg, notifikasjoner
+- **Edge Functions** kjører serverside-logikk for Stripe, AI, SMS, moderering
+- **RLS** (Row Level Security) beskytter all data på databasenivå
+- **WebRTC** bruker peer-to-peer med Supabase Realtime som signalering
 
-#### `/register` — Registration
-- **Purpose:** Multi-step registration wizard
-- **Components:** `WizardManager` with 7+ steps
-- **Steps:** Step1AboutYou, Step2Lifestyle, Step3Values, Step4Relationships, Step7Favorites, photo upload, occupation selection
-- **Backend:** `supabase.auth.signUp()`, then profile creation in `profiles` table
-- **Validation:** Required fields (name, age, location, occupation, bio ≥20 chars, height, body type, ethnicity, religion, values ≥3, interests ≥3, hobbies ≥2, languages ≥1, education, relationship goals, want children, exercise habits, profile image)
-
-#### `/reset-password` — Password Reset
-- **Purpose:** Set new password after email link
-- **Backend:** `supabase.auth.updateUser({ password })`
-
-#### `/admin-login` — Super Admin Login
-- **Purpose:** Separate admin authentication entry point
-
-#### Static Pages: `/help`, `/community-guidelines`, `/privacy-policy`, `/terms`, `/about`, `/contact`, `/cookie-policy`
-
-### 4.2 Protected Screens (Auth Required)
-
-#### `/discovery` — Discovery Feed
-- **Purpose:** Instagram-style social feed (primary home screen)
-- **Components:** Post cards with reactions, comments, stories carousel, trending hashtags, groups sidebar
-- **Backend:** `posts` table with realtime subscription (`useRealtimePosts`), `post_likes`, `post_reactions`, `post_comments`
-- **Actions:** Like, react, comment, share, save post, create post
-- **Navigation:** → `/post/:id`, → `/profile/:id`, → `/hashtag/:hashtag`, → `/create-post`
-
-#### `/swipe` — Swipe Cards
-- **Purpose:** Tinder-style dating card stack
-- **Components:** Full-screen card stack, action buttons (dislike/like/super-like/rewind/boost), filter sidebar (`SwipeFilters`)
-- **Backend:** `useDiscoveryProfiles`, `swipe_history`, `likes`, `matches`, `daily_usage`
-- **Logic:** Excludes already-swiped profiles, blocked users; checks daily limits; creates match on mutual like
-- **Animations:** `swipe-right`/`swipe-left` CSS keyframes, framer-motion transitions
-- **Layout:** `fixed inset-0` with `overflow-hidden`, edge-to-edge cards
-
-#### `/messages` — Messages/Chat
-- **Purpose:** Conversation list + chat view
-- **Components:** Conversation list, `ChatView` with message bubbles, typing indicator, voice recorder, media attachment
-- **Backend:** `messages` table with Supabase Realtime, `conversation_metadata`, `muted_conversations`, `typing_status`
-- **Features:** Online status badges, read receipts, message moderation, AI insights
-
-#### `/my-profile` — Own Profile
-- **Purpose:** View/edit own profile
-- **Components:** Profile header, photo gallery, stats, edit sections
-- **Backend:** `profiles`, `photos`, `profile_details`, `profile_preferences`
-
-#### `/profile/:id` — User Profile (Instagram-style)
-- **Purpose:** View another user's profile
-- **Components:** `InstagramProfile` with dual-layer architecture (social vs dating profile)
-- **Backend:** `useProfileAccess` hook checks subscription/match status
-- **Access Control:** Free users see `BlurredProfileOverlay` on dating details; premium/matched users see full profile
-
-#### `/discover` — Discover Hub
-- **Purpose:** Aggregated discovery page
-- **Components:** Trending hashtags, popular groups, nearby users, events
-- **Navigation:** → `/search`, → `/groups`, → `/events`, → `/hashtag/:hashtag`
-
-#### `/search` — Advanced Search
-- **Purpose:** Filter and search profiles
-- **Backend:** `search_profiles_fts` DB function (full-text search)
-
-#### `/matches` — Matches
-- **Purpose:** View mutual matches
-- **Backend:** `matches` table
-
-#### `/liked-me` — Who Liked Me
-- **Backend:** `likes` table filtered by `likee_id = current_user`
-
-#### `/viewed-me` — Who Viewed Me
-- **Backend:** `profile_views` table, `useProfileViewTracking`
-
-#### `/notifications` — Notifications
-- **Backend:** `notifications` table with types: like, match, message, follow, comment, event, group
-
-#### `/subscription` — Subscription Plans
-- **Components:** Plan comparison cards, Stripe checkout integration
-- **Backend:** `create-checkout` edge function, `user_subscriptions`
-
-#### `/verification` — Identity Verification
-- **Components:** Video verification dialog, document upload
-- **Backend:** `submit-verification` edge function, `verification_requests`, `video_verifications`
-
-#### `/compatibility/:userId` — Compatibility Insights
-- **Backend:** `calculate-compatibility` edge function, `ai_conversation_insights`
-
-#### `/gifts` — Gifts & Dates
-- **Components:** Virtual gift shop, date proposals
-- **Backend:** `virtual_gifts`, `user_coins`, `date_proposals`
-
-#### `/create-post` — Create Post
-- **Components:** Text editor, media upload, hashtag picker
-- **Backend:** Insert into `posts`, auto-extract hashtags
-
-#### `/create-event` — Create Event
-- **Backend:** Insert into `events`
-
-#### `/event/:id` — Event Detail
-- **Backend:** `events`, `event_attendees`
-
-#### `/post/:id` — Post Detail
-- **Backend:** `posts`, `post_comments`, `post_likes`, `post_reactions`
-
-#### `/saved` — Saved Posts
-- **Backend:** `saved_posts` joined with `posts`
-
-#### `/hashtag/:hashtag` — Hashtag Feed
-- **Backend:** `posts` filtered by hashtags array, `hashtags` table
-
-#### `/groups` — Groups List
-- **Backend:** `groups`, `group_members`
-
-#### `/groups/create` — Create Group
-- **Backend:** Insert into `groups`
-
-#### `/groups/:id` — Group Detail
-- **Backend:** `groups`, `group_members`, `group_posts`
-
-#### `/stories/create` — Create Story
-- **Backend:** `stories` table
-
-#### `/stories/:userId` — View Stories
-- **Backend:** `stories`, `story_views`, `story_reactions`
-
-#### `/discovery-nearby` — Nearby Users (Map)
-- **Components:** Leaflet map integration
-- **Backend:** `nearby_users` DB function (PostGIS `ST_DWithin`)
-
-### 4.3 Settings Screens
-
-| Route | Purpose |
-|-------|---------|
-| `/settings` | Main settings hub |
-| `/settings/privacy` | Privacy controls (visibility, online status, read receipts, etc.) |
-| `/settings/blocked` | Blocked users management |
-| `/settings/phone-verification` | Phone number verification |
-| `/settings/relationship` | Relationship preferences |
-| `/notifications/settings` | Notification preferences |
-
-**Backend:** `user_settings` table with granular `notifications_*` and `privacy_*` boolean/string fields
-
-### 4.4 Super Admin Panel (`/super-admin/*`)
-
-Protected by `SuperAdminGuard` component. 48 sub-pages:
-
-| Route | Page | Purpose |
-|-------|------|---------|
-| `/` | Dashboard | KPIs, charts, recent activity |
-| `/users` | Users | CRUD user management, profile editor |
-| `/verification` | Verification | Review verification requests |
-| `/moderation` | Moderation | Content moderation queue |
-| `/analytics` | Analytics | User engagement charts |
-| `/ab-testing` | A/B Testing | Experiment management |
-| `/system-health` | System Health | API performance, incidents |
-| `/email-campaigns` | Email Campaigns | Marketing emails |
-| `/exports` | Exports | Data export management |
-| `/audit-logs` | Audit Logs | Admin action history |
-| `/roles` | Roles | Role/permission management |
-| `/bulk-actions` | Bulk Actions | Mass operations |
-| `/categories` | Categories | Content categories |
-| `/registration-questions` | Reg. Questions | Onboarding form config |
-| `/messages` | Messages | Message oversight |
-| `/photos` | Photos | Photo moderation |
-| `/settings` | Settings | App-wide settings |
-| `/subscribers` | Subscribers | Subscription management |
-| `/payments` | Payments | Payment history |
-| `/social-login` | Social Login | OAuth provider config |
-| `/landing-page` | Landing Editor | CMS for landing page |
-| `/translations` | Translations | i18n string management |
-| `/likes` | Likes | Like analytics |
-| `/matches` | Matches | Match management |
-| `/comments` | Comments | Comment moderation |
-| `/groups` | Groups | Group management |
-| `/events` | Events | Event management |
-| `/followers` | Followers | Follow analytics |
-| `/notifications` | Notifications | Push notification management |
-| `/hashtags` | Hashtags | Hashtag management |
-| `/blocked-users` | Blocked Users | Block analytics |
-| `/conversations` | Conversations | Conversation oversight |
-| `/rate-limits` | Rate Limits | Usage limit config |
-| `/daily-usage` | Daily Usage | Usage analytics |
-| `/ai-insights` | AI Insights | AI feature analytics |
-| `/interests` | Interests | Interest category management |
-| `/support-tickets` | Support Tickets | User support queue |
-| `/api-keys` | API Keys | External API key management |
-| `/virtual-gifts` | Virtual Gifts | Gift catalog management |
-| `/ghost-users` | Ghost Users | Inactive user detection |
-| `/stories` | Stories | Story moderation |
-| `/calls` | Calls | Call analytics |
-| `/date-proposals` | Date Proposals | Date proposal oversight |
-| `/marriage-intentions` | Marriage | Marriage intention analytics |
-| `/safety-flags` | Safety Flags | Safety flag review |
-| `/scheduled-content` | Scheduled Content | Content scheduling |
-| `/profile-views` | Profile Views | View analytics |
+### 2.3 Tredjepartstjenester
+| Tjeneste | Bruk | Hemmelighet |
+|----------|------|-------------|
+| Stripe | Betalinger, abonnement | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` |
+| OpenAI | AI-generert bio, icebreakers, innsikt, moderering | `OPENAI_API_KEY` |
+| Twilio | SMS-verifisering | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER` |
+| Google STUN | WebRTC NAT-traversal | Ingen (offentlig) |
+| Tenor/GIPHY | GIF-søk i chat | `TENOR_API_KEY` |
 
 ---
 
-## 5. Navigation Map
+## 3. TEKNOLOGISTACK
 
-```
-Landing (/) ─────────────────────────────────────────────────────┐
-  ├── /auth (Login) ──────────────────────────────────────────┐  │
-  ├── /register (Multi-step wizard) ──────────────────────────┤  │
-  │                                                           │  │
-  │  [Authenticated User]                                     ▼  │
-  │  ┌─────────────────────────────────────────────────────────┐ │
-  │  │                   BOTTOM NAVIGATION                     │ │
-  │  │  Home(/discovery) | Swipe | Chat | Discover | Profile   │ │
-  │  └─────────┬──────────┬───────┬────────┬──────────┬────────┘ │
-  │            │          │       │        │          │           │
-  │   Discovery Feed   Swipe   Messages  Discover   My Profile  │
-  │     ├─ /post/:id   Cards    ├─ Chat    Hub       ├─ Edit     │
-  │     ├─ /create-post         │         ├─ /search  ├─ Photos  │
-  │     ├─ /hashtag/:tag        │         ├─ /groups  ├─ Settings │
-  │     ├─ /profile/:id         │         ├─ /events  │           │
-  │     └─ /stories/:uid        │         ├─ /matches │           │
-  │                              │         ├─ /liked-me│          │
-  │                              │         └─ /viewed-me          │
-  │                                                               │
-  │  [Admin users: bottom nav shows Admin instead of Profile]     │
-  │  /super-admin/* ── 48 admin sub-pages                         │
-  └───────────────────────────────────────────────────────────────┘
-```
-
-**Route Protection:**
-- `ProtectedRoute` wrapper checks `supabase.auth` session
-- `SuperAdminGuard` checks `user_roles` table for `super_admin` role
-- Public routes redirect authenticated users to `/discovery`
-- Bottom nav hidden on: `/`, `/auth`, `/register`, `/auth/callback`, `/admin-login`, `/admin-setup`, `/create-admin`, `/complete-profile`, `/super-admin/*`
+| Kategori | Teknologi | Versjon |
+|----------|-----------|---------|
+| Frontend-rammeverk | React | 18.3.1 |
+| Byggverktøy | Vite | 5.4.1 |
+| Språk | TypeScript | 5.5.3 |
+| CSS | Tailwind CSS | 3.4.11 |
+| UI-komponenter | shadcn/ui + Radix UI | Diverse |
+| Animasjoner | Framer Motion | 12.23.24 |
+| Routing | React Router DOM | 6.26.2 |
+| State/Data | TanStack React Query | 5.56.2 |
+| Skjema | React Hook Form + Zod | 7.53.0 / 3.23.8 |
+| Grafer | Recharts | 2.12.7 |
+| Kart | Leaflet + React Leaflet | 1.9.4 / 4.2.1 |
+| Drag & Drop | react-beautiful-dnd | 13.1.1 |
+| Backend | Supabase (PostgreSQL, Auth, Storage, Edge Functions) | 2.56.1 |
+| Betalinger | Stripe | 18.5.0 (Deno) |
+| Toast | Sonner | 1.5.0 |
+| Ikoner | Lucide React | 0.462.0 |
+| HTML-sanitering | isomorphic-dompurify | 2.28.0 |
+| Bildekomprimering | browser-image-compression | 2.0.2 |
 
 ---
 
-## 6. Design System
+## 4. FILSTRUKTUR
 
-### 6.1 Theme: "Midnight Rose"
-
-Dark mode is the **default and primary** theme.
-
-#### Primary Colors (HSL → HEX approximations)
-
-| Token | HSL | HEX | Usage |
-|-------|-----|-----|-------|
-| `--background` | `271 33% 9%` | `#170F21` | App background |
-| `--foreground` | `0 0% 95%` | `#F2F2F2` | Primary text |
-| `--card` | `268 37% 17%` | `#2A1E3D` | Card surfaces |
-| `--primary` | `336 90% 60%` | `#F43F8E` | CTAs, active states, brand accent |
-| `--primary-light` | `336 80% 70%` | `#F77BAE` | Hover states |
-| `--primary-dark` | `268 37% 17%` | `#2A1E3D` | Deep accent |
-| `--accent` | `340 95% 71%` | `#FB6FA9` | Secondary accent |
-| `--secondary` | `265 35% 14%` | `#1F1533` | Secondary surfaces |
-| `--muted` | `265 35% 14%` | `#1F1533` | Muted backgrounds |
-| `--muted-foreground` | `270 20% 63%` | `#9E8AB3` | Secondary text |
-| `--border` | `268 25% 25%` | `#3D2E52` | Borders |
-| `--destructive` | `0 84% 60%` | `#EF4444` | Delete/error |
-| `--success` | `142 76% 36%` | `#16A34A` | Success states |
-| `--warning` | `38 92% 50%` | `#F59E0B` | Warning states |
-| `--info` | `217 91% 60%` | `#3B82F6` | Info states |
-| `--ring` | `336 90% 60%` | `#F43F8E` | Focus rings |
-
-#### Tinder Legacy Colors (hardcoded in tailwind.config)
+```text
+/
+├── index.html                    # HTML entrypoint med PWA manifest, SEO meta
+├── package.json                  # Avhengigheter og scripts
+├── vite.config.ts                # Vite-konfigurasjon
+├── tailwind.config.ts            # Tailwind-konfigurasjon
+├── public/
+│   ├── manifest.json             # PWA-manifest
+│   ├── service-worker.js         # Push notification worker
+│   ├── icons/                    # PWA app-ikoner (192x192, 512x512)
+│   └── favicon.ico
+├── supabase/
+│   ├── config.toml               # Supabase-prosjektkonfigurasjon
+│   ├── migrations/               # SQL-migrasjonsfiler (kronologisk)
+│   └── functions/                # 28 Edge Functions (Deno)
+│       ├── _shared/validation.ts # Delt inputvalidering
+│       ├── admin-actions/        # Admin CRUD via service role
+│       ├── admin-delete-user/    # Sletting av brukere
+│       ├── ai-wingman/           # AI-assistent for dating-råd
+│       ├── calculate-compatibility/ # AI-kompatibilitetsberegning
+│       ├── calculate-match-score/   # Matchscore-algoritme
+│       ├── check-subscription/   # Sjekk abonnementsstatus
+│       ├── collect-system-metrics/ # Systemhelse-metrikker
+│       ├── create-checkout/      # Stripe Checkout-sesjon
+│       ├── create-super-admin/   # Opprett superadmin-rolle
+│       ├── customer-portal/      # Stripe kundeportal
+│       ├── extract-texts/        # Tekstuttrekk for oversettelse
+│       ├── generate-bio/         # AI bio-generering
+│       ├── generate-icebreakers/ # AI åpningsreplikker
+│       ├── generate-insights/    # AI samtaleinnsikt
+│       ├── manage-api-keys/      # API-nøkkelhåndtering
+│       ├── moderate-message/     # AI meldingsmoderering
+│       ├── moderate-photo/       # AI bildemoderasjon
+│       ├── search-gifs/          # GIF-søk (Tenor)
+│       ├── send-push-notification/ # Push-varsler
+│       ├── send-sms-verification/  # SMS OTP via Twilio
+│       ├── setup-admin/          # Admin-oppsett
+│       ├── stripe-webhook/       # Stripe webhook-mottaker
+│       ├── submit-verification/  # Video-verifisering
+│       ├── sync-all-translations/ # Oversettelsessynkronisering
+│       ├── sync-translations/    # Enkelt-språk oversettelse
+│       ├── translate-message/    # AI meldingsoversettelse
+│       └── verify-phone-code/    # SMS OTP-verifisering
+└── src/
+    ├── main.tsx                  # React entrypoint + console-suppression
+    ├── App.tsx                   # Root: Providers → Router → AppRoutes
+    ├── index.css                 # Midnight Rose design system variabler
+    ├── api/                      # Supabase datalag (24 filer)
+    │   ├── profiles.ts           # Profilhenting, oppdatering, søk
+    │   ├── messages.ts           # Samtaler, sendmeldinger, lesmerking
+    │   ├── matches.ts            # Match-henting med paginering
+    │   ├── likes.ts              # Like/dislike/superlike + match-opprettelse
+    │   ├── swipes.ts             # Swipe-historikk
+    │   ├── posts.ts              # CRUD for innlegg + stories
+    │   ├── comments.ts           # Kommentarer på innlegg
+    │   ├── reactions.ts          # Reaksjoner (likes, hjerte, etc.)
+    │   ├── events.ts             # Events CRUD, join/leave
+    │   ├── groups.ts             # Grupper CRUD, medlemskap
+    │   ├── gifts.ts              # Virtuelle gaver, coins
+    │   ├── payments.ts           # Stripe checkout/portal
+    │   ├── notifications.ts      # Notifikasjoner CRUD
+    │   ├── hashtags.ts           # Hashtag-sporing
+    │   ├── reports.ts            # Rapportering av brukere/innhold
+    │   ├── moderation.ts         # Modereringsverktøy
+    │   ├── ai.ts                 # AI-funksjonsanrop
+    │   ├── accountActions.ts     # Kontodeaktivering, sletting, passordbytte
+    │   ├── admin.ts              # Admin-spesifikke operasjoner
+    │   ├── adminDatabase.ts      # Admin database-queries
+    │   ├── dashboard.ts          # Dashboard-statistikk
+    │   ├── usage.ts              # Bruksstatistikk
+    │   ├── realDataService.ts    # Real data helpers
+    │   └── constants.ts          # API-konstanter
+    ├── components/               # React-komponenter (32 mapper)
+    │   ├── app/                  # App-shell: Layout, Routes, Guards, Transitions
+    │   │   ├── AppRoutes.tsx     # Hovedruting
+    │   │   ├── AppLayout.tsx     # Layout med BottomNav
+    │   │   ├── ProtectedRoute.tsx # Auth-guard
+    │   │   ├── SuperAdminGuard.tsx # Admin rollesjekk
+    │   │   └── routes/           # Rute-definisjoner (5 filer)
+    │   ├── auth/                 # Login-skjema, OAuth, Callback
+    │   ├── ui/                   # shadcn/ui basiskomponenter
+    │   ├── swipe/                # Swipe-kort, animasjoner
+    │   ├── messages/             # ChatView, ConversationList
+    │   ├── chat/                 # Meldingsbobler, input, typing
+    │   ├── calls/                # VideoCall, IncomingCall
+    │   ├── profile/              # Profilvisning, redigering
+    │   ├── my-profile/           # Min profil-sider
+    │   ├── discovery/            # Utforsk-feed, nærme brukere
+    │   ├── stories/              # Story-visning, opprettelse
+    │   ├── groups/               # Gruppelistning, detaljer
+    │   ├── events/               # Event-kort, detaljer
+    │   ├── gifts/                # Gave-UI, coins
+    │   ├── dates/                # Date-forslag
+    │   ├── compatibility/        # Kompatibilitetsvisning
+    │   ├── subscription/         # Abonnementsplaner
+    │   ├── verification/         # Video-verifisering
+    │   ├── notifications/        # Varselvisning
+    │   ├── settings/             # Innstillingsskjermer
+    │   ├── landing/              # Landingsside-seksjoner
+    │   ├── admin/                # Admin-komponenter
+    │   ├── boost/                # Profil-boost
+    │   ├── instagram/            # Instagram-stil profil
+    │   ├── location/             # Stedsvalg
+    │   ├── modals/               # Modale vinduer
+    │   ├── onboarding/           # Onboarding-flyt
+    │   ├── security/             # Sikkerhetskomponenter
+    │   ├── shared/               # Delte komponenter
+    │   ├── support/              # Support/hjelp
+    │   ├── language-selector/    # Språkvelger
+    │   ├── DetailEditor/         # Profildetalj-redigering
+    │   ├── BottomNavigation.tsx  # Hovednavigasjon (bunnmeny)
+    │   ├── EmptyState.tsx        # Tom tilstand-komponent
+    │   ├── ErrorBoundary.tsx     # Feilhåndtering
+    │   ├── LoadingState.tsx      # Lastespinner
+    │   └── MatchPopup.tsx        # Match-animasjon
+    ├── contexts/                 # React Contexts
+    │   ├── LanguageContext.tsx   # Språk (5 språk, RTL-støtte)
+    │   └── SubscriptionContext.tsx # Abonnementsstatus
+    ├── hooks/                    # Custom React Hooks (44 filer)
+    │   ├── useWebRTC.ts         # Video/taleanrop
+    │   ├── useTranslations.ts   # i18n oversettelser
+    │   ├── useSubscription.ts   # Abonnement-logikk
+    │   ├── useDiscoveryProfiles.ts # Profilforslag
+    │   ├── useNotifications.ts  # Varseltelling
+    │   ├── useOnlinePresence.ts # Online-status
+    │   ├── useStories.ts       # Story-håndtering
+    │   ├── useCompatibility.ts  # Kompatibilitet
+    │   └── useVoiceRecorder.ts  # Stemmeopptak
+    ├── pages/                    # Sidekomponenter (50+ sider)
+    │   ├── SuperAdmin/          # Admin-panel (48 undersider)
+    │   └── ...
+    ├── types/                    # TypeScript-typer
+    │   ├── profile.ts           # ProfileData (75+ felt)
+    │   ├── subscription.ts      # Abonnementsplaner og tiers
+    │   ├── account.ts           # Konto-handlinger
+    │   ├── swipe.ts             # Swipe-typer
+    │   ├── location.ts          # Stedsinformasjon
+    │   └── translations.ts      # Oversettelsetyper
+    ├── utils/                    # Hjelpefunksjoner
+    │   ├── logger.ts            # Produksjonslogger
+    │   ├── rtl.ts               # RTL-deteksjon
+    │   ├── valueMapping.ts      # Verdioversettelser
+    │   ├── ghostUserGenerator.ts # Ghost-brukere (admin)
+    │   ├── validation/          # Inputvalidering
+    │   ├── security/            # Sikkerhetsverktøy
+    │   ├── auth/                # Auth-hjelpere
+    │   └── admin/               # Admin-hjelpere
+    ├── config/
+    │   └── swipe.ts             # Swipe-konfigurasjon
+    ├── data/
+    │   ├── languages.ts         # Språkliste
+    │   └── occupations.ts       # Yrkes-liste
+    └── integrations/
+        └── supabase/
+            ├── client.ts        # Supabase-klient
+            ├── auth.tsx         # AuthProvider + hooks
+            └── types.ts         # Auto-genererte DB-typer (5725 linjer)
 ```
-tinder-rose: #F43F8E
-tinder-orange: #FB6FA9
-tinder-dark: #140F1F
-```
-
-#### Gradients
-| Name | Value |
-|------|-------|
-| `--gradient-primary` | `linear-gradient(135deg, hsl(268 37% 17%), hsl(336 90% 60%))` |
-| `--gradient-bg` | `linear-gradient(135deg, hsl(271 33% 9%), hsl(265 35% 14%) 50%, hsl(268 37% 17%))` |
-| `gradient-tinder` | `linear-gradient(to right, #F43F8E, #FB6FA9)` |
-| `gradient-brand` | `linear-gradient(135deg, #2A1E45, #F43F8E)` |
-
-#### Light Mode
-Overrides via `.light` class. White background (`0 0% 100%`), dark foreground (`240 10% 3.9%`). Primary colors remain the same rose/pink.
-
-### 6.2 Typography
-
-| Element | Font | Weight | Notes |
-|---------|------|--------|-------|
-| **Body** | Quicksand, Poppins, Inter | 400 | `font-feature-settings: "rlig" 1, "calt" 1` |
-| **Headings** | Quicksand | 500 (medium) | `tracking-tight` |
-| **Kurdish Sorani** | Noto Sans Arabic | 300-900 | RTL, `direction: rtl` |
-| **Kurdish Bold** | Noto Sans Arabic | 700 | `.font-kurdistan` class |
-
-**Font Scale:** Uses Tailwind defaults (`text-xs` through `text-9xl`). Bottom nav labels: `text-[11px]`.
-
-### 6.3 Spacing & Layout
-
-| Token | Value |
-|-------|-------|
-| `--radius` | `1rem` (16px) |
-| Border radius lg | `var(--radius)` = 16px |
-| Border radius md | `calc(var(--radius) - 2px)` = 14px |
-| Border radius sm | `calc(var(--radius) - 4px)` = 12px |
-| Container max-width | `1400px` (2xl) |
-| Container padding | `2rem` |
-| Bottom nav height | `56px` |
-| Action button | `48px` (sm: `64px`) |
-| Action button big | `64px` (sm: `80px`) |
-
-**Breakpoints:**
-```
-xs: 475px | sm: 640px | md: 768px | lg: 1024px | xl: 1280px | 2xl: 1536px
-```
-
-**Safe Area:** `env(safe-area-inset-top)` and `env(safe-area-inset-bottom)` for iOS notch support.
-
-### 6.4 Component Styles
-
-**Glass Effect:**
-```css
-.glass { background: hsla(265, 35%, 14%, 0.6); backdrop-filter: blur(24px); border: 1px solid hsla(268, 25%, 25%, 0.3); }
-```
-
-**Neo Card:**
-```css
-.neo-card { backdrop-filter: blur(4px); background: hsl(265 35% 14% / 0.6); border: 1px solid hsl(268 25% 25% / 0.4); border-radius: 12px; }
-```
-
-**Swipe Card:** `rounded-3xl`, height `clamp(400px, 85vh, 800px)`, gradient overlay bottom 2/3.
-
-**Bottom Navigation:** `bg-card/95 backdrop-blur-xl`, fixed bottom, `z-[100]`, active dot indicator (1.5x6px primary circle).
-
-### 6.5 Animations
-
-| Name | Duration | Easing | Description |
-|------|----------|--------|-------------|
-| `fade-in` | 0.4s | ease-out | Opacity 0→1 |
-| `fade-up` | 0.5s | ease-out | Opacity + translateY(10px→0) |
-| `scale-in` | 0.3s | ease-out | Scale 0.95→1 |
-| `swipe-right` | 0.5s | ease-out | translateX(0→150%) rotate(0→30deg) |
-| `swipe-left` | 0.5s | ease-out | translateX(0→-150%) rotate(0→-30deg) |
-| `bounce-in` | 0.5s | ease-out | Scale 0.8→1.1→1 |
-| `pulse-heart` | 1.5s | infinite | Scale 1→1.25→1 |
-| `midnight-pulse` | 4s | ease-in-out infinite | Opacity 0.3→0.6→0.3 |
-| `ai-pulse` | 3s | infinite | Box-shadow pulse with primary color |
-| `shimmer` | 2s | infinite | Horizontal shine sweep |
-| `shine` | 3s | infinite | Wider fancy shine sweep |
-
-**Framer Motion:** Used extensively for page transitions (`PageTransition` component), card animations, and micro-interactions.
 
 ---
 
-## 7. Database Architecture
+## 5. FUNKSJONALITET - DETALJERT
 
-### 7.1 Tables (48 tables)
+### 5.1 Autentisering & Registrering
+- **Login**: Email/passord via `supabase.auth.signInWithPassword()`
+- **Registrering**: Flertrinns wizard (`EnhancedDynamicRegistrationForm`) med:
+  - Steg 1: Email, passord, navn, alder, kjønn
+  - Steg 2: Kurdistan-region, lokasjon, yrke
+  - Steg 3: Bio, interesser, verdier, hobbyer
+  - Steg 4: Fysiske attributter, livsstil
+  - Steg 5: Profilbilde-opplasting
+- **OAuth**: Google og Facebook via `supabase.auth.signInWithOAuth()`
+- **Passord-reset**: Via `supabase.auth.resetPasswordForEmail()`
+- **Passordbytte**: Krever verifisering av nåværende passord først
+- **Session**: JWT i localStorage, auto-refresh via Supabase SDK
 
-#### Core User Data
+### 5.2 Swipe & Matching
+- **Swipe-kort**: Fullskjerm profil-kort med bilde, navn, alder, bio
+- **Handlinger**: Like (høyre), Dislike (venstre), Super Like (opp)
+- **Matching**: Når to brukere liker hverandre → match opprettes i `matches`-tabell
+- **Match-popup**: Animert popup ved ny match med "Send melding"-knapp
+- **Discovery-filtre**: Alder, avstand, region, religion, utdanning
 
-| Table | Purpose | Key Fields | Relationships |
-|-------|---------|------------|---------------|
-| `profiles` | Main user profile | `id` (FK→auth.users), `name`, `age`, `location`, `gender`, `bio`, `occupation`, `profile_image`, `kurdistan_region`, `ethnicity`, `religion`, `height`, `body_type`, `education`, `relationship_goals`, `want_children`, `exercise_habits`, `interests[]`, `values[]`, `hobbies[]`, `languages[]`, `verified`, `video_verified`, `phone_number`, `phone_verified`, `latitude`/`longitude`, `geo_location` (PostGIS geometry), `travel_mode_active`, `travel_location`, `dating_profile_visible`, `blur_photos`, `notification_preferences`, `last_active`, `is_generated` | Central table; most tables FK to this |
-| `profile_details` | Extended profile (1:1) | `profile_id` (FK→profiles), `body_type`, `ethnicity`, `religion`, `education`, `height`, `zodiac_sign`, `personality_type`, `smoking`, `drinking`, 30+ lifestyle fields | 1:1 with profiles |
-| `profile_preferences` | Dating preferences | `profile_id` (FK→profiles), filter preferences | 1:1 with profiles |
-| `profile_interests` | Interest tags (M:M) | `profile_id`, `interest_id` | FK→profiles, FK→interests |
-| `photos` | User photos | `profile_id`, `url`, `is_primary` | FK→profiles |
-| `user_roles` | Role assignments | `user_id` (FK→profiles), `role` (enum: super_admin, admin, moderator, user) | Separate from profiles for security |
-| `user_settings` | Per-user preferences | `user_id`, `notifications_*` (12 boolean fields), `privacy_*` (12 fields) | |
-| `user_subscriptions` | Subscription state | `user_id`, `subscription_type`, `expires_at` | FK→profiles |
-| `user_coins` | Virtual currency balance | `user_id`, `balance`, `total_earned`, `total_spent` | 1:1 with profiles |
+### 5.3 Meldinger
+- **Samtaler**: Hentet fra `messages`-tabell, gruppert per brukerpar
+- **Sanntid**: Supabase Realtime channels for nye meldinger
+- **Typing-indikator**: Via `typing_indicators`-tabell med realtime
+- **Lesebekreftelser**: `read_at`-tidsstempel oppdateres når meldinger vises
+- **Stemmeopptak**: `useVoiceRecorder` hook med MediaRecorder API
+- **GIF-søk**: Via `search-gifs` edge function (Tenor API)
+- **AI Meldingsoversettelse**: `translate-message` edge function
+- **AI Moderering**: `moderate-message` edge function sjekker innhold
 
-#### Social Features
+### 5.4 Video/Taleanrop
+- **WebRTC**: Peer-to-peer via `useWebRTC` hook
+- **Signalering**: Supabase Realtime brukt som signalkanal
+- **ICE-servere**: Google STUN (mangler TURN for produksjon)
+- **UI**: Fullskjerm VideoCallScreen med mute/kamera-toggle
+- **Innkommende anrop**: IncomingCallSheet (bottom sheet)
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `posts` | Social feed posts | `user_id`, `content`, `media_url`, `media_type`, `hashtags[]`, `likes_count`, `comments_count`, reaction counts (love, fire, haha, wow, sad, thoughtful, applause, `total_reactions`) |
-| `post_comments` | Nested comments | `post_id`, `user_id`, `content`, `parent_comment_id`, `depth`, `likes_count`, `mentions[]` |
-| `post_likes` | Post likes | `post_id`, `user_id` |
-| `post_reactions` | Emoji reactions | `post_id`, `user_id`, `reaction_type` |
-| `comment_likes` | Comment likes | `comment_id`, `user_id` |
-| `saved_posts` | Bookmarks | `post_id`, `user_id` |
-| `hashtags` | Hashtag registry | `name`, `usage_count`, `last_used_at` |
-| `followers` | Follow relationships | `follower_id`, `following_id` |
-| `stories` | Ephemeral stories | `user_id`, `media_url`, `media_type`, `expires_at`, `view_count` |
-| `story_views` | Story view tracking | `story_id`, `viewer_id` |
+### 5.5 Sosial Feed
+- **Innlegg**: Tekst + bilde med hashtags, likes, kommentarer
+- **Realtime**: Live oppdateringer via Supabase channels
+- **Hashtags**: Spores i `post_hashtags`-tabell, trendende hashtags
+- **Lagrede innlegg**: Brukere kan lagre innlegg (`saved_posts`)
+- **Rapportering**: Brukere kan rapportere innhold (`reports`)
 
-#### Dating Features
+### 5.6 Stories
+- **Opprettelse**: Bilde/video med tekst-overlay
+- **Visning**: Fullskjerm slideshow per bruker
+- **24-timers TTL**: Stories ekspirerer automatisk
+- **Story-visninger**: Spores for analytikk
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `likes` | Profile likes | `liker_id`, `likee_id` |
-| `matches` | Mutual matches | `user1_id`, `user2_id`, `matched_at` |
-| `swipe_history` | Swipe log | `user_id`, `swiped_profile_id`, `action` (like/dislike/super_like), `rewound` |
-| `daily_usage` | Daily action limits | `user_id`, `date`, `likes_count`, `super_likes_count`, `boosts_count`, `rewinds_count` |
-| `date_proposals` | Date invitations | `proposer_id`, `recipient_id`, `activity`, `proposed_date`, `location`, `status` |
-| `marriage_intentions` | Marriage goals | `user_id`, `intention`, `timeline`, `family_plans`, `visible_on_profile` |
-| `compatibility_scores` | Cached scores | |
+### 5.7 Grupper
+- **Opprettelse**: Navn, beskrivelse, kategori, bilde
+- **Medlemskap**: Join/leave med `group_members`-tabell
+- **Innlegg**: Gruppeinnlegg synlig kun for medlemmer
+- **Admin**: Gruppeeier kan moderere
 
-#### Communication
+### 5.8 Events
+- **Opprettelse**: Tittel, beskrivelse, dato, sted, maks deltakere
+- **Deltakelse**: Join/leave med kapasitetssjekk
+- **Listing**: Filtrering etter dato, kategori
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `messages` | Chat messages | `sender_id`, `recipient_id`, `text`, `media_url`, `media_type`, `media_duration`, `read` |
-| `conversation_metadata` | Conversation state | `user1_id`, `user2_id`, `last_message_at`, `is_archived` |
-| `typing_status` | Typing indicators | `conversation_id`, `user_id`, `is_typing` |
-| `muted_conversations` | Muted chats | `user_id`, `muted_user_id`, `muted_until` |
-| `calls` | Call history | `caller_id`, `callee_id`, `call_type` (voice/video), `status`, `duration_seconds`, `started_at`, `ended_at` |
-| `ai_conversation_insights` | AI analysis | `user_id`, `conversation_partner_id`, `shared_interests`, `suggested_topics`, `communication_style` |
+### 5.9 AI-funksjoner
+| Funksjon | Edge Function | Beskrivelse |
+|----------|--------------|-------------|
+| Bio-generering | `generate-bio` | AI skriver profilbio basert på brukerdata |
+| Kompatibilitet | `calculate-compatibility` | Scorer kompatibilitet mellom to profiler |
+| Icebreakers | `generate-icebreakers` | Foreslår åpningsreplikker |
+| Samtaleinnsikt | `generate-insights` | Analyserer samtalemønstre |
+| AI Wingman | `ai-wingman` | Datingrådgiver-chatbot |
+| Moderering | `moderate-message`, `moderate-photo` | Innholdsfiltrering |
 
-#### Safety & Moderation
+### 5.10 Gaver & Coins
+- **Coins**: Virtuell valuta lagret i `user_coins`
+- **Gaver**: Virtuelle gaver fra `virtual_gifts`-katalog
+- **Sending**: Bruker sender gave → coins trekkes → mottaker får notifikasjon
+- **Date-forslag**: Invitasjoner lagret i `date_proposals`
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `blocked_users` | Block list | `blocker_id`, `blocked_id`, `reason` |
-| `reports` | Content reports | `reporter_user_id`, `reported_user_id`, `content_type`, `content_id`, `reason`, `status`, `admin_notes` |
-| `reported_messages` | Message reports | `reporter_id`, `reported_user_id`, `message_id`, `reason`, `status` |
-| `moderation_actions` | Admin actions log | `admin_id`, `content_id`, `content_type`, `action_type`, `duration_hours` |
-| `message_safety_flags` | AI-detected flags | `sender_id`, `recipient_id`, `message_id`, `flag_type`, `severity`, `ai_detected` |
-| `message_rate_limits` | Rate limiting | `user_id`, `message_count`, `window_start` |
+### 5.11 Abonnement (Stripe)
+| Tier | Pris (NOK) | Stripe Price ID |
+|------|-----------|-----------------|
+| Free | 0 | - |
+| Basic | 199/mnd | `price_1RK4pqDY8qZ9eNdMPGHK0Rw5` |
+| Premium | 299/mnd | `price_1RK4rLDY8qZ9eNdMZiI5XTrO` |
+| Gold | 499/mnd | `price_1RK4sIDY8qZ9eNdMvrimk1w5` |
 
-#### Verification
+**Flyt**: Bruker velger plan → `create-checkout` → Stripe Checkout → `stripe-webhook` oppdaterer `user_subscriptions`.
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `verification_requests` | ID verification | `user_id`, `verification_type`, `document_url`, `selfie_url`, `status`, `rejection_reason` |
-| `video_verifications` | Video selfie | `user_id`, `video_url`, `thumbnail_url`, `confidence_score`, `status`, `verified_at` |
-| `phone_verifications` | Phone OTP | `user_id`, `phone_number`, `verification_code`, `expires_at`, `attempts`, `verified` |
+### 5.12 Verifisering
+- **Video**: Bruker tar opp video → `submit-verification` → admin godkjenner
+- **Telefon**: SMS OTP via `send-sms-verification` → `verify-phone-code`
+- **Status**: `profiles.verified`, `profiles.phone_verified`, `profiles.video_verified`
 
-#### Groups & Events
+---
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `groups` | Community groups | `name`, `description`, `category`, `privacy`, `created_by`, `member_count`, `post_count`, `cover_image` |
-| `group_members` | Membership | `group_id`, `user_id`, `role` (admin/member) |
-| `group_posts` | Group-post mapping | `group_id`, `post_id` |
-| `events` | Events | `user_id`, `title`, `description`, `event_date`, `location`, `category`, `max_attendees`, `attendees_count`, `image_url` |
-| `event_attendees` | RSVPs | `event_id`, `user_id` |
+## 6. RUTER (ALLE)
 
-#### Notifications & Push
+### 6.1 Offentlige ruter
+| Rute | Side | Beskrivelse |
+|------|------|-------------|
+| `/` | LandingV2 | Landingsside (redirect til /discovery hvis innlogget) |
+| `/auth` | Auth | Innlogging |
+| `/register` | Register | Registrering |
+| `/auth/callback` | AuthCallback | OAuth callback |
+| `/admin-login` | SuperAdminLogin | Admin innlogging |
+| `/reset-password` | ResetPassword | Passord-reset |
+| `/help` | HelpSupport | Hjelp og support |
+| `/community-guidelines` | CommunityGuidelines | Retningslinjer |
+| `/privacy-policy` | PrivacyPolicy | Personvern |
+| `/terms` | TermsOfService | Vilkår |
+| `/about` | AboutUs | Om oss |
+| `/contact` | ContactUs | Kontakt oss |
+| `/cookie-policy` | CookiePolicy | Cookie-policy |
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `notifications` | In-app notifications | `user_id`, `type`, `title`, `message`, `link`, `read`, `actor_id`, `post_id`, `group_id` |
-| `push_subscriptions` | Web push endpoints | `user_id`, `endpoint`, `p256dh`, `auth`, `is_active` |
+### 6.2 Beskyttede ruter (krever innlogging)
+| Rute | Side | Beskrivelse |
+|------|------|-------------|
+| `/discovery` | DiscoveryFeed | Hovedfeed |
+| `/swipe` | Swipe | Swipe-kort |
+| `/discover` | DiscoverHub | Hub: likes, views, matches |
+| `/messages` | Messages | Samtaler + chat |
+| `/my-profile` | MyProfile | Min profil |
+| `/profile/:id` | InstagramProfile | Andres profil |
+| `/matches` | Matches | Mine matcher |
+| `/liked-me` | LikedMe | Hvem liker meg |
+| `/viewed-me` | ViewedMe | Hvem har sett meg |
+| `/search` | AdvancedSearch | Avansert søk |
+| `/saved` | SavedPosts | Lagrede innlegg |
+| `/events` | Events | Event-liste |
+| `/create-event` | CreateEvent | Opprett event |
+| `/event/:id` | EventDetail | Event-detalj |
+| `/create-post` | CreatePost | Opprett innlegg |
+| `/post/:id` | PostDetail | Innlegg-detalj |
+| `/hashtag/:hashtag` | HashtagFeed | Hashtag-feed |
+| `/groups` | Groups | Gruppe-liste |
+| `/groups/create` | CreateGroup | Opprett gruppe |
+| `/groups/:id` | GroupDetail | Gruppe-detalj |
+| `/stories/create` | CreateStory | Opprett story |
+| `/stories/:userId` | StoriesView | Se stories |
+| `/gifts` | GiftsAndDates | Gaver og dates |
+| `/subscription` | Subscription | Abonnementsplaner |
+| `/verification` | Verification | Verifisering |
+| `/compatibility/:userId` | CompatibilityInsights | Kompatibilitetsvisning |
+| `/notifications` | Notifications | Varsler |
+| `/complete-profile` | CompleteProfile | Fullfør profil |
+| `/settings` | Settings | Innstillinger |
+| `/settings/privacy` | PrivacySettings | Personverninnstillinger |
+| `/settings/blocked` | BlockedUsers | Blokkerte brukere |
+| `/settings/phone-verification` | PhoneVerification | Telefonverifisering |
+| `/settings/relationship` | RelationshipSettings | Relasjonsinnstillinger |
+| `/notifications/settings` | NotificationSettings | Varselinnstillinger |
 
-#### Admin & System
+### 6.3 Admin-ruter (krever super_admin rolle)
+| Rute | Side |
+|------|------|
+| `/super-admin` | Dashboard |
+| `/super-admin/users` | Brukerhåndtering |
+| `/super-admin/stories` | Stories-moderering |
+| `/super-admin/calls` | Anropslogg |
+| `/super-admin/messages` | Meldingsovervåking |
+| `/super-admin/conversations` | Samtaler |
+| `/super-admin/matches` | Matcher |
+| `/super-admin/likes` | Likes |
+| `/super-admin/photos` | Bildemoderasjon |
+| `/super-admin/events` | Events |
+| `/super-admin/groups` | Grupper |
+| `/super-admin/moderation` | Moderering |
+| `/super-admin/safety-flags` | Sikkerhetsflagg |
+| `/super-admin/verification` | Verifisering |
+| `/super-admin/ghost-users` | Ghost-brukere |
+| `/super-admin/analytics` | Analytikk |
+| `/super-admin/daily-usage` | Daglig bruk |
+| `/super-admin/profile-views` | Profilvisninger |
+| `/super-admin/subscribers` | Abonnenter |
+| `/super-admin/payments` | Betalinger |
+| `/super-admin/virtual-gifts` | Virtuelle gaver |
+| `/super-admin/date-proposals` | Date-forslag |
+| `/super-admin/marriage-intentions` | Ekteskapsønsker |
+| `/super-admin/notifications` | Varsler |
+| `/super-admin/email-campaigns` | E-postkampanjer |
+| `/super-admin/support-tickets` | Support |
+| `/super-admin/ab-testing` | A/B-testing |
+| `/super-admin/categories` | Kategorier |
+| `/super-admin/interests` | Interesser |
+| `/super-admin/hashtags` | Hashtags |
+| `/super-admin/comments` | Kommentarer |
+| `/super-admin/followers` | Følgere |
+| `/super-admin/blocked-users` | Blokkerte |
+| `/super-admin/rate-limits` | Hastighetsbegrensninger |
+| `/super-admin/scheduled-content` | Planlagt innhold |
+| `/super-admin/translations` | Oversettelser |
+| `/super-admin/registration-questions` | Registreringsspørsmål |
+| `/super-admin/landing-page` | Landingsside-editor |
+| `/super-admin/social-login` | Sosial innlogging |
+| `/super-admin/api-keys` | API-nøkler |
+| `/super-admin/exports` | Eksporter |
+| `/super-admin/bulk-actions` | Massehandlinger |
+| `/super-admin/roles` | Roller |
+| `/super-admin/ai-insights` | AI-innsikt |
+| `/super-admin/system-health` | Systemhelse |
+| `/super-admin/audit-logs` | Revisjonslogger |
+| `/super-admin/settings` | Innstillinger |
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `admin_activities` | Admin activity log | `user_id`, `activity_type`, `description` |
-| `admin_audit_log` | Detailed audit trail | `user_id`, `action_type`, `table_name`, `record_id`, `changes` (JSON) |
-| `app_settings` | Key-value config | `key`, `value` |
-| `system_settings` | Categorized settings | `setting_key`, `setting_value` (JSON), `category` |
-| `system_metrics` | Health metrics | `metric_type`, `metric_data` (JSON), `severity`, `timestamp` |
-| `dashboard_stats` | Dashboard KPIs | `stat_name`, `stat_value`, `change_percentage`, `trend`, `icon` |
-| `user_engagement` | Engagement analytics | `date`, `users`, `views`, `likes`, `matches`, `conversations` |
+---
 
-#### Content Management
+## 7. DATABASE
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `content_categories` | Category system | `name`, `slug`, `description`, multilingual name/desc fields |
-| `category_items` | Items in categories | `category_id`, `name`, `item_type`, multilingual fields |
-| `registration_questions` | Dynamic reg form | `text`, `field_type`, `profile_field`, `registration_step`, `required`, multilingual fields |
-| `interests` | Interest master list | `name`, `category` |
+### 7.1 Tabelloversikt (85 tabeller)
+Gruppert etter domene:
 
-#### Translations & Landing
+**Kjerne-bruker (8)**
+`profiles`, `profile_details`, `profile_preferences`, `profile_visibility_settings`, `account_status`, `user_roles`, `connected_social_accounts`, `chaperone_settings`
 
-| Table | Purpose |
-|-------|---------|
-| `app_translations` | i18n string table (`translation_key`, `translation_value`, `language_code`, `category`) |
-| `landing_page_content` | Legacy landing content |
-| `landing_page_sections` | Section-based CMS |
-| `landing_page_translations` | Landing i18n |
-| `landing_page_v2_translations` | V2 landing CMS (hero, features, community, CTA, footer per language) |
-| `landing_page_snapshots` | Version history |
+**Matching & Dating (8)**
+`likes`, `matches`, `swipes`, `date_proposals`, `marriage_intentions`, `compatibility_scores`, `compatibility_cache`, `match_feedback`
 
-#### Payments
+**Meldinger & Kommunikasjon (7)**
+`messages`, `conversation_metadata`, `muted_conversations`, `typing_indicators`, `calls`, `ai_conversation_insights`, `message_rate_limits`
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `payments` | Payment records | `user_id`, `amount`, `currency`, `status`, `subscription_type`, `stripe_payment_intent_id_encrypted`, `stripe_customer_id_encrypted` |
-| `data_exports` | Data export jobs | `export_type`, `format`, `status`, `file_url`, `row_count` |
+**Sosialt (12)**
+`posts`, `post_comments`, `comment_likes`, `post_likes`, `post_reactions`, `post_hashtags`, `hashtags`, `post_media`, `stories`, `story_views`, `saved_posts`, `user_followers`
 
-#### Miscellaneous
+**Grupper & Events (4)**
+`groups`, `group_members`, `events`, `event_attendees`
 
-| Table | Purpose |
-|-------|---------|
-| `ab_tests` | A/B test configuration |
-| `email_campaigns` | Email marketing |
-| `chaperone_settings` | Conservative mode (chaperone can view messages/photos) |
-| `support_tickets` | User support system |
-| `virtual_gifts` | Gift catalog |
-| `scheduled_content` | Scheduled publishing |
+**Gaver & Coins (4)**
+`virtual_gifts`, `sent_gifts`, `user_coins`, `coin_transactions`
 
-### 7.2 Database Views
+**Abonnement & Betalinger (2)**
+`user_subscriptions`, `subscription_history`
 
-| View | Purpose |
-|------|---------|
-| `user_public_profile` | Public-safe profile projection |
-| `user_public_view` | Another public projection |
+**Verifisering (3)**
+`video_verifications`, `phone_verifications`, `verification_badges`
 
-### 7.3 Key Database Functions
+**Notifikasjoner (3)**
+`notifications`, `notification_preferences`, `push_subscriptions`
 
-| Function | Purpose |
-|----------|---------|
-| `calculate_compatibility(user1, user2)` | Returns compatibility score (0-100) |
-| `nearby_users(lat, long, radius_km, max_results)` | PostGIS proximity search |
-| `search_profiles_fts(query)` | Full-text search across profiles |
-| `get_notification_counts(user_id)` | Returns unread counts by type |
-| `get_or_create_daily_usage(user_id)` | Upserts daily usage record |
-| `get_user_trust_score(user_id)` | Calculates trust from verification + flags |
-| `has_role(user_id, role)` | Security-definer role check |
-| `is_super_admin(user_id)` | Admin check |
-| `is_user_blocked(target_id)` | Block check |
-| `is_group_admin(group_id, user_id)` | Group admin check |
-| `is_group_member(group_id, user_id)` | Membership check |
-| `is_profile_complete(profile_id)` | Completeness check |
-| `can_perform_action(action_type)` | Daily limit check |
-| `increment_usage_count(action_type)` | Increment daily counter |
-| `publish_scheduled_content()` | Cron-triggered publisher |
-| `add_story_reaction(story_id, user_id, emoji)` | Story reaction handler |
-| `insert_encrypted_payment(...)` | Encrypted payment insert |
-| `enrich_all_profiles_with_kurdish_data()` | Test data seeder |
+**Rapportering & Moderering (4)**
+`reports`, `safety_flags`, `blocked_users`, `scheduled_content`
 
-### 7.4 Enums
+**Analytikk (5)**
+`profile_views`, `daily_usage`, `user_engagement`, `usage_tracking`, `ab_tests`
 
+**Admin (7)**
+`admin_activities`, `admin_audit_log`, `admin_reports`, `email_campaigns`, `support_tickets`, `app_settings`, `api_keys`
+
+**Innhold (4)**
+`content_categories`, `category_items`, `landing_page_content`, `app_translations`
+
+**System (2)**
+`social_login_providers`, `system_metrics`
+
+### 7.2 Profiltabellen (kjerneskjema)
 ```sql
-app_role: 'super_admin' | 'admin' | 'moderator' | 'user'
+profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  name VARCHAR NOT NULL,
+  age INTEGER NOT NULL,
+  gender TEXT,
+  location VARCHAR NOT NULL,
+  occupation VARCHAR NOT NULL DEFAULT 'Not specified',
+  bio TEXT NOT NULL DEFAULT 'Tell us about yourself...',
+  profile_image VARCHAR NOT NULL DEFAULT 'https://placehold.co/400',
+  height VARCHAR NOT NULL DEFAULT '5''6"',
+  body_type VARCHAR NOT NULL DEFAULT 'Average',
+  ethnicity VARCHAR NOT NULL DEFAULT 'Prefer not to say',
+  religion VARCHAR NOT NULL DEFAULT 'Prefer not to say',
+  kurdistan_region VARCHAR NOT NULL DEFAULT 'South-Kurdistan',
+  education VARCHAR NOT NULL DEFAULT 'Not specified',
+  relationship_goals VARCHAR NOT NULL DEFAULT 'Looking for something serious',
+  want_children VARCHAR NOT NULL DEFAULT 'Open to children',
+  exercise_habits VARCHAR NOT NULL DEFAULT 'Sometimes',
+  values TEXT[] DEFAULT '{}',
+  interests TEXT[] DEFAULT '{}',
+  hobbies TEXT[] DEFAULT '{}',
+  languages TEXT[] DEFAULT '{}',
+  verified BOOLEAN DEFAULT false,
+  phone_verified BOOLEAN DEFAULT false,
+  video_verified BOOLEAN DEFAULT false,
+  dating_profile_visible BOOLEAN DEFAULT true,
+  is_generated BOOLEAN DEFAULT false,
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  geo_location GEOGRAPHY(POINT),
+  phone_number TEXT,
+  last_active TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ DEFAULT now()
+  -- + 40 ytterligere valgfrie felt (livsstil, preferanser, etc.)
+)
 ```
+
+### 7.3 Nøkkelrelasjoner
+```text
+auth.users(id) ←── profiles(id)
+profiles(id) ←── profile_details(profile_id)
+profiles(id) ←── profile_preferences(user_id)
+profiles(id) ←── likes(liker_id, liked_id)
+profiles(id) ←── matches(user1_id, user2_id)
+profiles(id) ←── messages(sender_id, recipient_id)
+profiles(id) ←── posts(user_id)
+profiles(id) ←── stories(user_id)
+profiles(id) ←── user_roles(user_id)
+profiles(id) ←── user_subscriptions(user_id)
+posts(id) ←── post_comments(post_id)
+posts(id) ←── post_likes(post_id)
+groups(id) ←── group_members(group_id)
+events(id) ←── event_attendees(event_id)
+```
+
+### 7.4 RLS-policy oversikt
+- **profiles**: Alle autentiserte kan lese (blokkerte brukere filtreres), kun eier kan oppdatere
+- **messages**: Kun sender/mottaker kan lese/opprette
+- **likes/matches**: Kun involverte brukere kan lese
+- **posts**: Autentiserte kan lese, eier kan CRUD
+- **user_roles**: Kun super_admins kan administrere
+- **user_subscriptions**: Eier kan lese, insert/update via SECURITY DEFINER
+- **admin-tabeller**: Kun `is_super_admin(auth.uid())` har tilgang
 
 ---
 
-## 8. User Flows
+## 8. EDGE FUNCTIONS (API)
 
-### 8.1 Registration Flow
-```
-Landing → /register → Step1 (Name, Age, Gender, Location, Kurdistan Region)
-→ Step2 (Height, Body Type, Exercise, Smoking, Drinking, Diet, Sleep, Pets)
-→ Step3 (Religion, Political Views, Values ≥3, Ethnicity)
-→ Step4 (Relationship Goals, Want Children, Love Language, Communication Style)
-→ Step5 (Photo Upload, Profile Image)
-→ Step6 (Occupation Selection)
-→ Step7 (Interests ≥3, Hobbies ≥2, Favorites)
-→ Bio Writing (≥20 chars, AI generation available)
-→ Languages Selection (≥1)
-→ Education Selection
-→ Profile Created → /discovery
+### 8.1 Autentisering
+Alle edge functions verifiserer JWT via:
+```typescript
+const authHeader = req.headers.get("Authorization")!;
+const token = authHeader.replace("Bearer ", "");
+const { data } = await supabaseClient.auth.getUser(token);
 ```
 
-### 8.2 Swipe & Match Flow
-```
-/swipe → Load profile stack (excludes: already swiped, blocked, self)
-→ User swipes right (like):
-    → Check daily limit (can_perform_action)
-    → Insert into swipe_history
-    → Insert into likes
-    → Check if target already liked current user
-        → YES: Create match in matches table → Show MatchPopup → Enable messaging
-        → NO: Continue
-→ User swipes left (dislike):
-    → Insert into swipe_history
-→ Super Like: Same as like but with boost notification
-→ Rewind: Mark last swipe as rewound, re-show card
-→ Boost: Increase visibility for X minutes
-```
+### 8.2 Endepunkter
 
-### 8.3 Messaging Flow
-```
-Match created → Conversation appears in /messages
-→ User opens conversation → Load messages (Supabase query + Realtime subscription)
-→ Type message → typing_status updated via Realtime
-→ Send message:
-    → Insert into messages
-    → moderate-message edge function (AI safety check)
-    → If flagged → insert into message_safety_flags
-    → Update conversation_metadata.last_message_at
-    → Send push notification (send-push-notification edge function)
-→ Recipient opens → Mark messages as read
-```
-
-### 8.4 Post Creation Flow
-```
-/create-post → Enter text content → Optionally attach media (image/video)
-→ Auto-extract #hashtags from content
-→ Insert into posts table
-→ Upsert hashtags table (increment usage_count)
-→ Notify followers
-```
-
-### 8.5 Verification Flow
-```
-/verification → Choose type (video selfie / document)
-→ Video: Record selfie following prompts (turn head left, right, smile)
-    → Upload to Supabase Storage
-    → submit-verification edge function
-    → Insert into video_verifications (status: pending)
-    → Admin reviews in /super-admin/verification
-    → Approved → profiles.video_verified = true
-→ Document: Upload ID photo
-    → Insert into verification_requests
-    → Admin review → profiles.verified = true
-```
-
-### 8.6 Subscription Flow
-```
-/subscription → Select plan → create-checkout edge function
-→ Redirect to Stripe Checkout
-→ stripe-webhook receives payment confirmation
-→ Insert/update user_subscriptions
-→ Redirect back to app with success
-```
+| Funksjon | Metode | Input | Output |
+|----------|--------|-------|--------|
+| `create-checkout` | POST | `{ priceId }` | `{ url: string }` (Stripe checkout URL) |
+| `stripe-webhook` | POST | Stripe Event | 200 OK |
+| `customer-portal` | POST | - | `{ url: string }` |
+| `check-subscription` | POST | - | `{ subscription_type, expires_at, is_active }` |
+| `generate-bio` | POST | `{ profile data }` | `{ bio: string }` |
+| `generate-icebreakers` | POST | `{ userId, targetUserId }` | `{ icebreakers: string[] }` |
+| `generate-insights` | POST | `{ conversationId }` | `{ insights }` |
+| `ai-wingman` | POST | `{ message, context }` | `{ reply: string }` |
+| `calculate-compatibility` | POST | `{ userId, targetUserId }` | `{ score, details }` |
+| `calculate-match-score` | POST | `{ profile1, profile2 }` | `{ score: number }` |
+| `moderate-message` | POST | `{ message }` | `{ safe: boolean, reason? }` |
+| `moderate-photo` | POST | `{ imageUrl }` | `{ safe: boolean }` |
+| `send-sms-verification` | POST | `{ phoneNumber }` | `{ success: boolean }` |
+| `verify-phone-code` | POST | `{ phone, code }` | `{ verified: boolean }` |
+| `search-gifs` | POST | `{ query }` | `{ results: GIF[] }` |
+| `translate-message` | POST | `{ text, targetLang }` | `{ translated: string }` |
+| `admin-actions` | POST | `{ action, table, data }` | `{ success, data }` |
+| `admin-delete-user` | POST | `{ userId }` | `{ success }` |
+| `create-super-admin` | POST | `{ userId }` | `{ success }` |
+| `collect-system-metrics` | POST | - | `{ metrics }` |
+| `send-push-notification` | POST | `{ userId, title, body }` | `{ success }` |
+| `submit-verification` | POST | `{ videoUrl }` | `{ success }` |
+| `sync-translations` | POST | `{ languageCode }` | `{ count }` |
+| `sync-all-translations` | POST | - | `{ count }` |
+| `extract-texts` | POST | - | `{ texts }` |
+| `manage-api-keys` | POST | `{ action, keyData }` | `{ key }` |
+| `setup-admin` | POST | `{ userId }` | `{ success }` |
 
 ---
 
-## 9. Admin Capabilities
+## 9. AUTENTISERING & SIKKERHET
 
-**Access Control:** `SuperAdminGuard` checks `user_roles` table for `super_admin` role via `useAdminRoleCheck` hook. All mutations go through `admin-actions` edge function with service-role key, logged in `admin_audit_log`.
+### 9.1 Auth-flyt
+1. Bruker registrerer seg via email/passord eller OAuth
+2. Supabase Auth utsteder JWT + refresh token
+3. Token lagres i `localStorage` via Supabase SDK
+4. `AuthProvider` wrapper lytter på `onAuthStateChange`
+5. `ProtectedRoute` sjekker `user` fra context
+6. `SuperAdminGuard` sjekker `user_roles`-tabell for `super_admin`
 
-**Key Capabilities:**
-- Full user CRUD (view/edit/ban/delete profiles, profile_details, profile_preferences)
-- Content moderation (posts, comments, photos, messages)
-- Verification request review (approve/reject with reason)
-- Safety flag review and action
-- A/B test management
-- Email campaign management
-- App settings configuration
-- Translation management
-- Landing page CMS
-- Registration form configuration
-- Data export generation
-- Role assignment (super_admin, admin, moderator)
-- System health monitoring
-- Bulk actions on users
-- Support ticket management
-- API key management
+### 9.2 Rollesystem
+```sql
+user_roles (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  role TEXT NOT NULL  -- 'super_admin'
+)
+```
+Sjekkes via `is_super_admin(auth.uid())` SECURITY DEFINER funksjon.
 
----
+### 9.3 Data-beskyttelse
+- **PII-beskyttelse**: `phone_number`, `latitude`, `longitude` er revoked fra `authenticated` role på `profiles`-tabellen. Tilgang kun via `get_own_profile_pii` RPC.
+- **Blokkering**: RLS filtrerer blokkerte brukere fra alle spørringer via `NOT EXISTS (SELECT 1 FROM blocked_users ...)`
+- **Profil-synlighet**: `profile_visibility_settings` lar brukere kontrollere hvilke felt som er synlige
+- **Trigger-beskyttelse**: DB-trigger hindrer brukere fra å endre `verified`, `phone_verified` selv
+- **Input-sanitering**: `isomorphic-dompurify` brukes for HTML-rensing
+- **Console-suppression**: `console.log/info/debug/warn` supprimert i produksjon
 
-## 10. Notification System
-
-### In-App Notifications
-- Stored in `notifications` table
-- Types: `like`, `match`, `message`, `follow`, `comment`, `mention`, `event`, `group`
-- Read/unread tracking
-- Badge counts on bottom nav (messages, discover hub aggregated)
-- `useNotifications` hook polls `get_notification_counts` DB function
-
-### Web Push Notifications
-- Service Worker based (browser push API)
-- `usePushNotifications` hook manages subscription
-- `push_subscriptions` table stores endpoints (VAPID keys)
-- `send-push-notification` edge function sends via Web Push Protocol
-- `usePushNotificationTriggers` hook triggers on new matches/likes/messages
-- Cleanup: `cleanup_dead_push_subscriptions`, `cleanup_inactive_push_subscriptions` DB functions
-
-### Notification Settings
-- 12 granular toggles in `user_settings`:
-  - `notifications_messages`, `notifications_matches`, `notifications_likes`
-  - `notifications_comments`, `notifications_follows`, `notifications_mentions`
-  - `notifications_events`, `notifications_groups`, `notifications_profile_views`
-  - `notifications_push`, `notifications_email`, `notifications_sms`, `notifications_marketing`
+### 9.4 Hemmeligheter (krever Supabase Dashboard)
+| Hemmelighet | Brukes av |
+|-------------|-----------|
+| `STRIPE_SECRET_KEY` | create-checkout, stripe-webhook |
+| `STRIPE_WEBHOOK_SECRET` | stripe-webhook |
+| `OPENAI_API_KEY` | generate-bio, icebreakers, insights, wingman, moderering |
+| `TWILIO_ACCOUNT_SID` | send-sms-verification |
+| `TWILIO_AUTH_TOKEN` | send-sms-verification |
+| `TWILIO_PHONE_NUMBER` | send-sms-verification |
+| `TENOR_API_KEY` | search-gifs |
+| `SUPABASE_SERVICE_ROLE_KEY` | admin-actions, admin-delete-user |
 
 ---
 
-## 11. Security & Privacy Structure
+## 10. DESIGN SYSTEM
 
-### Authentication
-- Supabase Auth (email/password + OAuth)
-- JWT-based session with auto-refresh
-- `onAuthStateChange` listener for session management
+### 10.1 Midnight Rose
+Appen bruker et egendefinert mørkt tema kalt "Midnight Rose":
 
-### Authorization
-- Row-Level Security (RLS) on all tables
-- `user_roles` table (separate from profiles) with `has_role()` security-definer function
-- `SuperAdminGuard` component for admin routes
-- `ProtectedRoute` component for authenticated routes
-- `useProfileAccess` hook gates dating profile access by subscription tier + match status
+| Variabel | HSL-verdi | Bruk |
+|----------|-----------|------|
+| `--background` | 271 33% 9% | Hovedbakgrunn (mørk lilla) |
+| `--card` | 268 37% 17% | Kort-bakgrunn |
+| `--primary` | 336 90% 60% | Hovedfarge (rosa) |
+| `--accent` | 340 95% 71% | Aksentfarge (lys rosa) |
+| `--muted-foreground` | 270 20% 63% | Dempet tekst |
+| `--border` | 268 25% 25% | Kantlinjer |
 
-### Data Privacy
-- Privacy settings per user: profile visibility, online status, read receipts, last active, age, distance, discoverable, profile views
-- Blocked users fully excluded from all queries
-- Photo blur option (`blur_photos` field)
-- Muted conversations
-- Data export capability (`data_exports` table)
-- Account deletion/deactivation flow (types in `src/types/account.ts`)
+### 10.2 Typografi
+- **Hovedfont**: Inter (alle vekter 100-900)
+- **Sekundær**: Poppins (300-700)
+- **Alternativ**: Quicksand (300-700)
+- **Kurdisk/Arabisk**: Noto Sans Arabic (300-900, RTL)
 
-### Content Safety
-- AI message moderation (`moderate-message` edge function)
-- AI photo moderation (`moderate-photo` edge function)
-- Message safety flags with severity levels
-- Report system (users, messages, content)
-- Message rate limiting (`message_rate_limits`)
-- Admin audit log for all admin actions
+### 10.3 Design-prinsipper
+- iOS/Android-nativt utseende med frosted glass headers
+- Pill-style kontroller og 24-32px avrundede hjørner
+- Bottom navigation (56px) med safe-area padding
+- Sheet/bottom-sheet for popups (vaul)
+- Sonner for toast-varsler
+- Framer Motion for sideoverganger
 
-### Encryption
-- Payment data stored encrypted (`*_encrypted` columns)
-- `insert_encrypted_payment` DB function
-
-### Input Validation
-- `useSecureForm` hook
-- `useEmailValidation` hook
-- Zod schemas for form validation
-- DOMPurify for HTML sanitization (`isomorphic-dompurify`)
+### 10.4 Responsivitet
+- Optimalisert for 390x844 (iPhone) som primær viewport
+- Max-width containere for tablet/desktop
+- Bottom nav skjules på admin-ruter
 
 ---
 
-## 12. Performance Considerations
+## 11. INTERNASJONALISERING (i18n)
 
-### Code Splitting
-- All pages lazy-loaded via `React.lazy()` + `Suspense`
-- Shared loading component (`SharedPageLoader`)
-- Route-level code splitting (5 route groups: public, protected, settings, groups, admin)
+### 11.1 Støttede språk
+| Kode | Språk | Retning |
+|------|-------|---------|
+| `english` | English | LTR |
+| `kurdish_sorani` | کوردی (سۆرانی) | RTL |
+| `kurdish_kurmanci` | Kurdî (Kurmancî) | LTR |
+| `norwegian` | Norsk | LTR |
+| `german` | Deutsch | LTR |
 
-### Image Optimization
-- `browser-image-compression` for client-side compression before upload
-- `useImageCompression` hook
-- Lazy loading with blur-up animation (`.image-blur-up` class)
-
-### Data Fetching
-- TanStack React Query for caching and deduplication
-- Supabase Realtime for messages, typing indicators, posts
-- `useThrottledAction` hook for rate-limited operations
-- `useAutoSave` hook for form auto-persistence
-
-### Rendering
-- Overscroll behavior disabled (`overscroll-behavior: none`)
-- Touch action manipulation for mobile performance
-- Scrollbar hiding utilities
-- `100dvh` for proper mobile viewport
-
-### Database
-- PostGIS extension for geospatial queries (proximity search)
-- Full-text search function (`search_profiles_fts`)
-- Indexed foreign keys on all relationship tables
-- Daily usage upsert function to avoid race conditions
-- 1000-row default query limit (Supabase)
+### 11.2 Implementasjon
+- Oversettelser lagres i `app_translations`-tabell
+- `useTranslations()` hook henter oversettelser basert på valgt språk
+- Auto-deteksjon av nettleserens språk ved første besøk
+- RTL-støtte via CSS `[dir="rtl"]` selektorer og `getTextDirection()`
+- Synkronisering via `sync-translations` edge function
 
 ---
 
-## 13. Missing Improvements & Potential Optimizations
+## 12. DEPLOY & DRIFT
 
-### Architecture
-1. **No offline support** — No service worker caching strategy for offline access
-2. **No virtual scrolling** — Long lists (messages, feeds) render all items; should use `react-window` or `tanstack-virtual`
-3. **No image CDN** — Images served directly from Supabase Storage; should use Supabase Image Transformations or a CDN
-4. **Profile data duplication** — `profiles` table has ~70 columns; `profile_details` duplicates some fields. Should consolidate or use JSONB for optional fields
+### 12.1 Hosting
+- **Frontend**: Lovable (Vite build → CDN)
+- **Backend**: Supabase Cloud (PostgreSQL, Edge Functions, Auth, Storage, Realtime)
+- **Publisert URL**: `https://dating-profile-creator-45.lovable.app`
 
-### Performance
-5. **No SSR/SSG** — Pure SPA; landing page would benefit from pre-rendering for SEO
-6. **No skeleton loaders** — Uses spinner-based `SharedPageLoader` instead of content-aware skeletons
-7. **Bundle size** — Leaflet, Recharts, and framer-motion are large; consider dynamic imports for map/chart pages only
-8. **No query pagination** — Many queries fetch all results; should implement cursor-based pagination
+### 12.2 Bygging
+```bash
+npm run build     # Vite produksjonsbygging
+npm run dev       # Utviklingsserver
+npm run preview   # Forhåndsvis prod-bygging
+```
 
-### Security
-9. **Admin role check on client** — `BottomNavigation` checks `user_roles` via client query (supplementary to server-side guard, but unnecessary exposure)
-10. **No CSRF protection** — Relies on Supabase JWT; standard for SPAs but worth noting
-11. **No content security policy headers** — Should add CSP headers
+### 12.3 Miljøvariabler
+Frontend (auto-satt av Lovable):
+- `VITE_SUPABASE_URL` = `https://bqgjfxilcpqosmccextj.supabase.co`
+- `VITE_SUPABASE_PUBLISHABLE_KEY` = (anon key)
+- `VITE_SUPABASE_PROJECT_ID` = `bqgjfxilcpqosmccextj`
 
-### Features
-12. **No read receipt UI in conversations list** — Read status exists in DB but conversation list doesn't show it
-13. **No message search** — No full-text search for chat messages
-14. **No profile deduplication** — Generated profiles (`is_generated`) mixed with real ones; no clear separation in admin
-15. **No automated test suite** — No unit/integration/e2e tests found
-16. **Chaperone mode incomplete** — Table exists but full UX flow (chaperone invitation, dashboard) may not be fully implemented
-17. **No WebSocket fallback** — Relies entirely on Supabase Realtime; no polling fallback
-18. **No email verification enforcement** — Users can access app without verifying email
+Backend (Supabase Dashboard → Edge Function Secrets):
+- Se seksjon 9.4 for komplett liste
 
-### i18n
-19. **Translation coverage** — Active i18n effort (8 rounds completed) but some strings may still be hardcoded
-20. **No pluralization rules** — `t(key, fallback)` pattern doesn't handle plural forms
+### 12.4 Edge Functions
+Deployes automatisk av Lovable. Kjører på Deno runtime.
 
-### UX
-21. **No dark/light mode toggle in UI** — Light mode CSS exists but no visible toggle for users
-22. **No onboarding tour** — New users go straight to discovery with no guided introduction
-23. **No PWA manifest** — Not installable as a Progressive Web App despite mobile-first design
+### 12.5 PWA
+- `manifest.json` med app-metadata
+- Service worker for push-varsler
+- Apple PWA meta-tags for iOS
 
 ---
 
-## 14. Edge Functions (28 functions)
+## 13. FEILHÅNDTERING
 
-| Function | Purpose | Trigger |
-|----------|---------|---------|
-| `admin-actions` | Service-role admin mutations | Admin panel actions |
-| `admin-delete-user` | User deletion | Admin action |
-| `ai-wingman` | AI chat assistant | User request |
-| `calculate-compatibility` | Compatibility scoring | Profile view / match |
-| `calculate-match-score` | Match scoring | Swipe action |
-| `check-subscription` | Subscription validation | Feature gating |
-| `collect-system-metrics` | System health data | Scheduled/admin |
-| `create-checkout` | Stripe checkout session | Subscription page |
-| `create-super-admin` | First admin setup | Setup flow |
-| `customer-portal` | Stripe customer portal | Settings |
-| `extract-texts` | Text extraction | Translation tool |
-| `generate-bio` | AI bio generation | Registration |
-| `generate-icebreakers` | Conversation starters | Chat |
-| `generate-insights` | AI conversation insights | Chat |
-| `manage-api-keys` | API key CRUD | Admin |
-| `moderate-message` | AI message moderation | Message send |
-| `moderate-photo` | AI photo moderation | Photo upload |
-| `search-gifs` | GIF search API | Chat |
-| `send-push-notification` | Web push delivery | Various triggers |
-| `send-sms-verification` | SMS OTP | Phone verification |
-| `setup-admin` | Admin configuration | Setup |
-| `stripe-webhook` | Stripe event handler | Stripe callbacks |
-| `submit-verification` | Verification submission | Verification flow |
-| `sync-all-translations` | Bulk translation sync | Admin |
-| `sync-translations` | Translation sync | Admin |
-| `translate-message` | Message translation | Chat |
-| `verify-phone-code` | OTP validation | Phone verification |
+### 13.1 Frontend
+- **ErrorBoundary**: React error boundary wrapper rundt kritiske komponenter
+- **Toast**: Sonner brukes for alle brukervenlige feilmeldinger
+- **Loading states**: `LoadingState`-komponent med spinner
+- **Empty states**: `EmptyState`-komponent
+- **Console suppression**: `console.log/info/debug/warn` disabled i produksjon
+
+### 13.2 Backend
+- Edge functions returnerer strukturerte JSON-feil med HTTP statuskoder
+- Supabase RLS gir 403 ved uautorisert tilgang
+- Stripe webhook verifiserer signatur før prosessering
+
+### 13.3 Logging
+- `src/utils/logger.ts` - produksjonslogger
+- Edge function logger via `console.log` (synlig i Supabase Dashboard)
+- Admin audit log: alle admin-handlinger logges i `admin_audit_log`
 
 ---
 
-*End of documentation.*
+## 14. KJENTE BEGRENSNINGER & FORBEDRINGER
+
+### 14.1 Kjente begrensninger
+1. WebRTC mangler TURN-servere (30-40% av anrop kan feile bak NAT)
+2. Ingen offline-modus/caching utover push-varsler
+3. Ingen automatisk kontosletting (cron-jobb mangler)
+4. Ghost user generator fortsatt i klient-bundle
+
+### 14.2 Foreslåtte forbedringer
+1. **TURN-servere**: Legg til Twilio/Metered TURN for pålitelige videoanrop
+2. **Server-side paginering**: Implementer cursor-basert paginering for meldinger
+3. **Offline-støtte**: Service worker precaching for app shell
+4. **Kontosletting-cron**: Daglig edge function som kjører planlagte slettinger
+5. **E2E-tester**: Playwright tester for kritiske brukerflyter
+6. **Overvåking**: Sentry eller tilsvarende for feilrapportering
+
+### 14.3 Skalerbarhet
+- Supabase PostgreSQL skalerer vertikalt (instansstørrelse kan oppgraderes)
+- Edge Functions skalerer automatisk med trafikk
+- Klientside-aggregering av samtaler bør migreres til database-views/RPCs
+- Realtime channels bør scopes til brukerens relevante data
+
+---
+
+## 15. HURTIGREFERANSE FOR UTVIKLERE
+
+### Kjør lokalt
+```bash
+npm install
+npm run dev
+```
+
+### Legg til ny side
+1. Opprett `src/pages/NySide.tsx`
+2. Legg til rute i relevant fil under `src/components/app/routes/`
+3. Wrap med `<P>` (ProtectedRoute) og `<L>` (Suspense lazy-loading)
+
+### Legg til ny API-funksjon
+1. Opprett/rediger fil i `src/api/`
+2. Bruk `supabase` fra `@/integrations/supabase/client`
+3. Verifiser bruker med `supabase.auth.getUser()` (ALDRI `getSession()`)
+
+### Legg til ny Edge Function
+1. Opprett mappe `supabase/functions/ny-funksjon/index.ts`
+2. Håndter CORS, verifiser JWT, returner JSON
+3. Deployes automatisk ved commit
+
+### Legg til ny tabell
+1. Bruk database migration tool
+2. Aktiver RLS
+3. Opprett policies med `auth.uid()`-sjekker
+4. Typer auto-genereres i `src/integrations/supabase/types.ts`
+
+### Design-konvensjoner
+- Bruk CSS-variabler: `bg-background`, `bg-card`, `text-foreground`, `text-primary`
+- Avrunding: `rounded-2xl` eller `rounded-3xl`
+- Headere: `h-14` med `backdrop-blur-xl bg-background/80`
+- Toast: `toast.success()` / `toast.error()` fra Sonner
+- Ikoner: Lucide React
+- Oversettelser: `t('key', 'Fallback')` via `useTranslations()`
