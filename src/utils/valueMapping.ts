@@ -5,7 +5,6 @@
 
 // Mapping from database values (human-readable) to UI component values (keys)
 export const dbToUiValueMapping: Record<string, Record<string, string>> = {
-  // Exercise Habits
   exercise_habits: {
     'Daily exercise': 'daily',
     'Few times a week': 'few-times-week', 
@@ -19,8 +18,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Daily fitness routine': 'daily',
     'Sports enthusiast': 'daily'
   },
-  
-  // Dietary Preferences  
   dietary_preferences: {
     'No restrictions': 'omnivore',
     'Omnivore': 'omnivore',
@@ -33,8 +30,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Halal': 'halal',
     'Other': 'other'
   },
-  
-  // Smoking
   smoking: {
     'Non-smoker': 'never',
     'Never': 'never',
@@ -45,8 +40,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Trying to quit': 'trying-to-quit',
     'Occasional smoker': 'socially'
   },
-  
-  // Drinking
   drinking: {
     'Non-drinker': 'never',
     'Never': 'never',
@@ -58,8 +51,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Light drinker': 'occasionally',
     'Former drinker': 'never'
   },
-  
-  // Sleep Schedule
   sleep_schedule: {
     'Early bird': 'early-bird',
     'Night owl': 'night-owl',
@@ -69,8 +60,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Balanced sleeper': 'flexible',
     'Inconsistent schedule': 'depends'
   },
-  
-// Add missing pets mapping values  
   have_pets: {
     'Yes, dogs': 'yes-dogs',
     'Yes, cats': 'yes-cats', 
@@ -86,8 +75,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Allergic to pets': 'no-allergic',
     'Have pets': 'yes-other'
   },
-  
-  // Religion
   religion: {
     'Muslim': 'muslim',
     'Christian': 'christian',
@@ -104,8 +91,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Spiritual': 'spiritual',
     'Yarsanism': 'other'
   },
-  
-  // Political Views
   political_views: {
     'Liberal': 'liberal',
     'Moderate': 'moderate',
@@ -116,8 +101,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Prefer not to say': 'prefer-not-say',
     'Kurdish Nationalist': 'progressive'
   },
-  
-  // Zodiac Sign
   zodiac_sign: {
     'Aries': 'aries',
     'Taurus': 'taurus',
@@ -132,8 +115,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Aquarius': 'aquarius',
     'Pisces': 'pisces'
   },
-  
-  // Love Language
   love_language: {
     'Words of Affirmation': 'words-of-affirmation',
     'Quality Time': 'quality-time',
@@ -141,8 +122,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Acts of Service': 'acts-of-service',
     'Receiving Gifts': 'receiving-gifts'
   },
-  
-  // Communication Style
   communication_style: {
     'Direct': 'direct',
     'Diplomatic': 'diplomatic',
@@ -154,8 +133,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Thoughtful and reflective': 'diplomatic',
     'Reserved but caring': 'reserved'
   },
-  
-  // Children
   want_children: {
     'Want children': 'want',
     'Don\'t want children': 'dont-want',
@@ -163,8 +140,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Already have children': 'have',
     'Undecided': 'undecided'
   },
-  
-  // Work Life Balance
   work_life_balance: {
     'Work comes first': 'work-first',
     'Life comes first': 'life-first',
@@ -172,8 +147,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Depends on the situation': 'situational',
     'Depends on season': 'situational'
   },
-  
-  // Education
   education: {
     'High School': 'high-school',
     'Some College': 'some-college',
@@ -184,8 +157,6 @@ export const dbToUiValueMapping: Record<string, Record<string, string>> = {
     'Trade School': 'trade-school',
     'Professional Degree': 'professional'
   },
-  
-  // Relationship Goals
   relationship_goals: {
     'Long-term relationship': 'long-term',
     'Marriage': 'marriage', 
@@ -215,24 +186,10 @@ Object.keys(dbToUiValueMapping).forEach(field => {
 export const convertDbToUiValues = (profileData: any): any => {
   const converted = { ...profileData };
   
-  console.log('Converting DB to UI values...');
-  
   Object.keys(dbToUiValueMapping).forEach(field => {
     if (profileData[field] && dbToUiValueMapping[field][profileData[field]]) {
-      const oldValue = profileData[field];
       converted[field] = dbToUiValueMapping[field][profileData[field]];
-      console.log(`✅ Converted ${field}: "${oldValue}" → "${converted[field]}"`);
-    } else if (profileData[field]) {
-      console.log(`⚠️  No mapping found for ${field}: "${profileData[field]}"`);
     }
-  });
-  
-  console.log('✅ Final converted profile sample:', {
-    education: converted.education,
-    dietary_preferences: converted.dietary_preferences,
-    have_pets: converted.have_pets,
-    smoking: converted.smoking,
-    drinking: converted.drinking
   });
   
   return converted;
@@ -247,7 +204,6 @@ export const convertUiToDbValues = (profileData: any): any => {
   Object.keys(uiToDbValueMapping).forEach(field => {
     if (profileData[field] && uiToDbValueMapping[field][profileData[field]]) {
       converted[field] = uiToDbValueMapping[field][profileData[field]];
-      console.log(`Converting for save ${field}: "${profileData[field]}" → "${converted[field]}"`);
     }
   });
   

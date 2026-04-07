@@ -45,7 +45,6 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   const handleSignOut = async () => {
-    console.log('SuperAdminLayout: Signing out admin user');
     try {
       await supabase.auth.signOut();
       navigate('/admin-login');
@@ -57,10 +56,10 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
 
   if (isCheckingRole) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card">
         <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-tinder-rose" />
-          <p className="text-gray-600">{t('admin.verifying_access', 'Verifying admin access...')}</p>
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">{t('admin.verifying_access', 'Verifying admin access...')}</p>
         </div>
       </div>
     );
@@ -119,26 +118,26 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0a]">
+    <div className="flex min-h-screen bg-background">
       {mobileMenuOpen && (
         <div className="fixed inset-0 bg-black/60 z-30 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
       )}
 
-      <aside className={`fixed top-0 left-0 z-40 h-screen bg-[#0f0f0f] border-r border-white/5 transition-all duration-300 ${collapsed ? 'lg:w-16' : 'lg:w-64'} ${mobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed top-0 left-0 z-40 h-screen bg-card border-r border-border transition-all duration-300 ${collapsed ? 'lg:w-16' : 'lg:w-64'} ${mobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b border-white/5">
+          <div className="flex items-center justify-between p-4 border-b border-border">
             {!collapsed && (
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">K</span>
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <span className="text-primary-foreground text-sm font-bold">K</span>
                 </div>
-                <span className="text-white font-semibold">KurdMatch</span>
+                <span className="text-foreground font-semibold">KurdMatch</span>
               </div>
             )}
-            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="ml-auto text-white/60 hover:text-white hover:bg-white/5 hidden lg:flex">
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="ml-auto text-muted-foreground hover:text-foreground hover:bg-muted hidden lg:flex">
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="ml-auto text-white/60 hover:text-white hover:bg-white/5 lg:hidden">
+            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="ml-auto text-muted-foreground hover:text-foreground hover:bg-muted lg:hidden">
               <ChevronLeft size={18} />
             </Button>
           </div>
@@ -154,8 +153,8 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                     className={({ isActive }) => 
                       `flex items-center p-3 rounded-lg transition-all duration-200 group ${
                         isActive 
-                          ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-500' 
-                          : 'hover:bg-white/5 text-white/60 hover:text-white'
+                          ? 'bg-gradient-to-r from-primary/20 to-accent/20 text-primary' 
+                          : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                       } ${collapsed ? 'lg:justify-center' : ''}`
                     }
                   >
@@ -167,8 +166,8 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
             </ul>
           </nav>
           
-          <div className="p-4 border-t border-white/5">
-            <Button onClick={handleSignOut} variant="ghost" className="flex items-center p-3 text-red-500 rounded-lg hover:bg-red-500/10 w-full justify-start">
+          <div className="p-4 border-t border-border">
+            <Button onClick={handleSignOut} variant="ghost" className="flex items-center p-3 text-destructive rounded-lg hover:bg-destructive/10 w-full justify-start">
               <LogOut size={20} className="flex-shrink-0" />
               <span className={`ml-3 text-sm ${collapsed ? 'hidden lg:inline' : ''}`}>{t('admin.sign_out', 'Sign Out')}</span>
             </Button>
@@ -177,15 +176,15 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
       </aside>
       
       <main className={`flex-1 transition-all duration-300 w-full ${collapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
-        <div className="lg:hidden sticky top-0 z-20 bg-[#0f0f0f] border-b border-white/5 p-4 flex items-center justify-between">
-          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} className="text-white/60 hover:text-white hover:bg-white/5">
+        <div className="lg:hidden sticky top-0 z-20 bg-card border-b border-border p-4 flex items-center justify-between">
+          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} className="text-muted-foreground hover:text-foreground hover:bg-muted">
             <ChevronRight size={20} />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">K</span>
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <span className="text-primary-foreground text-xs font-bold">K</span>
             </div>
-            <span className="text-white font-semibold text-sm">Admin</span>
+            <span className="text-foreground font-semibold text-sm">Admin</span>
           </div>
           <div className="w-10" />
         </div>
