@@ -109,13 +109,28 @@ const Messages = () => {
         />
       ) : (
         <div className="min-h-screen bg-background flex flex-col">
-          <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
-            <ConversationList
-              conversations={conversations}
-              allMatches={allMatches}
-              matchStories={matchStories}
-              onSelectConversation={setSelectedConversation}
-            />
+        <div className="flex-1 overflow-y-auto scrollbar-hide pb-24">
+            {conversations.length === 0 && allMatches.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-[60vh] text-center px-8">
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+                  <MessageCircle className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">{t('messages.no_conversations', 'No conversations yet')}</h3>
+                <p className="text-muted-foreground max-w-sm mb-6">
+                  {t('messages.no_conversations_desc', 'Match with someone to start chatting!')}
+                </p>
+                <Button onClick={() => window.location.href = '/swipe'}>
+                  {t('messages.start_swiping', 'Start Swiping')}
+                </Button>
+              </div>
+            ) : (
+              <ConversationList
+                conversations={conversations}
+                allMatches={allMatches}
+                matchStories={matchStories}
+                onSelectConversation={setSelectedConversation}
+              />
+            )}
           </div>
         </div>
       )}
