@@ -61,6 +61,7 @@ const GhostUsersPage = () => {
   const handleGenerate = async () => {
     setGenerating(true);
     setProgress({ current: 0, total: parseInt(count) });
+    const { generateGhostUsers } = await import('@/utils/ghostUserGenerator');
     const result = await generateGhostUsers({ count: parseInt(count), gender, generatePosts, generateStories, generatePhotos, setVerified, region: region || undefined, onProgress: (current, total) => setProgress({ current, total }) });
     setGenerating(false);
     setGenerateOpen(false);
