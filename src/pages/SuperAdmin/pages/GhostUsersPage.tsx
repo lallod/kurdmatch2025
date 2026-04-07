@@ -87,6 +87,7 @@ const GhostUsersPage = () => {
   };
 
   const handlePublish = async () => {
+    const { publishScheduledContent } = await import('@/utils/ghostUserGenerator');
     const result = await publishScheduledContent();
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
     toast({ title: t('admin.published_content', 'Published Content'), description: result.error ? `Error: ${result.error}` : t('admin.published_items', 'Published {{count}} scheduled items.', { count: result.published }) });
