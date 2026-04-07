@@ -96,6 +96,7 @@ const GhostUsersPage = () => {
   const handleRegenerate = async () => {
     const ids = ghostUsers.map(u => u.id);
     if (ids.length === 0) return;
+    const { regenerateActivity } = await import('@/utils/ghostUserGenerator');
     const result = await regenerateActivity(ids);
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
     toast({ title: t('admin.activity_regenerated', 'Activity Regenerated'), description: t('admin.scheduled_items', 'Scheduled {{count}} new content items.', { count: result.scheduled }) });
