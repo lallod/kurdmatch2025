@@ -79,6 +79,7 @@ const GhostUsersPage = () => {
   };
 
   const handleDeleteSingle = async (id: string) => {
+    const { deleteSingleGhostUser } = await import('@/utils/ghostUserGenerator');
     await deleteSingleGhostUser(id);
     queryClient.invalidateQueries({ queryKey: ['ghost-users'] });
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
