@@ -87,7 +87,6 @@ export const useAdminPhotos = () => {
   const approvePhoto = async (photoId: string) => {
     // This would typically update a moderation status field
     // For now, we'll just mark it as approved in a comment
-    console.log('Photo approved:', photoId);
     return true;
   };
 

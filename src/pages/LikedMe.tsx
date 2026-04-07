@@ -176,9 +176,12 @@ const LikedMe = () => {
               <Heart className="h-10 w-10 text-muted-foreground" />
             </div>
              <h3 className="text-xl font-semibold text-foreground mb-2">{t('liked_me.no_likes', 'No likes yet')}</h3>
-             <p className="text-muted-foreground max-w-sm">
-               {t('liked_me.no_likes_desc', "When someone likes your profile, they'll appear here. Keep your profile active to get more likes!")}
+             <p className="text-muted-foreground max-w-sm mb-6">
+               {t('liked_me.no_likes_desc', "When someone likes your profile, they'll appear here. Complete your profile to get noticed!")}
              </p>
+             <Button onClick={() => navigate('/my-profile')}>
+               {t('liked_me.complete_profile', 'Complete Your Profile')}
+             </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3">

@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { generateGhostUsers, deleteAllGhostUsers, deleteSingleGhostUser, publishScheduledContent, regenerateActivity, type GhostGenerationOptions } from '@/utils/ghostUserGenerator';
+import type { GhostGenerationOptions } from '@/utils/ghostUserGenerator';
 import { kurdishRegions } from '@/utils/profileGenerator/data/locations';
 import { useTranslations } from '@/hooks/useTranslations';
 
@@ -61,6 +61,7 @@ const GhostUsersPage = () => {
   const handleGenerate = async () => {
     setGenerating(true);
     setProgress({ current: 0, total: parseInt(count) });
+    const { generateGhostUsers } = await import('@/utils/ghostUserGenerator');
     const result = await generateGhostUsers({ count: parseInt(count), gender, generatePosts, generateStories, generatePhotos, setVerified, region: region || undefined, onProgress: (current, total) => setProgress({ current, total }) });
     setGenerating(false);
     setGenerateOpen(false);
@@ -70,6 +71,7 @@ const GhostUsersPage = () => {
   };
 
   const handleDeleteAll = async () => {
+    const { deleteAllGhostUsers } = await import('@/utils/ghostUserGenerator');
     const result = await deleteAllGhostUsers();
     queryClient.invalidateQueries({ queryKey: ['ghost-users'] });
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
@@ -77,6 +79,7 @@ const GhostUsersPage = () => {
   };
 
   const handleDeleteSingle = async (id: string) => {
+    const { deleteSingleGhostUser } = await import('@/utils/ghostUserGenerator');
     await deleteSingleGhostUser(id);
     queryClient.invalidateQueries({ queryKey: ['ghost-users'] });
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
@@ -84,6 +87,7 @@ const GhostUsersPage = () => {
   };
 
   const handlePublish = async () => {
+    const { publishScheduledContent } = await import('@/utils/ghostUserGenerator');
     const result = await publishScheduledContent();
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
     toast({ title: t('admin.published_content', 'Published Content'), description: result.error ? `Error: ${result.error}` : t('admin.published_items', 'Published {{count}} scheduled items.', { count: result.published }) });
@@ -92,6 +96,7 @@ const GhostUsersPage = () => {
   const handleRegenerate = async () => {
     const ids = ghostUsers.map(u => u.id);
     if (ids.length === 0) return;
+    const { regenerateActivity } = await import('@/utils/ghostUserGenerator');
     const result = await regenerateActivity(ids);
     queryClient.invalidateQueries({ queryKey: ['ghost-stats'] });
     toast({ title: t('admin.activity_regenerated', 'Activity Regenerated'), description: t('admin.scheduled_items', 'Scheduled {{count}} new content items.', { count: result.scheduled }) });

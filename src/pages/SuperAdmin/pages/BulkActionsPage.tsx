@@ -709,7 +709,14 @@ const BulkActionsPage = () => {
             </div>
             
             <div className="grid gap-2">
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={() => {
+                const csv = "email,name,age,gender,location,kurdistan_region\n";
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'user_import_template.csv';
+                a.click(); URL.revokeObjectURL(url);
+              }}>
                 <Download className="mr-2 h-4 w-4" />
                 {t('admin.download_template', 'Download Template')}
               </Button>

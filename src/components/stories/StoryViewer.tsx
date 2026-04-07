@@ -203,8 +203,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
               storyId={currentStory.id}
               userId={currentStory.user_id}
               currentUserId={currentUserId}
-              onReact={(reaction) => {
-                console.log('Toolbar reaction:', reaction);
+              onReact={(_reaction) => {
               }}
               isMuted={isMuted}
               onToggleMute={() => setIsMuted(!isMuted)}

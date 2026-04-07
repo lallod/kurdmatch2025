@@ -90,7 +90,6 @@ const LanguageTabPanel: React.FC<LanguageTabPanelProps> = ({
   };
 
   const handleTabChange = (value: string) => {
-    console.log('Tab changed to:', value);
     setActiveTab(value);
     setSearchValue('');
   };
