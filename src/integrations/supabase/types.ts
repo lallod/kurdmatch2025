@@ -4446,6 +4446,157 @@ export type Database = {
         }
         Relationships: []
       }
+      visible_profile_details: {
+        Row: {
+          body_type: string | null
+          career_ambitions: string | null
+          charity_involvement: string | null
+          children_status: string | null
+          communication_style: string | null
+          company: string | null
+          created_at: string | null
+          decision_making_style: string | null
+          dietary_preferences: string | null
+          dream_home: string | null
+          dream_vacation: string | null
+          drinking: string | null
+          education: string | null
+          ethnicity: string | null
+          evening_routine: string | null
+          family_closeness: string | null
+          favorite_memory: string | null
+          favorite_quote: string | null
+          favorite_season: string | null
+          financial_habits: string | null
+          friendship_style: string | null
+          have_pets: string | null
+          height: string | null
+          id: string | null
+          ideal_date: string | null
+          ideal_weather: string | null
+          love_language: string | null
+          morning_routine: string | null
+          personality_type: string | null
+          political_views: string | null
+          profile_id: string | null
+          religion: string | null
+          sleep_schedule: string | null
+          smoking: string | null
+          transportation_preference: string | null
+          travel_frequency: string | null
+          updated_at: string | null
+          work_environment: string | null
+          work_life_balance: string | null
+          zodiac_sign: string | null
+        }
+        Insert: {
+          body_type?: never
+          career_ambitions?: string | null
+          charity_involvement?: string | null
+          children_status?: string | null
+          communication_style?: never
+          company?: never
+          created_at?: string | null
+          decision_making_style?: string | null
+          dietary_preferences?: never
+          dream_home?: string | null
+          dream_vacation?: string | null
+          drinking?: never
+          education?: never
+          ethnicity?: never
+          evening_routine?: string | null
+          family_closeness?: string | null
+          favorite_memory?: string | null
+          favorite_quote?: string | null
+          favorite_season?: string | null
+          financial_habits?: string | null
+          friendship_style?: string | null
+          have_pets?: string | null
+          height?: never
+          id?: string | null
+          ideal_date?: string | null
+          ideal_weather?: string | null
+          love_language?: never
+          morning_routine?: string | null
+          personality_type?: never
+          political_views?: never
+          profile_id?: string | null
+          religion?: never
+          sleep_schedule?: never
+          smoking?: never
+          transportation_preference?: string | null
+          travel_frequency?: string | null
+          updated_at?: string | null
+          work_environment?: string | null
+          work_life_balance?: string | null
+          zodiac_sign?: never
+        }
+        Update: {
+          body_type?: never
+          career_ambitions?: string | null
+          charity_involvement?: string | null
+          children_status?: string | null
+          communication_style?: never
+          company?: never
+          created_at?: string | null
+          decision_making_style?: string | null
+          dietary_preferences?: never
+          dream_home?: string | null
+          dream_vacation?: string | null
+          drinking?: never
+          education?: never
+          ethnicity?: never
+          evening_routine?: string | null
+          family_closeness?: string | null
+          favorite_memory?: string | null
+          favorite_quote?: string | null
+          favorite_season?: string | null
+          financial_habits?: string | null
+          friendship_style?: string | null
+          have_pets?: string | null
+          height?: never
+          id?: string | null
+          ideal_date?: string | null
+          ideal_weather?: string | null
+          love_language?: never
+          morning_routine?: string | null
+          personality_type?: never
+          political_views?: never
+          profile_id?: string | null
+          religion?: never
+          sleep_schedule?: never
+          smoking?: never
+          transportation_preference?: string | null
+          travel_frequency?: string | null
+          updated_at?: string | null
+          work_environment?: string | null
+          work_life_balance?: string | null
+          zodiac_sign?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_details_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_details_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "user_public_profile"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_details_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "user_public_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       _postgis_deprecate: {
@@ -4820,6 +4971,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      is_field_visible: {
+        Args: { p_field_name: string; p_profile_id: string }
+        Returns: boolean
       }
       is_group_admin: {
         Args: { group_uuid: string; user_uuid: string }
